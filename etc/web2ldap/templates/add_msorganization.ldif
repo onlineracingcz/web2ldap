@@ -1,0 +1,5 @@
+dn: o=
+objectClass: organization
+objectClass: labeledURIObject
+objectClass: msOrganization
+

@@ -1,0 +1,653 @@
+<!--#set var="web2ldap_subtitle" value="Changes 0.9.x" -->
+<!--#set var="web2ldap_pagedescription" value="History of released versions" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#include file="ssi/changes_navigation.html" -->
+
+<h2 id="r0.9.6">0.9.6</h2>
+<p>Release Date: 2001-09-29</p>
+<dl>
+  <dt>Bug fixes and work arounds</dt>
+  <dd>
+    <ul>
+      <li>
+        Added a workaround for misbehaving LDAP servers (e.g. Lotus Domino)
+        which return a single null-byte character in <var>namingContexts</var>
+        attribute of RootDSE.
+      </li>
+      <li>
+        Another workaround for some weird effects if <em>python-ldap</em>
+        is linked against OpenLDAP 2 libs.
+      </li>
+      <li>
+        Fixed race condition in <var>LDAPSession.getRootDSE()</var> which
+        ended with <var>namingContexts</var> attribute having the value
+        None instead of [] under some strange error conditions.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h2 id="r0.9.5">0.9.5</h2>
+<p>Release Date: 2001-09-23</p>
+<dl>
+  <dt>Installation changes</dt>
+  <dd>
+    <ul>
+      <li>
+        Use separately distributed module
+        <a href="https://www.stroeder.com/pylib/PyWebLib/">
+        PyWebLib</a> for web session handling, form processing,
+        some HTTP header handling and SSL-related environment.
+        Modules <var>cgiforms</var>, <var>cgisession</var>, <var>cgihelper</var>
+        and <var>httphelper</var> are no longer shipped with web2ldap package.
+      </li>
+      <li>
+        Use module <var>ldapthreadlock</var> contributed to
+        <em>python-ldap</em> instead shipping own module <var>ldapthreading</var>.
+      </li>
+      <li>
+        Module <var>ldif</var> is no longer shipped since
+        it was contributed to <em>python-ldap</em> ages ago.
+      </li>
+      <li>
+        Module <var>DNS</var> is no longer distributed within the package.
+        Install <a href="http://pydns.sourceforge.net/">PyDNS</a>
+        instead.
+      </li>
+      <li>
+        Format of host-specific parameter
+        <a href="web2ldapcnf_hosts.html#addform_oc_list">addform_oc_list</a>
+        has changed. The tuple now contains the attribute type for forming
+        the RDN. This is pretty convenient. Use it!
+      </li>
+      <li>
+        On Posix platforms a local configuration module (etc/web2ldap
+        in start directory) now has precedence over a system-wide
+        configuration module (/etc/web2ldap).
+        Also getting the configuration module from Windows-specific
+        system directories is not possible anymore.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features</dt>
+  <dd>
+    <ul>
+      <li>
+        Implemented very basic group managment. Make sure to check out
+        button [Groups] in context menu of single entry display (read).
+      </li>
+      <li>
+        Added handling of binary attribute values stored as hex-byte
+        encoding with prefix {ASN}.
+      </li>
+    </ul>
+  </dd>
+  <dt>User Interface</dt>
+  <dd>
+    <ul>
+      <li>
+        The bind DN (var <var>who</var>) is reused as default in login form if
+        <var>ldap.INVALID_CREDENTIALS</var> was raised after login try.
+      </li>
+      <li>
+        New quick button in <var>ConnInfo</var> for accessing
+        <var>subschemaSubentry</var>.
+      </li>
+      <li>
+        The old password is not requested anymore in the password
+        input form. Instead a relogin window is provided if
+        <var>ldap.INSUFFICIENT_ACCESS</var> is raised.
+      </li>
+      <li>
+        If the user has to do a new login after changing his/her
+        password there is no menu shown anymore.
+      </li>
+      <li>
+        Added search option &quot;exists&quot; to
+        advanced search form. The search string is ignored
+        if this option is chosen.
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning and performance tuning</dt>
+  <dd>
+    <ul>
+      <li>
+        Removed unused module <var>msshelve</var>.
+      </li>
+      <li>
+        Removed some unnecessary module imports.
+      </li>
+      <li>
+        Separate module <var>ldaputil.passwd</var> is used to set the
+        userPassword attribute instead of doing all the stuff in
+        application module <var>w2lpasswd</var>.
+      </li>
+      <li>
+        Moved application modules <var>pylib/w2l*.py</var> to separate module
+        package directory <var>pylib/w2lapp/</var>.
+      </li>
+      <li>
+        Code-cleaning concerning <var>w2lapp.core.CleanUpThread</var>
+      </li>
+      <li>
+        Some code-cleaning with catching referral exceptions
+        when <em>python-ldap</em> is built with OpenLDAP 2.0.x.
+      </li>
+      <li>
+        Implemented new class <var>ldaputil.ldapurlLDAPUrl</var> which does
+        the whole LDAP URL handling.
+      </li>
+      <li>
+        Lots of small code clean-ups, e.g. substituted lots of
+        lambda, map(), filter function calls with list comprehensions.
+      </li>
+      <li>
+        The dumpasn1 config file is only parsed once at startup
+        and the parsed content is held persistent =&gt; tremendous
+        speed-up when displaying certificates and CRLs.
+      </li>
+      <li>
+        Moved creation of modlist's for modify() calls from ldapbase
+        into new sub-module ldaputil.modlist. Functions were renamed.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug fixes and work arounds</dt>
+  <dd>
+    <ul>
+      <li>
+        Hopefully fixed bugs with mixed-case handling of LDIF and
+        other input data by rewriting <var>ldapbase.modify_modifylist()</var>.
+      </li>
+      <li>
+        Proper handling of lower-cased attribute type names of special
+        root DSE attributes.
+      </li>
+      <li>
+        Catch all exceptions which might occur when calling
+        <var>DNS.ParseResolvConf()</var> in module <var>ldapdns</var>
+        and set ldapdns.dns_module_avail=0 in this case which switches
+        off looking up SRV RRs in DNS.
+        This is a rather crude approach which should be refined in
+        the near future.
+      </li>
+      <li>
+        A bunch of small fixes and clean-ups for nasty things
+        detected by
+        <a href="https://pypi.python.org/pypi/PyChecker">
+        PyChecker</a>.
+      </li>
+      <li>
+        <var>utctime.strftimeiso8601()</var> does not rely on
+        <var>time.strftime()</var> to display timestamps anymore.
+        This makes displaying of all year values possible
+        (not only 0..99,1900.. like enforced by <var>time.strftime()</var>).
+      </li>
+      <li>
+        When retrieving the root DSE &quot;+&quot; (ASCII 43) is used as
+        requested attribute type for OpenLDAP 2.0.x as described in
+        <a href="https://tools.ietf.org/html/rfc3673">RFC 3673</a>
+        if the objectClass attribute of root DSE contains 
+        &quot;OpenLDAProotDSE&quot;.
+      </li>
+      <li>
+        Fixed wrong definition of Mozilla-specific MIME type
+        for attribute <var>certificateRevocationList</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h2 id="r0.9.4">0.9.4</h2>
+<p>Release Date: 2001-06-23</p>
+<ul>
+  <li>
+    Fixed displaying of <var>iPAddress</var> attribute in
+    certificates.
+  </li>
+  <li>
+    Abandoned global configuration parameter
+    <var>web2ldapcnf.misc.script_method</var>.
+  </li>
+  <li>
+    Slightly improved excpetion handling especially
+    of logging/ignoring user-aborted connections, etc.
+  </li>
+  <li>
+    Determining appropriate charset used with browser was improved:
+    mainly proper parsing of capability values.
+  </li>
+  <li>
+    A lookup of SRV RRs is automatically done if a LDAP URL
+    does not contain a host name but a &quot;dc-style&quot; DN
+    (a DN formed by <var>domainComponent</var> attributes).
+  </li>
+  <li>
+    New configuration sub-module <a href="web2ldapcnf_fastcgi.html">fastcgi</a>.
+  </li>
+  <li>
+    Some really significant performance optimizations in
+    <var>ldapthreading</var> module. Former approach in method
+    <var>LDAPObject.result()</var> was brain-dead and slow.
+  </li>
+  <li>
+    Web session ID is now passed around in PATH_INFO instead as
+    a hidden form field. This means less HTML bloat and it decoupled
+    session retrieving from form processing.
+  </li>
+  <li>
+    If ldap.NAMING_VIOLATION occurs during <var>add</var>
+    the user can reedit his input.
+  </li>
+  <li>
+    Fixed smart login search with user names containing
+    NON-ASCII chars. (sigh!)
+  </li>
+  <li>
+    Fixed wrong passing of parameters when calling
+    function <var>ldapbase.SmartLogin()</var>.
+  </li>
+  <li>
+    Use timeout search for smart login.
+  </li>
+</ul>
+
+<h2 id="r0.9.3">0.9.3</h2>
+<p>Release Date: 2001-06-08</p>
+<ul>
+  <li>
+    Started writing a <a href="faq.html">FAQ document</a>.
+  </li>
+  <li>
+    Cleaned up determining the default RDN for adding new entry.
+  </li>
+  <li>
+    If an exception instance of type <var>ldap.PARTIAL_RESULTS</var>
+    contains more than one referral LDAP URL only the first
+    one is extracted and used. This is a workaround for the
+    problem that multiple referral URLs were not parsed properly.
+  </li>
+  <li>
+    New method <var>LDAPSession.isLeafEntry()</var> is used to prevent
+    user from submitting <var>modrdn</var> request on non-leaf entry.
+  </li>
+  <li>
+    If a single binary attribute is requested by command <var>read</var>
+    an error message is generated if the entry does not contain this
+    attribute (probably affects only cases where the user manually
+    edits the URL).
+  </li>
+  <li>
+    Some modifications to nicely display attributes found in
+    Active Directory (e.g. <var>objectGUID</var>, <var>whenChanged</var>).
+  </li>
+  <li>
+    Incompatible change to configuration dictionary
+    <var>web2ldapcnf.misc.ldap_browsermimetypes</var> to make
+    it more flexible. The format is now:
+    <pre>
+ldap_browsermimetypes = {
+  ('browsername','browserversion'):{
+    'attrtype':'mime_type'
+  },
+  'browsername':{
+    'attrtype':'mime_type'
+  },
+}
+    </pre>
+  </li>
+  <li>
+    Default MIME-types of certificates and CRLs
+    were changed to <var>application/pkix-cert</var> and
+    <var>application/pkix-crl</var> to be compliant to
+    <a href="https://tools.ietf.org/html/rfc2585">RFC 2585</a>.
+  </li>
+  <li>
+    Extra try-except block in <var>w2lhandler.py</var> sends all unhandled
+    exceptions (including exceptions raised in except statements of inner
+    try-except block) to logging function <var>w2lcore.log_exception()</var>.
+  </li>
+  <li>
+    Work around buggy browsers (e.g. StarOffice) which does not honour the
+    <var>accept-charset</var> attribute of &lt;form&gt; tag and try
+    to decode input as ISO-8859-1 if e.g. UTF-8 fails.
+  </li>
+</ul>
+
+<h2 id="r0.9.2">0.9.2</h2>
+<p>Release Date: 2001-05-19</p>
+<ul>
+  <li>
+    <strong>
+      Security fix:<br>
+    </strong>
+    When calling <var>ldapsession.LDAPSession.bind()</var>
+    the LDAPSession instance (associated with the web session)
+    flushes all cached data, forgets all old RootDSE
+    attributes and calls <var>ldapsession.LDAPSession.getRootDSE()</var>
+    again.
+  </li>
+  <li>
+    <strong>
+      Security fix:<br>
+    </strong>
+    Fixed determining SSL security level and displaying
+    certificates from SSL-related environment vars
+    in <var>conninfo</var>. (works only through FastCGI)
+  </li>
+  <li>
+    <strong>
+      Security feature:<br>
+    </strong>
+    Reimplemented rudimental SSL-based authorization scheme
+    for gateway use. (works only through FastCGI)
+  </li>
+  <li>
+    Fixed handling of search scope select field when a search
+    form is displayed after the user entered an invalid search filter.
+  </li>
+  <li>
+    Send HTTP error 405 in <var>msHTTPHandler</var> if running stand-alone
+    and web application is accessed with HTTP-method HEAD.
+  </li>
+  <li>
+    Adjusted some more HTTP error responses in <var>msHTTPHandler</var>
+    for running stand-alone to be hopefully more compliant to
+    <a href="https://tools.ietf.org/html/rfc2616">RFC 2616</a>.
+  </li>
+  <li>
+    If the user enters an incomplete RDN for a new entry containing
+    only the attribute type (e.g. 'cn=') and the corresponding
+    attribute value is present in the entry the new RDN is
+    automatically formed.
+  </li>
+  <li>
+    Removed input form for command <var>locate</var> from entry page
+    because too many people did not know what it means.
+    Instead directly invoke web2ldap with URL
+    <code>http://[host:port]/web2ldap/locate</code>
+    to get the input form.
+  </li>
+</ul>
+
+<h2 id="r0.9.1">0.9.1</h2>
+<p>Release Date: 2001-05-15</p>
+<ul>
+  <li>
+    Fixed a compability issue in method
+    <var>ldapthreading.LDAPObject.result()</var> with versions of
+    python-ldap based on sources prior 2000-10-19. (see the
+    <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/python-ldap/python-ldap/Modules/LDAPObject.c.diff?r1=1.6%26r2=1.7">
+    incompatible change made to python-ldap</a>)
+  </li>
+  <li>
+    Catch an AttributeError exception when using python-ldap built
+    with LDAP libs without caching option.
+  </li>
+  <li>
+    Running multi-threaded is also the default on non-Posix
+    platforms (e.g. Win32) now.
+  </li>
+</ul>
+
+<h2 id="r0.9.0">0.9.0</h2>
+<p>Release Date: 2001-05-10</p>
+<ul>
+  <li>
+    <strong>
+      Most important change:
+    </strong>
+    <br>
+    Dropped support for running as stateless CGI-BIN or
+    stateless mod_python handler. Instead the possible modes are
+    running as a multi-threaded stand-alone server or as a
+    multi-threaded FastCGI server.<br>
+    The main benefit is that LDAPObject instances are kept persistent
+    in memory =&gt; there is no need rebind for each hit anymore. This
+    greatly improves performance and reduces security risks since
+    the credentials do not have to be stored at all. Other benefits
+    are faster session database clean-ups and avoiding problems with
+    file locking, file permissions etc.
+  </li>
+  <li>
+    Web session managment. Each LDAP connection object is tied
+    to a session ID stored in a hidden input field.
+  </li>
+  <li>
+    Method HTTP-POST is used whereever the state of the LDAP repository
+    is changed or a login is done (to be compliant with section 9.1 of
+    <a href="https://tools.ietf.org/html/rfc2616">RFC 2616</a>).
+  </li>
+  <li>
+    Slightly improved debug log by suppressing traceback
+    if IOError.errno==32 (user aborted connection) and printing
+    date/time and client IP address.
+  </li>
+  <li>
+    <strong>
+      Important security fix: Internal URL redirector.
+    </strong>
+    <br>
+    URLs are not displayed directly anymore. The URL points
+    to the new <var>urlredirect</var> command which creates
+    a HTML page with &lt;meta http-equiv="refresh" content=&quot;0;..&gt;&quot;.
+    This avoids that the browser sends the currently viewed URL as
+    Referer-URL which could reveal session ID and credentials
+    to an attacker.
+  </li>
+  <li>
+    If ldap.SIZELIMIT_EXCEEDED exception is raised during
+    a search the and the output format is <var>table</var> the
+    partially received search results are displayed.
+  </li>
+  <li>
+    Default configuration module in distribution is now
+    platform-independent and trys to set all path names relative
+    to web2ldap directory. This makes quick-install for stand-alone mode
+    easy on  most platforms. Just extract archive and start the
+    sbin/web2ldap.py script.
+  </li>
+  <li>
+    Type of audio and image attributes is automatically determined
+    with sndhdr and imghdr modules in Python's standard lib.
+  </li>
+  <li>
+    Hopefully fixed template files for vCard. At least works with
+    Netscape now (problem with empty attributes).
+  </li>
+  <li>
+    Single entries are now retrieved with all binary attributes
+    and placed in a short-time cache together with other LDAP
+    session data. This makes it possible to correctly access
+    all multi-valued binary attributes with separate buttons
+    or display multi-valued image attributes in-line.
+  </li>
+  <li>
+    Wrapper script for running as <em>FastCGI server</em>.
+  </li>
+  <li>
+    Access log for stand-alone mode in combined log format (with Referer
+    and User-Agent header).
+  </li>
+  <li>
+    Wrapper class <var>ldapthreading.LDAPObject</var>
+    around <var>ldap.LDAPObject</var> (mainly for thread-locking)
+    which transforms all synchronous calls into asynchronous python-ldap
+    calls.
+  </li>
+  <li>
+    Log unhandled exceptions in error log file with a lot of
+    information about the aborted connection.
+  </li>
+  <li>
+    Make use of LDAP cache of LDAP libs. Two new host-/backend-specific
+    parameters <var>cache_timeout</var> and <var>cache_maxmem</var> in
+    configuration module web2ldapcnf.hosts.
+  </li>
+  <li>
+    User interface:
+    <ul>
+      <li>
+        Inline displaying of images (attribute jpegPhoto etc.)
+        when displaying an entry (Read).
+      </li>
+      <li>
+        &lt;embed type=&quot;..&quot; src=&quot;..&quot;&gt; for
+        &quot;displaying&quot; audio attribute.
+      </li>
+      <li>
+        Nicer displaying of operational attributes when displaying a
+        single entry by using a (language variant) HTML template file.
+      </li>
+      <li>
+        Slighly improved the HTML generation, e.g. more consequent use
+        of &lt;fieldset&gt; sections, lower-cased HTML tags and
+        attributes etc.
+      </li>
+      <li>
+        If ldap.OBJECT_CLASS_VIOLATION, ldap.OBJECT_CLASS_VIOLATION or
+        problems with RDN occurs during add (or modify) it
+        is now possible for the user to edit his input again.
+      </li>
+      <li>
+        If ldap.FILTER_ERROR exception is raised during a search the
+        user can edit the search filter and re-submit it.
+      </li>
+      <li>
+        Currently viewed DN is not changed if a new entry was added.
+        This hopefully makes it easier to repeatedly add entries below
+        the same node.
+      </li>
+      <li>
+        A <var>[Display All]</var> button for immediate switching to unpaged
+        displaying of search results.
+      </li>
+      <li>
+        OIDs in RootDSE attributes are displayed with name and description.
+        Credits go to Norbert Klasen for contributing a comprehensive list.
+      </li>
+      <li>
+        More information in connection info (ConnInfo).
+      </li>
+      <li>
+        Buttons for quickly choosing default object classes
+        of new entries. This list is configurable per host/backend.
+      </li>
+      <li>
+        Quick buttons for accessing RootDSE, CN=MONITOR and CN=CONFIG
+        in context menu of connection info (ConnInfo).
+      </li>
+      <li>
+        New command <var>monitor</var> which displays general
+        gateway statistics.
+      </li>
+      <li>
+        Improved documentation of configuration module package
+        <a href="web2ldapcnf.html">web2ldapcnf</a>.
+      </li>
+    </ul>
+  </li>
+  <li>
+    Bug fixes:
+    <ul>
+      <li>
+        Configuration did not work properly since 0.8.0 because I dropped
+        ldap_basedn in hidden fields. Fixed.
+      </li>
+      <li>
+        Fixed parsing of LDAP URLs. Bug was related to usage of
+        new string methods.
+      </li>
+      <li>
+        Fixed the screwed up passwd changing.
+      </li>
+      <li>
+        Check if RDN in input is empty or RDN has wrong format
+        before adding entry.
+      </li>
+      <li>
+        Fixed Unicode handling in ldapbase.SearchTree() (used for
+        recursive deleting of entries).
+      </li>
+      <li>
+        Fixed displaying of missing parent entry DNs when adding an entry.
+      </li>
+      <li>
+        Many small HTML generation fixes.
+      </li>
+      <li>
+        Many, many small fixes...and probably new bugs... ;-)
+      </li>
+      <li>
+        Fixed handling of LDIF input data (was case-sensitive regarding
+        the attribute types).
+      </li>
+    </ul>
+  </li>
+  <li>
+    Code cleaning:
+    <ul>
+      <li>
+        Dropped support for checking gateway use by looking
+        at DN of the client certificates. It seems that nobody
+        is using it and it was getting ugly (may appear again in
+        later version).
+      </li>
+      <li>
+        A lot of connection stuff is done within ldapsession.LDAPSession
+        objects now including storing and restoring sessions and
+        getting RootDSE attributes like namingContexts etc.
+      </li>
+      <li>
+        LDAP sessions are wrapped in LDAPSession objects for
+        pickling and to wrap specific details if a patched python-ldap
+        built against OpenLDAP 2.0.x libs is in use.
+      </li>
+      <li>
+        Rewrote parts of module w2lhandler.
+      </li>
+      <li>
+        Call login form directly if password of currently
+        used bind DN was changed.
+      </li>
+      <li>
+        The code for creating the input forms for adding and
+        modifying entries was a complete mess. It's still not pretty...
+      </li>
+      <li>
+        The code for creating the search forms was also a complete mess.
+      </li>
+      <li>
+        w2lgui.DisplayDN now took over all weird things with
+        displaying DNs.
+      </li>
+      <li>
+       Moved class <var>HTTPHandler</var> from module <var>msHTTPServer</var>
+       into separate module <var>msHTTPHandler</var>.
+      </li>
+      <li>
+        Creating hidden fields along with buttons is simplified by
+        new parameter hidden_fields (list of tuples) in function
+        <var>w2lgui.CommandButton()</var>.
+      </li>
+      <li>
+        Almost no direct calls of LDAPObject methods anymore. All necessary
+        methods are wrapped in sort of higher level wrapper
+        methods of LDAPSession class. This makes caching and locking
+        feasible.
+      </li>
+      <li>
+        Handle more input field stuff with the fine <var>cgiforms</var>
+        module and derived classes in module <var>w2lgui</var>.
+      </li>
+      <li>
+        Cleaned up function <var>httphelper.SendHeader()</var>.
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<!--#include file="ssi/footer.html" -->

@@ -1,0 +1,4 @@
+dn: uid=
+objectClass: account
+objectClass: inetLocalMailRecipient
+

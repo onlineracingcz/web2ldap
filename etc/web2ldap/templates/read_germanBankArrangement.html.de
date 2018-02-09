@@ -1,0 +1,16 @@
+<h2>Kontoverbindung Deutschland (germanBankArrangement)</h2>
+
+<table>
+  <tr>
+    <td>Konto-Nr.:</td>
+    <td>%(germanBankAccountNumber)s</td>
+  </tr>
+  <tr>
+    <td>Bankleitzahl (BLZ):</td>
+    <td>%(germanBankCode)s</td>
+  </tr>
+  <tr>
+    <td>Name der Bank:</td>
+    <td>%(germanBankName)s</td>
+  </tr>
+</table>

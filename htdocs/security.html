@@ -1,0 +1,173 @@
+<!--#set var="web2ldap_subtitle" value="Security" -->
+<!--#set var="web2ldap_pagedescription" value="Some notes on security" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<p>
+  Take the time to think first about your personal security
+  requirements before running it!
+</p>
+
+<h2>General</h2>
+<ul>
+  <li>
+    You should carefully think about whether to provide
+    highly confidential data over a networked service!
+  </li>
+  <li>
+    Note that in principle every web application is a security risk.
+    There's no warranty by the author of any kind!
+  </li>
+  <li>
+    It's highly recommended deploying SSL/TLS and client certificates for
+    securing the LDAP access through this gateway!
+  </li>
+  <li>
+    Running under the control of Apache or another web server
+    with SSL/TLS support is the only option for using
+    <a href="https://tools.ietf.org/html/rfc7230#section-2.7.2">HTTPS</a>.
+    Stand-alone mode does not provide SSL/TLS support yet.
+  </li>
+  <li>
+    Good news: web2ldap does <strong>not</strong> invoke any external program.
+  </li>
+  <li>
+    Again good news: Because this is Open Source software you can
+    audit the code. Feel free to do so and please report any problems
+    if you find some.
+  </li>
+</ul>
+
+<h2>LDAP</h2>
+<ul>
+  <li>
+    User passwords are not stored on disk or passed around
+    unless you turn on debug logging.
+  </li>
+  <li>
+    Note that the security options of web2ldap are not intended
+    for providing fine access control to the directory data itself.
+    You have to rely on the access control configured on your
+    LDAP-host based on the bind DN.
+    web2ldap binds to a LDAP-host with a bind-DN given by the user
+    so that all server-side access control is in effect.
+  </li>
+  <li>
+    Securing LDAP connections with LDAP over SSL/TLS (aka LDAPS) or
+    <a href="https://tools.ietf.org/html/rfc4513#section-3">StartTLS extended operation</a>
+    is possible and highly recommended.
+  </li>
+  <li>
+    Simple authentication (simple bind) and SASL bind is supported.
+    Which SASL mechs are available depends on the build
+    of your local client and SASL libs and the LDAP server's config.
+  </li>
+  <li>
+    In opposite to many commercial products the group administration
+    feature avoids security problems with concurrent administration
+    and multi-valued member attributes of group entries by simply
+    adding / removing single entries to / from groups instead of
+    replacing all the member values.
+  </li>
+</ul>
+
+<h2>Web Security</h2>
+<ul>
+  <li>
+    The environment variables for SSL/TLS data is specific for
+    <a href="https://httpd.apache.org/docs/current/mod/mod_ssl.html">mod_ssl</a> (preferred)
+    or ApacheSSL (automatically used fallback option).
+  </li>
+  <li>
+    All HTTP-headers have expire date set to current time to avoid
+    security problems with browsers and proxies caching secret data.
+    But be aware that some browsers/proxies ignore this and are caching all
+    data anyway. One solution to avoid caching by proxies is to use a
+    SSL-enabled web server because the web client uses the CONNECT-method
+    of HTTP to go through the proxy.
+  </li>
+  <li>
+    Special HTML characters are escaped to HTML representation
+    to address the problems described in
+    <a href="http://www.cert.org/advisories/CA-2000-02.html">
+    CERT Advisory CA-2000-02 - Malicious HTML Tags Embedded
+    in Client Web Requests</a>. This is maybe not an overall solution
+    for this problem.
+  </li>
+  <li>
+    Since version 0.9.0 URLs are not directly hyper-linked anymore.
+    The URL points to the new <em>urlredirect</em> command which creates
+    a HTML page with &lt;meta http-equiv="refresh" content=&quot;0;..&gt;&quot;.
+    This avoids that the browser sends the currently viewed URL as
+    Referer-URL which could reveal the session ID to an attacker.
+  </li>
+  <li>
+    Since version 0.9.0 a server-side session database is maintained
+    in memory accessible for all threads holding active LDAPObject
+    instances. Credentials are stored in this memory object
+    to enable automatic reconnects.
+  </li>
+  <li>
+    Environment vars which are assumed to be constant throughout
+    web sessions with the same ID are cross-checked when restoring
+    a session to reduce the risk of session-hijacking.
+  </li>
+  <li>
+    Sessions are expired after a
+    <a href="web2ldapcnf_misc.html#session_remove">configurable session timeout</a>.
+    The session object is deleted after expiration.
+  </li>
+  <li>
+    To avoid exhausting abuse of system resources there are configuration
+    parameters for setting session limits
+    (see <a href="web2ldapcnf_misc.html#session_limit">session_limit</a>
+    and <a href="web2ldapcnf_misc.html#session_per_ip_limit">session_per_ip_limit</a>).
+  </li>
+  <li>
+    <p>
+      The following HTTP headers are always sent to avoid security/privacy
+      problems (see also configuration parameter
+      <a href="web2ldapcnf_misc.html#http_headers">http_headers</a>):
+    </p>
+    <table summary="Security-related HTTP headers">
+      <tr>
+        <td><code>X-Content-Type-Options: nosniff</code></td>
+        <td>Switch off MIME-type guessing in MS IE 8+</td>
+      </tr>
+      <tr>
+        <td><code>X-XSS-Protection: 1; mode=block</code></td>
+        <td>Enable Cross-Site Scripting Protection for MS IE</td>
+      </tr>
+      <tr>
+        <td><code>Content-Security-Policy: default-src 'self';script-src 'none'</code></td>
+        <td>
+          <a href="https://en.wikipedia.org/wiki/Content_Security_Policy">
+          Content Security Policy</a>
+        </td>
+      </tr>
+      <tr>
+        <td><code>X-DNS-Prefetch-Control: off</code></td>
+        <td>Switch off DNS prefetching</td>
+      </tr>
+      <tr>
+        <td><code>Strict-Transport-Security: max-age=15768000 ; includeSubDomains</code></td>
+        <td>
+          Enforce use of <em>HTTPS</em>
+          at browser-side, but only sent when application was accessed
+          via <a href="https://tools.ietf.org/html/rfc7230#section-2.7.2">HTTPS</a> link before
+          (see <a href="https://tools.ietf.org/html/rfc6797">RFC 6797</a>)
+        </td>
+      </tr>
+      <tr>
+        <td><code>X-Frame-Options: DENY</code></td>
+        <td>
+          Deny use of frames completely to avoid click-jacking
+          (see <a href="https://developer.mozilla.org/en-US/docs/The_X-FRAME-OPTIONS_response_header">
+          The X-Frame-Options response header</a>)
+        </td>
+      </tr>
+    </table>
+  </li>
+</ul>
+
+<!--#include file="ssi/footer.html" -->

@@ -1,0 +1,24 @@
+# required by systemd, this service file should be used to
+# to start separate web2ldap FastCGI service
+# modify ExecStart according to your settings
+# modify PIDFile according to your settings
+# copy this file to /usr/lib/systemd/system
+# initiate: 	systemctl enable web2ldap-fcgi.service
+# start: 		systemctl start web2ldap-fcgi.service
+# get status: 	systemctl status web2ldap-fcgi.service
+#  
+
+[Unit]
+Description=web2ldap - web-based LDAPv3 client (FastCGI)
+Requires=network.target local-fs.target remote-fs.target
+After=local-fs.target remote-fs.target network.target
+#Wants=ldap.service
+#After=ldap.service
+
+[Service]
+Type=simple
+PIDFile=/opt/web2ldap/var/run/web2ldap-fcgi.pid
+ExecStart=/opt/web2ldap/fcgi/spawn-web2ldap.fcgi
+
+[Install]
+WantedBy=multi-user.target

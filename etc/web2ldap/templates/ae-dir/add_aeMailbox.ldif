@@ -1,0 +1,9 @@
+dn: cn=
+objectClass: applicationProcess
+objectClass: aeObject
+objectClass: aeMailbox
+objectClass: inetLocalMailRecipient
+aeStatus: 0
+mailLocalAddress: @example.com
+mailRoutingAddress: @example.com
+

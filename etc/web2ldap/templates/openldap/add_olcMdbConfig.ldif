@@ -1,0 +1,16 @@
+dn: olcDatabase=,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcMdbConfig
+olcDatabase: mdb
+olcDbCheckpoint: 200 5
+olcDbDirectory: /var/openldap/name/
+olcDbMode: 0640
+olcDbNoSync: FALSE
+olcLastMod: TRUE
+olcReadOnly: FALSE
+olcSuffix: dc=,dc=
+olcDbIndex: cn,sn,givenName,mail,o,ou sub,eq
+olcDbIndex: objectClass,uid,uidNumber,gidNumber pres,eq
+olcMonitoring: TRUE
+olcDbMaxSize: 4000000000
+

@@ -1,0 +1,5 @@
+dn: cn=
+objectClass: namedObject
+objectClass: aeTag
+aeStatus: 0
+

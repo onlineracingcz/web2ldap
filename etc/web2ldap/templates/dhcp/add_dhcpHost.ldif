@@ -1,0 +1,7 @@
+dn: cn=
+objectClass: top
+objectClass: dhcpHost
+dhcpHWAddress: ethernet 11:22:33:44:55:66
+dhcpOption: host-name "nb2"
+dhcpStatements: fixed-address 111.222.33.44
+

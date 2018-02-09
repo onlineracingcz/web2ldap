@@ -1,0 +1,84 @@
+<h1>&AElig;-DIR service/host group <em>%(cn)s</em></h1>
+
+<p class="EntryDN">%(entryDN)s</p>
+<p>%(structuralObjectClass)s</p>
+
+<h2>General</h2>
+<table>
+  <tr>
+    <td>Name of service/host group (cn):</td>
+    <td>%(cn)s</td>
+  </tr>
+  <tr>
+    <td>Status (aeStatus):</td>
+    <td>%(aeStatus)s</td>
+  </tr>
+  <tr>
+    <td>Expiry Status (aeExpiryStatus):</td>
+    <td>%(aeExpiryStatus)s</td>
+  </tr>
+  <tr>
+    <td>Intended purpose (description):</td>
+    <td>%(description)s</td>
+  </tr>
+  <tr>
+    <td>Ticket no. last change (aeTicketId):</td>
+    <td>%(aeTicketId)s</td>
+  </tr>
+  <tr>
+    <td>Validity period (aeNotBefore..aeNotAfter):</td>
+    <td>from %(aeNotBefore)s until %(aeNotAfter)s</td>
+  </tr>
+  <tr>
+    <td>Tag(s) (aeTag):</td>
+    <td>%(aeTag)s</td>
+  </tr>
+</table>
+
+<h2>Group references</h2>
+<table>
+  <tr>
+    <td>Setup admins (aeSetupGroups):</td>
+    <td>%(aeSetupGroups)s</td>
+  </tr>
+  <tr>
+    <td>Log viewers (aeLogStoreGroups):</td>
+    <td>%(aeLogStoreGroups)s</td>
+  </tr>
+  <tr>
+    <td>All visible groups (aeVisibleGroups):</td>
+    <td>%(aeVisibleGroups)s</td>
+  </tr>
+  <tr>
+    <td>Login groups (aeLoginGroups):</td>
+    <td>%(aeLoginGroups)s</td>
+  </tr>
+  <tr>
+    <td>Displayname groups (aeDisplayNameGroups):</td>
+    <td>%(aeDisplayNameGroups)s</td>
+  </tr>
+</table>
+
+<h2>SUDOERS</h2>
+<table>
+  <tr>
+    <td>Enabled sudo rule(s) (aeVisibleSudoers):</td>
+    <td>%(aeVisibleSudoers)s</td>
+  </tr>
+</table>
+
+<h2>Other system parameters</h2>
+<table>
+  <tr>
+    <td>HA service FQDN (aeFqdn):</td>
+    <td>%(aeFqdn)s</td>
+  </tr>
+  <tr>
+    <td>Retention period for logs (aeLogRetentionPeriod):</td>
+    <td>%(aeLogRetentionPeriod)s</td>
+  </tr>
+  <tr>
+    <td>Used as proxy by (aeProxyFor):</td>
+    <td>%(aeProxyFor)s</td>
+  </tr>
+</table>

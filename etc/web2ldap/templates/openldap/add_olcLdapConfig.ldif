@@ -1,0 +1,8 @@
+dn: olcDatabase=,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcLDAPConfig
+olcDatabase: ldap
+olcDbCancel: abandon
+olcDbURI: "ldap://127.0.0.1:12345"
+olcSuffix: dc=,dc=com
+

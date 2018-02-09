@@ -1,0 +1,119 @@
+<div lang="de">
+
+  <h1>%(cn)s</h1>
+
+  <table>
+    <tr>
+      <td>
+        <table>
+          <tr>
+            <td>Nachname:</td>
+            <td>%(sn)s</td>
+          </tr>
+          <tr>
+            <td>Vorname:</td>
+            <td>%(givenName)s</td>
+          </tr>
+          <tr>
+            <td>Titel:</td>
+            <td>%(title)s</td>
+          </tr>
+          <tr>
+            <td>E-Mail:</td>
+            <td>%(mail)s</td>
+          </tr>
+          <tr>
+            <td>Benutzerkennung:</td>
+            <td>%(uid)s</td>
+          </tr>
+          <tr>
+            <td>Beschreibung:</td>
+            <td>%(description)s</td>
+          </tr>
+        </table>
+      </td>
+      <td>
+        %(jpegPhoto)s
+      </td>
+    </tr>
+  </table>
+
+  <h2>Telefonnummern</h2>
+
+  <table>
+    <tr>
+      <td>Telefon (B&uuml;ro):</td>
+      <td>%(telephoneNumber)s</td>
+    </tr>
+    <tr>
+      <td>Telefon (privat):</td>
+      <td>%(homePhone)s</td>
+    </tr>
+    <tr>
+      <td>Telefon (mobil):</td>
+      <td>%(mobile)s</td>
+    </tr>
+    <tr>
+      <td>FAX:</td>
+      <td>%(facsimileTelephoneNumber)s</td>
+    </tr>
+  </table>
+
+  <h2>Adressangaben</h2>
+
+  <table>
+    <tr>
+      <td>Adresse:</td>
+      <td>
+        <address>
+          %(streetAddress)s<br>
+          %(postOfficeBox)s<br>
+          %(postalCode)s %(l)s<br>
+          %(st)s<br>
+         </address>
+      </td>
+    </tr>
+    <tr>
+      <td>Postalische Adresse:</td>
+      <td>
+        <address>
+          %(postalAddress)s
+        </address>
+      </td>
+    </tr>
+  </table>
+
+  <h2>Organisatorische Informationen</h2>
+
+  <table>
+    <tr>
+      <td>Raumnummer:</td>
+      <td>%(roomNumber)s</td>
+    </tr>
+    <tr>
+      <td>Personalnummer:</td>
+      <td>%(employeeNumber)s</td>
+    </tr>
+    <tr>
+      <td>Organisation:</td>
+      <td>%(o)s</td>
+    </tr>
+    <tr>
+      <td>Organisationseinheit:</td>
+      <td>%(ou)s</td>
+    </tr>
+    <tr>
+      <td>Abteilungs-Nr:</td>
+      <td>%(departmentNumber)s</td>
+    </tr>
+    <tr>
+      <td>Branche:</td>
+      <td>%(businessCategory)s</td>
+    </tr>
+    <tr>
+      <td>WWW:</td>
+      <td>%(labeledURI)s</td>
+    </tr>
+  </table>
+
+</div>

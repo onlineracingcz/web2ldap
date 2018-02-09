@@ -1,0 +1,59 @@
+<fieldset>
+
+  <legend>&AElig;-DIR login</legend>
+
+  <table>
+    <tr>
+      <td>User:</td>
+      <td>
+        <input name="who"
+               id="login_who"
+               title="User name or bind-DN of &AElig;-DIR entry"
+               placeholder="User name or bind-DN"
+               maxlength="300"
+               size="40"
+               value="{value_ldap_who}">
+      </td>
+    </tr>
+    <tr>
+      <td>Password:</td>
+      <td>
+        <input type="password"
+               title="Password to be used for login"
+               placeholder="your secret password"
+               name="cred"
+               id="login_cred"
+               maxlength="200"
+               size="40"
+               value="">
+      </td>
+    </tr>
+  </table>
+
+  <input type="hidden" name="login_filterstr" value="">
+  <input type="hidden" name="login_search_root" value="ou=ae-dir">
+
+  <p>
+    <input type="submit" id="login_submit" value="{value_submit}">
+  </p>
+
+</fieldset>
+
+<ul>
+  <li>
+    See <a href="https://ae-dir.com/web2ldap.html#connect-and-bind">user guide</a>
+    for more information.
+  </li>
+  <li>
+    Take care that you enter the password only while nobody is
+    watching your keyboard.
+  </li>
+  <li>
+    In case of errors see the user guide section
+    <a href="https://ae-dir.com/web2ldap.html#connect-common-errors">common errors</a>.
+  </li>
+  <!--li>
+    If you forgot your password you can
+    <a href="/pwd/requestpw">request password reset</a>.
+  </li-->
+</ul>

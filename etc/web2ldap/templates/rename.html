@@ -1,0 +1,101 @@
+<h1>Rename/move entry</h1>
+{form_begin}
+{field_hidden_dn}
+  <fieldset>
+    <legend>Parameters for rename operation</legend>
+    <input type="submit" value="Rename">
+    <input type="reset" value="Reset">
+    <table>
+      <tr>
+        <td>
+          <label for="rename_newrdn">New RDN</label>:
+        </td>
+        <td>
+          {field_rename_newrdn}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rename_newsuperior">New Superior DN</label>:
+        </td>
+        <td>
+          {field_rename_new_superior}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rename_delold">Delete old</label>:
+        </td>
+        <td>
+          <input type="checkbox"
+                 title="Delete old"
+                 name="rename_delold"
+                 value="yes"
+                 checked>
+        </td>
+      </tr>
+    </table>
+    {text_name_forms}
+  </fieldset>
+</form>
+
+<h2>Search for new superior DN</h2>
+
+{form_begin}
+{field_hidden_dn}
+  <fieldset>
+    <legend>Pre-configured searches</legend>
+    <table>
+      <tr>
+        <td>
+          <label for="rename_supsearchurl">Pre-configured search</label>:
+        </td>
+        <td>
+          {field_rename_supsearchurl}
+        </td>
+      </tr>
+    </table>
+    <input type="submit" value="Search">
+    <input type="reset" value="Reset">
+  </fieldset>
+</form>
+
+{form_begin}
+{field_hidden_dn}
+  <fieldset>
+    <legend>Expert search</legend>
+    <table>
+      <tr>
+        <td>
+          <label for="rename_newsupfilter">Search filter</label>:
+        </td>
+        <td>
+          <input title="Filter string for searching new superior entry"
+                 name="rename_newsupfilter"
+                 maxlength="300"
+                 size="50"
+                 value="{value_rename_newsupfilter}">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="rename_searchroot">Search root</label>:
+        </td>
+        <td>
+          {field_rename_search_root}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="scope">Search scope</label>:
+        </td>
+        <td>
+          {field_scope}
+        </td>
+      </tr>
+    </table>
+    <input type="submit" value="Search">
+    <input type="reset" value="Reset">
+    <p>{text_dit_structure_rule}</p>
+  </fieldset>
+</form>

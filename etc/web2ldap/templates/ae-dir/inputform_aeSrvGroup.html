@@ -1,0 +1,102 @@
+<h1>&AElig;-DIR server/service group (aeSrvGroup)</h1>
+
+<p>
+  Wiki documentation:
+  <a href="https://ae-dir.com/docs.html#schema-oc-aeSrvGroup">Schema</a> /
+  <a href="https://ae-dir.com/web2ldap.html#oc-aeSrvGroup">How-To</a>
+</p>
+
+<fieldset>
+  <legend>General</legend>
+  <table>
+    <tr>
+      <td>Name of service/host group (cn):</td>
+      <td>%(cn)s</td>
+    </tr>
+    <tr>
+      <td>Status (aeStatus):</td>
+      <td>%(aeStatus)s</td>
+    </tr>
+    <tr>
+      <td>Expiry Status (aeExpiryStatus):</td>
+      <td>%(aeExpiryStatus)s</td>
+    </tr>
+    <tr>
+      <td>Intended purpose (description):</td>
+      <td>%(description)s</td>
+    </tr>
+    <tr>
+      <td>Ticket no. last change (aeTicketId):</td>
+      <td>%(aeTicketId)s</td>
+    </tr>
+    <tr>
+      <td>Validity period (aeNotBefore..aeNotAfter):</td>
+      <td>
+        <dl>
+          <dt>from</dt>
+          <dd>%(aeNotBefore)s</dd>
+          <dt>until</dt>
+          <dd>%(aeNotAfter)s</dd>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td>Tag(s) (aeTag):</td>
+      <td>%(aeTag)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Group references</legend>
+  <table>
+    <tr>
+      <td>Setup admins (aeSetupGroups):</td>
+      <td>%(aeSetupGroups)s</td>
+    </tr>
+    <tr>
+      <td>Log viewers (aeLogStoreGroups):</td>
+      <td>%(aeLogStoreGroups)s</td>
+    </tr>
+    <tr>
+      <td>All visible groups (aeVisibleGroups):</td>
+      <td>%(aeVisibleGroups)s</td>
+    </tr>
+    <tr>
+      <td>Login groups (aeLoginGroups):</td>
+      <td>%(aeLoginGroups)s</td>
+    </tr>
+    <tr>
+      <td>Displayname groups (aeDisplayNameGroups):</td>
+      <td>%(aeDisplayNameGroups)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>SUDOERS</legend>
+  <table>
+    <tr>
+      <td>Enabled sudo rule(s) (aeVisibleSudoers):</td>
+      <td>%(aeVisibleSudoers)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Other system parameters</legend>
+  <table>
+    <tr>
+      <td>HA service FQDN (aeFqdn):</td>
+      <td>%(aeFqdn)s</td>
+    </tr>
+    <tr>
+      <td>Retention period for logs (aeLogRetentionPeriod):</td>
+      <td>%(aeLogRetentionPeriod)s</td>
+    </tr>
+    <tr>
+      <td>Used as proxy by (aeProxyFor):</td>
+      <td>%(aeProxyFor)s</td>
+    </tr>
+  </table>
+</fieldset>

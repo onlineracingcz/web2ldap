@@ -1,0 +1,54 @@
+<h1>&AElig;-DIR contact</h1>
+
+<p>
+  Documentation:
+  <a href="https://ae-dir.com/docs.html#schema-oc-aeContact">Schema</a> /
+  <a href="https://ae-dir.com/web2ldap.html#oc-aeContact">How-To</a>
+</p>
+
+<fieldset>
+  <table>
+    <tr>
+      <td>Common name (cn):</td>
+      <td>%(cn)s</td>
+    </tr>
+    <tr>
+      <td>E-mail address (mail):</td>
+      <td>%(mail)s</td>
+    </tr>
+    <tr>
+      <td>Status (aeStatus):</td>
+      <td>%(aeStatus)s</td>
+    </tr>
+    <tr>
+      <td>Expiry Status (aeExpiryStatus):</td>
+      <td>%(aeExpiryStatus)s</td>
+    </tr>
+    <tr>
+      <td>Intended purpose (description):</td>
+      <td>%(description)s</td>
+    </tr>
+    <tr>
+      <td>Ticket no. last change (aeTicketId):</td>
+      <td>%(aeTicketId)s</td>
+    </tr>
+    <tr>
+      <td>Validity period (aeNotBefore..aeNotAfter):</td>
+      <td>
+        <dl>
+          <dt>from</dt>
+          <dd>%(aeNotBefore)s</dd>
+          <dt>until</dt>
+          <dd>%(aeNotAfter)s</dd>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td>Tag(s) (aeTag):</td>
+      <td>%(aeTag)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<!--hidden input fields for auto-generated values-->
+%(displayName)s

@@ -1,0 +1,18 @@
+dn: uid=,cn=base,ou=ae-dir
+objectClass: account
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: aeObject
+objectClass: aeUser
+objectClass: posixAccount
+objectClass: ldapPublicKey
+objectClass: inetLocalMailRecipient
+aeStatus: 0
+aeExpiryStatus: 1
+description: primary desktop/mailbox account
+loginShell: /bin/bash
+pwdPolicySubentry: cn=ppolicy-base-users,cn=ae,ou=ae-dir
+aeNotBefore: now
+aeTag: pub-tag-no-welcome-yet
+

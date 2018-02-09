@@ -1,0 +1,100 @@
+# -*- coding: utf-8 -*-
+"""
+msbase.py -
+(c) by Michael Stroeder <michael@stroeder.com>
+
+This module is distributed under the terms of the
+GPL (GNU GENERAL PUBLIC LICENSE) Version 2
+(see http://www.gnu.org/copyleft/gpl.html)
+"""
+
+from __future__ import absolute_import
+
+from collections import defaultdict
+
+
+def union(a,b):
+  """
+  Return union of two lists a,b.
+
+  If a,b are lists of strings then ignorecase=1 can be used.
+  """
+  temp = {}
+  for elt in a:
+    temp[elt.lower()] = elt
+  for elt in b:
+    temp[elt.lower()] = elt
+  return temp.values()
+
+
+class DefaultDict(defaultdict):
+  """
+  Dictionary which returns a default value for non-existent keys.
+  """
+
+  def __init__(self,d=None,default=None):
+    defaultdict.__init__(self,default=default)
+    self.__default__ = default
+    d = d or {}
+    for k,v in d.items():
+      self.__setitem__(k,v)
+
+  def __missing__(self,key):
+    return self.__default__
+
+
+class Str1stValueDict(DefaultDict):
+
+  def __setitem__(self,k,v):
+    DefaultDict.__setitem__(self,k,v[0])
+
+
+class GrabKeys:
+  """
+  Class for grabbing the string-formatting keys out of a string
+  """
+
+  def __init__(self,s):
+    self.keys = set([])
+    s % self
+
+  def __call__(self):
+    return self.keys
+
+  def __getitem__(self, name):
+    self.keys.add(name)
+    return 0 # 0 is apparently compatible with all % format characters
+
+
+class CaseinsensitiveStringKeyDict(DefaultDict):
+  """
+  Dictionary class for case-insensitive string-keyed dictionaries
+  """
+
+  def __init__(self,default_dict=None,default=None):
+    DefaultDict.__init__(self,default=default)
+    self.update(default_dict or {})
+
+  def __setitem__(self,key,value):
+    DefaultDict.__setitem__(self,key.lower(),value)
+
+  def __getitem__(self,key):
+    return DefaultDict.__getitem__(self,key.lower())
+
+
+def chunks(l,s):
+  q,r = divmod(len(l),s)
+  for i in range(q):
+    yield l[i*s:(i+1)*s]
+  if r:
+    yield l[q*s:]
+
+
+def ascii_dump(s):
+  r = []
+  for b in s:
+    if ' '<=b<='~':
+      r.append(b)
+    else:
+      r.append('.')
+  return ''.join(r)

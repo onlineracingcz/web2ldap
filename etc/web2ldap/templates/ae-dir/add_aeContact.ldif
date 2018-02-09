@@ -1,0 +1,8 @@
+dn: cn=
+objectClass: namedObject
+objectClass: aeObject
+objectClass: aeContact
+objectClass: mailboxRelatedObject
+aeStatus: 0
+aeNotBefore: now
+

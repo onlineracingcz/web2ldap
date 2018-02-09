@@ -1,0 +1,124 @@
+<div lang="de">
+
+  <h1>Personeneintrag (inetOrgPerson)</h1>
+
+  <fieldset>
+    <legend>Individuelle Informationen</legend>
+    <table>
+      <tr>
+        <td>Voller Name (z.B. Vor- und Nachname):</td>
+        <td>%(cn)s</td>
+      </tr>
+      <tr>
+        <td>Nachname:</td>
+        <td>%(sn)s</td>
+      </tr>
+      <tr>
+        <td>Vorname:</td>
+        <td>%(givenName)s</td>
+      </tr>
+      <tr>
+        <td>Titel:</td>
+        <td>%(title)s</td>
+      </tr>
+      <tr>
+        <td>E-Mail:</td>
+        <td>%(mail)s</td>
+      </tr>
+      <tr>
+        <td>Benutzerkennung:</td>
+        <td>%(uid)s</td>
+      </tr>
+      <tr>
+        <td>Beschreibung:</td>
+        <td>%(description)s</td>
+      </tr>
+      <tr>
+        <td>JPEG-Foto:</td>
+        <td>%(jpegPhoto)s</td>
+      </tr>
+    </table>
+  </fieldset>
+
+  <fieldset>
+    <legend>Telefonnummern</legend>
+    <table>
+      <tr>
+        <td>Telefon (B&uuml;ro):</td>
+        <td>%(telephoneNumber)s</td>
+      </tr>
+      <tr>
+        <td>Telefon (privat):</td>
+        <td>%(homePhone)s</td>
+      </tr>
+      <tr>
+        <td>Telefon (mobil):</td>
+        <td>%(mobile)s</td>
+      </tr>
+      <tr>
+        <td>FAX:</td>
+        <td>%(facsimileTelephoneNumber)s</td>
+      </tr>
+    </table>
+  </fieldset>
+
+  <fieldset>
+    <legend>Addressen</legend>
+    <table>
+      <tr>
+        <td>Stra&szlig;e:</td>
+        <td>%(streetAddress)s</td>
+      </tr>
+      <tr>
+        <td>Postleitzahl:</td>
+        <td>%(postalCode)s</td>
+      </tr>
+      <tr>
+        <td>Ort:</td>
+        <td>%(l)s</td>
+      </tr>
+      <tr>
+        <td>Bundesland/-staat:</td>
+        <td>%(st)s</td>
+      </tr>
+      <tr>
+        <td>Postalische Anschrift:</td>
+        <td>%(postalAddress)s</td>
+      </tr>
+    </table>
+  </fieldset>
+
+  <fieldset>
+    <legend>Organisatorische Informationen</legend>
+    <table>
+      <tr>
+        <td>Raumnummer:</td>
+        <td>%(roomNumber)s</td>
+      </tr>
+      <tr>
+        <td>Personalnummer:</td>
+        <td>%(employeeNumber)s</td>
+      </tr>
+      <tr>
+        <td>Organisation:</td>
+        <td>%(o)s</td>
+      </tr>
+      <tr>
+        <td>Organisationseinheit:</td>
+        <td>%(ou)s</td>
+      </tr>
+      <tr>
+        <td>Abteilungs-Nr:</td>
+        <td>%(departmentNumber)s</td>
+      </tr>
+      <tr>
+        <td>Branche:</td>
+        <td>%(businessCategory)s</td>
+      </tr>
+      <tr>
+        <td>Web-Seite(n):</td>
+        <td>%(labeledURI)s</td>
+      </tr>
+    </table>
+  </fieldset>
+</div>

@@ -1,0 +1,12 @@
+<dl>
+  <dt>Eintrag erstellt:</dt>
+  <dd>
+     %(createTimestamp)s<br>
+     von %(creatorsName)s
+  </dd>
+  <dt>Zuletzt ge&auml;ndert:</dt>
+  <dd>
+     %(modifyTimestamp)s<br>
+     von %(modifiersName)s
+  </dd>
+</dl>

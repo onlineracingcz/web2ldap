@@ -1,0 +1,11 @@
+dn: cn=
+objectClass: top
+objectClass: groupOfEntries
+objectClass: posixGroup
+objectClass: aeObject
+objectClass: aeGroup
+aeStatus: 0
+cn: zone-auditors
+description: Group members are zone auditors who can read zone ''
+aeNotBefore: now
+

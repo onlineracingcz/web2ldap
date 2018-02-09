@@ -1,0 +1,47 @@
+<h2>HOTP token</h2>
+
+<h3>General</h3>
+
+<table>
+  <tr>
+    <td>Token device serial number:</td>
+    <td>%(oathTokenSerialNumber)s</td>
+  </tr>
+  <tr>
+    <td>OATH token ID:</td>
+    <td>%(oathTokenIdentifier)s</td>
+  </tr>
+  <tr>
+    <td>HOTP parameters policy:</td>
+    <td>%(oathHOTPParams)s</td>
+  </tr>
+  <tr>
+    <td>Time at which shared secret was set:</td>
+    <td>%(oathSecretTime)s</td>
+  </tr>
+  <tr>
+    <td>Shared secret:</td>
+    <td>%(oathSecret)s</td>
+  </tr>
+</table>
+
+<h3>State</h3>
+
+<table>
+  <tr>
+    <td>Current counter value:</td>
+    <td>%(oathHOTPCounter)s</td>
+  </tr>
+  <tr>
+    <td>Last successful login:</td>
+    <td>%(oathLastLogin)s</td>
+  </tr>
+  <tr>
+    <td>Failure count:</td>
+    <td>%(oathFailureCount)s</td>
+  </tr>
+  <tr>
+    <td>Last failure time:</td>
+    <td>%(oathLastFailure)s</td>
+  </tr>
+</table>

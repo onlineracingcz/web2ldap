@@ -1,0 +1,61 @@
+<h1>LDAPv%(monitorConnectionProtocol)s connection # %(monitorConnectionNumber)s</h1>
+
+<p class="EntryDN">%(entryDN)s</p>
+
+<h2>Network parameters</h2>
+
+<table>
+  <tr>
+    <td>Connected to:</td>
+    <td>%(monitorConnectionListener)s</td>
+  </tr>
+  <tr>
+    <td>Client peer address/domain:</td>
+    <td>%(monitorConnectionPeerAddress)s / %(monitorConnectionPeerDomain)s</td>
+  </tr>
+  <tr>
+    <td>Authz-DN:</td>
+    <td>%(monitorConnectionAuthzDN)s</td>
+  </tr>
+  <tr>
+    <td>Connected since:</td>
+    <td>%(monitorConnectionStartTime)s</td>
+  </tr>
+  <tr>
+    <td>Last time used:</td>
+    <td>%(monitorConnectionActivityTime)s</td>
+  </tr>
+</table>
+
+<h2>Operation counters</h2>
+
+<table>
+  <tr>
+    <td>Operations received:</td>
+    <td>%(monitorConnectionOpsReceived)s</td>
+  </tr>
+  <tr>
+    <td>Operations currently executing:</td>
+    <td>%(monitorConnectionOpsExecuting)s</td>
+  </tr>
+  <tr>
+    <td>Pending Operations:</td>
+    <td>%(monitorConnectionOpsPending)s</td>
+  </tr>
+  <tr>
+    <td>Completed operations:</td>
+    <td>%(monitorConnectionOpsCompleted)s</td>
+  </tr>
+  <tr>
+    <td>Read operations:</td>
+    <td>%(monitorConnectionRead)s</td>
+  </tr>
+  <tr>
+    <td>Write operations:</td>
+    <td>%(monitorConnectionWrite)s</td>
+  </tr>
+  <tr>
+    <td><var>connection_get()</var> counter:</td>
+    <td>%(monitorConnectionGet)s</td>
+  </tr>
+</table>

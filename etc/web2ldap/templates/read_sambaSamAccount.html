@@ -1,0 +1,108 @@
+<div lang="en">
+
+  <h2>Samba 3 Account <em>%(uid)s</em></h2>
+
+  <table>
+    <tr>
+      <td>
+        Samba-SID:
+      </td>
+      <td>
+        %(sambaSID)s
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Primary group (SID):
+      </td>
+      <td>
+        %(sambaPrimaryGroupSID)s
+      </td>
+    </tr>
+    <tr>
+      <td>Domain name:</td>
+      <td>%(sambaDomainName)s</td>
+    </tr>
+    <tr>
+      <td>Account Flags:</td>
+      <td>%(sambaAcctFlags)s</td>
+    </tr>
+  </table>
+
+  <h3>Home and profile</h3>
+
+  <table>
+    <tr>
+      <td>
+        Home drive/path:
+      </td>
+      <td>
+        %(sambaHomeDrive)s %(sambaHomePath)s
+      </td>
+    </tr>
+    <tr>
+      <td>Profile path:</td>
+      <td>%(sambaProfilePath)s</td>
+    </tr>
+    <tr>
+      <td>Logon script:</td>
+      <td>%(sambaLogonScript)s</td>
+    </tr>
+    <tr>
+      <td>User workstations:</td>
+      <td>%(sambaUserWorkstations)s</td>
+    </tr>
+  </table>
+
+  <h3>Logon times</h3>
+
+  <table>
+    <tr>
+      <td>Logon hours:</td>
+      <td>%(sambaLogonHours)s</td>
+    </tr>
+    <tr>
+      <td>Logon time:</td>
+      <td>%(sambaLogonTime)s</td>
+    </tr>
+    <tr>
+      <td>Logoff time:</td>
+      <td>%(sambaLogoffTime)s</td>
+    </tr>
+    <tr>
+      <td>Kickoff time:</td>
+      <td>%(sambaKickoffTime)s</td>
+    </tr>
+  </table>
+
+  <h3>Password parameters</h3>
+
+  <table>
+    <tr>
+      <td>Password change at next login:</td>
+      <td>%(sambaPwdMustChange)s</td>
+    </tr>
+    <tr>
+      <td>User can change password:</td>
+      <td>%(sambaPwdCanChange)s</td>
+    </tr>
+    <tr>
+      <td>User must change password:</td>
+      <td>%(sambaPwdMustChange)s</td>
+    </tr>
+    <tr>
+      <td>Password last set:</td>
+      <td>%(sambaPwdLastSet)s</td>
+    </tr>
+    <tr>
+      <td>Bad password count:</td>
+      <td>%(sambaBadPasswordCount)s</td>
+    </tr>
+    <tr>
+      <td>Bad password time:</td>
+      <td>%(sambaBadPasswordTime)s</td>
+    </tr>
+
+  </table>
+
+</div>

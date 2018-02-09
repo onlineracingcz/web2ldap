@@ -1,0 +1,10 @@
+dn: cn=
+objectClass: device
+objectClass: aeObject
+objectClass: aeDevice
+objectClass: aeNwDevice
+objectClass: bootableDevice
+objectClass: ieee802Device
+objectClass: ipHost 
+aeStatus: 0
+

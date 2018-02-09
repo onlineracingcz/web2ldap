@@ -1,0 +1,6 @@
+dn: cn=+mail=
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: msPerson
+description: 

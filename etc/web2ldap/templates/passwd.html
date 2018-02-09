@@ -1,0 +1,81 @@
+<h1>{text_heading}</h1>
+<p>{text_msg}</p>
+{form_begin}
+{value_dn}
+{value_passwd_action}
+{value_passwd_who}
+<table>
+<tr>
+  <td>{text_desc}</td>
+  <td>{text_whoami}</td>
+</tr>
+{disable_oldpw_start}
+<tr>
+  <td>Enter old password</td>
+  <td>
+    <input
+      type="password"
+      name="passwd_oldpasswd"
+      maxlength="100"
+      size="30"
+      title="Your old password"
+      value="">
+  </td>
+</tr>
+{disable_oldpw_end}
+<tr>
+  <td>Enter new password</td>
+  <td>
+    <input
+      type="password"
+      name="passwd_newpasswd"
+      maxlength="100"
+      size="40"
+      title="The new password to be set"
+      value="">
+  </td>
+</tr>
+<tr>
+  <td>Repeat new password</td>
+  <td>
+    <input
+      type="password"
+      name="passwd_newpasswd"
+      maxlength="100"
+      size="40"
+      title="Again the new password for verification"
+      value="">
+  </td>
+</tr>
+{disable_ownuser_start}
+<tr>
+  <td>Force password change</td>
+  <td><input type="checkbox" name="passwd_forcechange" value="yes"></td>
+</tr>
+<tr>
+  <td>Display password change link</td>
+  <td><input type="checkbox" name="passwd_inform" value="display_url"></td>
+</tr>
+{disable_ownuser_end}
+{disable_clientsidehashing_start}
+  <tr>
+    <td>Password encryption method</td>
+    <td>{form_field_passwd_scheme}</td>
+  </tr>
+{disable_clientsidehashing_end}
+{disable_syncnthash_start}
+  <tr>
+    <td>Sync with NtPassword attribute (for Samba)</td>
+    <td>{form_field_passwd_ntpasswordsync}</td>
+  </tr>
+{disable_syncnthash_end}
+{disable_settimesync_start}
+  <tr>
+    <td>Sync password setting times</td>
+    <td>{form_field_passwd_settimesync}</td>
+  </tr>
+{disable_settimesync_end}
+</table>
+<input type="submit" value="Change Password">
+<input type="reset" value="Reset">
+</form>

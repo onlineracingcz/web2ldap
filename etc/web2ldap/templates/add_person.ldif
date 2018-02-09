@@ -1,0 +1,4 @@
+dn: cn=
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson

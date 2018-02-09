@@ -1,0 +1,59 @@
+<!--#set var="web2ldap_subtitle" value="Demo" -->
+<!--#set var="web2ldap_pagedescription" value="Access to some public LDAP servers" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#set var="w2l_url" value="https://demo.web2ldap.de/web2ldap" -->
+
+<p>
+  <strong>
+    web2ldap as generic LDAP client only displays the dynamically
+    retrieved content of 3rd-party LDAP directories. I am not responsible
+    for the data displayed through web2ldap demo in any way.
+  </strong>
+</p>
+
+<dl>
+  <dt id="ae-dir.org">&AElig;-DIR demo</dt>
+  <dd>
+    web2ldap used as
+    <a href="https://demo.ae-dir.com/web2ldap">admin UI for &AElig;-DIR</a>
+    with write access for different admin roles
+    (see <a href="https://demo.ae-dir.com/web2ldap.html">
+    &AElig;-DIR | User Guide -- web2ldap</a>).
+  <dt>Schema browser</dt>
+  <dd>
+    Directly jump into the schema browser of an
+    <a target="web2ldap_demo" href="<!--#echo var="w2l_url" -->/oid?ldap://ldap.uninett.no/dc=uninett,dc=no">
+    OpenLDAP</a> or an
+    <a target="web2ldap_demo" href="<!--#echo var="w2l_url" -->/oid?ldap://ipa.demo1.freeipa.org/dc=demo1,dc=freeipa,dc=org">
+    389-DS</a> server.
+  </dd>
+  <dt>Tree browser</dt>
+  <dd>
+    The tree-based
+    <a target="web2ldap_demo" href="<!--#echo var="w2l_url" -->/dit?ldap://ldap.uninett.no/cn=sudoers,cn=posix,dc=uninett,dc=no">
+    DIT browser</a>
+  </dd>
+  <dt>Group membership maintenance</dt>
+  <dd>
+    The
+    <a target="web2ldap_demo" href="<!--#echo var="w2l_url" -->/groupadm?ldap://ldap.uninett.no/uid=anders,cn=internal,cn=people,dc=uninett,dc=no">
+    group admin</a> feature is helpful for quickly adding/removing an entry
+    to/from a group.
+  </dd>
+  <dt>OpenLDAP's back-monitor</dt>
+  <dd>
+    Browsing OpenLDAP's
+    <a target="web2ldap_demo" href="<!--#echo var="w2l_url" -->?ldap://ldap.itd.umich.edu/cn%3DMonitor??one">
+    back-monitor</a>
+    nicely displayed with a couple of <a href="web2ldapcnf_hosts.html#search_tdtemplate">template strings</a>.
+  </dd>
+  <dt>More public LDAP servers...</dt>
+  <dd>
+    More LDAP public servers to access through the
+    <a target="web2ldap_demo" href="<!--#echo var="w2l_url" -->">demo web2ldap service</a>.
+  </dd>
+</dl>
+
+<!--#include file="ssi/footer.html" -->

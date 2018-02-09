@@ -1,0 +1,7 @@
+dn: uniqueIdentifier=,cn=people,ou=ae-dir
+objectClass: locality
+objectClass: aeLocation
+objectClass: aeObject
+aeStatus: 0
+aeNotBefore: now
+

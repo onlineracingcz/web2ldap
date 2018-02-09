@@ -1,0 +1,76 @@
+  <fieldset>
+    <legend>Anmeldeinformationen</legend>
+    <table>
+      <tr>
+        <td>Anmeldemechanismus:</td>
+        <td>{field_login_mech}</td>
+      </tr>
+      <tr>
+        <td>Bind-DN oder Benutzerkennung:</td>
+        <td>
+          <input name="who"
+                 title="Vollst&auml;ndiger Bind-DN, Benutzerkennung zur Suche nach Benutzereintrag oder SASL AuthcID"
+                 maxlength="1024"
+                 size="60"
+                 value="{value_ldap_who}">
+        </td>
+      </tr>
+      <tr>
+        <td>Passwort</td>
+        <td>
+          <input type="password"
+                 title="Passwort zur Anmeldung"
+                 name="cred"
+                 maxlength="200"
+                 size="40"
+                 value="">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Filter f&uuml;r Benutzersuche<br>
+          (bei leerer Eingabe keine<br>Suche nach Benutzereintrag):
+        </td>
+        <td>
+          <input name="login_filterstr"
+                 title="Filter zur Suche nach dem Bind-DN (Benutzereintrag) mithilfe der Benutzerkennung"
+                 maxlength="120"
+                 size="60"
+                 value="{value_ldap_filter}">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Benutzersuche unter:
+        </td>
+        <td>
+          {field_login_search_root}
+        </td>
+      </tr>
+    </table>
+    <fieldset title="SASL options">
+      <legend>SASL-Optionen</legend>
+      <table>
+        <tr>
+          <td>AuthzID</td>
+          <td>
+            {field_login_authzid_prefix} 
+            <input name="login_authzid"
+                   title="zu verwendende Berechtigungs-ID f&uuml;r SASL-Anmeldung"
+                   maxlength="1024" size="30" value="">
+          </td>
+        </tr>
+        <tr>
+          <td>Bereich</td>
+          <td>
+            <input name="login_realm"
+                   title="Bereich (Realm) f&uuml;r SASL-Anmeldung"
+                   maxlength="1024" size="30" value="">
+          </td>
+        </tr>
+      </table>
+    </fieldset>
+  </fieldset>
+  <p>
+    <input type="submit" value="{value_submit}">
+  </p>

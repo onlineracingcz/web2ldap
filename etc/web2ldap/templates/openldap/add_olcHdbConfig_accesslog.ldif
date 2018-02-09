@@ -1,0 +1,27 @@
+dn: olcDatabase=,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcHdbConfig
+olcDatabase: hdb
+olcDbCheckpoint: 200 5
+olcDbDirectory: /var/openldap/HEAD/
+olcDbDirtyRead: FALSE
+olcLastMod: TRUE
+olcDbMode: 0640
+olcDbNoSync: FALSE
+olcReadOnly: FALSE
+olcSuffix: cn=accesslog
+olcDbIndex: objectClass eq
+olcDbIndex: reqDN eq
+olcDbIndex: reqStart eq
+olcDbIndex: reqAuthzID eq
+olcDbIndex: reqResult eq
+olcDbIndex: reqEntryUUID eq
+olcDbConfig: {0}set_cachesize 0 4000000 1
+olcDbConfig: {1}set_lg_regionmax 1048576
+olcDbConfig: {2}set_lg_max 10485760
+olcDbConfig: {3}set_lg_bsize 2097152
+olcDbConfig: {4}set_tmp_dir /tmp
+olcMonitoring: TRUE
+olcAccess: {0}to dn.subtree="cn=accesslog" 
+ by group/groupOfNames/member.exact="cn=slapd admins,ou=groups,dc=example,dc=com" read
+

@@ -1,0 +1,25 @@
+<fieldset>
+  <legend>Zus&auml;tzliche Angaben zur Organisation</legend>
+  <table>
+    <tr>
+      <td>Land:</td>
+      <td>%(c)s</td>
+    </tr>
+    <tr>
+      <td>E-Mail:</td>
+      <td>%(mail)s</td>
+    </tr>
+    <tr>
+      <td>WWW:</td>
+      <td>%(labeledURI)s</td>
+    </tr>
+    <tr>
+      <td>EU VAT-ID:</td>
+      <td>%(euVATId)s</td>
+    </tr>
+    <tr>
+      <td>Bankverbindung (BIC&amp;IBAN):</td>
+      <td>%(labeledBICandIBAN)s</td>
+    </tr>
+  </table>
+</fieldset>

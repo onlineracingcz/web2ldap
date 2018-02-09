@@ -1,0 +1,4 @@
+dn: cn=
+objectClass: applicationProcess
+objectClass: pkiCA
+

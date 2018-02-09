@@ -1,0 +1,9 @@
+dn: cn=
+objectClass: top
+objectClass: groupOfEntries
+objectClass: posixGroup
+objectClass: aeObject
+objectClass: aeGroup
+aeStatus: 0
+aeNotBefore: now
+

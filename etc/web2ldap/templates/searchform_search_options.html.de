@@ -1,0 +1,27 @@
+<fieldset>
+  <legend>Weitere Suchoptionen</legend>
+  <table>
+    <tr>
+      <td>Suchbasis:</td>
+      <td>{field_search_root}</td>
+    </tr>
+    <tr>
+      <td>Suchbereich:</td>
+      <td>{field_search_scope}</td>
+    </tr>
+    <tr>
+      <td>Ergebnisse pro Seite:</td>
+      <td>{field_search_resnumber}</td>
+    </tr>
+    <tr>
+      <td>ge&auml;ndert vor max.:</td>
+      <td>{field_search_lastmod}</td>
+    </tr>
+    <tr>
+      <td>Attribute (komma-separiert):</td>
+      <td>
+        <input name="search_attrs" maxlength="1000" size="50" value="{value_search_attrs}">
+      </td>
+    </tr>
+  </table>
+</fieldset>

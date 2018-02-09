@@ -1,0 +1,12 @@
+dn: associatedDomain=
+objectClass: dNSDomain2
+objectClass: domainRelatedObject
+associatedDomain: example.com
+dc: example
+mXRecord: 10 mail.example.com
+nSRecord: ns1.example.com
+nSRecord: ns2.example.com
+nSRecord: ns3.example.com
+rPRecord: host-master.example.com. updatensa.system.
+sOARecord: ns1.example.com. host-master.example.com. 2 10800 3600 604800 86400
+

@@ -1,0 +1,4 @@
+dn: dc=
+objectClass: dNSDomain2
+objectClass: domainRelatedObject
+

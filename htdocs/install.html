@@ -1,0 +1,279 @@
+<!--#set var="web2ldap_subtitle" value="Installing" -->
+<!--#set var="web2ldap_pagedescription" value="A brief description on how to install it" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<p>
+  <strong>
+    Note that this installation description is for
+    release <!--#include file="ssi/release.shtml" -->.<br>
+    It likely does not apply exactly to other releases. For those
+    see directory htdocs/ shipped in the source distribution archive.
+  </strong>
+</p>
+
+<p>Install receipts for specific platforms:</p>
+<ul>
+  <li>
+    <a href="install_windows.html">Windows 32</a>
+  </li>
+  <li>
+    <a href="install_debian.html">Debian</a>
+  </li>
+  <li>
+    <a href="install_opensuse.html">openSUSE Linux</a>
+  </li>
+  <li>
+    <a href="install_rhel.html">Red Hat Enterprise Linux (RHEL) 7.x</a>
+  </li>
+</ul>
+
+<h2 id="run_modes">Run modes</h2>
+
+<p>
+  web2ldap is running persistent as a multi-threaded server
+  process under Win32 and Unix platforms:
+</p>
+
+<table summary="Web server software needed for web2ldap">
+  <tr>
+    <th>Run mode</th>
+    <th>Start script</th>
+    <th>Web server</th>
+  </tr>
+  <tr>
+    <td>stand-alone</td>
+    <td><code>sbin/web2ldap.py</code></td>
+    <td>Python standard lib</td>
+  </tr>
+  <tr>
+    <td>CGI-BIN</td>
+    <td><code>cgi-bin/web2ldap.fcgi</code></td>
+    <td>
+      Any web server with CGI support and
+      <a href="https://github.com/gnosek/fcgiwrap">fcgiwrap</a>
+      installed
+    </td>
+  </tr>
+  <tr>
+    <td>FastCGI server</td>
+    <td><code>fcgi/web2ldap.py</code></td>
+    <td>
+      Any web server with
+      <a href="https://en.wikipedia.org/wiki/FastCGI#Web_Servers_that_implement_FastCGI">FastCGI support</a>.
+      Depending on the web server you might need
+      <a href="http://redmine.lighttpd.net/projects/spawn-fcgi">spawn-fcgi</a>.
+    </td>
+  </tr>
+</table>
+
+<h2 id="Prerequisites">Prerequisites</h2>
+<p>
+  For running web2ldap you need several modules.
+  You can check them with script <code>sbin/checkinst.py</code>.
+</p>
+
+<table summary="Prerequisites for web2ldap">
+  <tr><th>Package</th><th>Required</th><th>Description</th></tr>
+  <tr>
+    <td>
+      <a href="https://www.python.org/">Python 2.7.0+</a>
+      (<a href="https://www.python.org/downloads/release/python-2711/">2.7.11+</a> recommended)<br>
+      or <a href="https://pypy.org/">PyPy 5.0.1</a> (earlier versions do not work!)<br>      
+      Python 3.x or PyPy3 not supported!
+    </td>
+      <td>mandatory</td>
+    <td>
+      The programming language needed to run.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://www.stroeder.com/pyweblib.html">PyWebLib 1.3.8+ (1.3.12+ recommended)</a>
+    </td>
+      <td>mandatory</td>
+    <td>
+      Module package for web application programming.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://www.python-ldap.org/">python-ldap 2.4.14+</a> (2.4.21+ recommended)
+    </td>
+      <td>mandatory</td>
+    <td>
+      A wrapper module for accessing the OpenLDAP libs from Python
+      and other LDAP-related modules.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://www.openldap.org">OpenLDAP 2.4.11+</a> client libs (2.4.42+ recommended)
+    </td>
+    <td>mandatory</td>
+    <td>
+      Required to build python-ldap.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/pyasn1">pyasn1</a> and
+      <a href="https://pypi.python.org/pypi/pyasn1-modules">pyasn1-modules</a>
+    </td>
+      <td>mandatory</td>
+    <td>
+      <strong>Two</strong> separate module packages for processing ASN.1 data directly.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/netaddr">netaddr</a> or <a href="https://code.google.com/p/ipaddr-py/">ipaddr-py</a>
+    </td>
+      <td>mandatory</td>
+    <td>
+      Module package for processing IP addresses (<var>netaddr</var> preferred)
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="http://alldunn.com/python/fcgi.py">fcgi.py</a>
+    </td>
+    <td>optional</td>
+    <td>
+      For running as FastCGI server process
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/pydns">PyDNS</a> (2.3.6+ recommended)
+    </td>
+    <td>optional</td>
+    <td>
+      If you want to make use of SRV RR's to automatically locate your
+      LDAP server for a given dc-style DN you have to install this DNS module.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/M2Crypto">M2Crypto</a>
+    </td>
+    <td>optional</td>
+    <td>
+      For displaying short overview of X.509 certificates.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/paramiko">paramiko</a>
+    </td>
+    <td>optional</td>
+    <td>
+      For displaying short overview of SSH public keys.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://python-pillow.github.io/">Pillow (PIL fork, recommended)</a> or
+      <a href="http://www.pythonware.com/products/pil/index.htm">Python Imaging Library (PIL)</a>
+    </td>
+    <td>optional</td>
+    <td>
+      For automatically converting image data to required format (e.g. JPEGImage syntax).
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/pyExcelerator">pyExcelerator</a>
+    </td>
+    <td>optional</td>
+    <td>
+      For Excel data export.
+    </td>
+  </tr>
+</table>
+
+
+<h2 id="Installing">Installing</h2>
+
+<ol>
+  <li>
+    Install all <a href="#Prerequisites">required software</a>
+    on your system.
+  </li>
+  <li>
+    Extract content of archive web2ldap-<!--#include file="ssi/release.shtml" -->.tar.gz to e.g. /opt.
+    Regarding directory names under several Unix flavours:
+    Your mileage may vary. ;-)
+  </li>
+  <li>
+    Rename /opt/web2ldap-<!--#include file="ssi/release.shtml" --> to /opt/web2ldap.
+  </li>
+  <li>
+    Edit configuration modules under
+    [web2ldapdir]/etc/web2ldap/web2ldapcnf/
+    which contain comments about every configuration parameter.
+    See also the <a href="web2ldapcnf.html">documentation</a>.
+  </li>
+  <li>
+    Optional step to speed start-up time when starting web2ldap as user
+    which does not have write access to web2ldap directory:<br>
+    Change current directory to the directory where you extracted
+    web2ldap and invoke <code>python -m compileall [web2ldapdir]</code> and
+    <code>python -O -m compileall [web2ldapdir]</code> for compiling
+    all Python sources.
+  </li>
+  <li>
+    Optional step when running under Unix-like systems:<br>
+    Choose the right start script for your <a href="#run_modes">run mode</a>
+    and adjust the path to the Python interpreter executable in the
+    first line of the start script
+    (see also python -h for usage of option -O and -OO for running with
+    optimized bytecode generation).
+  </li>
+  <li>
+    Configure and run WWW server:
+    <dl>
+      <dt>stand-alone</dt>
+      <dd>
+        <dl>
+          <dt>Unix/Linux:</dt>
+          <dd>
+            <code>[web2ldapdir]/sbin/web2ldap.py</code><br>
+            For a quick start as stand-alone web gateway
+            simply invoke the script at the command-line which outputs
+            the start URL before detaching from console.
+          </dd>
+          <dt>Windows:</dt>
+          <dd>
+            Simply double-click the file
+            <code>[web2ldapdir]/sbin/web2ldap.py</code>.
+          </dd>
+        </dl>
+      </dd>
+      <dt>
+        Any HTTP server with CGI-FCGI wrapper
+      </dt>
+      <dd>
+        Install <code>cgi-bin/web2ldap.fcgi</code> to
+        CGI-BIN directory of web server.
+      </dd>
+      <dt>
+        Apache with mod_fastcgi
+      </dt>
+      <dd>
+        See configuration directives in file
+        <code>etc/httpd/sample-mod_fastcgi.conf</code>.
+      </dd>
+      <dt>
+        Apache with mod_fcgid
+      </dt>
+      <dd>
+        See configuration directives in file
+        <code>etc/httpd/sample-mod_fcgid.conf</code>.
+      </dd>
+    </dl>
+  </li>
+</ol>
+
+
+<!--#include file="ssi/footer.html" -->

@@ -1,0 +1,86 @@
+<!--#set var="web2ldap_subtitle" value="Download" -->
+<!--#set var="web2ldap_pagedescription" value="Source distribution" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<p>
+  The packaged files are provided as gzipped tar ball:<br>
+</p>
+
+<ul>
+  <li>
+    <a
+      type="application/octet-stream"
+      href="https://www.web2ldap.de/download/web2ldap-<!--#include file="ssi/release.shtml" -->.tar.gz"
+    >
+    web2ldap-<!--#include file="ssi/release.shtml" -->.tar.gz</a>
+    (<a href="changes-1.2.html#r<!--#include file="ssi/release.shtml" -->">release notes</a>)
+  </li>
+  <li>
+    <a
+      type="application/octet-stream"
+      href="https://www.web2ldap.de/download/web2ldap-<!--#include file="ssi/release.shtml" -->.tar.gz.pgp"
+    >
+      PGP package signature file
+    </a>
+    (see <a href="https://www.stroeder.com/impressum.html">PGP key download</a>)
+  </li>
+  <li>
+    <a
+      type="application/octet-stream"
+      href="https://www.web2ldap.de/download/web2ldap-<!--#include file="ssi/release.shtml" -->.tar.gz.p7s"
+    >
+      CMS (PKCS#7) package signature file
+    </a>
+  </li>
+</ul>
+
+<h2 id="License">Copyright and License</h2>
+<p>
+  &copy; 1998-2017 by <a href="https://www.stroeder.com">
+  Michael Str&ouml;der &lt;michael@stroeder.com&gt;</a>
+</p>
+<p>
+  This software including all Python modules except the ones
+  mentioned below is <a href="https://www.gnu.org/philosophy/">
+  Free Software</a> and given away under
+</p>
+<blockquote>
+  <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">
+  GPL (GNU GENERAL PUBLIC LICENSE) Version 2</a>
+</blockquote>
+<p>
+  Note that additions added in your local directory <code>etc/web2ldap/</code>
+  are considered local configuration and do not have to be disclosed to public.
+</p>
+<p>
+  The author refuses to give any warranty of any kind.
+</p>
+<p>
+  Software or files with different license included in distribution:
+</p>
+<ul>
+  <li>
+    The ASN.1 parser module included in this distribution
+    was derived from module pisces.asn1 written by Jeremy Hylton
+    as part of his work on <a href="http://www.cnri.reston.va.us/software/pisces/">Pisces</a>
+    (see license <a href="http://hdl.handle.net/1895.22/1007">1895.22/1007</a>).
+    <p>
+      Note:<br>
+      This module is only necessary for displaying X.509 certificates
+      and CRLs. If you feel uncomfortable with the Pisces license
+      just remove pylib/pisces/asn1.py when repackaging web2ldap. The presence
+      of the module is automatically detected.
+    </p>
+  </li>
+  <li>
+    The file <a href="https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.cfg">
+    etc/dumpasn1.cfg</a> is re-distributed in web2ldap with permission of the author
+    but is not subject of the GPL. You can also remove it from web2ldap and obtain it
+    separately when repackaging web2ldap and adjust the configuration parameter
+    <a href="web2ldapcnf_misc.html#dumpasn1cfg">dumpasn1cfg</a> to reflect another
+    position in your distribution's file system.
+  </li>
+</ul>
+
+<!--#include file="ssi/footer.html" -->

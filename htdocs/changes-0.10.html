@@ -1,0 +1,651 @@
+<!--#set var="web2ldap_subtitle" value="Changes 0.10.x" -->
+<!--#set var="web2ldap_pagedescription" value="History of released versions" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#include file="ssi/changes_navigation.html" -->
+
+<h2 id="r0.10.15">0.10.15</h2>
+<p>Release Date: 2002-07-20</p>
+<dl>
+  <dt>Fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        Module DNS was always imported since
+        <a href="changes.html#0.10.6">web2ldap 0.10.6</a>.
+        This mandantory dependency has been removed.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h2 id="r0.10.14">0.10.14</h2>
+<p>Release Date: 2002-07-17</p>
+<dl>
+  <dt>Fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        AttributeError exception is caught and ignored in
+        case OpenLDAP client libs were built with
+        configuration option --disable-cache.
+      </li>
+      <li>
+        Fixed another new bug with NON-ASCII chars in DNs
+        in ldaputil.base.match_dnlist().
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h2 id="r0.10.13">0.10.13</h2>
+<p>Release Date: 2002-07-13</p>
+<dl>
+  <dt>New features</dt>
+  <dd>
+    <ul>
+      <li>
+        Now all commands in PATH_INFO can be used with LDAP URLs.
+        If it is not possible to do something useful hopefully
+        an reasonable error message is displayed.
+        This makes it possible to directly point to an entry to be modified
+        or construct a URL to immediately jump to the password form for a
+        specific entry.
+      </li>
+      <li>
+        A descriptive list of all group entries is displayed in [groupadm]
+        with [Read] link to each group.
+      </li>
+    </ul>
+  </dd>
+  <dt>Fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        Reconnecting was broken when catching <var>ldap.SERVER_DOWN</var>.
+        A configuration option could not be read because of missing class
+        attribute <var>LDAPSession.host</var>.
+      </li>
+      <li>
+        Distinguished names are treated completely as opaque to avoid
+        problems with using OpenLDAP 2.1 client libs for python-ldap
+        but older OpenLDAP server versions.
+        Now let's see how that works...
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h2 id="r0.10.12">0.10.12</h2>
+<p>Release Date: 2002-07-08</p>
+<ul>
+  <li>
+    Fixed bug with missing parameter for <var>w2lapp.login.w2l_Login()</var>
+    in <var>w2lapp.passwd</var>.
+  </li>
+</ul>
+
+<h2 id="r0.10.11">0.10.11</h2>
+<p>Release Date: 2002-07-04</p>
+<ul>
+  <li>
+    Several small changes leading to more tolerant checking for
+    empty search results. This was necessary because of some small
+    upcoming changes in python-ldap.
+  </li>
+  <li>
+    When searching for a bind DN (smart login) search continuations
+    are ignored.
+  </li>
+  <li>
+    The default for the search root when displaying the search form
+    is set to dynamically instead of using just <var>ls.dn</var>.
+    A new method <var>ldapsession.LDAPSession.getSearchRoot()</var> was
+    added for that purpose.
+  </li>
+  <li>
+    Abandoned class attribute <var>ls.searchRoot</var> since it could
+    cause confusion if the user browses with two different browser
+    windows in different naming contexts but with same
+    <var>LDAPSession</var> instance.
+  </li>
+  <li>
+    Form parameter <var>login_search_root</var> is heeded when
+    login exceptions are caught. The default of the select list
+    is set accordingly.
+  </li>
+</ul>
+
+<h2 id="r0.10.10">0.10.10</h2>
+<p>Release Date: 2002-06-28</p>
+<ul>
+  <li>
+    Fixed type bug introduced with bug fix this afternoon...
+  </li>
+</ul>
+
+<h2 id="r0.10.9">0.10.9</h2>
+<p>Release Date: 2002-06-28</p>
+<ul>
+  <li>
+    With OpenLDAP 2.x the wildcard for getting all attributes
+    was not correct. Attributes were not displayed
+    since feature 1.3.6.1.4.1.4203.1.5.1
+    (see <a href="https://tools.ietf.org/html/draft-zeilenga-ldap-opattrs">draft-zeilenga-ldap-opattrs</a>) was not properly
+    handled.
+  </li>
+</ul>
+
+<h2 id="r0.10.8">0.10.8</h2>
+<p>Release Date: 2002-06-24</p>
+<dl>
+  <dt>Bug fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        Not really a bug fix: Display the RDN in the group select
+        list if the attribute <var>cn</var> was not found in the entry.
+      </li>
+      <li>
+        Removed debug print statements in <var>pylib/w2lapp/read.py</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h2 id="r0.10.7">0.10.7</h2>
+<p>Release Date: 2002-06-22</p>
+<dl>
+  <dt>New features</dt>
+  <dd>
+    <ul>
+      <li>
+        Introduced new host-/backend-specific parameter
+        <a href="web2ldapcnf_hosts.html#requested_attrs">requested_attrs</a>
+        which defines a list of attributes explicitly requested
+        when doing a search, read or modify operations.
+      </li>
+    </ul>
+  </dd>
+  <dt>Changes in UI</dt>
+  <dd>
+    <ul>
+      <li>
+        [Read] in main menu enforces the entry to be flushed
+        from cache and read freshly. A new form input parameter
+        <var>read_nocache</var> was introduced for that.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        The DN Unicode object was not properly encoded when
+        calling <var>DelTree()</var> in <var>w2lapp.delete</var>
+        which caused an exception when doing a recursive delete
+        with a base DN containing NON-ASCII chars.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h2 id="r0.10.6">0.10.6</h2>
+<p>Release Date: 2002-05-28</p>
+<dl>
+  <dt>Changes in UI</dt>
+  <dd>
+    <ul>
+      <li>
+        [groupadm] has new form parameter <var>group_search_root</var>.
+        A select list with the possible search root DNs for the
+        group search is shown.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        Module DNS is import in <var>w2lapp.locate</var>
+        to catch <var>DNS.Error</var> exception.
+      </li>
+      <li>
+        Properly display DNSError exception string.
+      </li>
+      <li>
+        Display attribute description for <var>supportedFeatures</var>
+        also with the help of the OID registry.
+      </li>
+      <li>
+        The [Group] feature did not show any groups at all
+        under some circumstances. Also the implementation is faster now.
+      </li>
+      <li>
+        On X.500 servers (e.g. Critical Path InJoin) a
+        one-level root search really returns the first level
+        which might be also in the <var>namingContexts</var> attribute of RootDSE.
+        Now the appended pseudo search results based on <var>namingContexts</var>
+        are filtered to avoid displaying a DN twice.
+      </li>
+      <li>
+        Checking if attribute values are used in characteristic
+        attributes is now done case-insensitive (and hopefully faster).
+      </li>
+      <li>
+       Displaying <var>DNS.Error</var> exception messages in
+       <var>locate</var> fixed.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h2 id="r0.10.5">0.10.5</h2>
+<p>Release Date: 2002-04-02</p>
+<ul>
+  <li>
+    Removed unnecessary 2nd submit button in login
+    form when changing to a server found via DNS SRV RR.
+  </li>
+  <li>
+    HTML examples for using side-bars of modern browsers as
+    entry point. (Make sure to use LDAP URLs!)
+  </li>
+  <li>
+    Fixed wrong case-sensitive behaviour of print output.
+  </li>
+  <li>
+    Added HTTP header <code>Cache-Control: no-cache</code>.
+  </li>
+  <li>
+    DNS and socket module exceptions are caught in
+    <var>w2lapp.locate</var> and displayed as error messages
+    to the user.
+  </li>
+</ul>
+
+<h2 id="r0.10.4">0.10.4</h2>
+<p>Release Date: 2002-03-01</p>
+<ul>
+  <li>
+    Separate field instances are created for displaying input fields
+    <var>search_scope</var> and <var>search_resnumber</var> in module
+    <var>w2lapp.searchform</var>.
+    This fixes running into a <var>KeyError</var> exception in case someone
+    e.g. enters a malformed search filter in a LDAP URL
+    and <var>w2lapp.searchform.w2l_SearchForm()</var> is called.
+  </li>
+  <li>
+    Correct handling of malformed DNs by normalizing the form
+    parameter <var>dn</var> after form processing.
+  </li>
+  <li>
+    If the RDN of a new entry added is automatically derived from
+    entry data characters special for DNs are correctly escaped.
+  </li>
+  <li>
+    Display attribute values as complete Python string representation
+    with properly escaped HTML special chars when displaying modify
+    list after adding or modifying an entry.
+  </li>
+  <li>
+    Several fixes for special chars used in DNs.
+  </li>
+  <li>
+    Fixed displaying no such object exception message if
+    DN contains non-ASCII characters.
+  </li>
+</ul>
+
+<h2 id="r0.10.3">0.10.3</h2>
+<p>Release Date: 2002-02-17</p>
+<ul>
+  <li>
+    Fixed race-condition in <var>w2lapp.handler</var> during
+    handling expired sessions.
+  </li>
+  <li>
+    Input field length for attribute values in
+    <var>w2lapp.addmodifyform</var> is now 60 chars.
+  </li>
+  <li>
+    Some more performance enhancements with determining
+    the appropriate attribute syntax for displaying an attribute value
+    in <var>w2lapp.gui.DataStr()</var>.
+  </li>
+  <li>
+    No generic error handler for <var>IOError</var> exceptions
+    in <var>w2lapp.handler.HandleHTTPRequest()</var> anymore.
+  </li>
+  <li>
+    Reordered menu items in <var>w2lapp.gui.ContextMenuSingleEntry()</var>
+    to hopefully improve usability.
+  </li>
+</ul>
+
+<h2 id="r0.10.2">0.10.2</h2>
+<p>Release Date: 2002-02-06</p>
+<ul>
+  <li>
+    Display quick-choose list for defining objectclasses with
+    <var>w2lapp.gui.W2L_Anchor()</var> instead of
+    <var>w2lapp.gui.W2L_Form()</var>. This is faster and looks more compact.
+  </li>
+  <li>
+    Fix if list of hostport parameters is passed to
+    <var>ldapsession.LDAPSession.open()</var>.
+  </li>
+</ul>
+
+<h2 id="r0.10.1">0.10.1</h2>
+<p>Release Date: 2002-02-04</p>
+<ul>
+  <li>
+    Fixes a bug according to host:port handling introduced
+    in 0.10.0 just before releasing it.
+  </li>
+  <li>
+    Result type in w2lapp.search is checked by dictionary
+    key instead of string comparison. This should lead to
+    increased performance when processing large search results.
+  </li>
+</ul>
+
+<h2 id="r0.10.0">0.10.0</h2>
+<p>Release Date: 2002-02-01</p>
+<dl>
+  <dt>Important notices</dt>
+  <dd>
+    <ul>
+      <li>
+        A new
+        <a href="http://python-ldap.sf.net">python-ldap</a>
+        is required which MUST be build with the
+        the OpenLDAP 2 libs.<br>
+        (Note: The OpenLDAP 2 libs are currently not available for Windows!)
+      </li>
+      <li>
+        The config file format for the host-/backend-specific parameters
+        has been changed! A base Python class <var>Web2LDAPConfig</var>
+        was defined. All configuration host-/backend-configurations
+        are instances of this class. This hopefully simplifies
+        the syntax.
+      </li>
+      <li>
+        <a href="https://www.stroeder.com/pyweblib.html">PyWebLib 1.1.0+</a>
+        required!
+      </li>
+    </ul>
+  </dd>
+  <dt>Features</dt>
+  <dd>
+    <ul>
+      <li>
+        Preliminary support for StartTLS extension
+        (see <a href="https://tools.ietf.org/html/rfc2830">RFC 2830</a>).
+        New host-/backend-specific parameter
+        <a href="web2ldapcnf_hosts.html#starttls">starttls</a>
+        defined.
+      </li>
+      <li>
+        Process LDAP URL extensions <var>bindname</var> and <var>X-BINDPW</var>
+        when executing command <var>ldapurl</var>. Use with care! Especially
+        it is not recommended to add passwords to URLs!
+      </li>
+      <li>
+        URLs in LDIF input are evaluated now (see
+        <a href="https://tools.ietf.org/html/rfc2849">RFC 2849</a>).
+        One can directly include an binary data blob loadable via FTP or
+        HTTP into an attribute of a LDAP entry (e.g. handy
+        for adding jpegPhoto attributes).
+        Global configuration parameter
+        <a href="web2ldapcnf_misc.html#ldif_url_schemes">web2ldapcnf.misc.ldif_url_schemes</a>
+        specifies which URL schemes are processed.<br>
+        <strong>Think twice when setting this since it is a security nightmare in most cases!!!</strong>
+      </li>
+      <li>
+        Command button [Modify RDN] was renamed to command [Rename].
+        The new superior DN can be set if LDAPv3 is in use.
+      </li>
+      <li>
+        Added signal handler for SIGHUP which reloads configuration
+        module <var>web2ldapcnf</var>.
+      </li>
+      <li>
+        Write PID of main thread to file. See new parameters
+        <a href="web2ldapcnf_standalone.html#pid_file">web2ldapcnf.standalone.pid_file</a>
+        and
+        <a href="web2ldapcnf_fastcgi.html#pid_file">web2ldapcnf.fastcgi.pid_file</a>.
+      </li>
+      <li>
+        Enabling/disabling manage DSA IT mode in [ConnInfo]
+        (see <a href="https://tools.ietf.org/html/draft-zeilenga-ldap-namedref">draft-zeilenga-ldap-namedref</a>).
+      </li>
+    </ul>
+  </dd>
+  <dt>User Interface</dt>
+  <dd>
+    <ul>
+      <li>
+        Also display OIDs in <var>supportedFeatures</var> of RootDSE
+        with description and reference to literature.
+      </li>
+      <li>
+        Default number of search results per page can be
+        set in configuration module web2ldapcnf.hosts with
+        new parameter
+        <a href="web2ldapcnf_hosts.html#search_resultsperpage">search_resultsperpage</a>.
+      </li>
+      <li>
+        Login form presents select list for specifying the search root
+        for search requests done with smart login (new form parameter
+        <var>login_search_root</var>). This enables smart login to search
+        for user entries outside the scope of the current backend.
+      </li>
+      <li>
+        Added a generic handler for exception <var>ldap.NO_SUCH_OBJECT</var>
+        which does a DNS SRV lookup for dc-style DNs. A login form
+        for confirming the reconnect is presented to the user.
+      </li>
+      <li>
+        Output mode can be chosen in [Read] button of main menu.
+        &quot;Raw table&quot; does not use HTML templates at all.
+      </li>
+      <li>
+        Hopefully improved HTML output to be more compliant to
+        HTML 4.01 transitional =&gt;.
+      </li>
+      <li>
+        Delete operation has three selectable modes of operation now:
+        <ul>
+          <li>
+            Only this entry
+          </li>
+          <li>
+            All entries below this entry (recursive)
+          </li>
+          <li>
+            All entries including this entry (recursive)
+          </li>
+        </ul>
+      </li>
+      <li>
+        Added support for deleting single binary attributes.
+        For binary attributes a [Delete] button is shown in the
+        raw display table of [Read]. All values are deleted at once.
+        There is no option to delete only certain attribute values of
+        multi-values attributes.
+      </li>
+      <li>
+        Command buttons are not generated by using &lt;form&gt; tags
+        anymore. Instead most command buttons are simple
+        links. This saves around 40% of HTML text in the search
+        result table and is rendered much faster in common web
+        browser. It is also more friendly to be styled by CSS definitions
+        and saves space in the menu bars.
+      </li>
+      <li>
+        Search results are displayed as descriptive list &lt;dl&gt;
+        instead as &lt;table&gt;.
+      </li>
+      <li>
+        In the search result list the attributes <var>hasSubordinates</var>
+        (see X.501) and <var>subordinateCount</var>
+        (implemented in Novell eDirectory)
+        are used if available to determine if it does make sense to
+        display a [Down] link.
+      </li>
+      <li>
+        The distinguished name (form parameter <var>dn</var>) is passed in
+        every link. The result is a more robust behaviour when the
+        user presses the browser's back button or opens links in
+        new windows.
+      </li>
+      <li>
+        Removed [Password] link from main menu. User can change
+        the password of the entry of current bind DN in [ConnInfo].
+      </li>
+      <li>
+        [ConnInfo] displays LDAP server vendor information
+        as described in
+        <a href="https://tools.ietf.org/html/rfc3045">RFC 3045</a>.
+      </li>
+      <li>
+        Attribute values used in characteristic attributes of RDN are
+        set to read-only in the entry input form since modifying these
+        attributes results in either an error or undefined behaviour
+        on broken servers. They are resubmitted though to prevent
+        the differential update deleting them.
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning and performance enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Use os.path.join(..) instead of os.sep.join([..]).
+      </li>
+      <li>
+        Simplified getting the operational attributes by checking the
+        presence of OID 1.3.6.1.4.1.4203.1.5.1 in list of attribute values
+        of attribute <var>supportedFeatures</var> of the server's root DSE.
+      </li>
+      <li>
+        Rewrote building the group search filters of the [groupadm] feature.
+      </li>
+      <li>
+        Displaying attribute types with known syntax is much faster now.
+      </li>
+      <li>
+        LDAPError exceptions are now converted to human-readable
+        HTML form by a single function.
+      </li>
+      <li>
+        Module <var>ldaputil.ldapurl</var> is no longer shipped with
+        web2ldap since it was contributed to <em>python-ldap</em>.
+        and renamed to <var>ldap.ldapurl</var>.
+      </li>
+      <li>
+        Module <var>ldaputil.modlist</var> is no longer shipped with
+        web2ldap since it was contributed to <em>python-ldap</em>
+        and renamed to <var>ldap.modlist</var>.
+      </li>
+      <li>
+        Big clean-up in <var>w2lapp.handler</var> regarding redundant
+        code for LDAP connects and binds (either coming the way via LDAP URL
+        or form input).
+      </li>
+      <li>
+        The handling of LDAP URLs and form parameters was harmonized.
+        The extra command <var>ldapurl</var> is still accepted for
+        backwards compability but is not necessary anymore.
+        If the query string of the URL is a LDAP URL it is automagically
+        processed that way and the parameters are derived from the LDAP URL.
+      </li>
+      <li>
+        HTTP Accept-headers are now all processed by basically the same
+        same class <var>pyweblib.helper.AcceptHeaderDict</var>.
+      </li>
+      <li>
+        Hopefully simplified handling of search form parameters.
+      </li>
+      <li>
+        Recursive deletes should be much faster since unnecessary
+        search operations are avoided if possible. It also does not consume
+        much memory anymore since there are no list manipulations necessary
+        anymore. Recursive deletes also honors the attributes
+        <var>hasSubordinates</var> and <var>subordinateCount</var> if available.
+        The new parameter delete_scope is handled exactly like search scope.
+      </li>
+      <li>
+        Cleaned up module <var>w2lapp.search</var> by writing a
+        base class for doing e.g. stream processing and
+        pseudo-paging of LDAP entries with async searches. This module
+        <var>ldap.async</var> is part of python-ldap.
+      </li>
+      <li>
+        Form input parameter <var>in_ldif</var> is now handled by
+        new class <var>w2lapp.gui.LDIFTextArea</var>.
+      </li>
+      <li>
+        New functions <var>w2lapp.gui.TopSection()</var> and
+        <var>w2lapp.gui.SimpleMessage()</var> used for most output
+        of the status bar, main and context menus.
+      </li>
+      <li>
+        Cleaned up parameter mess of <var>w2lapp.gui.CommandButton()</var>.
+      </li>
+      <li>
+        Consequently import symbols from <var>web2ldapcnf.misc</var>
+        through common mechanism.
+      </li>
+      <li>
+        The distinguished name is consequently passed around
+        to overcome inconsistencies if the user works with
+        more than one browser window but with one session ID.
+      </li>
+      <li>
+        Negation filter (!()) is not used in [GroupAdm] anymore
+        since negation assertions are usually very slow on most
+        LDAP servers.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug fixes and work arounds</dt>
+  <dd>
+    <ul>
+      <li>
+        Explicitly request special attribute types of sub schema sub entry
+        (necessary since e.g. OpenLDAP 2 does not return the attributes
+        by default).
+      </li>
+      <li>
+        If a bind was not successful at all [ConnInfo] does not fail anymore.
+        Instead a note about no proper binding occurs.
+      </li>
+      <li>
+        Exception handler for displaying known but malformed certificate
+        extensions with a generic parsing output.
+      </li>
+      <li>
+        Send Pragma: no-cache in HTTP header and the equivalent
+        in section &lt;head&gt; of HTML page to avoid browsers
+        reusing old HTML pages with old session IDs.
+      </li>
+      <li>
+        Reimplemented caching in <var>ldapsession.LDAPSession</var> to fix
+        a nasty bug with entries being not properly uncached by calling
+        method <var>LDAPSession.uncacheEntry()</var>.
+        The hierarchical cache structure with DN as first and attribute
+        list as second level makes uncaching of an entry much easier.
+      </li>
+      <li>
+        DSML output correctly substitutes occurences of &amp; and &lt;
+        with the character entities.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<!--#include file="ssi/footer.html" -->

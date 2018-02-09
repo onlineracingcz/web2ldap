@@ -1,0 +1,73 @@
+<h1>&AElig;-DIR sudo rule (aeSudoRule)</h1>
+
+<p>
+  Wiki documentation:
+  <a href="https://ae-dir.com/docs.html#schema-oc-aeSudoRule">Schema</a> /
+  <a href="https://ae-dir.com/web2ldap.html#oc-aeSudoRule">How-To</a>
+</p>
+
+<fieldset>
+  <legend>General</legend>
+  <table>
+    <tr>
+      <td>Name of rule (cn):</td>
+      <td>%(cn)s</td>
+    </tr>
+    <tr>
+      <td>Status (aeStatus):</td>
+      <td>%(aeStatus)s</td>
+    </tr>
+    <tr>
+      <td>Expiry Status (aeExpiryStatus):</td>
+      <td>%(aeExpiryStatus)s</td>
+    </tr>
+    <tr>
+      <td>Intended purpose (description):</td>
+      <td>%(description)s</td>
+    </tr>
+    <tr>
+      <td>Ticket no. last change (aeTicketId):</td>
+      <td>%(aeTicketId)s</td>
+    </tr>
+    <tr>
+      <td>Validity period (aeNotBefore..aeNotAfter):</td>
+      <td>
+        <dl>
+          <dt>from</dt>
+          <dd>%(aeNotBefore)s</dd>
+          <dt>until</dt>
+          <dd>%(aeNotAfter)s</dd>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td>Tag(s) (aeTag):</td>
+      <td>%(aeTag)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>SUDO-LDAP rules parameters</legend>
+  <table>
+    <tr>
+      <td>Allowed command(s) (sudoCommand):</td>
+      <td>%(sudoCommand)s</td>
+    </tr>
+    <tr>
+      <td>Run as (sudoRunAsUser):</td>
+      <td>%(sudoRunAsUser)s</td>
+    </tr>
+    <tr>
+      <td>Allowed user group(s) (sudoUser):</td>
+      <td>%(sudoUser)s</td>
+    </tr>
+    <tr>
+      <td>Option(s) (sudoOption):</td>
+      <td>%(sudoOption)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<!--hidden input fields for auto-generated values-->
+%(sudoHost)s

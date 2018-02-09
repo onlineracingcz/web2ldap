@@ -1,0 +1,7 @@
+The ASN.1 parser module pisces.asn1 was written by
+Jeremy Hylton <jeremy@digicool.com> as part of his work
+on Pisces (see http://www.cnri.reston.va.us/software/pisces/).
+
+Changes made by Michael Stroeder <michael@stroeder.com>:
+
+- Added some string ASN.1 types and GeneralizedTime.

@@ -1,0 +1,337 @@
+<h1>Search</h1>
+
+<datalist id="dnsdomains">
+  <option value=".example.com">example.com</option>
+</datalist>
+
+<datalist id="zonenames">
+  <option value="ae">ae: &AElig;-DIR</option>
+  <option value="base">base: Primary office users and groups</option>
+  <option value="otp">otp: OTP tokens (OATH-LDAP)</option>
+  <option value="people">people: People and department entries</option>
+  <option value="test">test: Testing playground</option>
+  <option value="pub">pub: Public data</option>
+</datalist>
+
+<datalist id="zonedn">
+  <option value="cn=ae,ou=ae-dir">ae: &AElig;-DIR</option>
+  <option value="cn=base,ou=ae-dir">base: Primary office users and groups</option>
+  <option value="cn=otp,ou=ae-dir">otp: OTP tokens (OATH-LDAP)</option>
+  <option value="cn=people,ou=ae-dir">people: People and department entries</option>
+  <option value="cn=test,ou=ae-dir">test: Testing playground</option>
+  <option value="cn=pub,ou=ae-dir">pub: Public data</option>
+</datalist>
+
+<a title="Read about searching in the user guide"
+   href="https://ae-dir.com/web2ldap.html#search">
+  How-To
+</a>
+
+<fieldset>
+
+  <legend>General</legend>
+
+  <p>
+    Match
+    <select title="Search mode" name="search_mode" size="1">
+    <option value="(&amp;%s)" selected="selected">all</option>
+    <option value="(|%s)">any</option>
+    </select> of the following:
+  </p>
+
+  <table>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}=*{av}*)">
+        <input type="hidden" name="search_attr" value="cn">
+        Common name (cn) contains
+      </td>
+      <td>
+        <input name="search_string" maxlength="70" size="40" value="">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="objectClass">
+        Type of entry (objectClass)
+      </td>
+      <td>
+        <select title="Type of entry (objectClass)" name="search_string" size="1">
+          <option value="">--</option>
+          <option value="aeAuthcToken">&AElig;-DIR authc. token (aeAuthcToken)</option>
+          <option value="aeContact">&AElig;-DIR contact (aeContact)</option>
+          <option value="aeDept">&AElig;-DIR department (aeDept)</option>
+          <option value="aeGroup">&AElig;-DIR user group (aeGroup)</option>
+          <option value="aeHost">&AElig;-DIR server/host (aeHost)</option>
+          <option value="aeLocation">&AElig;-DIR location (aeLocation)</option>
+          <option value="aeMailGroup">&AElig;-DIR mail group (aeMailGroup)</option>
+          <option value="aeNwDevice">&AElig;-DIR network interface (aeNwDevice)</option>
+          <option value="aePerson">&AElig;-DIR person (aePerson)</option>
+          <option value="aePolicy">&AElig;-DIR policy (aePolicy)</option>
+          <option value="aeService">&AElig;-DIR service/tool account (aeService)</option>
+          <option value="aeSrvGroup">&AElig;-DIR srv. group (aeSrvGroup)</option>
+          <option value="aeSudoRule">&AElig;-DIR sudoers rule (sudoRole)</option>
+          <option value="aeUser">&AElig;-DIR user account (aeUser)</option>
+          <option value="aeTag">&AElig;-DIR tag (aeTag)</option>
+          <option value="aeZone">&AElig;-DIR zone (aeZone)</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="aeStatus">
+        Status
+      </td>
+      <td>
+        <select title="Status of entry (aeStatus)" name="search_string" size="1">
+          <option value="">--</option>
+          <option value="-1">requested (-1)</option>
+          <option value="0">active (0)</option>
+          <option value="1">deactivated (1)</option>
+          <option value="2">archived (2)</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}=*{av}*)">
+        <input type="hidden" name="search_attr" value="aeTag">
+        Tags (aeTag) contains
+      </td>
+      <td>
+        <input name="search_string" maxlength="60" size="40" value="">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}:dn:={av})">
+        <input type="hidden" name="search_attr" value="cn">
+        Within zone
+      </td>
+      <td>
+        <input name="search_string" list="zonenames" maxlength="70" size="30" value="">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Entry DN
+        <select title="Matching rule for entryDN" name="search_mr" size="1">
+          <option value="dn">is</option>
+          <option value="dnSubordinateMatch">is subordinate of</option>
+          <option value="dnSubtreeMatch">within subtree</option>
+          <option value="dnOneLevelMatch">is child of</option>
+        </select>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="entryDN">
+      </td>
+      <td>
+        <input name="search_string" maxlength="80" size="40" value="">
+      </td>
+    </tr>
+
+  </table>
+
+</fieldset>
+
+<fieldset>
+  <legend>User and POSIX attributes</legend>
+  <table>
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="uid">
+        &AElig;-DIR user name (uid) is
+      </td>
+      <td>
+        <input name="search_string" maxlength="60" size="15" value=""><br>
+      </td>
+      <td>
+        <input type="hidden" name="search_attr" value="sshPublicKey">
+        has SSH public key
+        <input type="hidden" name="search_mr" value="">
+      </td>
+      <td>
+        <select name="search_option">
+          <option value="">-</option>
+          <option value="(!({at}=*))">no</option>
+          <option value="({at}=*)">yes</option>
+        </select>
+        <input name="search_string" type="hidden" value="">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="uidNumber">
+        POSIX-UID (uidNumber) is
+      </td>
+      <td>
+        <input name="search_string" maxlength="60" size="10" value=""><br>
+      </td>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="gidNumber">
+        POSIX-GID (gidNumber) is
+      </td>
+      <td>
+        <input name="search_string" maxlength="60" size="10" value=""><br>
+      </td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>E-mail attributes</legend>
+  <table>
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}=*{av}*)">
+        <input type="hidden" name="search_attr" value="mail">
+        E-Mail (mail) contains
+      </td>
+      <td>
+        <input name="search_string" maxlength="60" size="40" value=""><br>
+      </td>
+      <td>
+        <input type="hidden" name="search_attr" value="userCertificate">
+        has e-mail certificate
+        <input type="hidden" name="search_mr" value="">
+        <select name="search_option">
+          <option value="">-</option>
+          <option value="(!({at}=*))">no</option>
+          <option value="({at}=*)">yes</option>
+        </select>
+        <input name="search_string" type="hidden" value="">
+      </td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Server attributes</legend>
+  <table>
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}=*{av}*)">
+        <input type="hidden" name="search_attr" value="host">
+        Server's FQDN (host) contains
+      </td>
+      <td>
+        <input name="search_string" maxlength="60" size="30" value=""><br>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}=*{av})">
+        <input type="hidden" name="search_attr" value="host">
+        FQDN in domain
+      </td>
+      <td>
+        <input name="search_string" list="dnsdomains" maxlength="60" size="30" value=""><br>
+      </td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>HR attributes</legend>
+  <table>
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="employeeNumber">
+        Employee ID/number (employeeNumber) is
+      </td>
+      <td>
+        <input name="search_string" maxlength="30" size="15" value=""><br>
+      </td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Group attributes</legend>
+  <table>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="member">
+        Group member DN (member) is
+      </td>
+      <td>
+        <input name="search_string" maxlength="120" size="50" value=""><br>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="memberOf">
+        Is member of group (memberOf)
+      </td>
+      <td>
+        <input name="search_string" maxlength="120" size="50" value=""><br>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="memberOf">
+        Is member of group (memberOf)
+      </td>
+      <td>
+        <input name="search_string" maxlength="120" size="50" value=""><br>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="dnSubordinateMatch">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="memberOf">
+        Is member of a group in zone (memberOf)
+      </td>
+      <td>
+        <input name="search_string" list="zonedn" maxlength="120" size="50" value=""><br>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_mr" value="">
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="memberOf">
+        Is not member of group (memberOf)
+      </td>
+      <td>
+        <input name="search_string" maxlength="120" size="50" value=""><br>
+      </td>
+    </tr>
+
+  </table>
+</fieldset>

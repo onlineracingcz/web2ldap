@@ -1,0 +1,11 @@
+dn: cn=
+objectClass: top
+objectClass: groupOfEntries
+objectClass: posixGroup
+objectClass: aeObject
+objectClass: aeGroup
+aeStatus: 0
+cn: zone-admins
+description: Group members are zone admins who can manage zone ''
+aeNotBefore: now
+

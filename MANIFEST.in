@@ -1,0 +1,2 @@
+include clean.sh setup.py tox.ini
+recursive-include web2ldap *.py

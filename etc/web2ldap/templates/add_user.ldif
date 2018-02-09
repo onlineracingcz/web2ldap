@@ -1,0 +1,7 @@
+dn: uid=
+objectClass: account
+objectClass: posixAccount
+gidNumber: 100
+loginShell: /bin/bash
+homeDirectory: /home/
+

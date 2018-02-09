@@ -1,0 +1,114 @@
+<!--#set var="web2ldap_subtitle" value="Installing on Windows" -->
+<!--#set var="web2ldap_pagedescription" value="A brief description of how to install it on Windows 2000/XP/2003/2008/Vista/7" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<h2>Notes in advance</h2>
+<ul>
+  <li>
+    This simple install receipt requires that the machine has Internet (proxy)
+    access to load packages from <a href="https://pypi.python.org">PyPI repository</a>.
+  </li>
+  <li>
+    Your mileage may slightly vary! So watch out for error messages and
+    <a href="feedback.html">report back</a>.
+  </li>
+</ul>
+
+<h2>Python</h2>
+
+<p>
+  Download and install Windows installers (MSI files)
+  <a href="https://www.python.org/download/">Python 2.7.11+</a>.
+  Make sure you select to install the PIP component which includes
+  <em>easy_install</em> tool.
+</p>
+
+<h2>Python modules</h2>
+
+<p>
+  We proceed here with Python setup tools which automagically downloads
+  and build the latest releases from <a href="https://pypi.python.org">PyPI repository</a>.
+</p>
+
+<p>
+  It is assumed that you chose the default installation path
+  <em>c:\Python27</em> when installing Python.
+</p>
+
+<p>
+  Run <var>CMD.EXE</var> and type in the following commands:
+</p>
+
+<p>
+  Set proxy settings if needed:
+</p>
+
+<pre>
+set http_proxy="http://proxy.example.com:8080"
+set https_proxy="http://proxy.example.com:8080"
+set ftp_proxy="http://proxy.example.com:8080"
+</pre>
+
+<p>
+  Install needed modules:
+</p>
+
+<pre>
+c:\Python27\Scripts\easy_install netaddr
+c:\Python27\Scripts\easy_install python-ldap
+c:\Python27\Scripts\easy_install pyweblib
+c:\Python27\Scripts\easy_install pyasn1
+c:\Python27\Scripts\easy_install pyasn1_modules
+</pre>
+
+<p>Optional but useful modules:</p>
+
+<pre>
+c:\Python27\Scripts\easy_install pydns
+c:\Python27\Scripts\easy_install pyexcelerator
+c:\Python27\Scripts\easy_install pillow
+</pre>
+
+<h2>web2ldap application</h2>
+
+<p>
+  Download
+  <a href="https://www.web2ldap.de/download/web2ldap-<!--#include file="ssi/release.shtml" -->.tar.gz">
+  <!--#include file="ssi/release.shtml" -->.tar.gz</a>
+</p>
+
+<p>
+  Extract file <!--#include file="ssi/release.shtml" -->.tar.gz somewhere.
+  You may need an extra archive extract program like <em>WinZip</em> for that.
+</p>
+
+<p>
+  Run <var>CMD.EXE</var> and type in the following commands:
+</p>
+
+<pre>
+cd c:\path\to\web2ldap-<!--#include file="ssi/release.shtml" -->
+c:\python27\python.exe web2ldap-<!--#include file="ssi/release.shtml" -->\sbin\checkinst.py
+[..lots of output..watch for errors..]
+</pre>
+
+<p>
+  Start built-in HTTP server listening on all interfaces
+  by navigating to web2ldap-<!--#include file="ssi/release.shtml" -->\sbin\web2ldap.py and double-click
+  on it.
+</p>
+
+<p>
+  Access it with your browser: <a href="http://127.0.0.1:1760/web2ldap">http://127.0.0.1:1760/web2ldap</a>
+</p>
+
+<p>
+  Relax the IP restrictions by editing
+  <a href="web2ldapcnf_standalone.html#bind_address">bind_address</a> and
+  <a href="web2ldapcnf_standalone.html#access_allowed">access_allowed</a>
+  in file web2ldap-<!--#include file="ssi/release.shtml" -->\etc\web2ldap\web2ldapcnf\standalone.py
+  if you want to make web2ldap accessible by others over network.
+</p>
+
+<!--#include file="ssi/footer.html" -->

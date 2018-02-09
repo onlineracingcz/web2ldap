@@ -1,0 +1,200 @@
+<!--Search form for OpenLDAP's accesslog database-->
+
+<fieldset>
+  <legend>Search OpenLDAP's accesslog database</legend>
+
+  <p>
+    Match
+    <select title="Search mode" name="search_mode" size="1">
+    <option value="(&amp;%s)" selected="selected">all</option>
+    <option value="(|%s)">any</option>
+    </select> of the following:
+  </p>
+
+  <table>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="objectClass">
+        Object class of entry is
+      </td>
+      <td>
+        <select title="Object class of entry" name="search_string" size="1">
+          <option value="">- not set -</option>
+          <option value="auditWriteObject">Write operation</option>
+          <option value="auditReadObject">Read operation</option>
+          <option value="auditAbandon">Abandon operation</option>
+          <option value="auditAdd">Add operation</option>
+          <option value="auditBind">Bind operation</option>
+          <option value="auditCompare">Compare operation</option>
+          <option value="auditDelete">Delete operation</option>
+          <option value="auditModify">Modify operation</option>
+          <option value="auditModRDN">ModRDN operation</option>
+          <option value="auditSearch">Search operation</option>
+          <option value="auditExtended">Extended operation</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="reqSession">
+        Session (reqSession) is
+      </td>
+      <td>
+        <input name="search_string" maxlength="70" size="30" value="">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="reqType">
+        Request type (reqType) is
+      </td>
+      <td>
+        <select name="search_string">
+          <option value="" selected></option>
+          <option value="abandon">Abandon Request</option>
+          <option value="add">Add Request</option>
+          <option value="bind">Bind Request</option>
+          <option value="compare">Compare Request</option>
+          <option value="delete">Delete Request</option>
+          <option value="modify">Modify Request</option>
+          <option value="modrdn">Modrdn Request</option>
+          <option value="search">Search Request</option>
+          <option value="extended{1.3.6.1.4.1.1466.20037}">Start TLS Extended Operation</option>
+          <option value="extended{1.3.6.1.4.1.4203.1.11.1}">Modify Password Extended Operation</option>
+          <option value="extended{1.3.6.1.4.1.4203.1.11.3}">Who am I? Extended Operation</option>
+          <option value="extended{1.3.6.1.1.8}">Cancel Operation</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="reqResult">
+        Result code (reqResult) was
+      </td>
+      <td>
+        <select name="search_string">
+          <option value="" selected>- any -</option>
+          <option value="0">success (0)</option>
+          <option value="1">operationsError (1)</option>
+          <option value="2">protocolError (2)</option>
+          <option value="3">timeLimitExceeded (3)</option>
+          <option value="4">sizeLimitExceeded (4)</option>
+          <option value="5">compareFalse (5)</option>
+          <option value="6">compareTrue (6)</option>
+          <option value="7">authMethodNotSupported (7)</option>
+          <option value="8">strongerAuthRequired (8)</option>
+          <option value="9">reserved (9)</option>
+          <option value="10">referral (10)</option>
+          <option value="11">adminLimitExceeded (11)</option>
+          <option value="12">unavailableCriticalExtension (12)</option>
+          <option value="13">confidentialityRequired (13)</option>
+          <option value="14">saslBindInProgress (14)</option>
+          <option value="16">noSuchAttribute (16)</option>
+          <option value="17">undefinedAttributeType (17)</option>
+          <option value="18">inappropriateMatching (18)</option>
+          <option value="19">constraintViolation (19)</option>
+          <option value="20">attributeOrValueExists (20)</option>
+          <option value="21">invalidAttributeSyntax (21)</option>
+          <option value="32">noSuchObject (32)</option>
+          <option value="33">aliasProblem (33)</option>
+          <option value="34">invalidDNSyntax (34)</option>
+          <option value="35">reserved (35)</option> for undefined isLeaf
+          <option value="36">aliasDereferencingProblem (36)</option>
+          <option value="48">inappropriateAuthentication (48)</option>
+          <option value="49">invalidCredentials (49)</option>
+          <option value="50">insufficientAccessRights (50)</option>
+          <option value="51">busy (51)</option>
+          <option value="52">unavailable (52)</option>
+          <option value="53">unwillingToPerform (53)</option>
+          <option value="54">loopDetect (54)</option>
+          <option value="64">namingViolation (64)</option>
+          <option value="65">objectClassViolation (65)</option>
+          <option value="66">notAllowedOnNonLeaf (66)</option>
+          <option value="67">notAllowedOnRDN (67)</option>
+          <option value="68">entryAlreadyExists (68)</option>
+          <option value="69">objectClassModsProhibited (69)</option>
+          <option value="70">reserved (70)</option> for CLDAP
+          <option value="71">affectsMultipleDSAs (71)</option>
+          <option value="80">other (80)</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="reqType">
+        Request type (reqType) is
+      </td>
+      <td>
+        <input name="search_string" maxlength="70" size="30" value="">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_attr" value="reqDN">
+        affected entry (reqDN)
+        <select name="search_option" size="1">
+          <option value="({at}={av})">is</option>
+          <option value="({at}:dnSubtreeMatch:={av})">within</option>
+        </select>
+      </td>
+      <td>
+        <input name="search_string" maxlength="300" size="30" value="">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="reqAuthzID">
+        authz identity (reqAuthzID) is
+      </td>
+      <td>
+        <input name="search_string" maxlength="300" size="30" value="">
+      </td>
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}>={av})">
+        <input type="hidden" name="search_attr" value="reqStart">
+        after (reqStart&gt;=)
+      </td>
+      <td>
+        <input name="search_string" maxlength="40" size="30" value="">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}<={av})">
+        <input type="hidden" name="search_attr" value="reqStart">
+        before (reqStart&lt;=)
+      </td>
+      <td>
+        <input name="search_string" maxlength="40" size="30" value="">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av}*)">
+        <input type="hidden" name="search_attr" value="reqMod">
+        Modification begins with (reqMod)
+      </td>
+      <td>
+        <input name="search_string" maxlength="300" size="30" value="">
+      </td>
+    </tr>
+
+  </table>
+
+</fieldset>

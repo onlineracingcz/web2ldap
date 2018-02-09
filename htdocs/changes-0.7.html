@@ -1,0 +1,468 @@
+<!--#set var="web2ldap_subtitle" value="Changes 0.7.x" -->
+<!--#set var="web2ldap_pagedescription" value="History of released versions" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#include file="ssi/changes_navigation.html" -->
+
+<h2 id="r0.7.10">0.7.10</h2>
+<p>Release Date: 2000-08-27</p>
+<ul>
+  <li>
+    Better compability and defaults for running from scratch
+    under Win32 platform.
+  </li>
+  <li>
+    New form parameter ldap_basedn is used throughout the whole session.
+  </li>
+  <li>
+    List of possible base DNs of LDAP servers are automatically
+    queried if a connect is done to a
+    LDAPv3 server with namingContexts attribute set
+    or UMich-derived LDAPv2 server and entry cn=config.
+    User can select the search root from select list.
+  </li>
+  <li>
+    New configuration scheme: any configuration parameter in the
+    dictionary web2ldapcnf.hosts.ldap_def is now retrieved by looking at
+    string-key 'ldap://ldap_host/ldap_basedn', 'ldap_host', '_' ('_' is
+    meant as the overall default) in this order.
+    This allows to hold several database backends on the same host with
+    the same DNS name. It also shortens the ldap_def dictionary by
+    avoiding having to repeat same options for every server and
+    makes browsing of completely unconfigured hosts easy.
+    This concept should still handle your old config files correctly
+    (except the specific changes of some variables described below!).
+  </li>
+  <li>
+    Over-featured configuration of required security
+    level was simplified (You have to adjust your old config!).
+    <ul>
+      <li>
+        No more parameter web2ldapcnf.misc.security_level_default
+	any more. This is set in overall default in
+	web2ldapcnf.hosts.ldap_def['_']['security_level'] now.
+      </li>
+      <li>
+        Type of dictionary parameter
+	web2ldapcnf.hosts.ldap_def[]['security_level']
+	was changed to a simple integer for the required security
+	level. Security levels which depends on a specific command
+	might turn out to be less secure because of possible
+	bugs in implementation/configuration.
+      </li>
+    </ul>
+  </li>
+  <li>
+    vCard and printable HTML output is based on template files
+    similar to the <var>read_template</var>'s. This has the advantage to
+    use different templates per object class.<br>
+    Path names of template files for vCards and printable HTML are set
+    with parameter web2ldapcnf.hosts.ldap_def[..]['vcard_template']
+    and web2ldapcnf.hosts.ldap_def[..]['print_template']
+    (You have to adjust your old config! See example.).
+  </li>
+  <li>
+    Code cleaning:
+    <ul>
+      <li>
+        moved functions for widely used HTML output from module
+	w2lcore.py to new module w2lgui.py
+      </li>
+      <li>
+        moved/renamed function w2lcore.HTTPHeader() to httphelper.SendHeader()
+      </li>
+      <li>
+        Function w2lgui.CommandButton() expects UTF-8-encoded parameters
+	now and does the conversion itself. The result is some performance
+	loss but the code is less buggy.
+      </li>
+      <li>
+        Modules does not catch all exceptions with except: anymore.
+      </li>
+      <li>
+        Empty parameters are not ignored any more.
+      </li>
+      <li>
+        Non-existent parameters are set to None to distinguish
+	them from empty parameters.
+      </li>
+      <li>
+        w2ldelete.DelTree() is now non-recursive.
+      </li>
+      <li>
+        Smart login is now done in ldapbase.SmartLogin() =&gt;
+	w2lcore.LDAPSessionParams() looks nicer now.
+      </li>
+      <li>
+        Handle missing parameter ldap_dn with required flag of
+	cgiforms.formFieldClass()
+      </li>
+      <li>
+        Some case-sensitive bugs fixed when building search result table.
+      </li>
+    </ul>
+  </li>
+  <li>
+    All output of read is now wrapped by a &lt;div id=MessageDiv&gt;&lt;/div&gt;
+    no matter if the output is a table or generated with a template
+    (templates changed!).
+  </li>
+  <li>
+    New &lt;div id=StatusDiv&gt;&lt;/div&gt; for section with status line
+    containing current DN, host name and bind DN above
+    main menu.
+  </li>
+  <li>
+    Be as case-respecting as possible when
+    displaying attribute types without being case-sensitive
+    in attribute handling. (This fixes compability issues with
+    upcoming OpenLDAP 2.0.)
+  </li>
+  <li>
+    Tweaked CSS files a bit but this needs more work.
+    (Any good web designer willing to contribute?)
+  </li>
+</ul>
+
+<h2 id="r0.7.9">0.7.9</h2>
+<p>Release Date: 2000-08-02</p>
+<ul>
+  <li>
+    Fixed missing import of module ldif in w2lhandler.py.
+  </li>
+  <li>
+    Pass only ldif.ldif_pattern to TextAreaClass.__init__()
+  </li>
+</ul>
+
+<h2 id="r0.7.8">0.7.8</h2>
+<p>Release Date: 2000-07-30</p>
+<ul>
+  <li>
+    Wrapper script for running as persistent <var>PythonHandler</var>
+    under the control of the Apache module
+    <a href="http://www.modpython.org">mod_python</a>.
+  </li>
+  <li>
+    Use gzip-encoding for saving network bandwidth if client
+    has sent <CODE>Accept-Encoding: gzip</CODE> in the HTTP header.
+  </li>
+  <li>
+    Improved HTTP header data.
+    Especially date format is now conform to <a href="https://tools.ietf.org/html/rfc1123">RFC 1123</a>.
+  </li>
+  <li>
+    New parameter standalone.run_username for defining the
+    username for setuid() when started as root.
+  </li>
+  <li>
+    New parameter standalone.debug_log for setting path name
+    of debugging log file.
+    Redirect sys.stderr and sys.stdout to debug log
+    if running detached.
+  </li>
+  <li>
+    Fixed bug with being too case-sensitive with LDIF data
+    and input fields when modifying entries.
+  </li>
+  <li>
+    Relaxed DN regex checking for compability with
+    quoted data in RDN-components.
+  </li>
+  <li>
+    separated HTTP server module (independent of web2ldap now)
+  </li>
+  <li>
+    Updated documentation and web pages. Still not really complete...
+  </li>
+</ul>
+
+<h2 id="r0.7.7">0.7.7</h2>
+<p>Release Date: 2000-07-06</p>
+<dl>
+  <dt>Misc. stuff</dt>
+  <dd>
+    <ul>
+      <li>
+        Handle parsing of wrong LDIF data gracefully.
+      </li>
+      <li>
+        Use os.fork() to detach from console if running on Posix platform.
+      </li>
+      <li>
+        If threading is turned off the ForkingMixIn is used to
+        run a forking server when running under Posix-platform.
+      </li>
+      <li>
+        Fixed bug: Changing objectClass attribute of an entry
+        works again. New object classes were ignored.
+      </li>
+      <li>
+        Splitted calling the CGI-BIN and calling the stand-alone
+        server into two different scripts <var>cgi-bin/web2ldap.py</var> and
+        <var>sbin/web2ldap.py</var> to make a clean separation for users
+        and package maintainers.
+      </li>
+      <li>
+        Dropped support for form parameter <var>ldap_url</var>.
+        Was not used and made coding much more complicated.
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning:</dt>
+  <dd>
+    <ul>
+      <li>
+        All <var>form.add()</var> method calls are done in
+        module <var>w2lhandler.py</var> now.
+      </li>
+      <li>
+        Cleaned up parameter handling.
+      </li>
+      <li>
+        Handling of search form parameters in single form field objects.
+        Should be slightly faster.
+      </li>
+    </ul>
+  </dd>
+  <dt>Configuration changes:</dt>
+  <dd>
+    Configuration module <var>web2ldapcnf.py</var> is divided
+    into the following sub-modules:
+    <ul>
+      <li>
+        <var>misc.py</var>: various options
+      </li>
+      <li>
+        <var>standalone.py</var>: options only needed when running as
+        stand-alone web server
+      </li>
+      <li>
+        <var>hosts.py</var>: specific parameters for different LDAP hosts
+      </li>
+      <li>
+        <var>cgibin.py</var>: options only needed when running
+        via CGI-BIN interface under the control of a web server
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h2 id="r0.7.6">0.7.6</h2>
+<p>Release Date: 2000-06-18</p>
+<ul>
+  <li>
+    Partial display of search result table with -&gt;&gt; and &lt;&lt;- buttons
+    for previous and next page. The benefit is a better usability because
+    there's not so much HTML data sent to the browser.<br>
+    Due to limitations of LDAP the search results are retrieved completely
+    from the LDAP server up to the last result index displayed.
+    E.g. displaying search results 201 to 210 means sending
+    the results 1 to 200 to /dev/null.
+  </li>
+  <li>
+    Moved configuration files to separate directory (like /etc/web2ldap)
+    for easy producing of Linux-packages. Splitted former configuration
+    file module <var>web2ldapcnf.py</var> into directory module
+    <var>web2ldapcnf/</var> containing modules <var>all.py</var> and
+    <var>standalone.py</var>.
+  </li>
+  <li>
+    New parameter web2ldapcnf.input_maxfieldlen for specifying
+    maximum length of input data for attributes.
+  </li>
+  <li>
+    Base search form for very simple searches (default now).
+    The search form can be customized with a HTML template file.
+  </li>
+  <li>
+    Select base, advanced or expert search form with select list
+    of <var>[Search]</var> button.
+  </li>
+  <li>
+    Search results produce handy URL links for LDAP search URLs
+    and mailto-links for group mailings.
+  </li>
+  <li>
+    Alternate output formats (DSML, LDIF, pretty-printable) are
+    chosen from a select list with one button now.
+  </li>
+  <li>
+    Content negotiation with HTTP_ACCEPT_LANGUAGES
+    for serving multi-language variants
+    of template files (only search form and read templates by now).
+  </li>
+  <li>
+    SSL-enabled when running as a stand-alone gateway
+    (credits go to Ng Pheng Siong for providing the module
+    <a href="http://www.post1.com/home/ngps/m2/">M2Crypto</a>).
+    This means a lot of more parameters to configure. ;-)
+    Please do not ask me how to create server certs etc.
+    The <a href="http://www.openssl.org">OpenSSL</a> and
+    <a href="http://www.modssl.org">mod_ssl</a> docs
+    might be a good start for learning about this topic. ;-)
+  </li>
+  <li>
+    Improved HTML output (lower-cased, checked with tidy) -
+    first little steps to XHTML.
+  </li>
+  <li>
+    Send \r\n in HTTP header in platform independent manner.
+  </li>
+  <li>
+    Bunch of small fixes. (still recovering from errors with
+    the new module structure introduced in <a href="#0.7.3">0.7.3</a>...).
+  </li>
+  <li>
+    The semantics of the parameter <var>search_attr</var> has changed.
+    It represents the LDAP attribute name now (was userfriendly name before).
+    Incompatible changes in configuration (see parameters
+    <var>web2ldapcnf.search_attr</var> and <var>web2ldapcnf.ldap_knownattr</var>!!!
+  </li>
+  <li>
+    Parameter <var>search_maxhits</var> in <var>ldap_def</var> dictionary abandoned.
+  </li>
+  <li>
+    If no IP addr is given with option -l the stand-alone mode
+    binds to INADDR_ANY for listening on all network devices available.
+  </li>
+  <li>
+    Simple address-based access control with client's IP address in
+    stand-alone mode. See new parameter <var>web2ldapcnf.access_allowed</var>
+    for defining a list of networks which are allowed access.
+  </li>
+</ul>
+
+<h2 id="r0.7.5">0.7.5</h2>
+<p>Release Date: 2000-04-07</p>
+<ul>
+  <li>
+    Small fixes.
+  </li>
+  <li>
+    Display current RDN as input default when choosing modrdn.
+  </li>
+</ul>
+
+<h2 id="r0.7.4">0.7.4</h2>
+<p>Release Date: 2000-04-06</p>
+<ul>
+  <li>
+    Fixed missing module import when running stand-alone.
+  </li>
+</ul>
+
+<h2 id="r0.7.3">0.7.3</h2>
+<p>Release Date: 2000-04-05</p>
+<ul>
+  <li>
+    J. Stezenbach provided a patched
+    version of charset.py for faster character set conversion.
+  </li>
+  <li>
+    J. Stezenbach provided a solution
+    for the hanging socket when running as stand-alone
+    and catching ErrorExitClass exception in HandleHTTPRequest().
+  </li>
+  <li>
+    All functionality is put into modules
+    for reducing start-up latency especially when running as
+    CGI-BIN (thanks again to J. Stezenbach
+    for giving the right optimization hints).
+  </li>
+  <li>
+    Use string templates for displaying entry data
+    in search result table (new parameters!).
+  </li>
+  <li>
+    Make asynchronous searches to behave less memory-consuming
+    especially when downloading large amount of LDIF or DSML data.
+  </li>
+  <li>
+    New per-host parameter search_maxhits introduced to
+    limit the number of search results displayed in search
+    result table. This means: Behave nicer on large sites.
+  </li>
+</ul>
+
+<h2 id="r0.7.2">0.7.2</h2>
+
+
+<p>Release Date: 2000-02-27</p>
+<ul>
+  <li>
+    Added button downloading DSML-formatted
+    directory data. (Very preliminary and primitive implementation of
+    a DSML level 1 producer. This needs testing!).
+  </li>
+  <li>
+    Fixed bug with LDIF data containing non-ASCII characters.
+  </li>
+  <li>
+    Cleaned up password setting and added support for
+    <a href="http://developer.netscape.com/docs/technote/ldap/pass_sha.html">
+    SMD5 and SSHA</a> hash types. Also hash types can be restricted
+    in the per-host configuration.
+  </li>
+</ul>
+
+<h2 id="r0.7.1">0.7.1</h2>
+<p>Release Date: 2000-02-26</p>
+<ul>
+  <li>
+    Stand-alone mode delivers documents from web2ldapcnf.document_root now.
+  </li>
+  <li>
+    Added attribute <var>thumbnailphoto</var> to web2ldapcnf.ldap_binaryattr.
+  </li>
+  <li>
+    Changed the behaviour of the <var>[Easy Search]</var> button:<br>
+    If the base DN is empty the current DN is displayed
+    as default search base. This is more handy if
+    browsing in big X.500 trees.
+  </li>
+  <li>
+    Some bug-fixes.
+  </li>
+</ul>
+
+<h2 id="r0.7.0">0.7.0</h2>
+<p>Release Date: 2000-02-20</p>
+<ul>
+  <li>
+    Stand-alone mode by deriving own HTTP handler class from
+    SimpleHTTPServer.SimpleHTTPRequestHandler. Running stand-alone
+    speeds up things dramatically (modules are not re-imported
+    every time).<br>
+    And yes, it's multi-threaded (needs testing!!!).<br>
+    And yes, it runs under Windows.
+  </li>
+  <li>
+    Runs under Windows now.
+  </li>
+  <li>
+    Abandoned all global variables.
+  </li>
+  <li>
+    Does not use sys.stdin or sys.stdout directly any more.
+  </li>
+  <li>
+    Function calls for the web2ldap commands through
+    wrapper-function HandleHTTPRequest().
+  </li>
+  <li>
+    Produces correct HTTP expiring header now.
+  </li>
+  <li>
+    Make use of useful changes in module cgiforms.py.
+  </li>
+  <li>
+    New parameter web2ldapcnf.input_maxattrs.
+  </li>
+  <li>
+    New button <var>[Login As]</var> when displaying an entry.
+  </li>
+</ul>
+
+<!--#include file="ssi/footer.html" -->

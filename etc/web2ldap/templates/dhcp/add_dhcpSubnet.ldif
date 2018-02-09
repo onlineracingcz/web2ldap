@@ -1,0 +1,17 @@
+dn: cn=
+objectClass: top
+objectClass: dhcpSubnet
+objectClass: dhcpOptions
+cn: 10.2.1.0
+dhcpNetMask: 24
+dhcpOption: domain-name-servers 10.2.1.6
+dhcpOption: domain-name "foo.example.com"
+dhcpOption: routers 10.2.1.42
+dhcpOption: broadcast-address 10.2.1.255
+dhcpOption: subnet-mask 255.255.255.0
+dhcpRange: 10.2.1.100 10.2.1.220
+dhcpStatements: default-lease-time 7200
+dhcpStatements: max-lease-time 36000
+dhcpStatements: ping-check true
+dhcpStatements: ping-timeout 1
+

@@ -1,0 +1,7 @@
+dn: cn=,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: 
+olcAttributeTypes: ( <oid> NAME '' DESC '' MUST ( $ ) MAY ( $ ) )
+olcAttributeTypes: ( <oid> NAME '' DESC '' MUST ( $ ) MAY ( $ ) )
+olcObjectClasses: ( <oid> NAME '' DESC '' MUST ( $ ) MAY ( $ ) )
+olcObjectClasses: ( <oid> NAME '' DESC '' MUST ( $ ) MAY ( $ ) )

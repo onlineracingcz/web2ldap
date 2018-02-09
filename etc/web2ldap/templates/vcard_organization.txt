@@ -1,0 +1,17 @@
+BEGIN:VCARD
+  VERSION:2.1
+  PROFILE:VCARD
+  PRODID:-//WEB2LDAP//-//EN
+  REV:%(lastModifiedTime)s%(modifytimestamp)s
+  UID:%(entryUUID)s%(objectGUID)s
+  SOURCE: ldap:///%(dn)s
+  FN;CHARSET=utf-8:%(o)s
+  TEL;WORK:%(telephoneNumber)s
+  TEL;FAX:%(facsimileTelephoneNumber)s
+  ORG;CHARSET=utf-8:%(o)s;%(ou)s
+  NOTE;CHARSET=utf-8:%(description)s
+  N;CHARSET=utf-8:%(o)s
+  EMAIL;INTERNET:%(mail)s
+  URL:%(labeleduri)s
+  ADR;TYPE=postal;CHARSET=utf-8:%(postOfficeBox)s;;%(streetAddress)s;%(l)s;%(st)s;%(postalCode)s;%(c)s
+END:VCARD

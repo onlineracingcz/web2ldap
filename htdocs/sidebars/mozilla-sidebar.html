@@ -1,0 +1,36 @@
+<html>
+
+  <head>
+    <title>web2ldap</title>
+    <script language="JavaScript">
+      function ldapsearch() {
+        var s,l;
+        l=eval("document.ldap.ldapurl.value");
+        s=escape(eval("document.ldap.search.value"));
+        if(s) {
+          resultwindow=open('http://demo.web2ldap.de:1760/web2ldap?'+l+'(|(cn=*'+s+'*)(uid='+s+')(mail=*'+s+'*))','web2ldap',
+          'width=650,height=600,scrollbars=yes,resizable=yes');
+          resultwindow.focus();
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+
+    <form accept-charset="utf-8" name="ldap" action="" onsubmit="ldapsearch()">
+      <input type="button" value="Suchen" onclick="ldapsearch()"><br>
+      Search string:<br>
+      <input type="text" name="search" size="15"><br>
+      Directory:<br>
+      <select id="ldapurl" name="ldapurl" size="1" >
+        <option value="ldap&#58;//ldap.rediris.es:1389/dc&#61;rediris,dc&#61;es??sub?">RedIRIS</option>
+        <option value="ldap&#58;//ldap.uninett.no/dc&#61;uninett,dc&#61;no??sub?">UNINETT</option>
+        <option value="ldap&#58;//www.trustcenter.de/dc&#61;trustcenter,dc&#61;de??sub?">TC Trustcenter</option>
+        <option value="ldap&#58;//x500.bund.de/o&#61;Bund,c&#61;DE??sub?">IVBB</option>
+        <option value="ldap&#58;//db.debian.org/dc&#61;debian,dc&#61;org??sub?">Debian Developers</option>
+      </select>
+    </form>
+  </body>
+
+</html>

@@ -1,0 +1,67 @@
+<!--Search form for cn=changelog-->
+
+<fieldset>
+  <legend>Search changelog database</legend>
+
+  <p>
+    Match
+    <select title="Search mode" name="search_mode" size="1">
+    <option value="(&amp;%s)" selected="selected">all</option>
+    <option value="(|%s)">any</option>
+    </select> of the following:<br>
+  </p>
+
+  <table>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="changeType">
+        Change type (changeType) is<br>
+        <select name="search_string">
+          <option selected></option>
+          <option value="add">Add Request</option>
+          <option value="delete">Delete Request</option>
+          <option value="modify">Modify Request</option>
+          <option value="modrdn">Modrdn Request</option>
+        </select>
+      </td>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="changeInitiatorsName">
+        authz identity (changeInitiatorsName) is<br>
+        <input name="search_string" maxlength="300" size="30" value=""><br>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="targetDN">
+        affected entry's DN (targetDN) is<br>
+        <input name="search_string" maxlength="300" size="30" value=""><br>
+      </td>
+      <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="targetEntryUUID">
+        affected entry's UUID (targetEntryUUID) is<br>
+        <input name="search_string" maxlength="300" size="30" value=""><br>
+      </td>
+    <tr>
+      <td>
+        <input type="hidden" name="search_option" value="({at}>={av})">
+        <input type="hidden" name="search_attr" value="changeTime">
+        after (changeTime&gt;=)<br>
+        <input name="search_string" maxlength="22" size="22" value=""><br>
+      </td>
+      <td>
+        <input type="hidden" name="search_option" value="({at}<={av})">
+        <input type="hidden" name="search_attr" value="changeTime">
+        before (changeTime&lt;=)<br>
+        <input name="search_string" maxlength="22" size="22" value=""><br>
+      </td>
+    </tr>
+
+  </table>
+
+</fieldset>

@@ -1,0 +1,64 @@
+<h1>%(reqType)s operation</h1>
+
+<table>
+  <tr>
+    <td>Entry's DN (reqDN):</td>
+    <td>
+      %(reqDN)s
+    </td>
+  </tr>
+  <tr>
+    <td>Entry's UUID (reqEntryUUID):</td>
+    <td>
+      %(reqEntryUUID)s
+    </td>
+  </tr>
+  <tr>
+    <td>Result code/message</td>
+    <td>%(reqResult)s: %(reqMessage)s</td>
+  </tr>
+  <tr>
+    <td>Sent by (reqAuthzID)</td>
+    <td>%(reqAuthzID)s</td>
+  </tr>
+  <tr>
+    <td>Session no. (reqSession)</td>
+    <td>%(reqSession)s</td>
+  </tr>
+  <tr>
+    <td>Operation start/end</td>
+    <td>%(reqStart)s until %(reqEnd)s</td>
+  </tr>
+</table>
+
+<h2>Modifications</h2>
+
+<p>
+  <code>
+    %(reqMod)s
+  </code>
+</p>
+
+<h2>Old values</h2>
+
+<p>
+  <code>
+    %(reqOld)s
+  </code>
+</p>
+
+<h2>Extended controls</h2>
+
+<h3>Request controls</h3>
+<p>
+  <code>
+    %(reqControls)s
+  </code>
+</p>
+
+<h3>Response controls</h3>
+<p>
+  <code>
+    %(reqRespControls)s
+  </code>
+</p>

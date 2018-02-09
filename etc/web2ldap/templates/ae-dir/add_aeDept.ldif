@@ -1,0 +1,6 @@
+dn: departmentNumber=,cn=people,ou=ae-dir
+objectClass: organizationalUnit
+objectClass: aeDept
+objectClass: aeObject
+aeStatus: 0
+

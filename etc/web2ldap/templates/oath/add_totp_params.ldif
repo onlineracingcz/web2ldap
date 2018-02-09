@@ -1,0 +1,11 @@
+dn: cn=
+objectClass: namedObject
+objectClass: namedPolicy
+objectClass: oathParams
+objectClass: oathTOTPParams
+cn: HOTP user parameters
+description: OATH/TOTP policy parameters for user accounts
+oathHMACAlgorithm: 1.2.840.113549.2.7
+oathOTPLength: 8
+oathTOTPTimeStep: 30
+

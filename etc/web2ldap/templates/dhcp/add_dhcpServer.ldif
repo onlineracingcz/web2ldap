@@ -1,0 +1,6 @@
+dn: cn=
+objectClass: top
+objectClass: dhcpServer
+dhcpStatements: failover peer "dhcp-failover" { primary; address 10.2.1.1; port 647; peer address 10.2.1.2; peer port 647; max-response-delay 60; max-unacked-updates 10; mclt 3600; load balance max seconds 3; split 128; }
+structuralObjectClass: dhcpServer
+

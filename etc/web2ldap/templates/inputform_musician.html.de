@@ -1,0 +1,14 @@
+<h2>Musiker</h2>
+
+<fieldset>
+  <table>
+    <tr>
+      <td>Instrument(e):</td>
+      <td>%(musicalInstrument)s</td>
+    </tr>
+    <tr>
+      <td>Spielt mit bei:</td>
+      <td>%(musicalOrchestra)s</td>
+    </tr>
+  </table>
+</fieldset>

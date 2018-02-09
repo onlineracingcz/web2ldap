@@ -1,0 +1,294 @@
+<!--#set var="web2ldap_subtitle" value="FAQ" -->
+<!--#set var="web2ldap_pagedescription" value="Frequently Asked Questions" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<h2>General</h2>
+
+<dl>
+
+  <dt>
+    Is there a public <var>name-your-favourite-vcs-tool-here</var> repo?
+  </dt>
+  <dd>
+    Nope.
+  </dd>
+
+  <dt>
+    How many developers are working on it?
+  </dt>
+  <dd>
+    <a href="https://www.stroeder.com/">One</a>.
+  </dd>
+
+  <dt>
+    Is it open source?
+  </dt>
+  <dd>
+    Yes, see <a href="download.html">download</a> page.
+  </dd>
+
+  <dt>
+    Does it have good <var>name-your-favourite-star-rating-here</var>?
+  </dt>
+  <dd>
+    <a href="https://xkcd.com/937/">I don't care</a> ;-).
+  </dd>
+
+</dl>
+
+<h2>Installation</h2>
+
+<dl>
+
+  <dt>
+    <var>SyntaxError:</var> ...
+  </dt>
+  <dd>
+    You are probably running a wrong Python version or one of the
+    <a href="web2ldapcnf.html">configuration modules</a>
+    is screwed up.<br>
+    See <a href="install.html#Prerequisites">required software</a>
+    before starting web2ldap or have a closer look at the traceback where
+    the <var>SyntaxError</var> appears.
+  </dd>
+
+  <dt>
+    <var>ImportError: No module named...</var>
+  </dt>
+  <dd>
+    A required module was not found.
+    Install all <a href="install.html#Prerequisites">required software</a>
+    before starting web2ldap. You can check with the script <var>sbin/checkinst.py</var>
+    whether all needed software is installed.
+  </dd>
+
+  <dt>
+    I've installed some packages coming with my <var>favourite Linux
+    distribution</var> and get strange errors with...
+  </dt>
+  <dd>
+    Please check whether packages coming with your distribution
+    match the <em>version</em> of <a href="install.html#Prerequisites">
+    required software</a> before starting web2ldap.
+  </dd>
+
+  <dt>
+    I have started web2ldap in stand-alone mode. It runs and accessing it
+    from localhost works but I cannot access it over my network.
+    What is wrong?
+  </dt>
+  <dd>
+    <p>
+      For security reasons web2ldap does not bind to every interface
+      in your system as default like other network demons do. You have
+      to explicitly bind to a specific network interface by using
+      command line option -l.<br>
+      <kbd>
+      web2ldap -l my.public.ether.addr:port
+      </kbd></p>
+      You can enable binding to all interfaces by
+      <p><kbd>
+      web2ldap -l 0.0.0.0:port
+      </kbd>
+    </p>
+    <p>
+      There is also a stand-alone configuration option
+      <a href="web2ldapcnf_standalone.html#bind_address">
+      web2ldapcnf.standalone.bind_address</a> for setting this permanently.
+    </p>
+    <p>
+      Also watch out for stand-alone configuration option
+      <a href="web2ldapcnf_standalone.html#access_allowed">
+      web2ldapcnf.standalone.access_allowed</a> which limits the client's
+      IP addresses allowed to access the built-in web server.
+    </p>
+  </dd>
+
+  <dt>
+    Is it possible to run web2ldap under Windows (Win32)?
+  </dt>
+  <dd>
+    Yes. You have to grab a Win32 build of
+    <a href="https://www.python-ldap.org/download.html">
+    python-ldap</a>.
+  </dd>
+
+  <dt>
+    <code>NameError: global name 'threading' is not defined</code>
+  </dt>
+  <dd>
+    Your Python interpreter seems to have thread support disabled.
+    You can solve that by building Python with <code>configure
+    --with-threads</code>.
+  </dd>
+
+  <dt>
+    I experience problems with session hijacking detection when
+    accessing web2ldap through a web proxy or using HTTPS.
+  </dt>
+  <dd>
+    Check out configuration parameter
+    <a href="web2ldapcnf_misc.html#session_checkvars">web2ldapcnf.misc.session_checkvars</a>
+    and especially read the note about <var>REMOTE_ADDR</var> and <var>REMOTE_HOST</var>.
+    Also if using <a href="https://tools.ietf.org/html/rfc7230#section-2.7.2">HTTPS</a>
+    check whether SSL/TLS session caching is correctly configured for your
+    web server because <var>SSL_SESSION_ID</var> is also cross-checked.
+  </dd>
+
+</dl>
+
+<h2>Customizing</h2>
+
+<p>
+  See also extra page <a href="usability.html">customizing UI</a>.
+</p>
+
+<dl>
+
+  <dt>
+    I want to avoid displaying the raw DNs in the search
+    result table. How to do that?
+  </dt>
+  <dd>
+    There are several possibilities:
+    <ul>
+      <li>
+        Use configuration parameter
+        <a href="web2ldapcnf_hosts.html#search_tablistattrs">search_tablistattrs</a>.
+      </li>
+      <li>
+        Use configuration parameter
+        <a href="web2ldapcnf_hosts.html#search_tdtemplate">search_tdtemplate</a>.
+      </li>
+      <li>
+        Add the attribute <var>displayName</var> to your LDAP entry if
+        appropriate in your schema (e.g. in object class <var>inetOrgPerson</var>).
+      </li>
+    </ul>
+  </dd>
+
+  <dt>
+    I would like to setup some automatically filled fields. E.g.
+    automatically set the <em>cn</em> (common name) attribute with
+    the concatenation of values of the attributes
+    <em>givenName</em> and <em>sn</em> (surname).
+  </dt>
+  <dd>
+    <p>There are two ways of achieving something like this:</p>
+    <ul>
+      <li>
+        Use LDIF templates for defining defaults for attributes when
+        adding new entries (see host-/backend-specific paramter
+        <a href="web2ldapcnf_hosts.html#addform_entry_templates">addform_entry_templates</a>).
+      </li>
+      <li>
+        Implement a <a href="usability.html#plugin_classes">plug-in class</a>
+        for the attribute type.
+      </li>
+    </ul>
+  </dd>
+
+  <dt>
+    I would like to define a "select" item for certain input fields.
+  </dt>
+  <dd>
+    This can be easily done by defining a plug-in class based on
+    base class <var>w2lapp.schema.syntaxes.SelectList</var>
+    and register it as a LDAP syntax handler or explicitly for an attribute type.
+    A simple example can be found in file
+    <var>pylib/w2lapp/schema/plugins/msperson.py</var>.<br>
+    The select list can also be defined based on LDAP URLs specifying a
+    dynamic result set used for the select options. Watch out for plugin
+    classes based on <var>DynamicValueSelectList</var> or
+    <var>DynamicDNSelectList</var>.
+  </dd>
+
+  <dt>
+    How to customize the HTML output to use different colors,
+    different font size, etc.?
+  </dt>
+  <dd>
+    Customization of layout can be done by defining a CSS file
+    (<a href="http://www.w3.org/Style/CSS/">cascaded
+    style sheet</a>). Almost all important HTML elements have own
+    <em>id</em> or <em>class</em> attributes which can be used to
+    define their appearance.
+    Have a look at the example CSS files shipped with the source
+    distribution package.
+  </dd>
+
+</dl>
+
+<h2>Usage</h2>
+
+<dl>
+
+  <dt>
+    I would like to upload a photo, a certificate or other binary
+    attribute data. Is that possible?
+  </dt>
+  <dd>
+    Yes. But up to now only a single value is supported per attribute.
+    Uploading multiple binary attribute values is currently only possible
+    via LDIF when adding or modifying an entry.
+    You have to convert your binary data with a LDIF tool first
+    and cut&amp;paste its output into the LDIF input field
+    or provide a URL in the LDIF line (see global configuration
+    parameter
+    <a href="web2ldapcnf_misc.html#ldif_url_schemes">
+    web2ldapcnf.misc.ldif_url_schemes</a>).
+  </dd>
+
+  <dt>
+    I would like to delete a photo, a certificate or other binary
+    attribute data. Is that possible?
+  </dt>
+  <dd>
+    Yes, it is possible since
+    <a href="changes.html#0.10.0">version 0.10.0</a>.
+    An additional [Delete] link is shown for binary attributes. Note
+    that in case of multi-valued attributes all attribute
+    values are deleted. You cannot delete a single chosen
+    attribute value.
+  </dd>
+
+</dl>
+
+<h2>Integration</h2>
+
+<dl>
+
+  <dt>
+    I want to refer to the web2ldap gateway from a web page.
+    Is there a way to get a persistent URL?
+  </dt>
+  <dd>
+    Yes, see section <a href="usability.html#persistent_bookmarks">
+    constructing persistent bookmarks</a> for details.
+  </dd>
+
+  <dt>
+    Is there some way of nifty browser integration?
+  </dt>
+  <dd>
+    With Mozilla-derived browsers you can use
+    <a href="http://kb.mozillazine.org/Using_keyword_searches">
+    Custom Keywords</a>.
+  </dd>
+
+  <dt>
+    Is Kerberos-based authentication supported?
+  </dt>
+  <dd>
+    Yes. python-ldap has to been built with SASL/GSSAPI support (see also
+    <a href="https://www.python-ldap.org/doc/html/installing.html#building-and-installing">
+    python-ldap's installation instructions</a>)
+    and web2ldap has to be started in stand-alone mode by the end-user to use his/her
+    ticket granting ticket (TGT). Make sure that only this particular
+    end-user has access to web2ldap!
+  </dd>
+
+</dl>
+
+<!--#include file="ssi/footer.html" -->

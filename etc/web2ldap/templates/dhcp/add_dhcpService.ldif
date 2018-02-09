@@ -1,0 +1,14 @@
+dn: cn=
+objectClass: top
+objectClass: dhcpService
+cn: DHCP Config
+dhcpOption: T150 code 150 = string
+dhcpOption: wpad-url code 252 = text
+dhcpStatements: ddns-update-style interim
+dhcpStatements: ddns-updates on
+dhcpStatements: update-static-leases on
+dhcpStatements: authoritative
+dhcpStatements: key dhcp { algorithm hmac-md5; secret SuperSecretString; }
+dhcpStatements: zone 1.168.192.in-addr.arpa { primary 192.168.1.1; key dhcp; }
+dhcpStatements: zone domain.tld { primary 192.168.1.1; key dhcp; }
+

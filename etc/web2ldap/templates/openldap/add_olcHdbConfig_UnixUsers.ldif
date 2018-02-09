@@ -1,0 +1,20 @@
+dn: olcDatabase=,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcHdbConfig
+olcDatabase: hdb
+olcDbCheckpoint: 200 5
+olcDbDirectory: /var/openldap/HEAD/
+olcDbDirtyRead: FALSE
+olcDbMode: 0640
+olcDbNoSync: FALSE
+olcLastMod: TRUE
+olcReadOnly: FALSE
+olcSuffix: dc=,dc=
+olcDbIndex: objectClass,uid,uidNumber,gidNumber pres,eq
+olcDbConfig: {0}set_cachesize   0       4000000        1
+olcDbConfig: {1}set_lg_regionmax        1048576
+olcDbConfig: {2}set_lg_max              10485760
+olcDbConfig: {3}set_lg_bsize            2097152
+olcDbConfig: {4}set_tmp_dir             /tmp
+olcMonitoring: TRUE
+

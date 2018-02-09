@@ -1,0 +1,186 @@
+<h1>Person entry (aePerson)</h1>
+
+<p>
+  Wiki documentation:
+  <a href="https://ae-dir.com/docs.html#schema-oc-aePerson">Schema</a> /
+  <a href="https://ae-dir.com/web2ldap.html#oc-aePerson">How-To</a>
+</p>
+
+<fieldset>
+  <legend>Individual information</legend>
+  <table>
+    <tr>
+      <td>Unique Identifier:</td>
+      <td>%(uniqueIdentifier)s</td>
+    </tr>
+    <tr>
+      <td>Employee number:</td>
+      <td>%(employeeNumber)s</td>
+    </tr>
+    <tr>
+      <td>Surname:</td>
+      <td>%(sn)s</td>
+    </tr>
+    <tr>
+      <td>Given Name:</td>
+      <td>%(givenName)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Meta</legend>
+  <table>
+    <tr>
+      <td>Status (aeStatus):</td>
+      <td>%(aeStatus)s</td>
+    </tr>
+    <tr>
+      <td>Expiry Status (aeExpiryStatus):</td>
+      <td>%(aeExpiryStatus)s</td>
+    </tr>
+    <tr>
+      <td>Intended purpose (description):</td>
+      <td>%(description)s</td>
+    </tr>
+    <tr>
+      <td>Ticket no. last change (aeTicketId):</td>
+      <td>%(aeTicketId)s</td>
+    </tr>
+    <tr>
+      <td>Validity period (aeNotBefore..aeNotAfter):</td>
+      <td>
+        <dl>
+          <dt>from</dt>
+          <dd>%(aeNotBefore)s</dd>
+          <dt>until</dt>
+          <dd>%(aeNotAfter)s</dd>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td>Tag(s) (aeTag):</td>
+      <td>%(aeTag)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Organizational information</legend>
+  <table>
+    <tr>
+      <td>Department:</td>
+      <td>%(aeDept)s</td>
+    </tr>
+    <tr>
+      <td>Location:</td>
+      <td>%(aeLocation)s</td>
+    </tr>
+    <tr>
+      <td>Manager:</td>
+      <td>%(manager)s</td>
+    </tr>
+    <tr>
+      <td>Work Contract Type (employeeType):</td>
+      <td>%(employeeType)s</td>
+    </tr>
+    <tr>
+      <td>Organization:</td>
+      <td>%(o)s</td>
+    </tr>
+    <tr>
+      <td>Organizational unit:</td>
+      <td>%(ou)s</td>
+    </tr>
+    <tr>
+      <td>Department No.:</td>
+      <td>%(departmentNumber)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Phone Numbers</legend>
+  <table>
+    <tr>
+      <td>Telephone:</td>
+      <td>%(telephoneNumber)s</td>
+    </tr>
+    <tr>
+      <td>Home Phone:</td>
+      <td>%(homePhone)s</td>
+    </tr>
+    <tr>
+      <td>Mobile Phone:</td>
+      <td>%(mobile)s</td>
+    </tr>
+    <tr>
+      <td>FAX:</td>
+      <td>%(facsimileTelephoneNumber)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Address/location information</legend>
+  <table>
+    <tr>
+      <td>Street:</td>
+      <td>%(streetAddress)s</td>
+    </tr>
+    <tr>
+      <td>Postal Code:</td>
+      <td>%(postalCode)s</td>
+    </tr>
+    <tr>
+      <td>Location:</td>
+      <td>%(l)s</td>
+    </tr>
+    <tr>
+      <td>State:</td>
+      <td>%(st)s</td>
+    </tr>
+    <tr>
+      <td>Postal Address:</td>
+      <td>%(postalAddress)s</td>
+    </tr>
+    <tr>
+      <td>Country:</td>
+      <td>%(c)s</td>
+    </tr>
+    <tr>
+      <td>Room number:</td>
+      <td>%(roomNumber)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Misc.</legend>
+  <table>
+    <tr>
+      <td>E-mail address (mail):</td>
+      <td>%(mail)s</td>
+    </tr>
+    <tr>
+      <td>web page(s):</td>
+      <td>%(labeledURI)s</td>
+    </tr>
+    <tr>
+      <td>Photo:</td>
+      <td>
+        %(jpegPhoto)s
+      </td>
+    </tr>
+    <tr>
+      <td>S/MIME certificate:</td>
+      <td>
+        %(userCertificate)s
+      </td>
+    </tr>
+  </table>
+</fieldset>
+
+<!--hidden input fields for auto-generated values-->
+%(cn)s
+%(displayName)s

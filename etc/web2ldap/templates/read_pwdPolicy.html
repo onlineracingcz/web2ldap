@@ -1,0 +1,82 @@
+<h2>Password policy <em>%(cn)s</em></h2>
+
+<p>
+  %(description)s
+</p>
+
+<h3>Password change parameters</h3>
+
+<table>
+  <tr>
+    <td>Password attribute:</td>
+    <td>%(pwdAttribute)s</td>
+  </tr>
+  <tr>
+    <td>Minimum time between password modifications:</td>
+    <td>%(pwdMinAge)s</td>
+  </tr>
+  <tr>
+    <td>Maximum number of passwords stored in history:</td>
+    <td>%(pwdInHistory)s</td>
+  </tr>
+  <tr>
+    <td>Password quality check:</td>
+    <td>%(pwdCheckQuality)s</td>
+  </tr>
+  <tr>
+    <td>Minimum password length:</td>
+    <td>%(pwdMinLength)s</td>
+  </tr>
+  <tr>
+    <td>User (entry) is allowed to change own password:</td>
+    <td>%(pwdAllowUserChange)s</td>
+  </tr>
+  <tr>
+    <td>Old password must be sent when changing own password:</td>
+    <td>%(pwdSafeModify)s</td>
+  </tr>
+  <tr>
+    <td>Enforce password change after next bind:</td>
+    <td>%(pwdMustChange)s</td>
+  </tr>
+</table>
+
+<h3>Password expiry</h3>
+
+<table>
+  <tr>
+    <td>Time after which a password is no longer valid (password expiry):</td>
+    <td>%(pwdMaxAge)s</td>
+  </tr>
+  <tr>
+    <td>Time before password expiry a warning message is returned:</td>
+    <td>%(pwdExpireWarning)s</td>
+  </tr>
+  <tr>
+    <td>Maximum number of times that an expired password may be used:</td>
+    <td>%(pwdGraceAuthnLimit)s</td>
+  </tr>
+</table>
+
+<h3>Lockout parameters</h3>
+
+<strong>You should think twice whether you really want to lock out users!</strong>
+
+<table>
+  <tr>
+    <td>Password lockout after failed bind attempts:</td>
+    <td>%(pwdLockout)s</td>
+  </tr>
+  <tr>
+    <td>Duration of password lockout:</td>
+    <td>%(pwdLockoutDuration)s</td>
+  </tr>
+  <tr>
+    <td>Number of failed bind attempts for lockout:</td>
+    <td>%(pwdMaxFailure)s</td>
+  </tr>
+  <tr>
+    <td>Time after which failed bind attempts are purged:</td>
+    <td>%(pwdFailureCountInterval)s</td>
+  </tr>
+</table>

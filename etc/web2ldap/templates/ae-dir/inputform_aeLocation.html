@@ -1,0 +1,89 @@
+<h1>&AElig;-DIR location</h1>
+
+<p>
+  Documentation:
+  <a href="https://ae-dir.com/docs.html#schema-oc-aeLocation">Schema</a> /
+  <a href="https://ae-dir.com/web2ldap.html#oc-aeLocation">How-To</a>
+</p>
+
+<fieldset>
+  <label>Location information</label>
+  <table>
+    <tr>
+      <td>Short name:</td>
+      <td>%(cn)s</td>
+    </tr>
+    <tr>
+      <td>Street:</td>
+      <td>%(streetAddress)s</td>
+    </tr>
+    <tr>
+      <td>Postal Code:</td>
+      <td>%(postalCode)s</td>
+    </tr>
+    <tr>
+      <td>Location:</td>
+      <td>%(l)s</td>
+    </tr>
+    <tr>
+      <td>State:</td>
+      <td>%(st)s</td>
+    </tr>
+    <tr>
+      <td>Postal Address:</td>
+      <td>%(postalAddress)s</td>
+    </tr>
+    <tr>
+      <td>Country:</td>
+      <td>%(c)s</td>
+    </tr>
+    <tr>
+      <td>Telephone:</td>
+      <td>%(telephoneNumber)s</td>
+    </tr>
+    <tr>
+      <td>FAX:</td>
+      <td>%(facsimileTelephoneNumber)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Meta</legend>
+  <table>
+    <tr>
+      <td>Status (aeStatus):</td>
+      <td>%(aeStatus)s</td>
+    </tr>
+    <tr>
+      <td>Expiry Status (aeExpiryStatus):</td>
+      <td>%(aeExpiryStatus)s</td>
+    </tr>
+    <tr>
+      <td>Intended purpose (description):</td>
+      <td>%(description)s</td>
+    </tr>
+    <tr>
+      <td>Ticket no. last change (aeTicketId):</td>
+      <td>%(aeTicketId)s</td>
+    </tr>
+    <tr>
+      <td>Validity period (aeNotBefore..aeNotAfter):</td>
+      <td>
+        <dl>
+          <dt>from</dt>
+          <dd>%(aeNotBefore)s</dd>
+          <dt>until</dt>
+          <dd>%(aeNotAfter)s</dd>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td>Tag(s) (aeTag):</td>
+      <td>%(aeTag)s</td>
+    </tr>
+  </table>
+</fieldset>
+
+<!--hidden input fields for auto-generated values-->
+%(displayName)s

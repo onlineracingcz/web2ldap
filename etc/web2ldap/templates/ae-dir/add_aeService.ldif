@@ -1,0 +1,12 @@
+dn: uid=
+objectClass: account
+objectClass: aeObject
+objectClass: aeService
+objectClass: posixAccount
+objectClass: ldapPublicKey
+aeStatus: 0
+uid: system_
+loginShell: /bin/true
+pwdPolicySubentry: cn=ppolicy-systems,cn=ae,ou=ae-dir
+aeNotBefore: now
+

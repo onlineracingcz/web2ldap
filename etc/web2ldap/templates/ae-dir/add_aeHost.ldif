@@ -1,0 +1,10 @@
+dn: host=
+objectClass: device
+objectClass: aeDevice
+objectClass: aeObject
+objectClass: aeHost
+objectClass: ldapPublicKey
+aeStatus: 0
+pwdPolicySubentry: cn=ppolicy-systems,cn=ae,ou=ae-dir
+aeNotBefore: now
+

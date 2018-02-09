@@ -1,0 +1,163 @@
+<h1>%(displayName)s</h1>
+
+<p class="EntryDN">%(entryDN)s</p>
+<p>%(structuralObjectClass)s</p>
+
+<table>
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <td>Unique Identifier:</td>
+          <td>%(uniqueIdentifier)s</td>
+        </tr>
+        <tr>
+          <td>Employee number:</td>
+          <td>%(employeeNumber)s</td>
+        </tr>
+        <tr>
+          <td>Last name (sn):</td>
+          <td>%(sn)s</td>
+        </tr>
+        <tr>
+          <td>First name (givenName):</td>
+          <td>%(givenName)s</td>
+        </tr>
+        <tr>
+          <td>E-mail address (mail):</td>
+          <td>%(mail)s</td>
+        </tr>
+        <tr>
+          <td>Description:</td>
+          <td>%(description)s</td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      %(jpegPhoto)s
+    </td>
+  </tr>
+</table>
+
+<h2>Meta</h2>
+
+<table>
+  <tr>
+    <td>Status (aeStatus):</td>
+    <td>%(aeStatus)s</td>
+  </tr>
+  <tr>
+    <td>Expiry Status (aeExpiryStatus):</td>
+    <td>%(aeExpiryStatus)s</td>
+  </tr>
+  <tr>
+    <td>Intended purpose (description):</td>
+    <td>%(description)s</td>
+  </tr>
+  <tr>
+    <td>Ticket no. last change (aeTicketId):</td>
+    <td>%(aeTicketId)s</td>
+  </tr>
+  <tr>
+    <td>Validity period:</td>
+    <td>
+      <dl>
+        <dt>from (aeNotBefore)</dt>
+        <dd>%(aeNotBefore)s</dd>
+        <dt>until (aeNotAfter)</dt>
+        <dd>%(aeNotAfter)s</dd>
+      </dl>
+    </td>
+  </tr>
+  <tr>
+    <td>Tag(s) (aeTag):</td>
+    <td>%(aeTag)s</td>
+  </tr>
+</table>
+
+<h2>Organizational information</h2>
+<table>
+  <tr>
+    <td>Department (aeDept):</td>
+    <td>%(aeDept)s</td>
+  </tr>
+  <tr>
+    <td>Location (aeLocation):</td>
+    <td>%(aeLocation)s</td>
+  </tr>
+  <tr>
+    <td>Department No.:</td>
+    <td>%(departmentNumber)s</td>
+  </tr>
+  <tr>
+    <td>Organizational unit (ou):</td>
+    <td>%(ou)s</td>
+  </tr>
+  <tr>
+    <td>Manager:</td>
+    <td>%(manager)s</td>
+  </tr>
+  <tr>
+    <td>Work Contract Type (employeeType):</td>
+    <td>%(employeeType)s</td>
+  </tr>
+  <tr>
+    <td>Organization (o):</td>
+    <td>%(o)s</td>
+  </tr>
+  <tr>
+    <td>web page(s) (labeledURI):</td>
+    <td>%(labeledURI)s</td>
+  </tr>
+</table>
+
+<h2>Phone Numbers</h2>
+<table>
+  <tr>
+    <td>Telephone:</td>
+    <td>%(telephoneNumber)s</td>
+  </tr>
+  <tr>
+    <td>Home Phone:</td>
+    <td>%(homePhone)s</td>
+  </tr>
+  <tr>
+    <td>Mobile Phone:</td>
+    <td>%(mobile)s</td>
+  </tr>
+  <tr>
+    <td>FAX:</td>
+    <td>%(facsimileTelephoneNumber)s</td>
+  </tr>
+
+</table>
+
+<h2>Address/Location</h2>
+<table>
+  <tr>
+    <td>Address:</td>
+    <td>
+      <address>
+        %(streetAddress)s<br>
+        %(postalCode)s %(l)s<br>
+        %(st)s<br>
+       </address>
+    </td>
+  </tr>
+  <tr>
+    <td>Postal Address:</td>
+    <td>
+      <address>
+        %(postalAddress)s
+      </address>
+    </td>
+  </tr>
+  <tr>
+    <td>Country (c):</td>
+    <td>%(c)s</td>
+  </tr>
+  <tr>
+    <td>Room number:</td>
+    <td>%(roomNumber)s</td>
+  </tr>
+</table>

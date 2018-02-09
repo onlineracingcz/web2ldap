@@ -1,0 +1,103 @@
+<div lang="en">
+
+  <fieldset>
+
+    <legend>MIT Kerberos schema</legend>
+
+    <p>
+      Match
+      <select title="Search mode" name="search_mode" size="1">
+      <option value="(&amp;%s)" selected="selected">all</option>
+      <option value="(|%s)">any</option>
+      </select> of the following:
+    </p>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_attr" value="objectClass">
+          Object class of entry
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*)">*</option>
+          </select>
+        </td>
+        <td>
+          <select title="Object class of entry" name="search_string" size="1">
+            <option value="">- not set -</option>
+            <option value="krbPrincipal">krbPrincipal</option>
+            <option value="krbService">krbService</option>
+            <option value="krbAdmService">krbAdmService</option>
+            <option value="krbContainer">krbContainer</option>
+            <option value="krbKdcService">krbKdcService</option>
+            <option value="krbPwdPolicy">krbPwdPolicy</option>
+            <option value="krbRealmContainer">krbRealmContainer</option>
+            <option value="krbTicketPolicy">krbTicketPolicy</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          Principal Name (krbPrincipalName)
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*{av}*)">contains</option>
+          </select>
+          <input type="hidden" name="search_attr" value="krbPrincipalName">
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          Canonical Name (krbCanonicalName)
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*{av}*)">contains</option>
+          </select>
+          <input type="hidden" name="search_attr" value="krbCanonicalName">
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          Principal alias (krbPrincipalAliases)
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*{av}*)">contains</option>
+          </select>
+          <input type="hidden" name="search_attr" value="krbPrincipalAliases">
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="description">
+          Description text (description) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+</div>

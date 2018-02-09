@@ -1,0 +1,6 @@
+dn: cn=
+objectClass: aeObject
+objectClass: aeSrvGroup
+aeStatus: 0
+aeNotBefore: now
+

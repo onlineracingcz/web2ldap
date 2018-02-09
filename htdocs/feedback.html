@@ -1,0 +1,83 @@
+<!--#set var="web2ldap_subtitle" value="Feedback" -->
+<!--#set var="web2ldap_pagedescription" value="Send bug report or feature request" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<form action="mailto:feedback@web2ldap.de?subject=web2ldap%20feedback" method="post" enctype="text/plain">
+
+<h2>Personal info</h2>
+<p>
+  Your e-mail address (optional):
+  <input name="mail_addr" size=40><br>
+  If you actually like to receive a response your spam filter
+  should not simply refuse e-mail from dynamic IP addresses. Use
+  greylisting instead.
+</p>
+<p>
+  <INPUT TYPE="checkbox" NAME="mail_store" VALUE="Yes">
+  I would like to receive news about web2ldap in the future.<br>
+  (you can simply unsubsribe by sending e-mail to
+  <a href="mailto:feedback@web2ldap.de?subject=Unsubscribe%20web2ldap">feedback@web2ldap.de</a>).
+</p>
+
+<h2>Client side</h2>
+<p>
+Operating system (name, distribution, version):
+<input name="wwwclient_os" size="20"><br>
+WWW browser (name, version): <input name="wwwclient_software" size="20"><br>
+</p>
+
+<h2>web2ldap server</h2>
+<p>
+Operating system (name, distribution, version):
+<input name="wwwserver_os" size="20"><br>
+WWW-Server software (name, version): <input name="wwwserver_software" size="20"><br>
+Version of Python interpreter:
+<input name="python_version" size="10">
+<br>
+Version of LDAP module: <input name="ldapmodule_version" size=7><br>
+LDAP library with which LDAP module was built:
+<select NAME="ldap_lib" size="1">
+  <option>OpenLDAP 2.x</option>
+  <option>OpenLDAP 1.x</option>
+  <option>Netscape C-SDK</option>
+  <option>Novell's C-SDK</option>
+</select>
+Version <input name="ldap_lib_version" size=7>
+
+web2ldap release:
+<input name="web2ldap_version" size="16">
+<br>
+web2ldap runs as
+<select name="web2ldap_mode" size="1">
+  <option>stand-alone web server</option>
+  <option>FastCGI Server</option>
+  <option>SCGI Server (not supported anymore)</option>
+  <option>CGI-BIN (not supported anymore)</option>
+  <option>mod_python (not supported anymore)</option>
+</select>
+</p>
+
+<h2>LDAP server</h2>
+<p>
+Operating system (name, distribution, version):
+<input name="ldapserver_os" size="20"><br>
+LDAP-Server software: <input name="ldapserver_software" size="20">
+Version: <input name="ldapserver_version" size="7">
+</p>
+
+<h2>Additional Comments</h2>
+<p>
+E.g. cut &amp; paste error messages/tracebacks or
+output of script <em>sbin/checkinst.py</em> here.
+<textarea rows="15" cols="70" name="comment">
+</textarea>
+</p>
+
+<p>
+  <input type=submit value="Submit feedback">
+</p>
+
+</form>
+
+<!--#include file="ssi/footer.html" -->

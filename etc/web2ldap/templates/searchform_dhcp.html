@@ -1,0 +1,143 @@
+<div lang="en">
+
+  <fieldset>
+
+    <legend>General</legend>
+
+    <p>
+      Match
+      <select title="Search mode" name="search_mode" size="1">
+      <option value="(&amp;%s)" selected="selected">all</option>
+      <option value="(|%s)">any</option>
+      </select> of the following:
+    </p>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_attr" value="objectClass">
+          Object class of entry
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*)">*</option>
+          </select>
+        </td>
+        <td>
+          <select title="Object class of entry" name="search_string" size="1">
+            <option value="">- not set -</option>
+            <option value="dhcpClass">dhcpClass</option>
+            <option value="dhcpGroup">dhcpGroup</option>
+            <option value="dhcpHost">dhcpHost</option>
+            <option value="dhcpOptions">dhcpOptions</option>
+            <option value="dhcpPool">dhcpPool</option>
+            <option value="dhcpServer">dhcpServer</option>
+            <option value="dhcpService">dhcpService</option>
+            <option value="dhcpSharedNetwork">dhcpSharedNetwork</option>
+            <option value="dhcpSubClass">dhcpSubClass</option>
+            <option value="dhcpSubnet">dhcpSubnet</option>
+            <option value="dhcpTSigKey">dhcpTSigKey</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="cn">
+          Common name (cn) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="description">
+          Description text (description) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>DHCP attributes</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="dhcpNetMask">
+          IP address mask (dhcpNetMask) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="30" size="10" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="dhcpHWAddress">
+          Hardware address (dhcpHWAddress) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="30" size="25" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="dhcpStatements">
+          DHCP statement (dhcpStatements) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="dhcpOption">
+          DHCP option (dhcpOption) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="dhcpRange">
+          DHCP range (dhcpRange) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+</div>

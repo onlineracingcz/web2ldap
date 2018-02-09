@@ -1,0 +1,12 @@
+dn: cn=
+objectClass: top
+objectClass: sudoRole
+objectClass: aeObject
+objectClass: aeSudoRule
+description: full power via sudo for 
+aeStatus: 0
+sudoCommand: ALL
+sudoHost: ALL
+sudoRunAsUser: ALL
+aeNotBefore: now
+

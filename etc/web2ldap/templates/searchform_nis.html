@@ -1,0 +1,192 @@
+<div lang="en">
+
+  <fieldset>
+
+    <legend>General</legend>
+
+    <p>
+      Match
+      <select title="Search mode" name="search_mode" size="1">
+      <option value="(&amp;%s)" selected="selected">all</option>
+      <option value="(|%s)">any</option>
+      </select> of the following:
+    </p>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_attr" value="objectClass">
+          Object class of entry
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*)">*</option>
+          </select>
+        </td>
+        <td>
+          <select title="Object class of entry" name="search_string" size="1">
+            <option value="">- not set -</option>
+            <option value="posixAccount">posixAccount</option>
+            <option value="posixGroup">posixGroup</option>
+            <option value="ipHost">ipHost</option>
+            <option value="ieee802Device">ieee802Device</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="cn">
+          Common name (cn) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="description">
+          Description text (description) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>User attributes</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="uidNumber">
+          POSIX-UID (uidNumber) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="30" size="10" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="homeDirectory">
+          Home directory path (homeDirectory) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="loginShell">
+          Shell path name is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="gecos">
+          GECOS field (gecos) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>Group attributes</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="gidNumber">
+          POSIX-UID (gidNumber) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="30" size="10" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="memberUID">
+          POSIX-UID of group member (memberUID) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="30" size="10" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>Device attributes</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="macAddress">
+          Network MAC address (macAddress) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="30" size="20" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="ipHostNumber">
+          IP address (ipHostNumber) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="80" size="30" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+</div>

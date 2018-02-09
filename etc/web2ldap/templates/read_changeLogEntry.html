@@ -1,0 +1,58 @@
+<h1>%(changeNumber)s: %(changeType)s</h1>
+
+<p class="EntryDN">%(entryDN)s</p>
+
+<table>
+  <tr>
+    <td>Change No.:</td>
+    <td>%(changeNumber)s</td>
+  </tr>
+  <tr>
+    <td>Change time:</td>
+    <td>%(changeTime)s</td>
+  </tr>
+  <tr>
+    <td>Change initiator's DN:</td>
+    <td>%(changeInitiatorsName)s</td>
+  </tr>
+</table>
+
+<h2>Target entry</h2>
+
+<table>
+  <tr>
+    <td>Target DN:</td>
+    <td>%(targetDN)s</td>
+  </tr>
+  <tr>
+    <td>Target entryUUID:</td>
+    <td>%(targetEntryUUID)s</td>
+  </tr>
+  <tr>
+    <td>Target unique ID:</td>
+    <td>%(targetUniqueID)s</td>
+  </tr>
+</table>
+
+<h2>Change LDIF:</h2>
+<code>
+  %(targetDN)s<br>
+  %(changes)s
+</code>
+
+<h2>Replication data</h2>
+
+<table>
+  <tr>
+    <td>Changelog cookie:</td>
+    <td>%(changeLogCookie)s</td>
+  </tr>
+  <tr>
+    <td>Replica Identifier:</td>
+    <td>%(replicaIdentifier)s</td>
+  </tr>
+  <tr>
+    <td>Replication CSN</td>
+    <td>%(replicationCSN)s</td>
+  </tr>
+</table>

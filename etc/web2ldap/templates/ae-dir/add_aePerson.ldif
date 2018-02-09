@@ -1,0 +1,13 @@
+dn: uniqueIdentifier=,cn=people,ou=ae-dir
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: aePerson
+objectClass: aeObject
+objectClass: msPerson
+aeStatus: 0
+aeNotBefore: now
+aeDept: departmentNumber=0,cn=people,ou=ae-dir
+aeLocation: cn=no-location,cn=people,ou=ae-dir
+
+

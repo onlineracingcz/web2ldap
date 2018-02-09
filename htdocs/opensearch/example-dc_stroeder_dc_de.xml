@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>ldap://stroeder.de</ShortName>
+  <LongName>web2ldap search in dc=stroeder,dc=de</LongName>
+  <Description>Search LDAP server beneath dc=stroeder,dc=de</Description>
+  <Tags>web2ldap</Tags>
+  <Contact>feedback@web2ldap.de</Contact>
+  <Url
+    type="text/html"
+    rel="results"
+    template="http://localhost:1760/web2ldap?ldapi://%2ftmp%2fopenldap-socket/dc%3Dstroeder%2Cdc%3Dde??sub?(|(uid={searchTerms})(name=*{searchTerms}*)(mail={searchTerms}*))?x-saslmech=EXTERNAL"
+  />
+</OpenSearchDescription>

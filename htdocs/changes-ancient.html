@@ -1,0 +1,369 @@
+<!--#set var="web2ldap_subtitle" value="Changes ancient" -->
+<!--#set var="web2ldap_pagedescription" value="History of very old releases" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#include file="ssi/changes_navigation.html" -->
+
+<h2 id="r0.6.10">0.6.10</h2>
+<p>Release Date: 2000-02-08</p>
+<ul>
+  <li>
+    Two small fixes to building of modify list.
+  </li>
+  <li>
+    Fixed wrong HTML escaping in displaying of multi-line entries.
+  </li>
+</ul>
+
+<h2 id="r0.6.9">0.6.9</h2>
+<p>Release Date: 2000-02-07</p>
+<ul>
+  <li>
+    Do not print <var>[Go up]</var> buttons for DNs above basedn.
+  </li>
+  <li>
+    Started writing documentation...
+  </li>
+  <li>
+    Fixed problems with URLs and hidden parameters based on
+    DNs containing &quot; quotes.
+  </li>
+  <li>
+    Modify: Leave attribute objectClass alone if it does not have to be changed
+    and change objectClass and rest of entry in one call of modify_s().
+  </li>
+  <li>
+    Changed effect of web2ldapcnf.print_rawutf8: 0 Never, 1 Smart, 2 Always
+  </li>
+  <li>
+    Read single binary data from multi-valued attributes (not yet usable in UI).
+  </li>
+  <li>
+    New configuration parameter web2ldapcnf.ldif_maxbytes
+    for limiting the amount of data in the LDIF input field.
+  </li>
+  <li>
+    Even more bug hunting, code cleaning and small UI enhancements.
+  </li>
+  <li>
+    Escape special HTML/Javascript characters to address
+    security problems with scripting content described in
+    CERT advisory
+    <a href="http://www.cert.org/advisories/CA-2000-02.html">
+    CA-2000-02</a>.
+  </li>
+</ul>
+
+<h2 id="r0.6.8">0.6.8</h2>
+
+
+<p>Release Date: 2000-01-29</p>
+<ul>
+  <li>
+    Bug hunting and code cleaning.
+  </li>
+  <li>
+    Smarter main menu.
+  </li>
+  <li>
+    Graceful error handling.
+  </li>
+  <li>
+    Nice confirmation dialogue for delete.
+  </li>
+  <li>
+    Recursive delete of sub-trees.
+  </li>
+</ul>
+
+<h2 id="r0.6.7">0.6.7</h2>
+<p>Release Date: 2000-01-28</p>
+<ul>
+  <li>
+    Fixed bug with download of binary attributes introduced
+    in 0.6.5 or 0.6.6
+  </li>
+  <li>
+    New handling of SSL-related environment variables:
+    Prefer mod_ssl style with fallback to old ApacheSSL style.
+  </li>
+</ul>
+
+<h2 id="r0.6.6">0.6.6</h2>
+<p>Release Date: 2000-01-25</p>
+<ul>
+  <li>
+    You might have guessed it: Bug hunting and code cleaning!
+  </li>
+  <li>
+    Better support and example for CSS
+  </li>
+</ul>
+
+<h2 id="r0.6.5">0.6.5</h2>
+
+
+<p>Release Date: 2000-01-23</p>
+<ul>
+  <li>
+  Implemented modrdn.
+  </li>
+  <li>
+  Omnipresent button bar throughout the whole UI now
+  (including error messages).
+  </li>
+  <li>
+  Direct input of LDIF data possible during adding
+  or modifying entries (e.g. for binary data).
+  </li>
+  <li>
+  Display attributes of entry according to the schema categories
+  (required, allowed, not matching).
+  </li>
+  <li>
+  Minor bugfixing and code cleaning.
+  </li>
+  <li>
+  Display entries with HTML template files depending on objectClass.
+  </li>
+  <li>
+  HTML clean-up to be hopefully SGML-conform (and friendly to
+  browsers).
+  </li>
+  <li>
+  Configuration parameters for complete &lt;BODY&gt; tag.
+  </li>
+  <li>
+  ID params in important HTML tags for using CSS.
+  </li>
+  <li>
+  Configuration parameters for string placed in &lt;HEAD&gt;&lt;/HEAD&gt;
+  section (suitable for placing &lt;STYLE&gt; tags).
+  </li>
+</ul>
+
+<h2 id="r0.6.4">0.6.4</h2>
+
+
+<p>Release Date: 2000-01-06</p>
+<ul>
+  <li>
+  Some minor enhancements of user interface
+  </li>
+  <li>
+  Fixed a basedn-related bug in smart login search
+  </li>
+  <li>
+  Added automatically start of CGIHTTPServer.py
+  if web2ldap.py is invoked from command-line
+  (only Unix up to now).
+  </li>
+</ul>
+
+<h2 id="r0.6.1">0.6.1, 0.6.2, 0.6.3</h2>
+<p>Release Date: 2000-01-04</p>
+<ul>
+  <li>
+  bad day...
+  </li>
+</ul>
+
+<h2 id="r0.6.0">0.6.0</h2>
+<p>Release Date: 2000-01-03</p>
+<ul>
+  <li>
+  started enhanced user interface
+  </li>
+</ul>
+
+<h2 id="r0.5.8">0.5.8</h2>
+<p>Release Date: 1999-12-29</p>
+<ul>
+  <li>
+  some code cleaning / bug fixing
+  </li>
+  <li>
+  enhanced direct handling of UTF-8 input/output more
+  conform to HTML4 standard
+  </li>
+  <li>
+    new feature: for each host a dictionary with DNs as keys
+    can be created to define the default objectclass
+    and attribute for forming DNs for subordinate entries
+    (see example in cgi-bin/web2ldapcnf.py under host
+    ldap.stroeder.com). This is handy in situations where
+    unexperienced users have to add entries without knowing
+    how to form a new DN.
+  </li>
+</ul>
+
+<h2 id="r0.5.6">0.5.6</h2>
+<p>Release Date: 1999-12-21</p>
+<p>Changes since 0.5.3:</p>
+<ul>
+  <li>
+  some code cleaning / bug fixing in login procedure
+  </li>
+  <li>
+  some small performance enhancements
+  </li>
+  <li>
+  direct output of UTF-8 if browser sends UTF-8 in
+  HTTP_ACCEPTED_CHARSET (e.g. like Netscape Communicator 4.5x does)
+  </li>
+  <li>
+  fixed problems with being too case sensitive in modify
+  </li>
+  <li>
+  some small improvements in user interface
+  </li>
+</ul>
+
+<h2 id="r0.5.4">0.5.4</h2>
+(1999-12-13)
+<ul>
+  <li>
+  small bugfix
+  </li>
+</ul>
+
+<h2 id="r0.5.3">0.5.3</h2>
+<p>Release Date: 1999-12-12</p>
+<ul>
+<li>
+  deal with DNs containing spaces between DN components
+</li>
+<li>
+  fixed behaviour of accidently case sensitive attribute
+  name handling in addform/modifyform
+</li>
+</ul>
+
+<h2 id="r0.5.2">0.5.2</h2>
+
+<p>Release Date: 1999-11-17</p>
+<p>Changes since 0.5.0:</p>
+<ul>
+<li>
+renamed project to web2ldap
+</li>
+<li>
+complete re-design of modifyform to make it possible to change
+objectClass attributes.
+</li>
+<li>
+minor enhancements of user interface
+</li>
+<li>
+some small bug fixes
+</li>
+</ul>
+
+<h2 id="r0.5.1">ldap-client-cgi 0.5.1</h2>
+<p>Release Date: 1999-10-05</p>
+
+<h2 id="r0.5.0">ldap-client-cgi 0.5.0</h2>
+<p>Release Date: 1999-09-27</p>
+<ul>
+  <li>
+    complete re-design of add/modify
+  </li>
+  <li>
+    client-side schema checking with appropriate input forms
+    for required and allowed attributes
+  </li>
+  <li>
+    automatically checking for missing parent DNs if add fails
+    with "NO SUCH OBJECT" for reducing FAQ-traffic on
+    OpenLDAP mailing lists ;-)
+  </li>
+  <li>
+    support for setting hashed passwords ({crypt},{md5} and {sha})
+  </li>
+  <li>
+    minor enhancements of user interface
+  </li>
+  <li>
+    some small bug fixes
+  </li>
+</ul>
+
+<h2 id="r0.4.4">ldap-client-cgi 0.4.4</h2>
+<p>Release Date: 1999-09-04</p>
+<p>Changes since 0.4.2</p>
+<ul>
+  <li>
+    some bug fixes
+  </li>
+  <li>
+    more complete and slightly faster character conversion
+  </li>
+</ul>
+
+<h2 id="r0.4.3">ldap-client-cgi 0.4.3</h2>
+<p>Release Date: 1999-08-19</p>
+
+<h2 id="r0.4.2">ldap-client-cgi 0.4.2</h2>
+<p>Release Date: 1999-08-18</p>
+<ul>
+  <li>
+    security fix! (forgot METHOD-parameter in a &lt;FORM&gt;-tag)
+  </li>
+  <li>
+    small fixes in user interface
+  </li>
+</ul>
+
+<h2 id="r0.4.1">ldap-client-cgi 0.4.1</h2>
+<p>Release Date: 1999-08-08</p>
+<p>Changes since 0.3.1:</p>
+<ul>
+  <li>
+    bind without input of full bind-dn
+    (anon search seeks for complete DN first)
+  </li>
+  <li>
+    working tree traversal
+  </li>
+  <li>
+    almost every parameter configurable for each LDAP host separately
+  </li>
+  <li>
+    vCard's for easy download of addresses in address books
+    of NS Comm. and MS IE.
+  </li>
+  <li>
+    LDIF output of search results for bulk downloading of addresses
+    (no binary attributes up to now)
+  </li>
+  <li>
+    improvements to the user interface
+  </li>
+  <li>
+    clean login behaviour
+  </li>
+  <li>
+    minor HTML improvements
+  </li>
+</ul>
+
+<p>
+  Dig
+  <a href="https://groups.google.com/groups?q=%22ldap-client-cgi%22">groups.google.com</a>
+  if you're interested in changes of these ancient releases...
+</p>
+
+<h2 id="r0.4.0">ldap-client-cgi 0.4.0</h2>
+<p>Release Date: 1999-08-07</p>
+
+<h2 id="r0.3.1">ldap-client-cgi 0.3.1</h2>
+<p>Release Date: 1999-07-21</p>
+
+<h2 id="r0.3">ldap-client-cgi 0.3</h2>
+<p>Release Date: 1999-04-29</p>
+
+<h2 id="r0.2.6">ldap-client-cgi 0.2.6</h2>
+<p>Release Date: 1998-09-03</p>
+
+<!--#include file="ssi/footer.html" -->

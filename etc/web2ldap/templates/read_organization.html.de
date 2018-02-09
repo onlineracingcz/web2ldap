@@ -1,0 +1,60 @@
+<div lang="de">
+
+  <h1>%(o)s</h1>
+
+  <h2>Organisatorische Informationen</h2>
+
+  <table>
+    <tr>
+      <td>Name der Organisation:</td>
+      <td>%(o)s</td>
+    </tr>
+    <tr>
+      <td>Branche:</td>
+      <td>%(businessCategory)s</td>
+    </tr>
+    <tr>
+      <td>Beschreibung:</td>
+      <td>%(description)s</td>
+    </tr>
+  </table>
+
+  <h2>Adressangaben</h2>
+
+  <table>
+    <tr>
+      <td>Adresse:</td>
+      <td>
+        <address>
+          %(streetAddress)s<br>
+          %(postOfficeBox)s<br>
+          %(postalCode)s %(l)s<br>
+          %(st)s<br>
+          %(c)s<br>
+         </address>
+      </td>
+    </tr>
+    <tr>
+      <td>Postalische Adresse:</td>
+      <td>
+        <address>
+          %(postalAddress)s
+        </address>
+      </td>
+    </tr>
+  </table>
+
+  <h2>Telefonnummern</h2>
+
+  <table>
+    <tr>
+      <td>Telefon:</td>
+      <td>%(telephoneNumber)s</td>
+    </tr>
+    <tr>
+      <td>FAX:</td>
+      <td>%(facsimileTelephoneNumber)s</td>
+    </tr>
+  </table>
+
+</div>

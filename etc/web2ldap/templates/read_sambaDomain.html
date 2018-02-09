@@ -1,0 +1,94 @@
+<div lang="en">
+
+  <h1>Samba 3 Domain <em>%(sambaDomainName)s</em></h1>
+
+  <p class="EntryDN">%(entryDN)s</p>
+
+  <table>
+    <tr>
+      <td>Domain name:</td>
+      <td>%(sambaDomainName)s</td>
+    </tr>
+    <tr>
+      <td>
+        Samba-SID:
+      </td>
+      <td>
+        %(sambaSID)s
+      </td>
+    </tr>
+  </table>
+
+  <h2>Password policy</em></h2>
+
+  <table>
+    <tr>
+      <td>Force user to logon for password change:</td>
+      <td>%(sambaLogonToChgPwd)s</td>
+    </tr>
+    <tr>
+      <td>Minimum time between password modifications:</td>
+      <td>%(sambaMinPwdAge)s seconds</td>
+    </tr>
+    <tr>
+      <td>Time after which a password is no longer valid (password expiry):</td>
+      <td>%(sambaMaxPwdAge)s seconds</td>
+    </tr>
+    <tr>
+      <td>Minimum password length:</td>
+      <td>%(sambaMinPwdLength)s</td>
+    </tr>
+    <tr>
+      <td>sambaRefuseMachinePwdChange:</td>
+      <td>%(sambaRefuseMachinePwdChange)s</td>
+    </tr>
+    <tr>
+      <td>Maximum number of passwords stored in history:</td>
+      <td>%(sambaPwdHistoryLength)s</td>
+    </tr>
+  </table>
+
+  <h3>Lockout parameters</h3>
+
+  <strong>You should think twice whether you really want to lock out users!</strong>
+
+  <table>
+    <tr>
+      <td>Disconnect users outside logon hours:</td>
+      <td>%(sambaForceLogoff)s</td>
+    </tr>
+    <tr>
+      <td>Duration of password lockout:</td>
+      <td>%(sambaLockoutDuration)s seconds</td>
+    </tr>
+    <tr>
+      <td>Time after which failed logon attempts are purged:</td>
+      <td>%(sambaLockoutObservationWindow)s seconds</td>
+    </tr>
+    <tr>
+      <td>Number of failed logon attempts for lockout:</td>
+      <td>%(sambaLockoutThreshold)s</td>
+    </tr>
+  </table>
+
+  <h2>RID assignment</em></h2>
+
+  <table>
+    <tr>
+      <td>RID base:</td>
+      <td>%(sambaAlgorithmicRidBase)s</td>
+    </tr>
+    <tr>
+      <td>Next RID:</td>
+      <td>%(sambaNextRid)s</td>
+    </tr>
+    <tr>
+      <td>Next user RID:</td>
+      <td>%(sambaNextUserRid)s</td>
+    </tr>
+    <tr>
+      <td>Next group RID:</td>
+      <td>%(sambaNextGroupRid)s</td>
+    </tr>
+  </table>
+</div>

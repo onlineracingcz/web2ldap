@@ -1,0 +1,52 @@
+<!--#set var="web2ldap_subtitle" value="Configuration" -->
+<!--#set var="web2ldap_pagedescription" value="The configuration module directory web2ldapcnf/" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<p>
+  This is the reference documentation for the Python module package web2ldapcnf/.
+  You can set configuration options for various aspects. See also the
+  <a href="usability.html">usability summary</a>
+  on how to customize the user interface the by configuration.
+</p>
+<p>
+  The configuration module is divided into different sub-modules:
+</p>
+<dl>
+  <dt>__init__.py</dt>
+  <dd>
+    Initialization module for the directory module.
+    Simply do not touch this.
+  </dd>
+  <dt><a href="web2ldapcnf_misc.html">misc.py</a></dt>
+  <dd>
+    Options needed in any running-mode.
+  </dd>
+  <dt><a href="web2ldapcnf_standalone.html">standalone.py</a></dt>
+  <dd>
+    Options only needed when running as stand-alone web server.
+  </dd>
+  <dt><a href="web2ldapcnf_fastcgi.html">fastcgi.py</a></dt>
+  <dd>
+    Options only needed when running as FastCGI server.
+  </dd>
+  <dt><a href="web2ldapcnf_hosts.html">hosts.py</a></dt>
+  <dd>
+    Options specific for certain LDAP hosts.
+  </dd>
+  <dt><a href="web2ldapcnf_monitor.html">monitor.py</a></dt>
+  <dd>
+    Options only needed for monitor page.
+  </dd>
+</dl>
+<p>
+  <strong>Note:</strong><br>
+  The configuration itself is a Python module and therefore
+  you have to provide a syntactically correct module and correct
+  configuration parameters.<br>
+  For doing nifty things please refer to the <a href="https://docs.python.org/">Python docs</a>
+  on details about the Python syntax itself.
+  Most times this is not necessary since the example configuration is pretty easy to understand.
+</p>
+
+<!--#include file="ssi/footer.html" -->

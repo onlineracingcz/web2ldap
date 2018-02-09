@@ -1,0 +1,234 @@
+<div lang="en">
+
+  <fieldset>
+
+    <legend>General</legend>
+
+    <p>
+      Match
+      <select title="Search mode" name="search_mode" size="1">
+      <option value="(&amp;%s)" selected="selected">all</option>
+      <option value="(|%s)">any</option>
+      </select> of the following:
+    </p>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_attr" value="objectClass">
+          Object class of entry
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*)">*</option>
+          </select>
+        </td>
+        <td>
+          <select title="Object class of entry" name="search_string" size="1">
+            <option value="">- not set -</option>
+            <option value="inetOrgPerson">Person (inetOrgPerson)</option>
+            <option value="groupOfNames">Group (groupOfNames)</option>
+            <option value="account">User account (account)</option>
+            <option value="posixAccount">Posix User (posixAccount)</option>
+            <option value="posixGroup">Posix Group (posixGroup)</option>
+            <option value="organization">Organization</option>
+            <option value="organizationalUnit">Org. Unit</option>
+            <option value="applicationProcess">Application Process</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <select title="Attribute type" name="search_attr" size="1">
+            <option value="uid">uid</option>
+            <option value="uidNumber">uidNumber</option>
+            <option value="mail">mail</option>
+            <option value="entryUUID">entryUUID</option>
+            <option value="objectSID">objectSID (MS AD)</option>
+            <option value="objectGUID">objectGUID (MS AD)</option>
+            <option value="samAccountName">samAccountName (MS AD)</option>
+            <option value="userPrincipalName">userPrincipalName (MS AD)</option>
+          </select>
+          is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="20" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="cn">
+          Common name (cn) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          Entry DN
+          <select title="Matching rule for entryDN" name="search_mr" size="1">
+            <option value="dn">is</option>
+            <option value="dnSubordinateMatch">is subordinate of</option>
+            <option value="dnSubtreeMatch">within subtree</option>
+            <option value="dnOneLevelMatch">is child of</option>
+          </select>
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="entryDN">
+        </td>
+        <td>
+          <input name="search_string" maxlength="50" size="30" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>Person attributes</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="givenName">
+          First name (givenName) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="sn">
+          Last name (sn) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="mail">
+          E-Mail (mail) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="employeeNumber">
+          Employee No. (employeeNumber) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="20" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>Organization attributes</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="o">
+          Organization (o) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="ou">
+          Organization unit (ou) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="departmentNumber">
+          Department No. (departmentNumber) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="20" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>Locality / address attributes</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="l">
+          Locality name (l) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="ou">
+          Street address (street) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="30" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+</div>

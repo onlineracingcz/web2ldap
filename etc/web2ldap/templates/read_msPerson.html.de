@@ -1,0 +1,81 @@
+<h2>Zus&auml;tzliche Angaben zur Person</h2>
+
+<table>
+  <tr>
+    <td>
+      Eindeutige ID:
+    </td>
+    <td>
+      %(uniqueIdentifier)s
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Land:
+    </td>
+    <td>
+      %(c)s
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Anrede:
+    </td>
+    <td>
+      %(personalTitle)s
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Geschlecht (1=m&auml;nnlich, 2=weiblich):
+    </td>
+    <td>
+      %(gender)s
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Geb&auml;udename:
+    </td>
+    <td>
+      %(buildingName)s
+    </td>
+  </tr>
+  <tr>
+    <td>
+      T&auml;tigkeit (Position):
+    </td>
+    <td>
+      %(businessTitle)s
+    </td>
+  </tr>
+</table>
+
+<h3>Geburtsangaben</h3>
+
+<table>
+  <tr>
+    <td>
+      Geburtstag (YYYY-MM-DD):
+    </td>
+    <td>
+      %(dateofBirth)s
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Geburtsort:
+    </td>
+    <td>
+      %(birthPlace)s
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Geburtsname:
+    </td>
+    <td>
+      %(birthName)s
+    </td>
+  </tr>
+</table>

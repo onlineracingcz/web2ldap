@@ -1,0 +1,80 @@
+<h1>&AElig;-DIR personal account (aeUser)</h1>
+
+<p>
+  Wiki documentation:
+  <a href="https://ae-dir.com/docs.html#schema-oc-aeUser">Schema</a> /
+  <a href="https://ae-dir.com/web2ldap.html#oc-aeUser">How-To</a>
+</p>
+
+<fieldset>
+  <legend>Required input</legend>
+  <table>
+    <tr>
+      <td>User name (uid):</td>
+      <td>%(uid)s</td>
+    </tr>
+    <tr>
+      <td>Associated person (aePerson):</td>
+      <td>%(aePerson)s</td>
+    </tr>
+    <tr>
+      <td>Intended purpose (description):</td>
+      <td>%(description)s</td>
+    </tr>
+    <tr>
+      <td>Status (aeStatus):</td>
+      <td>%(aeStatus)s</td>
+    </tr>
+    <tr>
+      <td>Expiry Status (aeExpiryStatus):</td>
+      <td>%(aeExpiryStatus)s</td>
+    </tr>
+  </table>
+
+</fieldset>
+
+<fieldset>
+
+  <legend>Optional input</legend>
+
+  <table>
+    <tr>
+      <td>Ticket no. last change (aeTicketId):</td>
+      <td>%(aeTicketId)s</td>
+    </tr>
+    <tr>
+      <td>Validity period (aeNotBefore..aeNotAfter):</td>
+      <td>
+        <dl>
+          <dt>from</dt>
+          <dd>%(aeNotBefore)s</dd>
+          <dt>until</dt>
+          <dd>%(aeNotAfter)s</dd>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td>Tag(s) (aeTag):</td>
+      <td>%(aeTag)s</td>
+    </tr>
+    <tr>
+      <td>SSH public key(s) (sshPublicKey):</td>
+      <td>%(sshPublicKey)s</td>
+    </tr>
+    <tr title="IP address(es) from where to expect logins">
+      <td>Remote login hosts (aeRemoteHost):</td>
+      <td>%(aeRemoteHost)s</td>
+    </tr>
+    <tr>
+      <td>Primary e-mail address (mail):</td>
+      <td>%(mail)s</td>
+    </tr>
+  </table>
+
+</fieldset>
+
+<!--hidden input fields for auto-generated values-->
+%(sn)s
+%(givenName)s
+%(cn)s
+%(displayName)s

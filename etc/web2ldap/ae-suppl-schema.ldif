@@ -1,0 +1,79 @@
+dn: cn=ae-dir-structure
+#
+# top node ou=ae-dir
+#
+dITStructureRules: ( 1 NAME 'aeRoot-top-SR' FORM aeRoot-top-NF )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.1 NAME 'aeRoot-top-NF' OC aeRoot MUST ( ou ) )
+#
+# aeZone is direct subordinate of aeRoot
+#
+dITStructureRules: ( 2 NAME 'aeZone-aeRoot-SR' FORM aeZone-aeRoot-NF SUP ( 1 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.2 NAME 'aeZone-aeRoot-NF' OC aeZone MUST ( cn ) )
+#
+# Possible direct subordinates of aeZone:
+# aeUser, aeGroup, aeSrvGroup, aeSudoRule, aePerson, 
+# namedObject, namedPolicy
+#
+dITStructureRules: ( 3 NAME 'aeUser-aeZone-SR' FORM aeUser-aeZone-NF SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.3 NAME 'aeUser-aeZone-NF' OC aeUser MUST ( uid ) )
+#
+dITStructureRules: ( 4 NAME 'aeGroup-aeZone-SR' FORM aeGroup-aeZone-NF SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.4 NAME 'aeGroup-aeZone-NF' OC aeGroup MUST ( cn ) )
+#
+dITStructureRules: ( 5 NAME 'aeSrvGroup-aeZone-SR' FORM aeSrvGroup-aeZone-NF SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.5 NAME 'aeSrvGroup-aeZone-NF' OC aeSrvGroup MUST ( cn ) )
+#
+dITStructureRules: ( 6 NAME 'aeSudoRule-aeZone-SR' FORM aeSudoRule-aeZone-NF SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.6 NAME 'aeSudoRule-aeZone-NF' OC aeSudoRule MUST ( cn ) )
+# namedObject
+dITStructureRules: ( 7 NAME 'namedObject-aeZone-SR-1' FORM namedObject-aeZone-NF-cn SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.7 NAME 'namedObject-aeZone-NF-cn' OC namedObject MUST ( cn ) )
+dITStructureRules: ( 8 NAME 'namedObject-aeZone-SR-2' FORM namedObject-aeZone-NF-uniqueIdentifier SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.8 NAME 'namedObject-aeZone-NF-uniqueIdentifier' OC namedObject MUST ( uniqueIdentifier ) MAY ( cn ) )
+# namedPolicy
+dITStructureRules: ( 9 NAME 'namedPolicy-aeZone-SR-1' FORM namedPolicy-aeZone-NF-cn SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.9 NAME 'namedPolicy-aeZone-NF-cn' OC namedPolicy MUST ( cn ) )
+dITStructureRules: ( 10 NAME 'namedPolicy-aeZone-SR-2' FORM namedPolicy-aeZone-NF-uniqueIdentifier SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.10 NAME 'namedPolicy-aeZone-NF-uniqueIdentifier' OC namedPolicy MUST ( uniqueIdentifier ) MAY ( cn ) )
+# aePerson
+dITStructureRules: ( 11 NAME 'aePerson-aeZone-SR-1' FORM aePerson-aeZone-NF-employeeNumber SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.11 NAME 'aePerson-aeZone-NF-employeeNumber' OC aePerson MUST ( employeeNumber ) )
+dITStructureRules: ( 12 NAME 'aePerson-aeZone-SR-2' FORM aePerson-aeZone-NF-uniqueIdentifier SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.12 NAME 'aePerson-aeZone-NF-uniqueIdentifier' OC aePerson MUST ( uniqueIdentifier ) )
+# aeTag
+dITStructureRules: ( 13 NAME 'aeTag-aeZone-SR-1' FORM aeTag-aeZone-NF-cn SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.13 NAME 'aeTag-aeZone-NF-cn' OC aeTag MUST ( cn ) )
+# aeDept
+dITStructureRules: ( 14 NAME 'aeDept-aeZone-SR-1' FORM aeDept-aeZone-NF-cn SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.14 NAME 'aeDept-aeZone-NF-cn' OC aeDept MUST ( departmentNumber ) )
+# aeAuthcToken
+dITStructureRules: ( 15 NAME 'aeAuthcToken-aeZone-SR-1' FORM aeAuthcToken-aeZone-NF-cn SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.15 NAME 'aeAuthcToken-aeZone-NF-cn' OC aeAuthcToken MUST ( serialNumber ) )
+# aePolicy
+dITStructureRules: ( 16 NAME 'aePolicy-aeZone-SR-1' FORM aePolicy-aeZone-NF-cn SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.16 NAME 'aePolicy-aeZone-NF-cn' OC aePolicy MUST ( cn ) )
+# aeContact
+dITStructureRules: ( 17 NAME 'aeContact-aeZone-SR-1' FORM aeContact-aeZone-NF-cn SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.17 NAME 'aeContact-aeZone-NF-cn' OC aeContact MUST ( cn ) )
+# aeMailGroup
+dITStructureRules: ( 18 NAME 'aeMailGroup-aeZone-SR-1' FORM aeMailGroup-aeZone-NF-cn SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.18 NAME 'aeMailGroup-aeZone-NF-cn' OC aeMailGroup MUST ( cn ) )
+# aeLocation
+dITStructureRules: ( 19 NAME 'aeLocation-aeZone-SR-1' FORM aeLocation-aeZone-NF-cn SUP ( 2 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.19 NAME 'aeLocation-aeZone-NF-cn' OC aeLocation MUST ( cn ) )
+#
+# aeService can be subordinate of aeZone or aeSrvGroup
+#
+dITStructureRules: ( 20 NAME 'aeService-aeZone-SR' FORM aeService-aeZone-NF SUP ( 2 5 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.20 NAME 'aeService-aeZone-NF' OC aeService MUST ( uid ) )
+#
+# aeHost must be subordinate of aeSrvGroup
+#
+dITStructureRules: ( 21 NAME 'aeHost-aeZone-SR' FORM aeHost-aeZone-NF SUP ( 5 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.21 NAME 'aeHost-aeZone-NF' OC aeHost MUST ( host ) )
+#
+# aeNwDevice must be subordinate of aeHost
+#
+dITStructureRules: ( 30 NAME 'aeNwDevice-aeHost-SR' FORM aeNwDevice-aeHost-NF SUP ( 21 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.30 NAME 'aeNwDevice-aeHost-NF' OC aeNwDevice MUST ( cn ) )
+

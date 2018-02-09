@@ -1,0 +1,44 @@
+<h1>{text_heading}</h1>
+
+{text_error}
+
+<!--UTC value: {value_currenttime}-->
+
+{form_begin}
+  <fieldset title="Select list of pre-configured LDAP host(s)">
+    <legend>Pre-configured LDAP host(s)</legend>
+    <input type="submit" value="Connect">
+    <label for="ldapurl">to selected host:</label>
+    {field_uri_select}
+  </fieldset>
+</form>
+
+{disable_start}
+{form_begin}
+  <fieldset title="Any LDAP host by name:port and a search root">
+      <legend>Access any LDAP host</legend>
+      <table>
+        <tr>
+          <td><label for="conntype">Connection type</label></td>
+          <td>
+            <select title="Connection type" name="conntype" size="1" >
+              <option value="0" selected>LDAP clear-text connection</option>
+              <option value="1">LDAP with StartTLS ext.op.</option>
+              <option value="2">LDAP over separate SSL port (LDAPS)</option>
+              <option value="3">LDAP over Unix domain socket (LDAPI)</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td><label for="host">host:port:</label></td>
+          <td><input title="The hostname and/or IP address of the directory to connect to" name="host"  maxlength="255" size="30" value=""></td>
+        </tr>
+        <tr>
+          <td><label for="dn">search root:<br>(optional)</label></td>
+          <td><input title="Where to start searches" name="dn" maxlength="1024" size="50" value=""></td>
+        </tr>
+      </table>
+      <input type="submit" value="Connect">
+    </fieldset>
+</form>
+{disable_end}

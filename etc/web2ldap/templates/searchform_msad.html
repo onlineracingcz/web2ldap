@@ -1,0 +1,196 @@
+<div lang="en">
+
+  <fieldset>
+
+    <legend>General</legend>
+
+    <p>
+      Match
+      <select title="Search mode" name="search_mode" size="1">
+      <option value="(&amp;%s)" selected="selected">all</option>
+      <option value="(|%s)">any</option>
+      </select> of the following:
+    </p>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_attr" value="objectClass">
+          Object class of entry
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*)">*</option>
+          </select>
+        </td>
+        <td>
+          <select title="Object class of entry" name="search_string" size="1">
+            <option value="">- not set -</option>
+            <option value="computer">Server/workstation (computer)</option>
+            <option value="inetOrgPerson">Person (inetOrgPerson)</option>
+            <option value="group">User group (group)</option>
+            <option value="user">User account (user)</option>
+            <option value="contact">Contact info (contact)</option>
+            <option value="organizationalUnit">Org. Unit</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="cn">
+          Common name (cn) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="samAccountName">
+          SAM account name (samAccountName) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="objectSid">
+          Object security ID (objectSid) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="objectGUID">
+          Object GUID (objectGUID) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av}*)">
+          <input type="hidden" name="search_attr" value="userPrincipalName">
+          User principal name (userPrincipalName) starts with
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av}*)">
+          <input type="hidden" name="search_attr" value="servicePrincipalName">
+          Service principal name (servicePrincipalName) starts with
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>Person attributes</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="mail">
+          E-Mail (mail) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="employeeNumber">
+          Employee No. (employeeNumber) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="20" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="employeeID">
+          Employee ID (employeeID) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="20" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>Organizational attributes</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="ou">
+          Organization unit (ou) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="departmentNumber">
+          Department No. (departmentNumber) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="20" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+</div>

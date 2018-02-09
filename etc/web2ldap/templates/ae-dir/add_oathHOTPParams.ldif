@@ -1,0 +1,14 @@
+dn: cn=,cn=ae,ou=ae-dir
+cn: oath-policy-hotp-
+objectClass: aeObject
+objectClass: namedObject
+objectClass: namedPolicy
+objectClass: aePolicy
+objectClass: oathParams
+objectClass: oathHOTPParams
+aeStatus: 0
+description: OATH/HOTP policy parameters for
+oathHMACAlgorithm: 1.2.840.113549.2.7
+oathHOTPLookAhead: 15
+oathOTPLength: 8
+

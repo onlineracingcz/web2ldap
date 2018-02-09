@@ -1,0 +1,213 @@
+<div lang="en">
+
+  <fieldset>
+
+    <legend>General DNS attributes</legend>
+
+    <p>
+      Match
+      <select title="Search mode" name="search_mode" size="1">
+      <option value="(&amp;%s)" selected="selected">all</option>
+      <option value="(|%s)">any</option>
+      </select> of the following:
+    </p>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_attr" value="objectClass">
+          Object class of entry
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*)">*</option>
+          </select>
+        </td>
+        <td>
+          <select title="Object class of entry" name="search_string" size="1">
+            <option value="">- not set -</option>
+            <option value="domain">domain</option>
+            <option value="dNSDomain">dNSDomain</option>
+            <option value="dNSDomain2">dNSDomain2</option>
+            <option value="domainRelatedObject">domainRelatedObject</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="associatedDomain">
+          Full domain name (associatedDomain) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="dc">
+          First DNS label (dc) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="30" size="20" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="description">
+          Description text (description) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*)">
+          DNS entry has
+        </td>
+        <td>
+          <select name="search_attr">
+            <option value="">-/-</option>
+            <optgroup label="Common">
+              <option value="aRecord">A (IPv4)</option>
+              <option value="aAAARecord">AAAA (IPv6)</option>
+              <option value="pTRRecord">PTR</option>
+              <option value="cNAMERecord">CNAME</option>
+              <option value="mXRecord">MX</option>
+            </optgroup>
+            <optgroup label="Name server">
+              <option value="nSRecord">NS</option>
+              <option value="rPRecord">RP</option>
+              <option value="sOARecord">SOA</option>
+            </optgroup>
+            <optgroup label="DNSSEC">
+              <option value="DLVRecord">DLV</option>
+              <option value="dSRecord">DS</option>
+              <option value="nSec3ParamRecord">NSEC3</option>
+              <option value="nSECRecord">NSEC</option>
+              <option value="nXTRecord">NXT</option>
+              <option value="rRSIGRecord">RRSIG</option>
+              <option value="SigRecord">SIG</option>
+            </optgroup>
+            <optgroup label="Services">
+              <option value="nAPTRRecord">NAPTR</option>
+              <option value="sRVRecord">SRV (locating)</option>
+              <option value="sSHFPRecord">SSHFP</option>
+              <option value="TLSARecord">TLSA (DANE)</option>
+            </optgroup>
+            <optgroup label="Misc">
+              <option value="certRecord">CERT</option>
+              <option value="dHCIDRecord">DHCID</option>
+              <option value="dNameRecord">DNAME</option>
+              <option value="dNSKeyRecord">DNSKEY</option>
+              <option value="KeyRecord">KEY</option>
+              <option value="kXRecord">KX</option>
+              <option value="sPFRecord">SPF</option>
+              <option value="tXTRecord">TXT</option>
+              <option value="wKSRecord">WKS</option>
+            </optgroup>
+          </select>
+          RR data
+          <input type="hidden" name="search_string" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend>DNS resource records</legend>
+
+    <table>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="aRecord">
+          A RR / IPv4 address (aRecord) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="15" size="15" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="aAAARecord">
+          AAAA RR / IPv6 address (aAAARecord) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="70" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="pTRRecord">
+          PTR RR (pTRRecord) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="sRVRecord">
+          SRV RR (sRVRecord) contains
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="nSRecord">
+          NS RR (nSRecord) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_option" value="({at}={av})">
+          <input type="hidden" name="search_attr" value="sOARecord">
+          SOA RR (sOARecord) is
+        </td>
+        <td>
+          <input name="search_string" maxlength="60" size="40" value="">
+        </td>
+      </tr>
+
+    </table>
+
+  </fieldset>
+
+</div>

@@ -1,0 +1,15 @@
+dn: uid=
+objectClass: account
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: aeObject
+objectClass: aeUser
+objectClass: posixAccount
+objectClass: ldapPublicKey
+aeStatus: 0
+loginShell: /bin/bash
+pwdPolicySubentry: cn=ppolicy-users,cn=ae,ou=ae-dir
+aeNotBefore: now
+aeTag: pub-tag-no-welcome-yet
+
