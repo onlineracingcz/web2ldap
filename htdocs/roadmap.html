@@ -26,15 +26,26 @@
 
 <h2 id="r1.3">1.3</h2>
 <p>
+  Started February 2018
+  (see <a href="changes-1.3.html">1.3.x changes</a> for details)
+</p>
+<p>
+  <li>
+    PIP-based installation
+  </li>
   <li>
     Will replace python-ldap by module package
     <a href="https://pypi.python.org/pypi/ldap0">ldap0</a>.
+  </li>
+  <li>
+    Use module <a href="https://pypi.python.org/pypi/ipaddress">ipaddress</a>
+    instead of <var>netaddr</var> or <var>ipaddr</var>.
   </li>
 </p>
 
 <h2 id="r1.4">1.4</h2>
 <p>
-  Planned as medium rewrite within 2017.
+  Planned as medium rewrite starting end of 2018.
 </p>
 <ul>
   <li>
@@ -44,7 +55,7 @@
         Python 2.7.11+
       </li>
       <li>
-        python-ldap 2.4.28+ for handling LDIF change records
+        Handle LDIF change records
       </li>
       <li>
         pyweblib 1.4.0+ for HTML5 features
@@ -52,10 +63,6 @@
       <li>
         Use module <a href="http://www.python-excel.org/">xlwt</a> for
         improved Excel data export
-      </li>
-      <li>
-        Use module <a href="https://pypi.python.org/pypi/ipaddress">ipaddress</a>
-        instead of <var>netaddr</var> or <var>ipaddr</var>.
       </li>
       <li>
         Use <a href="http://www.dnspython.org">dnspython</a> instead of
