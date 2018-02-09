@@ -14,10 +14,11 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import types,ldap,w2lapp.gui
+import types,ldap0,w2lapp.gui
 
-from ldap.schema import \
-  SCHEMA_ATTRS,SCHEMA_CLASS_MAPPING,SCHEMA_ATTR_MAPPING, \
+from ldap0.schema.subentry import \
+  SCHEMA_ATTRS,SCHEMA_CLASS_MAPPING,SCHEMA_ATTR_MAPPING
+from ldap0.schema.models import \
   LDAPSyntax,AttributeType,ObjectClass,MatchingRule,MatchingRuleUse,DITContentRule,DITStructureRule,NameForm
 
 from pyweblib.forms import escapeHTML
@@ -106,7 +107,7 @@ def SchemaContextMenu(sid,form,ls,dn):
   try:
     subschemaSubentryDN = ls.searchSubSchemaEntryDN(dn)
     subschemaSubentry = ls.retrieveSubSchema(dn,None,None,False)
-  except ldap.LDAPError:
+  except ldap0.LDAPError:
     pass
   else:
     if subschemaSubentryDN!=None:
@@ -172,11 +173,11 @@ class DisplaySchemaElement:
       try:
         result = ls.l.search_s(
           ls.rootDSE['schemaNamingContext'][0],
-          ldap.SCOPE_SUBTREE,
+          ldap0.SCOPE_SUBTREE,
           '(|(&(objectClass=attributeSchema)(attributeID=%s))(&(objectClass=classSchema)(governsID=%s)))' % (self.se.oid,self.se.oid),
           attrlist=['cn']
         )
-      except ldap.LDAPError:
+      except ldap0.LDAPError:
         pass
       else:
         if result:

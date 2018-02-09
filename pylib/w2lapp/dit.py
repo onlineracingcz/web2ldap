@@ -33,7 +33,7 @@ DIT_ATTR_LIST = [
   'msDS-Approx-Immed-Subordinates' # MS Active Directory
 ]
 
-import ldap,w2lapp.gui
+import ldap0,w2lapp.gui
 
 from ldaputil.base import explode_dn,SplitRDN,ParentDN
 from w2lapp.gui import dn_anchor_hash
@@ -170,31 +170,31 @@ def w2l_DIT(sid,outf,command,form,ls,dn):
     search_base = u','.join(dn_components[dn_levels-cut_off_levels-i:])
     dit_dict[search_base] = {}
     try:
-      msg_id = ls.l.search_ext(
+      msg_id = ls.l.search(
         search_base.encode(ls.charset),
-        ldap.SCOPE_ONELEVEL,
+        ldap0.SCOPE_ONELEVEL,
         '(objectClass=*)',
         attrlist=DIT_ATTR_LIST,
         timeout=DIT_SEARCH_TIMELIMIT,
         sizelimit=DIT_SEARCH_SIZELIMIT,
       )
-      for res_type,res_data,_,_ in ls.l.allresults(msg_id):
+      for res_type,res_data,_,_ in ls.l.results(msg_id):
         # FIX ME! Search continuations are ignored for now
-        if res_type==ldap.RES_SEARCH_REFERENCE:
+        if res_type==ldap0.RES_SEARCH_REFERENCE:
           continue
         for res_dn,res_entry in res_data:
           res_dn = res_dn.decode(ls.charset)
           entry_dict[res_dn] = decode_dict(res_entry,ls.charset)
           dit_dict[search_base][res_dn] = {}
     except (
-      ldap.TIMEOUT,
-      ldap.SIZELIMIT_EXCEEDED,
-      ldap.TIMELIMIT_EXCEEDED,
-      ldap.ADMINLIMIT_EXCEEDED,
-      ldap.NO_SUCH_OBJECT,
-      ldap.INSUFFICIENT_ACCESS,
-      ldap.PARTIAL_RESULTS,
-      ldap.REFERRAL,
+      ldap0.TIMEOUT,
+      ldap0.SIZELIMIT_EXCEEDED,
+      ldap0.TIMELIMIT_EXCEEDED,
+      ldap0.ADMINLIMIT_EXCEEDED,
+      ldap0.NO_SUCH_OBJECT,
+      ldap0.INSUFFICIENT_ACCESS,
+      ldap0.PARTIAL_RESULTS,
+      ldap0.REFERRAL,
     ):
       dit_dict[search_base]['_sizelimit_'] = True
     else:

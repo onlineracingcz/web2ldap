@@ -10,7 +10,7 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import re,ldap,ldap.sasl,ldap.dn,ldap.filter
+import re,ldap0,ldap0.sasl,ldap0.dn,ldap0.filter
 
 from types import IntType
 
@@ -18,25 +18,25 @@ SEARCH_SCOPE_STR = ['base','one','sub']
 
 SEARCH_SCOPE = {
   # default for empty search scope string
-  '':ldap.SCOPE_BASE,
+  '':ldap0.SCOPE_BASE,
   # the search scope strings defined in RFC22xx(?)
-  'base':ldap.SCOPE_BASE,
-  'one':ldap.SCOPE_ONELEVEL,
-  'sub':ldap.SCOPE_SUBTREE,
+  'base':ldap0.SCOPE_BASE,
+  'one':ldap0.SCOPE_ONELEVEL,
+  'sub':ldap0.SCOPE_SUBTREE,
 }
 
 try:
   # Check whether constant is present (python-ldap 2.4.15+)
-  ldap.SCOPE_SUBORDINATE
+  ldap0.SCOPE_SUBORDINATE
 except AttributeError:
   pass
 else:
-  SEARCH_SCOPE['subordinate'] = ldap.SCOPE_SUBORDINATE
+  SEARCH_SCOPE['subordinate'] = ldap0.SCOPE_SUBORDINATE
   SEARCH_SCOPE_STR.append('subordinate')
 
 LDAP_OPT_NAMES_DICT = dict([
   (v,k)
-  for k,v in vars(ldap).items()+vars(ldap.sasl).items()
+  for k,v in vars(ldap0).items()+vars(ldap0.sasl).items()
   if type(v)==IntType
 ])
 
@@ -93,8 +93,8 @@ def is_dn(s):
   """returns 1 if s is a LDAP DN"""
   assert type(s)==UnicodeType, TypeError("Type of argument 's' must be UnicodeType: %s" % repr(s))
   try:
-    ldap.dn.str2dn(s.encode('utf-8'))
-  except ldap.DECODING_ERROR:
+    ldap0.dn.str2dn(s.encode('utf-8'))
+  except ldap0.DECODING_ERROR:
     return False
   else:
     return True
@@ -135,7 +135,7 @@ def rdn_dict(dn):
   if type(rdn)==UnicodeType:
     rdn = rdn.encode('utf-8')
   result = {}
-  for i in ldap.dn.explode_rdn(rdn.strip()):
+  for i in ldap0.dn.explode_rdn(rdn.strip()):
     attr_type,attr_value = explode_rdn_attr(unicode(i,'utf-8'))
     if result.has_key(attr_type):
       result[attr_type].append(attr_value)
@@ -146,14 +146,14 @@ def rdn_dict(dn):
 
 def explode_dn(dn):
   """
-  Unicode wrapper function for ldap.dn.explode_dn() which returns [] for
+  Unicode wrapper function for ldap0.dn.explode_dn() which returns [] for
   a zero-length DN
   """
   assert type(dn)==UnicodeType, TypeError("Type of argument 'dn' must be UnicodeType but was %s" % repr(dn))
   if not dn:
     return []
   assert type(dn)==UnicodeType,'Parameter dn must be Unicode'
-  return [ unicode(rdn.strip(),'utf-8') for rdn in ldap.dn.explode_dn(dn.encode('utf-8').strip()) ]
+  return [ unicode(rdn.strip(),'utf-8') for rdn in ldap0.dn.explode_dn(dn.encode('utf-8').strip()) ]
 
 
 def normalize_dn(dn):
@@ -247,7 +247,7 @@ def escape_ldap_filter_chars(search_string,charset='utf-8'):
       escape_mode=2
   else:
     raise TypeError,'search_string is not UnicodeType or StringType: %s' % (repr(search_string))
-  result = unicode(ldap.filter.escape_filter_chars(search_string,escape_mode=escape_mode),charset)
+  result = unicode(ldap0.filter.escape_filter_chars(search_string,escape_mode=escape_mode),charset)
   return result
 
 
@@ -256,7 +256,7 @@ def map_filter_parts(assertion_type,assertion_values,escape_mode=0):
   return [
     '(%s=%s)' % (
       assertion_type,
-      ldap.filter.escape_filter_chars(assertion_value,escape_mode=escape_mode),
+      ldap0.filter.escape_filter_chars(assertion_value,escape_mode=escape_mode),
     )
     for assertion_value in assertion_values
   ]

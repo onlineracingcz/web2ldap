@@ -13,7 +13,7 @@ class SimpleHTTPServer.SimpleHTTPRequestHandler.
 
 from __future__ import absolute_import
 
-__version__ = '1.2.99'
+__version__ = '1.3.0'
 
 import sys,os,posixpath,stat,socket,string,SimpleHTTPServer,urllib,msbase
 

@@ -14,14 +14,14 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import ldap,ldapsession,w2lapp.cnf,w2lapp.core,w2lapp.gui, \
+import ldap0,ldapsession,w2lapp.cnf,w2lapp.core,w2lapp.gui, \
        w2lapp.schema.viewer
 
-from ldap.controls.simple import ValueLessRequestControl,BooleanControl
+from ldap0.controls.simple import ValueLessRequestControl,BooleanControl
 
 AVAILABLE_BOOLEAN_CONTROLS = {
-  ldapsession.CONTROL_SUBENTRIES:           (('search_ext',),BooleanControl,True),
-  ldapsession.CONTROL_LDUP_SUBENTRIES:      (('search_ext',),ValueLessRequestControl,None),
+  ldapsession.CONTROL_SUBENTRIES:           (('search',),BooleanControl,True),
+  ldapsession.CONTROL_LDUP_SUBENTRIES:      (('search',),ValueLessRequestControl,None),
   ldapsession.CONTROL_MANAGEDSAIT:          (('**all**',),ValueLessRequestControl,None),
   ldapsession.CONTROL_RELAXRULES:           (('**write**',),ValueLessRequestControl,None),
   ldapsession.CONTROL_DONOTREPLICATE:       (('**write**',),ValueLessRequestControl,None),
@@ -31,13 +31,13 @@ AVAILABLE_BOOLEAN_CONTROLS = {
   '2.16.840.1.113730.3.4.17':               (('**read**',),ValueLessRequestControl,None),           # "real attributes only" control
   '2.16.840.1.113730.3.4.19':               (('**read**',),ValueLessRequestControl,None),           # "virtual attributes only" control
   '1.3.6.1.4.1.4203.666.11.9.5.1':          (('**all**',),ValueLessRequestControl,None),            # OpenLDAP's privateDB control for slapo-pcache
-  '1.3.18.0.2.10.26':                       (('delete_ext','rename'),ValueLessRequestControl,None), # Omit group referential integrity control
+  '1.3.18.0.2.10.26':                       (('delete','rename'),ValueLessRequestControl,None), # Omit group referential integrity control
   '1.2.840.113556.1.4.529':                 (('**read**',),ValueLessRequestControl,None),           # MS AD LDAP_SERVER_EXTENDED_DN_OID
   '1.2.840.113556.1.4.417':                 (('**all**',),ValueLessRequestControl,None),            # MS AD LDAP_SERVER_SHOW_DELETED_OID
-  '1.2.840.113556.1.4.2064':                (('search_ext',),ValueLessRequestControl,None),         # MS AD LDAP_SERVER_SHOW_RECYCLED_OID
-  '1.2.840.113556.1.4.1339':                (('search_ext',),ValueLessRequestControl,None),         # MS AD LDAP_SERVER_DOMAIN_SCOPE_OID
-  '1.2.840.113556.1.4.2065':                (('search_ext',),ValueLessRequestControl,None),         # MS AD LDAP_SERVER_SHOW_DEACTIVATED_LINK_OID
-  '1.3.6.1.4.1.42.2.27.9.5.2':              (('search_ext',),ValueLessRequestControl,None),         # Effective Rights control
+  '1.2.840.113556.1.4.2064':                (('search',),ValueLessRequestControl,None),         # MS AD LDAP_SERVER_SHOW_RECYCLED_OID
+  '1.2.840.113556.1.4.1339':                (('search',),ValueLessRequestControl,None),         # MS AD LDAP_SERVER_DOMAIN_SCOPE_OID
+  '1.2.840.113556.1.4.2065':                (('search',),ValueLessRequestControl,None),         # MS AD LDAP_SERVER_SHOW_DEACTIVATED_LINK_OID
+  '1.3.6.1.4.1.42.2.27.9.5.2':              (('search',),ValueLessRequestControl,None),         # Effective Rights control
   '1.3.6.1.4.1.26027.1.5.2':                (('**write**',),ValueLessRequestControl,None),          # Replication Repair Control
   '1.2.840.113556.1.4.619':                 (('**write**',),ValueLessRequestControl,None),          # MS AD LDAP_SERVER_LAZY_COMMIT_OID
 }

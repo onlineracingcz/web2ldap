@@ -6,7 +6,7 @@ web2ldap plugin classes for Novell eDirectory/DirXML
 
 from __future__ import absolute_import
 
-import uuid,ldap.filter,w2lapp.cnf
+import uuid,ldap0.filter,w2lapp.cnf
 
 from mspki.util import HexString
 
@@ -133,7 +133,7 @@ class OctetStringGUID(OctetString):
             'searchform','&raquo;',self._sid,
             [
               ('dn',self._dn),
-              ('filterstr', ldap.filter.escape_filter_chars(self.attrValue,2)),
+              ('filterstr', ldap0.filter.escape_filter_chars(self.attrValue,2)),
               ('searchform_mode','exp'),
             ],
             title=u'Search entry with this GUID',

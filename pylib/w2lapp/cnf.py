@@ -14,11 +14,11 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import signal,ldapurl,w2lapp.schema,ldap,ldap.schema,ldapsession
-from ldap.cidict import cidict
+import signal,ldap0.ldapurl,w2lapp.schema,ldap0,ldap0.schema,ldapsession
+from ldap0.cidict import cidict
 
 from types import StringType
-from ldapurl import LDAPUrl
+from ldap0.ldapurl import LDAPUrl
 
 import web2ldapcnf,web2ldapcnf.hosts,web2ldapcnf.misc,web2ldapcnf.standalone,web2ldapcnf.fastcgi,web2ldapcnf.countries
 from web2ldapcnf import misc,hosts,standalone,fastcgi,countries
@@ -111,7 +111,7 @@ def PopulateCheckDict(ldap_uri_list):
       ldap_uri,desc = ldap_uri
     except ValueError:
       pass
-    lu = ldapurl.LDAPUrl(ldap_uri)
+    lu = ldap0.ldapurl.LDAPUrl(ldap_uri)
     ldap_uri_list_check_dict[lu.initializeUrl()] = None
   return ldap_uri_list_check_dict # PopulateCheckDict()
 
@@ -132,8 +132,8 @@ def HUPSignalHandler(signum,frame):
   w2lapp.schema.parse_fake_schema(ldap_def)
   w2lapp.session.session.expireDeactivate = w2lapp.cnf.misc.session_remove
   w2lapp.session.session.expireRemove = w2lapp.cnf.misc.session_remove
-  ldap._trace_level = web2ldapcnf.misc.ldap_trace_level
-  ldap.set_option(ldap.OPT_DEBUG_LEVEL,web2ldapcnf.misc.ldap_opt_debug_level)
+  ldap0._trace_level = web2ldapcnf.misc.ldap_trace_level
+  ldap0.set_option(ldap0.OPT_DEBUG_LEVEL,web2ldapcnf.misc.ldap_opt_debug_level)
   w2lapp.core.ldap_uri_list_check_dict = PopulateCheckDict(web2ldapcnf.hosts.ldap_uri_list)
 
 try:

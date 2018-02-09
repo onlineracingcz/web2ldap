@@ -14,9 +14,9 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import ldap,w2lapp.gui
+import ldap0,w2lapp.gui
 
-from ldap.extop.dds import RefreshRequest,RefreshResponse
+from ldap0.extop.dds import RefreshRequest,RefreshResponse
 
 def DDSForm(sid,outf,form,ls,dn,Msg):
 
@@ -68,7 +68,7 @@ def w2l_DDS(sid,outf,command,form,ls,dn):
     extreq = RefreshRequest(entryName=dn,requestTtl=request_ttl)
     try:
       extop_resp_obj = ls.l.extop_s(extreq,extop_resp_class=RefreshResponse)
-    except ldap.SIZELIMIT_EXCEEDED as e:
+    except ldap0.SIZELIMIT_EXCEEDED as e:
       DDSForm(
         sid,outf,form,ls,dn,
         w2lapp.gui.LDAPError2ErrMsg(e,form,charset=form.accept_charset)

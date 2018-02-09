@@ -10,10 +10,10 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import ldapurl
+import ldap0.ldapurl
 
 
-class ExtendedLDAPUrl(ldapurl.LDAPUrl):
+class ExtendedLDAPUrl(ldap0.ldapurl.LDAPUrl):
   """
   Class for LDAP URLs passed as query string derived from LDAPUrl
   """

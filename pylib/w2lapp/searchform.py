@@ -14,7 +14,7 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import types,ldap,pyweblib.forms,w2lapp.core,w2lapp.gui,w2lapp.cnf
+import types,ldap0,pyweblib.forms,w2lapp.core,w2lapp.gui,w2lapp.cnf
 
 searchform_mode_text = {
   'adv':'Advanced',
@@ -59,21 +59,14 @@ search_options = (
 SEARCH_SCOPE_STR_BASE = u'0'
 SEARCH_SCOPE_STR_ONELEVEL = u'1'
 SEARCH_SCOPE_STR_SUBTREE = u'2'
+SEARCH_SCOPE_STR_SUBORDINATES = u'3'
 
 SEARCH_SCOPE_OPTIONS = [
   (SEARCH_SCOPE_STR_BASE,u'Base'),
   (SEARCH_SCOPE_STR_ONELEVEL,u'One level'),
   (SEARCH_SCOPE_STR_SUBTREE,u'Sub tree'),
+  (SEARCH_SCOPE_STR_SUBORDINATES,u'Subordinate'),
 ]
-
-try:
-  # Check whether constant is present (python-ldap 2.4.15+)
-  ldap.SCOPE_SUBORDINATE
-except AttributeError:
-  pass
-else:
-  SEARCH_SCOPE_STR_SUBORDINATES = u'3'
-  SEARCH_SCOPE_OPTIONS.append((SEARCH_SCOPE_STR_SUBORDINATES,u'Subordinate'))
 
 
 def SearchForm_exp(form,ls,dn,sub_schema,filterstr=''):
@@ -154,7 +147,7 @@ def SearchForm_adv(form,ls,dn,sub_schema):
   )
 
   mr_list = [u'']
-  mr_list.extend(sorted([unicode(mr) for mr in sub_schema.name2oid[ldap.schema.MatchingRule].keys()]))
+  mr_list.extend(sorted([unicode(mr) for mr in sub_schema.name2oid[ldap0.schema.models.MatchingRule].keys()]))
   # Create a select field instance for matching rule name
   search_mr_select = pyweblib.forms.Select(
     'search_mr',u'Matching rule used',
@@ -198,7 +191,7 @@ def w2l_SearchForm(
   sid,outf,command,form,ls,dn,
   Msg='',
   filterstr='',
-  scope=ldap.SCOPE_SUBTREE,
+  scope=ldap0.SCOPE_SUBTREE,
   search_root=None,
   searchform_mode=None,
 ):

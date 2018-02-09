@@ -10,8 +10,8 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import ldap.controls.readentry
-from ldap.controls.simple import ValueLessRequestControl,ResponseControl
+import ldap0.controls.readentry
+from ldap0.controls.simple import ValueLessRequestControl,ResponseControl
 
 from pyasn1_modules.rfc2251 import LDAPDN,PartialAttributeList,SearchResultEntry
 from pyasn1.type import namedtype,univ
@@ -19,7 +19,7 @@ from pyasn1.codec.ber import decoder
 from pyasn1.error import PyAsn1Error
 
 
-class ReadEntryControl(ldap.controls.readentry.ReadEntryControl):
+class ReadEntryControl(ldap0.controls.readentry.ReadEntryControl):
 
   class OpenLDAPITS6899SearchResultEntry(univ.Sequence):
     """
@@ -44,37 +44,14 @@ class ReadEntryControl(ldap.controls.readentry.ReadEntryControl):
 
 
 class PreReadControl(ReadEntryControl):
-  controlType = ldap.CONTROL_PRE_READ
+  controlType = ldap0.CONTROL_PRE_READ
 
-# override python-ldap's default implementation
-ldap.controls.KNOWN_RESPONSE_CONTROLS[PreReadControl.controlType] = PreReadControl
+# override ldap0's default implementation
+ldap0.controls.KNOWN_RESPONSE_CONTROLS.reg(PreReadControl)
 
 
 class PostReadControl(ReadEntryControl):
-  controlType = ldap.CONTROL_POST_READ
+  controlType = ldap0.CONTROL_POST_READ
 
-# override python-ldap's default implementation
-ldap.controls.KNOWN_RESPONSE_CONTROLS[PostReadControl.controlType] = PostReadControl
-
-
-class SearchNoOpControl(ValueLessRequestControl,ResponseControl):
-  """
-  No-op control attached for search operations implementing count operation
-
-  see https://www.openldap.org/its/index.cgi?findid=6598
-  """
-  controlType = '1.3.6.1.4.1.4203.666.5.18'
-
-  def __init__(self,criticality=False):
-    self.criticality = criticality
-
-  class SearchNoOpControlValue(univ.Sequence):
-    pass
-
-  def decodeControlValue(self,encodedControlValue):
-    decodedValue,_ = decoder.decode(encodedControlValue,asn1Spec=self.SearchNoOpControlValue())
-    self.resultCode = int(decodedValue[0])
-    self.numSearchResults = int(decodedValue[1])
-    self.numSearchContinuations = int(decodedValue[2])
-
-ldap.controls.KNOWN_RESPONSE_CONTROLS[SearchNoOpControl.controlType] = SearchNoOpControl
+# override ldap0's default implementation
+ldap0.controls.KNOWN_RESPONSE_CONTROLS.reg(PostReadControl)

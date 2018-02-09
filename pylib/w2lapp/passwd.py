@@ -14,10 +14,8 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import time,string,binascii,hashlib,ldap,ldaputil.base,ldaputil.passwd, \
+import time,string,binascii,hashlib,ldap0,ldaputil.base,ldaputil.passwd, \
        ldapsession,w2lapp.cnf,w2lapp.core,w2lapp.gui,w2lapp.login
-
-from ldap.schema.models import AttributeType
 
 from ldaputil.passwd import RandomString
 
@@ -56,7 +54,7 @@ def GetAllAllowedAttributes(schema,oc_list):
 
 def PasswordChangeUrl(form,ls,passwd_who,passwd_input):
   passwd_who_ldapurl_obj = ls.ldapUrl(passwd_who)
-  passwd_who_ldapurl_obj.scope = ldap.SCOPE_BASE
+  passwd_who_ldapurl_obj.scope = ldap0.SCOPE_BASE
   passwd_who_ldapurl_obj.who = passwd_who.encode(ls.charset)
   passwd_who_ldapurl_obj.cred = passwd_input.encode(ls.charset)
   passwd_who_ldapurl_obj.cred = passwd_input.encode(ls.charset)
@@ -96,7 +94,7 @@ def PasswdContextMenu(sid,form,dn,sub_schema):
       # SunONE/Netscape/Fedora/389 Directory Server
       u'passwordRetryCount',u'accountUnlockTime',
     )
-    if sub_schema.get_obj(ldap.schema.AttributeType,attr_type.encode('ascii'),None)!=None
+    if sub_schema.get_obj(ldap0.schema.models.AttributeType,attr_type.encode('ascii'),None)!=None
   ])
   result.append(
     form.applAnchor(
@@ -125,7 +123,7 @@ def PasswdContextMenu(sid,form,dn,sub_schema):
       u'passwordExpirationTime',u'passwordExpWarned',
       u'passwordRetryCount',u'accountUnlockTime',u'retryCountResetTime',
     )
-    if sub_schema.get_obj(ldap.schema.AttributeType,attr_type.encode('ascii'),None)!=None
+    if sub_schema.get_obj(ldap0.schema.models.AttributeType,attr_type.encode('ascii'),None)!=None
   ])
   result.append(
     form.applAnchor(
@@ -157,14 +155,17 @@ def PasswdForm(
   if not user_objectclasses:
     try:
       user_objectclasses = [ oc.lower() for oc in ls.getObjectClasses(passwd_who)[0] ]
-    except (ldap.CONSTRAINT_VIOLATION,ldap.INSUFFICIENT_ACCESS):
+    except (
+        ldap0.CONSTRAINT_VIOLATION,
+        ldap0.INSUFFICIENT_ACCESS,
+    ):
       user_objectclasses = []
 
   if Msg:
     Msg = '<p class="ErrorMessage">%s</p>' % (Msg)
 
   # Determine whether password attribute is unicodePwd on MS AD
-  unicode_pwd_avail = sub_schema.sed[ldap.schema.AttributeType].has_key('1.2.840.113556.1.4.90')
+  unicode_pwd_avail = sub_schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.4.90')
 
   # Determine whether user changes own password
   own_pwd_change = OwnPwdChange(ls,passwd_who)
@@ -246,7 +247,10 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
 
   try:
     user_objectclasses = [ oc.lower() for oc in ls.getObjectClasses(passwd_who)[0] ]
-  except (ldap.CONSTRAINT_VIOLATION,ldap.INSUFFICIENT_ACCESS):
+  except (
+    ldap0.CONSTRAINT_VIOLATION,
+    ldap0.INSUFFICIENT_ACCESS
+  ):
     user_objectclasses = []
 
   if 'passwd_newpasswd' in form.inputFieldNames:
@@ -286,11 +290,11 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
     # Extend with appropriate user-must-change-password-after-reset attribute
     if passwd_forcechange:
       # draft-behera-password-policy
-      if sub_schema.sed[AttributeType].has_key('1.3.6.1.4.1.42.2.27.8.1.22'):
-        passwd_modlist.append((ldap.MOD_REPLACE,'pwdReset','TRUE'))
+      if sub_schema.sed[ldap0.schema.models.AttributeType].has_key('1.3.6.1.4.1.42.2.27.8.1.22'):
+        passwd_modlist.append((ldap0.MOD_REPLACE,'pwdReset','TRUE'))
       # MS AD
-      elif sub_schema.sed[AttributeType].has_key('1.2.840.113556.1.4.96'):
-        passwd_modlist.append((ldap.MOD_REPLACE,'pwdLastSet','0'))
+      elif sub_schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.4.96'):
+        passwd_modlist.append((ldap0.MOD_REPLACE,'pwdLastSet','0'))
 
     if not passwd_action:
 
@@ -308,7 +312,10 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
           (old_password or u'').encode(ls.charset) or None,
           passwd_input.encode(ls.charset)
         )
-      except (ldap.CONSTRAINT_VIOLATION,ldap.UNWILLING_TO_PERFORM) as e:
+      except (
+        ldap0.CONSTRAINT_VIOLATION,
+        ldap0.UNWILLING_TO_PERFORM,
+      ) as e:
         PasswdForm(
           sid,outf,form,ls,dn,sub_schema,
           passwd_action,passwd_who,user_objectclasses,
@@ -339,8 +346,8 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
           try:
             if user_objectclasses and \
                not userpassword_class.lower() in user_objectclasses and \
-               sub_schema.get_inheritedattr(ldap.schema.ObjectClass,userpassword_class,'kind')==2:
-              passwd_modlist.append((ldap.MOD_ADD,'objectClass',userpassword_class))
+               sub_schema.get_inheritedattr(ldap0.schema.models.ObjectClass,userpassword_class,'kind')==2:
+              passwd_modlist.append((ldap0.MOD_ADD,'objectClass',userpassword_class))
               break
           except KeyError:
             pass
@@ -375,12 +382,12 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
 
       if OwnPwdChange(ls,passwd_who) and old_password:
         passwd_modlist.extend((
-          (ldap.MOD_DELETE,passwd_attr_type,[old_passwd_value]),
-          (ldap.MOD_ADD,passwd_attr_type,[new_passwd_value]),
+          (ldap0.MOD_DELETE,passwd_attr_type,[old_passwd_value]),
+          (ldap0.MOD_ADD,passwd_attr_type,[new_passwd_value]),
         ))
       else:
         passwd_modlist.append(
-          (ldap.MOD_REPLACE,passwd_attr_type,[new_passwd_value]),
+          (ldap0.MOD_REPLACE,passwd_attr_type,[new_passwd_value]),
         )
 
       passwd_settimesync = form.getInputValue('passwd_settimesync',['no'])[0]=='yes'
@@ -388,15 +395,15 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
       pwd_change_timestamp = time.time()
 
       if passwd_settimesync and all_attrs_dict.has_key('1.3.6.1.1.1.1.5'):
-        passwd_modlist.append((ldap.MOD_REPLACE,'shadowLastChange',str(int(pwd_change_timestamp/86400))))
+        passwd_modlist.append((ldap0.MOD_REPLACE,'shadowLastChange',str(int(pwd_change_timestamp/86400))))
 
       passwd_ntpasswordsync = form.getInputValue('passwd_ntpasswordsync',['no'])[0]=='yes'
 
       # Samba password synchronization if requested
       if passwd_ntpasswordsync and all_attrs_dict.has_key('1.3.6.1.4.1.7165.2.1.25'):
-        passwd_modlist.append((ldap.MOD_REPLACE,'sambaNTPassword',NtPasswordHash(passwd_input)))
+        passwd_modlist.append((ldap0.MOD_REPLACE,'sambaNTPassword',NtPasswordHash(passwd_input)))
         if passwd_settimesync and all_attrs_dict.has_key('1.3.6.1.4.1.7165.2.1.27'):
-          passwd_modlist.append((ldap.MOD_REPLACE,'sambaPwdLastSet',str(int(pwd_change_timestamp))))
+          passwd_modlist.append((ldap0.MOD_REPLACE,'sambaPwdLastSet',str(int(pwd_change_timestamp))))
 
       password_attr_types_msg = 'Password-related attributes set: %s' % (', '.join(
         [
@@ -410,7 +417,10 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
       # Modify password
       try:
         ls.modifyEntry(passwd_who,passwd_modlist)
-      except (ldap.CONSTRAINT_VIOLATION,ldap.UNWILLING_TO_PERFORM) as e:
+      except (
+        ldap0.CONSTRAINT_VIOLATION,
+        ldap0.UNWILLING_TO_PERFORM,
+      ) as e:
         PasswdForm(
           sid,outf,form,ls,dn,sub_schema,
           passwd_action,passwd_who,user_objectclasses,
@@ -418,7 +428,7 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
           Msg=w2lapp.gui.LDAPError2ErrMsg(e,form,ls.charset)
         )
         return
-      except ldap.NO_SUCH_ATTRIBUTE as e:
+      except ldap0.NO_SUCH_ATTRIBUTE as e:
         PasswdForm(
           sid,outf,form,ls,dn,sub_schema,
           passwd_action,passwd_who,user_objectclasses,
@@ -437,7 +447,7 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
       ls.l._last_bind = None
       try:
         ls.l.reconnect(ls.uri)
-      except ldap.INAPPROPRIATE_AUTH:
+      except ldap0.INAPPROPRIATE_AUTH:
         pass
       ls.who = None
       # Display login form

@@ -7,18 +7,12 @@ https://drift.uninett.no/nett/ip-nett/dnsattributes.schema
 
 from __future__ import absolute_import
 
-import re,string,hashlib,ldap,ldaputil,w2lapp.searchform
+import re,string,hashlib,ldap0,ldap0.schema.models,ldaputil,w2lapp.searchform
 
 from w2lapp.schema.syntaxes import  \
   IA5String,DNSDomain,DynamicValueSelectList,IPv4HostAddress,IPv6HostAddress, \
   syntax_registry
 
-
-#syntax_registry.registerAttrType(
-#  DNSDomain.oid,[
-#    '0.9.2342.19200300.100.1.37', # associatedDomain
-#  ],
-#)
 
 class AssociatedDomain(DNSDomain):
   oid = 'AssociatedDomain-oid'
@@ -45,7 +39,7 @@ class AssociatedDomain(DNSDomain):
       dn_u = self._ls.uc_decode(self._dn)[0]
       ldap_result = self._ls.l.search_s(
         self._ls.getSearchRoot(dn_u).encode(self._ls.charset),
-        ldap.SCOPE_SUBTREE,
+        ldap0.SCOPE_SUBTREE,
         '(&(objectClass=dNSDomain)(|(sOARecord=*)(nSRecord=*))(associatedDomain=*))',
         attrlist=['associatedDomain'],
       )
@@ -141,7 +135,7 @@ class AssociatedDomain(DNSDomain):
             ),
             title=u'Search referencing DNS A RR entries',
           ))
-          if self._schema.sed[ldap.schema.AttributeType].has_key('1.3.6.1.1.1.1.19'):
+          if self._schema.sed[ldap0.schema.models.AttributeType].has_key('1.3.6.1.1.1.1.19'):
             r.append(self._form.applAnchor(
               'search','IP host(s)',self._sid,
               (
@@ -153,7 +147,7 @@ class AssociatedDomain(DNSDomain):
               ),
               title=u'Search IP host(s) for this A address',
             ))
-          if self._schema.sed[ldap.schema.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
+          if self._schema.sed[ldap0.schema.models.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
             r.append(self._form.applAnchor(
               'search','DHCP host(s)',self._sid,
               (
@@ -252,7 +246,7 @@ class ARecord(IPv4HostAddress):
           ),
           title=u'Search PTR RR for this A address',
         ))
-        if self._schema.sed[ldap.schema.AttributeType].has_key('1.3.6.1.1.1.1.19'):
+        if self._schema.sed[ldap0.schema.models.AttributeType].has_key('1.3.6.1.1.1.1.19'):
           r.append(self._form.applAnchor(
             'search','IP host(s)',self._sid,
             (
@@ -264,7 +258,7 @@ class ARecord(IPv4HostAddress):
             ),
             title=u'Search IP host(s) for this A address',
           ))
-        if self._schema.sed[ldap.schema.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
+        if self._schema.sed[ldap0.schema.models.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
           r.append(self._form.applAnchor(
             'search','DHCP host(s)',self._sid,
             (

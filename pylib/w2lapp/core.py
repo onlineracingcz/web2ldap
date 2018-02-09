@@ -14,7 +14,7 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import os,time,ldap,w2lapp.cnf,w2lapp
+import os,time,ldap0,w2lapp.cnf,w2lapp
 
 from types import StringType,UnicodeType
 
@@ -48,11 +48,11 @@ filterwarnings(action="error", category=UnicodeWarning)
 # Switch off processing .ldaprc or ldap.conf
 os.environ['LDAPNOINIT']='1'
 
-ldap._trace_level=w2lapp.cnf.misc.ldap_trace_level
-ldap.set_option(ldap.OPT_DEBUG_LEVEL,w2lapp.cnf.misc.ldap_opt_debug_level)
-ldap.set_option(ldap.OPT_RESTART,0)
-ldap.set_option(ldap.OPT_DEREF,0)
-ldap.set_option(ldap.OPT_REFERRALS,0)
+ldap0._trace_level=w2lapp.cnf.misc.ldap_trace_level
+ldap0.set_option(ldap0.OPT_DEBUG_LEVEL,w2lapp.cnf.misc.ldap_opt_debug_level)
+ldap0.set_option(ldap0.OPT_RESTART,0)
+ldap0.set_option(ldap0.OPT_DEREF,0)
+ldap0.set_option(ldap0.OPT_REFERRALS,0)
 
 startUpTime = time.time()
 

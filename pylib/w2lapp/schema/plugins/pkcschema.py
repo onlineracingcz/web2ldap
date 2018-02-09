@@ -10,7 +10,7 @@ from __future__ import absolute_import
 
 from w2lapp.schema.syntaxes import DistinguishedName,SelectList,DynamicValueSelectList,syntax_registry
 
-from ldap.filter import escape_filter_chars
+from ldap0.filter import escape_filter_chars
 
 try:
   from w2lapp.schema.syntaxes import DumpASN1CfgOID

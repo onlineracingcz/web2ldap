@@ -5,7 +5,7 @@ web2ldap plugin classes for Samba 3
 
 from __future__ import absolute_import
 
-import ldap,string,re
+import ldap0,string,re
 
 from w2lapp.schema.syntaxes import \
   DirectoryString, \
@@ -83,14 +83,14 @@ class SambaSID(IA5String):
 
   def _search_domain_entry(self,domain_name):
     try:
-      ldap_result = self._ls.l.search_ext_s(
+      ldap_result = self._ls.l.search_s(
         self._ls.getSearchRoot(self._dn).encode(self._ls.charset),
-        ldap.SCOPE_SUBTREE,
+        ldap0.SCOPE_SUBTREE,
         '(&(objectClass=sambaDomain)(sambaDomainName=%s))' % (domain_name),
         attrlist=['sambaSID','sambaDomainName'],
         sizelimit=2
       )
-    except ldap.NO_SUCH_OBJECT:
+    except ldap0.NO_SUCH_OBJECT:
       return None
     else:
       if len(ldap_result)!=1:

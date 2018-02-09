@@ -14,8 +14,9 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import re,pyweblib,ldap,ldif,ldap.schema,\
-       ldaputil.schema,ldapsession,w2lapp.core,w2lapp.cnf,w2lapp.form,w2lapp.gui,w2lapp.read,w2lapp.modify,w2lapp.schema
+import re,pyweblib,ldap0,ldap0.ldif,ldap0.schema,\
+       ldaputil.schema,ldapsession,\
+       w2lapp.core,w2lapp.cnf,w2lapp.form,w2lapp.gui,w2lapp.read,w2lapp.modify,w2lapp.schema
 
 from w2lapp.schema.viewer import displayNameOrOIDList
 from w2lapp.schema.syntaxes import syntax_registry
@@ -30,12 +31,6 @@ except ImportError:
 
 
 heading_msg = {'modify':'Modify entry','add':'Add new entry'}
-
-attrtype_pattern = r'[\w;.]+(;[\w_-]+)*'
-attrvalue_pattern = r'(([^,]|\\,)*|".*?")'
-rdn_pattern = attrtype_pattern + r'[ ]*=[ ]*' + attrvalue_pattern
-dn_pattern = rdn_pattern + r'([ ]*,[ ]*' + rdn_pattern + r')*[ ]*'
-ldif.dn_regex   = re.compile('^%s$' % dn_pattern)
 
 
 INPUT_FORM_BEGIN_TMPL = """
@@ -110,7 +105,7 @@ class InputFormEntry(w2lapp.read.DisplayEntry):
     self.writeable_attr_oids = writeable_attr_oids
     self.invalid_attrs = invalid_attrs or {}
     new_object_classes = set(list(self.object_class_oid_set())) - set([
-      self._s.getoid(ldap.schema.ObjectClass,oc_name)
+      self._s.getoid(ldap0.schema.models.ObjectClass,oc_name)
       for oc_name in existing_object_classes or []
     ])
     new_attribute_types = self._s.attribute_types(
@@ -144,10 +139,10 @@ class InputFormEntry(w2lapp.read.DisplayEntry):
 
   def _get_rdn_dict(self,dn):
     assert type(dn)==type(u'')
-    entry_rdn_dict = ldap.schema.Entry(self._s,None,ldaputil.base.rdn_dict(dn))
+    entry_rdn_dict = ldap0.schema.models.Entry(self._s,None,ldaputil.base.rdn_dict(dn))
     for attr_type,attr_values in entry_rdn_dict.items():
       del entry_rdn_dict[attr_type]
-      d = ldap.cidict.cidict()
+      d = ldap0.cidict.cidict()
       for attr_value in attr_values:
         attr_value = attr_value.encode(self.ls.charset)
         assert type(attr_value)==type('')
@@ -161,13 +156,13 @@ class InputFormEntry(w2lapp.read.DisplayEntry):
     """
 
     oid = self._at2key(nameoroid)[0]
-    nameoroid_se = self._s.get_obj(ldap.schema.AttributeType,nameoroid)
+    nameoroid_se = self._s.get_obj(ldap0.schema.models.AttributeType,nameoroid)
     syntax_class = w2lapp.schema.syntaxes.syntax_registry.syntaxClass(
       self._s,nameoroid,
       self.structuralObjectClass
     )
     try:
-      attr_values = ldap.schema.Entry.__getitem__(self,nameoroid)
+      attr_values = ldap0.schema.models.Entry.__getitem__(self,nameoroid)
     except KeyError:
       attr_values = []
 
@@ -308,7 +303,7 @@ class InputFormEntry(w2lapp.read.DisplayEntry):
     # objectClass attribute as not modifiable (e.g. MS Active Directory)
     if not required_attrs_dict.has_key('2.5.4.0') and \
        not allowed_attrs_dict.has_key('2.5.4.0'):
-      required_attrs_dict['2.5.4.0'] = self._s.get_obj(ldap.schema.ObjectClass,'2.5.4.0')
+      required_attrs_dict['2.5.4.0'] = self._s.get_obj(ldap0.schema.models.ObjectClass,'2.5.4.0')
     return required_attrs_dict,allowed_attrs_dict
 
   def fieldset_table(self,outf,attr_types_dict,fieldset_title):
@@ -318,8 +313,8 @@ class InputFormEntry(w2lapp.read.DisplayEntry):
       <table summary="%s">
       """ % (fieldset_title,fieldset_title,fieldset_title)
     )
-    seen_attr_type_oids = ldap.cidict.cidict()
-    attr_type_names = ldap.cidict.cidict()
+    seen_attr_type_oids = ldap0.cidict.cidict()
+    attr_type_names = ldap0.cidict.cidict()
     for a in self.keys():
       at_oid = self._at2key(a)[0]
       if attr_types_dict.has_key(at_oid):
@@ -333,7 +328,7 @@ class InputFormEntry(w2lapp.read.DisplayEntry):
     attr_types = attr_type_names.keys()
     attr_types.sort(key=str.lower)
     for attr_type in attr_types:
-      attr_type_name = w2lapp.gui.SchemaElementName(self.sid,self.form,self.dn,self._s,attr_type,ldap.schema.AttributeType)
+      attr_type_name = w2lapp.gui.SchemaElementName(self.sid,self.form,self.dn,self._s,attr_type,ldap0.schema.models.AttributeType)
       attr_value_field_html = self[attr_type]
       outf_lines.append('<tr>\n<td class="InputAttrType">\n%s\n</td>\n<td>\n%s\n</td>\n</tr>\n' % (attr_type_name,attr_value_field_html))
     outf_lines.append('</table></fieldset>')
@@ -378,7 +373,7 @@ class InputFormEntry(w2lapp.read.DisplayEntry):
 
   def ldif_input(self,outf):
     f = StringIO()
-    ldif_writer = ldif.LDIFWriter(f)
+    ldif_writer = ldap0.ldif.LDIFWriter(f)
     ldap_entry = {}
     for attr_type in self.entry.keys():
       attr_values = ldaputil.schema.Entry.__getitem__(self,attr_type)
@@ -432,7 +427,7 @@ def SupentryDisplayString(
       inputform_supentrytemplate_attrtypes.update(GrabKeys(inputform_supentrytemplate[oc]).keys)
     try:
       parent_search_result = ls.readEntry(parent_dn,attrtype_list=list(inputform_supentrytemplate_attrtypes))
-    except (ldap.NO_SUCH_OBJECT,ldap.INSUFFICIENT_ACCESS,ldap.REFERRAL):
+    except (ldap0.NO_SUCH_OBJECT,ldap0.INSUFFICIENT_ACCESS,ldap0.REFERRAL):
       pass
     else:
       if parent_search_result:
@@ -476,7 +471,7 @@ def ObjectClassForm(
 
     # Determine possible structural object classes based on DIT structure rules
     # and name forms if DIT structure rules are defined in subschema
-    if sub_schema.sed[ldap.schema.models.DITStructureRule]:
+    if sub_schema.sed[ldap0.schema.models.DITStructureRule]:
       dit_structure_ruleid = ls.getGoverningStructureRule(parent_dn,sub_schema)
       if dit_structure_ruleid!=None:
         subord_structural_ruleids,subord_structural_oc = sub_schema.get_subord_structural_oc_names(dit_structure_ruleid)
@@ -484,17 +479,17 @@ def ObjectClassForm(
           all_structural_oc = subord_structural_oc
           dit_structure_rule_html = 'DIT structure rules:<br>%s' % ('<br>'.join(
             displayNameOrOIDList(
-              sid,form,dn,sub_schema,subord_structural_ruleids,ldap.schema.models.DITStructureRule
+              sid,form,dn,sub_schema,subord_structural_ruleids,ldap0.schema.models.DITStructureRule
             )
           ))
 
     # Determine possible structural object classes based on operational
     # attribute 'allowedChildClasses' (MS AD or OpenLDAP with slapo-allowed)
-    elif '1.2.840.113556.1.4.912' in sub_schema.sed[ldap.schema.models.AttributeType] and \
+    elif '1.2.840.113556.1.4.912' in sub_schema.sed[ldap0.schema.models.AttributeType] and \
          not 'OpenLDAProotDSE' in ls.rootDSE.get('objectClass',[]):
       try:
         parent_search_result = ls.readEntry(parent_dn,attrtype_list=['allowedChildClasses','allowedChildClassesEffective'])
-      except (ldap.NO_SUCH_OBJECT,ldap.INSUFFICIENT_ACCESS,ldap.REFERRAL):
+      except (ldap0.NO_SUCH_OBJECT,ldap0.INSUFFICIENT_ACCESS,ldap0.REFERRAL):
         pass
       else:
         if parent_search_result:
@@ -506,7 +501,7 @@ def ObjectClassForm(
           else:
             allowed_child_classes_kind_dict = {0:[],1:[],2:[]}
             for av in allowed_child_classes:
-              at_se = sub_schema.get_obj(ldap.schema.models.ObjectClass,av)
+              at_se = sub_schema.get_obj(ldap0.schema.models.ObjectClass,av)
               if not at_se is None:
                 allowed_child_classes_kind_dict[at_se.kind].append(av)
             all_structural_oc = allowed_child_classes_kind_dict[0]
@@ -534,8 +529,8 @@ def ObjectClassForm(
     # Try to look up a DIT content rule
     if existing_object_classes and structural_object_class:
       # Determine OID of structural object class
-      soc_oid = sub_schema.name2oid[ldap.schema.models.ObjectClass].get(structural_object_class,structural_object_class)
-      dit_content_rule = sub_schema.get_obj(ldap.schema.DITContentRule,soc_oid,None)
+      soc_oid = sub_schema.name2oid[ldap0.schema.models.ObjectClass].get(structural_object_class,structural_object_class)
+      dit_content_rule = sub_schema.get_obj(ldap0.schema.models.DITContentRule,soc_oid,None)
       if dit_content_rule!=None:
         if dit_content_rule.obsolete:
           dit_content_rule_status_text = 'Ignored obsolete'
@@ -544,17 +539,17 @@ def ObjectClassForm(
         else:
           dit_content_rule_status_text = 'Governed by'
           all_auxiliary_oc_oids = set([
-            sub_schema.getoid(ldap.schema.models.ObjectClass,nameoroid)
+            sub_schema.getoid(ldap0.schema.models.ObjectClass,nameoroid)
             for nameoroid in dit_content_rule.aux
           ])
           all_auxiliary_oc = [
             oc
             for oc in all_auxiliary_oc
-            if sub_schema.getoid(ldap.schema.models.ObjectClass,oc) in all_auxiliary_oc_oids
+            if sub_schema.getoid(ldap0.schema.models.ObjectClass,oc) in all_auxiliary_oc_oids
           ]
         dit_content_rule_html = '%s<br>DIT content rule:<br>%s' % (
           dit_content_rule_status_text,
-          w2lapp.gui.SchemaElementName(sid,form,dn,sub_schema,dit_content_rule.names[0],ldap.schema.DITContentRule)
+          w2lapp.gui.SchemaElementName(sid,form,dn,sub_schema,dit_content_rule.names[0],ldap0.schema.models.DITContentRule)
         )
 
     abstract_select_field = w2lapp.form.ObjectClassSelect(
@@ -650,7 +645,7 @@ def ObjectClassForm(
             tmpl_parent_dn,
             attrtype_list=addform_parent_attrs
           )
-        except (ldap.NO_SUCH_OBJECT,ldap.INSUFFICIENT_ACCESS):
+        except (ldap0.NO_SUCH_OBJECT,ldap0.INSUFFICIENT_ACCESS):
           continue
         else:
           if not parent_result:
@@ -664,7 +659,7 @@ def ObjectClassForm(
           if missing_parent_attrs:
             continue
       restricted_structural_oc,dit_structure_rule_html = get_possible_soc(ls,sub_schema,tmpl_parent_dn)
-      if sub_schema.sed[ldap.schema.models.DITStructureRule]:
+      if sub_schema.sed[ldap0.schema.models.DITStructureRule]:
         parent_gov_structure_rule = ls.getGoverningStructureRule(tmpl_parent_dn,sub_schema)
         if parent_gov_structure_rule==None:
           restricted_structural_oc = restricted_structural_oc or all_structural_oc
@@ -674,7 +669,7 @@ def ObjectClassForm(
         restricted_structural_oc = all_structural_oc
       restricted_structural_oc_set = ldaputil.schema.SchemaElementOIDSet(
         sub_schema,
-        ldap.schema.models.ObjectClass,
+        ldap0.schema.models.ObjectClass,
         restricted_structural_oc
       )
       entry = ldaputil.schema.Entry(sub_schema,ldif_dn,ldif_entry)
@@ -733,8 +728,8 @@ def ObjectClassForm(
 
   existing_structural_oc,existing_abstract_oc,existing_auxiliary_oc = w2lapp.schema.object_class_categories(sub_schema,existing_object_classes)
   all_oc = [
-    (sub_schema.get_obj(ldap.schema.models.ObjectClass,oid).names or (oid,))[0]
-    for oid in sub_schema.listall(ldap.schema.models.ObjectClass)
+    (sub_schema.get_obj(ldap0.schema.models.ObjectClass,oid).names or (oid,))[0]
+    for oid in sub_schema.listall(ldap0.schema.models.ObjectClass)
   ]
 
   if command=='add':
@@ -812,21 +807,15 @@ def ReadLDIFTemplate(ls,form,template_name):
   except IOError:
     raise w2lapp.core.ErrorExit(u'I/O error opening LDIF template for &quot;%s&quot;.' % (template_name_html))
   try:
-    ldif_parser = ldif.LDIFRecordList(
+    dn,entry = list(ldap0.ldif.LDIFParser(
       ldif_file,
       ignored_attr_types=[],
-      max_entries=1,
       process_url_schemes=w2lapp.cnf.misc.ldif_url_schemes
-    )
-    ldif_parser.parse()
+    ).parse(max_entries=1))[0]
   except (IOError,ValueError):
     raise w2lapp.core.ErrorExit(u'Value error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
   except Exception:
     raise w2lapp.core.ErrorExit(u'Other error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
-  if ldif_parser.all_records:
-    dn,entry = ldif_parser.all_records[0]
-  else:
-    raise w2lapp.core.ErrorExit(u'No entry in LDIF template.')
   return dn,entry # ReadLDIFTemplate()
 
 
@@ -834,7 +823,7 @@ def AttributeTypeDict(ls,param_name,param_default):
   """
   Build a list of attributes assumed in configuration to be constant while editing entry
   """
-  attrs = ldap.cidict.cidict()
+  attrs = ldap0.cidict.cidict()
   for attr_type in w2lapp.cnf.GetParam(ls,param_name,param_default):
     attrs[attr_type] = attr_type
   return attrs # AttributeTypeDict()
@@ -856,7 +845,7 @@ def AssertionFilter(ls,entry):
       continue
     else:
       assertion_filter_list.extend([
-        u'(%s)' % (u'='.join((attr_type,ldap.filter.escape_filter_chars(attr_value,escape_mode=1))))
+        u'(%s)' % (u'='.join((attr_type,ldap0.filter.escape_filter_chars(attr_value,escape_mode=1))))
         for attr_value in attr_values
         if attr_value is not None
       ])
@@ -872,10 +861,10 @@ def nomatching_attrs(sub_schema,entry,allowed_attrs_dict,required_attrs_dict):
   Determine attributes which does not appear in the schema but
   do exist in the entry
   """
-  nomatching_attrs_dict = ldap.cidict.cidict()
+  nomatching_attrs_dict = ldap0.cidict.cidict()
   for at_name in entry.keys():
     try:
-      at_oid = sub_schema.name2oid[ldap.schema.AttributeType][at_name]
+      at_oid = sub_schema.name2oid[ldap0.schema.models.AttributeType][at_name]
     except KeyError:
       nomatching_attrs_dict[at_name] = None
     else:
@@ -884,7 +873,7 @@ def nomatching_attrs(sub_schema,entry,allowed_attrs_dict,required_attrs_dict):
         required_attrs_dict.has_key(at_oid) or \
         at_name.lower()=='objectclass'
       ):
-        nomatching_attrs_dict[at_oid] = sub_schema.get_obj(ldap.schema.AttributeType,at_oid)
+        nomatching_attrs_dict[at_oid] = sub_schema.get_obj(ldap0.schema.models.AttributeType,at_oid)
   return nomatching_attrs_dict # nomatching_attrs()
 
 
@@ -893,7 +882,7 @@ def ReadOldEntry(ls,dn,sub_schema,assertion_filter,read_attrs=None):
   Retrieve all editable attribute types an entry
   """
 
-  AttributeType = ldap.schema.models.AttributeType
+  AttributeType = ldap0.schema.models.AttributeType
 
   WRITEABLE_ATTRS_NONE                 = None
   WRITEABLE_ATTRS_SLAPO_ALLOWED        = 1
@@ -903,7 +892,7 @@ def ReadOldEntry(ls,dn,sub_schema,assertion_filter,read_attrs=None):
 
   # Build a list of attributes to be requested
   if not read_attrs:
-    read_attrs = ldap.cidict.cidict({'*':'*'})
+    read_attrs = ldap0.cidict.cidict({'*':'*'})
     read_attrs.update(ConfiguredConstantAttributes(ls))
     read_attrs.update(AttributeTypeDict(ls,'requested_attrs',[]))
 
@@ -915,37 +904,11 @@ def ReadOldEntry(ls,dn,sub_schema,assertion_filter,read_attrs=None):
     read_attrs['allowedAttributesEffective'] = 'allowedAttributesEffective'
     write_attrs_method = WRITEABLE_ATTRS_SLAPO_ALLOWED
 
-#  # Try to use the Get Effective Rights Control if on OpenDS
-#  elif ls.vendorVersion and ls.vendorVersion.startswith('OpenDS Directory Server') and \
-#     '1.3.6.1.4.1.42.2.27.9.1.39' in sub_schema.sed[AttributeType] and \
-#     object_classes:
-#    required_attrs_dict,allowed_attrs_dict = sub_schema.attribute_types(object_classes,ignore_dit_content_rule=0)
-#    for a in required_attrs_dict.values()+allowed_attrs_dict.values():
-#      try:
-#        read_attrs[a.names[0]] = a.names[0]
-#      except AttributeError:
-#        read_attrs[a.oid] = a.oid
-#    # Query with attribute 'aclRights' with Effective Rights control e.g. on OpenDS
-#    if not ls.l._get_server_ctrls('search_ext').has_key('1.3.6.1.4.1.42.2.27.9.5.2'):
-#      server_ctrls.append(ldap.controls.LDAPControl('1.3.6.1.4.1.42.2.27.9.5.2',0,None))
-#    read_attrs['aclRights'] = 'aclRights'
-#    write_attrs_method = WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS
-
   else:
     write_attrs_method = WRITEABLE_ATTRS_NONE
 
   assert write_attrs_method in (WRITEABLE_ATTRS_NONE,WRITEABLE_ATTRS_SLAPO_ALLOWED,WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS),\
     ValueError("Invalid value for write_attrs_method" )
-
-  # Check whether to send Don't Use Copy Control along with search request
-  # standard OID from RFC 6171
-#  if ldapsession.CONTROL_DONTUSECOPY in ls.supportedControl and \
-#     not ls.l._get_server_ctrls('**read**').has_key(ldapsession.CONTROL_DONTUSECOPY):
-#    server_ctrls.append(ldap.controls.LDAPControl(ldapsession.CONTROL_DONTUSECOPY,1,None))
-  # OpenLDAP experimental OID
-#  elif ldapsession.CONTROL_DONTUSECOPY_OPENLDAP in ls.supportedControl and \
-#     not ls.l._get_server_ctrls('**read**').has_key(ldapsession.CONTROL_DONTUSECOPY_OPENLDAP):
-#    server_ctrls.append(ldap.controls.LDAPControl(ldapsession.CONTROL_DONTUSECOPY_OPENLDAP,1,None))
 
   # Explicitly request attribute 'ref' if in manage DSA IT mode
   if ls.l._get_server_ctrls('**all**').has_key(ldapsession.CONTROL_MANAGEDSAIT):
@@ -961,7 +924,7 @@ def ReadOldEntry(ls,dn,sub_schema,assertion_filter,read_attrs=None):
       server_ctrls=server_ctrls or None,
     )[0][1]
   except IndexError:
-    raise ldap.NO_SUCH_OBJECT
+    raise ldap0.NO_SUCH_OBJECT
 
   entry = ldaputil.schema.Entry(sub_schema,dn.encode(ls.charset),ldap_entry)
 

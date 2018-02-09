@@ -14,36 +14,36 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import time,pyweblib.forms,ldap,ldap.async,ldapsession,ldaputil.base, \
+import time,pyweblib.forms,ldap0,ldaputil.async,ldapsession,ldaputil.base, \
        w2lapp.core,w2lapp.cnf,w2lapp.gui,w2lapp.ldapparams
 
 # OID description dictionary from configuration directory
 from ldapoidreg import oid as oid_desc_reg
 
-class DeleteLeafs(ldap.async.AsyncSearchHandler):
+class DeleteLeafs(ldaputil.async.AsyncSearchHandler):
   """
   Class for deleting entries which are results of a search.
 
   DNs of Non-leaf entries are collected in DeleteLeafs.nonLeafEntries.
   """
   _entryResultTypes = set([
-    ldap.RES_SEARCH_ENTRY,
-    ldap.RES_SEARCH_RESULT,
+    ldap0.RES_SEARCH_ENTRY,
+    ldap0.RES_SEARCH_RESULT,
   ])
 
   def __init__(self,l,treeDeleteControl,delete_server_ctrls):
-    ldap.async.AsyncSearchHandler.__init__(self,l)
+    ldaputil.async.AsyncSearchHandler.__init__(self,l)
     self.serverctrls = delete_server_ctrls
     self.treeDeleteControl = treeDeleteControl
 
   def startSearch(self,searchRoot,searchScope,filterStr):
-    if searchScope==ldap.SCOPE_BASE:
-      raise ValueError, "Parameter searchScope must not be ldap.SCOPE_BASE."
+    if searchScope==ldap0.SCOPE_BASE:
+      raise ValueError, "Parameter searchScope must not be ldap0.SCOPE_BASE."
     self.nonLeafEntries = []
     self.nonDeletableEntries = []
     self.deletedEntries = 0
     self.noSuchObjectCounter = 0
-    ldap.async.AsyncSearchHandler.startSearch(
+    ldaputil.async.AsyncSearchHandler.startSearch(
       self,
       searchRoot,
       searchScope,
@@ -57,7 +57,7 @@ class DeleteLeafs(ldap.async.AsyncSearchHandler):
   def _processSingleResult(self,resultType,resultItem):
     if resultType in self._entryResultTypes:
       # Don't process search references
-      dn,entry = resultItem[0],ldap.cidict.cidict(resultItem[1])
+      dn,entry = resultItem[0],ldap0.cidict.cidict(resultItem[1])
       try:
         hasSubordinates = entry['hasSubordinates'][0].upper()=='TRUE'
       except KeyError:
@@ -78,14 +78,14 @@ class DeleteLeafs(ldap.async.AsyncSearchHandler):
         self.nonLeafEntries.append(dn)
       else:
         try:
-          self._l.delete_ext_s(dn,serverctrls=self.serverctrls)
-        except ldap.NO_SUCH_OBJECT:
+          self._l.delete_s(dn,serverctrls=self.serverctrls)
+        except ldap0.NO_SUCH_OBJECT:
           # Don't do anything if the entry is already gone except counting
           # these sub-optimal cases
           self.noSuchObjectCounter = self.noSuchObjectCounter+1
-        except ldap.INSUFFICIENT_ACCESS:
+        except ldap0.INSUFFICIENT_ACCESS:
           self.nonDeletableEntries.append(dn)
-        except ldap.NOT_ALLOWED_ON_NONLEAF:
+        except ldap0.NOT_ALLOWED_ON_NONLEAF:
           if hasSubordinates is None and subordinateCount is None:
             self.nonLeafEntries.append(dn)
           # Next statements are kind of a safety net and should never be executed
@@ -109,9 +109,9 @@ def DeleteEntries(outf,ls,dn,scope,tree_delete_control,delete_server_ctrls,delet
   start_time = time.time()
   end_time = start_time + delete_timelimit
   delete_filter = (delete_filter or u'(objectClass=*)').encode(ls.charset)
-  if scope==ldap.SCOPE_SUBTREE and tree_delete_control:
+  if scope==ldap0.SCOPE_SUBTREE and tree_delete_control:
     # Try to directly delete the whole subtree with the tree delete control
-    ls.l.delete_ext_s(dn,serverctrls=delete_server_ctrls)
+    ls.l.delete_s(dn,serverctrls=delete_server_ctrls)
     return True
   else:
     leafs_deleter = DeleteLeafs(ls.l,tree_delete_control,delete_server_ctrls)
@@ -124,9 +124,9 @@ def DeleteEntries(outf,ls,dn,scope,tree_delete_control,delete_server_ctrls,delet
       try:
         leafs_deleter.startSearch(dn,scope,filterStr=delete_filter)
         leafs_deleter.processResults(timeout=ls.timeout)
-      except ldap.NO_SUCH_OBJECT:
+      except ldap0.NO_SUCH_OBJECT:
         break
-      except (ldap.SIZELIMIT_EXCEEDED,ldap.ADMINLIMIT_EXCEEDED):
+      except (ldap0.SIZELIMIT_EXCEEDED,ldap0.ADMINLIMIT_EXCEEDED):
         deleted_entries_count += leafs_deleter.deletedEntries
         non_leaf_entries.update(leafs_deleter.nonLeafEntries)
         non_deletable_entries.update(leafs_deleter.nonDeletableEntries)
@@ -142,9 +142,9 @@ def DeleteEntries(outf,ls,dn,scope,tree_delete_control,delete_server_ctrls,delet
       if dn in non_deletable_entries:
         continue
       try:
-        leafs_deleter.startSearch(dn,ldap.SCOPE_SUBTREE,filterStr=delete_filter)
+        leafs_deleter.startSearch(dn,ldap0.SCOPE_SUBTREE,filterStr=delete_filter)
         leafs_deleter.processResults(timeout=ls.timeout)
-      except (ldap.SIZELIMIT_EXCEEDED,ldap.ADMINLIMIT_EXCEEDED):
+      except (ldap0.SIZELIMIT_EXCEEDED,ldap0.ADMINLIMIT_EXCEEDED):
         deleted_entries_count += leafs_deleter.deletedEntries
         non_leaf_entries.add(dn)
         non_leaf_entries.update(leafs_deleter.nonLeafEntries)
@@ -174,9 +174,9 @@ def DelSubtreeForm(sid,form,ls,dn,scope):
   delete_scope_field = pyweblib.forms.Select(
     'scope',u'Scope of delete operation',1,
     options=(
-      (str(ldap.SCOPE_BASE),'Only this entry'),
-      (str(ldap.SCOPE_ONELEVEL),'All entries below this entry (recursive)'),
-      (str(ldap.SCOPE_SUBTREE),'All entries including this entry (recursive)'),
+      (str(ldap0.SCOPE_BASE),'Only this entry'),
+      (str(ldap0.SCOPE_ONELEVEL),'All entries below this entry (recursive)'),
+      (str(ldap0.SCOPE_SUBTREE),'All entries including this entry (recursive)'),
     ),
     default=str(scope),
   )
@@ -316,9 +316,9 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
   delete_attr = form.getInputValue('delete_attr',[a.decode('ascii') for a in connLDAPUrl.attrs or []])
   delete_attr.sort()
   if delete_attr:
-    scope = ldap.SCOPE_BASE
+    scope = ldap0.SCOPE_BASE
   else:
-    scope = int(form.getInputValue('scope',[str(connLDAPUrl.scope or ldap.SCOPE_BASE)])[0])
+    scope = int(form.getInputValue('scope',[str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
 
   delete_filter = form.getInputValue('filterstr',[connLDAPUrl.filterstr])[0]
 
@@ -329,13 +329,13 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
 
   if delete_confirm:
 
-    if ls.l.protocol_version>=ldap.VERSION3:
+    if ls.l.protocol_version>=ldap0.VERSION3:
       conn_server_ctrls = set([
         server_ctrl.controlType
-        for server_ctrl in ls.l._serverctrls['**all**']+ls.l._serverctrls['**write**']+ls.l._serverctrls['delete_ext']
+        for server_ctrl in ls.l._serverctrls['**all**']+ls.l._serverctrls['**write**']+ls.l._serverctrls['delete']
       ])
       delete_server_ctrls = [
-        ldap.controls.LDAPControl(ctrl_oid,1,None)
+        ldap0.controls.LDAPControl(ctrl_oid,1,None)
         for ctrl_oid in delete_ctrl_oids
         if not ctrl_oid in conn_server_ctrls
       ] or None
@@ -346,7 +346,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
 
       # Recursive delete of whole sub-tree
 
-      if scope!=ldap.SCOPE_BASE:
+      if scope!=ldap0.SCOPE_BASE:
 
         ##########################################################
         # Recursive delete of entries in sub-tree
@@ -364,7 +364,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
         end_time_stamp = time.time()
 
         old_dn = dn
-        if scope==ldap.SCOPE_SUBTREE and delete_filter==None:
+        if scope==ldap0.SCOPE_SUBTREE and delete_filter==None:
           dn = ldaputil.base.ParentDN(dn)
           ls.setDN(dn)
         w2lapp.gui.SimpleMessage(
@@ -390,14 +390,14 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
           context_menu_list=w2lapp.gui.ContextMenuSingleEntry(sid,form,ls,dn)
         )
 
-      elif scope==ldap.SCOPE_BASE and delete_attr:
+      elif scope==ldap0.SCOPE_BASE and delete_attr:
 
         ##########################################################
         # Delete attribute(s) from an entry with modify request
         ##########################################################
 
         mod_list = [
-          (ldap.MOD_DELETE,attr_type,None)
+          (ldap0.MOD_DELETE,attr_type,None)
           for attr_type in delete_attr
         ]
         ls.modifyEntry(dn,mod_list,serverctrls=delete_server_ctrls)
@@ -422,7 +422,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
           context_menu_list=w2lapp.gui.ContextMenuSingleEntry(sid,form,ls,dn)
         )
 
-      elif scope==ldap.SCOPE_BASE:
+      elif scope==ldap0.SCOPE_BASE:
 
         ##########################################################
         # Delete a single whole entry

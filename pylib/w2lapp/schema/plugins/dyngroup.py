@@ -4,7 +4,7 @@ web2ldap plugin classes for attributes defined for so-called dynamic groups
 
 from __future__ import absolute_import
 
-import ldap,ldapurl,ldaputil.base
+import ldap0,ldap0.ldapurl,ldaputil.base
 
 from w2lapp.schema.syntaxes import LDAPUrl,syntax_registry
 
@@ -19,7 +19,7 @@ class MemberUrl(LDAPUrl):
 
   def _validate(self,attrValue):
     try:
-      self.lu_obj = ldapurl.LDAPUrl(attrValue)
+      self.lu_obj = ldap0.ldapurl.LDAPUrl(attrValue)
     except ValueError:
       return 0
     else:
@@ -35,10 +35,10 @@ class MemberUrl(LDAPUrl):
             attrtype_list=self.lu_obj.attrs,
             search_filter=self.lu_obj.filterstr or '(objectClass=*)',
           )
-        except ldap.LDAPError:
-          return 0
+        except ldap0.LDAPError:
+          return False
         else:
-          return 1
+          return True
 
 
 syntax_registry.registerAttrType(

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-ldaputil.schema: More functionality for ldap.schema
+ldaputil.schema: More functionality for ldap0.schema
 
 (c) by Michael Stroeder <michael@stroeder.com>
 
@@ -12,11 +12,11 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 from __future__ import absolute_import
 
 
-import collections,ldap.schema,ldap.schema.subentry,msbase
+import collections,ldap0.schema,ldap0.schema.subentry,msbase
 from itertools import combinations
 from types import UnicodeType
 
-from ldap.schema.models import AttributeType
+from ldap0.schema.models import AttributeType
 
 
 class SchemaElementOIDSet(collections.MutableSet):
@@ -95,10 +95,10 @@ class SchemaElementOIDSet(collections.MutableSet):
     ]
 
 
-class SubSchema(ldap.schema.subentry.SubSchema):
+class SubSchema(ldap0.schema.subentry.SubSchema):
 
   def __init__(self,sub_schema_sub_entry,subentry_dn=None,check_uniqueness=True):
-    ldap.schema.subentry.SubSchema.__init__(
+    ldap0.schema.subentry.SubSchema.__init__(
       self,
       sub_schema_sub_entry,
       check_uniqueness=check_uniqueness,
@@ -120,14 +120,14 @@ class SubSchema(ldap.schema.subentry.SubSchema):
   def determine_no_user_mod_attrs(self):
     result = {}.fromkeys([
       a.oid
-      for a in self.sed[ldap.schema.AttributeType].values()
+      for a in self.sed[ldap0.schema.models.AttributeType].values()
       if a.no_user_mod
     ])
     return result # determine_no_user_mod_attrs()
 
   def get_associated_name_forms(self,structural_object_class_oid):
     """
-    Returns a list of instances of ldap.schema.models.NameForm
+    Returns a list of instances of ldap0.schema.models.NameForm
     representing all name forms associated with the current structural
     object class of this entry.
 
@@ -137,7 +137,7 @@ class SubSchema(ldap.schema.subentry.SubSchema):
     """
     if structural_object_class_oid is None:
       return []
-    structural_object_class_obj = self.get_obj(ldap.schema.models.ObjectClass,structural_object_class_oid)
+    structural_object_class_obj = self.get_obj(ldap0.schema.models.ObjectClass,structural_object_class_oid)
     if structural_object_class_obj:
       structural_object_class_names = [
         oc_name.lower()
@@ -146,7 +146,7 @@ class SubSchema(ldap.schema.subentry.SubSchema):
     else:
       structural_object_class_names = ()
     result = []
-    for name_form_oid,name_form_obj in self.sed[ldap.schema.models.NameForm].items():
+    for name_form_oid,name_form_obj in self.sed[ldap0.schema.models.NameForm].items():
       if not name_form_obj.obsolete and (
            name_form_obj.oc==structural_object_class_oid or \
            name_form_obj.oc.lower() in structural_object_class_names
@@ -179,12 +179,12 @@ class SubSchema(ldap.schema.subentry.SubSchema):
 
   def get_applicable_name_form_objs(self,dn,structural_object_class_oid):
     """
-    Returns a list of instances of ldap.schema.models.NameForm
+    Returns a list of instances of ldap0.schema.models.NameForm
     representing all name form associated with the current structural
     object class of this entry and matching the current RDN.
     """
     if dn:
-      rdn_list=ldap.dn.str2dn(dn)[0]
+      rdn_list=ldap0.dn.str2dn(dn)[0]
       current_rdn_attrs = [ attr_type.lower() for attr_type,attr_value,dummy in rdn_list ]
       current_rdn_attrs.sort()
     else:
@@ -198,30 +198,30 @@ class SubSchema(ldap.schema.subentry.SubSchema):
     return result # get_applicable_name_form_objs()
 
   def get_possible_dit_structure_rules(self,dn,structural_object_class_oid):
-    name_form_identifiers = ldap.cidict.cidict({})
+    name_form_identifiers = ldap0.cidict.cidict({})
     for name_form_obj in self.get_applicable_name_form_objs(dn,structural_object_class_oid):
       name_form_identifiers[name_form_obj.oid] = None
     dit_struct_ruleids = {}
-    for dit_struct_rule_obj in self.sed[ldap.schema.models.DITStructureRule].values():
-      name_form_obj = self.get_obj(ldap.schema.models.NameForm,dit_struct_rule_obj.form)
+    for dit_struct_rule_obj in self.sed[ldap0.schema.models.DITStructureRule].values():
+      name_form_obj = self.get_obj(ldap0.schema.models.NameForm,dit_struct_rule_obj.form)
       if name_form_obj!=None and (name_form_obj.oid in name_form_identifiers) and \
-         (self.getoid(ldap.schema.models.ObjectClass,name_form_obj.oc)==structural_object_class_oid):
+         (self.getoid(ldap0.schema.models.ObjectClass,name_form_obj.oc)==structural_object_class_oid):
         dit_struct_ruleids[dit_struct_rule_obj.ruleid]=dit_struct_rule_obj
     return dit_struct_ruleids.keys() # get_possible_dit_structure_rules()
 
   def get_subord_structural_oc_names(self,ruleid):
     subord_structural_oc_oids = {}
     subord_structural_ruleids = {}
-    for dit_struct_rule_obj in self.sed[ldap.schema.models.DITStructureRule].values():
+    for dit_struct_rule_obj in self.sed[ldap0.schema.models.DITStructureRule].values():
       for sup in dit_struct_rule_obj.sup:
         if sup==ruleid:
           subord_structural_ruleids[dit_struct_rule_obj.ruleid]=None
-          name_form_obj = self.get_obj(ldap.schema.models.NameForm,dit_struct_rule_obj.form)
+          name_form_obj = self.get_obj(ldap0.schema.models.NameForm,dit_struct_rule_obj.form)
           if name_form_obj:
-            subord_structural_oc_oids[self.getoid(ldap.schema.models.ObjectClass,name_form_obj.oc)]=None
+            subord_structural_oc_oids[self.getoid(ldap0.schema.models.ObjectClass,name_form_obj.oc)]=None
     result = []
     for oc_oid in subord_structural_oc_oids.keys():
-      oc_obj = self.get_obj(ldap.schema.models.ObjectClass,oc_oid)
+      oc_obj = self.get_obj(ldap0.schema.models.ObjectClass,oc_oid)
       if oc_obj and oc_obj.names:
         result.append(oc_obj.names[0])
       else:
@@ -230,33 +230,33 @@ class SubSchema(ldap.schema.subentry.SubSchema):
 
   def get_superior_structural_oc_names(self,ruleid):
     try:
-      dit_struct_rule_obj = self.sed[ldap.schema.models.DITStructureRule][ruleid]
+      dit_struct_rule_obj = self.sed[ldap0.schema.models.DITStructureRule][ruleid]
     except KeyError:
       return None
     else:
       result=[];sup_ruleids=[]
       for sup_ruleid in dit_struct_rule_obj.sup:
         try:
-          sup_dit_struct_rule_obj = self.sed[ldap.schema.models.DITStructureRule][sup_ruleid]
+          sup_dit_struct_rule_obj = self.sed[ldap0.schema.models.DITStructureRule][sup_ruleid]
         except KeyError:
           pass
         else:
           if sup_dit_struct_rule_obj.form:
-            sup_name_form_obj = self.get_obj(ldap.schema.models.NameForm,sup_dit_struct_rule_obj.form)
+            sup_name_form_obj = self.get_obj(ldap0.schema.models.NameForm,sup_dit_struct_rule_obj.form)
             if sup_name_form_obj:
               sup_ruleids.append(sup_ruleid)
               result.append(sup_name_form_obj.oc)
     return sup_ruleids,result # get_superior_structural_oc_names()
 
 
-class Entry(ldap.schema.models.Entry):
+class Entry(ldap0.schema.models.Entry):
   """
   Base class with some additional basic methods
   """
 
   def __getitem__(self,nameoroid):
     try:
-      return ldap.schema.models.Entry.__getitem__(self,nameoroid)
+      return ldap0.schema.models.Entry.__getitem__(self,nameoroid)
     except KeyError as e:
       if (self.dn!=None) and (nameoroid.lower()=='entrydn' or nameoroid.lower()=='1.3.6.1.1.20'):
         if type(self.dn)==UnicodeType:
@@ -269,21 +269,21 @@ class Entry(ldap.schema.models.Entry):
 
   def object_class_oid_set(self):
     try:
-      object_classes = ldap.schema.Entry.__getitem__(self,'objectClass')
+      object_classes = ldap0.schema.models.Entry.__getitem__(self,'objectClass')
     except KeyError:
       object_classes = []
-    return SchemaElementOIDSet(self._s,ldap.schema.models.ObjectClass,object_classes)
+    return SchemaElementOIDSet(self._s,ldap0.schema.models.ObjectClass,object_classes)
 
   def get_structural_oc(self):
     try:
       structural_object_class_oid = self._s.getoid(
-        ldap.schema.models.ObjectClass,
-        ldap.schema.Entry.__getitem__(self,'structuralObjectClass')[-1]
+        ldap0.schema.models.ObjectClass,
+        ldap0.schema.models.Entry.__getitem__(self,'structuralObjectClass')[-1]
       )
     except (KeyError,IndexError):
       try:
         structural_object_class_oid = self._s.get_structural_oc(
-          ldap.schema.Entry.__getitem__(self,'objectClass')
+          ldap0.schema.models.Entry.__getitem__(self,'objectClass')
         )
       except KeyError:
         return None

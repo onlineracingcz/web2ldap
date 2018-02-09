@@ -14,17 +14,17 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import ldap, ldap.modlist,pyweblib.forms, \
-       w2lapp.cnf,w2lapp.core,w2lapp.gui,w2lapp.addmodifyform,w2lapp.modify
+import ldap0,ldap0.modlist,pyweblib.forms, \
+       w2lapp.cnf,w2lapp.core,w2lapp.gui,w2lapp.schema,w2lapp.addmodifyform,w2lapp.modify
 
-from ldap.dn import escape_dn_chars
+from ldap0.dn import escape_dn_chars
 
 import ldaputil.schema
 from ldaputil.base import ParentDN
 from ldaputil.controls import PostReadControl
 
 # Attribute types always ignored for add requests
-ADD_IGNORE_ATTR_TYPES = [
+ADD_IGNORE_ATTR_TYPES = {
   'entryDN',
   'entryCSN',
   'governingStructureRule',
@@ -32,7 +32,7 @@ ADD_IGNORE_ATTR_TYPES = [
   'structuralObjectClass',
   'subschemaSubentry',
   'collectiveAttributeSubentries',
-]
+}
 
 
 def ModlistTable(schema,modlist):
@@ -67,10 +67,10 @@ def SearchMissingParentEntries(ls,new_dn):
   while parent_dn.lower():
     try:
       ls.l.search_s(
-        parent_dn.encode('utf-8'),ldap.SCOPE_BASE,
+        parent_dn.encode('utf-8'),ldap0.SCOPE_BASE,
         '(objectClass=*)',['objectClass']
       )
-    except ldap.NO_SUCH_OBJECT:
+    except ldap0.NO_SUCH_OBJECT:
       missing_parentdns.append(parent_dn)
     parent_dn = ParentDN(parent_dn)
   return missing_parentdns
@@ -111,7 +111,7 @@ def w2l_Add(sid,outf,command,form,ls,dn):
   if add_clonedn:
     entry,_ = w2lapp.addmodifyform.ReadOldEntry(ls,add_clonedn,sub_schema,None,{'*':'*'})
     add_rdn,add_basedn = ldaputil.base.SplitRDN(add_clonedn)
-    add_rdn_dnlist = ldap.dn.str2dn(add_rdn.encode(ls.charset))
+    add_rdn_dnlist = ldap0.dn.str2dn(add_rdn.encode(ls.charset))
     add_rdn = u'+'.join(['%s=' % (at) for at,_,_ in add_rdn_dnlist[0]]).decode(ls.charset)
     add_basedn = add_basedn or dn
 
@@ -160,8 +160,8 @@ def w2l_Add(sid,outf,command,form,ls,dn):
   # If rdn does not contain a complete RDN try to determine
   # the attribute type for forming the RDN.
   try:
-    rdn_list = [ tuple(rdn_comp.split('=',1)) for rdn_comp in ldap.explode_rdn(add_rdn.encode(ls.charset)) ]
-  except ldap.DECODING_ERROR:
+    rdn_list = [ tuple(rdn_comp.split('=',1)) for rdn_comp in ldap0.dn.explode_rdn(add_rdn.encode(ls.charset)) ]
+  except ldap0.DECODING_ERROR:
     w2lapp.addmodifyform.w2l_AddForm(
       sid,outf,'add',form,ls,dn,
       add_rdn,add_basedn,entry,
@@ -197,7 +197,7 @@ def w2l_Add(sid,outf,command,form,ls,dn):
   ])
 
   # Generate list of modifications
-  modlist = ldap.modlist.addModlist(entry,ignore_attr_types=ADD_IGNORE_ATTR_TYPES)
+  modlist = ldap0.modlist.add_modlist(dict(entry.items()),ignore_attr_types=ADD_IGNORE_ATTR_TYPES)
 
   if not modlist:
     raise w2lapp.core.ErrorExit(u'Cannot add entry without attribute values.')
@@ -215,13 +215,13 @@ def w2l_Add(sid,outf,command,form,ls,dn):
 
   # Try to add the new entry
   try:
-    add_msg_id = ls.l.add_ext(
+    add_msg_id = ls.l.add(
       new_dn,
       modlist,
       serverctrls=add_serverctrls
     )
-    _,_,_,add_resp_ctrls = ls.l.result3(add_msg_id)
-  except ldap.NO_SUCH_OBJECT as e:
+    _,_,_,add_resp_ctrls,_,_ = ls.l.result(add_msg_id)
+  except ldap0.NO_SUCH_OBJECT as e:
     raise w2lapp.core.ErrorExit(
       u"""
       %s<br>
@@ -232,16 +232,16 @@ def w2l_Add(sid,outf,command,form,ls,dn):
         w2lapp.gui.DisplayDN(sid,form,ls,add_basedn.decode(ls.charset),commandbutton=0),
     ))
   except (
-    ldap.ALREADY_EXISTS,
-    ldap.CONSTRAINT_VIOLATION,
-    ldap.INVALID_DN_SYNTAX,
-    ldap.INVALID_SYNTAX,
-    ldap.NAMING_VIOLATION,
-    ldap.OBJECT_CLASS_VIOLATION,
-    ldap.OTHER,
-    ldap.TYPE_OR_VALUE_EXISTS,
-    ldap.UNDEFINED_TYPE,
-    ldap.UNWILLING_TO_PERFORM,
+    ldap0.ALREADY_EXISTS,
+    ldap0.CONSTRAINT_VIOLATION,
+    ldap0.INVALID_DN_SYNTAX,
+    ldap0.INVALID_SYNTAX,
+    ldap0.NAMING_VIOLATION,
+    ldap0.OBJECT_CLASS_VIOLATION,
+    ldap0.OTHER,
+    ldap0.TYPE_OR_VALUE_EXISTS,
+    ldap0.UNDEFINED_TYPE,
+    ldap0.UNWILLING_TO_PERFORM,
   ),e:
     # Some error in user's input => present input form to edit input values
     w2lapp.addmodifyform.w2l_AddForm(

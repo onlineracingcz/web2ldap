@@ -14,12 +14,11 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import pyweblib.forms,ldap.schema,ldaputil.schema,pyweblib.httphelper, \
-       w2lapp.core,w2lapp.cnf,w2lapp.gui,w2lapp.read,w2lapp.viewer
+import pyweblib.forms,ldap0.schema,ldaputil.schema,pyweblib.httphelper, \
+       w2lapp.core,w2lapp.cnf,w2lapp.gui,w2lapp.read,w2lapp.schema,w2lapp.viewer
 
 from msbase import union,GrabKeys
-from ldap.cidict import cidict
-from ldap.schema import AttributeType
+from ldap0.cidict import cidict
 from w2lapp.session import session
 from ldaputil.schema import SchemaElementOIDSet
 
@@ -36,7 +35,7 @@ class vCardEntry(ldaputil.schema.Entry):
       return ''
     else:
       try:
-        values = ldap.schema.Entry.__getitem__(self,nameoroid)
+        values = ldap0.schema.models.Entry.__getitem__(self,nameoroid)
       except KeyError:
         return ''
       else:
@@ -115,13 +114,13 @@ class DisplayEntry(ldaputil.schema.Entry):
     # This gets all object classes no matter what
     all_object_class_oid_set = self.object_class_oid_set()
     # Initialize the set with only the STRUCTURAL object class of the entry
-    object_class_oid_set = SchemaElementOIDSet(self._s,ldap.schema.models.ObjectClass,[])
+    object_class_oid_set = SchemaElementOIDSet(self._s,ldap0.schema.models.ObjectClass,[])
     structural_oc = self.get_structural_oc()
     if structural_oc:
       object_class_oid_set.add(structural_oc)
     # Now add the other AUXILIARY and ABSTRACT object classes
     for oc in all_object_class_oid_set:
-      oc_obj = self._s.get_obj(ldap.schema.models.ObjectClass,oc)
+      oc_obj = self._s.get_obj(ldap0.schema.models.ObjectClass,oc)
       if oc_obj==None or oc_obj.kind!=0:
         object_class_oid_set.add(oc)
     template_oc = object_class_oid_set.intersection(read_template_dict.data.keys())
@@ -156,7 +155,7 @@ class DisplayEntry(ldaputil.schema.Entry):
             else:
               try:
                 template_attr_oid_set = set([
-                  self._s.getoid(ldap.schema.AttributeType,attr_type_name)
+                  self._s.getoid(ldap0.schema.models.AttributeType,attr_type_name)
                   for attr_type_name in GrabKeys(template_str)()
                 ])
               except TypeError:
@@ -201,7 +200,7 @@ def PrintAttrList(sid,outf,ls,form,dn,sub_schema,entry,attrs,Comment):
   if u'*' in read_expandattr_set:
     read_tablemaxcount_dict = {}
   else:
-    read_tablemaxcount_dict = ldap.cidict.cidict(w2lapp.cnf.GetParam(ls,'read_tablemaxcount',{}))
+    read_tablemaxcount_dict = ldap0.cidict.cidict(w2lapp.cnf.GetParam(ls,'read_tablemaxcount',{}))
     for at in read_expandattr_set:
       try:
         del read_tablemaxcount_dict[at]
@@ -212,7 +211,7 @@ def PrintAttrList(sid,outf,ls,form,dn,sub_schema,entry,attrs,Comment):
   entry.sep = None
   for attr_type_name in show_attrs:
     attr_type_anchor_id = 'readattr_%s' % form.utf2display(unicode(attr_type_name))
-    attr_type_str = w2lapp.gui.SchemaElementName(sid,form,dn,sub_schema,attr_type_name,ldap.schema.AttributeType,name_template=r'<var>%s</var>')
+    attr_type_str = w2lapp.gui.SchemaElementName(sid,form,dn,sub_schema,attr_type_name,ldap0.schema.models.AttributeType,name_template=r'<var>%s</var>')
     attr_value_disp_list = entry[attr_type_name] or ['<strong>&lt;Empty attribute value list!&gt;</strong>']
     attr_value_count = len(attr_value_disp_list)
     dt_list = [
@@ -288,7 +287,7 @@ def w2l_Read(
     a.strip().encode('ascii')
     for a in form.getInputValue('read_attr',wanted_attrs)
   ]
-  wanted_attr_set = ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap.schema.models.AttributeType,wanted_attrs)
+  wanted_attr_set = ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,wanted_attrs)
   wanted_attrs = wanted_attr_set.names()
 
   # Specific attributes requested with form parameter search_attrs?
@@ -324,12 +323,15 @@ def w2l_Read(
       GrabKeys(operational_attrs_template)(),
       w2lapp.cnf.GetParam(ls,'requested_attrs',[]),
     )
-    if not at in entry and sub_schema.get_obj(AttributeType,at)!=None
+    if not at in entry and sub_schema.get_obj(ldap0.schema.models.AttributeType,at)!=None
   ]
   if not wanted_attrs and requested_attrs:
     try:
       search_result = ls.readEntry(dn,requested_attrs,search_filter=filterstr,no_cache=read_nocache)
-    except (ldap.NO_SUCH_ATTRIBUTE,ldap.INSUFFICIENT_ACCESS):
+    except (
+        ldap0.NO_SUCH_ATTRIBUTE,
+        ldap0.INSUFFICIENT_ACCESS,
+    ):
       # Catch and ignore complaints of server about not knowing attribute
       pass
     else:
@@ -469,7 +471,7 @@ def w2l_Read(
     collective_attrs = []
     nomatching_attrs = []
     for a in entry.keys():
-      at_se = sub_schema.get_obj(AttributeType,a,None)
+      at_se = sub_schema.get_obj(ldap0.schema.models.AttributeType,a,None)
       if at_se is None:
         nomatching_attrs.append(a)
       else:

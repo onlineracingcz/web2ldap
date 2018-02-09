@@ -12,7 +12,7 @@ from w2lapp.schema.syntaxes import \
 
 from w2lapp.schema.plugins.quirks import NamingContexts
 
-import re,mspki,ldapurl,ldap.filter,ldap.controls,w2lapp.gui,w2lapp.cnf
+import re,mspki,ldap0.ldapurl,ldap0.controls,w2lapp.gui,w2lapp.cnf
 
 from pyasn1.codec.ber import decoder as ber_decoder
 
@@ -180,16 +180,16 @@ class OlcSyncRepl(OlcMultilineText,LDAPUrl):
 
   def ldap_url(self):
     """
-    Return ldapurl.LDAPUrl object representing some syncrepl parameters
+    Return ldap0.ldapurl.LDAPUrl object representing some syncrepl parameters
     as close as possible.
     """
-    lu = ldapurl.LDAPUrl(self.provider)
+    lu = ldap0.ldapurl.LDAPUrl(self.provider)
     lu.dn = self.searchbase
     lu.scope = {
-      'sub':ldapurl.LDAP_SCOPE_SUBTREE,
-      'one':ldapurl.LDAP_SCOPE_ONELEVEL,
-      'base':ldapurl.LDAP_SCOPE_BASE,
-      'subord':ldapurl.LDAP_SCOPE_SUBTREE, # FIX ME: this is a work-around
+      'sub':ldap0.SCOPE_SUBTREE,
+      'one':ldap0.SCOPE_ONELEVEL,
+      'base':ldap0.SCOPE_BASE,
+      'subord':ldap0.SCOPE_SUBTREE, # FIX ME: this is a work-around
     }[self.scope]
     lu.filterstr = self.filter
     lu.who = self.authcid or self.binddn or ''
@@ -256,7 +256,7 @@ class AuditContext(NamingContexts):
           'searchform','Search',self._sid,
           [
             ('dn',self.attrValue),
-            ('scope',str(ldap.SCOPE_ONELEVEL)),
+            ('scope',str(ldap0.SCOPE_ONELEVEL)),
           ],
           title=u'Go to search form for audit log',
         ),
@@ -265,7 +265,7 @@ class AuditContext(NamingContexts):
           [
             ('dn',self.attrValue),
             ('filterstr','(objectClass=auditObject)'),
-            ('scope',str(ldap.SCOPE_ONELEVEL)),
+            ('scope',str(ldap0.SCOPE_ONELEVEL)),
           ],
           title=u'List audit log entries of all operations',
         ),
@@ -274,7 +274,7 @@ class AuditContext(NamingContexts):
           [
             ('dn',self.attrValue),
             ('filterstr','(objectClass=auditWriteObject)'),
-            ('scope',str(ldap.SCOPE_ONELEVEL)),
+            ('scope',str(ldap0.SCOPE_ONELEVEL)),
           ],
           title=u'List audit log entries of all write operations',
         ),
@@ -366,7 +366,7 @@ class ReqControls(IA5String):
         ctrl_name,_,_ = oid_desc_reg[ctrl_type]
       except (KeyError,ValueError):
         try:
-          ctrl_name = ldap.controls.KNOWN_RESPONSE_CONTROLS[ctrl_type].__class__.__name__
+          ctrl_name = ldap0.controls.KNOWN_RESPONSE_CONTROLS.get(ctrl_type).__class__.__name__
         except KeyError:
           ctrl_name = None
       if ctrl_name:

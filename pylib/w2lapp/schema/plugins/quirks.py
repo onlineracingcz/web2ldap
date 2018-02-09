@@ -7,7 +7,7 @@ a server is errornous or could not be retrieved.
 
 from __future__ import absolute_import
 
-import ldapurl,w2lapp.searchform
+import ldap0.ldapurl,w2lapp.searchform
 
 from w2lapp.schema.syntaxes import syntax_registry,OID,RFC822Address, \
   JPEGImage,PhotoG3Fax,Audio,Uri,LDAPUrl,Boolean,PostalAddress, \
@@ -257,9 +257,9 @@ class AltServer(LDAPUrl):
   desc = 'LDAP URIs of alternative server(s)'
 
   def _command_ldap_url(self,ldap_url):
-    ldap_url_obj = ldapurl.LDAPUrl(ldapUrl=ldap_url)
+    ldap_url_obj = ldap0.ldapurl.LDAPUrl(ldapUrl=ldap_url)
     ldap_url_obj.who = self._ls.who
-    ldap_url_obj.scope = ldapurl.LDAP_SCOPE_BASE
+    ldap_url_obj.scope = ldap0.ldapurl.LDAP_SCOPE_BASE
     ldap_url_obj.cred = None
     return ldap_url_obj
 

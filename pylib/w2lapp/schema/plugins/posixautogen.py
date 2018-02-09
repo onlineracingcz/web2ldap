@@ -7,7 +7,7 @@ Experimental => you have to understand what it internally does when enabling it!
 
 from __future__ import absolute_import
 
-import ldap
+import ldap0
 
 from msbase import Str1stValueDict
 from w2lapp.schema.plugins.nis import syntax_registry,UidNumber,GidNumber,IA5String
@@ -42,7 +42,7 @@ class AutogenNumber:
       try:
         ldap_result = self._ls.l.search_s(
           self._ls.getSearchRoot(self._dn).encode(self._ls.charset),
-          ldap.SCOPE_SUBTREE,
+          ldap0.SCOPE_SUBTREE,
           '(&(objectClass={0})({1}>={2})({1}<={3}))'.format(
             self.object_class,
             self.attrType,
@@ -52,9 +52,9 @@ class AutogenNumber:
           attrlist=[self.attrType],
         )
       except (
-        ldap.NO_SUCH_OBJECT,
-        ldap.SIZELIMIT_EXCEEDED,
-        ldap.TIMELIMIT_EXCEEDED,
+        ldap0.NO_SUCH_OBJECT,
+        ldap0.SIZELIMIT_EXCEEDED,
+        ldap0.TIMELIMIT_EXCEEDED,
       ):
         # search failed => no value suggested
         return u''

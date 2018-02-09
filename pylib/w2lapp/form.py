@@ -14,7 +14,7 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import urllib,uuid,codecs,re,Cookie,ldif,ldap.schema,msgzip,ldaputil.base, \
+import urllib,uuid,codecs,re,Cookie,ldap0.ldif,ldap0.schema,msgzip,ldaputil.base, \
        pyweblib.forms,ldapsession
 
 import w2lapp.cnf,w2lapp.core,w2lapp.gui,w2lapp.passwd,w2lapp.searchform,w2lapp.ldapparams,w2lapp.session
@@ -414,12 +414,12 @@ class Web2LDAPForm_ldapparams(Web2LDAPForm):
     )
     self.addField(
       pyweblib.forms.Select(
-        'ldap_deref',u'Dereference aliases',maxValues=1,default=str(ldap.DEREF_NEVER),
+        'ldap_deref',u'Dereference aliases',maxValues=1,default=str(ldap0.DEREF_NEVER),
         options=[
-          (unicode(ldap.DEREF_NEVER),u'never'),
-          (unicode(ldap.DEREF_SEARCHING),u'searching'),
-          (unicode(ldap.DEREF_FINDING),u'finding'),
-          (unicode(ldap.DEREF_ALWAYS),u'always'),
+          (unicode(ldap0.DEREF_NEVER),u'never'),
+          (unicode(ldap0.DEREF_SEARCHING),u'searching'),
+          (unicode(ldap0.DEREF_FINDING),u'finding'),
+          (unicode(ldap0.DEREF_ALWAYS),u'always'),
         ]
       )
     )
@@ -496,7 +496,7 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
     bulkmod_ctrl_options=[
       (control_oid,oid_desc_reg.get(control_oid,(control_oid,))[0])
       for control_oid,control_spec in w2lapp.ldapparams.AVAILABLE_BOOLEAN_CONTROLS.items()
-      if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'modify_ext' in control_spec[0]
+      if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'modify' in control_spec[0]
     ]
     self.addField(
       pyweblib.forms.Select(
@@ -524,10 +524,10 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
         w2lapp.cnf.misc.input_maxattrs,
         options=(
           (u'',u''),
-          (unicode(ldap.MOD_ADD),u'add'),
-          (unicode(ldap.MOD_DELETE),u'delete'),
-          (unicode(ldap.MOD_REPLACE),u'replace'),
-#          (unicode(ldap.MOD_INCREMENT),u'increment'),
+          (unicode(ldap0.MOD_ADD),u'add'),
+          (unicode(ldap0.MOD_DELETE),u'delete'),
+          (unicode(ldap0.MOD_REPLACE),u'replace'),
+          (unicode(ldap0.MOD_INCREMENT),u'increment'),
         ),
         default=u'',
       )
@@ -551,7 +551,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
     delete_ctrl_options=[
       (control_oid,oid_desc_reg.get(control_oid,(control_oid,))[0])
       for control_oid,control_spec in w2lapp.ldapparams.AVAILABLE_BOOLEAN_CONTROLS.items()
-      if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'delete_ext' in control_spec[0]
+      if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'delete' in control_spec[0]
     ]
     delete_ctrl_options.append((ldapsession.CONTROL_TREEDELETE,u'Tree Deletion'))
     self.addField(
@@ -636,7 +636,7 @@ class Web2LDAPForm_locate(Web2LDAPForm):
 class Web2LDAPForm_oid(Web2LDAPForm):
   def addCommandFields(self):
     self.addField(OIDInput('oid',u'OID'))
-    self.addField(pyweblib.forms.Select('oid_class','Schema element class',1,options=ldap.schema.SCHEMA_ATTRS,default=''))
+    self.addField(pyweblib.forms.Select('oid_class','Schema element class',1,options=ldap0.schema.SCHEMA_ATTRS,default=''))
 
 class Web2LDAPForm_dit(Web2LDAPForm):
   pass
@@ -691,7 +691,7 @@ class LDIFTextArea(pyweblib.forms.Textarea):
   ):
     pyweblib.forms.Textarea.__init__(
       self,
-      name,text,w2lapp.cnf.misc.ldif_maxbytes,1,ldif.ldif_pattern,
+      name,text,w2lapp.cnf.misc.ldif_maxbytes,1,'^.*$',
       required=required,
     )
     self._max_entries = max_entries
@@ -699,19 +699,11 @@ class LDIFTextArea(pyweblib.forms.Textarea):
 
   def getLDIFRecords(self):
     if self.value:
-      f = StringIO('\n'.join(self.value).encode(self.charset))
-      ldif_parser = ldif.LDIFRecordList(
-        f,
+      return list(ldap0.ldif.LDIFParser.fromstring(
+        '\n'.join(self.value).encode(self.charset),
         ignored_attr_types=[],
-        max_entries=self._max_entries,
         process_url_schemes=w2lapp.cnf.misc.ldif_url_schemes
-      )
-      # It's not clear why ldif_parser stays persistent.
-      # But let's reset class attribute now.
-      # FIX ME!!! Likely not thread-safe!
-      ldif_parser.all_records = []
-      ldif_parser.parse()
-      return ldif_parser.all_records[:]
+      ).parse(max_entries=self._max_entries))
     else:
       return []
 

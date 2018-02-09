@@ -14,13 +14,13 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import os,ldap,ldapurl, \
+import os,ldap0,ldap0.ldapurl, \
        ldaputil,pyweblib.forms,pyweblib.httphelper,msbase, \
        w2lapp.core,w2lapp.cnf,w2lapp.schema.syntaxes,w2lapp.locate, \
        w2lapp.searchform,w2lapp.monitor
 
-from ldapurl import LDAPUrl
-from ldap.filter import escape_filter_chars
+from ldap0.ldapurl import LDAPUrl
+from ldap0.filter import escape_filter_chars
 from pyweblib.forms import escapeHTML
 
 from ldaputil.base import \
@@ -93,11 +93,11 @@ def LDAPError2ErrMsg(e,form,charset='utf-8',template='{error_msg}<br>{matched_dn
 
   matched_dn = None
 
-  if isinstance(e,ldap.TIMEOUT) or not e.args:
+  if isinstance(e,ldap0.TIMEOUT) or not e.args:
 
     ErrMsg = u''
 
-  elif isinstance(e,ldap.INVALID_CREDENTIALS) and \
+  elif isinstance(e,ldap0.INVALID_CREDENTIALS) and \
        AD_LDAP49_ERROR_PREFIX in e.args[0].get('info',''):
 
     ad_error_code_pos = e.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
@@ -297,7 +297,7 @@ def ContextMenuSingleEntry(sid,form,ls,dn,vcard_link=0,dds_link=0,entry_uuid=Non
         [
           ('dn',current_audit_context),
           ('filterstr',accesslog_any_filterstr),
-          ('scope',str(ldap.SCOPE_ONELEVEL)),
+          ('scope',str(ldap0.SCOPE_ONELEVEL)),
         ],
         title=u'Complete audit trail for entry\r\n%s' % (dn),
       ),
@@ -306,7 +306,7 @@ def ContextMenuSingleEntry(sid,form,ls,dn,vcard_link=0,dds_link=0,entry_uuid=Non
         [
           ('dn',current_audit_context),
           ('filterstr',accesslog_write_filterstr),
-          ('scope',str(ldap.SCOPE_ONELEVEL)),
+          ('scope',str(ldap0.SCOPE_ONELEVEL)),
         ],
         title=u'Audit trail of write access to entry\r\n%s' % (dn),
       ),
@@ -324,7 +324,7 @@ def ContextMenuSingleEntry(sid,form,ls,dn,vcard_link=0,dds_link=0,entry_uuid=Non
         [
           ('dn',changelog_dn),
           ('filterstr',changelog_filterstr),
-          ('scope',str(ldap.SCOPE_ONELEVEL)),
+          ('scope',str(ldap0.SCOPE_ONELEVEL)),
         ],
         title=u'Audit trail of write access to current entry',
       )
@@ -340,7 +340,7 @@ def ContextMenuSingleEntry(sid,form,ls,dn,vcard_link=0,dds_link=0,entry_uuid=Non
       [
         ('dn',monitor_context_dn),
         ('filterstr','(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (escape_filter_chars(dn))),
-        ('scope',str(ldap.SCOPE_SUBTREE)),
+        ('scope',str(ldap0.SCOPE_SUBTREE)),
       ],
       title=u'Find connections of this user in monitor database',
     ))
@@ -365,7 +365,7 @@ def WhoAmITemplate(sid,form,ls,dn,who=None,entry=None):
       w2lapp.cnf.GetParam(ls,'supplement_schema',None),
       w2lapp.cnf.GetParam(ls,'schema_strictcheck',True),
     )
-    bound_as_templates = ldap.cidict.cidict(w2lapp.cnf.GetParam(
+    bound_as_templates = ldap0.cidict.cidict(w2lapp.cnf.GetParam(
       ls.ldapUrl(ls.getSearchRoot(who)),'boundas_template',{}
     ))
     # Read entry if necessary
@@ -375,7 +375,7 @@ def WhoAmITemplate(sid,form,ls,dn,who=None,entry=None):
         read_attrs.update(GrabKeys(bound_as_templates[oc]).keys)
       try:
         ldap_result = ls.readEntry(who,attrtype_list=list(read_attrs))
-      except ldap.LDAPError:
+      except ldap0.LDAPError:
         entry = {}
       else:
         if ldap_result:
@@ -386,7 +386,7 @@ def WhoAmITemplate(sid,form,ls,dn,who=None,entry=None):
       display_entry = w2lapp.read.DisplayEntry(sid,form,ls,dn,sub_schema,entry,'readSep',1)
       user_structural_oc = display_entry.get_structural_oc()
       for oc in bound_as_templates.keys():
-        if sub_schema.getoid(ldap.schema.ObjectClass,oc)==user_structural_oc:
+        if sub_schema.getoid(ldap0.schema.models.ObjectClass,oc)==user_structural_oc:
           try:
             result = bound_as_templates[oc] % display_entry
           except KeyError:
@@ -588,7 +588,7 @@ def SchemaElementName(sid,form,dn,schema,se_nameoroid,se_class,name_template=r'%
     if not se is None:
       result.append(form.applAnchor(
           'oid','&raquo;',sid,
-          [ ('dn',dn),('oid',se.oid),('oid_class',ldap.schema.SCHEMA_ATTR_MAPPING[se_class]) ]
+          [ ('dn',dn),('oid',se.oid),('oid_class',ldap0.schema.SCHEMA_ATTR_MAPPING[se_class]) ]
       ))
   return '\n'.join(result)
 
@@ -598,7 +598,7 @@ def LDAPURLButton(sid,form,ls,data):
     l = data
   else:
     l = LDAPUrl(ldapUrl=data)
-  command_func = {True:'read',False:'search'}[l.scope==ldap.SCOPE_BASE]
+  command_func = {True:'read',False:'search'}[l.scope==ldap0.SCOPE_BASE]
   if l.hostport:
     command_text = 'Connect'
     return form.applAnchor(
@@ -608,13 +608,13 @@ def LDAPURLButton(sid,form,ls,data):
       (('ldapurl',unicode(str(l))),)
     )
   else:
-    command_text = {True:'Read',False:'Search'}[l.scope==ldap.SCOPE_BASE]
+    command_text = {True:'Read',False:'Search'}[l.scope==ldap0.SCOPE_BASE]
     return form.applAnchor(
       command_func,command_text,sid,
       [
         ('dn',l.dn.decode(form.accept_charset)),
         ('filterstr',(l.filterstr or '(objectClass=*)').decode(form.accept_charset)),
-        ('scope',unicode(l.scope or ldap.SCOPE_SUBTREE)),
+        ('scope',unicode(l.scope or ldap0.SCOPE_SUBTREE)),
       ],
     )
 
@@ -642,8 +642,8 @@ def AttributeTypeSelectField(
   Return pyweblib.forms.Select instance for choosing attribute type names
   """
   attr_options_dict = {}
-  for attr_type in (map(unicode,default_attr_options or []) or sub_schema.sed[ldap.schema.AttributeType].keys())+attr_list:
-    attr_type_se = sub_schema.get_obj(ldap.schema.AttributeType,attr_type)
+  for attr_type in (map(unicode,default_attr_options or []) or sub_schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
+    attr_type_se = sub_schema.get_obj(ldap0.schema.models.AttributeType,attr_type)
     if attr_type_se:
       if attr_type_se.names:
         attr_type_name = unicode(attr_type_se.names[0],ls.charset)
@@ -738,7 +738,7 @@ def SearchRootField(
     dn_select_list = []
   dn_select_list = msbase.union(ls.namingContexts,dn_select_list)
   if search_root_searchurl:
-    slu = ldapurl.LDAPUrl(search_root_searchurl.encode(ls.charset))
+    slu = ldap0.ldapurl.LDAPUrl(search_root_searchurl.encode(ls.charset))
     try:
       ldap_result = ls.l.search_s(
         slu.dn,
@@ -746,7 +746,7 @@ def SearchRootField(
         slu.filterstr,
         attrlist=['1.1'],
       )
-    except ldap.LDAPError:
+    except ldap0.LDAPError:
       pass
     else:
       dn_select_list = msbase.union(

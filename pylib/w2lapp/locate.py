@@ -14,7 +14,7 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import socket,ldap
+import socket,ldap0
 
 try:
   import DNS
@@ -22,7 +22,7 @@ except ImportError:
   DNS = None
 
 from ldaputil.extldapurl import ExtendedLDAPUrl
-from ldapurl import LDAPUrlExtension,LDAPUrlExtensions
+from ldap0.ldapurl import LDAPUrlExtension,LDAPUrlExtensions
 
 # Modules shipped with web2ldap
 import ldaputil.base,ldaputil.dns,w2lapp.core,w2lapp.gui,w2lapp.schema.syntaxes
@@ -134,7 +134,7 @@ def w2l_Locate(outf,command,form):
                   urlscheme=url_scheme,
                   hostport='%s:%d' % (hostname,port),
                   dn=search_base,
-                  scope=ldap.SCOPE_BASE,
+                  scope=ldap0.SCOPE_BASE,
                   extensions=lu_extensions
                 )
                 outf_lines.append("""
@@ -158,7 +158,7 @@ def w2l_Locate(outf,command,form):
                   urlscheme=url_scheme,
                   hostport='%s:%d' % (hostname,port),
                   dn=search_base,
-                  scope=ldap.SCOPE_SUBTREE,
+                  scope=ldap0.SCOPE_SUBTREE,
                   filterstr='(mail=%s)' % (locate_name),
                   extensions=lu_extensions
                 )
@@ -191,7 +191,7 @@ def w2l_Locate(outf,command,form):
             ldap_url = ExtendedLDAPUrl(
               hostport=alias_name,
               dn=search_base,
-              scope=ldap.SCOPE_BASE
+              scope=ldap0.SCOPE_BASE
             )
             outf_lines.append("""
       <p>IP address found for host name %s: %s</p>

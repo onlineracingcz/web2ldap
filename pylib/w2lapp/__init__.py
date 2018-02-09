@@ -15,4 +15,4 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 from __future__ import absolute_import
 
 # This is also the release's overall version number
-__version__ = '1.2.101'
+__version__ = '1.3.0'

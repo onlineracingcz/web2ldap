@@ -9,7 +9,7 @@ import time,datetime,utctime,w2lapp.searchform
 
 from w2lapp.schema.syntaxes import SelectList,DynamicDNSelectList,Timespan,GeneralizedTime,syntax_registry
 from w2lapp.schema.plugins.quirks import UserPassword
-from ldap import LDAPError
+from ldap0 import LDAPError
 
 class PwdCheckQuality(SelectList):
   oid = 'PwdCheckQuality-oid'

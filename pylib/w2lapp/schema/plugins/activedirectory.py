@@ -5,7 +5,7 @@ web2ldap plugin classes for Active Directory (for some information see draft-arm
 
 from __future__ import absolute_import
 
-import time,utctime,struct,uuid,pyweblib,ldap,w2lapp.searchform
+import time,utctime,struct,uuid,pyweblib,ldap0.cidict,w2lapp.searchform
 
 from w2lapp.gui import DisplayDN
 
@@ -510,7 +510,7 @@ syntax_registry.registerAttrType(
 class CountryCode(SelectList):
   oid = 'CountryCode-oid'
   desc = 'Numerical country code'
-  attr_value_dict = ldap.cidict.cidict(w2lapp.cnf.countries.countryCode_dict)
+  attr_value_dict = ldap0.cidict.cidict(w2lapp.cnf.countries.countryCode_dict)
 
   def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
     self.attr_value_dict[u'0'] = u'-/-'

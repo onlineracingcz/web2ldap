@@ -14,7 +14,7 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import time,ldap,utctime,w2lapp.cnf,pyweblib.sslenv,ldaputil.base,w2lapp.core,w2lapp.gui,msgzip
+import time,ldap0,utctime,w2lapp.cnf,pyweblib.sslenv,ldaputil.base,w2lapp.core,w2lapp.gui,msgzip
 
 from w2lapp.session import session
 
@@ -24,7 +24,7 @@ from w2lapp.session import session
 
 def w2l_ConnInfo(sid,outf,command,form,ls,dn):
 
-  protocol_version = ls.l.get_option(ldap.OPT_PROTOCOL_VERSION)
+  protocol_version = ls.l.get_option(ldap0.OPT_PROTOCOL_VERSION)
 
   conninfo_flushcaches = int(form.getInputValue('conninfo_flushcaches',['0'])[0])
   if conninfo_flushcaches:
@@ -45,15 +45,15 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
     else:
       try:
         monitored_info = ls.readEntry(monitor_context_dn,['monitoredInfo'])[0][1]['monitoredInfo']
-      except (ldap.LDAPError,KeyError):
+      except (ldap0.LDAPError,KeyError):
         pass
       else:
         context_menu_list.append(form.applAnchor(
           'search','My connections',sid,
           [
             ('dn',monitor_context_dn),
-            ('filterstr','(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (ldap.filter.escape_filter_chars(ls.who or ''))),
-            ('scope',str(ldap.SCOPE_SUBTREE)),
+            ('filterstr','(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (ldap0.filter.escape_filter_chars(ls.who or ''))),
+            ('scope',str(ldap0.SCOPE_SUBTREE)),
           ],
           title=u'Find own connections in Monitor database',
         ))
@@ -91,8 +91,8 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
         'search','Audit my access',sid,
         [
           ('dn',current_audit_context),
-          ('filterstr','(&(objectClass=auditObject)(reqAuthzID=%s))' % (ldap.filter.escape_filter_chars(ls.who or ''))),
-          ('scope',str(ldap.SCOPE_ONELEVEL)),
+          ('filterstr','(&(objectClass=auditObject)(reqAuthzID=%s))' % (ldap0.filter.escape_filter_chars(ls.who or ''))),
+          ('scope',str(ldap0.SCOPE_ONELEVEL)),
         ],
         title=u'Complete audit trail for currently bound identity',
       ),
@@ -100,8 +100,8 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
         'search','Audit my writes',sid,
         [
           ('dn',current_audit_context),
-          ('filterstr','(&(objectClass=auditWriteObject)(reqAuthzID=%s))' % (ldap.filter.escape_filter_chars(ls.who or ''))),
-          ('scope',str(ldap.SCOPE_ONELEVEL)),
+          ('filterstr','(&(objectClass=auditWriteObject)(reqAuthzID=%s))' % (ldap0.filter.escape_filter_chars(ls.who or ''))),
+          ('scope',str(ldap0.SCOPE_ONELEVEL)),
         ],
         title=u'Audit trail of write access by currently bound identity',
       ),
@@ -109,8 +109,8 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
         'search','Last logins',sid,
         [
           ('dn',current_audit_context),
-          ('filterstr','(&(objectClass=auditBind)(reqDN=%s))' % (ldap.filter.escape_filter_chars(ls.who or ''))),
-          ('scope',str(ldap.SCOPE_ONELEVEL)),
+          ('filterstr','(&(objectClass=auditBind)(reqDN=%s))' % (ldap0.filter.escape_filter_chars(ls.who or ''))),
+          ('scope',str(ldap0.SCOPE_ONELEVEL)),
         ],
         title=u'Audit trail of last logins (binds) by currently bound identity',
       ),
@@ -119,7 +119,7 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
   for config_dn,txt in config_dn_list:
     try:
       entry_exists = ls.existingEntry(config_dn,suppress_referrals=1)
-    except ldap.LDAPError:
+    except ldap0.LDAPError:
       pass
     else:
       if entry_exists:
@@ -154,7 +154,7 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
 
   try:
     whoami_result = '&quot;%s&quot;' % (form.utf2display(ls.whoami()))
-  except ldap.LDAPError as e:
+  except ldap0.LDAPError as e:
     whoami_result = '<strong>Failed:</strong> %s' % (w2lapp.gui.LDAPError2ErrMsg(e,form,ls.charset))
 
   if ls.saslAuth:
@@ -171,10 +171,10 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
     sasl_mech = u'simple'
     sasl_auth_info = 'SASL not used'
 
-  if ldap.SASL_AVAIL:
+  if ldap0.SASL_AVAIL:
     try:
-      sasl_ssf = unicode(ls.l.get_option(ldap.OPT_X_SASL_SSF))
-    except ldap.LDAPError as e:
+      sasl_ssf = unicode(ls.l.get_option(ldap0.OPT_X_SASL_SSF))
+    except ldap0.LDAPError as e:
       sasl_ssf = u'error reading option: %s' % (w2lapp.gui.LDAPError2ErrMsg(e,form,ls.charset))
     except ValueError:
       sasl_ssf = u'option not available'

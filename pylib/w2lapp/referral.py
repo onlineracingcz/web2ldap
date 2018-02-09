@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 import w2lapp.core,w2lapp.gui,w2lapp.cnf
 
-from ldapurl import LDAPUrl
+from ldap0.ldapurl import LDAPUrl
 
 ErrorMessageDiv = """
 <h1>Error</h1>

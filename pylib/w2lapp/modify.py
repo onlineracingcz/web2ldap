@@ -14,8 +14,8 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import ldap,ldif,ldap.schema,ldaputil.schema, \
-       ldapsession,w2lapp.core,w2lapp.cnf,w2lapp.gui,w2lapp.addmodifyform,w2lapp.add
+import ldap0,ldap0.ldif,ldap0.schema,ldaputil.schema, \
+       ldapsession,w2lapp.core,w2lapp.cnf,w2lapp.gui,w2lapp.addmodifyform,w2lapp.add,w2lapp.schema
 
 from w2lapp.schema.syntaxes import syntax_registry,LDAPSyntaxValueError
 
@@ -24,7 +24,7 @@ try:
 except ImportError:
   from StringIO import StringIO
 
-from ldap.schema.models import AttributeType
+from ldap0.schema.models import AttributeType
 from ldaputil.modlist2 import modifyModlist
 
 def GetEntryfromInputForm(form,ls,dn,sub_schema):
@@ -140,7 +140,7 @@ def ModlistLDIF(dn,form,modlist):
   s = []
   s.append('<pre>')
   f = StringIO()
-  ldif_writer = ldif.LDIFWriter(f)
+  ldif_writer = ldap0.ldif.LDIFWriter(f)
   ldif_writer.unparse(dn.encode('utf-8'),modlist)
   s.append(form.utf2display(f.getvalue().decode('utf-8')).replace('\n','<br>'))
   s.append('</pre>')
@@ -221,7 +221,7 @@ def w2l_Modify(sid,outf,command,form,ls,dn):
 
   try:
     old_entry,dummy = w2lapp.addmodifyform.ReadOldEntry(ls,dn,sub_schema,in_assertion)
-  except ldap.NO_SUCH_OBJECT:
+  except ldap0.NO_SUCH_OBJECT:
     raise w2lapp.core.ErrorExit(u'Old entry was removed or modified in between! You have to edit it again.')
 
   # Filter out empty values
@@ -275,24 +275,24 @@ def w2l_Modify(sid,outf,command,form,ls,dn):
     if (not syntax_class.editable) and \
        new_entry[attr_type] and \
        (not attr_type in old_entry or new_entry[attr_type]!=old_entry[attr_type]):
-      modlist.append((ldap.MOD_REPLACE,attr_type,new_entry[attr_type]))
+      modlist.append((ldap0.MOD_REPLACE,attr_type,new_entry[attr_type]))
 
   if modlist:
     # Send modify-list to host
     try:
       ls.modifyEntry(dn,modlist,assertion_filter=in_assertion)
-    except ldap.ASSERTION_FAILED:
+    except ldap0.ASSERTION_FAILED:
       raise w2lapp.core.ErrorExit(u'Assertion failed => Entry was removed or modified in between! You have to edit it again.')
     except (
-      ldap.CONSTRAINT_VIOLATION,
-      ldap.INVALID_DN_SYNTAX,
-      ldap.INVALID_SYNTAX,
-      ldap.NAMING_VIOLATION,
-      ldap.OBJECT_CLASS_VIOLATION,
-      ldap.OTHER,
-      ldap.TYPE_OR_VALUE_EXISTS,
-      ldap.UNDEFINED_TYPE,
-      ldap.UNWILLING_TO_PERFORM,
+      ldap0.CONSTRAINT_VIOLATION,
+      ldap0.INVALID_DN_SYNTAX,
+      ldap0.INVALID_SYNTAX,
+      ldap0.NAMING_VIOLATION,
+      ldap0.OBJECT_CLASS_VIOLATION,
+      ldap0.OTHER,
+      ldap0.TYPE_OR_VALUE_EXISTS,
+      ldap0.UNDEFINED_TYPE,
+      ldap0.UNWILLING_TO_PERFORM,
     ),e:
       w2lapp.addmodifyform.w2l_ModifyForm(
         sid,outf,'modify',form,ls,dn,

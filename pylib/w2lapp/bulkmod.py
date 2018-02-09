@@ -14,7 +14,7 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import time,ldap,ldapsession,ldaputil.base, \
+import time,ldap0,ldapsession,ldaputil.base, \
        w2lapp.cnf,w2lapp.gui,w2lapp.ldapparams
 
 # OID description dictionary from configuration directory
@@ -49,11 +49,11 @@ def input_modlist(sid,form,ls,sub_schema,bulkmod_at,bulkmod_op,bulkmod_av):
     except LDAPSyntaxValueError:
       input_errors.add(i)
 
-    if mod_op==ldap.MOD_INCREMENT:
+    if mod_op==ldap0.MOD_INCREMENT:
       mod_dict[(mod_op,mod_type)] = set([None])
-    elif not mod_val and mod_op==ldap.MOD_DELETE:
+    elif not mod_val and mod_op==ldap0.MOD_DELETE:
       mod_dict[(mod_op,mod_type)] = set([None])
-    elif mod_val and mod_op in (ldap.MOD_DELETE,ldap.MOD_ADD,ldap.MOD_REPLACE):
+    elif mod_val and mod_op in (ldap0.MOD_DELETE,ldap0.MOD_ADD,ldap0.MOD_REPLACE):
       try:
         mod_dict[(mod_op,mod_type)].add(mod_val)
       except KeyError:
@@ -63,7 +63,7 @@ def input_modlist(sid,form,ls,sub_schema,bulkmod_at,bulkmod_op,bulkmod_av):
   if not input_errors:
     for mod_op,mod_type in mod_dict.keys():
       mod_vals = mod_dict[(mod_op,mod_type)]
-      if mod_op==ldap.MOD_DELETE and None in mod_vals:
+      if mod_op==ldap0.MOD_DELETE and None in mod_vals:
         mod_vals = None
       mod_list.append((mod_op,mod_type,mod_vals))
     for i,m in enumerate(mod_list):
@@ -307,7 +307,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
 
   bulkmod_cp = form.getInputValue('bulkmod_cp',[u''])[0]=='yes'
 
-  scope = int(form.getInputValue('scope',[str(connLDAPUrl.scope or ldap.SCOPE_BASE)])[0])
+  scope = int(form.getInputValue('scope',[str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
 
   bulkmod_filter = form.getInputValue('filterstr',[(connLDAPUrl.filterstr or '').decode(ls.charset)])[0] or u'(objectClass=*)'
 
@@ -354,13 +354,13 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
   elif bulkmod_submit==u'Apply':
 
     bulkmod_ctrl_oids = form.getInputValue('bulkmod_ctrl',[])
-    if ls.l.protocol_version>=ldap.VERSION3:
+    if ls.l.protocol_version>=ldap0.VERSION3:
       conn_server_ctrls = set([
         server_ctrl.controlType
-        for server_ctrl in ls.l._serverctrls['**all**']+ls.l._serverctrls['**write**']+ls.l._serverctrls['modify_ext']
+        for server_ctrl in ls.l._serverctrls['**all**']+ls.l._serverctrls['**write**']+ls.l._serverctrls['modify']
       ])
       bulkmod_server_ctrls = list(set([
-        ldap.controls.LDAPControl(ctrl_oid,1,None)
+        ldap0.controls.LDAPControl(ctrl_oid,1,None)
         for ctrl_oid in bulkmod_ctrl_oids
         if not ctrl_oid in conn_server_ctrls
       ])) or None
@@ -386,7 +386,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
         if bulk_mod_list:
           try:
             ls.modifyEntry(ldap_dn,bulk_mod_list,serverctrls=bulkmod_server_ctrls)
-          except ldap.LDAPError as e:
+          except ldap0.LDAPError as e:
             ldap_error_html.append(
               '<dt>%s</dt><dd>%s</dd>' % (form.utf2display(ldap_dn),form.utf2display(unicode(str(e))))
             )
@@ -407,7 +407,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
                 new_superior=bulkmod_newsuperior,
                 delold=w2lapp.cnf.GetParam(ls,'bulkmod_delold',0),
               )
-          except ldap.LDAPError as e:
+          except ldap0.LDAPError as e:
             ldap_error_html.append(
               '<dt>%s</dt><dd>%s</dd>' % (form.utf2display(ldap_dn),form.utf2display(unicode(str(e))))
             )

@@ -14,7 +14,7 @@ import mspki.util
 
 from w2lapp.schema.syntaxes import ASN1Object,Binary,GSER,syntax_registry
 
-from ldap.dn import explode_dn
+from ldap0.dn import explode_dn
 
 
 class AttributeCertificate(Binary):

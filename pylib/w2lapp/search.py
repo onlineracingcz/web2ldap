@@ -14,7 +14,7 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import time,csv,urllib,ldap,ldap.schema.models,ldap.async, \
+import time,csv,urllib,ldap0,ldap0.schema.models,ldaputil.async, \
        msbase,pyweblib.forms,pyweblib.httphelper,ldaputil.base,ldaputil.schema, \
        w2lapp.core,w2lapp.cnf,w2lapp.gui,w2lapp.read,w2lapp.searchform
 
@@ -24,7 +24,7 @@ from ldaputil.base import escape_ldap_filter_chars
 from msbase import GrabKeys
 from w2lapp.schema.syntaxes import syntax_registry
 from w2lapp.searchform import SEARCH_OPT_ATTR_EXISTS,SEARCH_OPT_ATTR_NOT_EXISTS
-from ldaputil.controls import SearchNoOpControl
+from ldap0.controls.openldap import SearchNoOpControl
 from ldapsession import LDAPLimitErrors
 from pyweblib.forms import escapeHTML
 
@@ -40,7 +40,7 @@ SizeLimitMsg = """
 """
 
 LDIF1_HEADER = r"""########################################################################
-# LDIF export by web2ldap %s, see http://www.web2ldap.de
+# LDIF export by web2ldap %s, see https://www.web2ldap.de
 # Date and time: %s
 # Bind-DN: %s
 # LDAP-URL of search:
@@ -51,12 +51,12 @@ version: 1
 """
 
 is_search_result = set([
-  ldap.RES_SEARCH_ENTRY,
-  ldap.RES_SEARCH_RESULT,
+  ldap0.RES_SEARCH_ENTRY,
+  ldap0.RES_SEARCH_RESULT,
 ])
 
 is_search_reference = set([
-  ldap.RES_SEARCH_REFERENCE,
+  ldap0.RES_SEARCH_REFERENCE,
 ])
 
 
@@ -67,7 +67,7 @@ class excel_semicolon(csv.excel):
 csv.register_dialect("excel-semicolon", excel_semicolon)
 
 
-class LDIFWriter(ldap.async.LDIFWriter):
+class LDIFWriter(ldaputil.async.LDIFWriter):
 
   def preProcessing(self):
     return
@@ -82,22 +82,22 @@ class LDIFWriter(ldap.async.LDIFWriter):
       self._ldif_writer._output_file,'text/plain',charset='UTF-8',
       additional_header=additional_http_header,
     )
-    ldap.async.LDIFWriter.preProcessing(self)
+    ldaputil.async.LDIFWriter.preProcessing(self)
 
 
-class PrintableHTMLWriter(ldap.async.List):
+class PrintableHTMLWriter(ldaputil.async.List):
   """
   Class for writing a stream LDAP search results to a printable file
   """
   _entryResultTypes = is_search_result
 
   def __init__(self,sid,outf,form,ls,dn,sub_schema,print_template_str_dict):
-    ldap.async.List.__init__(self,ls.l)
+    ldaputil.async.List.__init__(self,ls.l)
     self._sid,self._outf,self._form,self._ls,self._dn,self._s,self._p = sid,outf,form,ls,dn,sub_schema,print_template_str_dict
     return # __init__()
 
   def processResults(self,ignoreResultsNumber=0,processResultsCount=0,timeout=-1):
-    ldap.async.List.processResults(self,timeout=timeout)
+    ldaputil.async.List.processResults(self,timeout=timeout)
     self.allResults.sort()
     # This should speed up things
     utf2display = self._form.utf2display
@@ -139,14 +139,14 @@ class PrintableHTMLWriter(ldap.async.List):
     return # processResults()
 
 
-class CSVWriter(ldap.async.AsyncSearchHandler):
+class CSVWriter(ldaputil.async.AsyncSearchHandler):
   """
   Class for writing a stream LDAP search results to a CSV file
   """
   _entryResultTypes = is_search_result
 
   def __init__(self,l,f,sub_schema,attr_types,ldap_charset='utf-8',csv_charset='utf-8'):
-    ldap.async.AsyncSearchHandler.__init__(self,l)
+    ldaputil.async.AsyncSearchHandler.__init__(self,l)
     self._output_file = f
     self._csv_writer = csv.writer(f,dialect='excel-semicolon')
     self._s = sub_schema
@@ -189,14 +189,14 @@ else:
 
   pyExcelerator.UnicodeUtils.DEFAULT_ENCODING = 'cp1251'
 
-  class ExcelWriter(ldap.async.AsyncSearchHandler):
+  class ExcelWriter(ldaputil.async.AsyncSearchHandler):
     """
     Class for writing a stream LDAP search results to a Excel file
     """
     _entryResultTypes = is_search_result
 
     def __init__(self,l,f,sub_schema,attr_types,ldap_charset='utf-8'):
-      ldap.async.AsyncSearchHandler.__init__(self,l)
+      ldaputil.async.AsyncSearchHandler.__init__(self,l)
       self._f = f
       self._s = sub_schema
       self._attr_types = attr_types
@@ -312,7 +312,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
   )
 
   if scope==None:
-    scope = ldap.SCOPE_SUBTREE
+    scope = ldap0.SCOPE_SUBTREE
 
   search_filter = form.getInputValue('filterstr',[filterstr])
 
@@ -375,8 +375,8 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
   search_lastmod = int(form.getInputValue('search_lastmod',[-1])[0])
   if search_lastmod>0:
     timestamp_str = unicode(time.strftime('%Y%m%d%H%M%S',time.gmtime(time.time()-search_lastmod)),'ascii')
-    if sub_schema.sed[ldap.schema.AttributeType].has_key('1.2.840.113556.1.2.2') and \
-       sub_schema.sed[ldap.schema.AttributeType].has_key('1.2.840.113556.1.2.3'):
+    if sub_schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.2.2') and \
+       sub_schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.2.3'):
       # Assume we're searching MS Active Directory
       filterstr2 = u'(&(|(whenCreated>=%s.0Z)(whenChanged>=%s.0Z))%s)' % (
         timestamp_str,timestamp_str,filterstr
@@ -397,7 +397,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
     if a.strip()
   ]
 
-  search_attr_set = ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap.schema.models.AttributeType,search_attrs)
+  search_attr_set = ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
   search_attrs = search_attr_set.names()
 
   search_ldap_url = ls.ldapUrl(dn=search_root)
@@ -407,7 +407,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
 
   ldap_search_command = search_ldap_url.ldapSearchCommand().decode(ls.charset)
 
-  read_attr_set = ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap.schema.models.AttributeType,search_attrs)
+  read_attr_set = ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
   if search_output in ['table','print']:
     read_attr_set.add('objectClass')
 
@@ -428,7 +428,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
 
   elif search_output in ['table','raw']:
 
-    search_tdtemplate = ldap.cidict.cidict(w2lapp.cnf.GetParam(ls,'search_tdtemplate',{}))
+    search_tdtemplate = ldap0.cidict.cidict(w2lapp.cnf.GetParam(ls,'search_tdtemplate',{}))
     search_tdtemplate_keys = search_tdtemplate.keys()
     search_tdtemplate_keys_lower = search_tdtemplate.data.keys()
     search_tablistattrs = w2lapp.cnf.GetParam(ls,'search_tablistattrs',[])
@@ -457,7 +457,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
     read_attrs = read_attr_set.names()
 
     # Create async search handler instance
-    result_handler = ldap.async.List(ls.l)
+    result_handler = ldaputil.async.List(ls.l)
 
   elif search_output in ('ldif','ldif1'):
     # read all attributes
@@ -505,7 +505,10 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
       attrsOnly=0,
       sizelimit=search_size_limit
     )
-  except (ldap.FILTER_ERROR,ldap.INAPPROPRIATE_MATCHING) as e:
+  except (
+      ldap0.FILTER_ERROR,
+      ldap0.INAPPROPRIATE_MATCHING,
+  ) as e:
     # Give the user a chance to edit his bad search filter
     w2lapp.searchform.w2l_SearchForm(
       sid,outf,command,form,ls,dn,
@@ -517,7 +520,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
       scope=scope
     )
     return
-  except ldap.NO_SUCH_OBJECT as e:
+  except ldap0.NO_SUCH_OBJECT as e:
     if dn:
       raise e
 
@@ -533,7 +536,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
       result_handler.processResults(
         search_resminindex,search_resnumber+int(search_resnumber>0),timeout=ls.timeout
       )
-    except (ldap.SIZELIMIT_EXCEEDED,ldap.ADMINLIMIT_EXCEEDED) as e:
+    except (ldap0.SIZELIMIT_EXCEEDED,ldap0.ADMINLIMIT_EXCEEDED) as e:
       if search_size_limit<0 or result_handler.endResultBreak<search_size_limit:
         SearchWarningMsg = w2lapp.gui.LDAPError2ErrMsg(e,form,ls.charset,template=SizeLimitMsg)
       partial_results = 1
@@ -542,7 +545,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
       # search request without size limit but with the SearchNoOpControl attached
       if SearchNoOpControl.controlType in ls.supportedControl:
         try:
-          num_all_search_results,num_all_search_continuations = ls.l.noop_search_st(
+          num_all_search_results,num_all_search_continuations = ls.l.noop_search(
             search_root.encode(ls.charset),
             scope,
             filterstr=filterstr2.encode(ls.charset),
@@ -553,7 +556,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
             max_result_msg = '(of %d / %d) ' % (num_all_search_results,num_all_search_continuations)
         except LDAPLimitErrors:
           pass
-    except (ldap.FILTER_ERROR,ldap.INAPPROPRIATE_MATCHING) as e:
+    except (ldap0.FILTER_ERROR,ldap0.INAPPROPRIATE_MATCHING) as e:
       # Give the user a chance to edit his bad search filter
       w2lapp.searchform.w2l_SearchForm(
         sid,outf,command,form,ls,dn,
@@ -562,9 +565,9 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
         scope=scope
       )
       return
-    except (ldap.NO_SUCH_OBJECT,ldap.UNWILLING_TO_PERFORM) as e:
+    except (ldap0.NO_SUCH_OBJECT,ldap0.UNWILLING_TO_PERFORM) as e:
       resind = result_handler.endResultBreak
-      if dn or scope!=ldap.SCOPE_ONELEVEL:
+      if dn or scope!=ldap0.SCOPE_ONELEVEL:
         # Give the user a chance to edit his bad search filter
         w2lapp.searchform.w2l_SearchForm(
           sid,outf,command,form,ls,dn,
@@ -582,8 +585,8 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
 
     # HACK! Searching the root level the namingContexts is
     # appended if not already received in search result
-    if not dn and scope==ldap.SCOPE_ONELEVEL:
-      d = ldap.cidict.cidict()
+    if not dn and scope==ldap0.SCOPE_ONELEVEL:
+      d = ldap0.cidict.cidict()
       for result_dn in ls.namingContexts:
         if result_dn:
           d[result_dn] = result_dn
@@ -592,7 +595,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
         if result_dn!=None and d.has_key(result_dn):
           del d[result_dn]
       result_dnlist.extend([
-        (ldap.RES_SEARCH_ENTRY,(result_dn.encode(ls.charset),{}))
+        (ldap0.RES_SEARCH_ENTRY,(result_dn.encode(ls.charset),{}))
         for result_dn in d.values()
       ])
       resind = len(result_dnlist)
@@ -839,7 +842,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
         if r[0] in is_search_reference:
 
           # Display a search continuation (search reference)
-          entry = ldap.cidict.cidict({})
+          entry = ldap0.cidict.cidict({})
           try:
             refUrl = ExtendedLDAPUrl(r[1][1][0])
           except ValueError:
@@ -847,7 +850,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
             result_dd_str='Search reference (NON-LDAP-URI) =&gt; %s' % (form.utf2display(unicode(r[1][1][0])))
           else:
             result_dd_str='Search reference =&gt; %s' % (refUrl.htmlHREF(hrefTarget=None))
-            if scope==ldap.SCOPE_SUBTREE:
+            if scope==ldap0.SCOPE_SUBTREE:
               refUrl.scope = refUrl.scope or scope
               refUrl.filterstr = (unicode(refUrl.filterstr or '',ls.charset) or filterstr).encode(form.accept_charset)
               command_table = [
@@ -861,14 +864,14 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
             else:
               command_table = []
               refUrl.filterstr = filterstr
-              refUrl.scope=ldap.SCOPE_BASE
+              refUrl.scope=ldap0.SCOPE_BASE
               command_table.append(form.applAnchor(
                 'read','Read',
                 {0:sid,1:None}[refUrl.initializeUrl()!=ls.uri],
                 [('ldapurl',refUrl.unparse())],
                 title=u'Display single entry following search continuation',
               ))
-              refUrl.scope=ldap.SCOPE_ONELEVEL
+              refUrl.scope=ldap0.SCOPE_ONELEVEL
               command_table.append(form.applAnchor(
                 'search','Down',
                 {0:sid,1:None}[refUrl.initializeUrl()!=ls.uri],
@@ -879,7 +882,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
         elif r[0] in is_search_result:
 
           # Display a search result with entry's data
-          dn,entry = unicode(r[1][0],ls.charset),ldap.cidict.cidict(r[1][1])
+          dn,entry = unicode(r[1][0],ls.charset),ldap0.cidict.cidict(r[1][1])
 
           if search_output=='raw':
 
@@ -1043,5 +1046,5 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
 
     try:
       result_handler.processResults(timeout=ls.timeout)
-    except (ldap.SIZELIMIT_EXCEEDED,ldap.ADMINLIMIT_EXCEEDED):
+    except (ldap0.SIZELIMIT_EXCEEDED,ldap0.ADMINLIMIT_EXCEEDED):
       result_handler.postProcessing()

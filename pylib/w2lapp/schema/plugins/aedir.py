@@ -11,8 +11,8 @@ from __future__ import absolute_import
 import re,time,socket
 
 # from python-ldap
-import ldap,ldap.filter
-from ldap.filter import escape_filter_chars
+import ldap0
+from ldap0.filter import escape_filter_chars
 
 # from pyweblib
 from pyweblib.forms import HiddenInput
@@ -20,8 +20,8 @@ from pyweblib.forms import HiddenInput
 # from internal base modules
 import ldaputil.base
 from ldaputil.base import compose_filter, map_filter_parts
-from ldap.controls.readentry import PreReadControl
-from ldap.controls.deref import DereferenceControl
+from ldap0.controls.readentry import PreReadControl
+from ldap0.controls.deref import DereferenceControl
 
 # web2ldap's internal application modules
 import w2lapp.searchform,w2lapp.schema.plugins.inetorgperson,w2lapp.schema.plugins.sudoers,w2lapp.schema.plugins.ppolicy
@@ -103,7 +103,7 @@ class AEObjectUtil:
         attrtype_list=attrlist,
         search_filter='(objectClass=aeZone)',
       )
-    except ldap.LDAPError:
+    except ldap0.LDAPError:
       zone_entry = {}
     else:
       if ldap_result:
@@ -113,7 +113,7 @@ class AEObjectUtil:
       return zone_entry
 
   def _get_zone_name(self):
-    dn_list = ldap.dn.str2dn(
+    dn_list = ldap0.dn.str2dn(
       self._dn[:-len(self._ls.currentSearchRoot)-1].encode(self._ls.charset)
     )
     try:
@@ -151,7 +151,7 @@ class AEObjectUtil:
       return []
     ldap_result = self._ls.l.search_s(
       self._determineSearchDN(self._dn,self.lu_obj.dn),
-      ldap.SCOPE_SUBTREE,
+      ldap0.SCOPE_SUBTREE,
       '(&{0})'.format(
         ''.join(person_filter_parts)
       ),
@@ -254,12 +254,12 @@ class AEGIDNumber(GidNumber):
     pre-read entry control
     """
     prc = PreReadControl(criticality=True, attrList=[self.attrType])
-    msg_id = self._ls.l.modify_ext(
+    msg_id = self._ls.l.modify(
         self._get_id_pool_dn(),
-        [(ldap.MOD_INCREMENT, self.attrType, '1')],
+        [(ldap0.MOD_INCREMENT, self.attrType, '1')],
         serverctrls=[prc],
     )
-    _, _, _, resp_ctrls = self._ls.l.result3(msg_id)
+    _, _, _, resp_ctrls = self._ls.l.result(msg_id)
     return int(resp_ctrls[0].entry[self.attrType][0])
 
   def transmute(self,attrValues):
@@ -274,8 +274,8 @@ class AEGIDNumber(GidNumber):
         search_filter='({0}=*)'.format(self.attrType),
       )
     except (
-      ldap.NO_SUCH_OBJECT,
-      ldap.INSUFFICIENT_ACCESS,
+      ldap0.NO_SUCH_OBJECT,
+      ldap0.INSUFFICIENT_ACCESS,
     ):
       # search failed => ignore
       pass
@@ -340,7 +340,7 @@ class AEUserUid(AEUid):
       # check whether UID candidate already exists
       uid_result = self._ls.l.search_s(
         self._ls.currentSearchRoot.encode(self._ls.charset),
-        ldap.SCOPE_SUBTREE,
+        ldap0.SCOPE_SUBTREE,
         '(uid=%s)' % (uid_candidate),
         attrlist=['1.1'],
       )
@@ -513,9 +513,9 @@ class AEGroupMember(DynamicDNSelectList,AEObjectUtil):
     # Use the existing LDAP connection as current user
     attr_value_dict = SelectList._get_attr_value_dict(self)
     try:
-      ldap_result = self._ls.l.search_ext_s(
+      ldap_result = self._ls.l.search_s(
         self._ls.uc_encode(self._determineSearchDN(self._dn,self.lu_obj.dn))[0],
-        self.lu_obj.scope or ldap.SCOPE_SUBTREE,
+        self.lu_obj.scope or ldap0.SCOPE_SUBTREE,
         filterstr=self._determineFilter(),
         attrlist=self.lu_obj.attrs+['description'],
         serverctrls=srv_ctrls,
@@ -553,13 +553,13 @@ class AEGroupMember(DynamicDNSelectList,AEObjectUtil):
             option_title = self._ls.uc_decode(entry_desc)[0]
           attr_value_dict[option_value] = (option_text,option_title)
     except (
-      ldap.NO_SUCH_OBJECT,
-      ldap.SIZELIMIT_EXCEEDED,
-      ldap.TIMELIMIT_EXCEEDED,
-      ldap.PARTIAL_RESULTS,
-      ldap.INSUFFICIENT_ACCESS,
-      ldap.CONSTRAINT_VIOLATION,
-      ldap.REFERRAL,
+      ldap0.NO_SUCH_OBJECT,
+      ldap0.SIZELIMIT_EXCEEDED,
+      ldap0.TIMELIMIT_EXCEEDED,
+      ldap0.PARTIAL_RESULTS,
+      ldap0.INSUFFICIENT_ACCESS,
+      ldap0.CONSTRAINT_VIOLATION,
+      ldap0.REFERRAL,
     ):
       pass
     return attr_value_dict # _get_attr_value_dict()
@@ -650,9 +650,9 @@ class AEGroupDN(DynamicDNSelectList):
   )
 
   def displayValue(self,valueindex=0,commandbutton=0):
-    dn_comp_list = ldap.dn.str2dn(self.attrValue)
+    dn_comp_list = ldap0.dn.str2dn(self.attrValue)
     group_cn = dn_comp_list[0][0][1].decode(self._ls.charset)
-    parent_dn = ldap.dn.dn2str(dn_comp_list[1:]).decode(self._ls.charset)
+    parent_dn = ldap0.dn.dn2str(dn_comp_list[1:]).decode(self._ls.charset)
     r = [
       'cn=<strong>{0}</strong>,{1}'.format(
         self._form.utf2display(group_cn),
@@ -811,7 +811,7 @@ class AESameZoneObject(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeObject)(aeStatus=0))'
 
   def _determineSearchDN(self,current_dn,ldap_url_dn):
-    dn_list = ldap.dn.explode_dn(self._dn.encode(self._ls.charset))
+    dn_list = ldap0.dn.explode_dn(self._dn.encode(self._ls.charset))
     return  ','.join(dn_list[-2:])
 
 
@@ -1298,15 +1298,15 @@ class AEPerson2(AEPerson):
     try:
       ldap_result = self._ls.l.search_s(
         self._determineSearchDN(self._dn,self.lu_obj.dn),
-        ldap.SCOPE_SUBTREE,
+        ldap0.SCOPE_SUBTREE,
         sanitize_filter,
         attrlist=self.lu_obj.attrs,
       )
     except (
-      ldap.NO_SUCH_OBJECT,
-      ldap.INSUFFICIENT_ACCESS,
-      ldap.SIZELIMIT_EXCEEDED,
-      ldap.TIMELIMIT_EXCEEDED,
+      ldap0.NO_SUCH_OBJECT,
+      ldap0.INSUFFICIENT_ACCESS,
+      ldap0.SIZELIMIT_EXCEEDED,
+      ldap0.TIMELIMIT_EXCEEDED,
     ):
       return attrValues
     else:
@@ -1356,7 +1356,7 @@ class AEDerefAttribute(DirectoryString):
           attribute_type=self.attrType,
         ),
       )
-    except ldap.LDAPError:
+    except ldap0.LDAPError:
       result = None
     else:
       if ldap_result:
@@ -2142,7 +2142,7 @@ class AERFC822MailMember(DynamicValueSelectList):
     )
     ldap_result = self._ls.l.search_s(
       self._determineSearchDN(self._dn,self.lu_obj.dn),
-      ldap.SCOPE_SUBTREE,
+      ldap0.SCOPE_SUBTREE,
       entrydn_filter,
       attrlist=['mail'],
     )

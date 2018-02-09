@@ -14,10 +14,10 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import ldap,ldap.cidict,ldaputil.base, \
+import ldap0,ldap0.cidict,ldaputil.base, \
        w2lapp.core,w2lapp.gui
 
-ACTION2MODTYPE = {'add':ldap.MOD_ADD,'remove':ldap.MOD_DELETE}
+ACTION2MODTYPE = {'add':ldap0.MOD_ADD,'remove':ldap0.MOD_DELETE}
 
 REQUESTED_GROUP_ATTRS = ['objectClass','cn','description']
 
@@ -55,7 +55,7 @@ def GroupSelectFieldHTML(
     if ls.who!=None:
       try:
         colgroup_authzdn = u','.join(ldaputil.base.explode_dn(ls.who)[optgroup_min_level:optgroup_max_level])
-      except (IndexError,ValueError,ldap.DECODING_ERROR):
+      except (IndexError,ValueError,ldap0.DECODING_ERROR):
         pass
       else:
         if colgroup_authzdn in optgroup_dict and colgroup_authzdn!=colgroup_memberdn:
@@ -103,7 +103,7 @@ def GroupSelectFieldHTML(
 
 def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
 
-  groupadm_defs = ldap.cidict.cidict(w2lapp.cnf.GetParam(ls,'groupadm_defs',{}))
+  groupadm_defs = ldap0.cidict.cidict(w2lapp.cnf.GetParam(ls,'groupadm_defs',{}))
   if not groupadm_defs:
     raise w2lapp.core.ErrorExit(u'Group admin options empty or not set.')
   groupadm_defs_keys = groupadm_defs.keys()
@@ -125,7 +125,7 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
   if not result_dnlist:
     raise w2lapp.core.ErrorExit(u'No search result when reading entry.')
 
-  user_entry = ldap.schema.Entry(sub_schema,dn,result_dnlist[0][1])
+  user_entry = ldap0.schema.models.Entry(sub_schema,dn,result_dnlist[0][1])
 
   # Extract form parameters
   group_search_root = form.getInputValue('groupadm_searchroot',[ls.getSearchRoot(dn)])[0]
@@ -146,7 +146,7 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
       (
         oc.strip(),
         group_member_attrtype.strip(),
-        ldap.filter.escape_filter_chars(user_entry_attrvalue)
+        ldap0.filter.escape_filter_chars(user_entry_attrvalue)
       )
     )
 
@@ -164,26 +164,26 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
   ))
   if groupadm_name:
     all_group_filterstr = '(&(cn=*%s*)%s)' % (
-      ldap.filter.escape_filter_chars(groupadm_name.encode(ls.charset)),
+      ldap0.filter.escape_filter_chars(groupadm_name.encode(ls.charset)),
       all_group_filterstr
     )
 
   all_groups_dict = {}
 
   try:
-    msg_id = ls.l.search_ext(
+    msg_id = ls.l.search(
       group_search_root.encode(ls.charset),
-      ldap.SCOPE_SUBTREE,
+      ldap0.SCOPE_SUBTREE,
       all_group_filterstr,
       attrlist=REQUESTED_GROUP_ATTRS,attrsonly=0,timeout=ls.timeout
     )
     for _,res_data,_,_ in ls.l.allresults(msg_id):
       for group_dn,group_entry in res_data:
         if group_dn!=None:
-          all_groups_dict[unicode(group_dn,ls.charset)] = ldap.cidict.cidict(group_entry)
-  except ldap.NO_SUCH_OBJECT:
+          all_groups_dict[unicode(group_dn,ls.charset)] = ldap0.cidict.cidict(group_entry)
+  except ldap0.NO_SUCH_OBJECT:
     ErrorMsg = 'No such object! Did you choose a valid search base?'
-  except (ldap.SIZELIMIT_EXCEEDED,ldap.TIMELIMIT_EXCEEDED):
+  except (ldap0.SIZELIMIT_EXCEEDED,ldap0.TIMELIMIT_EXCEEDED):
     ErrorMsg = 'Size or time limit exceeded while searching group entries! Try to refine search parameters.'
 
   all_group_entries = all_groups_dict.keys()
@@ -225,7 +225,7 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
         if modlist:
           try:
             ls.modifyEntry(group_dn,modlist)
-          except ldap.LDAPError as e:
+          except ldap0.LDAPError as e:
             ldaperror_entries.append((group_dn,modlist,w2lapp.gui.LDAPError2ErrMsg(e,form,ls.charset)))
           else:
             successful_group_mods.append((group_dn,modlist))
@@ -234,12 +234,12 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
       group_add_list = [
         (group_dn,modlist)
         for group_dn,modlist in successful_group_mods
-        if modlist and modlist[0][0]==ldap.MOD_ADD
+        if modlist and modlist[0][0]==ldap0.MOD_ADD
       ]
       group_remove_list = [
         (group_dn,modlist)
         for group_dn,modlist in successful_group_mods
-        if modlist and modlist[0][0]==ldap.MOD_DELETE
+        if modlist and modlist[0][0]==ldap0.MOD_DELETE
       ]
       InfoMsg_list = ['<p class="SuccessMessage">Changed group membership</p>']
       if group_add_list:
@@ -285,19 +285,19 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
   remove_groups_dict = {}
 
   try:
-    msg_id = ls.l.search_ext(
+    msg_id = ls.l.search(
       group_search_root.encode(ls.charset),
-      ldap.SCOPE_SUBTREE,
+      ldap0.SCOPE_SUBTREE,
       remove_group_filterstr,
       attrlist=REQUESTED_GROUP_ATTRS,attrsonly=0,timeout=ls.timeout
     )
     for _,res_data,_,_ in ls.l.allresults(msg_id):
       for group_dn,group_entry in res_data:
         if group_dn!=None:
-          remove_groups_dict[unicode(group_dn,ls.charset)] = ldap.cidict.cidict(group_entry)
-  except ldap.NO_SUCH_OBJECT:
+          remove_groups_dict[unicode(group_dn,ls.charset)] = ldap0.cidict.cidict(group_entry)
+  except ldap0.NO_SUCH_OBJECT:
     ErrorMsg = 'No such object! Did you choose a valid search base?'
-  except (ldap.SIZELIMIT_EXCEEDED,ldap.TIMELIMIT_EXCEEDED):
+  except (ldap0.SIZELIMIT_EXCEEDED,ldap0.TIMELIMIT_EXCEEDED):
     # This should never happen if all groups could be retrieved
     ErrorMsg = 'Size or time limit exceeded while searching group entries!<br>Try to refine search parameters.'
 

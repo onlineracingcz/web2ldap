@@ -14,8 +14,8 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import ldap,ldapurl,pyweblib.forms,ldaputil.base, \
-       w2lapp.core,w2lapp.cnf,w2lapp.gui,w2lapp.form,w2lapp.schema.syntaxes
+import ldap0,ldap0.ldapurl,pyweblib.forms,ldaputil.base, \
+       w2lapp.core,w2lapp.cnf,w2lapp.gui,w2lapp.form,w2lapp.schema,w2lapp.schema.syntaxes
 
 from w2lapp.schema.viewer import displayNameOrOIDList
 
@@ -98,17 +98,17 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
 
     rename_supsearchurl = form.getInputValue('rename_supsearchurl',[None])[0]
     try:
-      sup_search_url = ldapurl.LDAPUrl(rename_supsearchurl_cfg[rename_supsearchurl])
+      sup_search_url = ldap0.ldapurl.LDAPUrl(rename_supsearchurl_cfg[rename_supsearchurl])
     except KeyError:
       rename_newsupfilter = form.getInputValue('rename_newsupfilter',[None])[0]
-      sup_search_url = ldapurl.LDAPUrl()
+      sup_search_url = ldap0.ldapurl.LDAPUrl()
       if rename_newsupfilter!=None:
         sup_search_url.urlscheme = 'ldap'
         sup_search_url.filterstr = (
           rename_newsupfilter or form.field['rename_newsupfilter'].default
         ).encode(ls.charset)
         sup_search_url.dn = form.getInputValue('rename_searchroot',[''])[0].encode(ls.charset)
-        sup_search_url.scope  = int(form.getInputValue('scope',[str(ldap.SCOPE_SUBTREE)])[0])
+        sup_search_url.scope  = int(form.getInputValue('scope',[str(ldap0.SCOPE_SUBTREE)])[0])
       else:
         sup_search_url = None
 
@@ -122,7 +122,7 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
     else:
       rename_searchroot_default = None
       rename_newsupfilter_default = form.field['rename_newsupfilter'].default
-      scope_default = unicode(ldap.SCOPE_SUBTREE)
+      scope_default = unicode(ldap0.SCOPE_SUBTREE)
 
     rename_search_root_field = w2lapp.gui.SearchRootField(form,ls,dn,name='rename_searchroot')
     rename_new_superior_field = NewSuperiorField(sid,form,ls,dn,sub_schema,sup_search_url,old_superior)
@@ -130,7 +130,7 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
     name_forms_text = ''
     dit_structure_rule_html = ''
 
-    if sub_schema.sed[ldap.schema.models.NameForm]:
+    if sub_schema.sed[ldap0.schema.models.NameForm]:
       # Determine if there are name forms defined for structural object class
       search_result = ls.readEntry(dn,['objectClass','structuralObjectClass','governingStructureRule'])
       if not search_result:
@@ -160,7 +160,7 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
           ).decode(ls.charset)
           dit_structure_rule_html = 'DIT structure rules:<br>%s' % (
             '<br>'.join(
-              displayNameOrOIDList(sid,form,dn,sub_schema,sup_structural_ruleids,ldap.schema.models.DITStructureRule)
+              displayNameOrOIDList(sid,form,dn,sub_schema,sup_structural_ruleids,ldap0.schema.models.DITStructureRule)
             )
           )
 

@@ -9,7 +9,7 @@ from __future__ import absolute_import
 
 import re,utctime,datetime,base64,w2lapp.gui
 
-from ldap import LDAPError
+from ldap0 import LDAPError
 
 from w2lapp.schema.syntaxes import \
   DirectoryString,OctetString,DynamicDNSelectList,GeneralizedTime,Timespan, \

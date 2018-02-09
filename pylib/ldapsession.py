@@ -10,30 +10,27 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import sys,socket,time,types,codecs,ldif,ldap,ldap.cidict,ldap.filter,ldap.resiter,ldaputil.base,ldaputil.schema
+import sys,socket,time,types,codecs,ldap0,ldap0.ldif,ldap0.sasl,ldap0.cidict,ldap0.filter,ldap0.schema
+import ldaputil.base,ldaputil.schema
 
-try:
-  import ldap.sasl
-except ImportError:
-  pass
-
-from ldap.ldapobject import ReconnectLDAPObject
-from ldap.schema.models import DITStructureRule
+from ldap0.ldapobject import ReconnectLDAPObject
+from ldap0.schema.models import DITStructureRule
 from ldaputil.base import escape_ldap_filter_chars
 from ldaputil.extldapurl import ExtendedLDAPUrl
-from ldaputil.controls import PreReadControl,PostReadControl,SearchNoOpControl
+from ldaputil.controls import PreReadControl,PostReadControl
+from ldap0.controls.openldap import SearchNoOpControl
 
-from ldap.controls import AssertionControl
+from ldap0.controls import AssertionControl
 # Authorization Identity Request and Response Controls (see RFC 3829)
 try:
-  from ldap.controls import AuthorizationIdentityRequestControl,AuthorizationIdentityResponseControl
+  from ldap0.controls import AuthorizationIdentityRequestControl,AuthorizationIdentityResponseControl
 except ImportError:
   AuthorizationIdentityRequestControl = AuthorizationIdentityResponseControl = None
-from ldap.controls.ppolicy import PasswordPolicyControl
-from ldap.controls.sessiontrack import SessionTrackingControl,SESSION_TRACKING_FORMAT_OID_USERNAME
+from ldap0.controls.ppolicy import PasswordPolicyControl
+from ldap0.controls.sessiontrack import SessionTrackingControl,SESSION_TRACKING_FORMAT_OID_USERNAME
 
 try:
-  from ldap.schema.subentry import SubschemaError
+  from ldap0.schema.subentry import SubschemaError
 except:
   SubschemaError = None
 
@@ -118,7 +115,12 @@ USER_ENTRY_ATTRIBUTES = (
 
 READ_CACHE_EXPIRE = 120
 
-LDAPLimitErrors = (ldap.TIMEOUT,ldap.TIMELIMIT_EXCEEDED,ldap.SIZELIMIT_EXCEEDED,ldap.ADMINLIMIT_EXCEEDED)
+LDAPLimitErrors = (
+  ldap0.TIMEOUT,
+  ldap0.TIMELIMIT_EXCEEDED,
+  ldap0.SIZELIMIT_EXCEEDED,
+  ldap0.ADMINLIMIT_EXCEEDED,
+)
 
 COUNT_TIMEOUT = 5.0
 
@@ -126,9 +128,9 @@ PYLDAP_RETRY_MAX = 8
 PYLDAP_RETRY_DELAY = 1.5
 
 
-class MyLDAPObject(ReconnectLDAPObject,ldap.resiter.ResultProcessor):
+class MyLDAPObject(ReconnectLDAPObject):
 
-  cache_time = 6.0
+  cache_ttl = 6.0
 
   def __init__(
     self,uri,
@@ -141,17 +143,17 @@ class MyLDAPObject(ReconnectLDAPObject,ldap.resiter.ResultProcessor):
     self._serverctrls = {
       '**all**':[],      # all LDAP operations
       '**bind**':[],     # all bind operations
-      '**read**':[],     # compare_ext,search_ext
-      '**write**':[],    # add_ext,delete_ext,modify_ext,rename
-      'abandon_ext':[],
-      'add_ext':[],
-      'compare_ext':[],
-      'delete_ext':[],
-      'modify_ext':[],
+      '**read**':[],     # compare,search
+      '**write**':[],    # add,delete,modify,rename
+      'abandon':[],
+      'add':[],
+      'compare':[],
+      'delete':[],
+      'modify':[],
       'passwd':[],
       'rename':[],
-      'search_ext':[],
-      'unbind_ext':[],
+      'search':[],
+      'unbind':[],
       'sasl_interactive_bind_s':[],
       'simple_bind':[],
     }
@@ -182,202 +184,89 @@ class MyLDAPObject(ReconnectLDAPObject,ldap.resiter.ResultProcessor):
       pass
     self._serverctrls[method] = _s_ctrls.values()
 
-  def abandon_ext(self,msgid,serverctrls=None,clientctrls=None):
-    return ReconnectLDAPObject.abandon_ext(
+  def abandon(self,msgid,serverctrls=None):
+    return ReconnectLDAPObject.abandon(
       self,msgid,
-      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['abandon_ext'],
-      clientctrls
+      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['abandon'],
     )
 
-  def simple_bind(self,who='',cred='',serverctrls=None,clientctrls=None):
+  def simple_bind(self,who='',cred='',serverctrls=None):
     assert type(who)==str,TypeError("Type of argument 'who' must be str but was %r" % who)
     assert type(cred)==str,TypeError("Type of argument 'cred' must be str but was %r" % cred)
     self.flush_cache()
     return ReconnectLDAPObject.simple_bind(
       self,who,cred,
       (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**bind**']+self._serverctrls['simple_bind'],
-      clientctrls
     )
 
-  def bind(self,who,cred,method=ldap.AUTH_SIMPLE):
-    self.flush_cache()
-    return ReconnectLDAPObject.bind(self,who,cred,method)
-
-  def sasl_interactive_bind_s(self,who,auth,serverctrls=None,clientctrls=None,sasl_flags=ldap.SASL_QUIET):
+  def sasl_interactive_bind_s(self,who,auth,serverctrls=None,sasl_flags=ldap0.SASL_QUIET):
     assert type(who)==str,TypeError("Type of argument 'who' must be str but was %r" % who)
     self.flush_cache()
     return ReconnectLDAPObject.sasl_interactive_bind_s(
       self,who,auth,
       (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**bind**']+self._serverctrls['sasl_interactive_bind_s'],
-      clientctrls,sasl_flags
+      sasl_flags
     )
 
-  def add_ext(self,dn,modlist,serverctrls=None,clientctrls=None):
+  def add(self,dn,modlist,serverctrls=None):
     assert type(dn)==str,TypeError("Type of argument 'dn' must be str but was %r" % dn)
-    self.uncache_entry(dn)
-    return ReconnectLDAPObject.add_ext(
+    return ReconnectLDAPObject.add(
       self,dn,modlist,
-      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['add_ext'],
-      clientctrls
+      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['add'],
     )
 
-  def compare_ext(self,dn,attr,value,serverctrls=None,clientctrls=None):
+  def compare(self,dn,attr,value,serverctrls=None):
     assert type(dn)==str,TypeError("Type of argument 'dn' must be str but was %r" % dn)
     assert type(attr)==str,TypeError("Type of argument 'attr' must be str but was %r" % attr)
     assert type(value)==str,TypeError("Type of argument 'value' must be str but was %r" % value)
-    return ReconnectLDAPObject.compare_ext(
+    return ReconnectLDAPObject.compare(
       self,dn,attr,value,
-      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**read**']+self._serverctrls['compare_ext'],
-      clientctrls
+      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**read**']+self._serverctrls['compare'],
     )
 
-  def delete_ext(self,dn,serverctrls=None,clientctrls=None):
+  def delete(self,dn,serverctrls=None):
     assert type(dn)==str,TypeError("Type of argument 'dn' must be str but was %r" % dn)
-    self.uncache_entry(dn)
-    return ReconnectLDAPObject.delete_ext(
+    return ReconnectLDAPObject.delete(
       self,dn,
-      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['delete_ext'],
-      clientctrls
+      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['delete'],
     )
 
-  def modify_ext(self,dn,modlist,serverctrls=None,clientctrls=None):
+  def modify(self,dn,modlist,serverctrls=None):
     assert type(dn)==str,TypeError("Type of argument 'dn' must be str but was %r" % dn)
-    self.uncache_entry(dn)
-    return ReconnectLDAPObject.modify_ext(self,dn,modlist,
-      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['modify_ext'],
-      clientctrls
+    return ReconnectLDAPObject.modify(self,dn,modlist,
+      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['modify'],
     )
 
-  def passwd(self,user,oldpw,newpw,serverctrls=None,clientctrls=None):
+  def passwd(self,user,oldpw,newpw,serverctrls=None):
     assert type(user)==str,TypeError("Type of argument 'user' must be str but was %r" % user)
     assert oldpw is None or type(oldpw)==str,TypeError("Type of argument 'oldpw' must be None or str but was %r" % oldpw)
     assert type(newpw)==str,TypeError("Type of argument 'newpw' must be str but was %r" % newpw)
-    self.uncache_entry(user)
     return ReconnectLDAPObject.passwd(self,user,oldpw,newpw,
       (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['passwd'],
-      clientctrls
     )
 
-  def rename(self,dn,newrdn,newsuperior=None,delold=1,serverctrls=None,clientctrls=None):
+  def rename(self,dn,newrdn,newsuperior=None,delold=1,serverctrls=None):
     assert type(dn)==str,TypeError("Type of argument 'dn' must be str but was %r" % dn)
     assert type(newrdn)==str,TypeError("Type of argument 'newrdn' must be str but was %r" % newrdn)
-    self.uncache_entry(dn)
     return ReconnectLDAPObject.rename(self,dn,newrdn,newsuperior,delold,
       (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['rename'],
-      clientctrls
     )
 
-  def search_ext(self,base,scope,filterstr='(objectClass=*)',attrlist=None,attrsonly=0,serverctrls=None,clientctrls=None,timeout=-1,sizelimit=0):
+  def search(self,base,scope,filterstr='(objectClass=*)',attrlist=None,attrsonly=0,serverctrls=None,timeout=-1,sizelimit=0):
     assert type(base)==str,TypeError("Type of argument 'base' must be str but was %r" % base)
     assert type(filterstr)==str,TypeError("Type of argument 'filterstr' must be str but was %r" % filterstr)
-    return ReconnectLDAPObject.search_ext(
+    return ReconnectLDAPObject.search(
       self,base,scope,filterstr,attrlist,attrsonly,
-      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**read**']+self._serverctrls['search_ext'],
-      clientctrls,timeout,sizelimit)
+      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**read**']+self._serverctrls['search'],
+      timeout,sizelimit)
 
-  def search_ext_s(self,base,scope,filterstr='(objectClass=*)',attrlist=None,attrsonly=0,serverctrls=None,clientctrls=None,timeout=-1,sizelimit=0,nocache=0,add_ctrls=0):
-    assert type(base)==str,TypeError("Type of argument 'base' must be str but was %r" % base)
-    assert type(filterstr)==str,TypeError("Type of argument 'filterstr' must be str but was %r" % filterstr)
-    current_time = time.time()
-    cache_key_args = (
-      base,
-      scope,
-      filterstr,
-      tuple(attrlist or []),
-      attrsonly,
-      tuple([
-        c.encodeControlValue()
-        for c in serverctrls or []
-      ]),
-      tuple(clientctrls or []),
-      timeout,
-      sizelimit,
-      add_ctrls,
-    )
-    try:
-      result_cache_time,ldap_result = self._cache[cache_key_args]
-    except KeyError:
-      ldap_result = None
-    else:
-      if nocache or current_time>result_cache_time:
-        del self._cache[cache_key_args]
-        ldap_result = None
-      else:
-        self._cache_hits+=1
-    if ldap_result is None:
-      self._cache_misses+=1
-      msgid = self.search_ext(base,scope,filterstr,attrlist,attrsonly,serverctrls,clientctrls,timeout,sizelimit)
-      ldap_result = self.result4(msgid,all=1,timeout=timeout,add_ctrls=add_ctrls)
-      self._cache[cache_key_args] = (current_time+self.cache_time,ldap_result)
-    if add_ctrls:
-      result = ldap_result
-    else:
-      result = ldap_result[1]
-    return result # search_ext_s()
-
-  def noop_search_st(self,base,scope=ldap.SCOPE_SUBTREE,filterstr='(objectClass=*)',timeout=-1):
-    assert type(base)==str,TypeError("Type of argument 'base' must be str but was %r" % base)
-    assert type(filterstr)==str,TypeError("Type of argument 'filterstr' must be str but was %r" % filterstr)
-    try:
-      msg_id = self.search_ext(
-        base,
-        scope,
-        filterstr=filterstr,
-        attrlist=['1.1'],
-        timeout=timeout,
-        serverctrls=[SearchNoOpControl(criticality=True)],
-      )
-      _,_,_,search_response_ctrls = self.result3(msg_id,all=1,timeout=timeout)
-    except LDAPLimitErrors as e:
-      self.abandon(msg_id)
-      raise e
-    else:
-      noop_srch_ctrl = [
-        c
-        for c in search_response_ctrls
-        if c.controlType==SearchNoOpControl.controlType
-      ]
-      if noop_srch_ctrl:
-        return noop_srch_ctrl[0].numSearchResults,noop_srch_ctrl[0].numSearchContinuations
-      else:
-        return (None,None)
-
-  def get_cache_hit_ratio(self):
-    """
-    Returns percentage of cache hit ratio
-    """
-    try:
-      return float(self._cache_hits)/float(self._cache_hits+self._cache_misses)*100
-    except ZeroDivisionError:
-      return None
-
-  def unbind_ext(self,serverctrls=None,clientctrls=None):
-    return ReconnectLDAPObject.unbind_ext(self,
-      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['unbind_ext'],
-      clientctrls
+  def unbind(self,serverctrls=None):
+    return ReconnectLDAPObject.unbind(self,
+      (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['unbind'],
     )
 
-  def flush_cache(self):
-    self._cache_misses = 0
-    self._cache_hits = 0
-    self._cache = {}
 
-  def uncache_entry(self,dn):
-    assert type(dn)==str,TypeError("Type of argument 'dn' must be str but was %r" % dn)
-    dn = dn.lower()
-    current_time = time.time()
-    for cache_key_args,cached_results in self._cache.items():
-      if cache_key_args[0].lower()==dn or cached_results[0]<current_time:
-        del self._cache[cache_key_args]
-      else:
-        for r in cached_results[1][1]:
-          cached_dn = r[0]
-          if cached_dn is not None and cached_dn.lower()==dn:
-            del self._cache[cache_key_args]
-            break # stop looping through results
-
-
-class LDAPSessionException(ldap.LDAPError):
+class LDAPSessionException(ldap0.LDAPError):
   """
   Base exception class raised within this module
   """
@@ -397,7 +286,7 @@ class PWD_CHANGE_AFTER_RESET(PasswordPolicyException):
   pass
 
 
-class INVALID_SIMPLE_BIND_DN(ldap.INVALID_DN_SYNTAX):
+class INVALID_SIMPLE_BIND_DN(ldap0.INVALID_DN_SYNTAX):
 
   def __init__(self,who=None,desc=None):
     self.who = who
@@ -440,7 +329,7 @@ class LDAPSession:
     # Set to not connected
     self.uri = None
     self.namingContexts = None
-    self._auditContextCache = ldap.cidict.cidict()
+    self._auditContextCache = ldap0.cidict.cidict()
     self._traceLevel = traceLevel
     self._traceFile = traceFile or sys.stdout
     # Character set/encoding of data stored on this particular host
@@ -449,7 +338,7 @@ class LDAPSession:
     self.uc_encode,self.uc_decode = conn_codec[0],conn_codec[1]
     # This is a dictionary for storing arbitrary objects
     # tied to a LDAP session
-    self.rootDSE = ldap.cidict.cidict()
+    self.rootDSE = ldap0.cidict.cidict()
     self.secureConn = 0
     self.saslAuth = None
     self.startTLSOption = 0
@@ -469,12 +358,12 @@ class LDAPSession:
 
   def setTLSOptions(self,tls_options=None):
     tls_options = tls_options or {}
-    if not self.uri.lower().startswith('ldapi:') and ldap.TLS_AVAIL:
+    if not self.uri.lower().startswith('ldapi:') and ldap0.TLS_AVAIL:
       # Only set the options if python-ldap was built with TLS support
       for ldap_opt,ldap_opt_value in tls_options.items():
         self.l.set_option(ldap_opt,ldap_opt_value)
-      self.l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT,ldap.OPT_X_TLS_DEMAND)
-      self.l.set_option(ldap.OPT_X_TLS_NEWCTX,0)
+      self.l.set_option(ldap0.OPT_X_TLS_REQUIRE_CERT,ldap0.OPT_X_TLS_DEMAND)
+      self.l.set_option(ldap0.OPT_X_TLS_NEWCTX,0)
     return # setTLSOptions()
 
   def startTLSExtOp(self,startTLSOption):
@@ -485,16 +374,16 @@ class LDAPSession:
       try:
         self.l.start_tls_s()
       except AttributeError as e:
-        raise ldap.SERVER_DOWN({
+        raise ldap0.SERVER_DOWN({
           'desc':str(e),
           'info':'python-ldap installation is lacking StartTLS support'
         })
       except (
-        ldap.UNAVAILABLE,
-        ldap.CONNECT_ERROR,
-        ldap.PROTOCOL_ERROR,
-        ldap.INSUFFICIENT_ACCESS,
-        ldap.SERVER_DOWN,    # Rely on ReconnectLDAPObject to catch up later
+        ldap0.UNAVAILABLE,
+        ldap0.CONNECT_ERROR,
+        ldap0.PROTOCOL_ERROR,
+        ldap0.INSUFFICIENT_ACCESS,
+        ldap0.SERVER_DOWN,    # Rely on ReconnectLDAPObject to catch up later
       ),e:
         if startTLSOption>1:
           self.unbind()
@@ -516,9 +405,9 @@ class LDAPSession:
         )
         self.uri = uri
         self.setTLSOptions(tls_options)
-        self.l.set_option(ldap.OPT_NETWORK_TIMEOUT,self.timeout)
+        self.l.set_option(ldap0.OPT_NETWORK_TIMEOUT,self.timeout)
         self.who = None
-      except ldap.SERVER_DOWN:
+      except ldap0.SERVER_DOWN:
         # Remove current host from list
         self.unbind()
         uri_list.pop(0)
@@ -580,7 +469,7 @@ class LDAPSession:
     try:
       self.l.unbind_s()
       del self.l
-    except ldap.LDAPError:
+    except ldap0.LDAPError:
       pass
     except AttributeError:
       pass
@@ -591,7 +480,7 @@ class LDAPSession:
 
   def _forgetRootDSEAttrs(self):
     """Forget all old RootDSE values"""
-    self.rootDSE = ldap.cidict.cidict()
+    self.rootDSE = ldap0.cidict.cidict()
     self.supportsAllOpAttr = 0
     self.namingContexts = None
 
@@ -629,24 +518,24 @@ class LDAPSession:
   def getRootDSE(self):
     """Retrieve attributes from Root DSE"""
     self._forgetRootDSEAttrs()
-    self.rootDSE = ldap.cidict.cidict()
+    self.rootDSE = ldap0.cidict.cidict()
     try:
       ldap_result = self.readEntry('',ROOTDSE_ATTRS)
     except (
-      ldap.CONFIDENTIALITY_REQUIRED,
-      ldap.CONSTRAINT_VIOLATION,
-      ldap.INAPPROPRIATE_AUTH,
-      ldap.INAPPROPRIATE_MATCHING,
-      ldap.INSUFFICIENT_ACCESS,
-      ldap.INVALID_CREDENTIALS,
-      ldap.NO_SUCH_OBJECT,
-      ldap.OPERATIONS_ERROR,
-      ldap.PARTIAL_RESULTS,
-      ldap.STRONG_AUTH_REQUIRED,
-      ldap.UNDEFINED_TYPE,
-      ldap.UNWILLING_TO_PERFORM,
-      ldap.PROTOCOL_ERROR,
-      ldap.UNAVAILABLE_CRITICAL_EXTENSION,
+      ldap0.CONFIDENTIALITY_REQUIRED,
+      ldap0.CONSTRAINT_VIOLATION,
+      ldap0.INAPPROPRIATE_AUTH,
+      ldap0.INAPPROPRIATE_MATCHING,
+      ldap0.INSUFFICIENT_ACCESS,
+      ldap0.INVALID_CREDENTIALS,
+      ldap0.NO_SUCH_OBJECT,
+      ldap0.OPERATIONS_ERROR,
+      ldap0.PARTIAL_RESULTS,
+      ldap0.STRONG_AUTH_REQUIRED,
+      ldap0.UNDEFINED_TYPE,
+      ldap0.UNWILLING_TO_PERFORM,
+      ldap0.PROTOCOL_ERROR,
+      ldap0.UNAVAILABLE_CRITICAL_EXTENSION,
     ):
       pass
     else:
@@ -674,20 +563,20 @@ class LDAPSession:
   def count(
     self,
     dn,
-    search_scope=ldap.SCOPE_SUBTREE,
+    search_scope=ldap0.SCOPE_SUBTREE,
     search_filter=u'(objectClass=*)',
     timeout=COUNT_TIMEOUT,
     sizelimit=0,
   ):
     if SearchNoOpControl.controlType in self.rootDSE.get('supportedControl',[]):
-      num_entries,num_referrals = self.l.noop_search_st(
+      num_entries,num_referrals = self.l.noop_search(
         self.uc_encode(dn)[0],
         search_scope,
         self.uc_encode(search_filter)[0],
         timeout=timeout,
       )
     else:
-      msg_id = self.l.search_ext(
+      msg_id = self.l.search(
         self.uc_encode(dn)[0],
         search_scope,
         self.uc_encode(search_filter)[0],
@@ -696,12 +585,12 @@ class LDAPSession:
         sizelimit=sizelimit,
       )
       count_dict = {
-        ldap.RES_SEARCH_ENTRY:0,
-        ldap.RES_SEARCH_REFERENCE:0,
+        ldap0.RES_SEARCH_ENTRY:0,
+        ldap0.RES_SEARCH_REFERENCE:0,
       }
       for res_type,res_data,_,_ in self.l.allresults(msg_id):
         count_dict[res_type] += len(res_data)
-      num_entries,num_referrals = (count_dict[ldap.RES_SEARCH_ENTRY],count_dict[ldap.RES_SEARCH_REFERENCE])
+      num_entries,num_referrals = (count_dict[ldap0.RES_SEARCH_ENTRY],count_dict[ldap0.RES_SEARCH_REFERENCE])
     return num_entries,num_referrals
 
   def subOrdinates(self,dn):
@@ -712,15 +601,15 @@ class LDAPSession:
                          'msDS-Approx-Immed-Subordinates')
     # First try to read operational attributes from entry itself
     # which might indicate whether there are subordinate entries
-    ldap_result = self.l.search_ext_s(
+    ldap_result = self.l.search_s(
       self.uc_encode(dn)[0],
-      ldap.SCOPE_BASE,'(objectClass=*)',
+      ldap0.SCOPE_BASE,'(objectClass=*)',
       subordinate_attrs,
       timeout=self.timeout
     )
     hasSubordinates = None; numSubordinates = None; numAllSubordinates = None
     if ldap_result:
-      entry = ldap.cidict.cidict(ldap_result[0][1])
+      entry = ldap0.cidict.cidict(ldap_result[0][1])
       for a in ('subordinateCount','numSubordinates','msDS-Approx-Immed-Subordinates'):
         try:
           numSubordinates = int(entry[a][0])
@@ -732,9 +621,9 @@ class LDAPSession:
         numAllSubordinates = int(entry['numAllSubordinates'][0])
       except KeyError:
         if numSubordinates!=None:
-          ldap_result = self.l.search_ext_s(
+          ldap_result = self.l.search_s(
             self.uc_encode(dn)[0],
-            ldap.SCOPE_SUBTREE,
+            ldap0.SCOPE_SUBTREE,
             '(numSubordinates>=1)',
             attrlist=['numSubordinates'],
             timeout=COUNT_TIMEOUT
@@ -751,9 +640,9 @@ class LDAPSession:
           hasSubordinates = None
     if hasSubordinates is None:
       # Explicitly search for subordinate entries
-      ldap_msgid = self.l.search_ext(
+      ldap_msgid = self.l.search(
         self.uc_encode(dn)[0],
-        ldap.SCOPE_ONELEVEL,'(objectClass=*)',
+        ldap0.SCOPE_ONELEVEL,'(objectClass=*)',
         ['1.1'],
         timeout=self.timeout,
         sizelimit=1
@@ -767,18 +656,18 @@ class LDAPSession:
     if SearchNoOpControl.controlType in self.rootDSE.get('supportedControl',[]):
       if not numSubordinates:
         try:
-          numSubordinates,_ = self.l.noop_search_st(
+          numSubordinates,_ = self.l.noop_search(
             self.uc_encode(dn)[0],
-            ldap.SCOPE_ONELEVEL,
+            ldap0.SCOPE_ONELEVEL,
             timeout=COUNT_TIMEOUT,
           )
         except LDAPLimitErrors:
           pass
       if not numAllSubordinates:
         try:
-          numAllSubordinates,_ = self.l.noop_search_st(
+          numAllSubordinates,_ = self.l.noop_search(
             self.uc_encode(dn)[0],
-            ldap.SCOPE_SUBTREE,
+            ldap0.SCOPE_SUBTREE,
             timeout=COUNT_TIMEOUT,
           )
         except LDAPLimitErrors:
@@ -793,16 +682,16 @@ class LDAPSession:
     """
     try:
       search_result = self.readEntry(dn,['objectClass','structuralObjectClass'])
-    except ldap.NO_SUCH_ATTRIBUTE:
+    except ldap0.NO_SUCH_ATTRIBUTE:
       search_result = self.readEntry(dn,['objectClass'])
     except (
-        ldap.INSUFFICIENT_ACCESS,
-        ldap.UNWILLING_TO_PERFORM,
+        ldap0.INSUFFICIENT_ACCESS,
+        ldap0.UNWILLING_TO_PERFORM,
     ):
       return [],None
     if not search_result:
-      raise ldap.NO_SUCH_OBJECT
-    entry = ldap.cidict.cidict(search_result[0][1])
+      raise ldap0.NO_SUCH_OBJECT
+    entry = ldap0.cidict.cidict(search_result[0][1])
     objectClass = entry.get('objectClass',[])
     structuralObjectClass_values = entry.get('structuralObjectClass',[None])
     # Attribute structuralObjectClass is supposed to be SINGLE-VALUE
@@ -822,12 +711,12 @@ class LDAPSession:
       # Search the DN of sub schema sub entry
       try:
         subschemasubentry_dn = self.l.search_subschemasubentry_s(self.uc_encode(dn)[0])
-      except ldap.LDAPError:
+      except ldap0.LDAPError:
         subschemasubentry_dn = None
       if subschemasubentry_dn is None:
         try:
           subschemasubentry_dn = self.l.search_subschemasubentry_s('')
-        except ldap.LDAPError:
+        except ldap0.LDAPError:
           subschemasubentry_dn = None
       # Store DN of sub schema sub entry in schema DN cache
       self.schema_dn_cache[dn] = subschemasubentry_dn
@@ -849,9 +738,9 @@ class LDAPSession:
       try:
         subschemasubentry = self.l.read_subschemasubentry_s(
           self.uc_encode(subschemasubentry_dn)[0],
-          ldap.schema.SCHEMA_ATTRS
+          ldap0.schema.SCHEMA_ATTRS
         )
-      except ldap.LDAPError:
+      except ldap0.LDAPError:
         sub_schema = None
       else:
         if subschemasubentry is None:
@@ -860,10 +749,9 @@ class LDAPSession:
           # Parse the schema
           if supplement_schema_ldif:
             try:
-              _,supplement_schema = ldif.ParseLDIF(
+              _,supplement_schema = list(ldap0.ldif.LDIFParser.fromstring(
                 open(supplement_schema_ldif,'rb'),
-                maxentries=1
-              )[0]
+              ).parse_entry_records(max_entries=1))[0]
             except (IndexError,ValueError):
               pass
             else:
@@ -894,14 +782,14 @@ class LDAPSession:
     if attrtype_list==['*']:
       attrtype_list = None
     # Read single entry from LDAP server
-    search_result = self.l.search_ext_s(
+    search_result = self.l.search_s(
       self.uc_encode(dn)[0],
-      ldap.SCOPE_BASE,
+      ldap0.SCOPE_BASE,
       self.uc_encode(search_filter)[0],
       attrlist=attrtype_list,
       attrsonly=only_attrtypes,
       timeout=self.timeout,
-      nocache=no_cache,
+      cache_ttl={True:0,False:None}[no_cache],
       serverctrls=server_ctrls,
     )
     return search_result
@@ -910,11 +798,11 @@ class LDAPSession:
     """Returns 1 if entry exists, 0 if NO_SUCH_OBJECT was raised."""
     try:
       self.readEntry(dn,[])
-    except ldap.INSUFFICIENT_ACCESS:
+    except ldap0.INSUFFICIENT_ACCESS:
       return True
-    except ldap.NO_SUCH_OBJECT:
+    except ldap0.NO_SUCH_OBJECT:
       return False
-    except ldap.PARTIAL_RESULTS:
+    except ldap0.PARTIAL_RESULTS:
       if suppress_referrals:
         return False
       else:
@@ -945,10 +833,10 @@ class LDAPSession:
         assertion_filter_tmpl = u'{filter_str}'
       assertion_filter_str = assertion_filter_tmpl.format(
         filter_str=assertion_filter,
-        dn_str=ldap.filter.escape_filter_chars(dn),
+        dn_str=ldap0.filter.escape_filter_chars(dn),
       ).encode(self.charset)
       serverctrls.append(AssertionControl(False,assertion_filter_str))
-    self.l.modify_ext_s(dn_str,modlist,serverctrls=serverctrls)
+    self.l.modify_s(dn_str,modlist,serverctrls=serverctrls)
     return # modifyEntry()
 
   def copyEntry(self,dn,new_rdn,new_superior):
@@ -957,22 +845,22 @@ class LDAPSession:
     r = self.readEntry(dn)
     if r:
       _,entry = r[0]
-      mod_list = ldap.modlist.addModlist(entry)
-      self.l.add_ext_s(
+      mod_list = ldap0.modlist.add_modlist(entry)
+      self.l.add_s(
         self.uc_encode(new_dn)[0],
         mod_list,
         serverctrls=None
       )
     else:
-      raise ldap.NO_SUCH_OBJECT
+      raise ldap0.NO_SUCH_OBJECT
     entry_uuid = None
     return new_dn,entry_uuid # renameEntry()
 
   def renameEntry(self,dn,new_rdn,new_superior=None,delold=1):
     """Rename an entry"""
-    self.l.uncache_entry(dn.encode(self.charset))
+    self.l.uncache(dn.encode(self.charset))
     if not new_superior is None:
-      self.l.uncache_entry(new_superior.encode(self.charset))
+      self.l.uncache(new_superior.encode(self.charset))
     old_superior_str = ldaputil.base.ParentDN(ldaputil.base.normalize_dn(dn))
     if new_superior!=None:
       if old_superior_str==ldaputil.base.normalize_dn(new_superior):
@@ -994,7 +882,7 @@ class LDAPSession:
       serverctrls=rename_serverctrls
     )
     # Receive result
-    _,_,_,rename_resp_ctrls = self.l.result3(rename_msg_id)
+    _,_,_,rename_resp_ctrls = self.l.result(rename_msg_id)
     # Try to extract Read Entry controls from response
     prec_ctrls = dict([
       (c.controlType,c)
@@ -1014,8 +902,7 @@ class LDAPSession:
 
   def deleteEntry(self,dn,serverctrls=None):
     """Delete single entry"""
-    self.l.uncache_entry(dn.encode(self.charset))
-    self.l.delete_ext_s(self.uc_encode(dn)[0],serverctrls=serverctrls)
+    self.l.delete_s(self.uc_encode(dn)[0],serverctrls=serverctrls)
     return # deleteEntry()
 
   def setDN(self,dn):
@@ -1037,12 +924,12 @@ class LDAPSession:
         result = self.readEntry(search_root_dn,['auditContext'])
       except AttributeError:
         audit_context_dn = None
-      except ldap.LDAPError:
+      except ldap0.LDAPError:
         audit_context_dn = None
       else:
         if result:
           try:
-            audit_context_dn = unicode(ldap.cidict.cidict(result[0][1])['auditContext'][0],self.charset)
+            audit_context_dn = unicode(ldap0.cidict.cidict(result[0][1])['auditContext'][0],self.charset)
           except KeyError:
             audit_context_dn = None
         else:
@@ -1062,9 +949,6 @@ class LDAPSession:
     If username is a valid DN it's used as bind-DN without further action.
     Otherwise filtertemplate is used to construct a LDAP search filter
     containing username instead of %s.
-    The calling application has to handle all possible exceptions:
-    ldap.NO_SUCH_OBJECT, ldap.FILTER_ERROR, ldapbase.USERNAME_NOT_UNIQUE
-    ldap.INVALID_CREDENTIALS, ldap.INAPPROPRIATE_AUTH
     """
     if not username:
       return u''
@@ -1075,15 +959,15 @@ class LDAPSession:
     searchfilter = filtertemplate.replace(u'%s',username_filter_escaped)
     # Try to find a unique entry with filtertemplate
     try:
-      result = self.l.search_ext_s(
+      result = self.l.search_s(
         self.uc_encode(searchroot)[0],
-        ldap.SCOPE_SUBTREE,
+        ldap0.SCOPE_SUBTREE,
         self.uc_encode(searchfilter)[0],
         attrlist=['1.1'],
         timeout=self.timeout,
         sizelimit=2
       )
-    except ldap.NO_SUCH_OBJECT:
+    except ldap0.NO_SUCH_OBJECT:
       raise USERNAME_NOT_FOUND({'desc':'Smart login did not find a matching user entry.'})
     else:
       # Ignore search continuations in search result list
@@ -1119,7 +1003,7 @@ class LDAPSession:
       self.l._last_bind = None
       # Force reconnecting in ReconnectLDAPObject
       self.l.reconnect(uri)
-    except ldap.INAPPROPRIATE_AUTH as e:
+    except ldap0.INAPPROPRIATE_AUTH as e:
       pass
     # Prepare extended controls attached to bind request
     bind_server_ctrls = []
@@ -1135,28 +1019,28 @@ class LDAPSession:
       #-------------------------------
 
       # disable SASL hostname canonicalization
-      if sasl_mech=='GSSAPI' and hasattr(ldap, 'OPT_X_SASL_NOCANON'):
-        self.l.set_option(ldap.OPT_X_SASL_NOCANON,1)
+      if sasl_mech=='GSSAPI':
+        self.l.set_option(ldap0.OPT_X_SASL_NOCANON,1)
 
-      sasl_auth = ldap.sasl.sasl(
+      sasl_auth = ldap0.sasl.SaslAuth(
         {
-          ldap.sasl.CB_AUTHNAME:(who or u'').encode(self.charset),
-          ldap.sasl.CB_PASS:(cred or u'').encode(self.charset),
-          ldap.sasl.CB_USER:(sasl_authzid or u'').encode(self.charset),
-          ldap.sasl.CB_GETREALM:(sasl_realm or u'').encode(self.charset),
+          ldap0.sasl.CB_AUTHNAME:(who or u'').encode(self.charset),
+          ldap0.sasl.CB_PASS:(cred or u'').encode(self.charset),
+          ldap0.sasl.CB_USER:(sasl_authzid or u'').encode(self.charset),
+          ldap0.sasl.CB_GETREALM:(sasl_realm or u'').encode(self.charset),
         },
         sasl_mech
       )
-      if ldap.SASL_AVAIL:
+      if ldap0.SASL_AVAIL:
         self.l.sasl_interactive_bind_s("",sasl_auth,serverctrls=bind_server_ctrls)
         self.saslAuth = sasl_auth
         # Don't store the password
         try:
-          del self.saslAuth.cb_value_dict[ldap.sasl.CB_PASS]
+          del self.saslAuth.cb_value_dict[ldap0.sasl.CB_PASS]
         except KeyError:
           pass
       else:
-        raise ldap.LDAPError('SASL not supported by local installation.')
+        raise ldap0.LDAPError('SASL not supported by local installation.')
 
       bind_srv_ctrls = []
 
@@ -1180,10 +1064,10 @@ class LDAPSession:
           self.uc_encode(cred or u'')[0],
           serverctrls=bind_server_ctrls
         )
-      except ldap.LDAPError as e:
+      except ldap0.LDAPError as e:
         # Explicitly fall back to anonymous bind before re-raising exception
         self.who = None
-        if type(e)==ldap.INVALID_DN_SYNTAX:
+        if type(e)==ldap0.INVALID_DN_SYNTAX:
           raise INVALID_SIMPLE_BIND_DN(who)
         else:
           raise e
@@ -1204,7 +1088,7 @@ class LDAPSession:
     # Determine identity by sending LDAPv3 Who Am I? extended operation
     try:
       whoami = self.whoami()
-    except ldap.LDAPError as e:
+    except ldap0.LDAPError as e:
       if who:
         self.who = u'u:%s' % (who)
       else:
@@ -1230,15 +1114,15 @@ class LDAPSession:
         # => try to determine it through OpenLDAP's libldap
         try:
           # Ask libldap for SASL username for later LDAP search
-          who = unicode(self.l.get_option(ldap.OPT_X_SASL_USERNAME),self.charset)
+          who = unicode(self.l.get_option(ldap0.OPT_X_SASL_USERNAME),self.charset)
         except AttributeError:
-          # Constant ldap.OPT_X_SASL_USERNAME not available in python-ldap => ignore
+          # Constant ldap0.OPT_X_SASL_USERNAME not available in python-ldap => ignore
           pass
 
       # Search for a user entry which matches the username known so far
       try:
         self.who = self.getBindDN(who,loginSearchRoot,whoami_filtertemplate)
-      except (ldap.LDAPError,USERNAME_NOT_FOUND,USERNAME_NOT_UNIQUE):
+      except (ldap0.LDAPError,USERNAME_NOT_FOUND,USERNAME_NOT_UNIQUE):
         pass
 
     # Read the user's entry if self.who is a DN to get name and preferences
@@ -1250,7 +1134,7 @@ class LDAPSession:
           search_filter='(objectClass=*)',
           no_cache=1
         )[0]
-      except (ldap.LDAPError,IndexError):
+      except (ldap0.LDAPError,IndexError):
         self.userEntry = {}
       else:
         self.who = userEntryDN.decode(self.charset)
@@ -1298,7 +1182,7 @@ class LDAPSession:
           'subschemaSubentry','administrativeRole'
         ]
       )
-    except ldap.NO_SUCH_OBJECT:
+    except ldap0.NO_SUCH_OBJECT:
       # Probably we reached root of current naming context
       return None
     if not search_result:
@@ -1353,7 +1237,7 @@ class LDAPSession:
         if self.saslAuth:
           lu.saslMech = self.saslAuth.mech.encode('ascii')
           if self.saslAuth.mech in PASSWORD_SASL_MECHS:
-            lu.who = self.saslAuth.cb_value_dict.get(ldap.sasl.CB_AUTHNAME,u'').encode(self.charset) or None
+            lu.who = self.saslAuth.cb_value_dict.get(ldap0.sasl.CB_AUTHNAME,u'').encode(self.charset) or None
         else:
           lu.who = (self.who or u'').encode(self.charset) or None
       return lu # ldapUrl()

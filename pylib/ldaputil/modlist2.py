@@ -6,7 +6,7 @@ ldaputil.modlist2 - create modify modlist's with schema knowledge
 
 from __future__ import absolute_import
 
-import ldap,ldaputil.schema
+import ldap0,ldaputil.schema
 
 # This constant defines the maximum count of attribute values for
 # which order is preserved when generating a diff
@@ -44,8 +44,8 @@ def modifyModlist(
   assert isinstance(new_entry,ldaputil.schema.Entry)
 
   # Performance optimization
-  AttributeType = ldap.schema.AttributeType
-  MatchingRule = ldap.schema.MatchingRule
+  AttributeType = ldap0.schema.models.AttributeType
+  MatchingRule = ldap0.schema.models.MatchingRule
 
   # Start building the modlist result
   modlist = []
@@ -93,19 +93,19 @@ def modifyModlist(
         del_values = [ v for v in old_value if not v in new_value_dict ]
         add_values = [ v for v in new_value if not v in old_value_dict ]
         if old_value and del_values:
-          modlist.append((ldap.MOD_DELETE,attrtype,del_values))
+          modlist.append((ldap0.MOD_DELETE,attrtype,del_values))
         if new_value and add_values:
-          modlist.append((ldap.MOD_ADD,attrtype,add_values))
+          modlist.append((ldap0.MOD_ADD,attrtype,add_values))
       else:
         # for few values be order-preserving
         if new_value and old_value!=new_value:
           if old_value:
-            modlist.append((ldap.MOD_DELETE,attrtype,old_value))
-          modlist.append((ldap.MOD_ADD,attrtype,new_value))
+            modlist.append((ldap0.MOD_DELETE,attrtype,old_value))
+          modlist.append((ldap0.MOD_ADD,attrtype,new_value))
     elif new_value and old_value!=new_value:
       if old_value:
-        modlist.append((ldap.MOD_DELETE,attrtype,None))
-      modlist.append((ldap.MOD_ADD,attrtype,new_value))
+        modlist.append((ldap0.MOD_DELETE,attrtype,None))
+      modlist.append((ldap0.MOD_ADD,attrtype,new_value))
 
   # Remove all attributes of old_entry which are not present
   # in new_entry at all
@@ -122,10 +122,10 @@ def modifyModlist(
         if at_eq_mr:
           mr_obj =  sub_schema.get_obj(MatchingRule,at_eq_mr)
           if mr_obj:
-            modlist.append((ldap.MOD_DELETE,attrtype,old_values))
+            modlist.append((ldap0.MOD_DELETE,attrtype,old_values))
           else:
-            modlist.append((ldap.MOD_DELETE,attrtype,None))
+            modlist.append((ldap0.MOD_DELETE,attrtype,None))
         else:
-          modlist.append((ldap.MOD_DELETE,attrtype,None))
+          modlist.append((ldap0.MOD_DELETE,attrtype,None))
 
   return modlist # modifyModlist()

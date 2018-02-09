@@ -5,7 +5,7 @@ web2ldap plugin classes for OpenDS and OpenDJ
 
 from __future__ import absolute_import
 
-import re,mspki.util,ldap,ldap.cidict,w2lapp.schema
+import re,mspki.util,ldap0,ldap0.cidict,w2lapp.schema
 
 from w2lapp.schema.syntaxes import DirectoryString,OctetString,SelectList,DynamicDNSelectList,MultilineText,BindDN,syntax_registry
 from w2lapp.schema.plugins.x509 import Certificate
@@ -411,16 +411,16 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
   def formValue(self):
     if not self.attrValue:
       return u''
-    entry = ldap.cidict.cidict(self._entry)
+    entry = ldap0.cidict.cidict(self._entry)
     attr_value = self.attrValue.decode(self._ls.charset)
     try:
       dn_comp_list = explode_dn(attr_value)
-    except ldap.DECODING_ERROR:
+    except ldap0.DECODING_ERROR:
       result = BindDN.formValue(self)
     else:
       try:
         rdn = rdn_dict(dn_comp_list[0])
-      except ldap.DECODING_ERROR:
+      except ldap0.DECODING_ERROR:
         result = BindDN.formValue(self)
       else:
         new_rdn = u'+'.join([

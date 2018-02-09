@@ -15,8 +15,8 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 from __future__ import absolute_import
 
 import sys,re,imghdr,sndhdr,urllib,uuid,datetime,time,utctime,json, \
-       ldap,ldapurl,pyweblib.forms, \
-       mspki.asn1helper,ldaputil.base,ldap.schema,xml.etree.ElementTree, \
+       ldap0,ldap0.ldapurl,pyweblib.forms, \
+       mspki.asn1helper,ldaputil.base,ldap0.schema,xml.etree.ElementTree, \
        w2lapp.viewer,w2lapp.form,w2lapp.gui,msbase,w2lapp.cnf,ldaputil.schema
 
 from collections import defaultdict
@@ -49,7 +49,7 @@ except ImportError:
 class SyntaxRegistry:
 
   def __init__(self):
-    self.oid2syntax = ldap.cidict.cidict()
+    self.oid2syntax = ldap0.cidict.cidict()
     self.at2syntax = defaultdict(dict)
 
   def registerSyntaxClass(self,c):
@@ -84,9 +84,9 @@ class SyntaxRegistry:
         self.at2syntax[a][oc_oid] = syntax_oid
 
   def syntaxClass(self,schema,attrtype_nameoroid,structural_oc=None):
-    attrtype_oid = schema.getoid(ldap.schema.AttributeType,attrtype_nameoroid.strip())
+    attrtype_oid = schema.getoid(ldap0.schema.models.AttributeType,attrtype_nameoroid.strip())
     if structural_oc:
-      structural_oc_oid = schema.getoid(ldap.schema.ObjectClass,structural_oc.strip())
+      structural_oc_oid = schema.getoid(ldap0.schema.models.ObjectClass,structural_oc.strip())
     else:
       structural_oc_oid = None
     syntax_oid = LDAPSyntax.oid
@@ -96,7 +96,7 @@ class SyntaxRegistry:
       try:
         syntax_oid = self.at2syntax[attrtype_oid][None]
       except KeyError:
-        attrtype_se = schema.get_inheritedobj(ldap.schema.AttributeType,attrtype_oid,['syntax'])
+        attrtype_se = schema.get_inheritedobj(ldap0.schema.models.AttributeType,attrtype_oid,['syntax'])
         if attrtype_se and attrtype_se.syntax:
           syntax_oid = attrtype_se.syntax
     try:
@@ -247,7 +247,7 @@ class LDAPSyntax:
       self.maxValues<=1 or \
       len(self._entry.get(self.attrType,[]))>=self.maxValues:
       return ''
-    se = self._schema.get_obj(ldap.schema.AttributeType,self.attrType)
+    se = self._schema.get_obj(ldap0.schema.models.AttributeType,self.attrType)
     if se and se.single_value:
       return ''
     return '<button formaction="%s#in_a_%s" type="submit" name="in_mr" value="%s%d">%s</button>' % (
@@ -291,7 +291,7 @@ class LDAPSyntax:
     return self.mimeType
 
   def displayValue(self,valueindex=0,commandbutton=0):
-    if ldapurl.isLDAPUrl(self.attrValue):
+    if ldap0.ldapurl.isLDAPUrl(self.attrValue):
       displayer_class = LDAPUrl
     elif url_regex.search(self.attrValue)!=None:
       displayer_class = Uri
@@ -858,7 +858,7 @@ class Uri(DirectoryString):
       display_url = u''
     else:
       display_url = u' (%s)' % (url)
-    if ldapurl.isLDAPUrl(url):
+    if ldap0.ldapurl.isLDAPUrl(url):
       return '<a href="%s?%s">%s%s</a>' % (
         self._form.script_name,
         self._form.utf2display(url),
@@ -990,15 +990,15 @@ class OID(IA5String):
       name,description,reference = oid_desc_reg[self.attrValue]
     except (KeyError,ValueError):
       try:
-        se = self._schema.get_obj(ldap.schema.ObjectClass,self.attrValue,raise_keyerror=1)
+        se = self._schema.get_obj(ldap0.schema.models.ObjectClass,self.attrValue,raise_keyerror=1)
       except KeyError:
         try:
-          se = self._schema.get_obj(ldap.schema.AttributeType,self.attrValue,raise_keyerror=1)
+          se = self._schema.get_obj(ldap0.schema.models.AttributeType,self.attrValue,raise_keyerror=1)
         except KeyError:
             return IA5String.displayValue(self,valueindex,commandbutton)
         else:
           return w2lapp.gui.SchemaElementName(
-            self._sid,self._form,self._dn,self._schema,self.attrValue,ldap.schema.AttributeType,name_template=r'%s'
+            self._sid,self._form,self._dn,self._schema,self.attrValue,ldap0.schema.models.AttributeType,name_template=r'%s'
           )
       else:
         name_template = {
@@ -1008,7 +1008,7 @@ class OID(IA5String):
         }[se.kind]
       # objectClass attribute is displayed with different function
       return w2lapp.gui.SchemaElementName(
-        self._sid,self._form,self._dn,self._schema,self.attrValue,ldap.schema.ObjectClass,
+        self._sid,self._form,self._dn,self._schema,self.attrValue,ldap0.schema.models.ObjectClass,
         name_template=name_template
       )
     else:
@@ -1225,7 +1225,7 @@ class ObjectGUID(LDAPSyntax):
 
   def displayValue(self,valueindex=0,commandbutton=0):
     objectguid_str = ''.join(['%02X' % ord(c) for c in self.attrValue])
-    return ldapurl.LDAPUrl(
+    return ldap0.ldapurl.LDAPUrl(
       ldapUrl=self._ls.uri,
       dn='GUID=%s' % (objectguid_str),
       who=None,cred=None
@@ -1473,7 +1473,7 @@ class DynamicValueSelectList(SelectList,DirectoryString):
   valueSuffix = ''
 
   def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
-    self.lu_obj = ldapurl.LDAPUrl(self.ldap_url)
+    self.lu_obj = ldap0.ldapurl.LDAPUrl(self.ldap_url)
     self.minLen = len(self.valuePrefix)+len(self.valueSuffix)
     SelectList.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry)
 
@@ -1489,7 +1489,7 @@ class DynamicValueSelectList(SelectList,DirectoryString):
       attr_value,
     )
     try:
-      ldap_result = self._ls.l.search_ext_s(
+      ldap_result = self._ls.l.search_s(
         self._ls.uc_encode(search_dn)[0],
         self.lu_obj.scope,
         search_filter,
@@ -1497,12 +1497,12 @@ class DynamicValueSelectList(SelectList,DirectoryString):
         sizelimit=2,
       )
     except (
-      ldap.NO_SUCH_OBJECT,
-      ldap.CONSTRAINT_VIOLATION,
-      ldap.INSUFFICIENT_ACCESS,
-      ldap.REFERRAL,
-      ldap.SIZELIMIT_EXCEEDED,
-      ldap.TIMELIMIT_EXCEEDED,
+      ldap0.NO_SUCH_OBJECT,
+      ldap0.CONSTRAINT_VIOLATION,
+      ldap0.INSUFFICIENT_ACCESS,
+      ldap0.REFERRAL,
+      ldap0.SIZELIMIT_EXCEEDED,
+      ldap0.TIMELIMIT_EXCEEDED,
     ):
       return None
     else:
@@ -1583,7 +1583,7 @@ class DynamicValueSelectList(SelectList,DirectoryString):
       pass
     else:
       search_dn = self._determineSearchDN(self._dn,self.lu_obj.dn)
-      search_scope = self.lu_obj.scope or ldap.SCOPE_BASE
+      search_scope = self.lu_obj.scope or ldap0.SCOPE_BASE
       search_attrs = (self.lu_obj.attrs or []) + ['description','info']
       # Use the existing LDAP connection as current user
       try:
@@ -1594,16 +1594,16 @@ class DynamicValueSelectList(SelectList,DirectoryString):
           attrlist=search_attrs,
         )
       except (
-        ldap.NO_SUCH_OBJECT,
-        ldap.SIZELIMIT_EXCEEDED,
-        ldap.TIMELIMIT_EXCEEDED,
-        ldap.PARTIAL_RESULTS,
-        ldap.INSUFFICIENT_ACCESS,
-        ldap.CONSTRAINT_VIOLATION,
-        ldap.REFERRAL,
+        ldap0.NO_SUCH_OBJECT,
+        ldap0.SIZELIMIT_EXCEEDED,
+        ldap0.TIMELIMIT_EXCEEDED,
+        ldap0.PARTIAL_RESULTS,
+        ldap0.INSUFFICIENT_ACCESS,
+        ldap0.CONSTRAINT_VIOLATION,
+        ldap0.REFERRAL,
       ):
         return {}
-    if search_scope==ldap.SCOPE_BASE:
+    if search_scope==ldap0.SCOPE_BASE:
       dn_r,entry_r=ldap_result[0]
       # When reading a single entry we build the map from a single multi-valued attribute
       assert len(self.lu_obj.attrs or [])==1,"attrlist in ldap_url must be of length 1 if scope is base"
@@ -1661,11 +1661,11 @@ class DynamicDNSelectList(DynamicValueSelectList,DistinguishedName):
         search_filter=self._determineFilter(),
       )
     except (
-      ldap.NO_SUCH_OBJECT,
-      ldap.CONSTRAINT_VIOLATION,
-      ldap.INSUFFICIENT_ACCESS,
-      ldap.INVALID_DN_SYNTAX,
-      ldap.REFERRAL,
+      ldap0.NO_SUCH_OBJECT,
+      ldap0.CONSTRAINT_VIOLATION,
+      ldap0.INSUFFICIENT_ACCESS,
+      ldap0.INVALID_DN_SYNTAX,
+      ldap0.REFERRAL,
     ):
       return None
     else:

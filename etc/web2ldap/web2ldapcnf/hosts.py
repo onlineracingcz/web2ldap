@@ -5,7 +5,7 @@ web2ldapcnf/hosts.py - Host-related options
 """
 
 # Leave this alone
-import os,ldap,web2ldapcnf
+import os,ldap0,web2ldapcnf
 
 class Web2LDAPConfig:
   """
@@ -685,15 +685,15 @@ ldap_def = {
     # (see section TLS OPTIONS on OpenLDAP's man page ldap_set_option(3)
     tls_options={
       # you should really set this!
-      ldap.OPT_X_TLS_REQUIRE_CERT:ldap.OPT_X_TLS_DEMAND,
+      ldap0.OPT_X_TLS_REQUIRE_CERT:ldap0.OPT_X_TLS_DEMAND,
       # Directory containing all the trusted root CA certs (symbolic hash links required!)
 #      LDAP_OPT_X_TLS_CACERTDIR = os.path.sep.join([web2ldapcnf.etc_dir,'web2ldap', 'ssl', 'crt']),
       # File containing all the trusted root CA certs
-      ldap.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','trusted-certs.crt'),
-#      ldap.OPT_X_TLS_CIPHER_SUITE:'ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA',
-      ldap.OPT_X_TLS_PROTOCOL_MIN:3,
-#      ldap.OPT_X_TLS_CRLCHECK:ldap.OPT_X_TLS_CRL_PEER,
-#      ldap.OPT_X_TLS_CRLFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','peers.crl'),
+      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','trusted-certs.crt'),
+#      ldap0.OPT_X_TLS_CIPHER_SUITE:'ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA',
+      ldap0.OPT_X_TLS_PROTOCOL_MIN:3,
+#      ldap0.OPT_X_TLS_CRLCHECK:ldap0.OPT_X_TLS_CRL_PEER,
+#      ldap0.OPT_X_TLS_CRLFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','peers.crl'),
     },
     # regular expression of subject DNs in client certs
     ssl_valid_dn=r'/.*',
@@ -1098,7 +1098,7 @@ ldap_def = {
   'ldaps://demo.ae-dir.com': Web2LDAPConfig(
     description=u'AE-DIR demo',
     tls_options={
-      ldap.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','DST_Root_CA_X3.pem'),
+      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','DST_Root_CA_X3.pem'),
     },
   )
 

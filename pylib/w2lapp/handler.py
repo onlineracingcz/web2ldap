@@ -14,7 +14,7 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 from __future__ import absolute_import
 
 import sys,os,types,socket,errno,time,traceback,urlparse,pprint, \
-       ldap,ldif,ldaputil,ldaputil.dns,ldapsession,mssignals, \
+       ldap0,ldaputil,ldaputil.dns,ldapsession,mssignals, \
        pyweblib.forms,pyweblib.httphelper,pyweblib.sslenv,pyweblib.helper,pyweblib.session, \
        msHTTPHandler
 
@@ -30,7 +30,7 @@ import w2lapp.core,w2lapp.gui,w2lapp.cnf, \
        w2lapp.bulkmod,w2lapp.srvrr,w2lapp.schema.viewer
 
 from types import UnicodeType,StringType
-from ldapurl import isLDAPUrl
+from ldap0.ldapurl import isLDAPUrl
 from ldaputil.extldapurl import ExtendedLDAPUrl
 from ldapsession import LDAPSession
 from w2lapp.gui import ExceptionMsg
@@ -44,18 +44,18 @@ LOG_SEPARATOR = '-'*60
 
 SCOPE2COMMAND = {
   None:'search',
-  ldap.SCOPE_BASE:'read',
-  ldap.SCOPE_ONELEVEL:'search',
-  ldap.SCOPE_SUBTREE:'search',
+  ldap0.SCOPE_BASE:'read',
+  ldap0.SCOPE_ONELEVEL:'search',
+  ldap0.SCOPE_SUBTREE:'search',
 }
 
 try:
   # Check whether constant is present (python-ldap 2.4.15+)
-  ldap.SCOPE_SUBORDINATE
+  ldap0.SCOPE_SUBORDINATE
 except AttributeError:
   pass
 else:
-  SCOPE2COMMAND[ldap.SCOPE_SUBORDINATE] = 'search'
+  SCOPE2COMMAND[ldap0.SCOPE_SUBORDINATE] = 'search'
 
 
 class AppHandler:
@@ -118,7 +118,7 @@ class AppHandler:
       # Log the LDAPSession object attributes
       logentry.append(pprint.pformat(ls.__dict__))
       # Log rootDSE attributes as LDIF
-      logentry.append(ldif.CreateLDIF('',ls.rootDSE.data))
+      logentry.append(pprint.pformat(ls.rootDSE.data))
     # Log all environment vars
     for k,v in sorted(self.env.items()):
       logentry.append(':'.join((k,repr(v))))
@@ -415,7 +415,7 @@ class AppHandler:
 
       #---------------------------------------------------------------
       # try-except block for gracefully handling of certain exceptions
-      # (mainly w2lapp.core.ErrorExit and ldap.LDAPError)
+      # (mainly w2lapp.core.ErrorExit and ldap0.LDAPError)
       #---------------------------------------------------------------
 
       try:
@@ -458,9 +458,9 @@ class AppHandler:
 
         self.command = self.command or {
           None:'searchform',
-          ldap.SCOPE_BASE:'read',
-          ldap.SCOPE_ONELEVEL:'search',
-          ldap.SCOPE_SUBTREE:'search',
+          ldap0.SCOPE_BASE:'read',
+          ldap0.SCOPE_ONELEVEL:'search',
+          ldap0.SCOPE_SUBTREE:'search',
         }[inputLDAPUrl.scope]
 
         #-------------------------------------------------
@@ -523,9 +523,6 @@ class AppHandler:
             w2lapp.cnf.GetParam(inputLDAPUrl,'session_track_control',0),
             tls_options=w2lapp.cnf.GetParam(inputLDAPUrl,'tls_options',{}),
           )
-          ls.l.set_option(ldap.OPT_RESTART,0)
-          ls.l.set_option(ldap.OPT_DEREF,0)
-          ls.l.set_option(ldap.OPT_REFERRALS,0)
           # Set host-/backend-specific timeout
           ls.timeout = ls.l.timeout = w2lapp.cnf.GetParam(ls,'timeout',60)
           # Store session data in case anything goes wrong after here
@@ -583,7 +580,7 @@ class AppHandler:
               whoami_filtertemplate=w2lapp.cnf.GetParam(ls,'binddnsearch',ur'(uid=%s)'),
               loginSearchRoot = login_search_root,
             )
-          except ldap.NO_SUCH_OBJECT as e:
+          except ldap0.NO_SUCH_OBJECT as e:
             ls.setDN(dn)
             w2lapp.login.w2l_Login(
               self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,login_search_root,
@@ -614,7 +611,7 @@ class AppHandler:
         # Execute the command module
         try:
           self.dispatch(inputLDAPUrl,ls,dn)
-        except ldap.SERVER_DOWN:
+        except ldap0.SERVER_DOWN:
           # Try to reconnect to LDAP server and retry action
           ls.l.reconnect(ls.uri)
           self.dispatch(inputLDAPUrl,ls,dn)
@@ -633,7 +630,7 @@ class AppHandler:
           e_msg = unicode(repr(str(e)))
         ExceptionMsg(self.sid,self.outf,self.command,self.form,ls,dn,u'Error parsing form',u'Error parsing form: %s' % (self.form.utf2display(e_msg)))
 
-      except ldap.SERVER_DOWN as e:
+      except ldap0.SERVER_DOWN as e:
         # Server is down and reconnecting impossible => remove session
         session.deleteSession(self.sid)
         # Redirect to entry page
@@ -646,7 +643,7 @@ class AppHandler:
           )
         )
 
-      except ldap.NO_SUCH_OBJECT as e:
+      except ldap0.NO_SUCH_OBJECT as e:
 
         #########################################
         # Generic handler for "No such object"
@@ -676,10 +673,10 @@ class AppHandler:
           # Found LDAP server for this naming context via DNS SRV RR
           w2lapp.srvrr.w2l_ChaseSRVRecord(self.sid,self.outf,self.command,self.form,ls,dn,host_list)
 
-      except (ldap.PARTIAL_RESULTS,ldap.REFERRAL) as e:
+      except (ldap0.PARTIAL_RESULTS,ldap0.REFERRAL) as e:
         w2lapp.referral.w2l_ChaseReferral(self.sid,self.outf,self.command,self.form,ls,dn,e)
 
-      except (ldap.INSUFFICIENT_ACCESS,ldap.STRONG_AUTH_REQUIRED) as e:
+      except (ldap0.INSUFFICIENT_ACCESS,ldap0.STRONG_AUTH_REQUIRED) as e:
         w2lapp.login.w2l_Login(
           self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,
           self.form.getInputValue('login_search_root',[ls.getSearchRoot(dn)])[0],
@@ -688,8 +685,8 @@ class AppHandler:
         )
 
       except (
-        ldap.INAPPROPRIATE_AUTH,
-        ldap.INVALID_CREDENTIALS,
+        ldap0.INAPPROPRIATE_AUTH,
+        ldap0.INVALID_CREDENTIALS,
         ldapsession.USERNAME_NOT_FOUND,
       ) as e:
         w2lapp.login.w2l_Login(
@@ -759,14 +756,14 @@ class AppHandler:
               'search','Show',self.sid,
               [
                 ('dn',login_search_root),
-                ('scope',str(ldap.SCOPE_SUBTREE)),
+                ('scope',str(ldap0.SCOPE_SUBTREE)),
                 ('filterstr',w2lapp.cnf.GetParam(ls,'binddnsearch',r'(uid=%s)').replace('%s',who))
               ]
           )]),
           who=who,relogin=1
         )
 
-      except ldap.TIMEOUT as e:
+      except ldap0.TIMEOUT as e:
         if __debug__:
           self.log_exception(ls)
         ExceptionMsg(
@@ -776,16 +773,16 @@ class AppHandler:
         )
 
       except (
-        ldap.DECODING_ERROR,
-        ldap.LOCAL_ERROR,
-        ldap.PARAM_ERROR,
-        ldap.OTHER,
-        ldap.USER_CANCELLED
+        ldap0.DECODING_ERROR,
+        ldap0.LOCAL_ERROR,
+        ldap0.PARAM_ERROR,
+        ldap0.OTHER,
+        ldap0.USER_CANCELLED
       ) as e:
         self.log_exception(ls)
         ExceptionMsg(self.sid,self.outf,self.command,self.form,ls,dn,u'LDAP exception',w2lapp.gui.LDAPError2ErrMsg(e,self.form,ls.charset))
 
-      except ldap.LDAPError as e:
+      except ldap0.LDAPError as e:
         if __debug__:
           self.log_exception(ls)
         ExceptionMsg(self.sid,self.outf,self.command,self.form,ls,dn,u'LDAP exception',w2lapp.gui.LDAPError2ErrMsg(e,self.form,ls.charset))
