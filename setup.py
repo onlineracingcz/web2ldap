@@ -66,6 +66,7 @@ setup(
     zip_safe=False,
     entry_points={
         'console_scripts': [
+            'web2ldap-fcgi=web2ldap.fcgiserver:start',
             'web2ldap-http=web2ldap.standalone:start',
             'web2ldap-checkinst=web2ldap.checkinst:check_inst',
         ],

@@ -10,7 +10,9 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import random,base64,hashlib
+import random
+import base64
+import hashlib
 
 
 # Alphabet for encrypted passwords (see module crypt)

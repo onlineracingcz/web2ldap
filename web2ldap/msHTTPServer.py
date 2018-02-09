@@ -10,13 +10,15 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import sys,os,time,getopt,SocketServer,socket,traceback
+import sys
+import os
+import time
+import getopt
+import SocketServer
+import socket
+import traceback
 
-try:
-  from os import getuid
-except ImportError:
-  def getuid():
-    return None
+from os import getuid
 
 try:
   import pwd

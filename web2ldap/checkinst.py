@@ -7,7 +7,12 @@ a particular release version of web2ldap.
 
 from __future__ import absolute_import
 
-import sys,os,imp,socket,pprint,platform
+import sys
+import os
+import imp
+import socket
+import pprint
+import platform
 from distutils.version import StrictVersion
 
 MINIMUM_PYTHON_VERSION = (2,7,10)
@@ -60,7 +65,6 @@ def check_inst():
   missing = []
 
   for modulename,mandantory,min_version,url,desc in [
-    ('.w2lapp',1,None,'https://www.web2ldap.de','Internal web2ldap application module'),
     ('ldap0',1,'0.0.54','https://pypi.python.org/pypi/ldap0','Module package for accessing LDAP servers'),
     ('pyasn1',1,None,'http://pyasn1.sf.net','ASN.1 module'),
     ('pyasn1_modules',1,None,'http://pyasn1.sf.net','ASN.1 LDAP module'),

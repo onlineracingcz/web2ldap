@@ -13,14 +13,21 @@ class SimpleHTTPServer.SimpleHTTPRequestHandler.
 
 from __future__ import absolute_import
 
-__version__ = '1.3.0'
-
-import sys,os,posixpath,stat,socket,string,SimpleHTTPServer,urllib,msbase
+import sys
+import os
+import posixpath
+import stat
+import socket
+import string
+import SimpleHTTPServer
+import urllib
+from time import strftime,gmtime
 
 from netaddr import IPAddress,IPNetwork
 
+import web2ldap.msbase
+from web2ldap.__about__ import __version__
 
-from time import strftime,gmtime
 
 def get_mime_types(mime_types_pathname):
   """
@@ -173,7 +180,7 @@ class HTTPHandlerClass(SimpleHTTPServer.SimpleHTTPRequestHandler):
         env[envitem[1]] = http_header_value
 
     # SERVER_SIGNATURE is built with string template and all connection data
-    disp_env = msbase.DefaultDict(env,'')
+    disp_env = web2ldap.msbase.DefaultDict(env,'')
     env['SERVER_SIGNATURE'] = self.server_signature % disp_env
 
     return env

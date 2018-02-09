@@ -11,11 +11,12 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-
-import collections,ldap0.schema,ldap0.schema.subentry,msbase
+import collections
 from itertools import combinations
 from types import UnicodeType
 
+import ldap0.schema
+import ldap0.schema.subentry
 from ldap0.schema.models import AttributeType
 
 

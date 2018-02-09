@@ -10,7 +10,8 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import time,datetime
+import time
+import datetime
 
 
 class utcdatetime(datetime.datetime):

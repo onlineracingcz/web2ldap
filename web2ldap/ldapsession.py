@@ -11,16 +11,19 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 from __future__ import absolute_import
 
 import sys,socket,time,types,codecs,ldap0,ldap0.ldif,ldap0.sasl,ldap0.cidict,ldap0.filter,ldap0.schema
-import ldaputil.base,ldaputil.schema
 
 from ldap0.ldapobject import ReconnectLDAPObject
 from ldap0.schema.models import DITStructureRule
-from ldaputil.base import escape_ldap_filter_chars
-from ldaputil.extldapurl import ExtendedLDAPUrl
-from ldaputil.controls import PreReadControl,PostReadControl
 from ldap0.controls.openldap import SearchNoOpControl
+from ldap0.controls.libldap import AssertionControl
 
-from ldap0.controls import AssertionControl
+import web2ldap.ldaputil.base
+import web2ldap.ldaputil.schema
+
+from web2ldap.ldaputil.base import escape_ldap_filter_chars
+from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
+from web2ldap.ldaputil.controls import PreReadControl,PostReadControl
+
 # Authorization Identity Request and Response Controls (see RFC 3829)
 try:
   from ldap0.controls import AuthorizationIdentityRequestControl,AuthorizationIdentityResponseControl
@@ -554,7 +557,7 @@ class LDAPSession:
     """
     if self.namingContexts is None and hasattr(self,'l'):
       self.getRootDSE()
-    return ldaputil.base.match_dnlist(dn,self.namingContexts or naming_contexts or [])
+    return web2ldap.ldaputil.base.match_dnlist(dn,self.namingContexts or naming_contexts or [])
 
   def isLeafEntry(self,dn):
     """Returns 1 if the node is a leaf entry, 0 otherwise"""
@@ -749,15 +752,16 @@ class LDAPSession:
           # Parse the schema
           if supplement_schema_ldif:
             try:
-              _,supplement_schema = list(ldap0.ldif.LDIFParser.fromstring(
-                open(supplement_schema_ldif,'rb'),
-              ).parse_entry_records(max_entries=1))[0]
+              with open(supplement_schema_ldif,'rb') as ldif_fileobj:
+                _,supplement_schema = list(
+                    ldap0.ldif.LDIFParser(ldif_fileobj).parse_entry_records(max_entries=1)
+                )[0]
             except (IndexError,ValueError):
               pass
             else:
               subschemasubentry.update(supplement_schema or {})
           try:
-            sub_schema = ldaputil.schema.SubSchema(
+            sub_schema = web2ldap.ldaputil.schema.SubSchema(
               subschemasubentry,
               self.uc_encode(subschemasubentry_dn)[0],
               check_uniqueness=strict_check,
@@ -861,9 +865,9 @@ class LDAPSession:
     self.l.uncache(dn.encode(self.charset))
     if not new_superior is None:
       self.l.uncache(new_superior.encode(self.charset))
-    old_superior_str = ldaputil.base.ParentDN(ldaputil.base.normalize_dn(dn))
+    old_superior_str = web2ldap.ldaputil.base.ParentDN(web2ldap.ldaputil.base.normalize_dn(dn))
     if new_superior!=None:
-      if old_superior_str==ldaputil.base.normalize_dn(new_superior):
+      if old_superior_str==web2ldap.ldaputil.base.normalize_dn(new_superior):
         new_superior_str = None
       else:
         new_superior_str = self.uc_encode(new_superior)[0]
@@ -911,7 +915,7 @@ class LDAPSession:
     """
     if type(dn)==types.StringType:
       dn = unicode(dn,self.charset)
-    dn=ldaputil.base.normalize_dn(dn)
+    dn=web2ldap.ldaputil.base.normalize_dn(dn)
     self._dn = dn
     self.currentSearchRoot = self.getSearchRoot(dn)
     return # setDN()
@@ -952,8 +956,8 @@ class LDAPSession:
     """
     if not username:
       return u''
-    elif ldaputil.base.is_dn(username):
-      return ldaputil.base.normalize_dn(username)
+    elif web2ldap.ldaputil.base.is_dn(username):
+      return web2ldap.ldaputil.base.normalize_dn(username)
     searchroot = searchroot or self.rootDSE.get('defaultNamingContext',[''])[0].decode(self.charset) or u''
     username_filter_escaped = escape_ldap_filter_chars(username)
     searchfilter = filtertemplate.replace(u'%s',username_filter_escaped)
@@ -977,7 +981,7 @@ class LDAPSession:
       elif len(result)!=1:
         raise USERNAME_NOT_UNIQUE({'desc':'More than one matching user entries.'})
       else:
-        return ldaputil.base.normalize_dn(unicode(result[0][0],self.charset))
+        return web2ldap.ldaputil.base.normalize_dn(unicode(result[0][0],self.charset))
 
   def whoami(self):
     wai = self.l.whoami_s()
@@ -1108,7 +1112,7 @@ class LDAPSession:
 
     # Try to look up the user entry's DN in case self.who is still not a DN
     if whoami_filtertemplate and \
-       (self.who==None or not ldaputil.base.is_dn(self.who)):
+       (self.who==None or not web2ldap.ldaputil.base.is_dn(self.who)):
       if self.saslAuth and self.saslAuth.mech in NON_INTERACTIVE_LOGIN_MECHS:
         # For SASL mechs EXTERNAL and GSSAPI the user did not enter a SASL username
         # => try to determine it through OpenLDAP's libldap
@@ -1126,7 +1130,7 @@ class LDAPSession:
         pass
 
     # Read the user's entry if self.who is a DN to get name and preferences
-    if self.who and ldaputil.base.is_dn(self.who):
+    if self.who and web2ldap.ldaputil.base.is_dn(self.who):
       try:
         userEntryDN,self.userEntry = self.readEntry(
           self.who,
@@ -1187,7 +1191,7 @@ class LDAPSession:
       return None
     if not search_result:
       return None
-    entry = ldaputil.schema.Entry(schema,dn,search_result[0][1])
+    entry = web2ldap.ldaputil.schema.Entry(schema,dn,search_result[0][1])
     try:
       # Try to directly read the governing structure rule ID from operational attribute in entry
       governing_structure_rule = entry['governingStructureRule'][0]
@@ -1198,7 +1202,7 @@ class LDAPSession:
     possible_dit_structure_rules = {}.fromkeys((
       entry.get_possible_dit_structure_rules(self.uc_encode(dn)[0]) or []
     ))
-    parent_dn = ldaputil.base.ParentDN(dn)
+    parent_dn = web2ldap.ldaputil.base.ParentDN(dn)
     administrative_roles = entry.get('administrativeRole',[])
     if 'subschemaAdminSpecificArea' in administrative_roles or \
        not parent_dn:

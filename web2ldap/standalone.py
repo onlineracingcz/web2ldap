@@ -13,11 +13,17 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-import sys,os,signal
+import sys
+import os
+import signal
+
+from web2ldap import msHTTPServer
+
 
 def start():
 
   exec_startdir = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+  print '***exec_startdir', repr(exec_startdir)
   sys.path.insert(0,os.path.join(exec_startdir,'etc','web2ldap'))
 
   if os.name == 'posix':
@@ -26,6 +32,8 @@ def start():
 
   # Import configuration modules
   import web2ldapcnf.misc,web2ldapcnf.standalone
+  from web2ldap.app.handler import Web2ldapHTTPHandler
+  from web2ldap.app.session import cleanUpThread
 
   # Extend sys.path with modules dirs from configuration
   for i in web2ldapcnf.misc.pylibdirs:
@@ -33,9 +41,6 @@ def start():
 
   # These imports have to be done after extending sys.path
   import web2ldapcnf.plugins
-  import mssignals,msHTTPServer,w2lapp.handler
-
-  from w2lapp.handler import Web2ldapHTTPHandler
 
   config_server_address,config_server_name = msHTTPServer.split_server_address(
     web2ldapcnf.standalone.bind_address,('127.0.0.1',1760)
@@ -49,9 +54,6 @@ def start():
       0,
       web2ldapcnf.standalone.run_username
     )
-
-  # Set active signal handler for stand-alone mode
-  signal.signal(signal.SIGTERM,mssignals.TERMSignalHandler)
 
   if run_detached:
     # Detach from console means logging to files.
@@ -94,8 +96,7 @@ def start():
     Web2ldapHTTPHandler.debug_log = sys.stdout
 
   # Start the clean-up thread
-  import w2lapp.session
-  w2lapp.session.cleanUpThread.start()
+  cleanUpThread.start()
 
   try:
     msHTTPServer.RunServer(
@@ -108,7 +109,7 @@ def start():
     )
   except KeyboardInterrupt,SystemExit:
     # Stop clean-up thread
-    w2lapp.session.cleanUpThread.enabled=0
+    cleanUpThread.enabled = 0
     if run_detached:
       # Remove the PID file
       Web2ldapHTTPHandler.debug_log.write(

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-ldaputil - several utility classes/functions for python-ldap
+web2ldap.app - module package of web2ldap application
+
+web2ldap - a web-based LDAP Client,
+see http://www.web2ldap.de for details
+
 (c) by Michael Stroeder <michael@stroeder.com>
 
 This module is distributed under the terms of the
@@ -10,7 +14,3 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
-from . import base
-from . import passwd
-from . import controls
-from . import extldapurl

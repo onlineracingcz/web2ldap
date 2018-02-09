@@ -13,7 +13,9 @@ This module uses module DNS: http://pydns.sourceforge.net
 
 from __future__ import absolute_import
 
-import socket,ldaputil.base
+import socket
+
+from .base import explode_dn
 
 try:
   import DNS
@@ -29,7 +31,7 @@ else:
 
 def dcdn2dnsdomain(dn=''):
   """convert dc-style DN to DNS domain name (see RFC 2247)"""
-  dn_components = ldaputil.base.explode_dn(dn.lower())
+  dn_components = explode_dn(dn.lower())
   dns_components = []
   for i in range(len(dn_components)-1,-1,-1):
     attrtype,value = dn_components[i].split('=',1)
