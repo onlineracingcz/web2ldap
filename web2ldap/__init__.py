@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-w2lapp - module package of web2ldap application
+web2ldap application package
 
 web2ldap - a web-based LDAP Client,
 see http://www.web2ldap.de for details
@@ -13,6 +13,3 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 """
 
 from __future__ import absolute_import
-
-# This is also the release's overall version number
-__version__ = '1.3.0'

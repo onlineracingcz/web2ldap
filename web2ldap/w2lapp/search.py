@@ -28,6 +28,8 @@ from ldap0.controls.openldap import SearchNoOpControl
 from ldapsession import LDAPLimitErrors
 from pyweblib.forms import escapeHTML
 
+import web2ldap.__about__
+
 SEARCH_NOOP_TIMEOUT = 5.0
 
 SizeLimitMsg = """
@@ -465,7 +467,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
     result_handler = LDIFWriter(ls.l,outf)
     if search_output=='ldif1':
       result_handler.headerStr = LDIF1_HEADER % (
-        w2lapp.__version__,
+        web2ldap.__about__.__version__,
         time.strftime(
           '%A, %Y-%m-%d %H:%M:%S GMT',
           time.gmtime(time.time())

@@ -20,6 +20,8 @@ import sys,os,types,socket,errno,time,traceback,urlparse,pprint, \
 
 from netaddr import IPNetwork
 
+import web2ldap.__about__
+
 # Import the application modules
 import w2lapp.core,w2lapp.gui,w2lapp.cnf, \
        w2lapp.passwd,w2lapp.dit,w2lapp.searchform,w2lapp.locate, \
@@ -866,7 +868,7 @@ class Web2ldapHTTPHandler(msHTTPHandler.HTTPHandlerClass):
   base_url = w2lapp.cnf.standalone.base_url
   server_signature = w2lapp.cnf.standalone.server_signature
   server_env = {
-    'SERVER_SOFTWARE':'web2ldap %s' % w2lapp.__version__,
+    'SERVER_SOFTWARE':'web2ldap %s' % web2ldap.__about__.__version__,
     'SERVER_ADMIN':w2lapp.cnf.standalone.server_admin,
     'DOCUMENT_ROOT':w2lapp.cnf.standalone.document_root,
     'SCRIPT_NAME':w2lapp.cnf.standalone.base_url or '/web2ldap',

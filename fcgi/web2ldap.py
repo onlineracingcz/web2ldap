@@ -17,7 +17,7 @@ import sys,os,signal,time,threading
 
 exec_startdir = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
 sys.path.insert(0,os.sep.join([exec_startdir,'etc','web2ldap']))
-sys.path.insert(0,os.sep.join([exec_startdir,'pylib']))
+sys.path.insert(0,os.sep.join([exec_startdir,'web2ldap']))
 
 
 if os.name == 'posix':

@@ -34,6 +34,7 @@ from types import UnicodeType
 # It's ok to use MD5 herein because it's *not* used for security relevant stuff
 from hashlib import md5
 
+import web2ldap.__about__
 
 ########################################################################
 # Initialize some constants used throughout web2ldap
@@ -528,7 +529,7 @@ def TopSection(sid,outf,command,form,ls,dn,title,main_menu_list,context_menu_lis
     'sid':sid or '',
     'title_text':title,
     'script_name':script_name,
-    'web2ldap_version':escapeHTML(w2lapp.__version__),
+    'web2ldap_version':escapeHTML(web2ldap.__about__.__version__),
     'command':command,
     'ldap_url':'',
     'ldap_uri':'-/-',

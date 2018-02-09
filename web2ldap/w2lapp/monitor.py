@@ -14,6 +14,8 @@ GPL (GNU GENERAL PUBLIC LICENSE) Version 2
 
 from __future__ import absolute_import
 
+import web2ldap.__about__
+
 import os,time,socket,threading,utctime,web2ldapcnf.misc,web2ldapcnf.monitor,w2lapp.core,w2lapp.gui
 
 try:
@@ -146,7 +148,7 @@ def w2l_Monitor(outf,command,form,env):
 
     <h2>Active sessions</h2>
     """.format(
-      text_version=w2lapp.__version__,
+      text_version=web2ldap.__about__.__version__,
       text_sysfqdn=socket.getfqdn(),
       int_pid=os.getpid(),
       int_ppid=os.getppid(),
