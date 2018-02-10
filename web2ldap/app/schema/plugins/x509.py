@@ -10,11 +10,10 @@ Currently untested!
 
 from __future__ import absolute_import
 
-import mspki.util
-
-from web2ldap.app.schema.syntaxes import ASN1Object,Binary,GSER,syntax_registry
-
 from ldap0.dn import explode_dn
+
+from web2ldap.mspki.util import pem2der
+from web2ldap.app.schema.syntaxes import ASN1Object,Binary,GSER,syntax_registry
 
 
 class AttributeCertificate(Binary):
@@ -32,7 +31,7 @@ class CertificateSimpleClass(Binary):
 
   def sanitizeInput(self,attrValue):
     try:
-      return mspki.util.pem2der(attrValue)
+      return pem2der(attrValue)
     except (ValueError,IndexError):
       return attrValue
 

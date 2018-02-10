@@ -5,7 +5,9 @@ web2ldap plugin classes for dynamic entries (see RFC 2589)
 
 from __future__ import absolute_import
 
-import time,utctime
+import time
+
+from web2ldap.utctime import strftimeiso8601
 
 from web2ldap.app.schema.syntaxes import Timespan,DistinguishedName,syntax_registry
 
@@ -18,7 +20,7 @@ class EntryTTL(Timespan):
     expiration_time = time.time()+int(self.attrValue)
     return '%s, expires %s' % (
       Timespan.displayValue(self,valueindex,commandbutton),
-      utctime.strftimeiso8601(time.gmtime(expiration_time)),
+      strftimeiso8601(time.gmtime(expiration_time)),
     )
 
 syntax_registry.registerAttrType(

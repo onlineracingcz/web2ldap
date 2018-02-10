@@ -14,12 +14,15 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import time,string,binascii,hashlib,ldap0,ldaputil.base,ldaputil.passwd, \
-       ldapsession,web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.login
+import time,string,binascii,hashlib
 
-from ldaputil.passwd import RandomString
+import ldap0
 
-available_hashtypes = ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items()
+from web2ldap.ldaputil.passwd import RandomString
+import web2ldap.ldaputil.base,web2ldap.ldaputil.passwd,web2ldap.ldapsession
+import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.login
+
+available_hashtypes = web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items()
 
 
 PASSWD_ACTIONS = [
@@ -82,7 +85,7 @@ def PasswdContextMenu(sid,form,dn,sub_schema):
   # Menu entry for unlocking entry
   delete_param_list = [
     ('dn',dn),
-    ('delete_ctrl',ldapsession.CONTROL_RELAXRULES),
+    ('delete_ctrl',web2ldap.ldapsession.CONTROL_RELAXRULES),
   ]
   delete_param_list.extend([
     ('delete_attr',attr_type)
@@ -358,7 +361,7 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
       if all_attrs_dict.has_key('1.2.840.113556.1.4.90'):
         # Active Directory's password attribute unicodePwd
         passwd_attr_type = 'unicodePwd'
-        unicodePwd = ldaputil.passwd.UnicodePwd(
+        unicodePwd = web2ldap.ldaputil.passwd.UnicodePwd(
           l=ls.l,
           dn=passwd_who.encode(ls.charset)
         )
@@ -369,7 +372,7 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
       else:
         # Assume standard password attribute userPassword
         passwd_attr_type = 'userPassword'
-        userPassword = ldaputil.passwd.UserPassword(
+        userPassword = web2ldap.ldaputil.passwd.UserPassword(
           l=ls.l,
           dn=passwd_who.encode(ls.charset),
           charset=ls.charset,

@@ -15,11 +15,11 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 # Additional encodings
-import t61_8
+from web2ldap import t61_8
 # Pisces
-from pisces import asn1
+from web2ldap.pisces import asn1
 # mspki itself
-import mspki.asn1helper
+from . import asn1helper
 
 strtag2charset = {
   asn1.PRINTABLE_STRING:'ascii',
@@ -79,7 +79,7 @@ class Name(asn1.Sequence):
 
   def descr(self,oids=None,charset='utf-8'):
     """Distinguished Name object with OIDs replaced by descriptions"""
-    f=mspki.asn1helper.GetOIDDescription
+    f=asn1helper.GetOIDDescription
     return [
       (f(i[0],oids),i[1])
       for i in self._name
@@ -87,7 +87,7 @@ class Name(asn1.Sequence):
 
   def htmldescr(self,oids=None,charset='utf-8'):
     """Distinguished Name object with OIDs replaced by descriptions"""
-    f=mspki.asn1helper.GetOIDDescription
+    f=asn1helper.GetOIDDescription
     return [
       ('%s (%s)' % (f(i[0],oids),i[0]),i[1])
       for i in self._name
@@ -101,7 +101,7 @@ class Name(asn1.Sequence):
     If parameter oids is set (dictionary returned by asn1.parseCfg()
     descriptions are used instead of OIDs.
     """
-    oids = oids or mspki.asn1helper.oids
+    oids = oids or asn1helper.oids
     if oids:
       rdnlist = self.descr(oids)
     else:
@@ -118,7 +118,7 @@ class Name(asn1.Sequence):
     If parameter oids is set (dictionary returned by asn1.parseCfg()
     descriptions are used instead of OIDs.
     """
-    oids = oids or mspki.asn1helper.oids
+    oids = oids or asn1helper.oids
     if oids:
       rdnlist = self.descr(oids)
     else:
@@ -136,7 +136,7 @@ class Name(asn1.Sequence):
     If parameter oids is set (dictionary returned by asn1.parseCfg()
     descriptions are used instead of OIDs.
     """
-    oids = oids or mspki.asn1helper.oids
+    oids = oids or asn1helper.oids
     if oids:
       rdnlist = self.htmldescr(oids)
     else:

@@ -7,10 +7,11 @@ see https://www.stroeder.com/oath-ldap.html
 
 from __future__ import absolute_import
 
-import re,utctime,datetime,base64,web2ldap.app.gui
+import re,datetime,base64,web2ldap.app.gui
 
 from ldap0 import LDAPError
 
+from web2ldap.utctime import strptime
 from web2ldap.app.schema.syntaxes import \
   DirectoryString,OctetString,DynamicDNSelectList,GeneralizedTime,Timespan, \
   HashAlgorithmOID,HMACAlgorithmOID,Binary,LDAPv3ResultCode,SelectList, \
@@ -184,7 +185,7 @@ class OathSecretTime(GeneralizedTime):
     else:
       return gt_disp_html
     try:
-      oath_secret_time_dt = utctime.strptime(self.attrValue)
+      oath_secret_time_dt = strptime(self.attrValue)
     except ValueError:
       return gt_disp_html
     try:

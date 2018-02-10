@@ -16,11 +16,12 @@ from __future__ import absolute_import
 
 # Python standard lib
 import hashlib
+
 # Pisces
-from pisces import asn1
+from web2ldap.pisces import asn1
 # mspki itself
-import mspki.utctime, mspki.util, mspki.x500, mspki.x509v3, mspki.asn1helper
-from mspki.utctime import UTCTime
+from . import utctime, util, x500, asn1helper
+from .utctime import UTCTime
 
 class Attribute(asn1.ASN1Object):
   """
@@ -59,7 +60,7 @@ class CertificateSerialNumber(Attribute):
 
   def __init__(self,val):
     if type(val)==type(''):
-      val = mspki.util.bytestolong(val)
+      val = util.bytestolong(val)
     self.val = val
 
   def __int__(self):
@@ -88,7 +89,7 @@ class X509SignedObject:
   def signatureAlgorithm(self,oids=None):
     """Algorithm used when creating signature"""
     if oids:
-      return mspki.asn1helper.GetOIDDescription(self.val[1].val[0],oids)
+      return asn1helper.GetOIDDescription(self.val[1].val[0],oids)
     else:
       return self.val[1].val[0]
 
@@ -152,13 +153,13 @@ class Certificate(X509SignedObject):
   def signature(self,oids=None):
     """Certificate's signature"""
     if oids:
-      return mspki.asn1helper.GetOIDDescription(self.tbsCertificate[self._tbsoffset+1].val[0],oids)
+      return asn1helper.GetOIDDescription(self.tbsCertificate[self._tbsoffset+1].val[0],oids)
     else:
       return self.tbsCertificate[self._tbsoffset+1].val[0]
 
   def issuer(self):
     """Issuer's distinguished name"""
-    return mspki.x500.Name(self.tbsCertificate[self._tbsoffset+2])
+    return x500.Name(self.tbsCertificate[self._tbsoffset+2])
 
   def validity(self):
     """
@@ -174,12 +175,12 @@ class Certificate(X509SignedObject):
 
   def subject(self):
     """Subject's distinguished name"""
-    return mspki.x500.Name(self.tbsCertificate[self._tbsoffset+4])
+    return x500.Name(self.tbsCertificate[self._tbsoffset+4])
 
   def subjectPublicKeyInfo(self,oids=None):
     """Subject's public key"""
     if oids:
-      alg = mspki.asn1helper.GetOIDDescription(self.tbsCertificate[self._tbsoffset+5].val[0].val[0],oids)
+      alg = asn1helper.GetOIDDescription(self.tbsCertificate[self._tbsoffset+5].val[0].val[0],oids)
     else:
       alg = self.tbsCertificate[self._tbsoffset+5].val[0].val[0]
     modulus, publicExponent = asn1.parse(self.tbsCertificate[self._tbsoffset+5].val[1].val)
@@ -187,7 +188,7 @@ class Certificate(X509SignedObject):
 
   def fingerprint(self,digest_algo,delimiter=':'):
     """returns fingerprint in dotted notation (delimiter between bytes)"""
-    return mspki.util.HexString(hashlib.new(digest_algo,self._buf).digest(),delimiter)
+    return util.HexString(hashlib.new(digest_algo,self._buf).digest(),delimiter)
 
   def issuerUniqueID(self):
     """Get subjectUniqueID (tag 1)"""
@@ -209,7 +210,7 @@ class Certificate(X509SignedObject):
     """Try to mimique the as_text() output of OpenSSL"""
     notBefore,notAfter = self.validity()
     subjectPublicKeyAlg, subjectPublicKeyModulus, subjectPublicKeyExponent = self.subjectPublicKeyInfo(oids)
-    subjectPublicKeyModulus_str = mspki.util.longtobytes(subjectPublicKeyModulus,128)
+    subjectPublicKeyModulus_str = util.longtobytes(subjectPublicKeyModulus,128)
     serialNumber = self.serialNumber()
     return """Certificate:
     Data:
@@ -239,10 +240,10 @@ class Certificate(X509SignedObject):
   self.subject().__str__(oids),
   subjectPublicKeyAlg,
   8*len(subjectPublicKeyModulus_str),8*len(subjectPublicKeyModulus_str),
-  mspki.util.HexString({0:'\000',1:'\001'}[subjectPublicKeyModulus<0L]+subjectPublicKeyModulus_str,wrap=66,indent=20),
+  util.HexString({0:'\000',1:'\001'}[subjectPublicKeyModulus<0L]+subjectPublicKeyModulus_str,wrap=66,indent=20),
   subjectPublicKeyExponent,subjectPublicKeyExponent,
   self.signatureAlgorithm(oids),
-  mspki.util.HexString(self.signatureValue(),wrap=64,indent=8)
+  util.HexString(self.signatureValue(),wrap=64,indent=8)
 )
 
 
@@ -293,7 +294,7 @@ class CRL(X509SignedObject):
   def signature(self,oids=None):
     """Certificate's signature algorithm"""
     if oids:
-      return mspki.asn1helper.GetOIDDescription(
+      return asn1helper.GetOIDDescription(
         self.tbsCertList[self._tbsoffset+0].val[0],
         oids
       )
@@ -302,7 +303,7 @@ class CRL(X509SignedObject):
 
   def issuer(self):
     """Issuer's distinguished name"""
-    return mspki.x500.Name(self.tbsCertList[self._tbsoffset+1])
+    return x500.Name(self.tbsCertList[self._tbsoffset+1])
 
   def thisUpdate(self):
     """Returns time tuple of thisUpdate"""
@@ -349,7 +350,8 @@ class CRL(X509SignedObject):
             "Item in revokedCertificates list has invalid length (%d)." % (i_len)
           )
         if i_len==3:
-          crlEntryExtensions = mspki.x509v3.Extensions(i[2])
+          from .x509v3 import Extensions as x509v3_Extensions
+          crlEntryExtensions = x509v3_Extensions(i[2])
         else:
           crlEntryExtensions = None
         revokeList.append((userCertificate,revocationDate,crlEntryExtensions))

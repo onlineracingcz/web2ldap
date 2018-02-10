@@ -7,8 +7,10 @@ https://drift.uninett.no/nett/ip-nett/dnsattributes.schema
 
 from __future__ import absolute_import
 
-import re,string,hashlib,ldap0,ldap0.schema.models,ldaputil,web2ldap.app.searchform
+import re,string,hashlib,ldap0,ldap0.schema.models
 
+import web2ldap.app.searchform
+from web2ldap.ldaputil.base import match_dnlist
 from web2ldap.app.schema.syntaxes import  \
   IA5String,DNSDomain,DynamicValueSelectList,IPv4HostAddress,IPv6HostAddress, \
   syntax_registry
@@ -51,7 +53,7 @@ class AssociatedDomain(DNSDomain):
         ])
         if d:
           try:
-            result = unicode(d[ldaputil.base.match_dnlist(dn_u,d.keys())]) or None
+            result = unicode(d[match_dnlist(dn_u,d.keys())]) or None
           except KeyError:
             pass
     return result

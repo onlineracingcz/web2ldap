@@ -19,9 +19,9 @@ import ldap0,ldap0.modlist,pyweblib.forms, \
 
 from ldap0.dn import escape_dn_chars
 
-import ldaputil.schema
-from ldaputil.base import ParentDN
-from ldaputil.controls import PostReadControl
+import web2ldap.ldaputil.schema
+from web2ldap.ldaputil.base import ParentDN
+from web2ldap.ldaputil.controls import PostReadControl
 
 # Attribute types always ignored for add requests
 ADD_IGNORE_ATTR_TYPES = {
@@ -110,15 +110,15 @@ def w2l_Add(sid,outf,command,form,ls,dn):
 
   if add_clonedn:
     entry,_ = web2ldap.app.addmodifyform.ReadOldEntry(ls,add_clonedn,sub_schema,None,{'*':'*'})
-    add_rdn,add_basedn = ldaputil.base.SplitRDN(add_clonedn)
+    add_rdn,add_basedn = web2ldap.ldaputil.base.SplitRDN(add_clonedn)
     add_rdn_dnlist = ldap0.dn.str2dn(add_rdn.encode(ls.charset))
     add_rdn = u'+'.join(['%s=' % (at) for at,_,_ in add_rdn_dnlist[0]]).decode(ls.charset)
     add_basedn = add_basedn or dn
 
   elif add_template:
     add_dn,entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(ls,form,add_template)
-    entry = ldaputil.schema.Entry(sub_schema,None,entry)
-    add_rdn,add_basedn = ldaputil.base.SplitRDN(add_dn.decode(ls.charset))
+    entry = web2ldap.ldaputil.schema.Entry(sub_schema,None,entry)
+    add_rdn,add_basedn = web2ldap.ldaputil.base.SplitRDN(add_dn.decode(ls.charset))
     add_basedn = add_basedn or dn
 
   else:

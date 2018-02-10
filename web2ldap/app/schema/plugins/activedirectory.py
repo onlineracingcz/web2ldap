@@ -5,11 +5,13 @@ web2ldap plugin classes for Active Directory (for some information see draft-arm
 
 from __future__ import absolute_import
 
-import time,utctime,struct,uuid,pyweblib,ldap0.cidict,web2ldap.app.searchform
+import time,struct,uuid,pyweblib,ldap0.cidict,web2ldap.app.searchform
+
+from web2ldap.utctime import strftimeiso8601
 
 from web2ldap.app.gui import DisplayDN
 
-from ldaputil.base import is_dn
+from web2ldap.ldaputil.base import is_dn
 
 from web2ldap.app.schema.syntaxes import \
   Binary,Boolean,DistinguishedName,DirectoryString,GeneralizedTime, \
@@ -641,7 +643,7 @@ class Interval(MicrosoftLargeInteger):
       if delta>=0:
         return '%s (%s)' % (
           MicrosoftLargeInteger.displayValue(self,valueindex,commandbutton),
-        self._form.utf2display(unicode(utctime.strftimeiso8601(time.gmtime(delta)))),
+        self._form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
         )
       else:
         return self.attrValue.encode('ascii')
@@ -660,7 +662,7 @@ class LockoutTime(Interval):
     else:
       return '%s (locked since %s)' % (
         MicrosoftLargeInteger.displayValue(self,valueindex,commandbutton),
-        self._form.utf2display(unicode(utctime.strftimeiso8601(time.gmtime(delta)))),
+        self._form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
       )
 
 syntax_registry.registerAttrType(

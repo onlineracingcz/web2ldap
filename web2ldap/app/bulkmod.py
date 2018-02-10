@@ -14,8 +14,12 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import time,ldap0,ldapsession,ldaputil.base, \
-       web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.ldapparams
+import time
+
+import ldap0
+
+import web2ldap.ldapsession,web2ldap.ldaputil.base
+import web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.ldapparams
 
 # OID description dictionary from configuration directory
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
@@ -179,7 +183,7 @@ def bulkmod_input_form(
     input_fields=input_fields,
     field_hidden_dn=form.hiddenFieldHTML('dn',dn,dn),
     field_hidden_filterstr=form.hiddenFieldHTML('filterstr',bulkmod_filter,bulkmod_filter),
-    field_hidden_scope=form.hiddenFieldHTML('scope',unicode(scope),unicode(ldaputil.base.SEARCH_SCOPE_STR[scope])),
+    field_hidden_scope=form.hiddenFieldHTML('scope',unicode(scope),unicode(web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope])),
     field_bulkmod_newsuperior=form.field['bulkmod_newsuperior'].inputHTML(
       default=bulkmod_newsuperior,
       title=u'New superior DN where all entries are moved beneath'
@@ -198,7 +202,7 @@ def bulkmod_confirmation_form(sid,outf,command,form,ls,sub_schema,dn,scope,bulkm
       bulkmod_filter,
       sizelimit=1000,
     )
-  except ldapsession.LDAPLimitErrors:
+  except web2ldap.ldapsession.LDAPLimitErrors:
     num_entries,num_referrals = ('unknown','unknown')
   else:
     if num_entries==None:
@@ -276,7 +280,7 @@ def bulkmod_confirmation_form(sid,outf,command,form,ls,sub_schema,dn,scope,bulkm
     ]) or '- none -',
     field_hidden_dn=form.hiddenFieldHTML('dn',dn,dn),
     field_hidden_filterstr=form.hiddenFieldHTML('filterstr',bulkmod_filter,bulkmod_filter),
-    field_hidden_scope=form.hiddenFieldHTML('scope',unicode(scope),unicode(ldaputil.base.SEARCH_SCOPE_STR[scope])),
+    field_hidden_scope=form.hiddenFieldHTML('scope',unicode(scope),unicode(web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope])),
     field_bulkmod_newsuperior=form.hiddenFieldHTML('bulkmod_newsuperior',bulkmod_newsuperior,bulkmod_newsuperior),
     text_bulkmod_cp={False:u'Move',True:u'Copy'}[bulkmod_cp],
     num_entries=num_entries,
@@ -396,7 +400,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
             ))
         # Apply the modrdn request
         if bulkmod_newsuperior:
-          old_rdn,_ = ldaputil.base.SplitRDN(ldap_dn)
+          old_rdn,_ = web2ldap.ldaputil.base.SplitRDN(ldap_dn)
           try:
             if bulkmod_cp:
               ls.copyEntry(ldap_dn,old_rdn,new_superior=bulkmod_newsuperior)
@@ -470,7 +474,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
         num_errors,
         num_sum,num_errors,num_errors,
         web2ldap.app.gui.DisplayDN(sid,form,ls,dn),
-        ldaputil.base.SEARCH_SCOPE_STR[scope],
+        web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
         end_time_stamp-begin_time_stamp,
         form.beginFormHTML('bulkmod',sid,'POST'),
         form.hiddenInputHTML(ignoreFieldNames=['bulkmod_submit']),

@@ -73,7 +73,7 @@ def x509_prep(value):
 
 
 # my own mspki modules
-from mspki import x509v3,asn1helper,asn1types
+from web2ldap.mspki import x509v3,asn1helper,asn1types
 
 CertificateParserError = ValueError
 

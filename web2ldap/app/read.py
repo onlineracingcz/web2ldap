@@ -14,19 +14,24 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import pyweblib.forms,ldap0.schema,ldaputil.schema,pyweblib.httphelper, \
-       web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.schema,web2ldap.app.viewer
+import pyweblib.forms
 
-from msbase import union,GrabKeys
+import ldap0.schema
 from ldap0.cidict import cidict
+
+import pyweblib.httphelper
+
+import web2ldap.ldaputil.schema
+import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.schema,web2ldap.app.viewer
+from web2ldap.msbase import union,GrabKeys
 from web2ldap.app.session import session
-from ldaputil.schema import SchemaElementOIDSet
+from web2ldap.ldaputil.schema import SchemaElementOIDSet
 
 
-class vCardEntry(ldaputil.schema.Entry):
+class vCardEntry(web2ldap.ldaputil.schema.Entry):
 
   def __init__(self,schema,entry,ldap_charset='utf-8',out_charset='utf-8'):
-    ldaputil.schema.Entry.__init__(self,schema,None,entry)
+    web2ldap.ldaputil.schema.Entry.__init__(self,schema,None,entry)
     self._ldap_charset = ldap_charset
     self._out_charset = out_charset
 
@@ -67,16 +72,16 @@ def generate_vcard(template_str,vcard_entry):
       template_lines_new.append(l.strip())
   return '\r\n'.join(template_lines_new) % vcard_entry
 
-class DisplayEntry(ldaputil.schema.Entry):
+class DisplayEntry(web2ldap.ldaputil.schema.Entry):
 
   def __init__(self,sid,form,ls,dn,schema,entry,sep_attr,commandbutton):
     assert type(dn)==type(u'')
-    ldaputil.schema.Entry.__init__(self,schema,dn.encode(ls.charset),entry)
+    web2ldap.ldaputil.schema.Entry.__init__(self,schema,dn.encode(ls.charset),entry)
     self.sid = sid
     self.form = form
     self.ls = ls
     self.dn = dn
-    self.entry = ldaputil.schema.Entry(schema,dn.encode(ls.charset),entry)
+    self.entry = web2ldap.ldaputil.schema.Entry(schema,dn.encode(ls.charset),entry)
     self.structuralObjectClass = self.entry.get_structural_oc()
     self.invalid_attrs = set()
     self.sep_attr = sep_attr
@@ -84,7 +89,7 @@ class DisplayEntry(ldaputil.schema.Entry):
 
   def __getitem__(self,nameoroid):
     try:
-      values = ldaputil.schema.Entry.__getitem__(self,nameoroid)
+      values = web2ldap.ldaputil.schema.Entry.__getitem__(self,nameoroid)
     except KeyError:
       return ''
     result = []
@@ -287,7 +292,7 @@ def w2l_Read(
     a.strip().encode('ascii')
     for a in form.getInputValue('read_attr',wanted_attrs)
   ]
-  wanted_attr_set = ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,wanted_attrs)
+  wanted_attr_set = web2ldap.ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,wanted_attrs)
   wanted_attrs = wanted_attr_set.names()
 
   # Specific attributes requested with form parameter search_attrs?
@@ -315,7 +320,7 @@ def w2l_Read(
     raise web2ldap.app.core.ErrorExit(u'Empty search result.')
 
   dn = search_result[0][0].decode(ls.charset)
-  entry = ldaputil.schema.Entry(sub_schema,dn,search_result[0][1])
+  entry = web2ldap.ldaputil.schema.Entry(sub_schema,dn,search_result[0][1])
 
   requested_attrs = [
     at
@@ -450,7 +455,7 @@ def w2l_Read(
       if not dn:
         outf.write('<h1>Root DSE</h1>')
       else:
-        h1_display_name = entry.get('displayName',entry.get('cn',['']))[0].decode(ls.charset) or ldaputil.base.SplitRDN(dn)[0]
+        h1_display_name = entry.get('displayName',entry.get('cn',['']))[0].decode(ls.charset) or web2ldap.ldaputil.base.SplitRDN(dn)[0]
         outf.write(
           '<h1>{0}</h1>\n<p class="EntryDN">{1}</p>\n'.format(
             form.utf2display(h1_display_name),

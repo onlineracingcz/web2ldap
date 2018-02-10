@@ -9,7 +9,7 @@ from __future__ import absolute_import
 
 import ldap0
 
-from msbase import Str1stValueDict
+from web2ldap.msbase import Str1stValueDict
 from web2ldap.app.schema.plugins.nis import syntax_registry,UidNumber,GidNumber,IA5String
 
 

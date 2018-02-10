@@ -16,7 +16,12 @@ from __future__ import absolute_import
 
 import web2ldap.__about__
 
-import os,time,socket,threading,utctime,web2ldapcnf.misc,web2ldapcnf.monitor,web2ldap.app.core,web2ldap.app.gui
+import os,time,socket,threading
+
+
+import web2ldapcnf.misc,web2ldapcnf.monitor
+
+import web2ldap.app.core,web2ldap.app.gui
 
 try:
   import pwd
@@ -24,16 +29,16 @@ except ImportError:
   pwd = None
 
 from web2ldap.app.session import session,cleanUpThread
-from utctime import strftimeiso8601
-from ldapsession import LDAPSession
+from web2ldap.utctime import strftimeiso8601
+from web2ldap.ldapsession import LDAPSession
 
-from netaddr import IPAddress,IPNetwork
+from ipaddress import ip_address,ip_network
 
 
 def check_monitor_access(env):
-  a = IPAddress(env['REMOTE_ADDR'])
-  for n in map(IPNetwork,web2ldapcnf.monitor.access_allowed):
-    if a in n:
+  a = ip_address(env['REMOTE_ADDR'].decode('ascii'))
+  for n in web2ldapcnf.monitor.access_allowed:
+    if a in ip_network(n,strict=False):
       return True
   return False
 

@@ -12,7 +12,7 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from pisces import asn1
+from web2ldap.pisces import asn1
 
 oids = {}
 

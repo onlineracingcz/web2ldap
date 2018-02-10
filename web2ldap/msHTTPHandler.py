@@ -25,7 +25,7 @@ import SimpleHTTPServer
 import urllib
 from time import strftime,gmtime
 
-from netaddr import IPAddress,IPNetwork
+from ipaddress import ip_address,ip_network
 
 import web2ldap.msbase
 from web2ldap.__about__ import __version__
@@ -68,7 +68,7 @@ class HTTPHandlerClass(SimpleHTTPServer.SimpleHTTPRequestHandler):
     'DOCUMENT_ROOT':os.sep,
   }
   dir_listing_allowed = 0
-  access_allowed   = map(IPNetwork,['127.0.0.1/255.0.0.0'])
+  access_allowed = [ip_network(u'127.0.0.1/255.0.0.0', strict=False)]
   # Log file objects should be overloaded if running detached
   access_log = sys.stdout
   error_log = sys.stderr
@@ -189,7 +189,7 @@ class HTTPHandlerClass(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
   # Checks if remote IP address is allowed to access
   def check_IPAdress(self):
-    a = IPAddress(self.client_address[0])
+    a = ip_address(self.client_address[0].decode('ascii'))
     for n in self.access_allowed:
       if a in n:
         return True

@@ -21,11 +21,11 @@ try:
 except ImportError:
   DNS = None
 
-from ldaputil.extldapurl import ExtendedLDAPUrl
+from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 from ldap0.ldapurl import LDAPUrlExtension,LDAPUrlExtensions
 
 # Modules shipped with web2ldap
-import ldaputil.base,ldaputil.dns,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.schema.syntaxes
+import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.schema.syntaxes
 
 
 ldap_hostname_aliases = [
@@ -57,10 +57,10 @@ def w2l_Locate(outf,command,form):
   if locate_name:
 
     # Try to determine the format of the input parameter
-    if ldaputil.base.is_dn(locate_name):
+    if web2ldap.ldaputil.base.is_dn(locate_name):
       # Use dc-style LDAP DN
       msg_html = 'Input is considered LDAP distinguished name.'
-      locate_domain = ldaputil.dns.dcdn2dnsdomain(locate_name)
+      locate_domain = web2ldap.ldaputil.dns.dcdn2dnsdomain(locate_name)
       locate_name_type = LOCATE_NAME_DCDN
     elif u'@' in locate_name:
       # Use domain part of RFC822 mail address
@@ -82,7 +82,7 @@ def w2l_Locate(outf,command,form):
         dns_name = '.'.join([ label.encode('idna') for label in dns_list[-dns_index:]])
         dns_name_u = '.'.join([ label.decode('idna') for label in dns_name.split('.')])
 
-        search_base = ldaputil.dns.dnsdomain2dcdn(dns_name)
+        search_base = web2ldap.ldaputil.dns.dnsdomain2dcdn(dns_name)
         if dns_name.endswith('de-mail-test.de') or dns_name.endswith('de-mail.de'):
           search_base = ','.join((search_base,'cn=de-mail'))
           lu_extensions = LDAPUrlExtensions({
@@ -105,7 +105,7 @@ def w2l_Locate(outf,command,form):
             # Search for a SRV RR of dns_name
             srv_prefix = '_%s._tcp' % (url_scheme)
             try:
-              dns_result = ldaputil.dns.ldapSRV(dns_name,srv_prefix=srv_prefix)
+              dns_result = web2ldap.ldaputil.dns.ldapSRV(dns_name,srv_prefix=srv_prefix)
             except (DNS.Error,socket.error) as e:
               outf_lines.append(u'DNS or socket error when querying %s: %s' % (srv_prefix,str(e)))
             else:

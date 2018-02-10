@@ -35,7 +35,7 @@ DIT_ATTR_LIST = [
 
 import ldap0,web2ldap.app.gui
 
-from ldaputil.base import explode_dn,SplitRDN,ParentDN
+from web2ldap.ldaputil.base import explode_dn,SplitRDN,ParentDN
 from web2ldap.app.gui import dn_anchor_hash
 
 

@@ -5,8 +5,10 @@ web2ldap plugin classes for attributes defined in draft-behera-ldap-password-pol
 
 from __future__ import absolute_import
 
-import time,datetime,utctime,web2ldap.app.searchform
+import time,datetime
 
+import web2ldap.app.searchform
+from web2ldap.utctime import strptime
 from web2ldap.app.schema.syntaxes import SelectList,DynamicDNSelectList,Timespan,GeneralizedTime,syntax_registry
 from web2ldap.app.schema.plugins.quirks import UserPassword
 from ldap0 import LDAPError
@@ -160,7 +162,7 @@ class PwdChangedTime(GeneralizedTime):
   def displayValue(self,valueindex=0,commandbutton=0):
     gt_disp_html = GeneralizedTime.displayValue(self,valueindex,commandbutton)
     try:
-      pwd_changed_dt = utctime.strptime(self.attrValue)
+      pwd_changed_dt = strptime(self.attrValue)
     except ValueError:
       return gt_disp_html
     try:

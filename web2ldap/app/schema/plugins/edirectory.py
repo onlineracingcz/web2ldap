@@ -8,7 +8,7 @@ from __future__ import absolute_import
 
 import uuid,ldap0.filter,web2ldap.app.cnf
 
-from mspki.util import HexString
+from web2ldap.mspki.util import HexString
 
 from web2ldap.app.schema.syntaxes import DirectoryString,Integer,OctetString, \
   PostalAddress,PrintableString, \

@@ -14,20 +14,22 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import re,pyweblib,ldap0,ldap0.ldif,ldap0.schema,\
-       ldaputil.schema,ldapsession,\
-       web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.form,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.modify,web2ldap.app.schema
-
-from web2ldap.app.schema.viewer import displayNameOrOIDList
-from web2ldap.app.schema.syntaxes import syntax_registry
-from msbase import GrabKeys
-
-from pyweblib.forms import escapeHTML
-
+import re
 try:
   from cStringIO import StringIO
 except ImportError:
   from StringIO import StringIO
+
+import pyweblib
+from pyweblib.forms import escapeHTML
+
+import ldap0,ldap0.ldif,ldap0.schema
+
+import web2ldap.ldaputil.schema,web2ldap.ldapsession
+import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.form,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.modify,web2ldap.app.schema
+from web2ldap.app.schema.viewer import displayNameOrOIDList
+from web2ldap.app.schema.syntaxes import syntax_registry
+from web2ldap.msbase import GrabKeys
 
 
 heading_msg = {'modify':'Modify entry','add':'Add new entry'}
@@ -100,8 +102,8 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     self.existing_object_classes = existing_object_classes
     self.set_dn(dn)
     self.command = command
-    self.relax_rules_enabled = self.ls.l._get_server_ctrls('**write**').has_key(ldapsession.CONTROL_RELAXRULES)
-    self.manage_dsait_enabled = self.ls.l._get_server_ctrls('**all**').has_key(ldapsession.CONTROL_MANAGEDSAIT)
+    self.relax_rules_enabled = self.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
+    self.manage_dsait_enabled = self.ls.l._get_server_ctrls('**all**').has_key(web2ldap.ldapsession.CONTROL_MANAGEDSAIT)
     self.writeable_attr_oids = writeable_attr_oids
     self.invalid_attrs = invalid_attrs or {}
     new_object_classes = set(list(self.object_class_oid_set())) - set([
@@ -139,7 +141,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
 
   def _get_rdn_dict(self,dn):
     assert type(dn)==type(u'')
-    entry_rdn_dict = ldap0.schema.models.Entry(self._s,None,ldaputil.base.rdn_dict(dn))
+    entry_rdn_dict = ldap0.schema.models.Entry(self._s,None,web2ldap.ldaputil.base.rdn_dict(dn))
     for attr_type,attr_values in entry_rdn_dict.items():
       del entry_rdn_dict[attr_type]
       d = ldap0.cidict.cidict()
@@ -276,7 +278,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     ]
     # Check whether Manage DIT control is in effect,
     # let python-ldap filter out OBSOLETE attribute types otherwise
-    relax_rules_enabled = self.ls.l._get_server_ctrls('**write**').has_key(ldapsession.CONTROL_RELAXRULES)
+    relax_rules_enabled = self.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
     if not relax_rules_enabled:
       attr_type_filter.append(('obsolete',[0]))
 
@@ -376,7 +378,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     ldif_writer = ldap0.ldif.LDIFWriter(f)
     ldap_entry = {}
     for attr_type in self.entry.keys():
-      attr_values = ldaputil.schema.Entry.__getitem__(self,attr_type)
+      attr_values = web2ldap.ldaputil.schema.Entry.__getitem__(self,attr_type)
       if not web2ldap.app.schema.no_userapp_attr(self._s,attr_type):
         ldap_entry[attr_type] = [
           attr_value
@@ -637,7 +639,7 @@ def ObjectClassForm(
     add_tmpl_dict = {}
     for template_name in addform_entry_templates_keys:
       ldif_dn,ldif_entry = ReadLDIFTemplate(ls,form,template_name)
-      tmpl_parent_dn = ldaputil.base.ParentDN(ldif_dn.decode(ls.charset)).decode(ls.charset) or parent_dn
+      tmpl_parent_dn = web2ldap.ldaputil.base.ParentDN(ldif_dn.decode(ls.charset)).decode(ls.charset) or parent_dn
       # first check whether mandatory attributes in parent entry are readable
       if addform_parent_attrs:
         try:
@@ -650,7 +652,7 @@ def ObjectClassForm(
         else:
           if not parent_result:
             continue
-          parent_entry = ldaputil.schema.Entry(sub_schema,parent_result[0][0],parent_result[0][1])
+          parent_entry = web2ldap.ldaputil.schema.Entry(sub_schema,parent_result[0][0],parent_result[0][1])
           missing_parent_attrs = set([
             attr_type
             for attr_type in addform_parent_attrs
@@ -667,12 +669,12 @@ def ObjectClassForm(
           restricted_structural_oc = restricted_structural_oc or []
       else:
         restricted_structural_oc = all_structural_oc
-      restricted_structural_oc_set = ldaputil.schema.SchemaElementOIDSet(
+      restricted_structural_oc_set = web2ldap.ldaputil.schema.SchemaElementOIDSet(
         sub_schema,
         ldap0.schema.models.ObjectClass,
         restricted_structural_oc
       )
-      entry = ldaputil.schema.Entry(sub_schema,ldif_dn,ldif_entry)
+      entry = web2ldap.ldaputil.schema.Entry(sub_schema,ldif_dn,ldif_entry)
       soc = entry.get_structural_oc()
       if soc and soc in restricted_structural_oc_set:
         try:
@@ -722,7 +724,7 @@ def ObjectClassForm(
 
   in_ocf = form.getInputValue('in_ocf',[u'tmpl'])[0]
 
-  relax_rules_enabled = ls.l._get_server_ctrls('**write**').has_key(ldapsession.CONTROL_RELAXRULES)
+  relax_rules_enabled = ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
 
   command_hidden_fields = [('dn',dn)]
 
@@ -735,7 +737,7 @@ def ObjectClassForm(
   if command=='add':
     parent_dn = dn
   elif command=='modify':
-    parent_dn = ldaputil.base.ParentDN(dn)
+    parent_dn = web2ldap.ldaputil.base.ParentDN(dn)
 
   # Build an select field based on config param 'addform_entry_templates'
   if command=='add' and in_ocf==u'tmpl':
@@ -911,7 +913,7 @@ def ReadOldEntry(ls,dn,sub_schema,assertion_filter,read_attrs=None):
     ValueError("Invalid value for write_attrs_method" )
 
   # Explicitly request attribute 'ref' if in manage DSA IT mode
-  if ls.l._get_server_ctrls('**all**').has_key(ldapsession.CONTROL_MANAGEDSAIT):
+  if ls.l._get_server_ctrls('**all**').has_key(web2ldap.ldapsession.CONTROL_MANAGEDSAIT):
     read_attrs['ref'] = 'ref'
 
   # Read the editable attribute values of entry
@@ -926,7 +928,7 @@ def ReadOldEntry(ls,dn,sub_schema,assertion_filter,read_attrs=None):
   except IndexError:
     raise ldap0.NO_SUCH_OBJECT
 
-  entry = ldaputil.schema.Entry(sub_schema,dn.encode(ls.charset),ldap_entry)
+  entry = web2ldap.ldaputil.schema.Entry(sub_schema,dn.encode(ls.charset),ldap_entry)
 
   if write_attrs_method==WRITEABLE_ATTRS_NONE:
     # No method to determine writeable attributes was used
@@ -935,7 +937,7 @@ def ReadOldEntry(ls,dn,sub_schema,assertion_filter,read_attrs=None):
   elif write_attrs_method==WRITEABLE_ATTRS_SLAPO_ALLOWED:
     # Determine writeable attributes from attribute 'allowedAttributesEffective'
     try:
-      writeable_attr_oids = ldaputil.schema.SchemaElementOIDSet(sub_schema,AttributeType,entry['allowedAttributesEffective'])
+      writeable_attr_oids = web2ldap.ldaputil.schema.SchemaElementOIDSet(sub_schema,AttributeType,entry['allowedAttributesEffective'])
     except KeyError:
       writeable_attr_oids = set([])
     else:
@@ -1019,7 +1021,7 @@ def w2l_AddForm(sid,outf,command,form,ls,dn,add_rdn,add_basedn,entry,Msg='',inva
     if len(rdn_candidate_attr_nameoroids)==1:
       rdn_input_field.setDefault(rdn_candidate_attr_nameoroids[0]+'=')
 
-  relax_rules_enabled = ls.l._get_server_ctrls('**write**').has_key(ldapsession.CONTROL_RELAXRULES)
+  relax_rules_enabled = ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
   if relax_rules_enabled:
     Msg = ''.join((Msg,'<p class="WarningMessage">Relax Rules Control enabled! Be sure you know what you are doing!</p>'))
 
@@ -1132,7 +1134,7 @@ def w2l_ModifyForm(sid,outf,command,form,ls,dn,entry,Msg='',invalid_attrs=None):
   required_attrs_dict,allowed_attrs_dict = input_form_entry.attribute_types()
   nomatching_attrs_dict = nomatching_attrs(sub_schema,input_form_entry,allowed_attrs_dict,required_attrs_dict)
 
-  supentry_display_string = SupentryDisplayString(sid,form,ls,ldaputil.base.ParentDN(dn),sub_schema)
+  supentry_display_string = SupentryDisplayString(sid,form,ls,web2ldap.ldaputil.base.ParentDN(dn),sub_schema)
 
   if writeable_attr_oids is None:
     in_wrtattroids_values = form.hiddenFieldHTML('in_wrtattroids',u'nonePseudoValue;x-web2ldap-None',u'')
@@ -1142,7 +1144,7 @@ def w2l_ModifyForm(sid,outf,command,form,ls,dn,entry,Msg='',invalid_attrs=None):
       for at_name in writeable_attr_oids or []
     ])
 
-  relax_rules_enabled = ls.l._get_server_ctrls('**write**').has_key(ldapsession.CONTROL_RELAXRULES)
+  relax_rules_enabled = ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
   if relax_rules_enabled:
     Msg = ''.join((Msg,'<p class="WarningMessage">Relax Rules Control enabled! Be sure you know what you are doing!</p>'))
 

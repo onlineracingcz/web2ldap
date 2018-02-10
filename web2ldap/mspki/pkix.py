@@ -15,10 +15,10 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 # Pisces
-from pisces import asn1
+from web2ldap.pisces import asn1
 # mspki itself
-import mspki.util, mspki.x500, mspki.x509, mspki.asn1types
-from mspki.utctime import UTCTime
+from . import util, x500, x509, asn1types
+from .utctime import UTCTime
 
 class GeneralName(asn1.Constructed):
   """
@@ -41,7 +41,7 @@ class GeneralName(asn1.Constructed):
   def __init__(self,val):
     self.tag = val.tag
     if self.tag==4:
-      self.val = mspki.x500.Name(val.val)
+      self.val = x500.Name(val.val)
     else:
       self.val = val.val
 
@@ -62,22 +62,22 @@ class GeneralName(asn1.Constructed):
       return self.val.html()
     if self.tag==6:
       return '<a target="%s" href="%s%s">%s</a>' % (
-        mspki.asn1types.url_target,
-        mspki.asn1types.url_prefix,
+        asn1types.url_target,
+        asn1types.url_prefix,
         self,self
       )
     else:
       return repr(self)
 
 
-class GeneralNames(mspki.asn1types.SequenceOf):
+class GeneralNames(asn1types.SequenceOf):
   """
   GeneralNames ::= SEQUENCE SIZE (1..MAX) OF GeneralName
   """
   item_class = GeneralName
 
 
-class BasicConstraints(mspki.asn1types.AttributeSequence):
+class BasicConstraints(asn1types.AttributeSequence):
   """
   BasicConstraints ::= SEQUENCE {
        cA                      BOOLEAN DEFAULT FALSE,
@@ -85,14 +85,14 @@ class BasicConstraints(mspki.asn1types.AttributeSequence):
   """
   attr_list = ['cA','pathLenConstraint']
   def __init__(self,val):
-    mspki.asn1types.AttributeSequence.__init__(self,val)
+    asn1types.AttributeSequence.__init__(self,val)
     if len(self.val)>0:
       self.cA = self.val[0]
     if len(self.val)==2:
       self.pathLenConstraint = self.val[1]
 
 
-class AuthorityKeyIdentifier(mspki.asn1types.AttributeSequence):
+class AuthorityKeyIdentifier(asn1types.AttributeSequence):
   """
   AuthorityKeyIdentifier ::= SEQUENCE {
      keyIdentifier             [0] KeyIdentifier           OPTIONAL,
@@ -101,7 +101,7 @@ class AuthorityKeyIdentifier(mspki.asn1types.AttributeSequence):
   """
   attr_list = ['keyIdentifier','authorityCertIssuer','authorityCertSerialNumber']
   def __init__(self,val):
-    mspki.asn1types.AttributeSequence.__init__(self,val)
+    asn1types.AttributeSequence.__init__(self,val)
     for i in self.val:
       if i.tag==0:
         self.keyIdentifier = KeyIdentifier(i.val)
@@ -111,7 +111,7 @@ class AuthorityKeyIdentifier(mspki.asn1types.AttributeSequence):
         elif isinstance(i.val,asn1.Sequence):
           self.authorityCertIssuer = GeneralNames(i.val)
       elif i.tag==2:
-        self.authorityCertSerialNumber = mspki.x509.CertificateSerialNumber(i.val)
+        self.authorityCertSerialNumber = x509.CertificateSerialNumber(i.val)
 
 
 class KeyIdentifier(asn1.OctetString):
@@ -122,7 +122,7 @@ class KeyIdentifier(asn1.OctetString):
     asn1.OctetString.__init__(self,val)
 
   def __str__(self):
-    return mspki.util.HexString(str(self.val)).strip()
+    return util.HexString(str(self.val)).strip()
 
   def __repr__(self):
     return '<%s: %s>' % (
@@ -140,7 +140,7 @@ class SubjectKeyIdentifier(KeyIdentifier):
   """
 
 
-class KeyUsage(mspki.asn1types.BitString):
+class KeyUsage(asn1types.BitString):
   """
   KeyUsage ::= BIT STRING {
        digitalSignature        (0),
@@ -160,7 +160,7 @@ class KeyUsage(mspki.asn1types.BitString):
   }
 
   def __str__(self):
-    return mspki.asn1types.BitString.__str__(self)
+    return asn1types.BitString.__str__(self)
 
 
 class SubjectAltName(GeneralNames):
@@ -198,7 +198,7 @@ class DistributionPointName(asn1.Contextual):
         self.val = GeneralNames(val.val)
       self.fullName = self.val
     elif val.tag==1:
-      self.val = mspki.x500.RelativeDistinguishedName(val.val)
+      self.val = x500.RelativeDistinguishedName(val.val)
       self.nameRelativeToCRLIssuer = self.val
     else:
       raise ValueError, "Invalid tag %d for %s" % (val.tag,self.__class__.__name__)
@@ -212,7 +212,7 @@ class DistributionPointName(asn1.Contextual):
   def html(self):
     return '%s:%s' % (self.tag_str[self.tag],self.val.html())
 
-class DistributionPoint(mspki.asn1types.AttributeSequence):
+class DistributionPoint(asn1types.AttributeSequence):
   """
   DistributionPoint ::= SEQUENCE {
        distributionPoint       [0]     DistributionPointName OPTIONAL,
@@ -222,7 +222,7 @@ class DistributionPoint(mspki.asn1types.AttributeSequence):
   attr_list = ['distributionPoint','reasons','cRLIssuer']
 
   def __init__(self,val):
-    mspki.asn1types.AttributeSequence.__init__(self,val)
+    asn1types.AttributeSequence.__init__(self,val)
     for i in self.val:
       if i.tag==0:
         self.distributionPoint = DistributionPointName(i.val)
@@ -237,7 +237,7 @@ class DistributionPoint(mspki.asn1types.AttributeSequence):
         raise ValueError, "Invalid tag %d for %s" % (i.tag,self.__class__.__name__)
 
 
-class CRLDistPointsSyntax(mspki.asn1types.SequenceOf):
+class CRLDistPointsSyntax(asn1types.SequenceOf):
   """
   CRLDistPointsSyntax ::= SEQUENCE SIZE (1..MAX) OF DistributionPoint
   """
@@ -249,7 +249,7 @@ class CRLDistributionPoints(CRLDistPointsSyntax):
        CRLDistPointsSyntax }
   """
 
-class ReasonFlags(mspki.asn1types.BitString):
+class ReasonFlags(asn1types.BitString):
   """
   ReasonFlags ::= BIT STRING {
        unused                  (0),
@@ -351,7 +351,7 @@ class ExtendedKeyUsage(asn1.Sequence):
     return str(self)
 
 
-class PolicyInformation(mspki.asn1types.AttributeSequence):
+class PolicyInformation(asn1types.AttributeSequence):
   """
   PolicyInformation ::= SEQUENCE {
        policyIdentifier   CertPolicyId,
@@ -361,13 +361,13 @@ class PolicyInformation(mspki.asn1types.AttributeSequence):
   attr_list = ['policyIdentifier','policyQualifiers']
 
   def __init__(self,val):
-    mspki.asn1types.AttributeSequence.__init__(self,val)
+    asn1types.AttributeSequence.__init__(self,val)
     self.policyIdentifier = CertPolicyId(self.val[0].val)
     if len(val)>1:
       self.policyQualifiers = PolicyQualifiers(self.val[1])
 
 
-class CertificatePolicies(mspki.asn1types.SequenceOf):
+class CertificatePolicies(asn1types.SequenceOf):
   """
   certificatePolicies ::= SEQUENCE SIZE (1..MAX) OF PolicyInformation
   """
@@ -380,7 +380,7 @@ class CertPolicyId(asn1.OID):
   """
 
 
-class PolicyQualifierInfo(mspki.asn1types.AttributeSequence):
+class PolicyQualifierInfo(asn1types.AttributeSequence):
   """
   PolicyQualifierInfo ::= SEQUENCE {
        policyQualifierId  PolicyQualifierId,
@@ -397,7 +397,7 @@ class PolicyQualifierInfo(mspki.asn1types.AttributeSequence):
       self.qualifier = UserNotice(self.val[1])
 
 
-class PolicyQualifiers(mspki.asn1types.SequenceOf):
+class PolicyQualifiers(asn1types.SequenceOf):
   item_class = PolicyQualifierInfo
 
 
@@ -424,13 +424,13 @@ class CPSuri(asn1.IA5String):
   
   def html(self):
     return '<a target="%s" href="%s%s">%s</a>' % (
-      mspki.asn1types.url_target,
-      mspki.asn1types.url_prefix,
+      asn1types.url_target,
+      asn1types.url_prefix,
       self.val,self.val
     )
 
 
-class UserNotice(mspki.asn1types.AttributeSequence):
+class UserNotice(asn1types.AttributeSequence):
   """
   UserNotice ::= SEQUENCE {
        noticeRef        NoticeReference OPTIONAL,
@@ -438,7 +438,7 @@ class UserNotice(mspki.asn1types.AttributeSequence):
   """
   attr_list = ['noticeRef','explicitText']
   def __init__(self,val):
-    mspki.asn1types.AttributeSequence.__init__(self,val)
+    asn1types.AttributeSequence.__init__(self,val)
     for i in self.val:
       if isinstance(i,asn1.Sequence):
         self.noticeRef = NoticeReference(i)
@@ -446,7 +446,7 @@ class UserNotice(mspki.asn1types.AttributeSequence):
         self.explicitText = DisplayText(i)
 
 
-class NoticeReference(mspki.asn1types.AttributeSequence):
+class NoticeReference(asn1types.AttributeSequence):
   """
   NoticeReference ::= SEQUENCE {
        organization     DisplayText,
@@ -455,7 +455,7 @@ class NoticeReference(mspki.asn1types.AttributeSequence):
   attr_list = ['organization','noticeNumbers']
 
   def __init__(self,val):
-    mspki.asn1types.AttributeSequence.__init__(self,val)
+    asn1types.AttributeSequence.__init__(self,val)
     self.organization = DisplayText(self.val[0])
     self.noticeNumbers = self.val[1]
 
@@ -469,7 +469,7 @@ class DisplayText(asn1.ASN1Object):
   """
 
 
-class AccessDescription(mspki.asn1types.AttributeSequence):
+class AccessDescription(asn1types.AttributeSequence):
   """
   AccessDescription  ::=  SEQUENCE {
           accessMethod          OBJECT IDENTIFIER,
@@ -478,12 +478,12 @@ class AccessDescription(mspki.asn1types.AttributeSequence):
   attr_list = ['accessMethod','accessLocation']
 
   def __init__(self,val):
-    mspki.asn1types.AttributeSequence.__init__(self,val)
+    asn1types.AttributeSequence.__init__(self,val)
     self.accessMethod = self.val[0]
     self.accessLocation = GeneralName(self.val[1])
 
 
-class AuthorityInfoAccessSyntax(mspki.asn1types.SequenceOf):
+class AuthorityInfoAccessSyntax(asn1types.SequenceOf):
   """
   AuthorityInfoAccessSyntax  ::=
           SEQUENCE SIZE (1..MAX) OF AccessDescription
@@ -491,7 +491,7 @@ class AuthorityInfoAccessSyntax(mspki.asn1types.SequenceOf):
   item_class = AccessDescription
 
 
-class IssuingDistributionPoint(mspki.asn1types.AttributeSequence):
+class IssuingDistributionPoint(asn1types.AttributeSequence):
   """
   issuingDistributionPoint ::= SEQUENCE {
        distributionPoint       [0] DistributionPointName OPTIONAL,
@@ -506,7 +506,7 @@ class IssuingDistributionPoint(mspki.asn1types.AttributeSequence):
   ]
 
   def __init__(self,val):
-    mspki.asn1types.AttributeSequence.__init__(self,val)
+    asn1types.AttributeSequence.__init__(self,val)
     for i in self.val:
       if i.tag==0:
         self.distributionPoint=DistributionPointName(i.val)
@@ -526,11 +526,11 @@ class CRLNumber(asn1.ASN1Object):
   """
 
 
-class SubjectDirectoryAttributes(mspki.asn1types.SequenceOf):
+class SubjectDirectoryAttributes(asn1types.SequenceOf):
   """
   SubjectDirectoryAttributes ::= SEQUENCE SIZE (1..MAX) OF Attribute
   """
-  item_class = mspki.x500.AttributeTypeAndValue
+  item_class = x500.AttributeTypeAndValue
 
 
 class SkipCerts(asn1.ASN1Object):
@@ -539,7 +539,7 @@ class SkipCerts(asn1.ASN1Object):
   """
 
 
-class PolicyConstraints(mspki.asn1types.AttributeSequence):
+class PolicyConstraints(asn1types.AttributeSequence):
   """
   PolicyConstraints ::= SEQUENCE {
        requireExplicitPolicy           [0] SkipCerts OPTIONAL,
@@ -552,7 +552,7 @@ class PolicyConstraints(mspki.asn1types.AttributeSequence):
   ]
 
   def __init__(self,val):
-    mspki.asn1types.AttributeSequence.__init__(self,val)
+    asn1types.AttributeSequence.__init__(self,val)
     for i in self.val:
       if i.tag==0:
         self.requireExplicitPolicy=SkipCerts(i.val)

@@ -14,25 +14,23 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import urllib,uuid,codecs,re,Cookie,ldap0.ldif,ldap0.schema,msgzip,ldaputil.base, \
-       pyweblib.forms,ldapsession
-
-import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.passwd,web2ldap.app.searchform,web2ldap.app.ldapparams,web2ldap.app.session
-
-# OID description dictionary from configuration directory
-from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
-
-from ldaputil.passwd import RandomString
-
+import urllib,uuid,codecs,re,Cookie
 try:
   from cStringIO import StringIO
 except ImportError:
   from StringIO import StringIO
-
-
 from types import UnicodeType
+
+import ldap0.ldif,ldap0.schema
+
+import pyweblib.forms
 from pyweblib.forms import escapeHTML
 
+import web2ldap.msgzip,web2ldap.ldaputil.base,web2ldap.ldapsession
+import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.passwd,web2ldap.app.searchform,web2ldap.app.ldapparams,web2ldap.app.session
+# OID description dictionary from configuration directory
+from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
+from web2ldap.ldaputil.passwd import RandomString
 
 CONNTYPE2URLSCHEME = {
   0:'ldap',
@@ -124,10 +122,10 @@ class Web2LDAPForm(pyweblib.forms.Form):
     """
     outfile = outf
     if web2ldap.app.cnf.misc.gzip_level>0 and \
-       not msgzip.GzipFile is None and \
+       not web2ldap.msgzip.GzipFile is None and \
        self.http_accept_encoding['gzip']>0:
       # Create new gzip-stream file object
-      return msgzip.GzipFile(
+      return web2ldap.msgzip.GzipFile(
         filename='web2ldap stream output',
         mode='wb',
         compresslevel=web2ldap.app.cnf.misc.gzip_level,
@@ -553,7 +551,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
       for control_oid,control_spec in web2ldap.app.ldapparams.AVAILABLE_BOOLEAN_CONTROLS.items()
       if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'delete' in control_spec[0]
     ]
-    delete_ctrl_options.append((ldapsession.CONTROL_TREEDELETE,u'Tree Deletion'))
+    delete_ctrl_options.append((web2ldap.ldapsession.CONTROL_TREEDELETE,u'Tree Deletion'))
     self.addField(
       pyweblib.forms.Select(
         'delete_ctrl',
@@ -570,7 +568,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
 
 class Web2LDAPForm_rename(Web2LDAPForm):
   def addCommandFields(self):
-    self.addField(pyweblib.forms.Input('rename_newrdn',u'New RDN',255,1,ldaputil.base.rdn_pattern,size=50))
+    self.addField(pyweblib.forms.Input('rename_newrdn',u'New RDN',255,1,web2ldap.ldaputil.base.rdn_pattern,size=50))
     self.addField(DistinguishedNameInput('rename_newsuperior','New superior DN'))
     self.addField(pyweblib.forms.Checkbox('rename_delold',u'Delete old',1,default="yes",checked=1))
     self.addField(
@@ -675,7 +673,7 @@ class DistinguishedNameInput(pyweblib.forms.Input):
     )
 
   def _validateFormat(self,value):
-    if value and not ldaputil.base.is_dn(value):
+    if value and not web2ldap.ldaputil.base.is_dn(value):
       raise pyweblib.forms.InvalidValueFormat(
         self.name,
         self.text.encode(self.charset),
@@ -867,7 +865,7 @@ class AttributeType(pyweblib.forms.Input):
   def __init__(self,name,text,maxValues):
     pyweblib.forms.Input.__init__(
       self,name,text,500,maxValues,
-      ldaputil.base.attr_type_pattern,required=0,size=30
+      web2ldap.ldaputil.base.attr_type_pattern,required=0,size=30
     )
 
 

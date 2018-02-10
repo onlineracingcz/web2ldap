@@ -5,14 +5,17 @@ web2ldap plugin classes for OpenDS and OpenDJ
 
 from __future__ import absolute_import
 
-import re,mspki.util,ldap0,ldap0.cidict,web2ldap.app.schema
+import re
 
+import ldap0,ldap0.cidict
+
+from web2ldap.ldaputil.base import explode_dn,rdn_dict
 from web2ldap.app.schema.syntaxes import DirectoryString,OctetString,SelectList,DynamicDNSelectList,MultilineText,BindDN,syntax_registry
 from web2ldap.app.schema.plugins.x509 import Certificate
 from web2ldap.app.schema.plugins.groups import MemberOf
-from ldaputil.base import explode_dn,rdn_dict
-
 from web2ldap.app.schema.plugins.quirks import NamingContexts
+from web2ldap.mspki.util import HexString
+from web2ldap.app.schema import no_humanreadable_attr
 
 syntax_registry.registerAttrType(
   MemberOf.oid,[
@@ -388,8 +391,8 @@ class OpenDSSyncHist(OctetString,DirectoryString):
       return OctetString.displayValue(self,valueindex,commandbutton)
     else:
       first_str = self._form.utf2display(':'.join((mod_attr_type,mod_number,mod_type)).decode(self._ls.charset))
-      if web2ldap.app.schema.no_humanreadable_attr(self._schema,mod_attr_type):
-        mod_value_html = mspki.util.HexString(
+      if no_humanreadable_attr(self._schema,mod_attr_type):
+        mod_value_html = HexString(
             mod_value,
             delimiter=':',wrap=64,linesep='<br>\n'
           )[:-1]

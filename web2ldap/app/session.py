@@ -14,8 +14,12 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import time,traceback,collections, \
-       pyweblib.session,ldapsession,web2ldap.app.cnf
+import time,traceback,collections
+
+import pyweblib.session
+       
+from web2ldap.ldapsession import LDAPSession
+import web2ldap.app.cnf
 
 
 class InvalidSessionInstance(pyweblib.session.SessionException):
@@ -108,7 +112,7 @@ class Session(pyweblib.session.WebSession):
     except KeyError:
       pass
     else:
-      if isinstance(ls_local,ldapsession.LDAPSession):
+      if isinstance(ls_local,LDAPSession):
         ls_local.unbind()
     pyweblib.session.WebSession.deleteSession(self,sid)
     # Remove old remote IP associations

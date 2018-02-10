@@ -359,7 +359,7 @@ def WhoAmITemplate(sid,form,ls,dn,who=None,entry=None):
       entry = ls.userEntry
     else:
       return 'anonymous'
-  if ldaputil.base.is_dn(who):
+  if web2ldap.ldaputil.base.is_dn(who):
     # Fall-back is to display the DN
     result = DisplayDN(sid,form,ls,who,commandbutton=0)
     # Determine relevant templates dict
@@ -547,7 +547,7 @@ def TopSection(sid,outf,command,form,ls,dn,title,main_menu_list,context_menu_lis
 
   if ls!=None and ls.uri!=None:
 
-    if not dn or not ldaputil.base.is_dn(dn):
+    if not dn or not web2ldap.ldaputil.base.is_dn(dn):
       dn = u''
 
     # Only output something meaningful if valid connection
@@ -730,7 +730,7 @@ def SearchRootField(
     except ValueError:
       dn = d
     if dn:
-      dn_list = ldaputil.base.explode_dn(dn.lower())
+      dn_list = web2ldap.ldaputil.base.explode_dn(dn.lower())
       dn_list.reverse()
       return ','.join(dn_list)
     else:

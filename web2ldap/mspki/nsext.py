@@ -13,9 +13,9 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 # Pisces
-from pisces import asn1
+from web2ldap.pisces import asn1
 # mspki itself
-import asn1types
+from . import asn1types
 
 
 # List of string representations of extension OIDs defined by Netscape

@@ -15,7 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 # Pisces
-from pisces import asn1
+from web2ldap.pisces import asn1
 
 
 class EntrustVersInfo(asn1.OctetString):

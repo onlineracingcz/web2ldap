@@ -14,15 +14,17 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import signal,ldap0.ldapurl,web2ldap.app.schema,ldap0,ldap0.schema,ldapsession
-from ldap0.cidict import cidict
-
 from types import StringType
+
+import ldap0,ldap0.ldapurl,ldap0.schema
+from ldap0.cidict import cidict
 from ldap0.ldapurl import LDAPUrl
 
 import web2ldapcnf,web2ldapcnf.hosts,web2ldapcnf.misc,web2ldapcnf.standalone,web2ldapcnf.fastcgi,web2ldapcnf.countries
 from web2ldapcnf import misc,hosts,standalone,fastcgi,countries
-from ldapsession import LDAPSession
+import web2ldap.ldapsession
+from web2ldap.ldapsession import LDAPSession
+import web2ldap.app.schema
 
 class Web2LDAPConfigDict(cidict):
 
@@ -115,32 +117,6 @@ def PopulateCheckDict(ldap_uri_list):
     ldap_uri_list_check_dict[lu.initializeUrl()] = None
   return ldap_uri_list_check_dict # PopulateCheckDict()
 
-
-def HUPSignalHandler(signum,frame):
-  import web2ldap.app.session,web2ldap.app.core
-  assert signum==signal.SIGHUP, \
-    'Received wrong signal: Expected signal.SIGHUP, got %d' % (signum)
-  reload(web2ldapcnf)
-  reload(web2ldapcnf.hosts)
-  reload(web2ldapcnf.misc)
-  reload(web2ldapcnf.standalone)
-  reload(web2ldapcnf.fastcgi)
-  reload(web2ldapcnf.countries)
-  from web2ldapcnf import hosts,misc,standalone,fastcgi
-  global ldap_def
-  ldap_def = Web2LDAPConfigDict(web2ldapcnf.hosts.ldap_def)
-  web2ldap.app.schema.parse_fake_schema(ldap_def)
-  web2ldap.app.session.session.expireDeactivate = web2ldap.app.cnf.misc.session_remove
-  web2ldap.app.session.session.expireRemove = web2ldap.app.cnf.misc.session_remove
-  ldap0._trace_level = web2ldapcnf.misc.ldap_trace_level
-  ldap0.set_option(ldap0.OPT_DEBUG_LEVEL,web2ldapcnf.misc.ldap_opt_debug_level)
-  web2ldap.app.core.ldap_uri_list_check_dict = PopulateCheckDict(web2ldapcnf.hosts.ldap_uri_list)
-
-try:
-  # Set signal handler for SIGHUP
-  signal.signal(signal.SIGHUP,HUPSignalHandler)
-except AttributeError:
-  pass
 
 def GetParam(ls,k,default):
   """

@@ -15,7 +15,11 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import sys,ldap0,ldap0.schema,ldap0.schema.util,ldaputil.schema,msbase
+import sys
+
+import ldap0,ldap0.schema,ldap0.schema.util
+
+import web2ldap.ldaputil.schema,web2ldap.msbase
 
 
 NOT_HUMAN_READABLE_LDAP_SYNTAXES = set([
@@ -148,7 +152,7 @@ def parse_fake_schema(ldap_def):
       else:
         if schema!=None:
           # Here comes an ugly class changing hack!!!
-          schema.__class__ = ldaputil.schema.SubSchema
+          schema.__class__ = web2ldap.ldaputil.schema.SubSchema
           schema.no_user_mod_attr_oids = schema.determine_no_user_mod_attrs()
           # Store the pre-parsed schema in the configuration
           ldap_def[k]._schema = schema

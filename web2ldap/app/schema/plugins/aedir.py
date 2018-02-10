@@ -18,8 +18,8 @@ from ldap0.filter import escape_filter_chars
 from pyweblib.forms import HiddenInput
 
 # from internal base modules
-import ldaputil.base
-from ldaputil.base import compose_filter, map_filter_parts
+import web2ldap.ldaputil.base
+from web2ldap.ldaputil.base import compose_filter, map_filter_parts
 from ldap0.controls.readentry import PreReadControl
 from ldap0.controls.deref import DereferenceControl
 
@@ -336,7 +336,7 @@ class AEUserUid(AEUid):
     gen_collisions = 0
     while gen_collisions < self.maxCollisionChecks:
       # generate new random UID candidate
-      uid_candidate = ldaputil.passwd.RandomString(self.genLen,self.UID_LETTERS)
+      uid_candidate = web2ldap.ldaputil.passwd.RandomString(self.genLen,self.UID_LETTERS)
       # check whether UID candidate already exists
       uid_result = self._ls.l.search_s(
         self._ls.currentSearchRoot.encode(self._ls.charset),
@@ -823,7 +823,7 @@ class AESrvGroup(AESameZoneObject):
   def _determineFilter(self):
     filter_str = self.lu_obj.filterstr or '(objectClass=*)'
     dn_u = self._dn.decode(self._ls.charset)
-    parent_dn = ldaputil.base.ParentDN(dn_u)
+    parent_dn = web2ldap.ldaputil.base.ParentDN(dn_u)
     return '(&%s(!(entryDN=%s)))' % (
       filter_str,
       parent_dn.encode(self._ls.charset),
@@ -930,7 +930,7 @@ class AEEntryDNAEHost(DistinguishedName):
 
   def _additional_links(self):
     attr_value_u = self.attrValue.decode(self._ls.charset)
-    parent_dn = ldaputil.base.ParentDN(attr_value_u)
+    parent_dn = web2ldap.ldaputil.base.ParentDN(attr_value_u)
     aesrvgroup_filter = u''.join([
       u'(aeSrvGroup=%s)' % av.decode(self._ls.charset)
       for av in self._entry.get('aeSrvGroup',[])
@@ -2286,7 +2286,7 @@ for name in dir():
   syntax_registry.registerSyntaxClass(eval(name))
 
 
-from ldapsession import LDAPSession as LDAPSessionOrig
+from web2ldap.ldapsession import LDAPSession as LDAPSessionOrig
 
 class AEDirLDAPSession(LDAPSessionOrig):
   binddn_tmpl = u'uid={username},{searchroot}'
@@ -2294,7 +2294,7 @@ class AEDirLDAPSession(LDAPSessionOrig):
   def getBindDN(self,username,searchroot,filtertemplate):
     if not username:
       return u''
-    elif ldaputil.base.is_dn(username):
+    elif web2ldap.ldaputil.base.is_dn(username):
       return username
     else:
       return self.binddn_tmpl.format(

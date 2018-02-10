@@ -5,22 +5,20 @@ web2ldap plugin classes for OpenLDAP
 
 from __future__ import absolute_import
 
+import re
+
+from pyasn1.codec.ber import decoder as ber_decoder
+
+import ldap0.ldapurl,ldap0.controls
+
+import web2ldap.app.gui,web2ldap.app.cnf
+from web2ldap.mspki.util import HexString
 from web2ldap.app.schema.syntaxes import \
   DistinguishedName,IA5String,OctetString,DirectoryString,Uri,SelectList, \
   LDAPUrl,BindDN,MultilineText,AuthzDN,UUID,Integer,NotBefore, \
   DynamicDNSelectList,LDAPv3ResultCode,syntax_registry
-
+from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 from web2ldap.app.schema.plugins.quirks import NamingContexts
-
-import re,mspki,ldap0.ldapurl,ldap0.controls,web2ldap.app.gui,web2ldap.app.cnf
-
-from pyasn1.codec.ber import decoder as ber_decoder
-
-try:
-  from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
-except ImportError:
-  oid_desc_reg = {}
-
 
 #---------------------------------------------------------------------------
 # slapo-syncprov
@@ -331,7 +329,7 @@ class ReqMod(OctetString,DirectoryString):
       return '%s:%s<br>\n<code>\n%s\n</code>\n' % (
         self._form.utf2display(mod_attr_type_u),
         self._form.utf2display(mod_type_u),
-        mspki.util.HexString(
+        HexString(
           mod_attr_value,
           delimiter=':',wrap=64,linesep='<br>\n'
         )[:-1]

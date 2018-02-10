@@ -14,8 +14,10 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import ldap0,ldap0.cidict,ldaputil.base, \
-       web2ldap.app.core,web2ldap.app.gui
+import ldap0,ldap0.cidict
+
+import web2ldap.ldaputil.base
+import web2ldap.app.core,web2ldap.app.gui
 
 ACTION2MODTYPE = {'add':ldap0.MOD_ADD,'remove':ldap0.MOD_DELETE}
 
@@ -35,7 +37,7 @@ def GroupSelectFieldHTML(
     optgroup_dict = {None:[]}
     for dn in dn_list:
       try:
-        colgroup_dn = u','.join(ldaputil.base.explode_dn(dn)[optgroup_min_level:optgroup_max_level])
+        colgroup_dn = u','.join(web2ldap.ldaputil.base.explode_dn(dn)[optgroup_min_level:optgroup_max_level])
       except (IndexError,ValueError):
         colgroup_dn = None
       if colgroup_dn:
@@ -45,7 +47,7 @@ def GroupSelectFieldHTML(
           optgroup_dict[colgroup_dn] = [dn]
     optgroup_list = []
     try:
-      colgroup_memberdn = u','.join(ldaputil.base.explode_dn(member_dn)[optgroup_min_level:optgroup_max_level])
+      colgroup_memberdn = u','.join(web2ldap.ldaputil.base.explode_dn(member_dn)[optgroup_min_level:optgroup_max_level])
     except (IndexError,ValueError):
       colgroup_memberdn = None
     else:
@@ -54,7 +56,7 @@ def GroupSelectFieldHTML(
     colgroup_authzdn = None
     if ls.who!=None:
       try:
-        colgroup_authzdn = u','.join(ldaputil.base.explode_dn(ls.who)[optgroup_min_level:optgroup_max_level])
+        colgroup_authzdn = u','.join(web2ldap.ldaputil.base.explode_dn(ls.who)[optgroup_min_level:optgroup_max_level])
       except (IndexError,ValueError,ldap0.DECODING_ERROR):
         pass
       else:

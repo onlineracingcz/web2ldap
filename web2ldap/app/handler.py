@@ -13,12 +13,15 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import sys,os,types,socket,errno,time,traceback,urlparse,pprint, \
-       ldap0,ldaputil,ldaputil.dns,ldapsession, \
-       pyweblib.forms,pyweblib.httphelper,pyweblib.sslenv,pyweblib.helper,pyweblib.session, \
-       msHTTPHandler
+import sys,os,types,socket,errno,time,traceback,urlparse,pprint
 
-from netaddr import IPNetwork
+import ldap0
+
+import pyweblib.forms,pyweblib.httphelper,pyweblib.sslenv,pyweblib.helper,pyweblib.session
+
+import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.ldapsession,web2ldap.msHTTPHandler
+
+from ipaddress import ip_network
 
 import web2ldap.__about__
 
@@ -33,8 +36,8 @@ import web2ldap.app.core,web2ldap.app.gui,web2ldap.app.cnf, \
 
 from types import UnicodeType,StringType
 from ldap0.ldapurl import isLDAPUrl
-from ldaputil.extldapurl import ExtendedLDAPUrl
-from ldapsession import LDAPSession
+from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
+from web2ldap.ldapsession import LDAPSession
 from web2ldap.app.gui import ExceptionMsg
 from web2ldap.app.form import Web2LDAPForm,FORM_CLASS
 from web2ldap.app.session import session
@@ -347,7 +350,7 @@ class AppHandler:
         conntype = int(self.form.getInputValue('conntype',[0])[0])
         inputLDAPUrl.urlscheme = web2ldap.app.form.CONNTYPE2URLSCHEME[conntype]
         inputLDAPUrl.hostport = self.form.getInputValue('host',[None])[0]
-        inputLDAPUrl.x_startTLS = str(ldapsession.START_TLS_REQUIRED * (conntype==1))
+        inputLDAPUrl.x_startTLS = str(web2ldap.ldapsession.START_TLS_REQUIRED * (conntype==1))
 
     # Separate parameters for dn, who, cred and scope
     # have predecence over parameters specified in LDAP URL
@@ -376,7 +379,7 @@ class AppHandler:
     assert who==None or type(who)==UnicodeType, TypeError("Type of variable 'who' must be UnicodeType: %s" % repr(who))
     assert cred==None or type(cred)==UnicodeType, TypeError("Type of variable 'cred' must be UnicodeType: %s" % repr(cred))
 
-    if not ldaputil.base.is_dn(dn):
+    if not web2ldap.ldaputil.base.is_dn(dn):
       raise web2ldap.app.core.ErrorExit(u'Invalid DN.')
 
     scope_str=self.form.getInputValue(
@@ -475,7 +478,7 @@ class AppHandler:
            ls.uri is None:
           # Force a SRV RR lookup for dc-style DNs,
           # create list of URLs to connect to
-          dns_srv_rrs = ldaputil.dns.dcDNSLookup(dn)
+          dns_srv_rrs = web2ldap.ldaputil.dns.dcDNSLookup(dn)
           initializeUrl_list = [
             ExtendedLDAPUrl(urlscheme='ldap',hostport=host,dn=dn).initializeUrl()
             for host in dns_srv_rrs
@@ -514,7 +517,7 @@ class AppHandler:
              not initializeUrl in web2ldap.app.core.ldap_uri_list_check_dict:
             raise web2ldap.app.core.ErrorExit(u'Only pre-configured LDAP servers allowed.')
           startTLSextop = inputLDAPUrl.getStartTLSOpt(
-            web2ldap.app.cnf.GetParam(inputLDAPUrl,'starttls',ldapsession.START_TLS_NO)
+            web2ldap.app.cnf.GetParam(inputLDAPUrl,'starttls',web2ldap.ldapsession.START_TLS_NO)
           )
           # Connect to new specified host
           ls.open(
@@ -549,7 +552,7 @@ class AppHandler:
           [inputLDAPUrl.saslMech or '']
         )[0].upper() or None
 
-        if who!=None and cred is None and not login_mech in ldapsession.NON_INTERACTIVE_LOGIN_MECHS:
+        if who!=None and cred is None and not login_mech in web2ldap.ldapsession.NON_INTERACTIVE_LOGIN_MECHS:
           # first ask for password in a login form
           #---------------------------------------
           ls.setDN(dn)
@@ -562,11 +565,11 @@ class AppHandler:
           )
           return
 
-        elif (who!=None and cred!=None) or login_mech in ldapsession.NON_INTERACTIVE_LOGIN_MECHS:
+        elif (who!=None and cred!=None) or login_mech in web2ldap.ldapsession.NON_INTERACTIVE_LOGIN_MECHS:
           # real bind operation
           #------------------------------
           login_search_root = self.form.getInputValue('login_search_root',[None])[0]
-          if who!=None and not ldaputil.base.is_dn(who) and login_search_root==None:
+          if who!=None and not web2ldap.ldaputil.base.is_dn(who) and login_search_root==None:
             login_search_root = ls.getSearchRoot(dn)
           try:
             ls.bind(
@@ -654,7 +657,7 @@ class AppHandler:
         if __debug__:
           self.log_exception(ls)
 
-        host_list = ldaputil.dns.dcDNSLookup(dn)
+        host_list = web2ldap.ldaputil.dns.dcDNSLookup(dn)
         if (not host_list) or (ExtendedLDAPUrl(ls.uri).hostport in host_list):
           # Did not find another LDAP server for this naming context
           try:
@@ -689,7 +692,7 @@ class AppHandler:
       except (
         ldap0.INAPPROPRIATE_AUTH,
         ldap0.INVALID_CREDENTIALS,
-        ldapsession.USERNAME_NOT_FOUND,
+        web2ldap.ldapsession.USERNAME_NOT_FOUND,
       ) as e:
         web2ldap.app.login.w2l_Login(
           self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,
@@ -698,7 +701,7 @@ class AppHandler:
           who=who,relogin=1
         )
 
-      except ldapsession.INVALID_SIMPLE_BIND_DN as e:
+      except web2ldap.ldapsession.INVALID_SIMPLE_BIND_DN as e:
         web2ldap.app.login.w2l_Login(
           self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,
           self.form.getInputValue('login_search_root',[ls.getSearchRoot(dn)])[0],
@@ -706,7 +709,7 @@ class AppHandler:
           who=who,relogin=1
         )
 
-      except ldapsession.PWD_EXPIRATION_WARNING as e:
+      except web2ldap.ldapsession.PWD_EXPIRATION_WARNING as e:
         # Setup what's required to the case command=='passwd'
         ls.setDN(dn or e.who)
         self.form.addField(pyweblib.forms.Select('passwd_scheme',u'Password hash scheme',1,options=web2ldap.app.passwd.available_hashtypes,default=web2ldap.app.passwd.available_hashtypes[-1]))
@@ -733,7 +736,7 @@ class AppHandler:
           )),
         )
 
-      except ldapsession.PasswordPolicyException as e:
+      except web2ldap.ldapsession.PasswordPolicyException as e:
         # Setup what's required to the case command=='passwd'
         ls.setDN(dn or e.who)
         self.form.addField(pyweblib.forms.Select('passwd_scheme',u'Password hash scheme',1,options=web2ldap.app.passwd.available_hashtypes,default=web2ldap.app.passwd.available_hashtypes[-1]))
@@ -747,7 +750,7 @@ class AppHandler:
           self.form.utf2display(unicode(e.desc))
         )
 
-      except ldapsession.USERNAME_NOT_UNIQUE as e:
+      except web2ldap.ldapsession.USERNAME_NOT_UNIQUE as e:
         login_search_root = self.form.getInputValue('login_search_root',[ls.getSearchRoot(dn)])[0]
         web2ldap.app.login.w2l_Login(
           self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,
@@ -858,7 +861,7 @@ class AppHandler:
     return # handle_request()
 
 
-class Web2ldapHTTPHandler(msHTTPHandler.HTTPHandlerClass):
+class Web2ldapHTTPHandler(web2ldap.msHTTPHandler.HTTPHandlerClass):
   script_name = web2ldap.app.cnf.standalone.base_url or '/web2ldap'
   base_url = web2ldap.app.cnf.standalone.base_url
   server_signature = web2ldap.app.cnf.standalone.server_signature
@@ -870,12 +873,15 @@ class Web2ldapHTTPHandler(msHTTPHandler.HTTPHandlerClass):
   }
   dir_listing_allowed = web2ldap.app.cnf.standalone.dir_listing_allowed
   reverse_lookups = web2ldap.app.cnf.standalone.reverse_lookups
-  access_allowed   = map(IPNetwork,web2ldap.app.cnf.standalone.access_allowed)
-  extensions_map = msHTTPHandler.get_mime_types(web2ldap.app.cnf.standalone.mime_types)
+  access_allowed = [
+    ip_network(n)
+    for n in web2ldap.app.cnf.standalone.access_allowed
+  ]
+  extensions_map = web2ldap.msHTTPHandler.get_mime_types(web2ldap.app.cnf.standalone.mime_types)
 
   # Start web2ldap itself.
   def run_app(self,http_env):
-    msHTTPHandler.HTTPHandlerClass.run_app(self,http_env)
+    web2ldap.msHTTPHandler.HTTPHandlerClass.run_app(self,http_env)
     # Call web2ldap application handler
     app = AppHandler(self.rfile,self.wfile,self.error_log,http_env)
     app.run()

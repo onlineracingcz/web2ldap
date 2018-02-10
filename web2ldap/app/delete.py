@@ -14,13 +14,19 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import time,pyweblib.forms,ldap0,ldaputil.async,ldapsession,ldaputil.base, \
-       web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.ldapparams
+import time
 
+import pyweblib.forms
+
+import ldap0
+
+import web2ldap.ldaputil.async,web2ldap.ldapsession,web2ldap.ldaputil.base
+import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.ldapparams
 # OID description dictionary from configuration directory
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 
-class DeleteLeafs(ldaputil.async.AsyncSearchHandler):
+
+class DeleteLeafs(web2ldap.ldaputil.async.AsyncSearchHandler):
   """
   Class for deleting entries which are results of a search.
 
@@ -32,7 +38,7 @@ class DeleteLeafs(ldaputil.async.AsyncSearchHandler):
   ])
 
   def __init__(self,l,treeDeleteControl,delete_server_ctrls):
-    ldaputil.async.AsyncSearchHandler.__init__(self,l)
+    web2ldap.ldaputil.async.AsyncSearchHandler.__init__(self,l)
     self.serverctrls = delete_server_ctrls
     self.treeDeleteControl = treeDeleteControl
 
@@ -43,7 +49,7 @@ class DeleteLeafs(ldaputil.async.AsyncSearchHandler):
     self.nonDeletableEntries = []
     self.deletedEntries = 0
     self.noSuchObjectCounter = 0
-    ldaputil.async.AsyncSearchHandler.startSearch(
+    web2ldap.ldaputil.async.AsyncSearchHandler.startSearch(
       self,
       searchRoot,
       searchScope,
@@ -221,9 +227,9 @@ def DelSubtreeForm(sid,form,ls,dn,scope):
     text_num_sub_ordinates=numSubordinates_html,
     text_num_all_sub_ordinates=numAllSubordinates_html,
     field_delete_scope=delete_scope_field.inputHTML(),
-    value_delete_ctrl_oid=ldapsession.CONTROL_TREEDELETE,
+    value_delete_ctrl_oid=web2ldap.ldapsession.CONTROL_TREEDELETE,
     value_delete_ctrl_checked=' checked'*int(
-      ldapsession.CONTROL_TREEDELETE in ls.supportedControl and \
+      web2ldap.ldapsession.CONTROL_TREEDELETE in ls.supportedControl and \
       not 'OpenLDAProotDSE' in ls.rootDSE.get('objectClass',[])
     ),
   )
@@ -254,7 +260,7 @@ def DelSearchForm(sid,form,ls,dn,scope,delete_filter):
       delete_filter,
       sizelimit=1000,
     )
-  except ldapsession.LDAPLimitErrors:
+  except web2ldap.ldapsession.LDAPLimitErrors:
     num_entries,num_referrals = ('unknown','unknown')
   else:
     if num_entries==None:
@@ -294,7 +300,7 @@ def DelSearchForm(sid,form,ls,dn,scope,delete_filter):
   """.format(
     value_dn=form.utf2display(dn),
     text_dn=web2ldap.app.gui.DisplayDN(sid,form,ls,dn),
-    text_scope=ldaputil.base.SEARCH_SCOPE_STR[scope],
+    text_scope=web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
     num_entries=num_entries,
     num_referrals=num_referrals,
     value_delete_filter=form.utf2display(delete_filter),
@@ -325,7 +331,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
   # Generate a list of requested LDAPv3 extended controls to be sent along
   # with a modify or delete request
   delete_ctrl_oids = form.getInputValue('delete_ctrl',[])
-  delete_ctrl_tree_delete = ldapsession.CONTROL_TREEDELETE in delete_ctrl_oids
+  delete_ctrl_tree_delete = web2ldap.ldapsession.CONTROL_TREEDELETE in delete_ctrl_oids
 
   if delete_confirm:
 
@@ -365,7 +371,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
 
         old_dn = dn
         if scope==ldap0.SCOPE_SUBTREE and delete_filter==None:
-          dn = ldaputil.base.ParentDN(dn)
+          dn = web2ldap.ldaputil.base.ParentDN(dn)
           ls.setDN(dn)
         web2ldap.app.gui.SimpleMessage(
           sid,outf,command,form,ls,dn,
@@ -382,7 +388,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
           """ % (
             deleted_entries_count,
             web2ldap.app.gui.DisplayDN(sid,form,ls,old_dn),
-            ldaputil.base.SEARCH_SCOPE_STR[scope],
+            web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
             end_time_stamp-begin_time_stamp,
             len(non_deletable_entries),
           ),
@@ -430,7 +436,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
 
         ls.deleteEntry(dn)
         old_dn = dn
-        dn = ldaputil.base.ParentDN(dn)
+        dn = web2ldap.ldaputil.base.ParentDN(dn)
         ls.setDN(dn)
         web2ldap.app.gui.SimpleMessage(
           sid,outf,command,form,ls,dn,
@@ -470,7 +476,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
     except IndexError:
       ldap_entry = {}
 
-    entry = ldaputil.schema.Entry(sub_schema,dn,ldap_entry)
+    entry = web2ldap.ldaputil.schema.Entry(sub_schema,dn,ldap_entry)
 
     if delete_attr:
       inner_form = DelAttrForm(sid,form,ls,dn,entry,delete_attr)

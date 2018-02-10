@@ -14,20 +14,24 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import sys,re,imghdr,sndhdr,urllib,uuid,datetime,time,utctime,json, \
-       ldap0,ldap0.ldapurl,pyweblib.forms, \
-       mspki.asn1helper,ldaputil.base,ldap0.schema,xml.etree.ElementTree, \
-       web2ldap.app.viewer,web2ldap.app.form,web2ldap.app.gui,msbase,web2ldap.app.cnf,ldaputil.schema
-
+import sys,re,imghdr,sndhdr,urllib,uuid,datetime,time,json,xml.etree.ElementTree
 from collections import defaultdict
-
 from xml.etree.ElementTree import ParseError as XMLParseError
-
 from types import StringType,UnicodeType,ClassType,TupleType
 
-from ldaputil.base import is_dn
+import ipaddress
 
-import netaddr
+import ldap0,ldap0.ldapurl,ldap0.schema
+
+import pyweblib.forms
+
+import web2ldap.msbase
+import web2ldap.mspki.asn1helper
+import web2ldap.ldaputil.base,web2ldap.ldaputil.schema
+import web2ldap.app.viewer,web2ldap.app.form,web2ldap.app.gui,web2ldap.app.cnf
+import web2ldap.utctime
+from web2ldap.ldaputil.base import is_dn
+
 
 # Detect Python Imaging Library (PIL)
 try:
@@ -172,9 +176,9 @@ class LDAPSyntax:
     self._schema = schema
     assert type(dn)==UnicodeType, "Argument 'dn' must be UnicodeType"
     self._dn = dn
-    assert entry is None or isinstance(entry,ldaputil.schema.Entry), \
+    assert entry is None or isinstance(entry,web2ldap.ldaputil.schema.Entry), \
       TypeError('entry must be ldaputil.schema.Entry but is %s' % (entry.__class__.__name__))
-    self._entry = entry or ldaputil.schema.Entry(self._schema,None,{})
+    self._entry = entry or web2ldap.ldaputil.schema.Entry(self._schema,None,{})
 
   def setAttrValue(self,attrValue):
     self.validate(attrValue)
@@ -593,7 +597,7 @@ class GeneralizedTime(IA5String):
 
   def _validate(self,attrValue):
     try:
-      dt = utctime.strptime(attrValue)
+      dt = web2ldap.utctime.strptime(attrValue)
     except ValueError:
       return False
     else:
@@ -647,7 +651,7 @@ class GeneralizedTime(IA5String):
 
   def displayValue(self,valueindex=0,commandbutton=0):
     try:
-      dt_utc = utctime.strptime(self.attrValue)
+      dt_utc = web2ldap.utctime.strptime(self.attrValue)
     except ValueError:
       return IA5String.displayValue(self,valueindex,commandbutton)
     try:
@@ -772,7 +776,7 @@ class IPHostAddress(IA5String):
   oid = 'IPHostAddress-oid'
   desc = 'string representation of IPv4 or IPv6 address'
   # Class in module ipaddr which parses address/network values
-  addr_class = netaddr.IPAddress
+  addr_class = ipaddress.ip_address
 
   def sanitizeInput(self,attrValue):
     return attrValue.strip()
@@ -789,31 +793,31 @@ class IPHostAddress(IA5String):
 class IPv4HostAddress(IPHostAddress):
   oid = 'IPv4HostAddress-oid'
   desc = 'string representation of IPv4 address'
-  addr_class = netaddr.IPAddress
+  addr_class = ipaddress.IPv4Address
 
 
 class IPv6HostAddress(IPHostAddress):
   oid = 'IPv6HostAddress-oid'
   desc = 'string representation of IPv6 address'
-  addr_class = netaddr.IPAddress
+  addr_class = ipaddress.IPv6Address
 
 
 class IPNetworkAddress(IPHostAddress):
   oid = 'IPNetworkAddress-oid'
   desc = 'string representation of IPv4 or IPv6 network address/mask'
-  addr_class = netaddr.IPNetwork
+  addr_class = ipaddress.ip_network
 
 
 class IPv4NetworkAddress(IPNetworkAddress):
   oid = 'IPv4NetworkAddress-oid'
   desc = 'string representation of IPv4 network address/mask'
-  addr_class = netaddr.IPNetwork
+  addr_class = ipaddress.IPv4Network
 
 
 class IPv6NetworkAddress(IPNetworkAddress):
   oid = 'IPv6NetworkAddress-oid'
   desc = 'string representation of IPv6 network address/mask'
-  addr_class = netaddr.IPNetwork
+  addr_class = ipaddress.IPv6Network
 
 
 class IPServicePortNumber(Integer):
@@ -980,7 +984,7 @@ class OID(IA5String):
     attrValue = attrValue.strip()
     if attrValue.startswith('{') and attrValue.endswith('}'):
       try:
-        attrValue = ldaputil.base.ietf_oid_str(attrValue)
+        attrValue = web2ldap.ldaputil.base.ietf_oid_str(attrValue)
       except ValueError:
         pass
     return attrValue
@@ -1068,15 +1072,15 @@ class OctetString(Binary):
       '<tr><td><code>%0.6X</code></td><td><code>%s</code></td><td><code>%s</code></td></tr>'% (
         i*self.bytes_split,
         ':'.join(x.encode('hex').upper() for x in c),
-        self._form.utf2display(unicode(msbase.ascii_dump(c),'ascii')),
+        self._form.utf2display(unicode(web2ldap.msbase.ascii_dump(c),'ascii')),
       )
-      for i,c in enumerate(msbase.chunks(self.attrValue,self.bytes_split))
+      for i,c in enumerate(web2ldap.msbase.chunks(self.attrValue,self.bytes_split))
     ]
     return '\n<table class="HexDump">\n%s\n</table>\n' % ('\n'.join(lines))
 
   def formValue(self):
     return unicode('\r\n'.join(
-      msbase.chunks(
+      web2ldap.msbase.chunks(
         ':'.join(x.encode('hex').upper() for x in self.attrValue or ''),
         self.bytes_split*3
       )
@@ -1289,7 +1293,7 @@ class SecondsSinceEpoch(Integer):
     int_str = Integer.displayValue(self,valueindex,commandbutton)
     try:
       return '%s (%s)' % (
-        utctime.strftimeiso8601(time.gmtime(float(self.attrValue))).encode('ascii'),
+        web2ldap.utctime.strftimeiso8601(time.gmtime(float(self.attrValue))).encode('ascii'),
         int_str,
       )
     except ValueError:
@@ -1304,7 +1308,7 @@ class DaysSinceEpoch(Integer):
     int_str = Integer.displayValue(self,valueindex,commandbutton)
     try:
       return '%s (%s)' % (
-        utctime.strftimeiso8601(time.gmtime(float(self.attrValue)*86400)).encode('ascii'),
+        web2ldap.utctime.strftimeiso8601(time.gmtime(float(self.attrValue)*86400)).encode('ascii'),
         int_str,
       )
     except ValueError:
@@ -1562,13 +1566,13 @@ class DynamicValueSelectList(SelectList,DirectoryString):
     elif ldap_url_dn=='.':
       result_dn = current_dn
     elif ldap_url_dn=='..':
-      result_dn = ldaputil.base.ParentDN(current_dn)
+      result_dn = web2ldap.ldaputil.base.ParentDN(current_dn)
     elif ldap_url_dn.endswith(',_'):
       result_dn = ','.join((ldap_url_dn[:-2],self._ls.getSearchRoot(self._dn)))
     elif ldap_url_dn.endswith(',.'):
       result_dn = ','.join((ldap_url_dn[:-2],current_dn))
     elif ldap_url_dn.endswith(',..'):
-      result_dn = ','.join((ldap_url_dn[:-3],ldaputil.base.ParentDN(current_dn)))
+      result_dn = ','.join((ldap_url_dn[:-3],web2ldap.ldaputil.base.ParentDN(current_dn)))
     else:
       result_dn = ldap_url_dn
     if result_dn.endswith(','):
@@ -1999,9 +2003,9 @@ else:
       attrValue = self.attrValue.encode('ascii')
       try:
         pisces_oid = asn1.OID(tuple(map(int,attrValue.split('.'))))
-        desc = mspki.asn1helper.GetOIDDescription(
+        desc = web2ldap.mspki.asn1helper.GetOIDDescription(
           pisces_oid,
-          mspki.asn1helper.oids,
+          web2ldap.mspki.asn1helper.oids,
           includeoid=1
         )
       except ValueError:

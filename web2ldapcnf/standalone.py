@@ -21,11 +21,11 @@ bind_address = '127.0.0.1:1760' # IPv4
 # Use ['0.0.0.0/0.0.0.0','::0'] to allow access to every client but think twice!
 # IPv6 network addresses without brackets!
 access_allowed = [
-  '127.0.0.0/255.0.0.0',
-  '::1',
-  'fe00::0',
-#  '10.0.0.0/255.0.0.0',
-#  '0.0.0.0/0.0.0.0','::0',
+  u'127.0.0.0/255.0.0.0',
+  u'::1',
+  u'fe00::0',
+#  u'10.0.0.0/255.0.0.0',
+#  u'0.0.0.0/0.0.0.0','::0',
 ]
 
 # User account name to setuid after being started as root

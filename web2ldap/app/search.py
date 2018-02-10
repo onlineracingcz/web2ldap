@@ -14,19 +14,24 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import time,csv,urllib,ldap0,ldap0.schema.models,ldaputil.async, \
-       msbase,pyweblib.forms,pyweblib.httphelper,ldaputil.base,ldaputil.schema, \
-       web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.searchform
+import time,csv,urllib
 
+import ldap0,ldap0.schema.models
+from ldap0.controls.openldap import SearchNoOpControl
 
-from ldaputil.extldapurl import ExtendedLDAPUrl
-from ldaputil.base import escape_ldap_filter_chars
-from msbase import GrabKeys
+import pyweblib.forms,pyweblib.httphelper
+from pyweblib.forms import escapeHTML
+
+import web2ldap.ldaputil.async,web2ldap.msbase
+import web2ldap.ldaputil.base,web2ldap.ldaputil.schema
+import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.searchform
+from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
+from web2ldap.ldaputil.base import escape_ldap_filter_chars
+from web2ldap.msbase import GrabKeys
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.app.searchform import SEARCH_OPT_ATTR_EXISTS,SEARCH_OPT_ATTR_NOT_EXISTS
-from ldap0.controls.openldap import SearchNoOpControl
-from ldapsession import LDAPLimitErrors
-from pyweblib.forms import escapeHTML
+from web2ldap.ldapsession import LDAPLimitErrors
+from web2ldap.msbase import CaseinsensitiveStringKeyDict
 
 import web2ldap.__about__
 
@@ -69,7 +74,7 @@ class excel_semicolon(csv.excel):
 csv.register_dialect("excel-semicolon", excel_semicolon)
 
 
-class LDIFWriter(ldaputil.async.LDIFWriter):
+class LDIFWriter(web2ldap.ldaputil.async.LDIFWriter):
 
   def preProcessing(self):
     return
@@ -84,22 +89,22 @@ class LDIFWriter(ldaputil.async.LDIFWriter):
       self._ldif_writer._output_file,'text/plain',charset='UTF-8',
       additional_header=additional_http_header,
     )
-    ldaputil.async.LDIFWriter.preProcessing(self)
+    web2ldap.ldaputil.async.LDIFWriter.preProcessing(self)
 
 
-class PrintableHTMLWriter(ldaputil.async.List):
+class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
   """
   Class for writing a stream LDAP search results to a printable file
   """
   _entryResultTypes = is_search_result
 
   def __init__(self,sid,outf,form,ls,dn,sub_schema,print_template_str_dict):
-    ldaputil.async.List.__init__(self,ls.l)
+    web2ldap.ldaputil.async.List.__init__(self,ls.l)
     self._sid,self._outf,self._form,self._ls,self._dn,self._s,self._p = sid,outf,form,ls,dn,sub_schema,print_template_str_dict
     return # __init__()
 
   def processResults(self,ignoreResultsNumber=0,processResultsCount=0,timeout=-1):
-    ldaputil.async.List.processResults(self,timeout=timeout)
+    web2ldap.ldaputil.async.List.processResults(self,timeout=timeout)
     self.allResults.sort()
     # This should speed up things
     utf2display = self._form.utf2display
@@ -113,7 +118,7 @@ class PrintableHTMLWriter(ldaputil.async.List):
           [s.lower() for s in self._p.keys()]
         ))
         if template_oc:
-          tableentry = msbase.CaseinsensitiveStringKeyDict(default='')
+          tableentry = CaseinsensitiveStringKeyDict(default='')
           attr_list=entry.keys()
           for attr in attr_list:
             tableentry[attr] = ', '.join([
@@ -141,14 +146,14 @@ class PrintableHTMLWriter(ldaputil.async.List):
     return # processResults()
 
 
-class CSVWriter(ldaputil.async.AsyncSearchHandler):
+class CSVWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
   """
   Class for writing a stream LDAP search results to a CSV file
   """
   _entryResultTypes = is_search_result
 
   def __init__(self,l,f,sub_schema,attr_types,ldap_charset='utf-8',csv_charset='utf-8'):
-    ldaputil.async.AsyncSearchHandler.__init__(self,l)
+    web2ldap.ldaputil.async.AsyncSearchHandler.__init__(self,l)
     self._output_file = f
     self._csv_writer = csv.writer(f,dialect='excel-semicolon')
     self._s = sub_schema
@@ -170,7 +175,7 @@ class CSVWriter(ldaputil.async.AsyncSearchHandler):
 
   def _processSingleResult(self,resultType,resultItem):
     if resultType in self._entryResultTypes:
-      entry = ldaputil.schema.Entry(self._s,resultItem[0],resultItem[1])
+      entry = web2ldap.ldaputil.schema.Entry(self._s,resultItem[0],resultItem[1])
       csv_row_list = []
       for attr_type in self._attr_types:
         csv_col_value_list = []
@@ -191,14 +196,14 @@ else:
 
   pyExcelerator.UnicodeUtils.DEFAULT_ENCODING = 'cp1251'
 
-  class ExcelWriter(ldaputil.async.AsyncSearchHandler):
+  class ExcelWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
     """
     Class for writing a stream LDAP search results to a Excel file
     """
     _entryResultTypes = is_search_result
 
     def __init__(self,l,f,sub_schema,attr_types,ldap_charset='utf-8'):
-      ldaputil.async.AsyncSearchHandler.__init__(self,l)
+      web2ldap.ldaputil.async.AsyncSearchHandler.__init__(self,l)
       self._f = f
       self._s = sub_schema
       self._attr_types = attr_types
@@ -225,7 +230,7 @@ else:
 
     def _processSingleResult(self,resultType,resultItem):
       if resultType in self._entryResultTypes:
-        entry = ldaputil.schema.Entry(self._s,resultItem[0],resultItem[1])
+        entry = web2ldap.ldaputil.schema.Entry(self._s,resultItem[0],resultItem[1])
         csv_row_list = []
         for attr_type in self._attr_types:
           csv_col_value_list = []
@@ -399,7 +404,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
     if a.strip()
   ]
 
-  search_attr_set = ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
+  search_attr_set = web2ldap.ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
   search_attrs = search_attr_set.names()
 
   search_ldap_url = ls.ldapUrl(dn=search_root)
@@ -409,7 +414,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
 
   ldap_search_command = search_ldap_url.ldapSearchCommand().decode(ls.charset)
 
-  read_attr_set = ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
+  read_attr_set = web2ldap.ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
   if search_output in ['table','print']:
     read_attr_set.add('objectClass')
 
@@ -417,7 +422,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
     print_template_filenames_dict = web2ldap.app.cnf.GetParam(ls,'print_template',None)
     if print_template_filenames_dict is None:
       raise web2ldap.app.core.ErrorExit(u'No templates for printing defined.')
-    print_template_str_dict = msbase.CaseinsensitiveStringKeyDict()
+    print_template_str_dict = CaseinsensitiveStringKeyDict()
     for oc in print_template_filenames_dict.keys():
       try:
         print_template_str_dict[oc] = open(print_template_filenames_dict[oc],'r').read()
@@ -459,7 +464,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
     read_attrs = read_attr_set.names()
 
     # Create async search handler instance
-    result_handler = ldaputil.async.List(ls.l)
+    result_handler = web2ldap.ldaputil.async.List(ls.l)
 
   elif search_output in ('ldif','ldif1'):
     # read all attributes
@@ -624,7 +629,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
           ('search_root',search_root),
           ('search_output',{0:'raw',1:'table'}[search_output=='table']),
           ('scope',str(scope)),
-          ('filterstr',ldaputil.base.negate_filter(filterstr)),
+          ('filterstr',web2ldap.ldaputil.base.negate_filter(filterstr)),
           ('search_resminindex',str(search_resminindex)),
           ('search_resnumber',str(search_resnumber)),
           ('search_lastmod',unicode(search_lastmod)),
@@ -665,7 +670,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
       </tr>
     </table>
       """ % (
-        ldaputil.base.SEARCH_SCOPE_STR[scope],
+        web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
         utf2display(search_root),
         utf2display(filterstr2),
     )
@@ -904,7 +909,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
               tableentry_attrs = template_attrs.intersection(entry.data.keys())
               if tableentry_attrs:
                 # Output entry with the help of pre-defined templates
-                tableentry = web2ldap.app.read.DisplayEntry(sid,form,ls,dn,sub_schema,ldaputil.schema.Entry(sub_schema,dn,entry),'searchSep',0)
+                tableentry = web2ldap.app.read.DisplayEntry(sid,form,ls,dn,sub_schema,web2ldap.ldaputil.schema.Entry(sub_schema,dn,entry),'searchSep',0)
                 tdlist = []
                 for oc in tdtemplate_oc:
                   tdlist.append(search_tdtemplate[oc] % tableentry)

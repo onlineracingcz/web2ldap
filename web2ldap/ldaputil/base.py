@@ -97,12 +97,7 @@ def ietf_oid_str(oid):
 def is_dn(s):
   """returns 1 if s is a LDAP DN"""
   assert type(s)==UnicodeType, TypeError("Type of argument 's' must be UnicodeType: %s" % repr(s))
-  try:
-    ldap0.dn.str2dn(s.encode('utf-8'))
-  except ldap0.DECODING_ERROR:
-    return False
-  else:
-    return True
+  return ldap0.dn.is_dn(s.encode('utf-8'))
 
 
 def explode_rdn_attr(rdn):

@@ -15,9 +15,9 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 # Pisces
-from pisces import asn1
+from web2ldap.pisces import asn1
 # mspki itself
-import mspki.x509
+from . import x509
 
 
 _ESCAPE_HTML_CHARS=list('\'&<>":={}()`')
@@ -118,7 +118,7 @@ class Extensions(asn1.Sequence):
     )
 
 
-class Certificate(mspki.x509.Certificate):
+class Certificate(x509.Certificate):
   """
   Class for X.509v3 certificates with extensions
 
@@ -154,7 +154,7 @@ class Certificate(mspki.x509.Certificate):
     return None
 
 
-class CRL(mspki.x509.CRL):
+class CRL(x509.CRL):
   """
   Class for X.509v2 CRLs with extensions
 
@@ -193,39 +193,39 @@ class CRL(mspki.x509.CRL):
 
 # now pull all oidreg's in other modules holding classes
 # for various X.509v3 extension
-import mspki.pkix, mspki.nsext, mspki.vendorext
+from . import pkix, nsext, vendorext
 
 oidreg = {
   # PKIX extensions
-  '2.5.29.9':mspki.pkix.SubjectDirectoryAttributes,
-  '2.5.29.10':mspki.pkix.BasicConstraints,
-  '2.5.29.14':mspki.pkix.SubjectKeyIdentifier,
-  '2.5.29.15':mspki.pkix.KeyUsage,
-  '2.5.29.16':mspki.pkix.PrivateKeyUsagePeriod,
-  '2.5.29.17':mspki.pkix.SubjectAltName,
-  '2.5.29.18':mspki.pkix.IssuerAltName,
-  '2.5.29.19':mspki.pkix.BasicConstraints,
-  '2.5.29.20':mspki.pkix.CRLNumber,
-  '2.5.29.28':mspki.pkix.IssuingDistributionPoint,
-  '2.5.29.31':mspki.pkix.CRLDistributionPoints,
-  '2.5.29.32':mspki.pkix.CertificatePolicies,
-  '2.5.29.35':mspki.pkix.AuthorityKeyIdentifier,
-  '2.5.29.36':mspki.pkix.PolicyConstraints,
-  '2.5.29.37':mspki.pkix.ExtendedKeyUsage,
-  '2.5.29.21':mspki.pkix.CRLReason,
-  '2.5.29.29':mspki.pkix.CertificateIssuer,
-  '1.3.6.1.5.5.7.1.1':mspki.pkix.AuthorityInfoAccessSyntax,
+  '2.5.29.9':pkix.SubjectDirectoryAttributes,
+  '2.5.29.10':pkix.BasicConstraints,
+  '2.5.29.14':pkix.SubjectKeyIdentifier,
+  '2.5.29.15':pkix.KeyUsage,
+  '2.5.29.16':pkix.PrivateKeyUsagePeriod,
+  '2.5.29.17':pkix.SubjectAltName,
+  '2.5.29.18':pkix.IssuerAltName,
+  '2.5.29.19':pkix.BasicConstraints,
+  '2.5.29.20':pkix.CRLNumber,
+  '2.5.29.28':pkix.IssuingDistributionPoint,
+  '2.5.29.31':pkix.CRLDistributionPoints,
+  '2.5.29.32':pkix.CertificatePolicies,
+  '2.5.29.35':pkix.AuthorityKeyIdentifier,
+  '2.5.29.36':pkix.PolicyConstraints,
+  '2.5.29.37':pkix.ExtendedKeyUsage,
+  '2.5.29.21':pkix.CRLReason,
+  '2.5.29.29':pkix.CertificateIssuer,
+  '1.3.6.1.5.5.7.1.1':pkix.AuthorityInfoAccessSyntax,
   # Netscape extensions
-  '2.16.840.1.113730.1.1':mspki.nsext.NsCertType,
-  '2.16.840.1.113730.1.2':mspki.nsext.NsBaseUrl,
-  '2.16.840.1.113730.1.3':mspki.nsext.NsRevocationUrl,
-  '2.16.840.1.113730.1.4':mspki.nsext.NsCaRevocationUrl,
-  '2.16.840.1.113730.1.7':mspki.nsext.NsRenewalUrl,
-  '2.16.840.1.113730.1.8':mspki.nsext.NsCaPolicyUrl,
-  '2.16.840.1.113730.1.12':mspki.nsext.NsSslServerName,
-  '2.16.840.1.113730.1.13':mspki.nsext.NsComment,
+  '2.16.840.1.113730.1.1':nsext.NsCertType,
+  '2.16.840.1.113730.1.2':nsext.NsBaseUrl,
+  '2.16.840.1.113730.1.3':nsext.NsRevocationUrl,
+  '2.16.840.1.113730.1.4':nsext.NsCaRevocationUrl,
+  '2.16.840.1.113730.1.7':nsext.NsRenewalUrl,
+  '2.16.840.1.113730.1.8':nsext.NsCaPolicyUrl,
+  '2.16.840.1.113730.1.12':nsext.NsSslServerName,
+  '2.16.840.1.113730.1.13':nsext.NsComment,
   # Entrust extensions
-  '1.2.840.113533.7.65.0':mspki.vendorext.EntrustVersInfo,
+  '1.2.840.113533.7.65.0':vendorext.EntrustVersInfo,
   # Verisign extensions
-  '2.16.840.1.113733.1.6.3':mspki.vendorext.VerisignCZAG,
+  '2.16.840.1.113733.1.6.3':vendorext.VerisignCZAG,
 }

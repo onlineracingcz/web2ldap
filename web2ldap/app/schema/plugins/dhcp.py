@@ -7,7 +7,7 @@ See http://tools.ietf.org/draft/draft-ietf-dhc-ldap-schema/
 
 from __future__ import absolute_import
 
-import re,web2ldap.app.schema.syntaxes,netaddr,web2ldap.app.cnf
+import re,web2ldap.app.schema.syntaxes,ipaddress,web2ldap.app.cnf
 
 from web2ldap.app.schema.syntaxes import \
   syntax_registry, \
@@ -65,7 +65,7 @@ class DHCPConfigStatement(MultilineText):
           ('search_string',dhcp_value),
         ]
         try:
-          reverse_dns = netaddr.IPAddress(dhcp_value).reverse_dns
+          reverse_dns = ipaddress.ip_address(dhcp_value).reverse_pointer
         except:
           pass
         else:
@@ -257,14 +257,6 @@ class DHCPNetMask(Integer):
   def _maxlen(self,form_value):
     return self.inputSize
 
-  def sanitizeInput(self,attrValue):
-    try:
-
-      attrValue = str(netaddr.IPNetwork('0.0.0.0/%s' % (attrValue)).prefixlen)
-    except Exception:
-      pass
-    return attrValue
-
 syntax_registry.registerAttrType(
   DHCPNetMask.oid,[
     '2.16.840.1.113719.1.203.4.6', # dhcpNetMask
@@ -279,19 +271,15 @@ class DHCPRange(IA5String):
   def _get_ipnetwork(self):
     cn = self._entry['cn'][0].strip()
     net_mask = self._entry['dhcpNetMask'][0].strip()
-    return netaddr.IPNetwork('/'.join((cn,net_mask)))
+    return ipaddress.ip_network('/'.join((cn,net_mask)),strict=False)
 
   def formValue(self):
     form_value = IA5String.formValue(self)
     if not form_value:
       try:
         # this will work only when using module netaddr
-        import netaddr
-        ipv4_network = self._get_ipnetwork()
-        form_value = u' '.join((
-          unicode(netaddr.IPAddress(ipv4_network.first)),
-          unicode(netaddr.IPAddress(ipv4_network.last))
-        ))
+        ipv4_network = self._get_ipnetwork().hosts()
+        form_value = u' '.join((unicode(ipv4_network[0]), unicode(ipv4_network[-1])))
       except Exception:
         pass
     return form_value
@@ -307,8 +295,8 @@ class DHCPRange(IA5String):
       return False
     else:
       try:
-        l_a = netaddr.IPAddress(l)
-        h_a = netaddr.IPAddress(h)
+        l_a = ipaddress.ip_address(l.decode(self._ls.l.charset))
+        h_a = ipaddress.ip_address(h.decode(self._ls.l.charset))
       except Exception:
         return False
       ip_addr_syntax_check = ( l_a<=h_a )

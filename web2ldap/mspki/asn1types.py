@@ -13,8 +13,8 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 import string
-from pisces import asn1
-import util
+from web2ldap.pisces import asn1
+from . import util
 
 url_prefix = ''
 url_target = '_top'

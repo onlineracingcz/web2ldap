@@ -14,8 +14,16 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import time,ldap0,utctime,web2ldap.app.cnf,pyweblib.sslenv,ldaputil.base,web2ldap.app.core,web2ldap.app.gui,msgzip
+import time
 
+import pyweblib.sslenv
+
+import ldap0
+
+import web2ldap.utctime
+import web2ldap.ldaputil.base
+import web2ldap.msgzip
+import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui
 from web2ldap.app.session import session
 
 ##############################################################################
@@ -161,7 +169,7 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
     sasl_mech = u'SASL/%s' % (ls.saslAuth.mech)
     sasl_auth_info = '<table>%s</table>' % '\n'.join([
         '<tr><td>%s</td><td>%s</td></tr>' % (
-          form.utf2display(unicode(ldaputil.base.LDAP_OPT_NAMES_DICT.get(k,str(k)),'ascii')),
+          form.utf2display(unicode(web2ldap.ldaputil.base.LDAP_OPT_NAMES_DICT.get(k,str(k)),'ascii')),
           form.utf2display(unicode(repr(v),ls.charset))
         )
         for k,v in ls.saslAuth.cb_value_dict.items()
@@ -237,7 +245,7 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
       protocol_version,
       ls.charset.upper(),
       {0:'not secured',1:'secured'}[ls.secureConn],
-      utctime.strftimeiso8601(time.gmtime(ls.connStartTime)),
+      web2ldap.utctime.strftimeiso8601(time.gmtime(ls.connStartTime)),
       time.time()-ls.connStartTime,
       ls.l._reconnects_done,
       form.utf2display(vendor_name),
@@ -302,7 +310,7 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
     for k,v in cross_check_vars
   ])
 
-  if isinstance(outf,msgzip.GzipFile):
+  if isinstance(outf,web2ldap.msgzip.GzipFile):
     compresslevel = outf.compresslevel
   else:
     compresslevel = None

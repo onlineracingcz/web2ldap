@@ -14,9 +14,12 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import ldap0,ldap0.ldapurl,pyweblib.forms,ldaputil.base, \
-       web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.form,web2ldap.app.schema,web2ldap.app.schema.syntaxes
+import ldap0,ldap0.ldapurl
 
+import pyweblib.forms
+
+import web2ldap.ldaputil.base
+import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.form,web2ldap.app.schema,web2ldap.app.schema.syntaxes
 from web2ldap.app.schema.viewer import displayNameOrOIDList
 
 
@@ -90,7 +93,7 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
     # Output input form
     # ---------------------------------------
 
-    old_rdn,old_superior = ldaputil.base.SplitRDN(dn)
+    old_rdn,old_superior = web2ldap.ldaputil.base.SplitRDN(dn)
 
     form.field['rename_newrdn'].setDefault(old_rdn)
 
@@ -137,7 +140,7 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
         # This should normally not happen, only if entry got deleted in between
         raise web2ldap.app.core.ErrorExit(u'Empty search result when reading entry to be renamed.')
 
-      entry = ldaputil.schema.Entry(sub_schema,dn,search_result[0][1])
+      entry = web2ldap.ldaputil.schema.Entry(sub_schema,dn,search_result[0][1])
 
       # Determine possible name forms for new RDN
       rdn_options = entry.get_rdn_templates()

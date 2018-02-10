@@ -14,20 +14,22 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import ldap0,ldapsession,web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui, \
-       web2ldap.app.schema.viewer
+import ldap0
+
+import web2ldap.ldapsession
+import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.schema.viewer
 
 from ldap0.controls.simple import ValueLessRequestControl,BooleanControl
 
 AVAILABLE_BOOLEAN_CONTROLS = {
-  ldapsession.CONTROL_SUBENTRIES:           (('search',),BooleanControl,True),
-  ldapsession.CONTROL_LDUP_SUBENTRIES:      (('search',),ValueLessRequestControl,None),
-  ldapsession.CONTROL_MANAGEDSAIT:          (('**all**',),ValueLessRequestControl,None),
-  ldapsession.CONTROL_RELAXRULES:           (('**write**',),ValueLessRequestControl,None),
-  ldapsession.CONTROL_DONOTREPLICATE:       (('**write**',),ValueLessRequestControl,None),
-  ldapsession.CONTROL_DONTUSECOPY:          (('**read**',),ValueLessRequestControl,None),
-  ldapsession.CONTROL_DONTUSECOPY_OPENLDAP: (('**read**',),ValueLessRequestControl,None),
-  ldapsession.CONTROL_SERVERADMINISTRATION: (('**write**',),ValueLessRequestControl,None),          # IBM DS
+  web2ldap.ldapsession.CONTROL_SUBENTRIES:           (('search',),BooleanControl,True),
+  web2ldap.ldapsession.CONTROL_LDUP_SUBENTRIES:      (('search',),ValueLessRequestControl,None),
+  web2ldap.ldapsession.CONTROL_MANAGEDSAIT:          (('**all**',),ValueLessRequestControl,None),
+  web2ldap.ldapsession.CONTROL_RELAXRULES:           (('**write**',),ValueLessRequestControl,None),
+  web2ldap.ldapsession.CONTROL_DONOTREPLICATE:       (('**write**',),ValueLessRequestControl,None),
+  web2ldap.ldapsession.CONTROL_DONTUSECOPY:          (('**read**',),ValueLessRequestControl,None),
+  web2ldap.ldapsession.CONTROL_DONTUSECOPY_OPENLDAP: (('**read**',),ValueLessRequestControl,None),
+  web2ldap.ldapsession.CONTROL_SERVERADMINISTRATION: (('**write**',),ValueLessRequestControl,None),          # IBM DS
   '2.16.840.1.113730.3.4.17':               (('**read**',),ValueLessRequestControl,None),           # "real attributes only" control
   '2.16.840.1.113730.3.4.19':               (('**read**',),ValueLessRequestControl,None),           # "virtual attributes only" control
   '1.3.6.1.4.1.4203.666.11.9.5.1':          (('**all**',),ValueLessRequestControl,None),            # OpenLDAP's privateDB control for slapo-pcache

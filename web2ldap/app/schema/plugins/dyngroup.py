@@ -4,7 +4,9 @@ web2ldap plugin classes for attributes defined for so-called dynamic groups
 
 from __future__ import absolute_import
 
-import ldap0,ldap0.ldapurl,ldaputil.base
+import ldap0,ldap0.ldapurl
+
+from web2ldap.ldaputil.base import is_dn
 
 from web2ldap.app.schema.syntaxes import LDAPUrl,syntax_registry
 
@@ -24,7 +26,7 @@ class MemberUrl(LDAPUrl):
       return 0
     else:
       search_base = self.lu_obj.dn.decode(self._ls.charset)
-      if not ldaputil.base.is_dn(search_base) or self.lu_obj.hostport:
+      if not is_dn(search_base) or self.lu_obj.hostport:
         return 0
       else:
         try:

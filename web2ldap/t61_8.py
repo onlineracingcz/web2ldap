@@ -15,6 +15,9 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 import codecs
+import copy
+
+from . import t61_7
 
 ### Codec APIs
 
@@ -61,9 +64,6 @@ codecs.register(codec_search_function)
 
 
 ### Decoding Map
-
-
-import copy,t61_7
 
 decoding_map = copy.copy(t61_7.decoding_map)
 
