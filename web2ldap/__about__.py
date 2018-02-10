@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Meta information about module package ekca_client
+Meta information about web2ldap
+
+web2ldap - a web-based LDAP Client,
+see https://www.web2ldap.de for details
+
+(c) 1998-2018 by Michael Stroeder <michael@stroeder.com>
+
+This software is distributed under the terms of the
+Apache License Version 2.0 (Apache-2.0)
+https://www.apache.org/licenses/LICENSE-2.0
 """
 
 import collections
@@ -14,7 +23,7 @@ __version_info__ = VersionInfo(
 __version__ = '.'.join(str(val) for val in __version_info__)
 __author__ = u'Michael Stroeder'
 __mail__ = u'michael@stroeder.com'
-__license__ = 'GPL-2.0'
+__license__ = 'Apache-2.0'
 
 __all__ = [
     '__version_info__',

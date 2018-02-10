@@ -35,51 +35,67 @@
   </li>
 </ul>
 
-<h2 id="License">Copyright and License</h2>
+<h2 id="license">Copyright and License</h2>
 <p>
-  &copy; 1998-2017 by <a href="https://www.stroeder.com">
-  Michael Str&ouml;der &lt;michael@stroeder.com&gt;</a>
+  &copy; 1998-2018 by <a href="https://stroeder.com/impressum.html">Michael Str&ouml;der</a>
 </p>
 <p>
-  This software including all Python modules except the ones
-  mentioned below is <a href="https://www.gnu.org/philosophy/">
-  Free Software</a> and given away under
+  web2ldap 1.3.0 and newer is distributed under the following license:
 </p>
-<blockquote>
-  <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">
-  GPL (GNU GENERAL PUBLIC LICENSE) Version 2</a>
-</blockquote>
+<pre>
+  Licensed under the Apache License, Version 2.0 (the "License"); you may
+  not use files and content provided on this web site except in compliance
+  with the License. You may obtain a copy of the License at
+
+      <a href="https://www.apache.org/licenses/LICENSE-2.0">https://www.apache.org/licenses/LICENSE-2.0</a>
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+</pre>
+<p>Further notes:</p>
+<ul>
+  <li>
+    The author refuses to give any warranty of any kind.
+  </li>
+  <li>
+    web2ldap 1.2.x and before is still under copy-left license
+    <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">GPL-2.0</a>.
+  </li>
+  <li>
+    The source files are using the machine-readable SPDX license identifier
+    <a href="https://spdx.org/licenses/Apache-2.0.html">Apache-2.0</a>
+  </li>
+</ul>
+
+<h2 id="other">Other licenses</h2>
 <p>
-  Note that additions added in your local directory <code>etc/web2ldap/</code>
-  are considered local configuration and do not have to be disclosed to public.
-</p>
-<p>
-  The author refuses to give any warranty of any kind.
-</p>
-<p>
-  Software or files with different license included in distribution:
+  Software or files with different license included in source distribution:
 </p>
 <ul>
   <li>
     The ASN.1 parser module included in this distribution
-    was derived from module pisces.asn1 written by Jeremy Hylton
+    was derived from module <var>pisces.asn1</var> written by Jeremy Hylton
     as part of his work on <a href="http://www.cnri.reston.va.us/software/pisces/">Pisces</a>
     (see license <a href="http://hdl.handle.net/1895.22/1007">1895.22/1007</a>).
     <p>
       Note:<br>
       This module is only necessary for displaying X.509 certificates
       and CRLs. If you feel uncomfortable with the Pisces license
-      just remove web2ldap/pisces/asn1.py when repackaging web2ldap. The presence
-      of the module is automatically detected.
+      just remove <var>web2ldap/pisces/asn1.py</var> when repackaging web2ldap.
+      The presence of the module is automatically detected.
     </p>
   </li>
   <li>
     The file <a href="https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.cfg">
     etc/dumpasn1.cfg</a> is re-distributed in web2ldap with permission of the author
-    but is not subject of the GPL. You can also remove it from web2ldap and obtain it
-    separately when repackaging web2ldap and adjust the configuration parameter
-    <a href="web2ldapcnf_misc.html#dumpasn1cfg">dumpasn1cfg</a> to reflect another
-    position in your distribution's file system.
+    but is not subject of the above <a href="#license">license</a>.
+    You could remove it from web2ldap distribution and obtain it separately
+    when repackaging web2ldap and adjust the configuration parameter
+    <a href="web2ldapcnf_misc.html#dumpasn1cfg">dumpasn1cfg</a> to reflect
+    another position in your distribution's file system.
   </li>
 </ul>
 

@@ -2,12 +2,14 @@
 vendorext.py - classes for vendor specific X.509v3 extensions
 (c) by Michael Stroeder <michael@stroeder.com>
 
-This module is distributed under the terms of the
-GPL (GNU GENERAL PUBLIC LICENSE) Version 2
-(see http://www.gnu.org/copyleft/gpl.html)
+web2ldap - a web-based LDAP Client,
+see https://www.web2ldap.de for details
 
-Unlike other extension classes where the ASN.1 type names are used
-as class names we use the OpenSSL names as class names.
+(c) 1998-2018 by Michael Stroeder <michael@stroeder.com>
+
+This software is distributed under the terms of the
+Apache License Version 2.0 (Apache-2.0)
+https://www.apache.org/licenses/LICENSE-2.0
 """
 
 from __future__ import absolute_import
