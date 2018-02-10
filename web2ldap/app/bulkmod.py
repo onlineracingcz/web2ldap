@@ -18,7 +18,7 @@ import time,ldap0,ldapsession,ldaputil.base, \
        web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.ldapparams
 
 # OID description dictionary from configuration directory
-from ldapoidreg import oid as oid_desc_reg
+from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 
 from web2ldap.app.schema.syntaxes import syntax_registry,LDAPSyntaxValueError
 

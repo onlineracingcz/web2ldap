@@ -20,7 +20,7 @@ import urllib,uuid,codecs,re,Cookie,ldap0.ldif,ldap0.schema,msgzip,ldaputil.base
 import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.passwd,web2ldap.app.searchform,web2ldap.app.ldapparams,web2ldap.app.session
 
 # OID description dictionary from configuration directory
-from ldapoidreg import oid as oid_desc_reg
+from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 
 from ldaputil.passwd import RandomString
 

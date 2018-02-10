@@ -19,3 +19,4 @@ from . import base
 from . import passwd
 from . import controls
 from . import extldapurl
+from . import oidreg

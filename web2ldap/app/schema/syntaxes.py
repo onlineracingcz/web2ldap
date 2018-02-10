@@ -41,7 +41,7 @@ except ImportError:
   from StringIO import StringIO
 
 try:
-  from ldapoidreg import oid as oid_desc_reg
+  from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 except ImportError:
   oid_desc_reg = {}
 

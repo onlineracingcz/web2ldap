@@ -18,7 +18,7 @@ import time,pyweblib.forms,ldap0,ldaputil.async,ldapsession,ldaputil.base, \
        web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.ldapparams
 
 # OID description dictionary from configuration directory
-from ldapoidreg import oid as oid_desc_reg
+from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 
 class DeleteLeafs(ldaputil.async.AsyncSearchHandler):
   """

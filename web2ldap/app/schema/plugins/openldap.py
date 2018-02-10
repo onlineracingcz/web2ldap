@@ -17,7 +17,7 @@ import re,mspki,ldap0.ldapurl,ldap0.controls,web2ldap.app.gui,web2ldap.app.cnf
 from pyasn1.codec.ber import decoder as ber_decoder
 
 try:
-  from ldapoidreg import oid as oid_desc_reg
+  from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 except ImportError:
   oid_desc_reg = {}
 
