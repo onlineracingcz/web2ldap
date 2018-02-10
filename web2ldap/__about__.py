@@ -3,7 +3,22 @@
 Meta information about module package ekca_client
 """
 
-__version__ = '1.3.0'
+import collections
+
+VersionInfo = collections.namedtuple('version_info', ('major', 'minor', 'micro'))
+__version_info__ = VersionInfo(
+    major=1,
+    minor=3,
+    micro=0,
+)
+__version__ = '.'.join(str(val) for val in __version_info__)
 __author__ = u'Michael Stroeder'
+__mail__ = u'michael@stroeder.com'
 __license__ = 'GPL-2.0'
-__mail__ = 'michael@stroeder.com'
+
+__all__ = [
+    '__version_info__',
+    '__version__',
+    '__author__',
+    '__license__',
+]
