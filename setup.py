@@ -62,6 +62,8 @@ setup(
         'M2Crypto',
         'pyExcelerator',
         'pydns',
+        'paramiko',
+        'Pillow',
     ],
     zip_safe=False,
     entry_points={
