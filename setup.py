@@ -55,7 +55,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'setuptools',
-        'ldap0',
+        'ldap0>=0.0.55',
         'pyweblib',
         'pyasn1_modules',
         'ipaddress',
