@@ -42,6 +42,7 @@ try:
 except:
   SubschemaError = None
 
+LDAP_CACHE_TTL = 5.0
 
 START_TLS_NO = 0
 START_TLS_TRY = 1
@@ -138,8 +139,6 @@ PYLDAP_RETRY_DELAY = 1.5
 
 class MyLDAPObject(ReconnectLDAPObject):
 
-  cache_ttl = 6.0
-
   def __init__(
     self,uri,
     trace_level=0,
@@ -171,6 +170,7 @@ class MyLDAPObject(ReconnectLDAPObject):
       trace_level,trace_file,trace_stack_limit,
       retry_max=retry_max,
       retry_delay=retry_delay,
+      cache_ttl=LDAP_CACHE_TTL,
     )
 
   def _get_server_ctrls(self,method):
