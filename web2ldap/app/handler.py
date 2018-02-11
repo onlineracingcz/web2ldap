@@ -19,7 +19,7 @@ import ldap0
 
 import pyweblib.forms,pyweblib.httphelper,pyweblib.sslenv,pyweblib.helper,pyweblib.session
 
-import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.ldapsession,web2ldap.msHTTPHandler
+import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.ldapsession,web2ldap.httphandler
 
 from ipaddress import ip_network
 
@@ -859,30 +859,3 @@ class AppHandler:
     del self.sid,self.inf,self.outf,self.errf,self.command
 
     return # handle_request()
-
-
-class Web2ldapHTTPHandler(web2ldap.msHTTPHandler.HTTPHandlerClass):
-  script_name = web2ldap.app.cnf.standalone.base_url or '/web2ldap'
-  base_url = web2ldap.app.cnf.standalone.base_url
-  server_signature = web2ldap.app.cnf.standalone.server_signature
-  server_env = {
-    'SERVER_SOFTWARE':'web2ldap %s' % web2ldap.__about__.__version__,
-    'SERVER_ADMIN':web2ldap.app.cnf.standalone.server_admin,
-    'DOCUMENT_ROOT':web2ldap.app.cnf.standalone.document_root,
-    'SCRIPT_NAME':web2ldap.app.cnf.standalone.base_url or '/web2ldap',
-  }
-  dir_listing_allowed = web2ldap.app.cnf.standalone.dir_listing_allowed
-  reverse_lookups = web2ldap.app.cnf.standalone.reverse_lookups
-  access_allowed = [
-    ip_network(n)
-    for n in web2ldap.app.cnf.standalone.access_allowed
-  ]
-  extensions_map = web2ldap.msHTTPHandler.get_mime_types(web2ldap.app.cnf.standalone.mime_types)
-
-  # Start web2ldap itself.
-  def run_app(self,http_env):
-    web2ldap.msHTTPHandler.HTTPHandlerClass.run_app(self,http_env)
-    # Call web2ldap application handler
-    app = AppHandler(self.rfile,self.wfile,self.error_log,http_env)
-    app.run()
-    return # end of web2ldapHTTPHandlerClass.run_app()
