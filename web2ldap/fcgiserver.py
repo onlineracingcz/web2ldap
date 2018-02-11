@@ -41,10 +41,6 @@ def start():
     except Exception,e:
       sys.stderr.write('Warning: Creating PID file %s failed: %s\n' % (repr(web2ldapcnf.fastcgi.pid_file),str(e)))
 
-  # Extend sys.path with modules dirs from configuration
-  for i in web2ldapcnf.misc.pylibdirs:
-    sys.path.insert(0,i)
-
   # These imports have to be done after extending sys.path
   import fcgi
   import web2ldapcnf.plugins

@@ -7,9 +7,6 @@ web2ldapcnf/misc.py - Misc. configuration options for web2ldap
 # Leave this alone
 import os,web2ldapcnf
 
-# A list with directories containing additional Python modules
-pylibdirs = [ os.path.join(web2ldapcnf.web2ldap_dir,'web2ldap') ]
-
 ########################################################################
 # HTTP-Options
 ########################################################################
