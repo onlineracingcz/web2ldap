@@ -776,18 +776,18 @@ class IPHostAddress(IA5String):
   oid = 'IPHostAddress-oid'
   desc = 'string representation of IPv4 or IPv6 address'
   # Class in module ipaddr which parses address/network values
-  addr_class = ipaddress.ip_address
+  addr_class = None
   simpleSanitizers = (
     str.strip,
   )
 
   def _validate(self,attrValue):
     try:
-      _ = self.addr_class(attrValue)
+      addr = ipaddress.ip_address(attrValue.decode('ascii'))
     except Exception:
       return False
     else:
-      return True
+      return self.addr_class == None or isinstance(addr,self.addr_class)
 
 
 class IPv4HostAddress(IPHostAddress):
@@ -805,15 +805,14 @@ class IPv6HostAddress(IPHostAddress):
 class IPNetworkAddress(IPHostAddress):
   oid = 'IPNetworkAddress-oid'
   desc = 'string representation of IPv4 or IPv6 network address/mask'
-  addr_class = ipaddress.ip_network
 
   def _validate(self,attrValue):
     try:
-      _ = self.addr_class(attrValue, strict=False)
+      addr = ipaddress.ip_network(attrValue.decode('ascii'), strict=False)
     except Exception:
       return False
     else:
-      return True
+      return self.addr_class == None or isinstance(addr,self.addr_class)
 
 
 class IPv4NetworkAddress(IPNetworkAddress):
