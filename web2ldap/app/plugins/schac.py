@@ -9,7 +9,7 @@ from __future__ import absolute_import
 
 import re,datetime
 from web2ldap.app.schema.syntaxes import DirectoryString,IA5String,NumericString,CountryString,DNSDomain,NumstringDate,syntax_registry
-from web2ldap.app.schema.plugins.msperson import Gender
+from web2ldap.app.plugins.msperson import Gender
 
 
 syntax_registry.registerAttrType(

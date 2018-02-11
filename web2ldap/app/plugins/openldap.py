@@ -18,7 +18,7 @@ from web2ldap.app.schema.syntaxes import \
   LDAPUrl,BindDN,MultilineText,AuthzDN,UUID,Integer,NotBefore, \
   DynamicDNSelectList,LDAPv3ResultCode,syntax_registry
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
-from web2ldap.app.schema.plugins.quirks import NamingContexts
+from web2ldap.app.plugins.quirks import NamingContexts
 
 #---------------------------------------------------------------------------
 # slapo-syncprov

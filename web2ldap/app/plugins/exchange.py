@@ -6,7 +6,7 @@ web2ldap plugin classes for MS Exchange 5.5
 from __future__ import absolute_import
 
 from web2ldap.app.schema.syntaxes import syntax_registry,RFC822Address,Binary
-from web2ldap.app.schema.plugins.activedirectory import MsAdGUID
+from web2ldap.app.plugins.activedirectory import MsAdGUID
 
 syntax_registry.registerAttrType(
   RFC822Address.oid,[

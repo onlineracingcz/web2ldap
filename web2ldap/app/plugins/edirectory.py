@@ -14,7 +14,7 @@ from web2ldap.app.schema.syntaxes import DirectoryString,Integer,OctetString, \
   PostalAddress,PrintableString, \
   MultilineText,OID,SelectList,DynamicDNSelectList,NullTerminatedDirectoryString, \
   Binary,BitArrayInteger,XmlValue,PreformattedMultilineText,syntax_registry
-from web2ldap.app.schema.plugins.x509 import Certificate,CertificateList
+from web2ldap.app.plugins.x509 import Certificate,CertificateList
 
 from web2ldap.app.gui import DisplayDN
 

@@ -24,7 +24,7 @@ from ldap0.controls.readentry import PreReadControl
 from ldap0.controls.deref import DereferenceControl
 
 # web2ldap's internal application modules
-import web2ldap.app.searchform,web2ldap.app.schema.plugins.inetorgperson,web2ldap.app.schema.plugins.sudoers,web2ldap.app.schema.plugins.ppolicy
+import web2ldap.app.searchform,web2ldap.app.plugins.inetorgperson,web2ldap.app.plugins.sudoers,web2ldap.app.plugins.ppolicy
 
 from web2ldap.app.schema.syntaxes import \
   DirectoryString,DistinguishedName,SelectList, \
@@ -32,16 +32,16 @@ from web2ldap.app.schema.syntaxes import \
   DynamicDNSelectList,RFC822Address,Integer,ComposedAttribute, \
   NotBefore,NotAfter,syntax_registry
 
-from web2ldap.app.schema.plugins.nis import UidNumber,GidNumber,MemberUID,Shell
-from web2ldap.app.schema.plugins.inetorgperson import DisplayNameInetOrgPerson
-from web2ldap.app.schema.plugins.groups import GroupEntryDN
-from web2ldap.app.schema.plugins.oath import OathHOTPToken
+from web2ldap.app.plugins.nis import UidNumber,GidNumber,MemberUID,Shell
+from web2ldap.app.plugins.inetorgperson import DisplayNameInetOrgPerson
+from web2ldap.app.plugins.groups import GroupEntryDN
+from web2ldap.app.plugins.oath import OathHOTPToken
 try:
-  from web2ldap.app.schema.plugins.opensshlpk import ParamikoSshPublicKey as SshPublicKey
+  from web2ldap.app.plugins.opensshlpk import ParamikoSshPublicKey as SshPublicKey
 except ImportError:
   # paramiko is missing
-  from web2ldap.app.schema.plugins.opensshlpk import SshPublicKey
-from web2ldap.app.schema.plugins.posixautogen import HomeDirectory
+  from web2ldap.app.plugins.opensshlpk import SshPublicKey
+from web2ldap.app.plugins.posixautogen import HomeDirectory
 
 # OID arc for AE-DIR, see stroeder.com-oid-macros.schema
 AE_OID_PREFIX = '1.3.6.1.4.1.5427.1.389.100'
@@ -1884,7 +1884,7 @@ syntax_registry.registerAttrType(
 
 
 syntax_registry.registerAttrType(
-  web2ldap.app.schema.plugins.inetorgperson.CNInetOrgPerson.oid,[
+  web2ldap.app.plugins.inetorgperson.CNInetOrgPerson.oid,[
     '2.5.4.3', # commonName
   ],
   structural_oc_oids=[
@@ -2029,7 +2029,7 @@ syntax_registry.registerAttrType(
 )
 
 
-class AESudoUser(web2ldap.app.schema.plugins.sudoers.SudoUserGroup):
+class AESudoUser(web2ldap.app.plugins.sudoers.SudoUserGroup):
   oid = 'AESudoUser-oid'
   desc = 'AE-DIR: sudoUser'
   ldap_url = (
@@ -2172,7 +2172,7 @@ syntax_registry.registerAttrType(
 )
 
 
-class AEPwdPolicy(web2ldap.app.schema.plugins.ppolicy.PwdPolicySubentry):
+class AEPwdPolicy(web2ldap.app.plugins.ppolicy.PwdPolicySubentry):
   oid = 'AEPwdPolicy-oid'
   desc = 'AE-DIR: pwdPolicySubentry'
   ldap_url = 'ldap:///_??sub?(&(objectClass=aePolicy)(objectClass=pwdPolicy)(aeStatus=0))'

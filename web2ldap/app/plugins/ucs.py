@@ -11,7 +11,7 @@ from web2ldap.app.schema.syntaxes import \
   Binary,RFC822Address,DynamicDNSelectList,MultilineText, \
   syntax_registry
 
-from web2ldap.app.schema.plugins.msperson import DateOfBirth
+from web2ldap.app.plugins.msperson import DateOfBirth
 
 
 class UniventionPolicyReference(DynamicDNSelectList):

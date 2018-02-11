@@ -11,9 +11,9 @@ import ldap0,ldap0.cidict
 
 from web2ldap.ldaputil.base import explode_dn,rdn_dict
 from web2ldap.app.schema.syntaxes import DirectoryString,OctetString,SelectList,DynamicDNSelectList,MultilineText,BindDN,syntax_registry
-from web2ldap.app.schema.plugins.x509 import Certificate
-from web2ldap.app.schema.plugins.groups import MemberOf
-from web2ldap.app.schema.plugins.quirks import NamingContexts
+from web2ldap.app.plugins.x509 import Certificate
+from web2ldap.app.plugins.groups import MemberOf
+from web2ldap.app.plugins.quirks import NamingContexts
 from web2ldap.mspki.util import HexString
 from web2ldap.app.schema import no_humanreadable_attr
 

@@ -2054,7 +2054,7 @@ class ComposedAttribute(LDAPSyntax):
 
   One can define an ordered sequence of string templates in class
   attribute ComposedDirectoryString.compose_templates.
-  See examples in module web2ldap.app.schema.plugins.inetorgperson.
+  See examples in module web2ldap.app.plugins.inetorgperson.
 
   Obviously this only works for single value attributes.
   """

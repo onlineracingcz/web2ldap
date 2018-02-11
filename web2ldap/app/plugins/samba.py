@@ -31,7 +31,7 @@ syntax_registry.registerAttrType(
 )
 
 
-from web2ldap.app.schema.plugins.activedirectory import LogonHours
+from web2ldap.app.plugins.activedirectory import LogonHours
 
 syntax_registry.registerAttrType(
   LogonHours.oid,[

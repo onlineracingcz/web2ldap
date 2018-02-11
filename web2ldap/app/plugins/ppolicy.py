@@ -10,7 +10,7 @@ import time,datetime
 import web2ldap.app.searchform
 from web2ldap.utctime import strptime
 from web2ldap.app.schema.syntaxes import SelectList,DynamicDNSelectList,Timespan,GeneralizedTime,syntax_registry
-from web2ldap.app.schema.plugins.quirks import UserPassword
+from web2ldap.app.plugins.quirks import UserPassword
 from ldap0 import LDAPError
 
 class PwdCheckQuality(SelectList):

@@ -10,7 +10,7 @@ from __future__ import absolute_import
 import ldap0
 
 from web2ldap.msbase import Str1stValueDict
-from web2ldap.app.schema.plugins.nis import syntax_registry,UidNumber,GidNumber,IA5String
+from web2ldap.app.plugins.nis import syntax_registry,UidNumber,GidNumber,IA5String
 
 
 class HomeDirectory(IA5String):

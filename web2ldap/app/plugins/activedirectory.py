@@ -18,7 +18,7 @@ from web2ldap.app.schema.syntaxes import \
   Integer,BitArrayInteger,OctetString,SelectList,IA5String,Uri,OID, \
   DynamicValueSelectList,DynamicDNSelectList,DNSDomain,XmlValue,syntax_registry
 
-from web2ldap.app.schema.plugins.groups import GroupEntryDN
+from web2ldap.app.plugins.groups import GroupEntryDN
 
 
 class ObjectCategory(DynamicDNSelectList,DistinguishedName):

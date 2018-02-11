@@ -5,7 +5,7 @@ web2ldap plugin classes for FreeIPA
 from __future__ import absolute_import
 
 from web2ldap.app.schema.syntaxes import UUID,DNSDomain,syntax_registry
-from web2ldap.app.schema.plugins.samba import SambaSID
+from web2ldap.app.plugins.samba import SambaSID
 
 
 syntax_registry.registerAttrType(
@@ -22,9 +22,9 @@ syntax_registry.registerAttrType(
 )
 
 try:
-  from web2ldap.app.schema.plugins.opensshlpk import ParamikoSshPublicKey
+  from web2ldap.app.plugins.opensshlpk import ParamikoSshPublicKey
 except ImportError:
-  from web2ldap.app.schema.plugins.opensshlpk import SshPublicKey
+  from web2ldap.app.plugins.opensshlpk import SshPublicKey
   syntax_registry.registerAttrType(
     SshPublicKey.oid,[
       '2.16.840.1.113730.3.8.11.31', # ipaSshPubKey
