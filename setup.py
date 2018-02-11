@@ -57,7 +57,6 @@ setup(
         'setuptools',
         'ldap0>=0.0.55',
         'pyweblib',
-        'pyasn1_modules',
         'ipaddress',
         'M2Crypto',
         'pyExcelerator',
