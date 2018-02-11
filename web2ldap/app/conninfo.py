@@ -281,7 +281,7 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
       </tr>
       <tr>
         <td>Cache hit ratio:</td>
-        <td>%d %%</td>
+        <td>%0.1f %%</td>
       </tr>
     </table>
     """ % (
