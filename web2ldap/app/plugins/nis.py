@@ -181,12 +181,6 @@ syntax_registry.registerAttrType(
 syntax_registry.registerAttrType(
   IPHostAddress.oid,[
     '1.3.6.1.1.1.1.19', # ipHostNumber
-  ]
-)
-
-
-syntax_registry.registerAttrType(
-  IPNetworkAddress.oid,[
     '1.3.6.1.1.1.1.20', # ipNetworkNumber
   ]
 )
