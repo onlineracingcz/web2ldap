@@ -296,7 +296,7 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
       len(ls.l._cache),
       len(ls.schema_dn_cache),
       len(ls.schema_cache),
-      round(ls.l.get_cache_hit_ratio() or 0.0),
+      ls.l.cache_hit_ratio(),
     )
   )
 
