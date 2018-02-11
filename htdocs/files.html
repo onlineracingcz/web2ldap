@@ -10,44 +10,6 @@
 
 <dl>
 
-  <dt>sbin/</dt>
-
-  <dd>
-    <dl>
-      <dt>web2ldap.py</dt>
-      <dd>
-        web2ldap stand-alone start script
-      </dd>
-      <dt>checkinst.py</dt>
-      <dd>
-        Checks Python version and lists all required or optional modules
-        and checks whether they are installed.
-      </dd>
-      <dt>web2ldap_postinstall.sh</dt>
-      <dd>
-        Shell script for setting/correcting ownership/permissions.
-        You might have to modify the vars in the script to match your local
-        installation.
-      </dd>
-    </dl>
-  </dd>
-
-  <dt>fcgi/</dt>
-
-  <dd>
-    <dl>
-      <dt>web2ldap.py</dt>
-      <dd>
-        web2ldap FastCGI start script
-      </dd>
-      <dt>spawn-web2ldap.fcgi</dt>
-      <dd>
-        Wrapper script around <em>spawn-fcgi</em> to start web2ldap as
-        external FastCGI responder.
-      </dd>
-    </dl>
-  </dd>
-
   <dt>htdocs/</dt>
 
   <dd>
@@ -74,22 +36,6 @@
       <dt>web2ldap/</dt>
       <dd>
         <dl>
-          <dt>web2ldapcnf/</dt>
-          <dd>
-            <ul>
-              <li><a href="web2ldapcnf_misc.html">misc.py</a>
-              <li><a href="web2ldapcnf_hosts.html">hosts.py</a>
-              <li><a href="web2ldapcnf_standalone.html">standalone.py</a>
-              <li><a href="web2ldapcnf_fastcgi.html">fastcgi.py</a>
-              <li><a href="web2ldapcnf_monitor.html">monitor.py</a>
-            </ul>
-            <dl>
-              <dt>plugins/</dt>
-              <dd>
-                Plugin modules implemented in Python
-              </dd>
-            </dl>
-          </dd>
           <dt>templates/</dt>
           <dd>
             various HTML and LDIF templates for displaying entries and input forms
@@ -138,11 +84,29 @@
     </dl>
   </dd>
 
-  <dt>pylib/</dt>
+  <dt>web2ldapcnf/</dt>
   <dd>
-    various modules / module packages
+    the configuration module package
+    <ul>
+      <li><a href="web2ldapcnf_misc.html">misc.py</a>
+      <li><a href="web2ldapcnf_hosts.html">hosts.py</a>
+      <li><a href="web2ldapcnf_standalone.html">standalone.py</a>
+      <li><a href="web2ldapcnf_fastcgi.html">fastcgi.py</a>
+      <li><a href="web2ldapcnf_monitor.html">monitor.py</a>
+    </ul>
     <dl>
-      <dt>w2lapp/schema/plugins/</dt>
+      <dt>plugins/</dt>
+      <dd>
+        Plugin modules implemented in Python
+      </dd>
+    </dl>
+  </dd>
+
+  <dt>web2ldap/</dt>
+  <dd>
+    the application's module package
+    <dl>
+      <dt>app/plugins/</dt>
       <dd>
         The pre-installed <a href="features.html#plugin">plugin modules</a>
       </dd>
