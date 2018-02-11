@@ -31,7 +31,7 @@ def start():
     sys.path.append('/etc/web2ldap')
 
   # Import configuration modules
-  import web2ldapcnf.misc,web2ldapcnf.fastcgi
+  import web2ldapcnf.misc,web2ldapcnf.fastcgi,web2ldapcnf.plugins
   from web2ldap.app.handler import AppHandler
   from web2ldap.app.session import cleanUpThread
 
@@ -43,26 +43,12 @@ def start():
 
   # These imports have to be done after extending sys.path
   import fcgi
-  import web2ldapcnf.plugins
-
-  # Redirect stderr/web error log and stdout if log files
-  # were specified in configuration
-  if web2ldapcnf.fastcgi.error_log:
-    error_log = open(web2ldapcnf.fastcgi.error_log,'a',1)
-    sys.stderr.close()
-    sys.stderr = error_log
-  else:
-    error_log = None
-  if web2ldapcnf.fastcgi.debug_log:
-    sys.stdout.close()
-    sys.stdout = open(web2ldapcnf.fastcgi.debug_log,'a',1)
-
 
   def handle_request(req):
     """Function which handles a single request"""
     req.env['SCRIPT_NAME'] = web2ldapcnf.fastcgi.base_url or req.env['SCRIPT_NAME']
     try:
-      app = AppHandler(req.inp,req.out,error_log or req.err,req.env)
+      app = AppHandler(req.inp,req.out,req.env)
       app.run()
     finally:
       req.Finish()

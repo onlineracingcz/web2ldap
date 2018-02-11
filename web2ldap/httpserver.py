@@ -410,8 +410,6 @@ to access the web application.""" % (
   HTTPHandler.script_name
 )
   if run_detached:
-    sys.stdout = HTTPHandler.debug_log
-    sys.stderr = HTTPHandler.error_log
     try:
       ServerInstance.serve_forever()
     finally:
@@ -461,8 +459,6 @@ def start():
     # Log files are opened before dropping privileges to avoid having to
     # grant write permission to log file directory to non-privileged user
     HTTPHandler.access_log = open(web2ldapcnf.standalone.access_log,'a',1)
-    HTTPHandler.error_log = open(web2ldapcnf.standalone.error_log,'a',1)
-    HTTPHandler.debug_log = open(web2ldapcnf.standalone.debug_log,'a',1)
     pid_file = open(web2ldapcnf.standalone.pid_file,'w')
 
   # Change UID if one was defined
@@ -487,14 +483,9 @@ def start():
       pid_file.close()
       sys.stdin.close()
       sys.stdout.close()
-      sys.stdout = HTTPHandler.debug_log
-      sys.stderr.close()
-      sys.stderr = HTTPHandler.error_log
   else:
     # Log to console
     HTTPHandler.access_log = sys.stdout
-    HTTPHandler.error_log = sys.stderr
-    HTTPHandler.debug_log = sys.stdout
 
   # Start the clean-up thread
   cleanUpThread.start()
@@ -513,9 +504,7 @@ def start():
     cleanUpThread.enabled = 0
     if run_detached:
       # Remove the PID file
-      HTTPHandler.debug_log.write(
-        'Trying to remove PID file %s\n' % (web2ldapcnf.standalone.pid_file)
-      )
+      sys.stdout.write('Trying to remove PID file %s\n' % (web2ldapcnf.standalone.pid_file))
       os.remove(web2ldapcnf.standalone.pid_file)
 
 

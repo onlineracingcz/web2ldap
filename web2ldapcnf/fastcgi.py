@@ -19,16 +19,6 @@ run_threaded = 1
 #pid_file = os.path.join(web2ldapcnf.var_run,'web2ldap-fcgi.pid')
 pid_file = None
 
-# Path name of error log file
-# error_log = '/var/log/web2ldap/error_log'
-# error_log = os.path.join(web2ldapcnf.var_log,'error_log')
-error_log = None
-
-# Path name of debug log file
-# debug_log = '/var/log/web2ldap/debug_log'
-# debug_log = os.path.join(web2ldapcnf.var_log,'debug_log')
-debug_log = None
-
 # Set a base URL of the application (handy for running via reverse proxy)
 # Set None to let web2ldap determine the base URL automatically from
 # CGI-BIN environment var SCRIPT_NAME

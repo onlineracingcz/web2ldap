@@ -62,12 +62,6 @@ pid_file = os.path.join(web2ldapcnf.var_run,'web2ldap-standalone.pid')
 # Path name of access log file
 access_log = os.path.join(web2ldapcnf.var_log,'web2ldap_access_log')
 
-# Path name of error log file
-error_log = os.path.join(web2ldapcnf.var_log,'web2ldap_error_log')
-
-# Path name of debug log file
-debug_log = os.path.join(web2ldapcnf.var_log,'web2ldap_debug_log')
-
 # Where static documents reside
 document_root = os.path.join(web2ldapcnf.web2ldap_dir,'htdocs')
 

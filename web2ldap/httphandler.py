@@ -78,8 +78,6 @@ class HTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   ]
   # Log file objects should be overloaded if running detached
   access_log = sys.stdout
-  error_log = sys.stderr
-  debug_log = sys.stdout
   reverse_lookups = web2ldap.app.cnf.standalone.reverse_lookups
   extensions_map = get_mime_types(web2ldap.app.cnf.standalone.mime_types)
 
@@ -105,14 +103,13 @@ class HTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
   def log_error(self, fmt, *args):
     """Log error messages"""
-    self.error_log.write(
+    sys.stderr.write(
       "%s - - [%s] %s\n" % (
         self.address_string(),
         self.log_date_time_string(),
         fmt % args
       )
     )
-    self.error_log.flush()
 
   def log_message(self, fmt, *args):
     """Log all access messages"""
@@ -260,7 +257,7 @@ class HTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       )
     )
     # Call web2ldap application handler
-    app = web2ldap.app.handler.AppHandler(self.rfile,self.wfile,self.error_log,http_env)
+    app = web2ldap.app.handler.AppHandler(self.rfile,self.wfile,http_env)
     app.run()
     return
 

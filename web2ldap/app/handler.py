@@ -65,10 +65,9 @@ else:
 
 class AppHandler:
 
-  def __init__(self,inf,outf,errf,env):
+  def __init__(self,inf,outf,env):
     self.inf = inf
     self.outf = outf
-    self.errf = errf
     self.env = env
     self.script_name = self.env['SCRIPT_NAME']
     self.command,self.sid = self.path_info()
@@ -104,7 +103,7 @@ class AppHandler:
   def log_exception(self,ls):
     """
     Write an exception with environment vars, LDAP connection data
-    and Python traceback to errf file object.
+    and Python traceback to stderr.
     """
     # Get exception instance and traceback info
     exc_obj,exc_value,exc_traceback = sys.exc_info()
@@ -129,7 +128,7 @@ class AppHandler:
       logentry.append(':'.join((k,repr(v))))
     logentry.append(''.join(traceback.format_exception(exc_obj,exc_value,exc_traceback,20)))
     # Write the log entry to errf file object
-    self.errf.write(os.linesep.join(logentry))
+    sys.stderr.write(os.linesep.join(logentry))
     # Avoid memory leaks
     exc_obj=None;exc_value=None;exc_traceback=None
     del exc_obj;del exc_value;del exc_traceback
@@ -259,7 +258,7 @@ class AppHandler:
     ls = LDAPSession(
       self.guess_client_addr(),
       web2ldap.app.cnf.misc.ldap_trace_level,
-      self.errf
+      sys.stderr
     )
     ls.cookie = self.form.setNewCookie(str(id(ls)))
     session.storeSession(self.sid,ls)
@@ -508,7 +507,7 @@ class AppHandler:
           ls = LDAPSession(
             self.guess_client_addr(),
             web2ldap.app.cnf.misc.ldap_trace_level,
-            self.errf
+            sys.stderr
           )
           ls.cookie = self.form.setNewCookie(str(id(ls)))
           session.storeSession(self.sid,ls)
@@ -853,9 +852,9 @@ class AppHandler:
       self.log_exception(ls)
 
     self.outf.flush()
-    self.errf.flush()
+    sys.stderr.flush()
 
     # Clean up things
-    del self.sid,self.inf,self.outf,self.errf,self.command
+    del self.sid,self.inf,self.outf,self.command
 
     return # handle_request()
