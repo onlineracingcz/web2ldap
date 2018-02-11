@@ -777,9 +777,9 @@ class IPHostAddress(IA5String):
   desc = 'string representation of IPv4 or IPv6 address'
   # Class in module ipaddr which parses address/network values
   addr_class = ipaddress.ip_address
-
-  def sanitizeInput(self,attrValue):
-    return attrValue.strip()
+  simpleSanitizers = (
+    str.strip,
+  )
 
   def _validate(self,attrValue):
     try:
@@ -806,6 +806,14 @@ class IPNetworkAddress(IPHostAddress):
   oid = 'IPNetworkAddress-oid'
   desc = 'string representation of IPv4 or IPv6 network address/mask'
   addr_class = ipaddress.ip_network
+
+  def _validate(self,attrValue):
+    try:
+      _ = self.addr_class(attrValue, strict=False)
+    except Exception:
+      return False
+    else:
+      return True
 
 
 class IPv4NetworkAddress(IPNetworkAddress):
@@ -849,9 +857,9 @@ class Uri(DirectoryString):
   oid = 'Uri-OID'
   desc = 'URI'
   reObj = url_regex
-
-  def sanitizeInput(self,attrValue):
-    return attrValue.strip()
+  simpleSanitizers = (
+    str.strip,
+  )
 
   def displayValue(self,valueindex=0,commandbutton=0):
     attr_value = self._ls.uc_decode(self.attrValue)[0]
@@ -1728,9 +1736,9 @@ class CountryString(SelectList):
   oid = '1.3.6.1.4.1.1466.115.121.1.11'
   desc = 'Two letter country string as listed in ISO 3166-2'
   attr_value_dict = web2ldap.app.cnf.countries.c_dict
-
-  def sanitizeInput(self,attrValue):
-    return attrValue.upper().strip()
+  simpleSanitizers = (
+    str.strip,
+  )
 
 
 class DeliveryMethod(PrintableString):
