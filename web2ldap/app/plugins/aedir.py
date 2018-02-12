@@ -13,6 +13,7 @@ import re,time,socket
 # from python-ldap
 import ldap0
 from ldap0.filter import escape_filter_chars
+from ldap0.pw import random_string
 
 # from pyweblib
 from pyweblib.forms import HiddenInput
@@ -259,7 +260,7 @@ class AEGIDNumber(GidNumber):
         [(ldap0.MOD_INCREMENT, self.attrType, '1')],
         serverctrls=[prc],
     )
-    _, _, _, resp_ctrls = self._ls.l.result(msg_id)
+    _, _, _, resp_ctrls, _, _ = self._ls.l.result(msg_id)
     return int(resp_ctrls[0].entry[self.attrType][0])
 
   def transmute(self,attrValues):
@@ -336,12 +337,12 @@ class AEUserUid(AEUid):
     gen_collisions = 0
     while gen_collisions < self.maxCollisionChecks:
       # generate new random UID candidate
-      uid_candidate = web2ldap.ldaputil.passwd.RandomString(self.genLen,self.UID_LETTERS)
+      uid_candidate = random_string(alphabet=self.UID_LETTERS,length=self.genLen)
       # check whether UID candidate already exists
       uid_result = self._ls.l.search_s(
         self._ls.currentSearchRoot.encode(self._ls.charset),
         ldap0.SCOPE_SUBTREE,
-        '(uid=%s)' % (uid_candidate),
+        '(uid=%s)' % (escape_filter_chars(uid_candidate)),
         attrlist=['1.1'],
       )
       if not uid_result:
