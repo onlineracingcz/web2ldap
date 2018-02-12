@@ -46,14 +46,6 @@
       <li>
         Config module <var>web2ldapcnf</var> was moved to top-level directory.
       </li>
-      <li>
-        Dropped configuration variable <var>pylibdirs</var> which caused
-        too much hen-and-egg problems and thus was not useful.
-      </li>
-      <li>
-        Dropped separate error and debug log configuration variables.
-        Errors now always go to <var>stderr</var> which was the default anyway.
-      </li>
     </ul>
   </dd>
   <dt>New features/enhancements</dt>
@@ -67,11 +59,19 @@
   <dd>
     <ul>
       <li>
-        The half-baken <var>SIGHUP</var> config reload handler was removed.
-        Actually it was never really used.
+        Dropped configuration variable <var>pylibdirs</var> which caused
+        too much hen-and-egg problems and thus was not useful.
       </li>
       <li>
-        Dropped internal gzip compressing because it is much better to
+        No separate error and debug log configuration variables anymore.
+        Errors now always go to <var>stderr</var> which was the default anyway.
+      </li>
+      <li>
+        The half-baken <var>SIGHUP</var> config reload handler was removed.
+        Actually it was never really useful.
+      </li>
+      <li>
+        Abandoned internal gzip compressing because it is much better to
         leave this to the invoking web server.
       </li>
     </ul>
