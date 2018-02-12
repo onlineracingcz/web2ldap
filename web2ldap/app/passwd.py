@@ -17,8 +17,8 @@ from __future__ import absolute_import
 import time,string,binascii,hashlib
 
 import ldap0
+from ldap0.pw import random_string
 
-from web2ldap.ldaputil.passwd import RandomString
 import web2ldap.ldaputil.base,web2ldap.ldaputil.passwd,web2ldap.ldapsession
 import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.login
 
@@ -35,7 +35,7 @@ PASSWD_ACTIONS_DICT = dict([
 ])
 
 PASSWD_GEN_LENGTH = 20
-PASSWD_GEN_CHARS = unicode(string.ascii_lowercase+string.digits+'./\<>!"$','utf-8')
+PASSWD_GEN_CHARS = string.ascii_lowercase+string.digits+'./\<>!"$'
 
 
 def NtPasswordHash(password):
@@ -278,9 +278,9 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
 
     no_passwd_input = not passwd_input
     if no_passwd_input:
-      passwd_input = RandomString(
-        web2ldap.app.cnf.GetParam(ls,'passwd_genlength',PASSWD_GEN_LENGTH),
-        web2ldap.app.cnf.GetParam(ls,'passwd_genchars',PASSWD_GEN_CHARS),
+      passwd_input = random_string(
+        alphabet=web2ldap.app.cnf.GetParam(ls,'passwd_genchars',PASSWD_GEN_CHARS),
+        length=web2ldap.app.cnf.GetParam(ls,'passwd_genlength',PASSWD_GEN_LENGTH),
       )
 
     passwd_forcechange = form.getInputValue('passwd_forcechange',['no'])[0]=='yes'

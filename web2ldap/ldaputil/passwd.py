@@ -20,6 +20,9 @@ import base64
 import hashlib
 
 
+from ldap0.pw import random_string
+
+
 # Alphabet for encrypted passwords (see module crypt)
 CRYPT_ALPHABET = './0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -74,25 +77,6 @@ DEFAULT_SALT_ALPHABET = tuple([
   chr(i)
   for i in range(0,256)
 ])
-
-
-def RandomString(length,chars):
-  """
-  Create a random byte string.
-
-  length
-      Requested length of string.
-  chars
-      If non-zero string it is assumed to contain all valid chars for the
-      random string. If zero-length or None the result returned is an
-      arbitrary octet string.
-  """
-  sys_rand = random.SystemRandom()
-  chars_bounce = len(chars)-1
-  return ''.join([
-    chars[sys_rand.randint(0,chars_bounce)]
-    for _ in range(length)
-  ])
 
 
 class Password:
@@ -151,9 +135,9 @@ class UserPassword(Password):
       raise ValueError,'Hashing scheme %s not supported.' % (scheme)
     if salt is None:
       if scheme=='crypt':
-        salt = RandomString(2,CRYPT_ALPHABET)
+        salt = random_string(CRYPT_ALPHABET,2)
       elif scheme in ('smd5','ssha','ssha256','ssha384','ssha512'):
-        salt = RandomString(12,DEFAULT_SALT_ALPHABET)
+        salt = random_string(DEFAULT_SALT_ALPHABET,12)
       else:
         salt = ''
     if scheme=='crypt':

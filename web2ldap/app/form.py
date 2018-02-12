@@ -22,6 +22,7 @@ except ImportError:
 from types import UnicodeType
 
 import ldap0.ldif,ldap0.schema
+from ldap0.pw import random_string
 
 import pyweblib.forms
 from pyweblib.forms import escapeHTML
@@ -30,7 +31,6 @@ import web2ldap.ldaputil.base,web2ldap.ldapsession
 import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.passwd,web2ldap.app.searchform,web2ldap.app.ldapparams,web2ldap.app.session
 # OID description dictionary from configuration directory
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
-from web2ldap.ldaputil.passwd import RandomString
 
 CONNTYPE2URLSCHEME = {
   0:'ldap',
@@ -98,7 +98,7 @@ class Web2LDAPForm(pyweblib.forms.Form):
   def setNewCookie(self,name_suffix):
     if self.cookie_length:
       # Generate a randomized key and value
-      cookie_key = RandomString(self.cookie_length,pyweblib.session.SESSION_ID_CHARS)
+      cookie_key = random_string(alphabet=pyweblib.session.SESSION_ID_CHARS,length=self.cookie_length)
       cookie_name = ''.join((self.cookie_name_prefix,name_suffix))
       c = Cookie.SimpleCookie({
         cookie_name:cookie_key,
