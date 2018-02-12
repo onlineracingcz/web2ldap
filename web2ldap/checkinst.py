@@ -83,7 +83,6 @@ def check_inst():
     ('hashlib',1,None,'https://www.python.org','Module useful for generating hashed LDAP passwords'),
     ('xml.etree',0,None,'http://effbot.org/zone/element.htm','ElementTree XML parser'),
     ('pyweblib',1,'1.3.8','http://www.stroeder.com/pylib/PyWebLib/','Yet another web application module package'),
-    ('fcgi',0,None,'http://alldunn.com/python/fcgi.py','FCGI module (e.g., Apache with mod_fastcgi)'),
     ('crypt',0,None,'https://www.python.org','Unix crypt hash module for client-side hashed LDAP passwords'),
     ('DNS',0,None,'http://pydns.sf.net','module for DNS lookups, e.g. SRV RRs'),
     ('M2Crypto',0,None,'https://pypi.python.org/pypi/M2Crypto','Python wrapper module for OpenSSL'),

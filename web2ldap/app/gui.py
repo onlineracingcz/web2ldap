@@ -14,12 +14,12 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
+import time
 import os
 from types import UnicodeType
 from hashlib import md5
 
 import pyweblib.forms
-import pyweblib.httphelper
 from pyweblib.forms import escapeHTML
 
 import ldap0
@@ -678,26 +678,30 @@ def AttributeTypeSelectField(
   return attr_select
 
 
-# Ausdrucken eines HTML-Kopfes mit Titelzeile
-def Header(outf,form):
-  additional_http_header = {}
-  additional_http_header.update(web2ldap.app.cnf.misc.http_headers)
+def Header(outf,form,content_type='text/html',more_headers=None):
+  # Get current time as GMT (seconds since epoch)
+  current_datetime = time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime(time.time()))
+  # Build list of header lines
+  headers = []
+  # Write header
+  if content_type.startswith('text/'):
+    content_type = '%s;charset=%s' % (content_type,form.accept_charset)
+  headers.append(('Content-Type',content_type))
+  headers.append(('Date',current_datetime))
+  headers.append(('Last-Modified',current_datetime))
+  headers.append(('Expires',current_datetime))
   if form.next_cookie:
-    additional_http_header['Set-Cookie'] = str(form.next_cookie)[12:]
+    headers.append(('Set-Cookie',str(form.next_cookie)[12:]))
   if form.env.get('HTTPS','off')=='on' and \
-     not 'Strict-Transport-Security' in additional_http_header:
-    additional_http_header['Strict-Transport-Security']='max-age=15768000 ; includeSubDomains'
-  pyweblib.httphelper.SendHeader(
-    outf,
-    'text/html',
-    form.accept_charset,
-    expires_offset=0,
-    additional_header=additional_http_header,
-  )
-  return # Header()
+     'Strict-Transport-Security' not in web2ldap.app.cnf.misc.http_headers:
+    headers.append(('Strict-Transport-Security','max-age=15768000 ; includeSubDomains'))
+  for h,v in web2ldap.app.cnf.misc.http_headers.items():
+    headers.append((h,v))
+  headers.extend(more_headers or [])
+  outf.set_headers(headers)
+  return headers # Header()
 
 
-# Ausdrucken eines HTML-Endes
 def Footer(f,form):
   f.write("""
     <p class="ScrollLink">

@@ -258,7 +258,7 @@ import web2ldap.app.plugins.h350
 # Æ-DIR
 #---------------------------------------------------------------------------
 
-#import web2ldap.app.plugins.aedir
+import web2ldap.app.plugins.aedir
 
 #web2ldap.app.plugins.aedir.AETicketId.reObj = re.compile('^[A-Z]+-[0-9]+$')
 #web2ldap.app.plugins.aedir.AETicketId.html_tmpl = '<a href="https://issues.example.com/browse/{av}">{av}</a>'
@@ -276,23 +276,14 @@ import web2ldap.app.plugins.h350
 #   title="DNS entry">DNS</a>
 #"""
 
-#web2ldap.app.schema.syntaxes.syntax_registry.registerAttrType(
-#  web2ldap.app.plugins.aedir.AEPersonManager.oid,[
-#    '0.9.2342.19200300.100.1.10', # manager
-#  ],
-#  structural_oc_oids=[
-#    web2ldap.app.plugins.aedir.AE_PERSON_OID, # aePerson
-#  ],
-#)
-
 # for mapping username to bind-DN of form 
 #import ldapsession
 #ldapsession.LDAPSession = web2ldap.app.plugins.aedir.AEDirLDAPSession
 #web2ldap.app.plugins.aedir.AEDirLDAPSession.binddn_tmpl = u'uid={username},ou=ae-dir'
 
 # Parameters for generating user names
-#web2ldap.app.plugins.aedir.AEUserId.maxLen = 4
-#web2ldap.app.plugins.aedir.AEUserId.maxCollisionChecks = 15
+#web2ldap.app.plugins.aedir.AEUserUid.maxLen = 4
+#web2ldap.app.plugins.aedir.AEUserUid.maxCollisionChecks = 15
 
 #---------------------------------------------------------------------------
 # Composed attributes for..

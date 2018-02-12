@@ -114,13 +114,12 @@ Check whether all software is installed - watch out for errors and warnings:
 http://your-server-hostname-or-address-here:1760/web2ldap
 </code>
 
-<h3>Integrate with Apache/mod_fcgid</h3>
+<h3>Integrate with Apache/mod_wsgi</h3>
 
-<p>Install packages for running as FastCGI server:</p>
+<p>Install packages for running as WSGI server:</p>
 
 <pre>
-apt-get install apache2-mpm-prefork libapache2-mod-fcgid
-wget -O /opt/web2ldap/lib/python2.7/site-packages/fcgi.py http://alldunn.com/python/fcgi.py
+apt-get install apache2-mpm-prefork libapache2-mod-wsgi
 </pre>
 
 <p>
@@ -129,11 +128,9 @@ wget -O /opt/web2ldap/lib/python2.7/site-packages/fcgi.py http://alldunn.com/pyt
 </p>
 
 <pre>
-cp /opt/web2ldap/fcgi/web2ldap.py /opt/web2ldap/fcgi/web2ldap.py.orig
-sed 's|/usr/bin/python|/opt/web2ldap/bin/python|' /opt/web2ldap/fcgi/web2ldap.py.orig > /opt/web2ldap/fcgi/web2ldap.py
-cp /opt/web2ldap/etc/httpd/sample-mod_fcgid-2.4.conf /etc/apache2/conf-available/web2ldap-fcgid.conf
-$EDITOR /etc/apache2/conf-available/web2ldap-fcgid.conf
-a2enconf  web2ldap-fcgid.conf
+cp /opt/web2ldap/etc/httpd/sample-mod_wsgi-2.4.conf /etc/apache2/conf-available/web2ldap-wsgi.conf
+$EDITOR /etc/apache2/conf-available/web2ldap-wsgi.conf
+a2enconf  web2ldap-wsgi.conf
 service apache2 reload
 </pre>
 

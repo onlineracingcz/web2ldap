@@ -5,7 +5,7 @@ Options for web2ldap running as stand-alone HTTP server
 
 (c) by Michael Stroeder <michael@stroeder.com>
 
-Note that these options does not affect FastCGI mode at all!
+Note that these options does not affect WSGI mode at all!
 """
 
 # Leave this alone

@@ -19,8 +19,6 @@ import pyweblib.forms
 import ldap0.schema
 from ldap0.cidict import cidict
 
-import pyweblib.httphelper
-
 import web2ldap.ldaputil.schema
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.schema,web2ldap.app.viewer
 from web2ldap.msbase import union,GrabKeys
@@ -549,15 +547,16 @@ def w2l_Read(
             break
         display_entry = vCardEntry(sub_schema,entry)
         display_entry['dn'] = [dn.encode(ls.charset)]
-        additional_http_header = {
-          'Content-Disposition':'inline; filename=%s.vcf' % (vcard_filename.encode(form.accept_charset)),
-        }
-        additional_http_header.update(web2ldap.app.cnf.misc.http_headers)
-        pyweblib.httphelper.SendHeader(
-          outf,'text/x-vcard',
-          charset=form.accept_charset,
-          expires_offset=0,
-          additional_header=additional_http_header,
+        web2ldap.app.gui.Header(
+          outf,
+          form,
+          content_type='text/x-vcard',
+          more_headers=[
+            (
+              'Content-Disposition',
+              'inline; filename=%s.vcf' % (vcard_filename.encode(form.accept_charset))
+            ),
+          ],
         )
         outf.write(generate_vcard(template_str,display_entry))
 

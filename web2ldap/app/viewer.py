@@ -17,7 +17,6 @@ from __future__ import absolute_import
 import binascii
 
 import pyweblib.forms
-import pyweblib.httphelper
 import pyweblib.helper
 
 import web2ldap.app.gui
@@ -43,17 +42,13 @@ def DisplayBinaryAttribute(
   else:
     value = entry[attrtype][index]
   # Send HTTP header with appropriate MIME type
-  additional_http_header = {
-    'Content-Disposition':'inline; filename=%s' % (attachment_filename),
-  }
-  additional_http_header.update(web2ldap.app.cnf.misc.http_headers)
-  pyweblib.httphelper.SendHeader(
-    outf=outf,
-    contenttype=mimetype,
-    charset=form.accept_charset,
-    contentlength=len(value),
-    expires_offset=0,
-    additional_header=additional_http_header,
+  web2ldap.app.gui.Header(
+    outf,
+    form,
+    content_type=mimetype,
+    more_headers = [
+      ('Content-Disposition','inline; filename=%s', attachment_filename),
+    ]
   )
   # send attribute value
   outf.write(value)

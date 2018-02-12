@@ -19,7 +19,7 @@ import ldap0
 
 import pyweblib.forms,pyweblib.httphelper,pyweblib.sslenv,pyweblib.helper,pyweblib.session
 
-import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.ldapsession,web2ldap.httphandler
+import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.ldapsession
 
 from ipaddress import ip_network
 

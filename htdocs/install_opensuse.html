@@ -96,16 +96,16 @@ python /opt/web2ldap/sbin/web2ldap.py -l 0.0.0.0:1760 -d off
 http://your-server-hostname-or-address-here:1760/web2ldap
 </code>
 
-<h3>Integrate with Apache/mod_fcgid</h3>
+<h3>Integrate with Apache/mod_wsgi</h3>
 
-<p>Install packages for running as FastCGI server:</p>
+<p>Install packages for running as WSGI server:</p>
 
 <pre>
-zypper install apache2-mod_fcgid python-fcgi
+zypper install apache2-mod_wsgi
 </pre>
 
 <p>
-  Enable FastCGI in Apache by adding <em>fcgid</em> to
+  Enable WSGI in Apache by adding <em>wsgi</em> to
   <var>APACHE_MODULES</var> in file <em>/etc/sysconfig/apache2</em>.
 </p>
 
@@ -115,14 +115,14 @@ zypper install apache2-mod_fcgid python-fcgi
 </p>
 
 <p>
-  Enable <var>mod_fcgid</var> by editing <var>APACHE_MODULES</var>
+  Enable <var>mod_wsgi</var> by editing <var>APACHE_MODULES</var>
   in file /etc/sysconfig/apache2.
 </p>
 
 <pre>
-cp /opt/web2ldap/etc/httpd/sample-mod_fcgid-2.4.conf /etc/apache2/conf.d/web2ldap-fcgid.conf
+cp /opt/web2ldap/etc/httpd/sample-mod_wsgi-2.4.conf /etc/apache2/conf.d/web2ldap-wsgi.conf
 $EDITOR /etc/sysconfig/apache2
-$EDITOR /etc/apache2/conf.d/web2ldap-fcgid.conf
+$EDITOR /etc/apache2/conf.d/web2ldap-wsgi.conf
 rcapache2 restart
 </pre>
 

@@ -147,7 +147,6 @@ def parse_fake_schema(ldap_def):
       try:
         _,schema = ldap0.schema.util.urlfetch(schema_uri)
       except (IOError,OSError,ldap0.LDAPError) as e:
-        # FIX ME!!! This does not work for running as FastCGI server
         sys.stderr.write('Error retrieving schema from %s: %s\n' % (schema_uri,str(e)))
       else:
         if schema!=None:
@@ -156,4 +155,3 @@ def parse_fake_schema(ldap_def):
           schema.no_user_mod_attr_oids = schema.determine_no_user_mod_attrs()
           # Store the pre-parsed schema in the configuration
           ldap_def[k]._schema = schema
-

@@ -47,22 +47,10 @@
     <td>Python standard lib</td>
   </tr>
   <tr>
-    <td>CGI-BIN</td>
-    <td><code>cgi-bin/web2ldap.fcgi</code></td>
+    <td>WSGI</td>
+    <td><code>web2ldap/wsgi.py</code></td>
     <td>
-      Any web server with CGI support and
-      <a href="https://github.com/gnosek/fcgiwrap">fcgiwrap</a>
-      installed
-    </td>
-  </tr>
-  <tr>
-    <td>FastCGI server</td>
-    <td><code>fcgi/web2ldap.py</code></td>
-    <td>
-      Any web server with
-      <a href="https://en.wikipedia.org/wiki/FastCGI#Web_Servers_that_implement_FastCGI">FastCGI support</a>.
-      Depending on the web server you might need
-      <a href="http://redmine.lighttpd.net/projects/spawn-fcgi">spawn-fcgi</a>.
+      Any web server with WSGI support
     </td>
   </tr>
 </table>
@@ -132,15 +120,6 @@
       <td>mandatory</td>
     <td>
       Module package for processing IP addresses (<var>netaddr</var> preferred)
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="http://alldunn.com/python/fcgi.py">fcgi.py</a>
-    </td>
-    <td>optional</td>
-    <td>
-      For running as FastCGI server process
     </td>
   </tr>
   <tr>
@@ -238,7 +217,7 @@
         <dl>
           <dt>Unix/Linux:</dt>
           <dd>
-            <code>[web2ldapdir]/sbin/web2ldap.py</code><br>
+            <code>[web2ldapdir]/web2ldap/wsgi.py</code><br>
             For a quick start as stand-alone web gateway
             simply invoke the script at the command-line which outputs
             the start URL before detaching from console.
@@ -246,30 +225,16 @@
           <dt>Windows:</dt>
           <dd>
             Simply double-click the file
-            <code>[web2ldapdir]/sbin/web2ldap.py</code>.
+            <code>[web2ldapdir]/web2ldap/wsgi.py</code>.
           </dd>
         </dl>
       </dd>
       <dt>
-        Any HTTP server with CGI-FCGI wrapper
-      </dt>
-      <dd>
-        Install <code>cgi-bin/web2ldap.fcgi</code> to
-        CGI-BIN directory of web server.
-      </dd>
-      <dt>
-        Apache with mod_fastcgi
+        Apache with mod_wsgi
       </dt>
       <dd>
         See configuration directives in file
-        <code>etc/httpd/sample-mod_fastcgi.conf</code>.
-      </dd>
-      <dt>
-        Apache with mod_fcgid
-      </dt>
-      <dd>
-        See configuration directives in file
-        <code>etc/httpd/sample-mod_fcgid.conf</code>.
+        <code>etc/httpd/sample-mod_wsgi.conf</code>.
       </dd>
     </dl>
   </li>

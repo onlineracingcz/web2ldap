@@ -932,7 +932,7 @@ class Image(Binary):
         else:
           size_attr_html = 'width="%d" height="%d"' % (width,height)
     attr_value_len = len(self.attrValue)
-    img_link = "%s/read/%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d&amp;read_attrmode=load&amp;read_attrmimetype=image/jpeg" % (
+    img_link = "%s/read/%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d&amp;read_attrmode=load&amp" % (
       self._form.script_name,self._sid,
       urllib.quote(self._dn.encode(self._form.accept_charset)),
       urllib.quote(self.attrType),
