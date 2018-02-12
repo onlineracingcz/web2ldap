@@ -271,7 +271,7 @@ class DHCPRange(IA5String):
   def _get_ipnetwork(self):
     cn = self._entry['cn'][0].strip()
     net_mask = self._entry['dhcpNetMask'][0].strip()
-    return ipaddress.ip_network('/'.join((cn,net_mask)),strict=False)
+    return ipaddress.ip_network(('%s/%s' % (cn,net_mask)).decode('ascii'),strict=False)
 
   def formValue(self):
     form_value = IA5String.formValue(self)
@@ -289,16 +289,15 @@ class DHCPRange(IA5String):
 
   def _validate(self,attrValue):
     try:
-      split_list = attrValue.split(' ',2)
-      l,h = split_list[0],split_list[1]
+      l,h = attrValue.split(' ',1)
     except (IndexError,ValueError):
       return False
+    try:
+      l_a = ipaddress.ip_address(l.decode(self._ls.charset))
+      h_a = ipaddress.ip_address(h.decode(self._ls.charset))
+    except Exception:
+      return False
     else:
-      try:
-        l_a = ipaddress.ip_address(l.decode(self._ls.l.charset))
-        h_a = ipaddress.ip_address(h.decode(self._ls.l.charset))
-      except Exception:
-        return False
       ip_addr_syntax_check = ( l_a<=h_a )
       try:
         ipv4_network = self._get_ipnetwork()
