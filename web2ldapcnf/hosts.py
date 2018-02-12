@@ -37,7 +37,6 @@ ldap_uri_list = [
     u'Local OpenLDAP 2.x server (Unix domain socket)'
   ),
   ('ldaps://demo.ae-dir.com/ou=ae-dir????bindname=uid%3Daead%2Cou%3Dae-dir,X-BINDPW=CorrectHorseBatteryStaple',u'Æ-DIR demo role Æ admin'),
-  ('ldap://ldap.uninett.no/dc=uninett,dc=no','UNINETT'),
   ('ldap://magnesio.rediris.es:1389/dc%3Drediris%2Cdc%3Des??one?%28objectClass%3D%2A%29','Red.es/RedIRIS'),
   ('ldap://ipa.demo1.freeipa.org/dc=demo1,dc=freeipa,dc=org??one??bindname=uid%3Dadmin%2Ccn%3Dusers%2Ccn%3Daccounts%2Cdc%3Ddemo1%2Cdc%3Dfreeipa%2Cdc%3Dorg,X-BINDPW=Secret123','freeIPA demo as admin'),
   ('ldap://db.debian.org/dc=debian,dc=org??one',u'debian.org Developers LDAP Search'),
