@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7 -ROO
 # -*- coding: utf-8 -*-
 """
 fcgi/web2ldap.py - stub script for running as FastCGI server
