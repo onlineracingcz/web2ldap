@@ -17,7 +17,7 @@ import sys,os,types,socket,errno,time,traceback,urlparse,pprint
 
 import ldap0
 
-import pyweblib.forms,pyweblib.httphelper,pyweblib.sslenv,pyweblib.helper,pyweblib.session
+import pyweblib.forms,pyweblib.sslenv,pyweblib.helper,pyweblib.session
 
 import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.ldapsession
 
@@ -52,15 +52,19 @@ SCOPE2COMMAND = {
   ldap0.SCOPE_BASE:'read',
   ldap0.SCOPE_ONELEVEL:'search',
   ldap0.SCOPE_SUBTREE:'search',
+  ldap0.SCOPE_SUBORDINATE:'search',
 }
 
-try:
-  # Check whether constant is present (python-ldap 2.4.15+)
-  ldap0.SCOPE_SUBORDINATE
-except AttributeError:
-  pass
-else:
-  SCOPE2COMMAND[ldap0.SCOPE_SUBORDINATE] = 'search'
+SIMPLE_MSG_HTML = """
+<html>
+  <head>
+    <title>Note</title>
+  </head>
+  <body>
+    {message}
+  </body>
+</html>
+"""
 
 
 class AppHandler:
@@ -196,6 +200,13 @@ class AppHandler:
       except ValueError:
         c,s = path_info,''
     return c,s # path_info()
+
+  def simple_msg(self,msg):
+    """
+    Output HTML text.
+    """
+    web2ldap.app.gui.Header(self.outf,self.form)
+    self.outf.write(SIMPLE_MSG_HTML.format(message=msg))
 
   def url_redirect(
     self,
@@ -814,7 +825,7 @@ class AppHandler:
         ExceptionMsg(self.sid,self.outf,self.command,self.form,ls,dn,u'Error',e.Msg)
 
       except pyweblib.session.MaxSessionCountExceeded:
-        pyweblib.httphelper.SimpleMsg(self.outf,'Too many web sessions! Try later...')
+        self.simple_msg('Too many web sessions! Try later...')
 
       except pyweblib.session.SessionExpired:
         self.url_redirect(u'Session expired.')
@@ -845,7 +856,7 @@ class AppHandler:
         return
 
     except pyweblib.forms.InvalidRequestMethod:
-      pyweblib.httphelper.SimpleMsg(self.outf,'Invalid request method!')
+      self.simple_msg('Invalid request method!')
 
     except:
       # Log unhandled exceptions
