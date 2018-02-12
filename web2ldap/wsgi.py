@@ -5,15 +5,17 @@ web2ldap.wsgi -- WSGI app wrapper eventually starting a stand-alone HTTP server
 
 from __future__ import absolute_import
 
-import sys
-import pprint
-from wsgiref.util import FileWrapper
+import os
+import wsgiref.util
+import wsgiref.simple_server
+
 try:
   from cStringIO import StringIO
 except ImportError:
   from StringIO import StringIO
 
-import web2ldap.app.handler
+import web2ldap.__about__
+import web2ldap.app.cnf, web2ldap.app.handler
 
 BASE_URL = '/web2ldap'
 
@@ -45,9 +47,6 @@ class AppResponse(file):
         self._seek += 1
         return line        
 
-    def flush(self):
-        pass
-
     def close(self):
         del self._seek
         del self._lines
@@ -57,20 +56,10 @@ class AppResponse(file):
 
 
 def application(environ, start_response):
-    if not environ['PATH_INFO'].startswith('/web2ldap'):
-        start_response(
-            '404 Not found!',
-            [],
-        )
-        return []
-    environ['SCRIPT_NAME'] = BASE_URL
-    environ['PATH_INFO'] = environ['PATH_INFO'][len(environ['SCRIPT_NAME']):]
+    if not environ['SCRIPT_NAME']:
+        wsgiref.util.shift_path_info(environ)
     outf = AppResponse()
-    app = web2ldap.app.handler.AppHandler(
-        environ['wsgi.input'],
-        outf,
-        environ,
-    )
+    app = web2ldap.app.handler.AppHandler(environ, outf)
     app.run()
     outf.headers.append(('Content-Length', str(outf._bytelen)))
     start_response(
@@ -82,8 +71,13 @@ def application(environ, start_response):
 
 def start_server():
     import wsgiref.simple_server
-    httpd = wsgiref.simple_server.make_server('', 1760, application)
-    print "Serving on port 1760..."
+    httpd = wsgiref.simple_server.make_server(
+        '127.0.0.1',
+        1760,
+        application,
+    )
+    host, port = httpd.socket.getsockname()
+    print "Serving http://%s:%s/web2ldap" % (host, port)
     try:
         # Serve until process is killed
         httpd.serve_forever()

@@ -691,7 +691,8 @@ def Header(outf,form,content_type='text/html',more_headers=None):
   headers.append(('Last-Modified',current_datetime))
   headers.append(('Expires',current_datetime))
   if form.next_cookie:
-    headers.append(('Set-Cookie',str(form.next_cookie)[12:]))
+    for _, cookie in form.next_cookie.items():
+      headers.append(('Set-Cookie',str(cookie)[12:]))
   if form.env.get('HTTPS','off')=='on' and \
      'Strict-Transport-Security' not in web2ldap.app.cnf.misc.http_headers:
     headers.append(('Strict-Transport-Security','max-age=15768000 ; includeSubDomains'))

@@ -125,8 +125,6 @@ def DeleteEntries(outf,ls,dn,scope,tree_delete_control,delete_server_ctrls,delet
     non_leaf_entries = set()
     non_deletable_entries = set()
     while time.time()<=end_time:
-      # Send something for keeping the connection to the user's web browser open
-      outf.write('');outf.flush()
       try:
         leafs_deleter.startSearch(dn,scope,filterStr=delete_filter)
         leafs_deleter.processResults(timeout=ls.timeout)

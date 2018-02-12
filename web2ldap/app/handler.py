@@ -69,8 +69,8 @@ SIMPLE_MSG_HTML = """
 
 class AppHandler:
 
-  def __init__(self,inf,outf,env):
-    self.inf = inf
+  def __init__(self,env,outf):
+    self.inf = env['wsgi.input']
     self.outf = outf
     self.env = env
     self.script_name = self.env['SCRIPT_NAME']
@@ -132,7 +132,7 @@ class AppHandler:
       logentry.append(':'.join((k,repr(v))))
     logentry.append(''.join(traceback.format_exception(exc_obj,exc_value,exc_traceback,20)))
     # Write the log entry to errf file object
-    sys.stderr.write(os.linesep.join(logentry))
+    self.env['wsgi.errors'].write(os.linesep.join(logentry))
     # Avoid memory leaks
     exc_obj=None;exc_value=None;exc_traceback=None
     del exc_obj;del exc_value;del exc_traceback
@@ -448,7 +448,7 @@ class AppHandler:
           return
         elif self.command=='locate':
           self.form.getInputFields(ignoreEmptyFields=0)
-          web2ldap.app.locate.w2l_Locate(self.outf,self.command,self.form)
+          web2ldap.app.locate.w2l_Locate(self.outf,self.command,self.form,self.env)
           return
         elif self.command=='':
           # New connect => remove old session if necessary
@@ -861,9 +861,6 @@ class AppHandler:
     except:
       # Log unhandled exceptions
       self.log_exception(ls)
-
-    self.outf.flush()
-    sys.stderr.flush()
 
     # Clean up things
     del self.sid,self.inf,self.outf,self.command

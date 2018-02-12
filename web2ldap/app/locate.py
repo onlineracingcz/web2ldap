@@ -41,7 +41,7 @@ LOCATE_NAME_RFC822 = 0
 LOCATE_NAME_DCDN   = 1
 LOCATE_NAME_DOMAIN = 2
 
-def w2l_Locate(outf,command,form):
+def w2l_Locate(outf,command,form,env):
   """
   Try to locate a LDAP server in DNS by several heuristics
   """
@@ -210,7 +210,7 @@ def w2l_Locate(outf,command,form):
               )
             )
 
-  web2ldap.app.gui.TopSection(None,outf,command,form,None,None,'DNS lookup',web2ldap.app.gui.EntryMainMenu(form),[])
+  web2ldap.app.gui.TopSection(None,outf,command,form,None,None,'DNS lookup',web2ldap.app.gui.EntryMainMenu(form,env),[])
 
   outf.write("""
   <h1>Locate LDAP host via DNS</h1>
