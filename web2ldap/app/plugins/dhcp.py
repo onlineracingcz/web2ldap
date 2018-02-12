@@ -297,15 +297,15 @@ class DHCPRange(IA5String):
       h_a = ipaddress.ip_address(h.decode(self._ls.charset))
     except Exception:
       return False
+    if l_a > h_a:
+      return False
+    try:
+      ipv4_network = self._get_ipnetwork()
+    except Exception:
+      # Let's simply ignore all parsing issues with network address data here
+      return True
     else:
-      ip_addr_syntax_check = ( l_a<=h_a )
-      try:
-        ipv4_network = self._get_ipnetwork()
-      except Exception:
-        # Let's simply ignore all parsing issues with network address data here
-        return ip_addr_syntax_check
-      else:
-        return ip_addr_syntax_check and l_a in ipv4_network and h_a in ipv4_network
+      return l_a in ipv4_network and h_a in ipv4_network
 
 
 syntax_registry.registerAttrType(
