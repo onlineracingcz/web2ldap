@@ -22,7 +22,6 @@ import ldap0
 
 import web2ldap.utctime
 import web2ldap.ldaputil.base
-import web2ldap.msgzip
 import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui
 from web2ldap.app.session import session
 
@@ -310,10 +309,6 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
     for k,v in cross_check_vars
   ])
 
-  if isinstance(outf,web2ldap.msgzip.GzipFile):
-    compresslevel = outf.compresslevel
-  else:
-    compresslevel = None
   outf.write("""
     <h2>HTTP connection</h2>
     <table summary="HTTP connection">
@@ -321,7 +316,6 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
       <tr><td>direct remote address/port:</td><td>%s:%s</td></tr>
       <tr><td>Server signature:</td><td>%s</td></tr>
       <tr><td>Character set/encoding:</td><td>%s</td></tr>
-      <tr><td>GZIP compression level:</td><td>%s</td></tr>
       <tr>
         <td>Cross-check vars in use:</td>
         <td>
@@ -340,7 +334,6 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
       form.utf2display(unicode(form.env.get('REMOTE_PORT',''))),
       form.env.get('SERVER_SIGNATURE',''),
       form.utf2display(unicode(form.accept_charset.upper())),
-      str(compresslevel),
       cross_check_vars_html,
       form.utf2display(unicode(form.env.get('HTTP_USER_AGENT',''),form.accept_charset)),
       form.browser_type or '',

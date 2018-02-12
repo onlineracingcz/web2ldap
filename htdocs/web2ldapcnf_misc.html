@@ -13,7 +13,6 @@
   [<a href="#cookie_length">cookie_length</a>]
   [<a href="#cookie_max_age">cookie_max_age</a>]
   [<a href="#dumpasn1cfg">dumpasn1cfg</a>]
-  [<a href="#gzip_level">gzip_level</a>]
   [<a href="#good_redirect_targets">good_redirect_targets</a>]
   [<a href="#http_headers">http_headers</a>]
   [<a href="#input_maxattrs">input_maxattrs</a>]
@@ -160,23 +159,6 @@
 HTML and HTTP options
 </h2>
 <dl>
-
-  <dt id="gzip_level">gzip_level</dt>
-  <dd>
-    The HTTP body can be sent compressed with gzip algorithm if this parameter
-    is set to a non-zero compressing level, the HTTP client sends
-    <em>Accept-Encoding: gzip</em> in the HTTP request header and the
-    web server sets HTTP_ACCEPT_CHARSET environment variable.
-    This also needs zlibmodule which is automatically detected.<br>
-    Note:<br>
-    This might speed things up if the server's CPU rather fast
-    compared to the network link. Even with large search results you
-    won't gain much by choosing gzip level higher than 1.
-    <p>Example:</p>
-    <samp>
-      gzip_level=1
-    </samp>
-  </dd>
 
   <dt id="http_headers">http_headers</dt>
   <dd>

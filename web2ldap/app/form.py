@@ -26,7 +26,7 @@ import ldap0.ldif,ldap0.schema
 import pyweblib.forms
 from pyweblib.forms import escapeHTML
 
-import web2ldap.msgzip,web2ldap.ldaputil.base,web2ldap.ldapsession
+import web2ldap.ldaputil.base,web2ldap.ldapsession
 import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.passwd,web2ldap.app.searchform,web2ldap.app.ldapparams,web2ldap.app.session
 # OID description dictionary from configuration directory
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
@@ -117,22 +117,9 @@ class Web2LDAPForm(pyweblib.forms.Form):
 
   def outFileObject(self,outf):
     """
-    Create file object for gziping on-the-fly if configuration
-    and HTTP header allows it
+    do something magic with output file object
     """
-    outfile = outf
-    if web2ldap.app.cnf.misc.gzip_level>0 and \
-       not web2ldap.msgzip.GzipFile is None and \
-       self.http_accept_encoding['gzip']>0:
-      # Create new gzip-stream file object
-      return web2ldap.msgzip.GzipFile(
-        filename='web2ldap stream output',
-        mode='wb',
-        compresslevel=web2ldap.app.cnf.misc.gzip_level,
-        fileobj=outfile
-      )
-    else:
-      return outfile
+    return outf
 
   def determineCharset(self):
     self.accept_charset = 'utf-8'

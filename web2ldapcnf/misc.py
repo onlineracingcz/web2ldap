@@ -8,20 +8,7 @@ web2ldapcnf/misc.py - Misc. configuration options for web2ldap
 import os,web2ldapcnf
 
 ########################################################################
-# HTTP-Options
-########################################################################
-
-# The HTTP body can be sent to client gzip-compressed if client presents
-# gzip in HTTP_ACCEPT_ENCODING. You can set the gzip level (1-9) here.
-# Set 0 to turn it off. This needs zlibmodule which is automatically detected.
-# Note: This might speed things up if the server's CPU is very fast
-# compared to the network link. Even with large search results you
-# won't gain much by choosing gzip level higher than 1.
-# Note: Seems to break displaying images in-line in Netscape 4.x.
-gzip_level = 0
-
-########################################################################
-# Other Options
+# General Options
 ########################################################################
 
 # Trace output of the LDAP connection can be written to error
