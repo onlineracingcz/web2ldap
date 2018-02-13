@@ -63,6 +63,7 @@ setup(
         'pydns',
         'paramiko',
         'Pillow',
+        'certifi',
     ],
     zip_safe=False,
     entry_points={

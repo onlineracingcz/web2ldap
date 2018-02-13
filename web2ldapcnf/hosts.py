@@ -5,7 +5,13 @@ web2ldapcnf/hosts.py - Host-related options
 """
 
 # Leave this alone
-import os,ldap0,web2ldapcnf
+import os
+
+import ldap0
+
+import certifi
+
+import web2ldapcnf
 
 class Web2LDAPConfig:
   """
@@ -687,7 +693,8 @@ ldap_def = {
       # Directory containing all the trusted root CA certs (symbolic hash links required!)
 #      LDAP_OPT_X_TLS_CACERTDIR = os.path.sep.join([web2ldapcnf.etc_dir,'web2ldap', 'ssl', 'crt']),
       # File containing all the trusted root CA certs
-      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','trusted-certs.crt'),
+#      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','trusted-certs.crt'),
+      ldap0.OPT_X_TLS_CACERTFILE:certifi.where(),
 #      ldap0.OPT_X_TLS_CIPHER_SUITE:'ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA',
       ldap0.OPT_X_TLS_PROTOCOL_MIN:3,
 #      ldap0.OPT_X_TLS_CRLCHECK:ldap0.OPT_X_TLS_CRL_PEER,
