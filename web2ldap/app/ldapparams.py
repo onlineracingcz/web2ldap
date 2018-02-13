@@ -122,7 +122,7 @@ def w2l_LDAPParameters(sid,outf,command,form,ls,dn):
           [
             ('dn',dn),
             (
-              'ldapparam_%s_control' % {False:u'enable',True:u'disable'}[control_enabled],
+              'ldapparam_%s_control' % {False:'enable',True:'disable'}[control_enabled],
               control_oid_u
             ),
           ],
