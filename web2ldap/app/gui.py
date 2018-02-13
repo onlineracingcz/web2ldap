@@ -459,7 +459,7 @@ def MainMenu(sid,form,ls,dn):
       form.applAnchor(
         'read',
         'Read',
-        sid,[('dn',dn),('read_nocache','1')],
+        sid,[('dn',dn),('read_nocache',u'1')],
         title=u'Display entry %s' % (dn or u'Root DSE')
       ),
     )
