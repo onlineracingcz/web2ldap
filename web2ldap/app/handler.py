@@ -107,7 +107,7 @@ class AppHandler:
   def log_exception(self,ls):
     """
     Write an exception with environment vars, LDAP connection data
-    and Python traceback to stderr.
+    and Python traceback to error log
     """
     # Get exception instance and traceback info
     exc_obj,exc_value,exc_traceback = sys.exc_info()
@@ -269,7 +269,7 @@ class AppHandler:
     ls = LDAPSession(
       self.guess_client_addr(),
       web2ldap.app.cnf.misc.ldap_trace_level,
-      sys.stderr
+      self.env['wsgi.errors'],
     )
     ls.cookie = self.form.setNewCookie(str(id(ls)))
     session.storeSession(self.sid,ls)
@@ -518,7 +518,7 @@ class AppHandler:
           ls = LDAPSession(
             self.guess_client_addr(),
             web2ldap.app.cnf.misc.ldap_trace_level,
-            sys.stderr
+            self.env['wsgi.errors'],
           )
           ls.cookie = self.form.setNewCookie(str(id(ls)))
           session.storeSession(self.sid,ls)
