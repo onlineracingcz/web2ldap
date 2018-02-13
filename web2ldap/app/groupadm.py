@@ -179,7 +179,7 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
       all_group_filterstr,
       attrlist=REQUESTED_GROUP_ATTRS,attrsonly=0,timeout=ls.timeout
     )
-    for _,res_data,_,_ in ls.l.allresults(msg_id):
+    for _,res_data,_,_ in ls.l.results(msg_id):
       for group_dn,group_entry in res_data:
         if group_dn!=None:
           all_groups_dict[unicode(group_dn,ls.charset)] = ldap0.cidict.cidict(group_entry)
@@ -222,7 +222,7 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
                   )
                 )
               member_value = user_entry[user_entry_attrtype][0]
-            modlist.append((ACTION2MODTYPE[action],group_member_attrtype,member_value))
+            modlist.append((ACTION2MODTYPE[action],group_member_attrtype,[member_value]))
         # Finally try to apply group membership modification(s) to single group entry
         if modlist:
           try:
@@ -293,7 +293,7 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
       remove_group_filterstr,
       attrlist=REQUESTED_GROUP_ATTRS,attrsonly=0,timeout=ls.timeout
     )
-    for _,res_data,_,_ in ls.l.allresults(msg_id):
+    for _,res_data,_,_ in ls.l.results(msg_id):
       for group_dn,group_entry in res_data:
         if group_dn!=None:
           remove_groups_dict[unicode(group_dn,ls.charset)] = ldap0.cidict.cidict(group_entry)
