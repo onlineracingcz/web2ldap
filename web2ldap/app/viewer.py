@@ -47,7 +47,7 @@ def DisplayBinaryAttribute(
     form,
     content_type=mimetype,
     more_headers = [
-      ('Content-Disposition','inline; filename=%s', attachment_filename),
+      ('Content-Disposition','inline; filename=%s' % attachment_filename),
     ]
   )
   # send attribute value
