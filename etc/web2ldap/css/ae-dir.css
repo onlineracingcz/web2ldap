@@ -1,0 +1,25 @@
+@import url("default.css");
+
+.aestatus0 {
+  padding-left:0.5em;
+  border-left:0.25em solid #52CC29;
+  color:#000000;
+}
+
+.aestatus1,.aestatus2,.aestatus-1 {
+  padding-left:0.5em;
+  color:#606060;
+  font-style:italic;
+}
+
+.aestatus1 {
+  border-left:0.25em solid #FF9900;
+}
+
+.aestatus2 {
+  border-left:0.25em solid #DA6A45;
+}
+
+.aestatus-1 {
+  border-left:0.25em solid #FFFF19;
+}

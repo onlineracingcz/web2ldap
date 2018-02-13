@@ -1,0 +1,355 @@
+/***********************************************************************/
+/* Hippie (means colorful) layout style sheet for web2ldap             */
+/* web2ldap - web-based LDAP Client, see http://www.web2ldap.de        */
+/***********************************************************************/
+
+body {
+  background-color:#f328ad;
+  color:#000000;
+  margin:0;
+  font-family:fantasy;
+}
+
+img {
+  max-width:150px;
+}
+
+h1 {
+  font-size:1.7em;
+  font-weight:bold;
+}
+
+h2 {
+  font-size:1.3em;
+  font-weight:bold;
+}
+
+h3 {
+  font-size:1.1em;
+  font-weight:bold;
+}
+
+h1 {
+  background-color:#ffb645;
+  border-radius: 10px;
+  padding:0.5em;
+  font-size:2.0em;
+  font-weight:bold;
+}
+
+h2 {
+  background-color:#d4ff45;
+  border-radius: 8px;
+  padding:0.3em;
+  font-size:1.6em;
+  font-weight:bold;
+}
+
+h3 {
+  font-size:1.2em;
+  font-weight:bold;
+}
+
+select {
+  color:#020574;
+  background-color:#d1fff9;
+  border-radius: 5px;
+  border:3px ridge #edb240;
+}
+
+input {
+  color:#020574;
+  background-color:#d1fff9;
+  border-radius: 5px;
+  border:3px ridge #edb240;
+}
+
+radio {
+  color:#020574;
+  background-color:#d1fff9;
+  border-radius: 5px;
+  border:3px ridge #edb240;
+}
+
+textarea {
+  color:#020574;
+  background-color:#d1fff9;
+  border-radius: 5px;
+  border:3px ridge #edb240;
+}
+
+/* TopSection encloses StatusLine, MainMenu and ContextMenu */
+#TopSection {
+}
+
+#StatusLine {
+  z-index:100;
+  top:0.4em;
+  left:0.5em;
+  right:0.5em;
+  font-size:1.0em;
+  text-align:left;
+  padding:0.5em;
+  height:4.5em;
+  background-color:#ffffff;
+  border:none;
+  border-radius: 10px;
+  overflow:hidden;
+
+}
+
+html>body #StatusLine {
+  position:fixed;
+}
+
+#StatusLine table {
+  top:0;
+  width:100%;
+}
+
+#MainMenu {
+  top:5.5em;
+  left:0;
+  margin:0;
+  padding:0.5em;
+  width:8em;
+  float:left;
+  height:100%;
+}
+
+html>body #MainMenu {
+  position:fixed;
+}
+
+#ContextMenu {
+  top:5.5em;
+  right:0;
+  margin:0;
+  padding:0.5em;
+  width:8em;
+  float:right;
+  height:100%;
+}
+
+html>body #ContextMenu {
+  position:fixed;
+}
+
+#CommandTable {
+  margin:0.8em;
+  display:inline;
+}
+
+#SrchResList {
+  width:100%;
+  margin:1em 0 1em 0;
+}
+
+#SrchResList td {
+  vertical-align:top;
+  padding:0.5em;
+  border-top:1px solid;
+  margin-bottom:0.2em;
+}
+
+#SrchResList tr {
+  border-top:2px solid;
+}
+
+#SrchResList td.CommandTable {
+  width:6.2em;
+}
+
+#SrchRes {
+}
+
+table.ReadAttrTable {
+  width:100%;
+  border:1px solid;
+  border-radius: 10px;
+  background-color:#ffed76;
+}
+
+tr.ReadAttrTableRow {
+}
+
+td.ReadAttrType {
+  border:none;
+  padding:0.1em;
+  margin:0.2em;
+}
+
+td.ReadAttrValue {
+  border:none;
+  padding:0.1em;
+  margin:0.2em;
+}
+
+td#About {
+  font-size:100%;
+  text-align:center;
+  vertical-align:middle;
+}
+
+div.Main {
+  background-color:#FFFFFF;
+  position:absolute;
+  top:6em;
+  margin: 0.5em;
+  left:8.5em;
+  right:8.5em;
+  text-align:left;
+  padding:0.7em;
+  color:#000000;
+  border:none;
+  border-radius: 10px;
+/*  white-space: nowrap; */
+  overflow-x: auto;
+  -ms-overflow-x: auto;
+  overflow-y: auto;
+  -ms-overflow-y: auto;
+}
+
+legend {
+  font-size:1.2em;
+  padding:0.2em;
+  border:2px solid #ff4000;
+  border-radius: 10px;
+  background-color:#baff15;
+}
+
+fieldset {
+  margin:0.7em;
+  padding:0.7em;
+  border:none;
+  border-radius: 10px;
+  background-color:#feff98;
+}
+
+#Message {
+}
+
+.ErrorMessage {
+  font-weight:bold;
+  font-size:2em;
+  padding:1.5em;
+  border: none;
+  color:#a0ffae;
+  background-color:#ffa000;
+  border-radius: 10px;
+}
+
+.WarningMessage {
+  font-weight:bold;
+  padding:0.5em;
+  border: 3px solid #e0e0e0;
+}
+
+#Input {
+}
+
+
+/**********************************************************************/
+/* styles for web2ldap's internal links                               */
+/**********************************************************************/
+
+a {
+  text-align:center;
+  padding:0.2em;
+  font-size:95%;
+  color:#7d2aa4;
+  text-decoration:none;
+  font-weight:bold;
+  text-align:center;
+}
+
+a:hover {
+  text-decoration:underline;
+}
+
+a:active {
+  text-decoration:underline;
+}
+
+a:focus {
+  text-decoration:underline;
+}
+
+
+a.CommandLink {
+  text-align:center;
+  padding:0.2em;
+  font-size:95%;
+  color:#AA4012;
+  text-decoration:none;
+  font-weight:bold;
+  text-align:center;
+}
+
+a.CommandLink:hover {
+  color:#FFFFFF;
+  background-color:#c63;
+}
+
+a.CommandLink:active {
+  color:#FFFFFF;
+  background-color:#c63;
+}
+
+a.CommandLink:focus {
+  color:#FFFFFF;
+  background-color:#c63;
+}
+
+
+#TopSection a.CommandLink {
+  text-align:center;
+  color:#000000;
+  background-color:#f7f7f7;
+}
+
+#MainMenu a.CommandLink {
+  display:block;
+  padding:0.2em;
+  margin:0.5em 0 0.5em 0;
+  border:none;
+  border-radius: 8px;
+  background-color:#ffeeff;
+}
+
+#ContextMenu a.CommandLink {
+  display:block;
+  padding:0.2em;
+  margin:0.5em 0 0.5em 0;
+  border:none;
+  border-radius: 8px;
+  background-color:#aaffee;
+}
+
+#TopSection a.CommandLink:hover {
+  color:#FFFFFF;
+  background-color:#c63;
+}
+
+#TopSection a.CommandLink:active {
+  color:#FFFFFF;
+  background-color:#c63;
+}
+
+#TopSection a.CommandLink:focus {
+  color:#FFFFFF;
+  background-color:#c63;
+}
+
+#StatusLine a.CommandLink {
+  border:none;
+  display:inline;
+  color:#AA4012;
+  padding:0.1em;
+  background-color:transparent;
+}
+
+#StatusLine a.CommandLink:hover {
+  color:#FFFFFF;
+  background-color:#c63;
+}

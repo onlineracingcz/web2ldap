@@ -5,6 +5,7 @@ web2ldap.wsgi -- WSGI app wrapper eventually starting a stand-alone HTTP server
 
 from __future__ import absolute_import
 
+import sys
 import os
 import wsgiref.util
 import wsgiref.simple_server
@@ -58,7 +59,7 @@ class AppResponse(file):
 
 def application(environ, start_response):
     if environ['PATH_INFO'].startswith('/web2ldap/css'):
-        css_filename = os.path.join('web2ldap', 'css', os.path.basename(environ['PATH_INFO']))
+        css_filename = os.path.join(sys.prefix, 'etc', 'web2ldap', 'css', os.path.basename(environ['PATH_INFO']))
         try:
             css_size = os.stat(css_filename).st_size
             css_file = open(css_filename, 'rb')

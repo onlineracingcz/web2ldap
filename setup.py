@@ -6,6 +6,7 @@ package/install module package ekca-client
 
 import sys
 import os
+import glob
 from setuptools import setup, find_packages
 
 PYPI_NAME = 'web2ldap'
@@ -53,6 +54,15 @@ setup(
     test_suite='tests',
     python_requires='==2.7.*',
     include_package_data=True,
+    data_files=[
+        ('etc/web2ldap', glob.glob('etc/web2ldap/*.*')),
+        ('etc/web2ldap/css', glob.glob('etc/web2ldap/css/*.css')),
+        ('etc/web2ldap/templates', glob.glob('etc/web2ldap/templates/*.*')),
+        ('etc/web2ldap/templates/ae-dir', glob.glob('etc/web2ldap/templates/ae-dir/*.*')),
+        ('etc/web2ldap/templates/dhcp', glob.glob('etc/web2ldap/templates/dhcp/*.*')),
+        ('etc/web2ldap/templates/oath', glob.glob('etc/web2ldap/templates/oath/*.*')),
+        ('etc/web2ldap/templates/openldap', glob.glob('etc/web2ldap/templates/openldap/*.*')),
+    ],
     install_requires=[
         'setuptools',
         'ldap0>=0.0.55',
@@ -69,6 +79,12 @@ setup(
     entry_points={
         'console_scripts': [
             'web2ldap=web2ldap.wsgi:start_server',
+            'web2ldap-checkinst=web2ldap.checkinst:check_inst',
+        ],
+        'web2ldap_data': [
+            'templates=web2ldapcnf.templates:get_templates_path',
+            'properties=web2ldapcnf.templates:get_properties_path',
+            'schema=web2ldapcnf.templates:get_schema_path',
         ],
     }
 )

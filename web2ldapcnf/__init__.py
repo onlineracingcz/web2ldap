@@ -12,7 +12,7 @@ All code must be valid Python syntax.
 import sys,os
 
 # Directory where web2ldap is started
-web2ldap_dir = os.path.dirname(os.path.dirname(__file__))
+web2ldap_dir = sys.prefix
 
 # Default directory for [web2ldap]/var
 var_dir = os.path.join(web2ldap_dir,'var')
