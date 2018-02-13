@@ -376,7 +376,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
     begin_time_stamp = time.time()
 
     ldap_msgid = ls.l.search(dn.encode(ls.charset),scope,bulkmod_filter.encode(ls.charset),attrlist=['1.1'])
-    result_iter = ls.l.allresults(ldap_msgid)
+    result_iter = ls.l.results(ldap_msgid)
 
     result_ldif_html = []
 
