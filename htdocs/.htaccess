@@ -1,4 +1,0 @@
-Options +IncludesNOEXEC
-DirectoryIndex web2ldap.html
-AddType text/html .html
-AddOutputFilter INCLUDES .html
