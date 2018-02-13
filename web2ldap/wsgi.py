@@ -32,6 +32,7 @@ class AppResponse(file):
         self.headers = headers
 
     def write(self, buf):
+        assert isinstance(buf, str), TypeError('expected string for buf, but got %r', buf)
         self._lines.append(buf)
         self._seek += 1
         self._bytelen += len(buf)
@@ -45,7 +46,7 @@ class AppResponse(file):
         except IndexError:
             return ''
         self._seek += 1
-        return line        
+        return line
 
     def close(self):
         del self._seek
@@ -56,6 +57,24 @@ class AppResponse(file):
 
 
 def application(environ, start_response):
+    if environ['PATH_INFO'].startswith('/web2ldap/css'):
+        css_filename = os.path.join('web2ldap', 'css', os.path.basename(environ['PATH_INFO']))
+        try:
+            css_size = os.stat(css_filename).st_size
+            css_file = open(css_filename, 'rb')
+            start_response(
+                '200 OK',
+                [('Content-type', 'text/css')],
+                [('Content-Length', css_size)],
+            )
+        except IOError:
+            start_response(
+                '404 not found',
+                [('Content-type', 'text/plain')],
+            )
+            return []
+        else:
+            return wsgiref.util.FileWrapper(css_file)
     if not environ['SCRIPT_NAME']:
         wsgiref.util.shift_path_info(environ)
     outf = AppResponse()
