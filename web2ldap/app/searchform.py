@@ -243,7 +243,7 @@ def w2l_SearchForm(
     for sftn in searchform_template_cfg.keys():
       if sftn!='_':
         ContextMenuList.append(form.applAnchor(
-          'searchform',sftn,sid,
+          'searchform',form.utf2display(sftn),sid,
           [
             ('dn',dn),
             ('searchform_mode','base'),
