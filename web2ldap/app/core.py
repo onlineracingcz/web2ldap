@@ -13,10 +13,14 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 from __future__ import absolute_import
-
-import os,time,ldap0,web2ldap.app.cnf,web2ldap.app
-
 from types import StringType,UnicodeType
+
+import os,time
+
+import ldap0
+
+import web2ldap.app.cnf
+
 
 def str2unicode(s,charset):
   if type(s) is StringType:
