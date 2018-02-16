@@ -262,7 +262,10 @@ class Web2LDAPForm(pyweblib.forms.Form):
     return result # allInputFields()
 
   def applAnchor(
-    self,command,anchor_text,sid,
+    self,
+    command,
+    anchor_text,
+    sid,
     form_parameters,
     target=None,
     title=None,
@@ -271,26 +274,33 @@ class Web2LDAPForm(pyweblib.forms.Form):
     """
     Build the HTML text of a anchor with form parameters
     """
-    target_attr = title_attr = ''
+    assert isinstance(command, str), TypeError('command must be string, but was %r', command)
+    assert isinstance(anchor_text, str), TypeError('anchor_text must be string, but was %r', anchor_text)
+    assert sid is None or isinstance(sid, str), TypeError('sid must be None or string, but was %r', sid)
+    assert anchor_id is None or isinstance(anchor_id, unicode), TypeError('anchor_id must be None or unicode, but was %r', anchor_id)
+    assert target is None or isinstance(target, str), TypeError('target must be None or string, but was %r', target)
+    assert title is None or isinstance(title, unicode), TypeError('title must be None or unicode, but was %r', title)
+    target_attr = ''
     if target:
       target_attr = ' target="%s"' % (target)
+    title_attr = ''
     if title:
       title_attr = ' title="%s"' % (self.utf2display(title).replace(' ','&nbsp;'))
     if anchor_id:
       anchor_id = '#%s' % (self.utf2display(anchor_id))
-    return '<a class="CommandLink"%s%s href="%s?%s%s">%s</a>' % (
-      target_attr,title_attr,
+    res = '<a class="CommandLink"%s%s href="%s?%s%s">%s</a>' % (
+      target_attr,
+      title_attr,
       self.actionUrlHTML(command,sid),
       '&amp;'.join([
-        '%s=%s' % (
-          param_name,
-          urllib.quote(self.uc_encode(param_value)[0])
-        )
+        '%s=%s' % (param_name,urllib.quote(self.uc_encode(param_value)[0]))
         for param_name,param_value in form_parameters
       ]),
       anchor_id or '',
       anchor_text,
     )
+    assert isinstance(res, str), TypeError('res must be string, but was %r', res)
+    return res
 
 
 class Web2LDAPNullForm(Web2LDAPForm):
