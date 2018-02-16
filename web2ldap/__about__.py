@@ -29,5 +29,6 @@ __all__ = [
     '__version_info__',
     '__version__',
     '__author__',
+    '__mail__',
     '__license__',
 ]
