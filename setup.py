@@ -13,6 +13,19 @@ PYPI_NAME = 'web2ldap'
 
 BASEDIR = os.path.dirname(os.path.realpath(__file__))
 
+data_files=sorted([
+    (
+        root_dir[len(BASEDIR)+1:],
+        [
+            os.path.join(root_dir[len(BASEDIR)+1:], filename)
+            for filename in filenames
+        ]
+    )
+    for root_dir, _, filenames in os.walk(os.path.join(BASEDIR, 'etc/web2ldap'))
+])
+import pprint
+pprint.pprint(data_files)
+
 sys.path.insert(0, os.path.join(BASEDIR, 'web2ldap'))
 import __about__
 
@@ -54,15 +67,7 @@ setup(
     test_suite='tests',
     python_requires='==2.7.*',
     include_package_data=True,
-    data_files=[
-        ('etc/web2ldap', glob.glob('etc/web2ldap/*.*')),
-        ('etc/web2ldap/css', glob.glob('etc/web2ldap/css/*.css')),
-        ('etc/web2ldap/templates', glob.glob('etc/web2ldap/templates/*.*')),
-        ('etc/web2ldap/templates/ae-dir', glob.glob('etc/web2ldap/templates/ae-dir/*.*')),
-        ('etc/web2ldap/templates/dhcp', glob.glob('etc/web2ldap/templates/dhcp/*.*')),
-        ('etc/web2ldap/templates/oath', glob.glob('etc/web2ldap/templates/oath/*.*')),
-        ('etc/web2ldap/templates/openldap', glob.glob('etc/web2ldap/templates/openldap/*.*')),
-    ],
+    data_files=data_files,
     install_requires=[
         'setuptools',
         'ldap0>=0.0.55',
