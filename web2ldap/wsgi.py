@@ -58,7 +58,7 @@ class AppResponse(file):
 
 
 def application(environ, start_response):
-    if environ['PATH_INFO'].startswith('/web2ldap/css'):
+    if environ['PATH_INFO'].startswith('/css/web2ldap'):
         css_filename = os.path.join(sys.prefix, 'etc', 'web2ldap', 'css', os.path.basename(environ['PATH_INFO']))
         try:
             css_size = os.stat(css_filename).st_size
