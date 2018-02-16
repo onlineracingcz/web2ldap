@@ -23,8 +23,6 @@ data_files=sorted([
     )
     for root_dir, _, filenames in os.walk(os.path.join(BASEDIR, 'etc/web2ldap'))
 ])
-import pprint
-pprint.pprint(data_files)
 
 sys.path.insert(0, os.path.join(BASEDIR, 'web2ldap'))
 import __about__
