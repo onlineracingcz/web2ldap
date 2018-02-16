@@ -16,6 +16,7 @@ except ImportError:
   from StringIO import StringIO
 
 import web2ldap.__about__
+import web2ldapcnf
 import web2ldap.app.cnf, web2ldap.app.handler
 
 BASE_URL = '/web2ldap'
@@ -59,7 +60,13 @@ class AppResponse(file):
 
 def application(environ, start_response):
     if environ['PATH_INFO'].startswith('/css/web2ldap'):
-        css_filename = os.path.join(sys.prefix, 'etc', 'web2ldap', 'css', os.path.basename(environ['PATH_INFO']))
+        css_filename = os.path.join(
+            web2ldapcnf.web2ldap_dir,
+            'etc',
+            'web2ldap',
+            'css',
+            os.path.basename(environ['PATH_INFO'])
+        )
         try:
             css_size = os.stat(css_filename).st_size
             css_file = open(css_filename, 'rb')
