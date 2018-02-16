@@ -294,7 +294,7 @@ CertificateDisplayer = PiscesCertificateDisplayer
 
 def DisplayX509Certificate(sid,outf,command,form,dn,attr,entry,index=None):
   """Display a base64-encoded X.509 certificate attribute"""
-  outf.write('<h1>%s</h1>' % (unicode(attr,'ascii')))
+  outf.write('<h1>%s</h1>' % (attr))
   attr_value_count = len(entry[attr])
   for i in range(attr_value_count):
     if attr_value_count>1:
@@ -310,7 +310,7 @@ def DisplayX509Certificate(sid,outf,command,form,dn,attr,entry,index=None):
 
 def DisplayCRL(sid,outf,command,form,dn,attr,entry,index=None):
   """Display a base64-encoded CRL attribute"""
-  outf.write('<h1>%s</h1>' % (unicode(attr,'ascii')))
+  outf.write('<h1>%s</h1>' % (attr))
   attr_value_count = len(entry[attr])
   for i in range(attr_value_count):
     if attr_value_count>1:
