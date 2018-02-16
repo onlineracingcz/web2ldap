@@ -14,7 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import time,traceback,collections
+import sys,time,traceback,collections
 
 import pyweblib.session
        
@@ -177,12 +177,17 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
 ########################################################################
 
 global session
-session = Session(
-  expireDeactivate=web2ldap.app.cnf.misc.session_remove,
-  expireRemove=web2ldap.app.cnf.misc.session_remove,
-  crossCheckVars = web2ldap.app.cnf.misc.session_checkvars,
-  maxSessionCount = web2ldap.app.cnf.misc.session_limit,
-  maxSessionCountPerIP = web2ldap.app.cnf.misc.session_per_ip_limit,
-)
+if not hasattr(__name__, 'session'):
+    sys.stderr.write('Initialize web2ldap session store\n')
+    session = Session(
+      expireDeactivate=web2ldap.app.cnf.misc.session_remove,
+      expireRemove=web2ldap.app.cnf.misc.session_remove,
+      crossCheckVars = web2ldap.app.cnf.misc.session_checkvars,
+      maxSessionCount = web2ldap.app.cnf.misc.session_limit,
+      maxSessionCountPerIP = web2ldap.app.cnf.misc.session_per_ip_limit,
+    )
 
-cleanUpThread = CleanUpThread(session,interval=5)
+global cleanUpThread
+if not hasattr(__name__, 'cleanUpThread'):
+    sys.stderr.write('Initialize web2ldap clean-up thread\n')
+    cleanUpThread = CleanUpThread(session,interval=5)
