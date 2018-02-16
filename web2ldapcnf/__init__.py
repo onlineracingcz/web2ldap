@@ -12,7 +12,7 @@ All code must be valid Python syntax.
 import sys,os
 
 # Directory where web2ldap is started
-web2ldap_dir = sys.prefix
+web2ldap_dir = os.environ.get('WEB2LDAP_HOME', sys.prefix)
 
 # Default directory for [web2ldap]/var
 var_dir = os.path.join(web2ldap_dir,'var')
@@ -29,7 +29,9 @@ templates_dir = os.path.join(etc_dir,os.path.join('web2ldap','templates'))
 for var_subdir in ['run','log','state']:
   vars()['var_'+var_subdir] = os.path.join(var_dir,var_subdir)
 
-import web2ldapcnf.misc,web2ldapcnf.hosts
+import web2ldapcnf.misc
+import web2ldapcnf.hosts
+import web2ldapcnf.plugins
 
 try:
   import web2ldapcnf.local
