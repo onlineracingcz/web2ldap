@@ -185,47 +185,6 @@ class List(AsyncSearchHandler):
     self.allResults.append((resultType,resultItem))
 
 
-class Dict(AsyncSearchHandler):
-  """
-  Class for collecting all search results into a dictionary {dn:entry}
-  """
-
-  def __init__(self,l):
-    AsyncSearchHandler.__init__(self,l)
-    self.allEntries = {}
-
-  def _processSingleResult(self,resultType,resultItem):
-    if resultType in ENTRY_RESULT_TYPES:
-      # Search continuations are ignored
-      dn,entry = resultItem
-      self.allEntries[dn] = entry
-
-
-class IndexedDict(Dict):
-  """
-  Class for collecting all search results into a dictionary {dn:entry}
-  and maintain case-sensitive equality indexes to entries
-  """
-
-  def __init__(self,l,indexed_attrs=None):
-    Dict.__init__(self,l)
-    self.indexed_attrs = indexed_attrs or tuple()
-    self.index = {}.fromkeys(self.indexed_attrs,{})
-
-  def _processSingleResult(self,resultType,resultItem):
-    if resultType in ENTRY_RESULT_TYPES:
-      # Search continuations are ignored
-      dn,entry = resultItem
-      self.allEntries[dn] = entry
-      for a in self.indexed_attrs:
-        if a in entry:
-          for v in entry[a]:
-            try:
-              self.index[a][v].append(dn)
-            except KeyError:
-              self.index[a][v] = [ dn ]
-
-
 class FileWriter(AsyncSearchHandler):
   """
   Class for writing a stream of LDAP search results to a file object
