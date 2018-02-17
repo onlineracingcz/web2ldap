@@ -81,13 +81,14 @@ class LDIFWriter(web2ldap.ldaputil.async.LDIFWriter):
 
   def afterFirstResult(self):
     # Output search results as LDIF
-    additional_http_header = {
-      'Content-Disposition':'inline; filename=web2ldap-export.ldif',
-    }
-    additional_http_header.update(web2ldap.app.cnf.misc.http_headers)
-    pyweblib.httphelper.SendHeader(
-      self._ldif_writer._output_file,'text/plain',charset='UTF-8',
-      additional_header=additional_http_header,
+    self._ldif_writer._output_file.set_headers(
+      web2ldap.app.gui.gen_headers(
+        content_type='text/plain',
+        charset='utf-8',
+        more_headers=[
+          ('Content-Disposition','inline; filename=web2ldap-export.ldif'),
+        ]
+      )
     )
     web2ldap.ldaputil.async.LDIFWriter.preProcessing(self)
 
@@ -162,14 +163,14 @@ class CSVWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
     self._csv_charset = csv_charset
 
   def afterFirstResult(self):
-    # Output search results as CSV
-    additional_http_header = {
-      'Content-Disposition':'inline; filename=web2ldap-export.csv',
-    }
-    additional_http_header.update(web2ldap.app.cnf.misc.http_headers)
-    pyweblib.httphelper.SendHeader(
-      self._output_file,'text/csv',charset='UTF-8',
-      additional_header=additional_http_header,
+    self._output_file.set_headers(
+      web2ldap.app.gui.gen_headers(
+        content_type='text/csv',
+        charset='utf-8',
+        more_headers=[
+          ('Content-Disposition','inline; filename=web2ldap-export.csv'),
+        ]
+      )
     )
     self._csv_writer.writerow(self._attr_types)
 
@@ -213,13 +214,14 @@ else:
       self._row_counter = 0
 
     def afterFirstResult(self):
-      additional_http_header = {
-        'Content-Disposition':'inline; filename=web2ldap-export.xls',
-      }
-      additional_http_header.update(web2ldap.app.cnf.misc.http_headers)
-      pyweblib.httphelper.SendHeader(
-        self._f,'application/vnd.ms-excel',charset='UTF-8',
-        additional_header=additional_http_header,
+      self._f.set_headers(
+        web2ldap.app.gui.gen_headers(
+          content_type='application/vnd.ms-excel',
+          charset='utf-8',
+          more_headers=[
+            ('Content-Disposition','inline; filename=web2ldap-export.xls'),
+          ]
+        )
       )
       for col in range(len(self._attr_types)):
         self._worksheet.write(0,col,self._attr_types[col])

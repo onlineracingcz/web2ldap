@@ -678,27 +678,30 @@ def AttributeTypeSelectField(
   return attr_select
 
 
-def Header(outf,form,content_type='text/html',more_headers=None):
+def gen_headers(content_type='text/html',charset='utf-8',more_headers=None):
   # Get current time as GMT (seconds since epoch)
   current_datetime = time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime(time.time()))
-  # Build list of header lines
   headers = []
-  # Write header
   if content_type.startswith('text/'):
-    content_type = '%s;charset=%s' % (content_type,form.accept_charset)
+    content_type = '%s;charset=%s' % (content_type,charset)
   headers.append(('Content-Type',content_type))
   headers.append(('Date',current_datetime))
   headers.append(('Last-Modified',current_datetime))
   headers.append(('Expires',current_datetime))
+  for h,v in web2ldap.app.cnf.misc.http_headers.items():
+    headers.append((h,v))
+  headers.extend(more_headers or [])
+  return headers # Header()
+
+
+def Header(outf,form,content_type='text/html',charset=None,more_headers=None):
+  headers = gen_headers(content_type=content_type,charset=charset,more_headers=more_headers)
   if form.next_cookie:
     for _, cookie in form.next_cookie.items():
       headers.append(('Set-Cookie',str(cookie)[12:]))
   if form.env.get('HTTPS','off')=='on' and \
      'Strict-Transport-Security' not in web2ldap.app.cnf.misc.http_headers:
     headers.append(('Strict-Transport-Security','max-age=15768000 ; includeSubDomains'))
-  for h,v in web2ldap.app.cnf.misc.http_headers.items():
-    headers.append((h,v))
-  headers.extend(more_headers or [])
   outf.set_headers(headers)
   return headers # Header()
 
