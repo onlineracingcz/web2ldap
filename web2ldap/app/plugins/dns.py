@@ -231,7 +231,7 @@ class ARecord(IPv4HostAddress):
   def displayValue(self,valueindex=0,commandbutton=0):
     r = [IPv4HostAddress.displayValue(self,valueindex,commandbutton)]
     if commandbutton:
-      ip_addr = self.addr_class(self.attrValue)
+      ip_addr = self.addr_class(self.attrValue.decode('ascii'))
       try:
         ip_addr.reverse_dns
       except AttributeError:
