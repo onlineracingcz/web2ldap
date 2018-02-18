@@ -7,22 +7,34 @@ from __future__ import absolute_import
 
 import sys
 import os
+import SocketServer
 import wsgiref.util
 import wsgiref.simple_server
 
-try:
-  from cStringIO import StringIO
-except ImportError:
-  from StringIO import StringIO
-
-import web2ldap.__about__
 import web2ldapcnf
-import web2ldap.app.cnf, web2ldap.app.handler
+import web2ldap.__about__
+import web2ldap.app.cnf
+import web2ldap.app.handler
 
 BASE_URL = '/web2ldap'
 
 
-class AppResponse(file):
+class W2lWSGIRequestHandler(wsgiref.simple_server.WSGIRequestHandler):
+    """
+    custom WSGIServer class
+    """
+
+
+class W2lWSGIServer(wsgiref.simple_server.WSGIServer, SocketServer.ThreadingMixIn):
+    """
+    custom WSGIServer class
+    """
+
+
+class AppResponse(object):
+    """
+    Application response class as file-like object
+    """
 
     def __init__(self):
         self._seek = 0
@@ -31,34 +43,32 @@ class AppResponse(file):
         self.headers = []
 
     def set_headers(self, headers):
+        """
+        set all HTTP headers at once
+        """
         self.headers = headers
 
     def write(self, buf):
+        """
+        file-like method
+        """
         assert isinstance(buf, str), TypeError('expected string for buf, but got %r', buf)
         self._lines.append(buf)
         self._seek += 1
         self._bytelen += len(buf)
 
-    def seek(self, spos):
-        self._seek = spos
-
-    def readline(self):
-        try:
-            line = self._lines[self._seek]
-        except IndexError:
-            return ''
-        self._seek += 1
-        return line
-
     def close(self):
+        """
+        file-like method
+        """
         del self._seek
         del self._lines
 
-    def rest(self):
-        return self._lines[self._seek:]
-
 
 def application(environ, start_response):
+    """
+    the main WSGI application function
+    """
     if environ['PATH_INFO'].startswith('/css/web2ldap'):
         css_filename = os.path.join(
             web2ldapcnf.web2ldap_dir,
@@ -97,11 +107,24 @@ def application(environ, start_response):
 
 
 def start_server():
-    import wsgiref.simple_server
+    """
+    start a simple stand-alone web server
+    """
+    try:
+        port_arg = int(sys.argv[2])
+        host_arg = sys.argv[1]
+    except IndexError:
+        host_arg = '127.0.0.1'
+        try:
+            port_arg = int(sys.argv[1])
+        except IndexError:
+            port_arg = 1760
     httpd = wsgiref.simple_server.make_server(
-        '127.0.0.1',
-        1760,
+        host_arg,
+        port_arg,
         application,
+        server_class=W2lWSGIServer,
+        handler_class=W2lWSGIRequestHandler,
     )
     host, port = httpd.socket.getsockname()
     print "Serving http://%s:%s/web2ldap" % (host, port)
