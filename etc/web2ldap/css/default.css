@@ -4,7 +4,9 @@ body {
   background-color:#ffffff;
   color:#000000;
   margin:0;
-  font-family:Verdana,Arial,Sans-Serif;
+  font-family:sans-serif;
+  -ms-text-size-adjust:100%;
+  -webkit-text-size-adjust:100%
 }
 
 img {
