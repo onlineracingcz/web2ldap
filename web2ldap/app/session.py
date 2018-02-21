@@ -17,7 +17,7 @@ from __future__ import absolute_import
 import sys,time,traceback,collections
 
 import pyweblib.session
-       
+
 from web2ldap.ldapsession import LDAPSession
 import web2ldap.app.cnf
 
@@ -191,3 +191,4 @@ global cleanUpThread
 if not hasattr(__name__, 'cleanUpThread'):
     sys.stderr.write('Initialize web2ldap clean-up thread\n')
     cleanUpThread = CleanUpThread(session,interval=5)
+    cleanUpThread.start()

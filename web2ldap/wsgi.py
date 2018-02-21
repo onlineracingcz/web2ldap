@@ -133,7 +133,8 @@ def start_server():
         httpd.serve_forever()
     except KeyboardInterrupt:
         print "Stopping service on port 1760..."
-
+        # Stop clean-up thread
+        web2ldap.app.session.cleanUpThread.enabled = 0
 
 if __name__ == '__main__':
     start_server()
