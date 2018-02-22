@@ -277,7 +277,6 @@ class DHCPRange(IA5String):
     form_value = IA5String.formValue(self)
     if not form_value:
       try:
-        # this will work only when using module netaddr
         ipv4_network = self._get_ipnetwork().hosts()
         form_value = u' '.join((unicode(ipv4_network[0]), unicode(ipv4_network[-1])))
       except Exception:
