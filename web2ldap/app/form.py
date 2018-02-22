@@ -31,6 +31,7 @@ import web2ldap.ldaputil.base,web2ldap.ldapsession
 import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.passwd,web2ldap.app.searchform,web2ldap.app.ldapparams,web2ldap.app.session
 # OID description dictionary from configuration directory
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
+from web2ldap.app.session import session_store
 
 CONNTYPE2URLSCHEME = {
   0:'ldap',
@@ -138,9 +139,9 @@ class Web2LDAPForm(pyweblib.forms.Form):
     self.addField(pyweblib.forms.Input(
       'delsid',
       u'Old SID to be deleted',
-      web2ldap.app.session.session.session_id_len,
+      session_store.session_id_len,
       1,
-      web2ldap.app.session.session.session_id_re.pattern
+      session_store.session_id_re.pattern
     ))
     self.addField(pyweblib.forms.Input('who',u'Bind DN/AuthcID',1000,1,u'.*',size=40))
     self.addField(pyweblib.forms.Input('cred',u'with Password',200,1,u'.*',size=15))

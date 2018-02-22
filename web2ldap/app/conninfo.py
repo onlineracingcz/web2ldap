@@ -23,7 +23,7 @@ import ldap0
 import web2ldap.utctime
 import web2ldap.ldaputil.base
 import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui
-from web2ldap.app.session import session
+from web2ldap.app.session import session_store
 
 ##############################################################################
 # Connection info
@@ -299,7 +299,7 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
     )
   )
 
-  cross_check_vars = session.sessiondict['__session_checkvars__'+sid].items()
+  cross_check_vars = session_store.sessiondict['__session_checkvars__'+sid].items()
   cross_check_vars.sort()
   cross_check_vars_html = '\n'.join([
     '<tr><td>%s</td><td>%s</td></tr>' % (

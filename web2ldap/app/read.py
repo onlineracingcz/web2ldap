@@ -22,7 +22,7 @@ from ldap0.cidict import cidict
 import web2ldap.ldaputil.schema
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.schema,web2ldap.app.viewer
 from web2ldap.msbase import union,GrabKeys
-from web2ldap.app.session import session
+from web2ldap.app.session import session_store
 from web2ldap.ldaputil.schema import SchemaElementOIDSet
 
 
@@ -344,7 +344,7 @@ def w2l_Read(
   display_entry = DisplayEntry(sid,form,ls,dn,sub_schema,entry,'readSep',1)
 
   # Save session into database mainly for storing LDAPSession cache
-  session.storeSession(sid,ls)
+  session_store.storeSession(sid,ls)
 
   if len(wanted_attrs)==1 and \
      not wanted_attrs[0] in ('*','+'):

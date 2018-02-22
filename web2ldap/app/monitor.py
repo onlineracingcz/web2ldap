@@ -28,7 +28,7 @@ try:
 except ImportError:
   pwd = None
 
-from web2ldap.app.session import session,cleanUpThread
+from web2ldap.app.session import session_store,cleanUpThread
 from web2ldap.utctime import strftimeiso8601
 from web2ldap.ldapsession import LDAPSession
 
@@ -175,15 +175,15 @@ def w2l_Monitor(outf,command,form,env):
           for t in threading.enumerate()
         ]
       ),
-      int_sessioncounter=session.sessionCounter,
-      int_maxconcurrentsessions=session.max_concurrent_sessions,
-      int_maxconcurrentsessionsperip=session.max_concurrent_sessions,
+      int_sessioncounter=session_store.sessionCounter,
+      int_maxconcurrentsessions=session_store.max_concurrent_sessions,
+      int_maxconcurrentsessionsperip=session_store.max_concurrent_sessions,
       int_removedsessions=cleanUpThread.removed_sessions,
       int_sessionlimit=web2ldapcnf.misc.session_limit,
       int_sessionlimitperip=web2ldapcnf.misc.session_per_ip_limit,
-      int_sessionremoveperiod=session.expireRemove,
-      int_currentnumremoteipaddrs=len(session.remote_ip_sessions),
-      int_numremoteipaddrs=len(session.remote_ip_counter),
+      int_sessionremoveperiod=session_store.expireRemove,
+      int_currentnumremoteipaddrs=len(session_store.remote_ip_sessions),
+      int_numremoteipaddrs=len(session_store.remote_ip_counter),
       text_remoteiphitlist='\n'.join(
         [
           '<tr><td>%s</td><td>%d</td><td>%0.4f</td></tr>' % (
@@ -191,17 +191,17 @@ def w2l_Monitor(outf,command,form,env):
             count,
             float(count/uptime),
           )
-          for ip,count in session.remote_ip_counter.most_common()
+          for ip,count in session_store.remote_ip_counter.most_common()
         ]
       ),
     )
   )
 
-  if session.sessiondict:
+  if session_store.sessiondict:
 
     real_ldap_sessions = []
     fresh_ldap_sessions = []
-    for k,i in session.sessiondict.items():
+    for k,i in session_store.sessiondict.items():
       if not k.startswith('__'):
         if isinstance(i[1],LDAPSession) and i[1].uri:
           real_ldap_sessions.append((k,i))

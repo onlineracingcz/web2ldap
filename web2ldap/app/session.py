@@ -136,15 +136,18 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
   def __init__(self,*args,**kwargs):
     pyweblib.session.CleanUpThread.__init__(self,*args,**kwargs)
     self.removed_sessions = 0
+    self.run_counter = 0
+    self.last_run_time = 0
 
   def run(self):
     """Thread function for cleaning up session database"""
     while not self._stop_event.isSet():
+      self.run_counter += 1
+      current_time = time.time()
       try:
-        current_time = time.time()
         sessiondict_keys = [
           sid
-          for sid in self._sessionInstance.sessiondict.keys()
+          for sid in globals()['session_store'].sessiondict.keys()
           if not sid.startswith('__')
         ]
         for session_id in sessiondict_keys:
@@ -160,6 +163,7 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
               # Remove expired session
               self._sessionInstance.deleteSession(session_id)
               self.removed_sessions+=1
+        self.last_run_time = current_time
       except:
         # Catch all exceptions to avoid thread being killed.
         if __debug__:
@@ -176,19 +180,17 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
 # Initialize web session object
 ########################################################################
 
-global session
-if not hasattr(__name__, 'session'):
-    sys.stderr.write('Initialize web2ldap session store\n')
-    session = Session(
-      expireDeactivate=web2ldap.app.cnf.misc.session_remove,
-      expireRemove=web2ldap.app.cnf.misc.session_remove,
-      crossCheckVars = web2ldap.app.cnf.misc.session_checkvars,
-      maxSessionCount = web2ldap.app.cnf.misc.session_limit,
-      maxSessionCountPerIP = web2ldap.app.cnf.misc.session_per_ip_limit,
-    )
+global session_store
+sys.stderr.write('Initialize web2ldap session store\n')
+session_store = Session(
+  expireDeactivate=web2ldap.app.cnf.misc.session_remove,
+  expireRemove=web2ldap.app.cnf.misc.session_remove,
+  crossCheckVars = web2ldap.app.cnf.misc.session_checkvars,
+  maxSessionCount = web2ldap.app.cnf.misc.session_limit,
+  maxSessionCountPerIP = web2ldap.app.cnf.misc.session_per_ip_limit,
+)
 
 global cleanUpThread
-if not hasattr(__name__, 'cleanUpThread'):
-    sys.stderr.write('Initialize web2ldap clean-up thread\n')
-    cleanUpThread = CleanUpThread(session,interval=5)
-    cleanUpThread.start()
+sys.stderr.write('Initialize web2ldap clean-up thread\n')
+cleanUpThread = CleanUpThread(session_store,interval=5)
+cleanUpThread.start()
