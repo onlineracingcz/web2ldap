@@ -1506,7 +1506,7 @@ class AEPersonMailaddress(DynamicValueSelectList):
         '(aePerson=%s)'
         '(mailLocalAddress=*)'
       ')'
-    ) % (self._dn)
+    ) % self._ls.uc_encode(self._dn)[0]
 
 syntax_registry.registerAttrType(
   AEPersonMailaddress.oid,[
