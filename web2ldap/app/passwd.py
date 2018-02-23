@@ -26,8 +26,8 @@ available_hashtypes = web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items(
 
 
 PASSWD_ACTIONS = [
-  (u'passwdextop',u'Server-side',u'Password modify extended operation'),
-  (u'setuserpassword',u'Modify password attribute',u'Set the password attribute with modify operation'),
+  ('passwdextop','Server-side',u'Password modify extended operation'),
+  ('setuserpassword','Modify password attribute',u'Set the password attribute with modify operation'),
 ]
 PASSWD_ACTIONS_DICT = dict([
   (action,(short_desc,long_desc))
