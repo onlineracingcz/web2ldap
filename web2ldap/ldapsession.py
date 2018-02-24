@@ -891,7 +891,7 @@ class LDAPSession:
       serverctrls=rename_serverctrls
     )
     # Receive result
-    _,_,_,rename_resp_ctrls = self.l.result(rename_msg_id)
+    _,_,_,rename_resp_ctrls,_,_ = self.l.result(rename_msg_id)
     # Try to extract Read Entry controls from response
     prec_ctrls = dict([
       (c.controlType,c)
