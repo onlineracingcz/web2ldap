@@ -43,7 +43,7 @@ max_searchparams = 20
 
 # Path name to dumpasn1.cfg. Grab it from
 # https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.cfg
-dumpasn1cfg = os.path.join(web2ldapcnf.etc_dir,'dumpasn1.cfg')
+dumpasn1cfg = os.path.join(web2ldapcnf.etc_dir,'web2ldap','dumpasn1.cfg')
 
 ########################################################################
 # Global HTML options (templates etc.)
