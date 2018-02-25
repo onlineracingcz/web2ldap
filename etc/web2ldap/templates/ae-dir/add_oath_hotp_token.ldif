@@ -7,10 +7,10 @@ objectClass: oathHOTPToken
 serialNumber: yubikey-
 cn: yubikey-
 aeStatus: 0
-displayName: Yubikey NEO #
+displayName: Yubikey #
 oathFailureCount: 0
 oathHOTPCounter: 0
-oathHOTPParams: cn=oath-policy-yubikey-users,cn=ae,ou=ae-dir
+oathHOTPParams: cn=oath-policy-hotp-users,cn=ae,ou=ae-dir
 oathTokenIdentifier: ubhe
 pwdPolicySubentry: cn=ppolicy-otptokens,cn=ae,ou=ae-dir
 
