@@ -113,6 +113,16 @@ class AEObjectUtil:
         zone_entry = {}
       return zone_entry
 
+  def _get_zone_dn(self):
+    dn_list = ldap0.dn.explode_dn(
+      self._dn[:-len(self._ls.currentSearchRoot)-1].encode(self._ls.charset)
+    )
+    result = ','.join((
+      dn_list[-1],
+      self._ls.currentSearchRoot.encode(self._ls.charset),
+    ))
+    return result # _get_zone_dn()
+
   def _get_zone_name(self):
     dn_list = ldap0.dn.str2dn(
       self._dn[:-len(self._ls.currentSearchRoot)-1].encode(self._ls.charset)
@@ -812,8 +822,7 @@ class AESameZoneObject(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeObject)(aeStatus=0))'
 
   def _determineSearchDN(self,current_dn,ldap_url_dn):
-    dn_list = ldap0.dn.explode_dn(self._dn.encode(self._ls.charset))
-    return  ','.join(dn_list[-2:])
+    return self._get_zone_dn()
 
 
 class AESrvGroup(AESameZoneObject):
@@ -837,7 +846,7 @@ syntax_registry.registerAttrType(
 )
 
 
-class AEProxyFor(AESameZoneObject):
+class AEProxyFor(AESameZoneObject,AEObjectUtil):
   oid = 'AEProxyFor-oid'
   desc = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
   ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
@@ -846,7 +855,7 @@ class AEProxyFor(AESameZoneObject):
     filter_str = self.lu_obj.filterstr or '(objectClass=*)'
     return '(&%s(!(entryDN=%s)))' % (
       filter_str,
-      self._dn,
+      self._dn.encode(self._ls.charset),
     )
 
 syntax_registry.registerAttrType(
