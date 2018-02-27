@@ -367,7 +367,7 @@ class LDAPSession:
   def setTLSOptions(self,tls_options=None):
     tls_options = tls_options or {}
     if not self.uri.lower().startswith('ldapi:') and ldap0.TLS_AVAIL:
-      # Only set the options if python-ldap was built with TLS support
+      # Only set the options if ldap0 was built with TLS support
       for ldap_opt,ldap_opt_value in tls_options.items():
         self.l.set_option(ldap_opt,ldap_opt_value)
       self.l.set_option(ldap0.OPT_X_TLS_REQUIRE_CERT,ldap0.OPT_X_TLS_DEMAND)
@@ -381,11 +381,6 @@ class LDAPSession:
     if startTLSOption:
       try:
         self.l.start_tls_s()
-      except AttributeError as e:
-        raise ldap0.SERVER_DOWN({
-          'desc':str(e),
-          'info':'python-ldap installation is lacking StartTLS support'
-        })
       except (
         ldap0.UNAVAILABLE,
         ldap0.CONNECT_ERROR,
@@ -1121,12 +1116,8 @@ class LDAPSession:
       if self.saslAuth and self.saslAuth.mech in NON_INTERACTIVE_LOGIN_MECHS:
         # For SASL mechs EXTERNAL and GSSAPI the user did not enter a SASL username
         # => try to determine it through OpenLDAP's libldap
-        try:
-          # Ask libldap for SASL username for later LDAP search
-          who = unicode(self.l.get_option(ldap0.OPT_X_SASL_USERNAME),self.charset)
-        except AttributeError:
-          # Constant ldap0.OPT_X_SASL_USERNAME not available in python-ldap => ignore
-          pass
+        # Ask libldap for SASL username for later LDAP search
+        who = unicode(self.l.get_option(ldap0.OPT_X_SASL_USERNAME),self.charset)
 
       # Search for a user entry which matches the username known so far
       try:
