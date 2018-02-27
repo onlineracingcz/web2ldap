@@ -414,7 +414,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
   search_ldap_url.scope = scope
   search_ldap_url.attrs = search_attrs
 
-  ldap_search_command = search_ldap_url.ldapSearchCommand().decode(ls.charset)
+  ldap_search_command = search_ldap_url.ldapsearch_cmd().decode(ls.charset)
 
   read_attr_set = ldap0.schema.models.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
   if search_output in ['table','print']:

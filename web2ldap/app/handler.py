@@ -329,15 +329,15 @@ class AppHandler:
     if isLDAPUrl(self.form.query_string):
       # Extract the connection parameters from a LDAP URL
       try:
-        inputLDAPUrl = ExtendedLDAPUrl(self.form.query_string)
+        input_ldapurl = ExtendedLDAPUrl(self.form.query_string)
       except ValueError as e:
         raise web2ldap.app.core.ErrorExit(u'Error parsing LDAP URL: %s.' % (
           self.form.utf2display(unicode(str(e)))
         ))
       else:
-        self.command = self.command or SCOPE2COMMAND[inputLDAPUrl.scope]
+        self.command = self.command or SCOPE2COMMAND[input_ldapurl.scope]
         if self.command in ('search','read'):
-          inputLDAPUrl.filterstr = inputLDAPUrl.filterstr or '(objectClass=*)'
+          input_ldapurl.filterstr = input_ldapurl.filterstr or '(objectClass=*)'
         # Re-instantiate form based on command derived from LDAP URL
         self.form = FORM_CLASS.get(self.command,Web2LDAPForm)(self.inf,self.env)
 
@@ -352,38 +352,38 @@ class AppHandler:
         # One form parameter with LDAP URL
         ldap_url_input = self.form.field['ldapurl'].value[0]
         try:
-          inputLDAPUrl = ExtendedLDAPUrl(ldap_url_input.encode('ascii'))
+          input_ldapurl = ExtendedLDAPUrl(ldap_url_input.encode('ascii'))
         except ValueError as e:
           raise web2ldap.app.core.ErrorExit(u'Error parsing LDAP URL: %s.' % (unicode(str(e),self.form.accept_charset)))
       else:
-        inputLDAPUrl = ExtendedLDAPUrl()
+        input_ldapurl = ExtendedLDAPUrl()
         conntype = int(self.form.getInputValue('conntype',[0])[0])
-        inputLDAPUrl.urlscheme = web2ldap.app.form.CONNTYPE2URLSCHEME[conntype]
-        inputLDAPUrl.hostport = self.form.getInputValue('host',[None])[0]
-        inputLDAPUrl.x_startTLS = str(web2ldap.ldapsession.START_TLS_REQUIRED * (conntype==1))
+        input_ldapurl.urlscheme = web2ldap.app.form.CONNTYPE2URLSCHEME[conntype]
+        input_ldapurl.hostport = self.form.getInputValue('host',[None])[0]
+        input_ldapurl.x_startTLS = str(web2ldap.ldapsession.START_TLS_REQUIRED * (conntype==1))
 
     # Separate parameters for dn, who, cred and scope
     # have predecence over parameters specified in LDAP URL
 
-    dn = self.form.getInputValue('dn',[unicode(inputLDAPUrl.dn,self.form.accept_charset)])[0]
+    dn = self.form.getInputValue('dn',[unicode(input_ldapurl.dn,self.form.accept_charset)])[0]
 
     who = self.form.getInputValue('who',[None])[0]
     if who==None:
-      if inputLDAPUrl.who!=None:
-        who = unicode(inputLDAPUrl.who,self.form.accept_charset)
+      if input_ldapurl.who!=None:
+        who = unicode(input_ldapurl.who,self.form.accept_charset)
     else:
-      inputLDAPUrl.who = who.encode(self.form.accept_charset)
+      input_ldapurl.who = who.encode(self.form.accept_charset)
 
     cred = self.form.getInputValue('cred',[None])[0]
     if cred==None:
-      if inputLDAPUrl.cred!=None:
-        cred = unicode(inputLDAPUrl.cred,self.form.accept_charset)
+      if input_ldapurl.cred!=None:
+        cred = unicode(input_ldapurl.cred,self.form.accept_charset)
     else:
-      inputLDAPUrl.cred = cred.encode(self.form.accept_charset)
+      input_ldapurl.cred = cred.encode(self.form.accept_charset)
 
-    assert type(inputLDAPUrl.dn)==StringType, TypeError("Type of variable 'inputLDAPUrl.dn' must be StringType: %s" % repr(inputLDAPUrl.dn))
-    assert inputLDAPUrl.who==None or type(inputLDAPUrl.who)==StringType, TypeError("Type of variable 'inputLDAPUrl.who' must be StringType: %s" % repr(inputLDAPUrl.who))
-    assert inputLDAPUrl.cred==None or type(inputLDAPUrl.cred)==StringType, TypeError("Type of variable 'inputLDAPUrl.cred' must be StringType: %s" % repr(inputLDAPUrl.cred))
+    assert type(input_ldapurl.dn)==StringType, TypeError("Type of variable 'input_ldapurl.dn' must be StringType: %s" % repr(input_ldapurl.dn))
+    assert input_ldapurl.who==None or type(input_ldapurl.who)==StringType, TypeError("Type of variable 'input_ldapurl.who' must be StringType: %s" % repr(input_ldapurl.who))
+    assert input_ldapurl.cred==None or type(input_ldapurl.cred)==StringType, TypeError("Type of variable 'input_ldapurl.cred' must be StringType: %s" % repr(input_ldapurl.cred))
 
     assert type(dn)==UnicodeType, TypeError("Type of variable 'dn' must be UnicodeType: %s" % repr(dn))
     assert who==None or type(who)==UnicodeType, TypeError("Type of variable 'who' must be UnicodeType: %s" % repr(who))
@@ -395,15 +395,15 @@ class AppHandler:
     scope_str=self.form.getInputValue(
       'scope',
       [
-        {0:str(inputLDAPUrl.scope),1:''}[inputLDAPUrl.scope is None]
+        {0:str(input_ldapurl.scope),1:''}[input_ldapurl.scope is None]
       ]
      )[0]
     if scope_str:
-      inputLDAPUrl.scope=int(scope_str)
+      input_ldapurl.scope=int(scope_str)
     else:
-      inputLDAPUrl.scope=None
+      input_ldapurl.scope=None
 
-    return inputLDAPUrl,dn,who,cred # end of _get_ldapconn_params()
+    return input_ldapurl,dn,who,cred # end of _get_ldapconn_params()
 
   def run(self):
 
@@ -469,22 +469,22 @@ class AppHandler:
           self.url_redirect(u'Disconnecting...',refresh_time=0)
           return
 
-        inputLDAPUrl,dn,who,cred = self._get_ldapconn_params()
+        input_ldapurl,dn,who,cred = self._get_ldapconn_params()
 
         self.command = self.command or {
           None:'searchform',
           ldap0.SCOPE_BASE:'read',
           ldap0.SCOPE_ONELEVEL:'search',
           ldap0.SCOPE_SUBTREE:'search',
-        }[inputLDAPUrl.scope]
+        }[input_ldapurl.scope]
 
         #-------------------------------------------------
         # Connect to LDAP server
         #-------------------------------------------------
 
-        if not inputLDAPUrl.hostport is None and \
-           inputLDAPUrl.hostport=='' and \
-           inputLDAPUrl.urlscheme=='ldap' and \
+        if not input_ldapurl.hostport is None and \
+           input_ldapurl.hostport=='' and \
+           input_ldapurl.urlscheme=='ldap' and \
            ls.uri is None:
           # Force a SRV RR lookup for dc-style DNs,
           # create list of URLs to connect to
@@ -507,8 +507,8 @@ class AppHandler:
           else:
             web2ldap.app.srvrr.w2l_ChaseSRVRecord(self.sid,self.outf,self.command,self.form,ls,dn,initializeUrl_list)
             return
-        elif not inputLDAPUrl.hostport is None:
-          initializeUrl = str(inputLDAPUrl.initializeUrl()[:])
+        elif not input_ldapurl.hostport is None:
+          initializeUrl = str(input_ldapurl.initializeUrl()[:])
         else:
           initializeUrl = None
 
@@ -526,17 +526,17 @@ class AppHandler:
           if web2ldap.app.cnf.hosts.restricted_ldap_uri_list and \
              not initializeUrl in web2ldap.app.core.ldap_uri_list_check_dict:
             raise web2ldap.app.core.ErrorExit(u'Only pre-configured LDAP servers allowed.')
-          startTLSextop = inputLDAPUrl.getStartTLSOpt(
-            web2ldap.app.cnf.GetParam(inputLDAPUrl,'starttls',web2ldap.ldapsession.START_TLS_NO)
+          startTLSextop = input_ldapurl.get_starttls_extop(
+            web2ldap.app.cnf.GetParam(input_ldapurl,'starttls',web2ldap.ldapsession.START_TLS_NO)
           )
           # Connect to new specified host
           ls.open(
             initializeUrl,
-            web2ldap.app.cnf.GetParam(inputLDAPUrl,'timeout',-1),
+            web2ldap.app.cnf.GetParam(input_ldapurl,'timeout',-1),
             startTLSextop,
             self.env,
-            web2ldap.app.cnf.GetParam(inputLDAPUrl,'session_track_control',0),
-            tls_options=web2ldap.app.cnf.GetParam(inputLDAPUrl,'tls_options',{}),
+            web2ldap.app.cnf.GetParam(input_ldapurl,'session_track_control',0),
+            tls_options=web2ldap.app.cnf.GetParam(input_ldapurl,'tls_options',{}),
           )
           # Set host-/backend-specific timeout
           ls.timeout = ls.l.timeout = web2ldap.app.cnf.GetParam(ls,'timeout',60)
@@ -559,7 +559,7 @@ class AppHandler:
 
         login_mech = self.form.getInputValue(
           'login_mech',
-          [inputLDAPUrl.saslMech or '']
+          [input_ldapurl.saslMech or '']
         )[0].upper() or None
 
         if who!=None and cred is None and not login_mech in web2ldap.ldapsession.NON_INTERACTIVE_LOGIN_MECHS:
@@ -567,11 +567,11 @@ class AppHandler:
           #---------------------------------------
           ls.setDN(dn)
           web2ldap.app.login.w2l_Login(
-            self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,
+            self.sid,self.outf,self.command,self.form,ls,dn,input_ldapurl,
             self.form.getInputValue('login_search_root',[ls.getSearchRoot(dn)])[0],
             login_msg='',
             who=who,relogin=0,nomenu=1,
-            login_default_mech=inputLDAPUrl.saslMech
+            login_default_mech=input_ldapurl.saslMech
           )
           return
 
@@ -588,9 +588,9 @@ class AppHandler:
               login_mech,
               ''.join((
                 self.form.getInputValue('login_authzid_prefix',[''])[0],
-                self.form.getInputValue('login_authzid',[inputLDAPUrl.saslAuthzId or ''])[0],
+                self.form.getInputValue('login_authzid',[input_ldapurl.saslAuthzId or ''])[0],
               )) or None,
-              self.form.getInputValue('login_realm',[inputLDAPUrl.saslRealm])[0],
+              self.form.getInputValue('login_realm',[input_ldapurl.saslRealm])[0],
               binddn_filtertemplate=self.form.getInputValue('login_filterstr',[ur'(uid=%s)'])[0],
               whoami_filtertemplate=web2ldap.app.cnf.GetParam(ls,'binddnsearch',ur'(uid=%s)'),
               loginSearchRoot = login_search_root,
@@ -598,7 +598,7 @@ class AppHandler:
           except ldap0.NO_SUCH_OBJECT as e:
             ls.setDN(dn)
             web2ldap.app.login.w2l_Login(
-              self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,login_search_root,
+              self.sid,self.outf,self.command,self.form,ls,dn,input_ldapurl,login_search_root,
               login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e,self.form,ls.charset),
               who=who,relogin=1
             )
@@ -625,11 +625,11 @@ class AppHandler:
 
         # Execute the command module
         try:
-          self.dispatch(inputLDAPUrl,ls,dn)
+          self.dispatch(input_ldapurl,ls,dn)
         except ldap0.SERVER_DOWN:
           # Try to reconnect to LDAP server and retry action
           ls.l.reconnect(ls.uri)
-          self.dispatch(inputLDAPUrl,ls,dn)
+          self.dispatch(input_ldapurl,ls,dn)
         else:
           # Store current session
           session_store.storeSession(self.sid,ls)
@@ -693,7 +693,7 @@ class AppHandler:
 
       except (ldap0.INSUFFICIENT_ACCESS,ldap0.STRONG_AUTH_REQUIRED) as e:
         web2ldap.app.login.w2l_Login(
-          self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,
+          self.sid,self.outf,self.command,self.form,ls,dn,input_ldapurl,
           self.form.getInputValue('login_search_root',[ls.getSearchRoot(dn)])[0],
           who='',
           login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e,self.form,ls.charset),relogin=1
@@ -705,7 +705,7 @@ class AppHandler:
         web2ldap.ldapsession.USERNAME_NOT_FOUND,
       ) as e:
         web2ldap.app.login.w2l_Login(
-          self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,
+          self.sid,self.outf,self.command,self.form,ls,dn,input_ldapurl,
           self.form.getInputValue('login_search_root',[ls.getSearchRoot(dn)])[0],
           login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e,self.form,ls.charset),
           who=who,relogin=1
@@ -713,7 +713,7 @@ class AppHandler:
 
       except web2ldap.ldapsession.INVALID_SIMPLE_BIND_DN as e:
         web2ldap.app.login.w2l_Login(
-          self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,
+          self.sid,self.outf,self.command,self.form,ls,dn,input_ldapurl,
           self.form.getInputValue('login_search_root',[ls.getSearchRoot(dn)])[0],
           login_msg=self.form.utf2display(unicode(e)),
           who=who,relogin=1
@@ -763,7 +763,7 @@ class AppHandler:
       except web2ldap.ldapsession.USERNAME_NOT_UNIQUE as e:
         login_search_root = self.form.getInputValue('login_search_root',[ls.getSearchRoot(dn)])[0]
         web2ldap.app.login.w2l_Login(
-          self.sid,self.outf,self.command,self.form,ls,dn,inputLDAPUrl,
+          self.sid,self.outf,self.command,self.form,ls,dn,input_ldapurl,
           login_search_root,
           login_msg=web2ldap.app.cnf.misc.command_link_separator.join([
             web2ldap.app.gui.LDAPError2ErrMsg(e,self.form,ls.charset),

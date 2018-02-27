@@ -18,76 +18,78 @@ from __future__ import absolute_import
 import ldap0.ldapurl
 
 
+LDAPSEARCH_TMPL = 'ldapsearch -H "{uri}" {tls} -b "{dn}" -s {scope} {auth} "{filterstr}" {attrs}'
+
+
 class ExtendedLDAPUrl(ldap0.ldapurl.LDAPUrl):
-  """
-  Class for LDAP URLs passed as query string derived from LDAPUrl
-  """
-  attr2extype = {
-    'who':'bindname',
-    'cred':'X-BINDPW',
-    'x_startTLS':'x-starttls',
-    'saslMech':'x-saslmech',
-    'saslAuthzId':'x-saslauthzid',
-    'saslRealm':'x-saslrealm',
-  }
+    """
+    Class for LDAP URLs passed as query string derived from LDAPUrl
+    """
+    attr2extype = {
+        'who': 'bindname',
+        'cred': 'X-BINDPW',
+        'x_startTLS': 'x-starttls',
+        'saslMech': 'x-saslmech',
+        'saslAuthzId': 'x-saslauthzid',
+        'saslRealm': 'x-saslrealm',
+    }
 
-  def getStartTLSOpt(self,minStartTLSOpt):
-    """
-    Returns a value indicating whether StartTLS ext.op. shall be used.
-    Argument minStartTLSOpt indicates the minimum security level requested.
-    0 No
-    1 Yes, if possible. Proceed if not possible.
-    2 Yes, mandantory. Abort if not possible.
-    """
-    if not self.extensions:
-      return minStartTLSOpt
-    try:
-      e = self.extensions.get('startTLS',self.extensions['starttls'])
-    except KeyError:
-      try:
-        result = int(self.x_startTLS or '0')
-      except ValueError:
-        raise ValueError(u'LDAP URL extension x-starttls must be integer 0, 1 or 2.')
-    else:
-      result = int(e.critical) + int(e.extype.lower()=='starttls')
-    return max(result,minStartTLSOpt) # getStartTLSOpt()
+    def get_starttls_extop(self, min_starttls):
+        """
+        Returns a value indicating whether StartTLS ext.op. shall be used.
+        Argument min_starttls indicates the minimum security level requested.
+        0 No
+        1 Yes, if possible. Proceed if not possible.
+        2 Yes, mandantory. Abort if not possible.
+        """
+        if not self.extensions:
+            return min_starttls
+        try:
+            ext_starttls = self.extensions.get('startTLS', self.extensions['starttls'])
+        except KeyError:
+            try:
+                result = int(self.x_startTLS or '0')
+            except ValueError:
+                raise ValueError(u'LDAP URL extension x-starttls must be integer 0, 1 or 2.')
+        else:
+            result = int(ext_starttls.critical) + int(ext_starttls.extype.lower() == 'starttls')
+        print '***', repr(result)
+        return max(result, min_starttls) # get_starttls_extop()
 
-  def ldapSearchCommand(self):
-    """
-    Returns string with OpenLDAP compatible ldapsearch command.
-    """
-    if self.attrs is None:
-      attrs_str = ''
-    else:
-      attrs_str = ' '.join(self.attrs)
-    scope_str = {
-      0:'base',
-      1:'one',
-      2:'sub',
-      3:'children',
-    }[self.scope]
-    if self.saslMech:
-      auth_str = '-Y "{saslmech}"'.format(saslmech=self.saslMech)
-    elif self.who:
-      auth_str = '-x -D "{who}" -W'.format(
-        who=self.who or '',
-      )
-    else:
-      auth_str = ''
-    if self.x_startTLS:
-      tls_str = '-ZZ'
-    else:
-      tls_str = ''
-    if self.extensions:
-      # FIX ME! Set extensions
-      pass
-    ldap_search_command = 'ldapsearch -H "{uri}" {tls} -b "{dn}" -s {scope} {auth} "{filterstr}" {attrs}'.format(
-      uri=self.initializeUrl(),
-      dn=self.dn,
-      scope=scope_str,
-      attrs=attrs_str,
-      filterstr=self.filterstr or '(objectClass=*)',
-      auth=auth_str,
-      tls=tls_str,
-    )
-    return ldap_search_command
+    def ldapsearch_cmd(self):
+        """
+        Returns string with OpenLDAP compatible ldapsearch command.
+        """
+        if self.attrs is None:
+            attrs_str = ''
+        else:
+            attrs_str = ' '.join(self.attrs)
+        scope_str = {
+            0: 'base',
+            1: 'one',
+            2: 'sub',
+            3: 'children',
+        }[self.scope]
+        if self.saslMech:
+            auth_str = '-Y "{saslmech}"'.format(saslmech=self.saslMech)
+        elif self.who:
+            auth_str = '-x -D "{who}" -W'.format(who=self.who or '')
+        else:
+            auth_str = ''
+        if self.x_startTLS:
+            tls_str = '-ZZ'
+        else:
+            tls_str = ''
+        if self.extensions:
+            # FIX ME! Set extensions
+            pass
+        return LDAPSEARCH_TMPL.format(
+            uri=self.initializeUrl(),
+            dn=self.dn,
+            scope=scope_str,
+            attrs=attrs_str,
+            filterstr=self.filterstr or '(objectClass=*)',
+            auth=auth_str,
+            tls=tls_str,
+        )
+        # end of ldapsearch_cmd()
