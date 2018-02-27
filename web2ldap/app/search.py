@@ -23,7 +23,7 @@ import pyweblib.forms,pyweblib.httphelper
 from pyweblib.forms import escapeHTML
 
 import web2ldap.ldaputil.async,web2ldap.msbase
-import web2ldap.ldaputil.base,web2ldap.ldaputil.schema
+import web2ldap.ldaputil.base
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.searchform
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 from web2ldap.ldaputil.base import escape_ldap_filter_chars
@@ -176,7 +176,7 @@ class CSVWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
 
   def _processSingleResult(self,resultType,resultItem):
     if resultType in self._entryResultTypes:
-      entry = web2ldap.ldaputil.schema.Entry(self._s,resultItem[0],resultItem[1])
+      entry = ldap0.schema.models.Entry(self._s,resultItem[0],resultItem[1])
       csv_row_list = []
       for attr_type in self._attr_types:
         csv_col_value_list = []
@@ -232,7 +232,7 @@ else:
 
     def _processSingleResult(self,resultType,resultItem):
       if resultType in self._entryResultTypes:
-        entry = web2ldap.ldaputil.schema.Entry(self._s,resultItem[0],resultItem[1])
+        entry = ldap0.schema.models.Entry(self._s,resultItem[0],resultItem[1])
         csv_row_list = []
         for attr_type in self._attr_types:
           csv_col_value_list = []
@@ -406,7 +406,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
     if a.strip()
   ]
 
-  search_attr_set = web2ldap.ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
+  search_attr_set = ldap0.schema.models.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
   search_attrs = search_attr_set.names()
 
   search_ldap_url = ls.ldapUrl(dn=search_root)
@@ -416,7 +416,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
 
   ldap_search_command = search_ldap_url.ldapSearchCommand().decode(ls.charset)
 
-  read_attr_set = web2ldap.ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
+  read_attr_set = ldap0.schema.models.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,search_attrs)
   if search_output in ['table','print']:
     read_attr_set.add('objectClass')
 
@@ -911,7 +911,7 @@ def w2l_Search(sid,outf,command,form,ls,dn,connLDAPUrl):
               tableentry_attrs = template_attrs.intersection(entry.data.keys())
               if tableentry_attrs:
                 # Output entry with the help of pre-defined templates
-                tableentry = web2ldap.app.read.DisplayEntry(sid,form,ls,dn,sub_schema,web2ldap.ldaputil.schema.Entry(sub_schema,dn,entry),'searchSep',0)
+                tableentry = web2ldap.app.read.DisplayEntry(sid,form,ls,dn,sub_schema,entry,'searchSep',0)
                 tdlist = []
                 for oc in tdtemplate_oc:
                   tdlist.append(search_tdtemplate[oc] % tableentry)

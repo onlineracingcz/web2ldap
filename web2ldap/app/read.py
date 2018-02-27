@@ -14,22 +14,23 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
+from UserDict import IterableUserDict
+
 import pyweblib.forms
 
 import ldap0.schema
 from ldap0.cidict import cidict
+from ldap0.schema.models import SchemaElementOIDSet
 
-import web2ldap.ldaputil.schema
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.schema,web2ldap.app.viewer
 from web2ldap.msbase import union,GrabKeys
 from web2ldap.app.session import session_store
-from web2ldap.ldaputil.schema import SchemaElementOIDSet
 
 
-class vCardEntry(web2ldap.ldaputil.schema.Entry):
+class vCardEntry(ldap0.schema.models.Entry):
 
   def __init__(self,schema,entry,ldap_charset='utf-8',out_charset='utf-8'):
-    web2ldap.ldaputil.schema.Entry.__init__(self,schema,None,entry)
+    ldap0.schema.models.Entry.__init__(self,schema,None,entry)
     self._ldap_charset = ldap_charset
     self._out_charset = out_charset
 
@@ -70,16 +71,16 @@ def generate_vcard(template_str,vcard_entry):
       template_lines_new.append(l.strip())
   return '\r\n'.join(template_lines_new) % vcard_entry
 
-class DisplayEntry(web2ldap.ldaputil.schema.Entry):
+
+class DisplayEntry(IterableUserDict):
 
   def __init__(self,sid,form,ls,dn,schema,entry,sep_attr,commandbutton):
     assert type(dn)==type(u'')
-    web2ldap.ldaputil.schema.Entry.__init__(self,schema,dn.encode(ls.charset),entry)
     self.sid = sid
     self.form = form
     self.ls = ls
     self.dn = dn
-    self.entry = web2ldap.ldaputil.schema.Entry(schema,dn.encode(ls.charset),entry)
+    self.entry = ldap0.schema.models.Entry(schema,dn.encode(ls.charset),entry)
     self.structuralObjectClass = self.entry.get_structural_oc()
     self.invalid_attrs = set()
     self.sep_attr = sep_attr
@@ -87,13 +88,13 @@ class DisplayEntry(web2ldap.ldaputil.schema.Entry):
 
   def __getitem__(self,nameoroid):
     try:
-      values = web2ldap.ldaputil.schema.Entry.__getitem__(self,nameoroid)
+      values = self.entry.__getitem__(nameoroid)
     except KeyError:
       return ''
     result = []
-    syntax_se = web2ldap.app.schema.syntaxes.syntax_registry.syntaxClass(self._s,nameoroid,self.structuralObjectClass)
+    syntax_se = web2ldap.app.schema.syntaxes.syntax_registry.syntaxClass(self.entry._s,nameoroid,self.structuralObjectClass)
     for i in range(len(values)):
-      attr_instance = syntax_se(self.sid,self.form,self.ls,self.dn,self._s,nameoroid,values[i],self.entry)
+      attr_instance = syntax_se(self.sid,self.form,self.ls,self.dn,self.entry._s,nameoroid,values[i],self.entry)
       try:
         attr_value_html = attr_instance.displayValue(valueindex=i,commandbutton=self.commandbutton)
       except UnicodeError:
@@ -115,15 +116,15 @@ class DisplayEntry(web2ldap.ldaputil.schema.Entry):
   def get_html_templates(self,cnf_key):
     read_template_dict = cidict(web2ldap.app.cnf.GetParam(self.ls,cnf_key,{}))
     # This gets all object classes no matter what
-    all_object_class_oid_set = self.object_class_oid_set()
+    all_object_class_oid_set = self.entry.object_class_oid_set()
     # Initialize the set with only the STRUCTURAL object class of the entry
-    object_class_oid_set = SchemaElementOIDSet(self._s,ldap0.schema.models.ObjectClass,[])
-    structural_oc = self.get_structural_oc()
+    object_class_oid_set = SchemaElementOIDSet(self.entry._s,ldap0.schema.models.ObjectClass,[])
+    structural_oc = self.entry.get_structural_oc()
     if structural_oc:
       object_class_oid_set.add(structural_oc)
     # Now add the other AUXILIARY and ABSTRACT object classes
     for oc in all_object_class_oid_set:
-      oc_obj = self._s.get_obj(ldap0.schema.models.ObjectClass,oc)
+      oc_obj = self.entry._s.get_obj(ldap0.schema.models.ObjectClass,oc)
       if oc_obj==None or oc_obj.kind!=0:
         object_class_oid_set.add(oc)
     template_oc = object_class_oid_set.intersection(read_template_dict.data.keys())
@@ -134,7 +135,7 @@ class DisplayEntry(web2ldap.ldaputil.schema.Entry):
     # Determine relevant HTML templates
     template_oc,read_template_dict = self.get_html_templates(cnf_key)
     # Sort the object classes by object class category
-    structural_oc,abstract_oc,auxiliary_oc = web2ldap.app.schema.object_class_categories(self._s,template_oc)
+    structural_oc,abstract_oc,auxiliary_oc = web2ldap.app.schema.object_class_categories(self.entry._s,template_oc)
     template_oc = structural_oc+auxiliary_oc+abstract_oc
     # Templates defined => display the entry with the help of the template
     used_templates = []
@@ -158,7 +159,7 @@ class DisplayEntry(web2ldap.ldaputil.schema.Entry):
             else:
               try:
                 template_attr_oid_set = set([
-                  self._s.getoid(ldap0.schema.models.AttributeType,attr_type_name)
+                  self.entry._s.getoid(ldap0.schema.models.AttributeType,attr_type_name)
                   for attr_type_name in GrabKeys(template_str)()
                 ])
               except TypeError:
@@ -189,7 +190,7 @@ def PrintAttrList(sid,outf,ls,form,dn,sub_schema,entry,attrs,Comment):
   show_attrs = [
     a
     for a in attrs
-    if entry.has_key(a)
+    if a in entry.entry
   ]
   if not show_attrs:
     # There's nothing to display => exit
@@ -290,7 +291,7 @@ def w2l_Read(
     a.strip().encode('ascii')
     for a in form.getInputValue('read_attr',wanted_attrs)
   ]
-  wanted_attr_set = web2ldap.ldaputil.schema.SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,wanted_attrs)
+  wanted_attr_set = SchemaElementOIDSet(sub_schema,ldap0.schema.models.AttributeType,wanted_attrs)
   wanted_attrs = wanted_attr_set.names()
 
   # Specific attributes requested with form parameter search_attrs?
@@ -318,7 +319,7 @@ def w2l_Read(
     raise web2ldap.app.core.ErrorExit(u'Empty search result.')
 
   dn = search_result[0][0].decode(ls.charset)
-  entry = web2ldap.ldaputil.schema.Entry(sub_schema,dn,search_result[0][1])
+  entry = ldap0.schema.models.Entry(sub_schema,dn,search_result[0][1])
 
   requested_attrs = [
     at

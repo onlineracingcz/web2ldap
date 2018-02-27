@@ -23,7 +23,6 @@ from ldap0.controls.openldap import SearchNoOpControl
 from ldap0.controls.libldap import AssertionControl
 
 import web2ldap.ldaputil.base
-import web2ldap.ldaputil.schema
 
 from web2ldap.ldaputil.base import escape_ldap_filter_chars
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
@@ -761,7 +760,7 @@ class LDAPSession:
             else:
               subschemasubentry.update(supplement_schema or {})
           try:
-            sub_schema = web2ldap.ldaputil.schema.SubSchema(
+            sub_schema = ldap0.schema.subentry.SubSchema(
               subschemasubentry,
               self.uc_encode(subschemasubentry_dn)[0],
               check_uniqueness=strict_check,
@@ -1187,7 +1186,7 @@ class LDAPSession:
       return None
     if not search_result:
       return None
-    entry = web2ldap.ldaputil.schema.Entry(schema,dn,search_result[0][1])
+    entry = ldap0.schema.models.Entry(schema,dn,search_result[0][1])
     try:
       # Try to directly read the governing structure rule ID from operational attribute in entry
       governing_structure_rule = entry['governingStructureRule'][0]

@@ -27,7 +27,7 @@ import pyweblib.forms
 
 import web2ldap.msbase
 import web2ldap.mspki.asn1helper
-import web2ldap.ldaputil.base,web2ldap.ldaputil.schema
+import web2ldap.ldaputil.base
 import web2ldap.app.viewer,web2ldap.app.form,web2ldap.app.gui,web2ldap.app.cnf
 import web2ldap.utctime
 from web2ldap.ldaputil.base import is_dn
@@ -163,10 +163,10 @@ class LDAPSyntax:
     self.attrType = attrType
     assert type(attrValue)==StringType or attrValue is None, \
       TypeError(
-        "%s(): attrtype=%s Argument 'attrValue' must be StringType or None, was: %s" % (
+        "%s(): attrtype=%r Argument 'attrValue' must be StringType or None, was: %r" % (
           self.__class__.__name__,
-          repr(attrType),
-          repr(attrValue),
+          attrType,
+          attrValue,
         )
       )
     self.attrValue = attrValue
@@ -176,9 +176,9 @@ class LDAPSyntax:
     self._schema = schema
     assert type(dn)==UnicodeType, "Argument 'dn' must be UnicodeType"
     self._dn = dn
-    assert entry is None or isinstance(entry,web2ldap.ldaputil.schema.Entry), \
+    assert entry is None or isinstance(entry,ldap0.schema.models.Entry), \
       TypeError('entry must be ldaputil.schema.Entry but is %s' % (entry.__class__.__name__))
-    self._entry = entry or web2ldap.ldaputil.schema.Entry(self._schema,None,{})
+    self._entry = entry or ldap0.schema.models.Entry(self._schema,None,{})
 
   def setAttrValue(self,attrValue):
     self.validate(attrValue)

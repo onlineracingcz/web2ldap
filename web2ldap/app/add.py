@@ -19,7 +19,6 @@ import ldap0,ldap0.modlist,pyweblib.forms, \
 
 from ldap0.dn import escape_dn_chars
 
-import web2ldap.ldaputil.schema
 from web2ldap.ldaputil.base import ParentDN
 from web2ldap.ldaputil.controls import PostReadControl
 
@@ -117,7 +116,7 @@ def w2l_Add(sid,outf,command,form,ls,dn):
 
   elif add_template:
     add_dn,entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(ls,form,add_template)
-    entry = web2ldap.ldaputil.schema.Entry(sub_schema,None,entry)
+    entry = ldap0.schema.models.Entry(sub_schema,None,entry)
     add_rdn,add_basedn = web2ldap.ldaputil.base.SplitRDN(add_dn.decode(ls.charset))
     add_basedn = add_basedn or dn
 

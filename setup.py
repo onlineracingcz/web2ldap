@@ -68,7 +68,7 @@ setup(
     data_files=data_files,
     install_requires=[
         'setuptools',
-        'ldap0>=0.0.55',
+        'ldap0>=0.0.56',
         'pyweblib',
         'ipaddress',
         'M2Crypto',

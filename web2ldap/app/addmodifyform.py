@@ -25,7 +25,7 @@ from pyweblib.forms import escapeHTML
 
 import ldap0,ldap0.ldif,ldap0.schema
 
-import web2ldap.ldaputil.schema,web2ldap.ldapsession
+import web2ldap.ldapsession
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.form,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.modify,web2ldap.app.schema
 from web2ldap.app.schema.viewer import displayNameOrOIDList
 from web2ldap.app.schema.syntaxes import syntax_registry
@@ -106,16 +106,16 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     self.manage_dsait_enabled = self.ls.l._get_server_ctrls('**all**').has_key(web2ldap.ldapsession.CONTROL_MANAGEDSAIT)
     self.writeable_attr_oids = writeable_attr_oids
     self.invalid_attrs = invalid_attrs or {}
-    new_object_classes = set(list(self.object_class_oid_set())) - set([
-      self._s.getoid(ldap0.schema.models.ObjectClass,oc_name)
+    new_object_classes = set(list(self.entry.object_class_oid_set())) - set([
+      self.entry._s.getoid(ldap0.schema.models.ObjectClass,oc_name)
       for oc_name in existing_object_classes or []
     ])
-    new_attribute_types = self._s.attribute_types(
+    new_attribute_types = self.entry._s.attribute_types(
       new_object_classes,
       raise_keyerror=0,
       ignore_dit_content_rule=self.relax_rules_enabled
     )
-    old_attribute_types = self._s.attribute_types(
+    old_attribute_types = self.entry._s.attribute_types(
       existing_object_classes or [],
       raise_keyerror=0,
       ignore_dit_content_rule=self.relax_rules_enabled
@@ -141,7 +141,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
 
   def _get_rdn_dict(self,dn):
     assert type(dn)==type(u'')
-    entry_rdn_dict = ldap0.schema.models.Entry(self._s,None,web2ldap.ldaputil.base.rdn_dict(dn))
+    entry_rdn_dict = ldap0.schema.models.Entry(self.entry._s,None,web2ldap.ldaputil.base.rdn_dict(dn))
     for attr_type,attr_values in entry_rdn_dict.items():
       del entry_rdn_dict[attr_type]
       d = ldap0.cidict.cidict()
@@ -156,15 +156,14 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     """
     Return HTML input field(s) for the attribute specified by nameoroid.
     """
-
-    oid = self._at2key(nameoroid)[0]
-    nameoroid_se = self._s.get_obj(ldap0.schema.models.AttributeType,nameoroid)
+    oid = self.entry._at2key(nameoroid)[0]
+    nameoroid_se = self.entry._s.get_obj(ldap0.schema.models.AttributeType,nameoroid)
     syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.syntaxClass(
-      self._s,nameoroid,
+      self.entry._s,nameoroid,
       self.structuralObjectClass
     )
     try:
-      attr_values = ldap0.schema.models.Entry.__getitem__(self,nameoroid)
+      attr_values = self.entry.__getitem__(nameoroid)
     except KeyError:
       attr_values = []
 
@@ -178,12 +177,12 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     if not syntax_class.editable:
       attr_values = ['']
 
-    attr_inst = syntax_class(self.sid,self.form,self.ls,self.dn,self._s,nameoroid,None,self.entry)
+    attr_inst = syntax_class(self.sid,self.form,self.ls,self.dn,self.entry._s,nameoroid,None,self.entry)
     invalid_attr_indexes = set(self.invalid_attrs.get(nameoroid,[]))
 
     for attr_index,attr_value in enumerate(attr_values):
 
-      attr_inst = syntax_class(self.sid,self.form,self.ls,self.dn,self._s,nameoroid,attr_value,self.entry)
+      attr_inst = syntax_class(self.sid,self.form,self.ls,self.dn,self.entry._s,nameoroid,attr_value,self.entry)
       highlight_invalid = attr_index in invalid_attr_indexes
 
       if (
@@ -206,7 +205,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         ) or (
           # Set to writeable if relax rules control is in effect and attribute is NO-USER-APP in subschema
           not self.relax_rules_enabled and \
-          web2ldap.app.schema.no_userapp_attr(self._s,oid)
+          web2ldap.app.schema.no_userapp_attr(self.entry._s,oid)
         ):
         result.append('\n'.join((
           '<span class="InvalidInput">'*highlight_invalid,
@@ -283,7 +282,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
       attr_type_filter.append(('obsolete',[0]))
 
     # Filter out extensibleObject
-    object_class_oids = self.object_class_oid_set()
+    object_class_oids = self.entry.object_class_oid_set()
     try:
       object_class_oids.remove('1.3.6.1.4.1.1466.101.120.111')
     except KeyError:
@@ -293,7 +292,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     except KeyError:
       pass
 
-    required_attrs_dict,allowed_attrs_dict = self._s.attribute_types(
+    required_attrs_dict,allowed_attrs_dict = self.entry._s.attribute_types(
       list(object_class_oids),
       attr_type_filter=attr_type_filter,
       raise_keyerror=0,
@@ -305,7 +304,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     # objectClass attribute as not modifiable (e.g. MS Active Directory)
     if not required_attrs_dict.has_key('2.5.4.0') and \
        not allowed_attrs_dict.has_key('2.5.4.0'):
-      required_attrs_dict['2.5.4.0'] = self._s.get_obj(ldap0.schema.models.ObjectClass,'2.5.4.0')
+      required_attrs_dict['2.5.4.0'] = self.entry._s.get_obj(ldap0.schema.models.ObjectClass,'2.5.4.0')
     return required_attrs_dict,allowed_attrs_dict
 
   def fieldset_table(self,outf,attr_types_dict,fieldset_title):
@@ -317,20 +316,20 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     )
     seen_attr_type_oids = ldap0.cidict.cidict()
     attr_type_names = ldap0.cidict.cidict()
-    for a in self.keys():
-      at_oid = self._at2key(a)[0]
+    for a in self.entry.keys():
+      at_oid = self.entry._at2key(a)[0]
       if attr_types_dict.has_key(at_oid):
         seen_attr_type_oids[at_oid] = None
         attr_type_names[a.encode('ascii')] = None
     for at_oid,at_se in attr_types_dict.items():
       if at_se and \
          not seen_attr_type_oids.has_key(at_oid) and \
-         not web2ldap.app.schema.no_userapp_attr(self._s,at_oid):
+         not web2ldap.app.schema.no_userapp_attr(self.entry._s,at_oid):
           attr_type_names[(at_se.names or (at_se.oid,))[0].encode('ascii')] = None
     attr_types = attr_type_names.keys()
     attr_types.sort(key=str.lower)
     for attr_type in attr_types:
-      attr_type_name = web2ldap.app.gui.SchemaElementName(self.sid,self.form,self.dn,self._s,attr_type,ldap0.schema.models.AttributeType)
+      attr_type_name = web2ldap.app.gui.SchemaElementName(self.sid,self.form,self.dn,self.entry._s,attr_type,ldap0.schema.models.AttributeType)
       attr_value_field_html = self[attr_type]
       outf_lines.append('<tr>\n<td class="InputAttrType">\n%s\n</td>\n<td>\n%s\n</td>\n</tr>\n' % (attr_type_name,attr_value_field_html))
     outf_lines.append('</table></fieldset>')
@@ -353,12 +352,12 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     outf_lines = []
     for attr_type,attr_values in self.entry.items():
       at_oid = self.entry._at2key(attr_type)[0]
-      syntax_class = syntax_registry.syntaxClass(self._s,attr_type,self.structuralObjectClass)
+      syntax_class = syntax_registry.syntaxClass(self.entry._s,attr_type,self.structuralObjectClass)
       if syntax_class.editable and \
-         not web2ldap.app.schema.no_userapp_attr(self._s,attr_type) and \
+         not web2ldap.app.schema.no_userapp_attr(self.entry._s,attr_type) and \
          not at_oid in displayed_attrs:
         for attr_value in attr_values:
-          attr_inst = syntax_class(self.sid,self.form,self.ls,self.dn,self._s,attr_type,attr_value,self.entry)
+          attr_inst = syntax_class(self.sid,self.form,self.ls,self.dn,self.entry._s,attr_type,attr_value,self.entry)
           outf_lines.append(self.form.hiddenFieldHTML('in_at',attr_type.decode('ascii'),u''))
           outf_lines.append(web2ldap.app.gui.HIDDEN_FIELD % ('in_avi',str(self.attr_counter),''))
           try:
@@ -378,8 +377,8 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     ldif_writer = ldap0.ldif.LDIFWriter(f)
     ldap_entry = {}
     for attr_type in self.entry.keys():
-      attr_values = web2ldap.ldaputil.schema.Entry.__getitem__(self,attr_type)
-      if not web2ldap.app.schema.no_userapp_attr(self._s,attr_type):
+      attr_values = self.entry.__getitem__(attr_type)
+      if not web2ldap.app.schema.no_userapp_attr(self.entry._s,attr_type):
         ldap_entry[attr_type] = [
           attr_value
           for attr_value in attr_values
@@ -652,7 +651,7 @@ def ObjectClassForm(
         else:
           if not parent_result:
             continue
-          parent_entry = web2ldap.ldaputil.schema.Entry(sub_schema,parent_result[0][0],parent_result[0][1])
+          parent_entry = ldap0.schema.models.Entry(sub_schema,parent_result[0][0],parent_result[0][1])
           missing_parent_attrs = set([
             attr_type
             for attr_type in addform_parent_attrs
@@ -669,12 +668,12 @@ def ObjectClassForm(
           restricted_structural_oc = restricted_structural_oc or []
       else:
         restricted_structural_oc = all_structural_oc
-      restricted_structural_oc_set = web2ldap.ldaputil.schema.SchemaElementOIDSet(
+      restricted_structural_oc_set = ldap0.schema.models.SchemaElementOIDSet(
         sub_schema,
         ldap0.schema.models.ObjectClass,
         restricted_structural_oc
       )
-      entry = web2ldap.ldaputil.schema.Entry(sub_schema,ldif_dn,ldif_entry)
+      entry = ldap0.schema.models.Entry(sub_schema,ldif_dn,ldif_entry)
       soc = entry.get_structural_oc()
       if soc and soc in restricted_structural_oc_set:
         try:
@@ -864,7 +863,7 @@ def nomatching_attrs(sub_schema,entry,allowed_attrs_dict,required_attrs_dict):
   do exist in the entry
   """
   nomatching_attrs_dict = ldap0.cidict.cidict()
-  for at_name in entry.keys():
+  for at_name in entry.entry.keys():
     try:
       at_oid = sub_schema.name2oid[ldap0.schema.models.AttributeType][at_name]
     except KeyError:
@@ -928,7 +927,7 @@ def ReadOldEntry(ls,dn,sub_schema,assertion_filter,read_attrs=None):
   except IndexError:
     raise ldap0.NO_SUCH_OBJECT
 
-  entry = web2ldap.ldaputil.schema.Entry(sub_schema,dn.encode(ls.charset),ldap_entry)
+  entry = ldap0.schema.models.Entry(sub_schema,dn.encode(ls.charset),ldap_entry)
 
   if write_attrs_method==WRITEABLE_ATTRS_NONE:
     # No method to determine writeable attributes was used
@@ -937,7 +936,7 @@ def ReadOldEntry(ls,dn,sub_schema,assertion_filter,read_attrs=None):
   elif write_attrs_method==WRITEABLE_ATTRS_SLAPO_ALLOWED:
     # Determine writeable attributes from attribute 'allowedAttributesEffective'
     try:
-      writeable_attr_oids = web2ldap.ldaputil.schema.SchemaElementOIDSet(sub_schema,AttributeType,entry['allowedAttributesEffective'])
+      writeable_attr_oids = ldap0.schema.models.SchemaElementOIDSet(sub_schema,AttributeType,entry['allowedAttributesEffective'])
     except KeyError:
       writeable_attr_oids = set([])
     else:
@@ -1000,7 +999,7 @@ def w2l_AddForm(sid,outf,command,form,ls,dn,add_rdn,add_basedn,entry,Msg='',inva
   required_attrs_dict,allowed_attrs_dict = input_form_entry.attribute_types()
   nomatching_attrs_dict = nomatching_attrs(sub_schema,input_form_entry,allowed_attrs_dict,required_attrs_dict)
 
-  rdn_options = input_form_entry.get_rdn_templates()
+  rdn_options = input_form_entry.entry.get_rdn_templates()
 
   supentry_display_string = SupentryDisplayString(sid,form,ls,add_basedn,sub_schema)
 

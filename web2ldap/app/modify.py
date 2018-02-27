@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 import ldap0,ldap0.ldif,ldap0.schema
 
-import web2ldap.ldaputil.schema,web2ldap.ldapsession
+import web2ldap.ldapsession
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.addmodifyform,web2ldap.app.add,web2ldap.app.schema
 from web2ldap.app.schema.syntaxes import syntax_registry,LDAPSyntaxValueError
 
@@ -47,7 +47,7 @@ def GetEntryfromInputForm(form,ls,dn,sub_schema):
   if not (len(in_attrtype_list)==len(in_value_list)==len(in_value_indexes)):
     raise web2ldap.app.core.ErrorExit(u'Different count of attribute types and values input.')
 
-  entry = web2ldap.ldaputil.schema.Entry(sub_schema,dn.encode(ls.charset),{})
+  entry = ldap0.schema.models.Entry(sub_schema,dn.encode(ls.charset),{})
 
   # Stuff input field lists into raw dictionary
   for i,attr_type in enumerate(in_attrtype_list):
@@ -230,7 +230,7 @@ def w2l_Modify(sid,outf,command,form,ls,dn):
     new_entry[attr_type] = filter(None,attr_values)
 
   # Set up a dictionary of all attribute types to be ignored
-  ignore_attr_types = web2ldap.ldaputil.schema.SchemaElementOIDSet(sub_schema,AttributeType,web2ldap.app.add.ADD_IGNORE_ATTR_TYPES)
+  ignore_attr_types = ldap0.schema.models.SchemaElementOIDSet(sub_schema,AttributeType,web2ldap.app.add.ADD_IGNORE_ATTR_TYPES)
 
   # Determine whether Relax Rules control is in effect
   relax_rules_enabled = ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)

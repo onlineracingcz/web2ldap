@@ -140,7 +140,7 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
         # This should normally not happen, only if entry got deleted in between
         raise web2ldap.app.core.ErrorExit(u'Empty search result when reading entry to be renamed.')
 
-      entry = web2ldap.ldaputil.schema.Entry(sub_schema,dn,search_result[0][1])
+      entry = ldap0.schema.models.Entry(sub_schema,dn,search_result[0][1])
 
       # Determine possible name forms for new RDN
       rdn_options = entry.get_rdn_templates()
