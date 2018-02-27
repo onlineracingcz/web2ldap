@@ -17,10 +17,11 @@ from __future__ import absolute_import
 import time,string,binascii,hashlib
 
 import ldap0
-from ldap0.pw import random_string
+from ldap0.pw import random_string, unicode_pwd
 
-import web2ldap.ldaputil.base,web2ldap.ldaputil.passwd,web2ldap.ldapsession
+import web2ldap.ldapsession
 import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.login
+from web2ldap.ldaputil.passwd import user_password_hash
 
 available_hashtypes = web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items()
 
@@ -361,27 +362,16 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
       if all_attrs_dict.has_key('1.2.840.113556.1.4.90'):
         # Active Directory's password attribute unicodePwd
         passwd_attr_type = 'unicodePwd'
-        unicodePwd = web2ldap.ldaputil.passwd.UnicodePwd(
-          l=ls.l,
-          dn=passwd_who.encode(ls.charset)
-        )
-        new_passwd_value = unicodePwd.encodePassword(passwd_input)
+        new_passwd_value = unicode_pwd(password=passwd_input)
         passwd_scheme = ''
         if old_password:
-          old_passwd_value = unicodePwd.encodePassword(old_password)
+          old_passwd_value = unicode_pwd(old_password)
       else:
         # Assume standard password attribute userPassword
         passwd_attr_type = 'userPassword'
-        userPassword = web2ldap.ldaputil.passwd.UserPassword(
-          l=ls.l,
-          dn=passwd_who.encode(ls.charset),
-          charset=ls.charset,
-        )
-        # Work around the problem that LDAP applications use different
-        # charset encodings for the userPassword attribute
-        new_passwd_value = userPassword.encodePassword(passwd_input,passwd_scheme)
+        new_passwd_value = user_password_hash(passwd_input.encode(ls.charset),passwd_scheme.encode('ascii'))
         if old_password:
-          old_passwd_value = userPassword.encodePassword(old_password,'')
+          old_passwd_value = user_password_hash(old_password.encode(ls.charset),'')
 
       if OwnPwdChange(ls,passwd_who) and old_password:
         passwd_modlist.extend((
