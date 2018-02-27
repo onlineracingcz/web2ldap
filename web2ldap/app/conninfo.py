@@ -178,15 +178,12 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
     sasl_mech = u'simple'
     sasl_auth_info = 'SASL not used'
 
-  if ldap0.SASL_AVAIL:
-    try:
-      sasl_ssf = unicode(ls.l.get_option(ldap0.OPT_X_SASL_SSF))
-    except ldap0.LDAPError as e:
-      sasl_ssf = u'error reading option: %s' % (web2ldap.app.gui.LDAPError2ErrMsg(e,form,ls.charset))
-    except ValueError:
-      sasl_ssf = u'option not available'
-  else:
-    sasl_ssf = u'no SASL support in python-ldap'
+  try:
+    sasl_ssf = unicode(ls.l.get_option(ldap0.OPT_X_SASL_SSF))
+  except ldap0.LDAPError as e:
+    sasl_ssf = u'error reading option: %s' % (web2ldap.app.gui.LDAPError2ErrMsg(e,form,ls.charset))
+  except ValueError:
+    sasl_ssf = u'option not available'
 
   vendor_name = unicode(
     (
