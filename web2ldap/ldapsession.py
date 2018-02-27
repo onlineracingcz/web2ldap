@@ -26,7 +26,7 @@ import web2ldap.ldaputil.base
 
 from web2ldap.ldaputil.base import escape_ldap_filter_chars
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
-from web2ldap.ldaputil.controls import PreReadControl,PostReadControl
+from ldap0.controls.readentry import PreReadControl,PostReadControl
 
 # Authorization Identity Request and Response Controls (see RFC 3829)
 try:

@@ -18,9 +18,9 @@ import ldap0,ldap0.modlist,pyweblib.forms, \
        web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.schema,web2ldap.app.addmodifyform,web2ldap.app.modify
 
 from ldap0.dn import escape_dn_chars
+from ldap0.controls.readentry import PostReadControl
 
 from web2ldap.ldaputil.base import ParentDN
-from web2ldap.ldaputil.controls import PostReadControl
 
 # Attribute types always ignored for add requests
 ADD_IGNORE_ATTR_TYPES = {
