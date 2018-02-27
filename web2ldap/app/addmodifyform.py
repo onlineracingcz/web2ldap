@@ -277,7 +277,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
       ('collective',[0]),
     ]
     # Check whether Manage DIT control is in effect,
-    # let python-ldap filter out OBSOLETE attribute types otherwise
+    # filter out OBSOLETE attribute types otherwise
     relax_rules_enabled = self.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
     if not relax_rules_enabled:
       attr_type_filter.append(('obsolete',[0]))
