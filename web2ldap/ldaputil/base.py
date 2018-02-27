@@ -19,25 +19,7 @@ import re,ldap0,ldap0.sasl,ldap0.dn,ldap0.filter
 
 from types import IntType
 
-SEARCH_SCOPE_STR = ['base','one','sub']
-
-SEARCH_SCOPE = {
-  # default for empty search scope string
-  '':ldap0.SCOPE_BASE,
-  # the search scope strings defined in RFC22xx(?)
-  'base':ldap0.SCOPE_BASE,
-  'one':ldap0.SCOPE_ONELEVEL,
-  'sub':ldap0.SCOPE_SUBTREE,
-}
-
-try:
-  # Check whether constant is present (python-ldap 2.4.15+)
-  ldap0.SCOPE_SUBORDINATE
-except AttributeError:
-  pass
-else:
-  SEARCH_SCOPE['subordinate'] = ldap0.SCOPE_SUBORDINATE
-  SEARCH_SCOPE_STR.append('subordinate')
+SEARCH_SCOPE_STR = ['base','one','sub','subordinate']
 
 LDAP_OPT_NAMES_DICT = dict([
   (v,k)
