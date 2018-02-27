@@ -10,7 +10,7 @@ from __future__ import absolute_import
 # Python's standard lib
 import re,time,socket
 
-# from python-ldap
+# from ldap0 package
 import ldap0
 from ldap0.filter import escape_filter_chars
 from ldap0.pw import random_string

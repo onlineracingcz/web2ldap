@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-ldaputil - several utility classes/functions for python-ldap
+ldaputil - several LDAP-related utility classes/functions
 (c) by Michael Stroeder <michael@stroeder.com>
 
 web2ldap - a web-based LDAP Client,

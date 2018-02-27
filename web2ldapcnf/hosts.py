@@ -685,7 +685,7 @@ ldap_def = {
     starttls=0,
 
     # Dictionary for specifying arbitrary TLS-related LDAP options.
-    # Which options are really available on your system depends on your python-ldap and OpenLDAP build.
+    # Which options are really available on your system depends on your ldap0 and OpenLDAP builds.
     # (see section TLS OPTIONS on OpenLDAP's man page ldap_set_option(3)
     tls_options={
       # you should really set this!
