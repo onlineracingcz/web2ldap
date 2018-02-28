@@ -53,7 +53,6 @@ class ExtendedLDAPUrl(ldap0.ldapurl.LDAPUrl):
                 raise ValueError(u'LDAP URL extension x-starttls must be integer 0, 1 or 2.')
         else:
             result = int(ext_starttls.critical) + int(ext_starttls.extype.lower() == 'starttls')
-        print '***', repr(result)
         return max(result, min_starttls) # get_starttls_extop()
 
     def ldapsearch_cmd(self):
