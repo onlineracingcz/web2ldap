@@ -815,7 +815,7 @@ syntax_registry.registerAttrType(
 )
 
 
-class AESameZoneObject(DynamicDNSelectList):
+class AESameZoneObject(DynamicDNSelectList,AEObjectUtil):
   oid = 'AESameZoneObject-oid'
   desc = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
   input_fallback = False # no fallback to normal input field
