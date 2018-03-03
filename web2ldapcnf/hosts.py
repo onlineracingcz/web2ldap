@@ -356,7 +356,7 @@ ae_dir_config = Web2LDAPConfig(
     'oathTokenIdentifier',
     'oathTokenSerialNumber',
     'oathTOTPParams',
-    'oathTOTPToken'
+    'oathTOTPToken',
     'objectClass',
     'ou',
     'personalTitle',
