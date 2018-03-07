@@ -88,7 +88,7 @@ def check_inst():
     ('M2Crypto',0,None,'https://pypi.python.org/pypi/M2Crypto','Python wrapper module for OpenSSL'),
     ('paramiko',0,None,'https://pypi.python.org/pypi/paramiko','Python implementation of SSH protocol'),
     ('PIL',0,None,'http://www.pythonware.com/products/pil/index.htm','Python Imaging Library'),
-    ('pyExcelerator',0,None,'http://pyexcelerator.sourceforge.net/','Generates/imports Excel files'),
+    ('xlwt',0,None,'http://www.python-excel.org/','Generates/imports Excel files'),
   ]:
     error_text_prefix={0:'Warning!',1:'Fatal Error!'}[mandantory]
     m_list = modulename.split('.')

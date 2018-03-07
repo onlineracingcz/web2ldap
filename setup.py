@@ -72,7 +72,7 @@ setup(
         'pyweblib',
         'ipaddress',
         'M2Crypto',
-        'pyExcelerator',
+        'xlwt',
         'pydns',
         'paramiko',
         'Pillow',

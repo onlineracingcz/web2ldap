@@ -190,12 +190,10 @@ class CSVWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
       self._csv_writer.writerow(csv_row_list)
 
 try:
-  import pyExcelerator
+  import xlwt
 except ImportError:
   ExcelWriter = None
 else:
-
-  pyExcelerator.UnicodeUtils.DEFAULT_ENCODING = 'cp1251'
 
   class ExcelWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
     """
@@ -209,7 +207,7 @@ else:
       self._s = sub_schema
       self._attr_types = attr_types
       self._ldap_charset = ldap_charset
-      self._workbook = pyExcelerator.Workbook()
+      self._workbook = xlwt.Workbook(encoding='cp1251')
       self._worksheet = self._workbook.add_sheet('web2ldap_export')
       self._row_counter = 0
 
