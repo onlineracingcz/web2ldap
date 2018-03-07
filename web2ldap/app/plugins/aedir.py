@@ -532,7 +532,7 @@ class AEGroupMember(DynamicDNSelectList,AEObjectUtil):
         serverctrls=srv_ctrls,
         add_ctrls=1,
       )
-      for dn,entry,controls in ldap_result[1]:
+      for dn,entry,controls in ldap_result:
         if dn is None:
           # ignore search continuations
           continue
