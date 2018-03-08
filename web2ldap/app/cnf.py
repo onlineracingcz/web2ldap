@@ -20,8 +20,8 @@ import ldap0,ldap0.ldapurl,ldap0.schema
 from ldap0.cidict import cidict
 from ldap0.ldapurl import LDAPUrl
 
-import web2ldapcnf,web2ldapcnf.hosts,web2ldapcnf.misc,web2ldapcnf.standalone,web2ldapcnf.countries
-from web2ldapcnf import misc,hosts,standalone,countries
+import web2ldapcnf,web2ldapcnf.hosts,web2ldapcnf.misc,web2ldapcnf.standalone
+from web2ldapcnf import misc,hosts,standalone
 import web2ldap.ldapsession
 from web2ldap.ldapsession import LDAPSession
 import web2ldap.app.schema

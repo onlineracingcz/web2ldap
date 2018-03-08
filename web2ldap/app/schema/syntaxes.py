@@ -14,7 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import sys,re,imghdr,sndhdr,urllib,uuid,datetime,time,json,xml.etree.ElementTree
+import sys,os,re,imghdr,sndhdr,urllib,uuid,datetime,time,json,xml.etree.ElementTree
 from collections import defaultdict
 from xml.etree.ElementTree import ParseError as XMLParseError
 from types import StringType,UnicodeType,ClassType,TupleType
@@ -24,6 +24,8 @@ import ipaddress
 import ldap0,ldap0.ldapurl,ldap0.schema
 
 import pyweblib.forms
+
+import web2ldapcnf
 
 import web2ldap.msbase
 import web2ldap.mspki.asn1helper
@@ -1731,10 +1733,12 @@ class Boolean(SelectList,IA5String):
     return IA5String.displayValue(self,valueindex,commandbutton)
 
 
-class CountryString(SelectList):
+class CountryString(PropertiesSelectList):
   oid = '1.3.6.1.4.1.1466.115.121.1.11'
   desc = 'Two letter country string as listed in ISO 3166-2'
-  attr_value_dict = web2ldap.app.cnf.countries.c_dict
+  properties_pathname = os.path.join(
+    web2ldapcnf.etc_dir,'web2ldap','properties','attribute_select_c.properties'
+  )
   simpleSanitizers = (
     str.strip,
   )

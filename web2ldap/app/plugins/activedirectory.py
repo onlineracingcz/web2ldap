@@ -5,7 +5,7 @@ web2ldap plugin classes for Active Directory (for some information see draft-arm
 
 from __future__ import absolute_import
 
-import time,struct,uuid,pyweblib,ldap0.cidict,web2ldap.app.searchform
+import os,time,struct,uuid,pyweblib,ldap0.cidict,web2ldap.app.searchform
 
 from web2ldap.utctime import strftimeiso8601
 
@@ -13,10 +13,13 @@ from web2ldap.app.gui import DisplayDN
 
 from web2ldap.ldaputil.base import is_dn
 
+import web2ldapcnf
+
 from web2ldap.app.schema.syntaxes import \
   Binary,Boolean,DistinguishedName,DirectoryString,GeneralizedTime, \
   Integer,BitArrayInteger,OctetString,SelectList,IA5String,Uri,OID, \
-  DynamicValueSelectList,DynamicDNSelectList,DNSDomain,XmlValue,syntax_registry
+  DynamicValueSelectList,DynamicDNSelectList,DNSDomain,XmlValue,PropertiesSelectList,\
+  syntax_registry
 
 from web2ldap.app.plugins.groups import GroupEntryDN
 
@@ -509,10 +512,15 @@ syntax_registry.registerAttrType(
 )
 
 
-class CountryCode(SelectList):
+class CountryCode(PropertiesSelectList):
   oid = 'CountryCode-oid'
   desc = 'Numerical country code'
-  attr_value_dict = ldap0.cidict.cidict(web2ldap.app.cnf.countries.countryCode_dict)
+  properties_pathname = os.path.join(
+    web2ldapcnf.etc_dir,'web2ldap','properties','attribute_select_countryCode.properties'
+  )
+  simpleSanitizers = (
+    str.strip,
+  )
 
   def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
     self.attr_value_dict[u'0'] = u'-/-'

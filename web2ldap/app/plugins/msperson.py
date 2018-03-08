@@ -5,8 +5,9 @@ web2ldap plugin classes for attributes defined for msPerson
 
 from __future__ import absolute_import
 
-import re,os.path,datetime, \
-       web2ldapcnf
+import re,os.path,datetime
+
+import web2ldapcnf
 
 from web2ldap.app.schema.syntaxes import DirectoryString, \
   IA5String,PropertiesSelectList,ISO8601Date,syntax_registry
