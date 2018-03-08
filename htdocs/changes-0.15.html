@@ -1,0 +1,632 @@
+<!--#set var="web2ldap_subtitle" value="Changes 0.15.x" -->
+<!--#set var="web2ldap_pagedescription" value="History of released versions" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#include file="ssi/changes_navigation.html" -->
+
+<h1 id="r0.15.22">0.15.22</h1>
+<p>Release Date: 2005-10-17</p>
+<ul>
+  <li>
+    Corrected the titles of some links.
+  </li>
+  <li>
+    HTTP header <var>Content-Disposition</var> is sent as <var>inline</var>
+    instead of <var>attachment</var>. E.g. this enables the browser to
+    directly display e.g. LDIF exports instead of asking for helper
+    application.
+  </li>
+  <li>
+    Spec file for building RPMs contributed by <a href="http://www.dkluenter.de">
+    Dieter Kl&uuml;nter.</a>
+  </li>
+</ul>
+
+<h1 id="r0.15.21">0.15.21</h1>
+<p>Release Date: 2005-10-13</p>
+<ul>
+  <li>
+    When starting in stand-alone mode stdout and stdin are closed
+    to completely detach from console. Unfortunately some start-up
+    messages are written to the <var>web2ldapHTTPHandlerClass.debug_log</var> now.
+  </li>
+  <li>
+    Added HTML <var>class</var> attributes used when displaying attribute
+    table of a single entry. HTML attribute <var>rowspan</var> is used for
+    attribute type column in the table.
+  </li>
+  <li>
+    If a schema element was manually searched and is not found
+    the input form is re-displayed with the given name or OID
+    for manual correction by the user.
+  </li>
+  <li>
+    In the search result list the attribute <var>numAllSubordinates</var>
+    is used if available to determine if it does make sense to
+    display a [Down] link.
+  </li>
+  <li>
+    When performing a recursive delete the attribute
+    <var>numAllSubordinates</var> is used if available to determine
+    whether an entry is a non-leaf.
+  </li>
+  <li>
+    The number of direct and total subordinate entries is displayed
+    before deleting an entry which has subordinate entries.
+  </li>
+  <li>
+    Collective attributes are no longer displayed in input form
+    when editing an entry.
+  </li>
+  <li>
+    Collective Attributes are listed separately when displaying
+    a single entry.
+  </li>
+</ul>
+
+<h1 id="r0.15.20">0.15.20</h1>
+<p>Release Date: 2005-10-09</p>
+<ul>
+  <li>
+    Fixed displaying a search continuation if the search filter
+    contains non-ASCII characters.
+  </li>
+  <li>
+    The number of direct and total subordinate entries is displayed
+    in the title of a [Down] link when displaying search result list
+    and the appropriate operational attributes exist.
+  </li>
+  <li>
+    <var>w2lapp.gui.PrintFooter()</var>:
+    <var>outf.flush()</var> is called for sending the data to
+    the browser immediately which speeds up displaying the page.
+  </li>
+</ul>
+
+<h1 id="r0.15.19">0.15.19</h1>
+<p>Release Date: 2005-09-29</p>
+<p>Credits go to Claudia D. for her proposals improving the user interface.</p>
+<ul>
+  <li>
+    Once again: Fixed <var>LDAPSyntax.displayValue()</var>...
+  </li>
+  <li>
+    Searching group entries and changing the group membership
+    of an entry is now divided into separate forms. Hopefully
+    this is more obvious to the user than the former UI.
+  </li>
+  <li>
+    A &lt;table&gt; is used instead of a &lt;dt&gt; for
+    listing the attributes not covered by template when
+    displaying a single entry. This saves much space in the
+    browser window.
+  </li>
+  <li>
+    The object class select lists are 20 items long now.
+  </li>
+  <li>
+    When modifying the object classes of an entry the existing
+    object classes are listed first in the select fields.
+    Hopefully it is more obvious to the user now what these
+    select fields are all about.
+  </li>
+</ul>
+
+<h1 id="r0.15.18">0.15.18</h1>
+<p>Release Date: 2005-09-26</p>
+<ul>
+  <li>
+    Fixed exception logging handler.
+  </li>
+</ul>
+
+<h1 id="r0.15.17">0.15.17</h1>
+<p>Release Date: 2005-09-25</p>
+<ul>
+  <li>
+    The search size limit is set when retrieving partial results.
+    This avoids sending abandon request (in <var>ldap.async.AsyncSearchHandler</var>)
+    if not necessary.
+  </li>
+  <li>
+    <var>socket.error</var> is handled just like <var>IOError</var>.
+  </li>
+  <li>
+    Reactivated the special attribute value testing in
+    <var>LDAPSyntax.displayValue()</var> with a corrected regex
+    for timestamps. This fixes a infinite loop in regex-matching.
+  </li>
+</ul>
+
+<h1 id="r0.15.16">0.15.16</h1>
+<p>Release Date: 2005-09-21</p>
+<ul>
+  <li>
+    A serious bug was introduced in <a href="#0.15.14">0.15.14</a>
+    affecting input forms. The change was backed out.
+    Therefore web2ldap does not correctly support editing entries
+    with language sub-types until I spent more time fixing this. :-(
+  </li>
+  <li>
+    Error <var>ldap.INSUFFICIENT_ACCESS</var> is now ignored when
+    subsequently reading the operational attributes of an entry while
+    displaying a single entry (caused because of brain-dead access control ;-).
+  </li>
+  <li>
+    Deactivated the special attribute value testing in
+    <var>LDAPSyntax.displayValue()</var> which is used when no registered syntax
+    class is found.
+  </li>
+</ul>
+
+<h1 id="r0.15.15">0.15.15</h1>
+<p>Release Date: 2005-09-20</p>
+<ul>
+  <li>
+    When connecting to a LDAP server which completely disallows
+    anonymous bind the login form is correctly displayed now.
+  </li>
+  <li>
+    More fine-grained error handling when connecting and probing
+    the LDAP version.
+  </li>
+  <li>
+    Relaxed syntax checking for telephone and FAX numbers when processing
+    input data.
+  </li>
+</ul>
+
+<h1 id="r0.15.14">0.15.14</h1>
+<p>Release Date: 2005-09-17</p>
+<ul>
+  <li>
+    Collective attributes are no longer displayed in input form
+    when editing an entry.
+  </li>
+  <li>
+    Fixed attribute values with language sub-types not being displayed
+    when a template is used for displaying entry or the entry modification
+    input form.
+  </li>
+  <li>
+    The URL redirector (command <var>urldirect</var>) now ignores LDAP URLs.
+    The LDAP URL in the query string is then processed by web2ldap as usual.
+    Especially this effect LDAP URLs in certificates.
+  </li>
+</ul>
+
+<h1 id="r0.15.13">0.15.13</h1>
+<p>Release Date: 2005-08-30</p>
+<ul>
+  <li>
+    If modifying password fails with <var>ldap.CONSTRAINT_VIOLATION</var>
+    the <var>LDAPError</var> message is displayed together with the
+    password entry fields to re-enter another password. This is a more
+    graceful handling when password quality checking is in effect.
+  </li>
+  <li>
+    Added even more restrictions for HTTP header <var>Cache-Control</var>.
+    The complete list:
+    <code>private, no-store, no-cache, max-age=0, must-revalidate</code>
+  </li>
+  <li>
+    Fixed displaying attribute values of <var>vendorName</var> and <var>vendorVersion</var>
+    when showing connection information.
+  </li>
+</ul>
+
+<h1 id="r0.15.12">0.15.12</h1>
+<p>Release Date: 2005-06-26</p>
+<ul>
+  <li>
+    Fixed handling of missing rootDSE data when connecting to
+    an LDAPv2 server.
+  </li>
+  <li>
+    Fixed exporting search results as printable HTML table.
+  </li>
+  <li>
+    Added plug-in module for ppolicy overlay of OpenLDAP
+    (see <a href="https://tools.ietf.org/html/draft-behera-ldap-password-policy">draft-behera-ldap-password-policy</a>).
+  </li>
+</ul>
+
+<h1 id="r0.15.11">0.15.11</h1>
+<p>Release Date: 2005-06-21</p>
+<dl>
+  <dt>Installation and Configuration changes</dt>
+  <dd>
+    <ul>
+      <li>
+        List of ISO 3166-2, numeric country codes and country names defined
+        in new configuration sub-module <var>web2ldapcnf.countries</var>.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Added general configuration parameter
+        <a href="web2ldapcnf_misc.html#ldap_opt_debug_level">web2ldapcnf.misc.ldap_opt_debug_level</a>
+        for setting debug level of OpenLDAP libs.
+      </li>
+      <li>
+        Implemented eDirectory-specific plug-in class
+        <var>TaggedNameAndString</var>.
+      </li>
+      <li>
+        Added plug-in module for <a href="https://www.openldap.org/">OpenLDAP</a>.
+      </li>
+      <li>
+        Added plug-in classes <var>CountryCode</var> and <var>LogonHours</var> for MS AD.
+      </li>
+      <li>
+        When modifying an entry the DIT content rule which governs the
+        structural object class is displayed with a link to this rule in the schema browser.
+      </li>
+      <li>
+        In the search result list the attribute <var>msDS-Approx-Immed-Subordinates</var>
+        is used if available to determine if it does make sense to
+        display a [Down] link.
+      </li>
+      <li>
+        LDAP URLs in query strings (e.g. used for web2ldap-bookmarks) can now have
+        the following LDAP URL extensions for specifying the SASL login
+        parameters: <var>x-saslmech</var>, <var>x-saslauthzid</var> and <var>x-saslrealm</var>.
+      </li>
+      <li>
+        When displaying connection information all possible rootDSE attributes
+        are taken into account instead of dumb probing all known monitor and
+        configuration DNs.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug Fixes and Work-Arounds</dt>
+  <dd>
+    <ul>
+      <li>
+        Exception <var>ldap.INSUFFICIENT_ACCESS</var> is ignored
+        in <var>getUmichConfig()</var> to avoid this exception being
+        raised to user.
+      </li>
+      <li>
+        Recursive delete is hopefully more resistent against being
+        caught in an end-less loop when working a buggy LDAP server.
+      </li>
+      <li>
+        Fixed handling of non-existing or empty <var>namingContexts</var> attribute
+        in RootDSE.
+      </li>
+      <li>
+        The operational attribute <var>structuralObjectClass</var> is supposed
+        to be SINGLE-VALUE but some broken LDAPv3 server implementations
+        (e.g. Active Directory) return all the superior structural object classes
+        as attribute values.<br>
+        There was a work-around added for that which fixes determining the
+        correct DIT content in rule in effect on those broken servers.
+      </li>
+      <li>
+        Fixed input of bind DN with NON-ASCII chars in login form.
+      </li>
+      <li>
+        LDAP URLs with standard port numbers used as keys in cascaded
+        configuration are matched with our without the port number.
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning</dt>
+  <dd>
+    <ul>
+      <li>
+        Some modifications in the syntax / attribute type class implementation
+        which also clean-ups the plug-in implementations. Many syntaxes added.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r0.15.10">0.15.10</h1>
+<p>Release Date: 2005-04-29</p>
+<ul>
+  <li>
+    Two small fixes for the SIGHUP handler.
+  </li>
+  <li>
+    The ManageDSAITMode control is always set to critical to make
+    it fail if not supported by the LDAP server
+  </li>
+</ul>
+
+<h1 id="r0.15.9">0.15.9</h1>
+<p>Release Date: 2005-02-15</p>
+<ul>
+  <li>
+    Added new syntax class <var>PosixTimestamp</var>.
+  </li>
+  <li>
+    Added new plug-in module for <a href="http://www.samba.org">Samba</a>.
+  </li>
+  <li>
+    Better message formatting after renaming entry.
+  </li>
+  <li>
+    Fixed missing symbol <var>mail_pattern</var>.
+  </li>
+</ul>
+
+<h1 id="r0.15.8">0.15.8</h1>
+<p>Release Date: 2005-02-07</p>
+<ul>
+  <li>
+    Added new plug-in class for syntax <var>Interval</var>
+    on MS Active Directory. This nicely displays timestamp
+    values in the following attributes:
+    <ul>
+      <li><var>accountExpires</var></li>
+      <li><var>badPasswordTime</var></li>
+      <li><var>lastLogon</var></li>
+      <li><var>lastLogonTimestamp</var></li>
+      <li><var>lastLogoff</var></li>
+      <li><var>pwdLastSet</var></li>
+    </ul>
+  </li>
+  <li>
+    Added new plug-in class for attribute <var>instanceType</var>
+    on MS Active Directory.
+  </li>
+</ul>
+
+<h1 id="r0.15.7">0.15.7</h1>
+<p>Release Date: 2005-02-05</p>
+<ul>
+  <li>
+    Added new plug-in class for attribute type <var>sAMAccountType</var>
+    on MS Active Directory.
+  </li>
+  <li>
+    The SIGPIPE handler now simply ignores SIGPIPE instead of
+    raising <var>mssignals.SigPipeException</var>. This fixes
+    some strange effects when running in FastCGI mode and one
+    hits [ Disconnect ] after reconnecting to the LDAP
+    server of the current session (e.g. because of server restart).
+    <p>
+      So this is for you if your web server's error log shows something like:<br>
+    </p>
+    <code>
+      Exception exceptions.AttributeError: "FCGI instance has no attribute 'err'" in &lt;bound method FCGI.__del__ of &lt;fcgi.FCGI insta
+      nce at 0x42f0db6c&gt;&gt; ignored
+    </code>
+  </li>
+  <li>
+    Allow IPv6 addresses to be passed as parameter values in LDAP URLs
+    and input fields.
+  </li>
+</ul>
+
+<h1 id="r0.15.6">0.15.6</h1>
+<p>Release Date: 2004-12-02</p>
+<ul>
+  <li>
+    Fixed displaying LDAP connection information when
+    attributes <var>vendorName</var> and <var>vendorVersion</var> are
+    not present in the root DSE.
+  </li>
+  <li>
+    Python 2.4 compability fix for displaying time stamps in certificates
+    and CRLs.
+  </li>
+</ul>
+
+<h1 id="r0.15.5">0.15.5</h1>
+<p>Release Date: 2004-11-18</p>
+<ul>
+  <li>
+    Added new plug-in class for attribute type <var>userAccountControl</var>
+    on MS Active Directory.
+  </li>
+  <li>
+    Fixed checking for attribute type <var>dc</var> in DN parts
+    when converting dc-style DNs to DNS domains during SRV lookup.
+    It is now case-insensitive.
+  </li>
+</ul>
+
+<h1 id="r0.15.4">0.15.4</h1>
+<p>Release Date: 2004-11-11</p>
+<ul>
+  <li>
+    Fixed displaying search filters in schema viewer for
+    searching object classes or attribute types without
+    <var>NAME</var> in schema element declaration.
+  </li>
+  <li>
+    Added plug-in class for MS Exchange 5.x.
+  </li>
+</ul>
+
+<h1 id="r0.15.3">0.15.3</h1>
+<p>Release Date: 2004-10-26</p>
+<ul>
+  <li>
+    Compability fix for python-ldap built without
+    support for SSL/TLS.
+  </li>
+  <li>
+    Small fix or better work-around for handling
+    attribute types where syntax is not set.
+  </li>
+  <li>
+    Fixed validation of <var>jpegPhoto</var> attribute values.
+  </li>
+</ul>
+
+<h1 id="r0.15.2">0.15.2</h1>
+<p>Release Date: 2004-08-21</p>
+<ul>
+  <li>
+    Fixed a bug introduced in 0.15.1 which occured when
+    invoking exception method <var>ErrorExit.html()</var>.
+  </li>
+</ul>
+
+<h1 id="r0.15.1">0.15.1</h1>
+<p>Release Date: 2004-08-05</p>
+<dl>
+  <dt><strong>Security fixes!</strong></dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed error handling where client-generated parameters
+        displayed in various error messages could be exploited
+        for cross-site scripting (XSS) attacks. All web2ldap
+        versions prior to this version are considered vulnerable.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed backward-compability issue with Python 2.0
+        by avoiding use of function inspect.isclass().
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r0.15.0">0.15.0</h1>
+<p>Release Date: 2004-07-29</p>
+<dl>
+  <dt>Installation and Configuration changes</dt>
+  <dd>
+    <ul>
+      <li>
+        The host:port form in the cascaded configuration
+        was abandoned. All string-keys MUST be valid LDAP URLs
+        except the single underscore for the default section.
+        Additionally one can group configuration parameters
+        around a common base DN (AKA as search root AKA naming context)
+        by specifying a LDAP URL with empty <var>hostport</var> part.
+        (see section <a href="web2ldapcnf_hosts.html#cascaded_config">Cascaded configuration</a>).
+      </li>
+      <li>
+        <strong>Note:</strong> This release requires upgrading to
+        <a href="https://www.python-ldap.org/">python-ldap 2.0.1</a>
+        which contains an important bug fix.
+      </li>
+      <li>
+        Performance optimization module
+        <a href="http://psyco.sourceforge.net/">psyco</a>
+        is imported if available.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Sort of a rudimental plug-in interface for
+        syntax and attribute-type classes. Added plug-in example module
+        for attribute types <var>c</var> and <var>gender</var>.
+      </li>
+      <li>
+        Added plug-in classes for vendor-specific syntaxes and/or attribute types:
+        <ul>
+          <li>
+            MS Active Directory (see <a href="https://tools.ietf.org/html/draft-armijo-ldap-syntax">draft-armijo-ldap-syntax</a>)
+          </li>
+          <li>
+            Novell eDirectory (see <a href="https://tools.ietf.org/html/draft-sermersheim-nds-ldap-schema">draft-sermersheim-nds-ldap-schema</a>)
+          </li>
+          <li>
+            Entrust PKI (see
+            <a href="http://www.entrust.com/resources/download.cfm/21132/directory_schema_6.pdf">
+            Entrust Directory Schema Requirements for Entrust 6.0</a>)
+          </li>
+          <li>
+            posixAccount (see <a href="https://tools.ietf.org/html/rfc2307">RFC 2307</a>)
+          </li>
+        </ul>
+      </li>
+      <li>
+        New host-specific parameter
+        <a href="web2ldapcnf_hosts.html#link_css">link_css</a>
+        allows to set different style sheets (CSS URL) for
+        different servers / naming contexts.
+      </li>
+      <li>
+        A multi-select field is also displayed for abstract object classes
+        when adding or modifying entries. E.g. this preserves
+        object class <var>top</var> in an existing entry.
+      </li>
+      <li>
+        If attribute <var>schemaNamingContext</var> is present in
+        RootDSE (e.g. with MS AD) a link is displayed in the schema viewer
+        to the relating schema element entry found under the schema naming
+        context.
+      </li>
+      <li>
+        Attribute values of syntax <var>OctetString</var> can now be edited
+        in hex-dump format.
+      </li>
+      <li>
+        Support for SASL mechanism <var>NTLM</var>.
+      </li>
+      <li>
+        LDAP URLs as string keys for configuration dictionary
+        are now normalized before building <var>w2lapp.cnf.ldap_def</var>.
+        This should lead to a more robust configuration behaviour.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug Fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed displaying anonymous login in case
+        a username or bind-DN was given without password.
+      </li>
+      <li>
+        Equals sign added as allowed character to regex pattern for
+        <var>PrintableString</var>.
+      </li>
+      <li>
+        <var>urllib.quote()</var> is used instead of
+        <var>urllib_plus.quote()</var> which fixes some
+        strange errors with DNs passed around in URLs.
+      </li>
+      <li>
+        Added additional check whether to explicitly add object class attribute
+        to set of required attributes in input form.
+        This is a work-around for LDAP servers which mark the
+        <var>objectClass</var> attribute as not user-modifiable
+        (e.g. MS Active Directory)
+      </li>
+      <li>
+        Properly fall-back to binary download if there is no special
+        handler for viewing a single binary attribute.
+      </li>
+      <li>
+        Imports of <var>sndhdr</var> and <var>StringIO</var> were missing for
+        <var>w2lapp.schema.syntaxes.Audio</var>.
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning</dt>
+  <dd>
+    <ul>
+      <li>
+        Got rid of calling <var>eval()</var> in <var>pisces.asn1</var>
+        to be more friendly to psyco.
+      </li>
+      <li>
+        Removed some of the special attribute value detections in
+        <var>w2lapp.schema.syntaxes.LDAPSyntax.displayValue()</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<!--#include file="ssi/footer.html" -->

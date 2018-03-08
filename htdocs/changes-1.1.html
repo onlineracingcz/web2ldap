@@ -1,0 +1,2295 @@
+<!--#set var="web2ldap_subtitle" value="Changes 1.1.x" -->
+<!--#set var="web2ldap_pagedescription" value="History of released versions" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#include file="ssi/changes_navigation.html" -->
+
+<h1 id="r1.1.49">1.1.49</h1>
+<p>Release Date: 2013-12-15</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Group administration UI now generates &lt;select&gt; tags with enclosed
+        &lt;optgroup&gt; tags with parent DN of group DN as <var>label</var>.
+        This is very helpful if same group names are used in different subtrees.
+      </li>
+    </ul>
+  </dd>
+  <dt>Security fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed possible XSS flaw when displaying group DN and entry data in
+        group administration UI.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        More robust attribute value auto-generation in plugin class
+        <var>w2lapp.schema.plugins.posixautogen.HomeDirectory.homeDirectoryTemplate</var>.
+      </li>
+      <li>
+        More robust parsing of attribute <var>olcSyncrepl</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.48">1.1.48</h1>
+<p>Release Date: 2013-11-23</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Added/registered plugin classes for the following MIT Kerberos
+        attributes:
+        <ul>
+          <li>krbPwdPolicyReference</li>
+          <li>krbPwdLockoutDuration</li>
+          <li>krbMinPwdLife</li>
+          <li>krbMaxPwdLife</li>
+        </ul>
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed LDAP filter in plugin class for <var>krbTicketPolicyReference</var>.
+      </li>
+      <li>
+        Cache for <var>auditContext</var> attribute not flushed.
+      </li>
+      <li>
+        Gracefully handle server explicitly not allowing simple bind requests.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.47">1.1.47</h1>
+<p>Release Date: 2013-10-27</p>
+<dl>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed Python 2.6 compability issued in <var>checkinst.py</var>.
+      </li>
+      <li>
+        Registered more MS AD attributes with plugin class <var>Binary</var>.
+      </li>
+      <li>
+        Exception <var>ldap.STRONG_AUTH_REQUIRED</var> is ignored when reading rootDSE.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.46">1.1.46</h1>
+<p>Release Date: 2013-09-25</p>
+<dl>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed handling search option &quot;exists&quot;.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.45">1.1.45</h1>
+<p>Release Date: 2013-09-19</p>
+<dl>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed regression in <var>w2lapp.passwd</var> caused by overzealous
+        code cleaning in <a href="#1.1.44">1.1.44</a>.
+      </li>
+      <li>
+        Fixed LDAP URL handling to old behaviour.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.44">1.1.44</h1>
+<p>Release Date: 2013-09-16</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        New plugin class for OpenLDAP's back-config attribute
+        <var>olcSyncrepl</var> parses the syncrepl statement and shows
+        clickable link based on LDAP URL.
+      </li>
+      <li>
+        Hostname is displayed on the monitor page. This is useful if
+        behind a reverse proxy or load-balancer.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Error messages in case of LDAP URL parsing error are now
+        properly escaped.
+      </li>
+      <li>
+        Fixed LDAP URL handling to old behaviour.
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning</dt>
+  <dd>
+    <ul>
+      <li>
+        Several hints/issues fixed found with <a href="http://pychecker.sourceforge.net/">pychecker</a>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.43">1.1.43</h1>
+<p>Release Date: 2013-09-01</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Improved HTML layout when displaying certificate/CRL.
+      </li>
+      <li>
+        Certificate/CRL viewer now displays OID names also for deeply nested
+        X.500 <var>Name</var> (DNs).
+      </li>
+      <li>
+        CRL viewer now displays <var>CRLReason</var> extension.
+      </li>
+      <li>
+        New plugin module <var>w2lapp.schema.plugins.x509</var> now
+        contains all the cert/CRL plugin classes and new stub classes
+        for all the LDAP syntaxes defined in
+        <a href="https://tools.ietf.org/html/rfc4523">RFC 4523</a>.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed using module <var>pisces.asn1</var> really optionally
+        (regression introduced in <a href="#r1.1.42">1.1.42</a>).
+      </li>
+      <li>
+        Fixed Unicode issue in plugin class for Lotus Domino/LDAP attribute
+        <var>dominoCertificate</var>.
+      </li>
+      <li>
+        Added work-around for <var>UnicodeDecodeError</var> if buggy
+        LDAP server (Lotus Domino/LDAP 7.x) returns <var>diagnosticMessage</var>
+        with non-ASCII characters as ISO-8859-1 (Latin1).
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning</dt>
+  <dd>
+    <ul>
+      <li>
+        New syntax class <var>w2lapp.schema.syntaxes.CSN</var> registered
+        for OpenLDAP attribute types <var>contextCSN</var>, <var>entryCSN</var>
+        and <var>namingCSN</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.42">1.1.42</h1>
+<p>Release Date: 2013-08-31</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Additional search roots can be dynamically searched
+        with search parameters specified by
+        <a href="web2ldapcnf_hosts.html#searchform_search_root_url">searchform_search_root_url</a>
+      </li>
+      <li>
+        Some basic support for displaying <var>crlEntryExtensions</var>.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        The formerly used type of the entry input form is correctly
+        used when representing the input form in case of an error.
+      </li>
+      <li>
+        Fixed displaying an error message for <var>noSuchObject</var>
+        with a <var>matchedDN</var> containing non-ASCII characters.
+      </li>
+      <li>
+        Fixed determining the possible DIT structure rules for a DN
+        containing non-ASCII characters.
+      </li>
+      <li>
+        PEM to DER conversion for certificates and CRLs now uses a more
+        liberal parsing function to deal with various delimiter texts
+        for CA certs.
+      </li>
+      <li>
+        Added a work-around to parse a broken CRL without
+        <var>nextUpdate</var> attribute.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.41">1.1.41</h1>
+<p>Release Date: 2013-08-13</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        If attribute <var>numSubordinates</var> is present but
+        <var>numAllSubordinates</var> is missing
+        values of <var>numSubordinates</var> are summed up to determine
+        the number of all entries in a subtree (e.g. when displaying the
+        delete form).
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning</dt>
+  <dd>
+    <ul>
+      <li>
+        <var>w2lapp.delete</var> now consequently uses
+        <a href="https://docs.python.org/library/string.html#formatstrings">
+        Python's Format String Syntax</a> internally.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.40">1.1.40</h1>
+<p>Release Date: 2013-07-18</p>
+<dl>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed regression with missing &gt;= filter part in plugin class
+        for <var>pwdExpireWarning</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.39">1.1.39</h1>
+<p>Release Date: 2013-07-16</p>
+<dl>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        When generating links to advanced search form with missing
+        form parameters reasonable defaults are set now.
+      </li>
+      <li>
+        Fixed several regressions in search parameter handling.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.38">1.1.38</h1>
+<p>Release Date: 2013-07-15</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Advanced search form handling was improved:
+        <ul>
+          <li>Table layout.</li>
+          <li>Buttons [+] and [-] extend/shortens search parameter list.</li>
+          <li>Matching rules can be specified.</li>
+          <li>Whenever appropriate the user is redirected back to advanced search form.</li>
+          <li>
+            Various plugin classes now display link to advanced search form
+            instead of simple LDAP filter in expert search form.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Error message and fall-back to advanced search form in case <var>IOError</var>
+        is raised during loading template file referenced by
+        <a href="web2ldapcnf_hosts.html#searchform_template">searchform_template</a>.
+      </li>
+      <li>
+        DIT content rules referencing an attribute type are listed
+        when displaying the attribute type in schema viewer.
+      </li>
+      <li>
+        Directly referencing object classes and inherited object
+        classes are displayed separately when displaying the
+        attribute type in schema viewer.
+      </li>
+      <li>
+        No-op search control used to determine number of subordinate entries
+        when presenting deletion input form.
+      </li>
+      <li>
+        In case of <var>ldap.FILTER_ERROR</var> being caught the
+        errornous filter is displayed.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Better error handling in case of invalid certificate/CRLs values.
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning</dt>
+  <dd>
+    <ul>
+      <li>
+        OpenLDAP's no-op search now isolated in new method
+        <var>MyLDAPObject.noop_search_st()</var>.
+      </li>
+      <li>
+        Some code clean-up in <var>w2lapp.searchform</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.37">1.1.37</h1>
+<p>Release Date: 2013-06-25</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        New class attrs <var>LDAPSyntax.searchSep/readSep/fieldSep</var>
+        used consequently everywhere through class
+        <var>w2lapp.read.DisplayEntry</var>. This enables plugin classes
+        to control how multiple attribute values are separated.
+      </li>
+      <li>
+        Search form parameter <var>filterstr</var> can now be
+        multi-valued and its values are always evaluated along with the
+        other form parameters from basic/advanced search form. This
+        allows to define search form templates with arbitrary additional
+        filters to be combined with user's input in the search form.
+      </li>
+      <li>
+        OpenLDAP's no-op search control is now sent with tight timeout (5 sec)
+        to not overwhelm the server in case many entries have to be checked.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Corrected determining server name in standalone mode.
+      </li>
+      <li>
+        Fixed Unicode handling of attribute type names when displaying
+        password attributes after changing them.
+      </li>
+      <li>
+        Fixed issue with multiple <var>delsid</var> form parameter sent
+        after re-login.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.36">1.1.36</h1>
+<p>Release Date: 2013-06-18</p>
+<dl>
+  <dt>Dropped features</dt>
+  <dd>
+    <ul>
+      <li>
+        Syncing password attributes of ancient Samba 2 schema is
+        not supported anymore. Use Samba 3 instead.
+      </li>
+      <li>
+        Removed inline Javascript frame-buster in favour of sending
+        secure values for HTTP header <var>X-Content-Security-Policy</var>
+        (see <a href="http://www.w3.org/TR/CSP/">Content Security Policy (CSP)</a>).
+        You can add an reference to an external Javascript source file
+        to the template file referenced by
+        <a href="web2ldapcnf_misc.html#html_begin_template">html_begin_template</a>.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Plugin class for <var>pwdChangedTime</var> now displays that a
+        password will never expire.
+      </li>
+      <li>
+        New host-specific parameter
+        <a href="web2ldapcnf_hosts.html#passwd_modlist">passwd_modlist</a>
+        allows to set a custom initial password attribute modification list.
+      </li>
+      <li>
+        New global configuration parameter
+        <a href="web2ldapcnf_misc.html#http_headers">http_headers</a>
+        allows to define a static dictionary of HTTP headers in the
+        configuration to be sent to the browser in any case.
+      </li>
+      <li>
+        New session ID is generated when login is performed to prevent
+        session fixation attacks.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed exception plugin class for <var>pwdChangedTime</var> in
+        case the referended password policy entry does not contain
+        <var>pwdMaxAge</var>.
+      </li>
+      <li>
+        Fixed <var>UnicodeError</var> in plugin class <var>DynamicDNSelectList</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.35">1.1.35</h1>
+<p>Release Date: 2013-05-28</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Some improvements to searching for schema elements in the schema
+        viewer.
+      </li>
+      <li>
+        Also absolute date/time of password expiry timestamp is
+        displayed in plugin class for <var>pwdChangedTime</var>.
+      </li>
+      <li>
+        New small plugin module for FreeRADIUS/LDAP schema.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        More robust version number check in <var>sbin/checkinst.py</var>.
+      </li>
+      <li>
+        Timestamp seconds now converted to long integer before
+        transforming it to readable representation to eliminate
+        unnecessary strings in output due to float rounding.
+      </li>
+      <li>
+        The user name taken from login form is now correctely escaped
+        before adding it into a LDAP filter.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.34">1.1.34</h1>
+<p>Release Date: 2013-05-22</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        New plugin class for attribute <var>pwdChangedTime</var>.
+      </li>
+      <li>
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed Unicode issue in plugin class <var>Timespan</var>.
+      </li>
+      <li>
+        Fixed Unicode issue in module <var>w2lapp.schema.plugin.ppolicy</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.33">1.1.33</h1>
+<p>Release Date: 2013-05-17</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        All group modifications are displayed.
+      </li>
+      <li>
+        New plugin classes for MS AD attributes:
+        <ul>
+          <li>GUIDs (objectGUID, parentGUID, rightsGuid, siteGUID)</li>
+          <li>msDS-SupportedEncryptionTypes</li>
+        </ul>
+      </li>
+      <li>
+        New plugin classes for <var>pwdExpireWarning</var> and <var>
+        pwdMaxAge</var> display search links.
+      </li>
+      <li>
+        It's now possible to search for arbitrary <var>OctetString</var> values.
+      </li>
+      <li>
+        If host-specific parameter
+        <a href="web2ldapcnf_hosts.html#search_attrs">search_attrs</a>
+        is not set or an empty list all attribute types are displayed
+        in attribute select list in advanced search form.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        If a only a single char * or + is given as attribute list this
+        is no longer treated as a real single attribute when reading an
+        entry.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.32">1.1.32</h1>
+<p>Release Date: 2013-05-10</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        New plugin class <var>w2lapp.schema.syntaxes.Timespan</var> displays
+        time spans as hours, minutes, seconds used for:
+        <ul>
+          <li>pwdMinAge</li>
+          <li>pwdMaxAge</li>
+          <li>pwdExpireWarning</li>
+          <li>entryTTL</li>
+        </ul>
+      </li>
+      <li>
+        Time before password expiration displayed as hours, minutes, seconds.
+      </li>
+      <li>
+        When submitting several group modifications all failed attempts
+        are collected and displayed with LDAP error information after
+        processing all group modifications.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Better handling of <var>LDAPError</var> exceptions in case the
+        LDAP server does not support
+        <a href="https://tools.ietf.org/html/rfc4532">&quot;Who am I?&quot;</a>.
+        Especially occured as problem with SASL/GSSAPI bind.
+      </li>
+      <li>
+        Plugin class <var>DNSDomain</var> lower-cases input values
+        before applying the IDNA encoding.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.31">1.1.31</h1>
+<p>Release Date: 2013-02-16</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        The number of revoked certs is displayed when displaying a CRL.
+      </li>
+      <li>
+        New plugin class for NIS attribute <var>macAddress</var>
+        which sanitizes user input and does reg-ex checking.
+      </li>
+      <li>
+        New plugin module for
+        <a href="http://www.sudo.ws/sudoers.ldap.man.html">sudo-ldap</a>.
+      </li>
+      <li>
+        Plugin class for <var>memberURL</var> now strips white-spaces
+        from input values.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Small fix for displaying LDAP error messages.
+      </li>
+      <li>
+        Fixed handling of class attributes <var>valuePrefix</var> and
+        <var>valueSuffix</var> in plugin class <var>DynamicValueSelectList</var>.
+      </li>
+      <li>
+        Work-around for LDAP URLs with bad search filter passed in as
+        <var>QUERY_STRING</var> in the URL.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.30">1.1.30</h1>
+<p>Release Date: 2013-01-19</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        The
+        <a href="https://tools.ietf.org/html/rfc4532">&quot;Who am I?&quot;</a>
+        extended operation is now always used to detect bind-DN rewriting
+        also in case of simple bind.
+      </li>
+      <li>
+        Some more plugin classes in module <var>w2lapp.schema.plugins.pgpkeysrv</var>.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        More liberal regex pattern for <var>sambaAcctFlags</var>.
+      </li>
+      <li>
+        Fixed an exception caused by empty strings in an attribute list
+        when reading an entry.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.29">1.1.29</h1>
+<p>Release Date: 2013-01-07</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Schema viewer now displays direct links to DIT content rules
+        referencing the object class displayed.
+      </li>
+      <li>
+        <strong>@</strong> character in form parameter <var>search_attrs</var>
+        is now expanded at the client-side to a set of attribute type names.
+        So this works also with LDAP servers not supporting
+        <a href="https://tools.ietf.org/html/rfc4529">RFC 4529</a> and it's
+        usable when exporting entries to a table-based format (CSV or
+        Excel).
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed reading attribute <var>gidNumber</var> of <var>
+        sambaGroupMapping</var> entry when generating attribute value
+        for <var>sambaSID</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.28">1.1.28</h1>
+<p>Release Date: 2012-12-27</p>
+<dl>
+  <dt>Installation and Configuration changes</dt>
+  <dd>
+    <ul>
+      <li>
+        Python module
+        <a href="https://pypi.python.org/pypi/netaddr">netaddr</a>
+        can be used as alternate implementation of required classes
+        <var>IPAddress</var> and <var>IPNetwork</var>.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Error message is displayed in HTML output if there is an string
+        format error in HTML template which caused <var>TypeError</var>
+        internally.
+      </li>
+      <li>
+        New HTML templates for Samba3 LDAP schema.
+      </li>
+      <li>
+        Values for attributes <var>sambaSID</var> are auto-generated if empty.
+      </li>
+      <li>
+        New or existing plugin classes registered for attribute types in
+        Samba3 LDAP schema:
+        <ul>
+          <li>sambaDomainName</li>
+          <li>sambaHomeDrive</li>
+          <li>sambaLogonToChgPwd</li>
+          <li>sambaPrimaryGroupSID</li>
+        </ul>
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Work-around for missing form field if <var>ldapsession.PasswordPolicyException</var>
+        is caught and <var>w2lapp.passwd.PasswdForm()</var> is invoked directly.
+      </li>
+      <li>
+        <strong>@</strong> character is now allowed in form parameter <var>search_attrs</var>
+        to correctly support <a href="https://tools.ietf.org/html/rfc4529">RFC 4529</a>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.27">1.1.27</h1>
+<p>Release Date: 2012-12-07</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Declared new plugin class for attribute type
+        <var>
+          <a href="https://tools.ietf.org/html/draft-klasen-ldap-x509certificate-schema-03#section-4.2.3">
+          x509keyUsage</a>
+        </var>
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed Unicode issue in <var>w2lapp.schema.syntaxes.SelectList</var>
+        which affected all classes derived from that.
+      </li>
+      <li>
+        Added dummy value for attribute <var>LDAPSyntax.oid</var>
+        to various base plugin classes to avoid false registration under
+        some circumstances.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.26">1.1.26</h1>
+<p>Release Date: 2012-12-05</p>
+<dl>
+  <dt>Installation and Configuration changes</dt>
+  <dd>
+    <ul>
+      <li>
+        Semantics of global configuration parameter
+        <a href="web2ldapcnf_hosts.html#session_limit">session_limit</a>
+        slightly changed. It now defines the time-span after which a new
+        session ID is generated.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Better error message in case <var>ldap.NO_SUCH_OBJECT</var> was
+        raised when adding entry.
+      </li>
+      <li>
+        Display <var>matchedDN</var> if present in <var>LDAPError</var> exception
+        (e.g. <var>ldap.NO_SUCH_OBJECT</var>).
+      </li>
+      <li>
+        New plugin class for OpenDS/OpenDJ attribute <var>ds-cfg-alternate-bind-dn</var>
+        auto-fills incomplete RDNs based on entry.
+      </li>
+      <li>
+        New plugin class for attribute <var>x509issuer</var> defined in
+        <a href="https://tools.ietf.org/html/draft-ietf-pkix-ldap-pkc-schema">
+        draft-ietf-pkix-ldap-pkc-schema</a> makes it easier to find CA
+        certs in a directory using that schema.
+      </li>
+      <li>
+        When displaying single attribute a new work-around trys to
+        locate cert/CRL attributes which have <em>;binary</em> transfer
+        type even though the form parameter <var>read_attr</var>
+        (derived from LDAP URL) did not contain it.
+      </li>
+      <li>
+        New plugin class for IP host and network addresses also used for NIS
+        attribute types <var>ipHostNumber</var> and <var>ipNetworkNumber</var>.
+      </li>
+      <li>
+        New or existing plugin classes registered for attribute types in
+        ISC DHCP LDAP schema:
+        <ul>
+          <li>dhcpAssignedToClient</li>
+          <li>dhcpDnsStatus</li>
+          <li>dhcpReservedForClient</li>
+          <li>dhcpNetMask</li>
+          <li>dhcpRange</li>
+        </ul>
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed escaping attribute values when constructing search filter
+        in plugin class <var>w2lapp.schema.plugins.nis</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.25">1.1.25</h1>
+<p>Release Date: 2012-10-28</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        New host-/backend-specific
+        <a href="web2ldapcnf_hosts.html#passwd_template">passwd_template</a>
+        for specifying a template for change password form.
+      </li>
+      <li>
+        After the admin changing another entry's password a link is displayed which
+        can be sent to the user for him/her changing own password immediately
+        if the checkbox in the password form was selected.
+      </li>
+      <li>
+        Added refresh meta tag to &lt;head&gt; section which instructs
+        the browser to automatically redirect to the [Connect] page
+        after session expiration.
+      </li>
+      <li>
+        <var>LDAPSession.who</var> is now set to the DN returned by
+        reading the user entry after bind.
+      </li>
+      <li>
+        Values for attribute <var>memberUid</var> are automatically
+        checked whether an <var>posixAccount</var> entry exists containing
+        the same value in the <var>uid</var> attribute if <var>MemberUID.ldap_url</var>
+        contains a LDAP URL.
+      </li>
+      <li>
+        When setting password of an entry templates defined with host-specific parameter
+        <a href="web2ldapcnf_hosts.html#boundas_template">boundas_template</a>
+        are also used to show a more descriptive user name if possible.
+      </li>
+      <li>
+        Added support for retrieving count of all search results
+        by using OpenLDAP's no-op search control
+        (see <a href="https://www.openldap.org/its/index.cgi?findid=6598">OpenLDAP ITS#6598</a>).
+      </li>
+      <li>
+        When a user changes own password and chooses to let web2ldap generate it
+        the new password is shown in re-login form message.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.24">1.1.24</h1>
+<p>Release Date: 2012-08-25</p>
+<dl>
+  <dt>Installation changes</dt>
+  <dd>
+    The following changes to local system installation are <strong>required</strong>:
+    <ul>
+      <li>
+        New: Module <a href="https://code.google.com/p/ipaddr-py/">ipaddr-py</a> required.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Better support for IPv6 (except running in stand-alone mode).
+      </li>
+      <li>
+        A link in context menu displayed with search results allows quick
+        negation of search filter.
+      </li>
+      <li>
+        Plugin class <var>DynamicValueSelectList</var>
+        now has class attributes <var>valuePrefix</var> and <var>valueSuffix</var>
+        for automatically adding a prefix and/or suffix to attribute values
+        derived from a LDAP search.
+      </li>
+      <li>
+        If applying templates in input form would result in duplicate
+        input fields for the same attribute only the first template
+        containing the attribute is used.
+      </li>
+      <li>
+        The status line text displayed behind <em>Bound as:</em>
+        is now based on attributes in the user's entry and a HTML template snippet
+        defined by new host-specific parameter
+        <a href="web2ldapcnf_hosts.html#boundas_template">boundas_template</a>.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed displaying LDAP URLs pointing to remote servers.
+      </li>
+      <li>
+        Plugin classes for dynamic DN or value select lists no longer
+        search for referenced data when called with argument
+        <var>commandbutton=0</var>.
+      </li>
+      <li>
+        <var>DynamicValueSelectList._determineSearchDN</var> does not
+        return DN ending with a comma anymore.
+      </li>
+      <li>
+        A <var>NameError</var> caused by a bug in <var>M2Crypto</var>
+        is caught can ignored.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.23">1.1.23</h1>
+<p>Release Date: 2012-06-26</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Subject and issuer DN output of <var>M2Crypto</var> is now
+        decoded to UTF-8 strings so non-ASCII chars are not displayed
+        hex-escaped.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed order of module import in start scripts for different run modes.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.22">1.1.22</h1>
+<p>Release Date: 2012-06-22</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Using tree delete control is not default in case OpenLDAP
+        was detected as LDAP server.
+      </li>
+      <li>
+        New plugin class for attribute type <var>memberUrl</var>
+        checks various values in the LDAP URL and sends a dummy
+        search to provoke server-side errors to check validity of LDAP URL.
+      </li>
+      <li>
+        LDAP URLs now have more handy links attached depending whether
+        <var>hostport</var> part is empty or not.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        No links are shown in search results by the plugin class
+        for dynamically generated select lists.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.21">1.1.21</h1>
+<p>Release Date: 2012-06-17</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        [Locate] now allows searching in DNS for internationalized domain names
+        (see <a href="https://tools.ietf.org/html/rfc3490">RFC 3490</a>).
+      </li>
+      <li>
+        Exception <var>ldap.schema.subentry.SubschemaError</var> is now caught and the
+        locally installed fall-back subschema is used.
+      </li>
+      <li>
+        Plugin classes <var>Binary</var> and <var>CertificateRevocationList</var>
+        now display byte count for the attribute value.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        When decoding/encoding DNS names domain components are processed
+        separately to more strictly follow guidelines in
+        <a href="https://tools.ietf.org/html/rfc3490">RFC 3490</a>.
+      </li>
+      <li>
+        Cleaned up input and error handling in [Locate].
+      </li>
+      <li>
+        <var>ValueError</var> caught and displayed inline in case module
+        <var>M2Crypto</var> is not able to correctly extract
+        <var>notBefore/notAfter</var> attributes from certificates.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.20">1.1.20</h1>
+<p>Release Date: 2012-06-07</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Added new values in OID registry and MS AD plugin module for
+        Windows 2012 Server.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Reverted the behaviour when binding to the server. The whole
+        connection is dropped but reconnecting is done by calling
+        <var>ReconnectLDAPObject.reconnect()</var>
+        (python-ldap 2.4.10 recommended for this).
+      </li>
+      <li>
+        Again fixed <var>UnicodeDecodeError</var> when displaying SASL information
+        in [ConnInfo].
+      </li>
+      <li>
+        The <var>rootDSE</var> is now read after bind before trying to look up user's entry
+        (e.g. by SASL user name after GSSAPI to MS AD).
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.19">1.1.19</h1>
+<p>Release Date: 2012-05-31</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Template variable <var>text_scriptname</var> now available
+        for <a href="web2ldapcnf_misc.html#connect_template">connect_template</a>.
+      </li>
+      <li>
+        New plugin classes for OpenDS/<a href="http://www.opendj.org">OpenDJ</a>
+        attribute <var>ds-cfg-account-status-notification-type</var>.
+      </li>
+      <li>
+        Registered OpenDS/<a href="http://www.opendj.org">OpenDJ</a> attribute
+        <var>ds-cfg-public-key-certificate</var> with plugin class <var>Certificate</var>.
+      </li>
+      <li>
+        In the schema viewer some texts containing multiple spaces and
+        line feeds are now displayed as continous flowed text with line breaks.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Parentheses are now allowed in local part of e-mail addresses
+        (attribute <var>mail</var> etc).
+      </li>
+      <li>
+        Some small fixes when receiving kill signals.
+      </li>
+      <li>
+        Fixed <var>UnicodeDecodeError</var> when displaying SASL information
+        in [ConnInfo].
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning</dt>
+  <dd>
+    <ul>
+      <li>
+        Some updates to plug-in classes based on <var>w2lapp.schema.syntaxes.SelectList</var>.
+      </li>
+      <li>
+        <var>w2lapp.schema.syntaxes.Boolean</var> now based on
+        <var>w2lapp.schema.syntaxes.SelectList</var>. Still some small issues
+        with the falsely lower-cased <var>Boolean</var> attribute values
+        in OpenDS/<a href="http://www.opendj.org">OpenDJ</a>
+        (read <a href="http://lists.forgerock.org/pipermail/opendj/2012-May/001836.html">more...</a>).
+      </li>
+      <li>
+        Some clean-ups when displaying texts with line breaks.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.18">1.1.18</h1>
+<p>Release Date: 2012-05-19</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Added more values for Exchange to
+        <var>w2lapp.schema.plugins.activedirectory.ObjectVersion</var>
+        but plugin class now behaves like <var>Integer</var> class
+        except when displaying attribute values.
+      </li>
+      <li>
+        SASL information now displayed with API constant names in [ConnInfo].
+      </li>
+      <li>
+        New plugin classes for OpenDS/<a href="http://www.opendj.org">OpenDJ</a>
+        which display static select list in the entry input form for the
+        following attributes:
+        <ul>
+          <li>ds-cfg-certificate-validation-policy</li>
+          <li>ds-cfg-default-root-privilege-name</li>
+          <li>ds-cfg-ssl-cipher-suite</li>
+          <li>ds-cfg-ssl-protocol</li>
+          <li>ds-privilege-name</li>
+        </ul>
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed displaying hex cert serial number.
+      </li>
+      <li>
+        Fixed displaying attribute <var>ds-sync-hist</var> if modification
+        value is not human-readable.
+      </li>
+      <li>
+        Plugin class for <var>pwdPolicySubentry</var> now also searches for
+        entries with object class <var>ds-cfg-password-policy</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.17">1.1.17</h1>
+<p>Release Date: 2012-05-13</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Relaxed validation of form parameter <var>add_template</var>.
+        Thus any Unicode character is now allowed in description part of
+        <a href="web2ldapcnf_hosts.html#addform_entry_templates">addform_entry_templates</a>.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed switching input forms if set of attribute types known
+        as writeable is empty and thus <var>nonePseudoValue;x-web2ldap-None</var>
+        was passed in.
+      </li>
+      <li>
+        Better error handling if something goes wrong when parsing
+        LDIF templates.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.16">1.1.16</h1>
+<p>Release Date: 2012-05-06</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Session tracking control is sent along to the LDAP server
+        with each LDAP request
+        (see <a href="https://tools.ietf.org/html/draft-wahl-ldap-session">draft-wahl-ldap-session</a>)
+        if host-/backend-specific parameter
+        <a href="web2ldapcnf_hosts.html#session_track_control">session_track_control</a>
+        is non-zero.
+      </li>
+      <li>
+        For OpenDS / <a href="http://www.opendj.org">OpenDJ</a>:
+        <ul>
+          <li>
+            New plugin classes which displays dynamic select list in the
+            entry input form for the following attributes:
+            <ul>
+              <li>ds-cfg-certificate-mapper</li>
+              <li>ds-cfg-key-manager-provider</li>
+              <li>ds-cfg-trust-manager-provider</li>
+            </ul>
+          </li>
+          <li>
+            New plugin classes which displays static select list in the
+            entry input form for the following attributes:
+            <ul>
+              <li>ds-cfg-disabled-privilege</li>
+              <li>ds-cfg-etime-resolution</li>
+              <li>ds-cfg-ssl-client-auth-policy</li>
+              <li>ds-cfg-security-level</li>
+            </ul>
+          </li>
+          <li>
+            Registered attribute
+            <var>ds-cfg-identity-mapper</var> with appropriate plugin class.
+          </li>
+        </ul>
+      <li>
+        If Python module <a href="http://chandlerproject.org/Projects/MeTooCrypto">
+        M2Crypto</a> is installed:
+        <ul>
+          <li>
+            Basic information of X.509 certificates is displayed
+            when viewing the LDAP entry.
+          </li>
+          <li>
+            If module <var>pisces</var> is not installed the textual
+            OpenSSL output is displayed as detailed certificate view.
+            Does not work for CRLs yet.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Added another work-around for invalid read entry control values
+        received from older OpenLDAP servers:<br>
+        <var>IndexError</var> is now caught when extracting
+        attribute <var>entryUUID</var> from the post read control value
+        when renaming an entry.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.15">1.1.15</h1>
+<p>Release Date: 2012-05-02</p>
+<dl>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Plugin class <var>BitArrayInteger</var> now has method <var>formValue()</var>
+        which generates the correct form value in the entry input form
+        even when the input field is locked.
+      </li>
+      <li>
+        AD-specific plugin class <var>LogonHours</var> now has method <var>formValue()</var>
+        which generates the correct form value in the entry input form.
+      </li>
+      <li>
+        If the entry input form is generated again after an input error
+        the set of writable attributes is preserved.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.14">1.1.14</h1>
+<p>Release Date: 2012-04-30</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        New plugin MS AD classes for editing schema references to
+        <var>ClassSchema</var> and <var>attributeSchema</var> entries within
+        MS AD schema configuration container.
+      </li>
+      <li>
+        New plugin class for attribute <var>demailMaxAuthLevel</var> used
+        for <a href="http://de-mail.de">DE-Mail</a>.
+      </li>
+      <li>
+        Values from OpenDS/OpenDJ's rootDSE attribute <var>ds-private-naming-contexts</var>
+        are now added to set of available naming contexts which makes
+        it also possible to define backend-specific parameters for those.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Plugin class for MS AD attribute
+        <a href="http://msdn.microsoft.com/en-us/library/ms675935%28v=vs.85%29.aspx">groupType</a>
+        now based on <var>BitArrayInteger</var> allowing all possible
+        combinations of bit flags.
+      </li>
+      <li>
+        Fixed splitting RDN in case of equal sign in attribute values
+        when generating the entry input form.
+      </li>
+      <li>
+        Fixed displaying select in connect form when server description
+        contains non-ASCII chars.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.13">1.1.13</h1>
+<p>Release Date: 2012-04-21</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Version number displayed along with exception log.
+      </li>
+      <li>
+        Named placeholders are now used with
+        <a href="https://docs.python.org/library/string.html#formatstrings">
+        Python's Format String Syntax</a> for login form templates.<br>
+        <strong>You have re-edit your own customized login forms!</strong>
+      </li>
+      <li>
+        Template for input form also used when renaming an entry
+        (new host-/backend-specific parameter
+        <a href="web2ldapcnf_hosts.html#rename_template">rename_template</a>).
+      </li>
+      <li>
+        The begin of the HTML output is now read from an external template
+        configured with global parameter <a href="web2ldapcnf_misc.html#html_begin">
+        html_begin</a>. Parameters <var>html_bodybegin</var> and <var>html_head</var>
+        are not used anymore.
+      </li>
+      <li>
+        The initial connect form is now read from an external template
+        configured with global parameter <a href="web2ldapcnf_misc.html#connect_template">
+        connect_template</a>.
+      </li>
+      <li>
+        The status area is now read from an external template
+        (new host-/backend-specific parameter
+        <a href="web2ldapcnf_hosts.html#status_template">status_template</a>).
+      </li>
+      <li>
+        DNS SRV RR lookup now extended to non-standard <var>_ldaps._tcp.example.com</var>
+        used with <a href="http://de-mail.de">DE-Mail</a>.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        <var>LDAPSyntaxValueError</var> exceptions raised during sanitizing
+        user's input are now caught and appropriate error message is displayed.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.12">1.1.12</h1>
+<p>Release Date: 2012-04-16</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        When determining language-specific template file names
+        the subtags of the values in <var>Accept-charset</var> header
+        are now ignored.
+      </li>
+      <li>
+        Input field for <var>search_attrs</var> is now always present in
+        search options part of every type of search form. Therefore
+        host-/backend-specific parameter <var>searchform_attrs_size</var>
+        not needed anymore.
+      </li>
+      <li>
+        New plugin class for displaying OpenDS/OpenDJ attribute
+        <var>ds-sync-hist</var>.
+      </li>
+      <li>
+        New attribute <var>reqEntryUUID</var> also alternatively used
+        when searching in OpenLDAP's 2.4.31+ accesslog database. Also added specific
+        plugin class for this attribute. (See motivation for this in OpenLDAP's
+        <a href="https://www.openldap.org/its/index.cgi?findid=6656">ITS#6656</a>).
+      </li>
+      <li>
+        A work-around for older OpenLDAP bug (see
+        <a href="https://www.openldap.org/its/index.cgi?findid=6899">ITS#6899</a>)
+        makes it possible to enable the Read Entry Control (see
+        <a href="https://tools.ietf.org/html/rfc4527">RFC 4527</a>) with
+        all OpenLDAP versions.
+      </li>
+      <li>
+        Added new experimental plugin class
+        <var>w2lapp.schema.plugins.posixautogen.AutogenGIDNumber</var>
+        which autogenerates input value for attribute <var>gidNumber</var>
+        in <var>posixGroup</var> entries.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed sub-classing for plugin class <var>KrbPrincipalType</var>.
+      </li>
+      <li>
+        Fixed searching for superior entries when renaming entries
+        and entry is governed by DIT structure rule.
+      </li>
+      <li>
+        Fixed plugin class <var>AutogenUIDNumber</var> to ignore search
+        continuations (LDAP referrals).
+      </li>
+      <li>
+        Fixed behaviour in case a password change is required after password reset.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.11">1.1.11</h1>
+<p>Release Date: 2012-04-04</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        New plugin class for LDAP syntax <var>Control</var>
+        used in OpenLDAP's accesslog DB for attributes <var>reqControls</var>
+        and <var>reqRespControls</var> which prints out some more information.
+      </li>
+      <li>
+        Added <a href="http://support.microsoft.com/kb/832572">NO_AUTH_DATA_REQUIRED</a>
+        and <var>PARTIAL_SECRETS_ACCOUNT</var> to
+        <var>UserAccountControl.flag_desc_table</var>.
+      </li>
+      <li>
+        Plugin class <var>BitArrayInteger</var> now sets the columns of
+        the &lt;textarea&gt; input field to the maximum needed length.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed use of host-/backend-specific
+        <a href="web2ldapcnf_hosts.html#login_template">login_template</a>
+        during initial connect to a LDAP server.
+      </li>
+    </ul>
+  </dd>
+  <dt>Documentation</dt>
+  <dd>
+    <ul>
+      <li>
+        Improved platform-specific <a href="install.html">installation receipts</a>.
+      </li>
+      <li>
+        Simplified FastCGI configuration files.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.10">1.1.10</h1>
+<p>Release Date: 2012-03-27</p>
+<dl>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fix for validating <var>uniqueMember</var> attribute values.
+      </li>
+      <li>
+        Fix for handling default values based in base plugin class <var>OnOffFlag</var>.
+      </li>
+      <li>
+        Fixed some typos in HTML template for OpenLDAP's cn=config.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.9">1.1.9</h1>
+<p>Release Date: 2012-03-23</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Registered various attribute types of OpenLDAP's cn=config
+        with plugin class <var>MultilineText</var>.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        LDAP referrals are now ignored when searching option entries
+        in plugin class <var>DynamicValueSelectList</var>.
+      </li>
+      <li>
+        LDAP referrals are now ignored when searching superior entry
+        for informational messages.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.8">1.1.8</h1>
+<p>Release Date: 2012-03-21</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        More templates for OpenLDAP's cn=config.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed regression in schema viewer when displaying schema element trees
+        of derived object classes and attribute types.
+      </li>
+      <li>
+        Fixed regression when displaying login form during referral chasing.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.7">1.1.7</h1>
+<p>Release Date: 2012-03-16</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Various enhancements for accessing and displaying
+        <a href="https://tools.ietf.org/html/draft-good-ldap-changelog">changelog</a>
+        data used e.g. by OpenDS/OpenDJ.
+      </li>
+      <li>
+        The exact result or <var>LDAPError</var> message of
+        <a href="https://tools.ietf.org/html/rfc4532">&quot;Who am I?&quot;</a>
+        extended operation is displayed in [ConnInfo].
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Display link to connection entries in Monitor backend also if
+        there is no accesslog database attached...
+      </li>
+      <li>
+        Some compliance fixes in HTML markup to make W3C validator happy.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.6">1.1.6</h1>
+<p>Release Date: 2012-03-14</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        New host-/backend-specific configuration parameter
+        <a href="web2ldapcnf_hosts.html#read_tablemaxcount">
+        read_tablemaxcount</a> allows to define multi-valued attributes for which
+        only a maximum count of attribute values are displayed. Klicking on
+        [Raw] in the context menu will expand all attribute values at once.
+      </li>
+      <li>
+        If attribute <var>monitorContext</var> is present in <var>rootDSE</var>
+        a link for searching own or a user's LDAP connections
+        in the monitor database is displayed in the context menu of [ConnInfo]
+        and when displaying a single entry.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Also <var>ldap.PROTOCOL_ERROR</var> and <var>ldap.SERVER_DOWN</var>
+        are ignored if <a href="web2ldapcnf_hosts.html#starttls">starttls</a>
+        is set to <var>1</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.5">1.1.5</h1>
+<p>Release Date: 2012-03-09</p>
+<dl>
+  <dt>Dropped features</dt>
+  <dd>
+    <ul>
+      <li>
+        Support for <em>LDAPv2</em> connections was dropped to speed up connecting
+        to the server. A first anonymous bind request for testing whether a valid
+        <em>LDAPv3</em> connection was established is not needed anymore
+        (see also <a href="https://tools.ietf.org/html/rfc3494">RFC 3494</a>).
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        <a href="https://docs.python.org/library/string.html#formatstrings">
+        Python's Format String Syntax</a> is now used for login form templates.
+        This allows to simply remove placeholders for unneeded input fields.<br>
+        Caveat: If you have customized login forms you have to rework your templates
+        to use this new syntax.
+      </li>
+      <li>
+        New host-/backend-specific configuration parameter
+        <a href="web2ldapcnf_hosts.html#searchoptions_template">
+        searchoptions_template</a> allows to define the input fields
+        for search base, scope etc.
+      </li>
+      <li>
+        Schema viewer explicitly displays <var>USAGE</var> of attribute types.
+      </li>
+      <li>
+        Initial connect and bind was optimized to avoid reading
+        <var>rootDSE</var> and subschema subentry twice.
+      </li>
+      <li>
+        Some more templates translated to German.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed a regression introduced in <a href="#r1.1.4">1.1.4</a> which
+        made it impossible to use encrypted connections (LDAPS or LDAP w/StartTLS)
+        for non-anonymous bind.
+      </li>
+      <li>
+        When displaying an input form <var>ldap.INSUFFICIENT_ACCESS</var>
+        is ignored when reading the superior entry which is only for
+        informational use anyway.
+      </li>
+      <li>
+        If first preferred language is <em>en</em> then the standard HTML
+        templates are used now. The ones shipped with source distribution
+        are considered to be the English templates.
+      </li>
+      <li>
+        Corrected false translations in various HTML templates.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.4">1.1.4</h1>
+<p>Release Date: 2012-03-01</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        A new SSL/TLS context is always initialized for each LDAP connection.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed validation of attribute values of LDAP syntax <var>Generalized
+        Time</var> to also allow <var>fraction</var> and time zone offset as
+        defined in <a href="https://tools.ietf.org/html/rfc4517">RFC 4517</a>.
+      </li>
+      <li>
+        Fix for leap years in age calculation in plugin classes for attribute
+        types <var>msPerson::dateOfBirth</var> and <var>schacDateOfBirth</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.3">1.1.3</h1>
+<p>Release Date: 2012-02-27</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Form parameter <var>search_attr</var> now accepts comma-separated
+        list of attribute types which all are added to the LDAP filter
+        with the accompanying <var>search_string</var> as assertion value.
+      </li>
+      <li>
+        New host-/backend-specific configuration parameter
+        <a href="web2ldapcnf_hosts.html#groupadm_filterstr_template">
+        groupadm_filterstr_template</a> allows to influence the set of
+        group entries shown in group administration dialogue.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        When editing an entry in the LDIF input field existing values of
+        binary/non-human-readable attributes (e.g. <var>jpegPhoto</var> or
+        <var>userCertificate;binary</var>) are sent as changed if the input
+        LDIF did not change the values.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.2">1.1.2</h1>
+<p>Release Date: 2012-02-25</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Search assertion values are normalized via plugin classes if the
+        accompanying <var>search_mode</var> is not a substring search.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed a regression bug which accidently deleted binary/non-human-readable
+        attributes (e.g. <var>jpegPhoto</var> or <var>userCertificate;binary</var>)
+        when modifying an entry.
+      </li>
+      <li>
+        Stricter regex pattern for checking values of LDAP syntax <var>OID</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.1">1.1.1</h1>
+<p>Release Date: 2012-02-22</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Plugin classes for attribute <var>msPerson::dateOfBirth</var> and
+        <var>schacDateOfBirth</var> now display the age of a person.
+      </li>
+      <li>
+        Stricter checks in plugin classes for birthday-related attribute
+        types <var>msPerson::dateOfBirth</var>, <var>schacDateOfBirth</var>
+        and <var>schacYearOfBirth</var> enforce birthday to be in the past.
+      </li>
+      <li>
+        New plugin module <var>w2lapp.schema.plugins.opensshlpk</var> for
+        <a href="https://code.google.com/p/openssh-lpk/">OpenSSH-LPK</a>.
+      </li>
+      <li>
+        The schema viewer now displays the internally used plugin class
+        for LDAP syntaxes and attribute types. This eases finding plugin
+        class registration errors.
+      </li>
+      <li>
+        Added new experimental plugin module <var>w2lapp.schema.plugins.posixautogen</var>
+        which autogenerates some input values for <var>posixAccount</var>
+        entries (currently only <var>uidNumber</var> and <var>homeDirectory</var>).<br>
+        Make sure you understand what it does internally <em>before</em>
+        enabling it in production!
+      </li>
+    </ul>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        <var>LDAPI</var> connections are now also correctly displayed as secured in [ConnInfo].
+      </li>
+      <li>
+        When modifying an entry the modify list now also includes auto-generated attributes.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r1.1.0">1.1.0</h1>
+<p>Release Date: 2012-02-16</p>
+<dl>
+  <dt>Installation and Configuration changes</dt>
+  <dd>
+    The following changes to local system installation are <strong>required</strong>:
+    <ul>
+      <li>
+        Upgrade to <a href="https://www.python.org/">Python 2.6.x or newer</a>
+      </li>
+      <li>
+        Upgrade to <a href="https://www.python-ldap.org/">python-ldap 2.4.0 or newer</a>.
+      </li>
+      <li>
+        New: Modules <a href="http://pyasn1.sourceforge.net/">pyasn1 0.0.13a
+        and pyasn1_modules</a> are required.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        New plugin base class <var>PropertiesSelectList</var> allows to maintain
+        a select list (value/description pairs) in common properties files
+        which are also subject to language-variant resolution like the
+        HTML templates. See <var>msperson.py</var> for example use.
+      </li>
+      <li>
+        Support for various boolean flag LDAPv3 extended controls with a
+        nicer user interface.
+      </li>
+      <li>
+        Delta modification is smarter now when diffing multi-valued attributes
+        leading to smaller modification lists.
+      </li>
+      <li>
+        If the DN of the user's entry could be determined after successful bind
+        this user entry is read and stored in the <var>LDAPSession</var>
+        instance for determining further user preferences and login data.
+      </li>
+      <li>
+        Added support for setting SHA-2 hash password values at the client-side
+        (schemes {SHA256}, {SSHA256}, etc.).
+      </li>
+      <li>
+        Added plugin module for Apple-specific attribute types.
+      </li>
+      <li>
+        Experimental CSV and Excel export without any formatting parameters.
+      </li>
+      <li>
+        The following HTTP headers are always sent to avoid security/privacy problems:<br>
+        <table summary="Security-related HTTP headers">
+          <tr>
+            <td><code>X-Content-Type-Options: nosniff</code></td>
+            <td>Switch off MIME-type guessing in MS IE 8+</td>
+          </tr>
+          <tr>
+            <td><code>X-XSS-Protection: 0</code></td>
+            <td>Cross-Site Scripting Protection for MS IE</td>
+          </tr>
+          <tr>
+            <td><code>X-DNS-Prefetch-Control: off</code></td>
+            <td>Switch off DNS prefetching</td>
+          </tr>
+          <tr>
+            <td><code>Strict-Transport-Security: max-age=15768000 ; includeSubDomains</code></td>
+            <td>
+              Enforce use of
+              <a href="https://tools.ietf.org/html/rfc2818">HTTPS</a>
+              at browser-side, but only sent when application was accessed
+              via <em>HTTPS</em>
+              (see <a href="https://tools.ietf.org/html/rfc6797">RFC 6797</a>)
+            </td>
+          </tr>
+          <tr>
+            <td><code>X-Frame-Options: DENY</code></td>
+            <td>
+              Deny use of frames completely to avoid click-jacking
+              (see <a href="https://developer.mozilla.org/en-US/docs/The_X-FRAME-OPTIONS_response_header">
+              The X-Frame-Options response header</a>)
+            </td>
+          </tr>
+        </table>
+      </li>
+      <li>
+        The search form now contains a select field for a modification
+        time interval. This automatically extends the filter string restricting
+        the results by attributes <var>createTimestamp</var> and <var>modifyTimestamp</var>
+        relative to the current time.
+      </li>
+      <li>
+        The line <code>dn:</code> in LDIF templates can now optionally also
+        contain a whole distinguished name, not only a RDN. In this case the
+        DN portion after the RDN is interpreted as base DN under which the new
+        entry is to be added.
+      </li>
+      <li>
+        New method <var>GeneralizedTime.sanitizeInput()</var> converts to
+        a correct timestamp if only a date without time part was given as input.
+      </li>
+      <li>
+        The <var>Assertion Control</var> is used when sending a modify request
+        if the seems to support it to prevent the server to process the
+        request if the entry has been changed in between
+        (see <a href="https://tools.ietf.org/html/rfc4528">RFC 4528</a>).
+        Host-specific parameter
+        <a href="web2ldapcnf_hosts.html#modify_constant_attrs">modify_constant_attrs</a>
+        is used to generate the assertion filter.
+      </li>
+      <li>
+        Group adminstration now handles limits more gracefully.
+      </li>
+      <li>
+        Partial search results are returned in exported data (LDIF, DSML, CSV,
+        Excel) even if an administrative limit was hit.
+      </li>
+      <li>
+        Deleting attributes from an entry is now much more flexible
+        in the UI and can be done with appropriate LDAPv3 ext. controls.
+        One use-case is removing operational password policy attributes
+        which cannot be edited in the normal input form.
+      </li>
+      <li>
+        Additional LDAPv3 ext. controls can be also used when deleting entries.
+      </li>
+      <li>
+        Added refreshing dynamic entry with extended operation
+        (see <a href="https://tools.ietf.org/html/rfc2589">RFC 2589</a>).
+      </li>
+      <li>
+        Password policy control sent and received for displaying password
+        warnings and guide the user to change the password (see
+        <a href="https://tools.ietf.org/html/draft-behera-ldap-password-policy/">
+        draft-behera-ldap-password-policy</a>).
+      </li>
+      <li>
+        Added support for Authorization Identity Request and Response Controls
+        (see <a href="https://tools.ietf.org/html/rfc3829">RFC 3829</a>).
+      </li>
+    </ul>
+  </dd>
+  <dt>Dropped features</dt>
+  <dd>
+    <ul>
+      <li>
+        Support for setting the old and insecure LAN manager password hash
+        attribute <var>lmPassword</var>/<var>sambaLMPassword</var> along
+        with the userPassword was dropped.
+      </li>
+      <li>
+        Support for running as SCGIServer was removed since nobody (including me)
+        ever used it.
+      </li>
+    </ul>
+  </dd>
+  <dt>Changes in the UI</dt>
+  <dd>
+    <ul>
+      <li>
+        Output is now HTML5.
+      </li>
+      <li>
+        New style sheet(s) which look much better now.
+      </li>
+      <li>
+        When adding/modifying an entry some information of the superior entry
+        is displayed if <a href="web2ldapcnf_hosts.html#inputform_supentrytemplate">
+        inputform_supentrytemplate</a> is defined. This is user-friendly
+        especially when the superior DN does not contain attribute values
+        easily recognizable by humans.
+      </li>
+      <li>
+        The connection type (LDAP, LDAP with StartTLS ext.op., LDAPS or LDAPI)
+        can now be specified in the connection form.
+      </li>
+      <li>
+        Specifying LDAP options/controls was moved from [ConnInfo]
+        into a separate module accessible via extra entry in the main menu.
+      </li>
+      <li>
+        When generating the object class select form the operational attribute
+        <var>allowedChildClasses</var> (e.g. available on MS AD)
+        is now honoured to determine which STRUCTURAL object classes are allowed
+        for the new subordinate entry.
+      </li>
+      <li>
+        When generating the input form vendor-specific operational attributes
+        are now honoured to determine whether an attribute is writeable
+        by the bound user. Otherwise only a read-only hidden field is displayed.
+        <dl>
+          <dt><var>allowedAttributesEffective</var></dt>
+          <dd>
+            Tested with MS AD and OpenLDAP overlay <var>slapo-allowed</var>
+            (see also <a href="https://www.openldap.org/its/index.cgi?findid=4730">ITS#4730</a>).
+          </dd>
+        </dl>
+      </li>
+      <li>
+        The schema browser is now directly accessible via extra entry
+        in the main menu.
+      </li>
+      <li>
+        Some improvements for setting the password of an user entry:
+        <ul>
+          <li>
+            Hash settings are not displayed when changing <var>unicodePwd</var>
+            on MS AD
+          </li>
+          <li>
+            If the user changes his own password he can enter old password
+            for servers which need that (e.g. MS AD or Novell eDirectory).
+            A modify list with <var>ldap.MOD_DEL</var> and <var>ldap.MOD_ADD</var>
+            is generated then instead of <var>ldap.MOD_REPLACE</var>.
+          </li>
+        </ul>
+      </li>
+      <li>
+        LDAP URLs shown in the UI now have SASL and StartTLS parameters set
+        which were used during connect and last login. This makes it easier
+        for the user to generate bookmark URLs containing StartTLS and SASL
+        bind information.
+      </li>
+      <li>
+        LDAP URL extension <var>x-saslmech</var> is now taken as default
+        for the bind mechanism select list in the login form.
+      </li>
+      <li>
+        [More] and [Fewer] in the advanced search form are now submit buttons
+        and thus user's input entered in the search form so far is preserved.
+        Empty user input is simply ignored and the advanced search form is
+        displayed again.
+      </li>
+      <li>
+        In the monitor web page the LDAP connections are now displayed as table.
+      </li>
+      <li>
+        The list of requested attributes when displaying a single entry
+        can now be altered in a simple input form below the displayed entry.
+        This is handy for attributes which have to be explicitly requested
+        to be returned by the server.
+      </li>
+      <li>
+        The submit button [Search] is now on top of all types of search forms.
+      </li>
+      <li>
+        Fingerprint based on SHA-256 is now displayed for displayed X.509
+        certificates.
+      </li>
+      <li>
+        When catching <var>ldap.SERVER_DOWN</var> a real error message is now
+        shown instead of just redirecting to the start page. The user has
+        to manually go to the [Connect] page.
+      </li>
+      <li>
+        [ConnInfo] now shows LDAP connection start time and duration.
+      </li>
+      <li>
+        Advanced search form now shows the attribute type's description
+        from the subschema as <var>title</var> in the option value.
+      </li>
+      <li>
+        If the user does not enter a new password in the change password
+        input form a new password is randomly generated and displayed
+        to the user. Length and valid chars of generated passwords can be
+        configured by host-specific parameters
+        <a href="web2ldapcnf_hosts.html#passwd_genlength">passwd_genlength</a> and
+        <a href="web2ldapcnf_hosts.html#passwd_genchars">passwd_genchars</a>.
+      </li>
+      <li>
+        Specific error message text for numeric codes returned by MS AD is displayed
+        in case of <var>ldap.INVALID_CREDENTIALS</var> being raised.
+      </li>
+      <li>
+        Group adminstration now allows to enter a (partial) group name
+        to limit the number of groups found.
+      </li>
+      <li>
+        The password change dialogue has a new input field for enforcing a password
+        change after reset. This sets various attributes depending on what's
+        detected in the subschema (draft-behera-ldap-password-policy, MS AD).
+      </li>
+      <li>
+        The password context menu now contains a link for removing
+        password-related attributes from an entry.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bugs fixed</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed behaviour when
+        <a href="https://tools.ietf.org/html/draft-zeilenga-ldap-relax/">
+        Relax Rules Control</a> is in effect.
+      </li>
+      <li>
+        Fixed regex-checking for attribute <var>pgpKey</var>.
+      </li>
+      <li>
+        Processing of <var>.ldaprc</var> or <var>ldap.conf</var> is now
+        explicitly switched off by setting environment variable <var>LDAPNOINIT=1</var>.
+      </li>
+      <li>
+        Fixed setting cert validation option for StartTLS ext.op. or LDAPS.
+      </li>
+      <li>
+        DESC fields of schema elements are now properly handled as UTF-8 and escaped.
+      </li>
+      <li>
+        Search filter string is now passed through login form (in case of
+        intermediate login before searching is needed).
+      </li>
+      <li>
+        Attributes are now correctly displayed when parameter <var>search_tdtemplate</var>
+        is in effect no matter of the case of attribute type name.
+      </li>
+    </ul>
+  </dd>
+  <dt>Security fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        [ConnInfo]: All values coming from HTTP headers are now fully escaped
+        to avoid XSS attacks based on manipulated HTTP headers.
+      </li>
+      <li>
+        More escaping when displaying error messages from untrusted sources
+        to avoid XSS attacks by manipulated LDAP servers.
+      </li>
+    </ul>
+  </dd>
+  <dt>Code cleaning</dt>
+  <dd>
+    <ul>
+      <li>
+        Support for <a href="http://psyco.sourceforge.net/"><var>psyco</var></a>
+        was dropped since the project seems to be unmaintained.
+      </li>
+      <li>
+        Many changes/fixes towards a more consequent use of <var>Unicode</var> objects.
+      </li>
+      <li>
+        Completely reworked control parameter handling in [Params] for
+        setting controls (formerly in [ConnInfo].
+      </li>
+      <li>
+        Deprecated module <var>sets</var> is not imported anymore.
+      </li>
+      <li>
+        Removed unused functions in module <var>msbase</var>.
+      </li>
+      <li>
+        Removed unused functions in module <var>ldaputil.base</var>.
+      </li>
+      <li>
+        New submodule <var>ldaputil.extldapurl</var>.
+      </li>
+      <li>
+        Consequent use of <var>BooleanType</var> with values <var>True</var>
+        and <var>False</var> where appropriate.
+      </li>
+      <li>
+        Dropped support for reading <var>cn=config</var> attribute <var>database</var>
+        on old LDAPv2 Umich servers.
+      </li>
+      <li>
+        Caching was removed from class <var>ldap.LDAPSession</var> and is now solely
+        done in class <var>ldapsession.LDAPObject</var>. Uncaching single entries
+        is now more reliable in new method <var>ldapsession.LDAPObject.uncache_entry()</var>.
+      </li>
+      <li>
+        Consistent use of module <var>hashlib</var> in Python's standard lib
+        also for MD4 so no need for installing additional modules for MD4 anymore.
+      </li>
+      <li>
+        Cleaned up inconsistent use of tabs and spaces (runs with python -tt now).
+      </li>
+      <li>
+        Dropped configuration parameter <var>web2ldapcnf.misc.print_rawutf8</var>
+        since all browsers accept <var>UTF-8</var> today.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<!--#include file="ssi/footer.html" -->

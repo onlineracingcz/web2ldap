@@ -1,0 +1,933 @@
+<!--#set var="web2ldap_subtitle" value="Changes 0.16.x" -->
+<!--#set var="web2ldap_pagedescription" value="History of released versions" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#include file="ssi/changes_navigation.html" -->
+
+
+<h1 id="r0.16.41">0.16.41</h1>
+<p>Release Date: 2008-08-03</p>
+<ul>
+  <li>
+    Security fix! Redirects to arbitrary URLs are only allowed with valid session ID.
+  </li>
+  <li>
+    plug-in class <var>DynamicValueSelectList</var> now also reads a simple
+    select list from a multi-valued attribute of a certain entry (when search scope
+    in LDAP URL is base).
+  </li>
+  <li>
+    Detected browser class and browser version and HTTP header <var>User-Agent</var>
+    are displayed in [ConnInfo] now.
+  </li>
+  <li>
+    plug-in class <var>BitArrayInteger</var> now displays a multi-line
+    input field for each bits. This is more handy for manipulating the single bits
+    like in MS AD's attribute <var>userAccountControl</var>.
+  </li>
+  <li>
+    Fixed displaying the value for binary fields (e.g. OctetString) when
+    outputting a hidden field (disabled input field).
+  </li>
+</ul>
+
+<h1 id="r0.16.40">0.16.40</h1>
+<p>Release Date: 2008-07-26</p>
+<ul>
+  <li>
+    Fixed error handling for <var>objectClassViolation</var> when adding a new entry.
+  </li>
+  <li>
+    Added doc page about improving <a href="usability.html">usability</a> by configuration.
+  </li>
+  <li>
+    Improved docs.
+  </li>
+  <li>
+    Schema browser now accepts semicolon subtype in form parameter <var>oid</var>.
+  </li>
+</ul>
+
+<h1 id="r0.16.39">0.16.39</h1>
+<p>Release Date: 2008-07-17</p>
+<ul>
+  <li>
+    Support for tree delete control (see
+    <a href="https://tools.ietf.org/html/draft-armijo-ldap-treedelete">draft-armijo-ldap-treedelete</a>).
+  </li>
+  <li>
+    Cosmetic changes to output of [ConnInfo].
+  </li>
+</ul>
+
+<h1 id="r0.16.38">0.16.38</h1>
+<p>Release Date: 2008-07-15</p>
+<ul>
+  <li>
+    Fixed a regression in [Password] (module <var>w2lapp.passwd</var>)
+    when the entry's DN contains NON-ASCII chars.
+  </li>
+</ul>
+
+<h1 id="r0.16.37">0.16.37</h1>
+<p>Release Date: 2008-07-15</p>
+<ul>
+  <li>
+    Fixed changing the password in MS AD (attribute <var>unicodePwd</var>).
+  </li>
+  <li>
+    Fixed more regressions in [Password] (module <var>w2lapp.passwd</var>).
+  </li>
+</ul>
+
+<h1 id="r0.16.36">0.16.36</h1>
+<p>Release Date: 2008-07-14</p>
+<ul>
+  <li>
+    Changed the internal setting of TLS options: If OpenLDAP libs 2.4 or newer are
+    detected the TLS options are only set for the current connection.
+  </li>
+  <li>
+    Fixed a regression in [Password] (module <var>w2lapp.passwd</var>).
+  </li>
+</ul>
+
+<h1 id="r0.16.35">0.16.35</h1>
+<p>Release Date: 2008-07-14</p>
+<ul>
+  <li>
+    Certificates and CRLs are automagically converted from ASCII-armored
+    format (often called PEM) to binary DER format if needed before being added
+    to attributes of syntax <var>Certificate</var> or <var>CertificateRevocationList</var>.
+  </li>
+  <li>
+    The DN portion of <var>DynamicValueSelectList.ldap_url</var> has the following
+    special values (placeholders) now for defining the search DN based on the current
+    DN of the entry:
+    <table border>
+      <tr><td>_</td><td>underscore</td><td>use the best matching naming context</td></tr>
+      <tr><td>.</td><td>single dot</td><td>use current DN</td></tr>
+      <tr><td>..</td><td>two dots</td><td>use parent DN</td></tr>
+    </table>
+  </li>
+  <li>
+    Added simple <var>Select</var>-based plug-in class for
+    attribute type <var>pwdAttribute</var>.
+  </li>
+  <li>
+    New features if
+    <a href="http://www.pythonware.com/products/pil/index.htm">Python Imaging Library (PIL)</a>
+    is (optionally) installed:
+    <ul>
+      <li>
+        Images are now automagically converted to JPEG format for attributes of
+        syntax <var>JPEGImage</var> (e.g. attribute <var>jpegPhoto</var>).
+      </li>
+      <li>
+        Attributes <var>width</var> and <var>height</var> always set for &lt;img&gt; tag.
+      </li>
+      <li>
+        <var>width</var> and <var>height</var> set to maximum values keeping
+        the original aspect ratio of the image.
+      </li>
+    </ul>
+  </li>
+  <li>
+    Changes when setting passwords:
+    <ul>
+      <li>
+        Support for <em>Password Modify Extended Operation</em> for server-side password setting
+        (see <a href="https://tools.ietf.org/html/rfc3062">RFC 3062</a>).
+      </li>
+      <li>
+        Generated salts for client-hashed password are eight bytes long.
+      </li>
+    </ul>
+  </li>
+  <li>
+    New global configuration parameter
+    <a href="web2ldapcnf_misc.html#session_paranoid">session_paranoid</a>
+    enables generating a new session ID for each hit. While slighty more secure this makes
+    the browser's back button unusable though.
+  </li>
+</ul>
+
+<h1 id="r0.16.34">0.16.34</h1>
+<p>Release Date: 2008-07-11</p>
+<ul>
+  <li>
+    When displaying search results the <var>title</var> attributes of
+    links contain multiple lines now.
+  </li>
+  <li>
+    Select list of LDIF templates only displayed when adding new entries.
+  </li>
+  <li>
+    Multiple lines for syntax Postal Address are joined with &quot; $ &quot; instead
+    of &quot;$&quot;. Whitespaces are stripped from begin and end of the lines.
+  </li>
+  <li>
+    All attributes declared with <var>NO-USER-MODIFICATION</var> set are silently ignored
+    when modifying entries even if provided in user input.
+  </li>
+  <li>
+    Fixed handling of NON-ASCII chars in multi-line text input fields
+    (e.g. for attribute <var>postalAddress</var>).
+  </li>
+  <li>
+    Fixed handling of delta-modification in case an attribute having no EQUALITY
+    matching rule defined for it.
+  </li>
+</ul>
+
+<h1 id="r0.16.33">0.16.33</h1>
+<p>Release Date: 2008-07-11</p>
+<ul>
+  <li>
+    When adding an entry an exception <var>ldap.UNWILLING_TO_PERFORM</var>
+    also leads to the input form for modifying entry data.
+  </li>
+  <li>
+    When re-displaying the entry input form in case of an error
+    binary attribute are dropped since at the moment there is no appropriate
+    way to deal with them in hidden input fields.
+  </li>
+  <li>
+    Improved object class selection form:
+    <ul>
+      <li>
+        A select list for object classes without kind (&quot;Misc.&quot;) is only displayed if needed.
+      </li>
+      <li>
+        To save space the LDIF template list is now added as a select input field
+        of the object class selection form. This also makes it possible to select
+        a different input form type when using LDIF templates.
+      </li>
+      <li>
+        All input fields have a <var>title</var> attribute now.
+      </li>
+      <li>
+        Descriptions of input fields have &lt;label for=&quot;id&quot;&gt; now.
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="r0.16.32">0.16.32</h1>
+<p>Release Date: 2008-07-10</p>
+<ul>
+  <li>
+    In case of an attribute having an EQUALITY matching rule defined
+    which is not implemented (announced in subschema) the
+    delta-modification now deletes the whole attribute value.
+    E.g. this avoids problems with attribute <var>postalAddress</var> on OpenLDAP.
+  </li>
+</ul>
+
+<h1 id="r0.16.31">0.16.31</h1>
+<p>Release Date: 2008-07-07</p>
+<ul>
+  <li>
+    Support for name forms when adding new entries:
+    If name forms are associated with the structural object class of
+    the new entry to be added then a select list of all possible name forms
+    is displayed.
+  </li>
+  <li>
+    New base class <var>MultilineText</var> for implementing attribute plug-in classes
+    for multi-line text fields.
+  </li>
+  <li>
+    A multi-line text field is displayed as input field for attributes
+    of syntax postal address (1.3.6.1.4.1.1466.115.121.1.41).
+  </li>
+  <li>
+    New plug-in module for LDAP-based PGP key servers.
+  </li>
+</ul>
+
+<h1 id="r0.16.30">0.16.30</h1>
+<p>Release Date: 2008-06-30</p>
+<ul>
+  <li>
+    New parameter
+    <a href="web2ldapcnf_hosts.html#restricted_ldap_uri_list">web2ldapcnf.hosts.restricted_ldap_uri_list</a>
+    allows to restrict the LDAP servers to be accessible to the ones listed in
+    <a href="web2ldapcnf_hosts.html#ldap_uri_list">web2ldapcnf.hosts.ldap_uri_list</a>.
+  </li>
+</ul>
+
+<h1 id="r0.16.29">0.16.29</h1>
+<p>Release Date: 2008-06-27</p>
+<ul>
+  <li>
+    Better handling of multi-valued RDN when adding a new entry:
+    <ul>
+      <li>
+        Auto-completion with attribute values from the input entry.
+      </li>
+      <li>
+        Attributes passed in with the RDN
+        are automatically added to the entry if attribute is completely absent.
+      </li>
+    </ul>
+  </li>
+  <li>
+    Graceful handling for absent schema element referenced with key-word <var>SUP</var>.
+  </li>
+  <li>
+    If using a non-DN name for a simple bind without a filter-template
+    for searching the user entry then the user entry is searched
+    after successful bind with the user's rights. This is handy e.g. when using
+    <var>userPrincipalName</var> for simple bind with MS AD.
+  </li>
+  <li>
+    If search root used for searching a user entry is empty then
+    <var>defaultNamingContext</var> from rootDSE is used as search root
+    if present.
+  </li>
+  <li>
+    New AD-specific plug-in classes for <var>domainControllerFunctionality</var>,
+    <var>domainFunctionality</var> and <var>forestFunctionality</var>.
+  </li>
+  <li>
+    Code cleaning in schema viewer and added a work-around for buggy
+    class <var>ldap.schema.models.NameForm</var> in older versions of python-ldap.
+  </li>
+</ul>
+
+<h1 id="r0.16.28">0.16.28</h1>
+<p>Release Date: 2008-06-22</p>
+<ul>
+  <li>
+    If the LDAP server returns strange empty lists as attribute value lists
+    (e.g. OpenDS does this for attribute <var>isMemberOf</var>)
+    then these are ignored when modifying an entry.
+  </li>
+  <li>
+    Also in case of an attribute getting completely deleted the
+    delta-modification now explicitly deletes the old attribute values if an
+    EQUALITY matching rule is defined in subschema for the attribute type.
+  </li>
+</ul>
+
+<h1 id="r0.16.27">0.16.27</h1>
+<p>Release Date: 2008-06-18</p>
+<ul>
+  <li>
+    Delta-modification now explicitly deletes the old attribute values if an
+    EQUALITY matching rule is defined in subschema for the attribute type.
+    This is an additional cross-check to detect whether the entry to be modified
+    was removed or changed in between.
+  </li>
+  <li>
+    Simplified referral chasing: The DN is simply extracted from referral URL
+    (in compliance with the note in <a href="https://tools.ietf.org/html/rfc3296">RFC 3296</a>
+    about empty referral DN).
+  </li>
+</ul>
+
+<h1 id="r0.16.26">0.16.26</h1>
+<p>Release Date: 2008-06-16</p>
+<ul>
+  <li>
+    Fixed a regression when enabling tree delete control for recursive tree deletion.
+  </li>
+  <li>
+    An assertion filter is passed along in form parameter <var>in_assertion</var>
+    from the input form to the modify page which is used to cross-check
+    whether the entry to be modified was removed or changed in between.
+    Still this is not using the assertion control. But it's safer than before.
+  </li>
+</ul>
+
+<h1 id="r0.16.25">0.16.25</h1>
+<p>Release Date: 2008-06-14</p>
+<ul>
+  <li>
+    Fixed a regression when adding entries.
+  </li>
+</ul>
+
+<h1 id="r0.16.24">0.16.24</h1>
+<p>Release Date: 2008-06-14</p>
+<ul>
+  <li>
+    HTTP header <var>Cache-Control</var> is set very strictly for every HTTP response
+    (e.g. also when producing LDIF and vCard exports and display single binary
+    attributes like <var>jpegPhoto</var>).
+  </li>
+  <li>
+    Some socket exceptions are now correctly ignored.
+    These are typically caused by a user getting impatient
+    and the connection to the browser gets lost.<br>
+    Examples:
+    <ul>
+      <li>
+        <code>error: (104, 'Connection reset by peer')</code>
+      </li>
+      <li>
+        <code>error: (32, 'Broken pipe')</code>
+      </li>
+    </ul>
+  </li>
+  <li>
+    Attribute <var>auditContext</var> is now correctly handled:
+    <ul>
+      <li>
+        Additional menu items in the context menu for searching
+        the complete or the write audit trail for the single entry displayed.
+      </li>
+      <li>
+        When displaying the attribute <var>auditContext</var> itself
+        the plug-in class now links to complete or write audit trail
+        for current database.
+      </li>
+      <li>
+        [ConnInfo] also displays link into audit database.
+      </li>
+    </ul>
+  </li>
+  <li>
+    Added new plug-in class for attribute type <var>administrativeRole</var>
+    (see also <a href="https://tools.ietf.org/html/rfc3672">RFC 3672</a>).
+  </li>
+  <li>
+    Deprecation warnings under <a href="https://www.python.org/">Python 2.6</a>
+    for modules <var>md5</var> and <var>sha</var> are avoided by trying an 
+    import of module <var>hashlib</var> first.
+  </li>
+  <li>
+    Syntax checking for LDAP syntax <var>Numeric String</var> was relaxed
+    to also accept space characters (see also section 3.3.23
+    <a href="https://tools.ietf.org/html/rfc4517">RFC 4517</a>).
+  </li>
+  <li>
+    Renamed plug-in module for <a href="https://tools.ietf.org/html/rfc2307">RFC 2307</a>
+    schema elements from <var>posixaccount</var> to <var>nis</var>.
+  </li>
+  <li>
+    T.61 related codec modules are now correctly registered and used
+    when displaying certificates and CRLs.
+  </li>
+  <li>
+    Again the entry input form handling and delta-modification was partially rewritten.
+    This should fix several issues in former releases.
+  </li>
+</ul>
+
+<h1 id="r0.16.23">0.16.23</h1>
+<p>Release Date: 2008-02-29</p>
+<ul>
+  <li>
+    Added new plug-in classes for attribute types:
+    <ul>
+      <li>
+        <var>dateOfBirth</var> defined for object class <var>msPerson</var>
+        (see also <a href="https://www.stroeder.com/stroeder.com.schema">schema file</a>).
+      </li>
+      <li>
+        <var>pwdPolicySubentry</var>
+      </li>
+    </ul>
+  </li>
+  <li>
+    If <var>self.maxLen</var> is set for a syntax handler class then the
+    HTML attribute <var>maxLen</var> of the input field is set to the
+    minimum of <var>self.maxLen</var> and 50.
+  </li>
+  <li>
+    Improved plug-in base class <var>DynamicDNSelectList</var>:
+    If the DN portion in the LDAP URL (see class attribute <var>ldap_url</var>)
+    is a single dot then the naming context of the current DN is used when searching
+    possible attribute value/description pairs for the select list.
+  </li>
+  <li>
+    Fixed/improved schema browser:
+    <ul>
+      <li>
+        Added link to OID registry at <a href="http://www.oid-info.com">oid-info.com</a>.
+      </li>
+      <li>
+        Fixed listing the referencing attribute types when displaying
+        a matching rule.
+      </li>
+      <li>
+        Added listing the referencing matching rules when displaying
+        a LDAP syntax.
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="r0.16.22">0.16.22</h1>
+<p>Release Date: 2008-02-14</p>
+<ul>
+  <li>
+    Fixed a regression in plug-in module for MS AD.
+  </li>
+  <li>
+    Fixed a regression in and slightly improved plug-in class for attribute
+    <var>auditContext</var>.
+  </li>
+</ul>
+
+<h1 id="r0.16.21">0.16.21</h1>
+<p>Release Date: 2007-12-09</p>
+<ul>
+  <li>
+    Fixed a regression in exporting printable output of search result list.
+  </li>
+</ul>
+
+<h1 id="r0.16.20">0.16.20</h1>
+<p>Release Date: 2007-10-17</p>
+<ul>
+  <li>
+    Fixed passing around attribute values of syntax <var>OctetString</var>
+    as hidden parameters in template-based input form.
+  </li>
+  <li>
+    Fixed displaying the LDIF after a successful modify if the DN contains
+    NON-ASCII characters.
+  </li>
+</ul>
+
+<h1 id="r0.16.19">0.16.19</h1>
+<p>Release Date: 2007-10-07</p>
+<ul>
+  <li>
+    Fixed displaying the search results as a raw list of DNs.
+  </li>
+</ul>
+
+<h1 id="r0.16.18">0.16.18</h1>
+<p>Release Date: 2007-09-21</p>
+<ul>
+  <li>
+    Fixed handling of host-specific parameter
+    <a href="web2ldapcnf_hosts.html#search_tdtemplate">search_tdtemplate</a>
+    when displaying search result list.
+  </li>
+</ul>
+
+<h1 id="r0.16.17">0.16.17</h1>
+<p>Release Date: 2007-09-17</p>
+<ul>
+  <li>
+    Import of <var>ldap.sasl</var> not mandantory anymore.
+  </li>
+  <li>
+    New form parameter <var>groupadm_view</var> for command <var>groupadm</var>
+    enables the use to choose which group entris to list
+    in the group list legend.
+  </li>
+  <li>
+    Invalid DN given in a LDAP URL is caught as exception.
+  </li>
+  <li>
+    Leading zeros in user input are stripped for attribute values of
+    LDAP syntax <var>Integer</var>.
+  </li>
+  <li>
+    Changes in the plug-in class API now allows full access to subschema information
+    and LDAP connection objects within a plug-in class.
+  </li>
+  <li>
+    New base plug-in classes <var>DynamicValuesSelectList</var> and <var>DynamicDNSelectList</var>
+    for dynamically searching
+    &lt;option&gt; values/texts for a &lt;select&gt; list.
+  </li>
+  <li>
+    Modifications to single entries are now displayed as LDIF change records.
+  </li>
+  <li>
+    Input form can now be switched between the modes
+    <var>Template</var>, <var>Table</var> and <var>LDIF</var>
+    without loosing the changes made to the input data.
+  </li>
+  <li>
+    Parameter
+    <a href="web2ldapcnf_hosts.html#link_css">link_css</a>
+    now must contain a complete HTML snippet for specifying
+    CSS files for various media.
+  </li>
+  <li>
+    The <var>print</var> style sheet is not imported in CSS files anymore.
+    MS IE choked on that.
+  </li>
+</ul>
+
+<h1 id="r0.16.16">0.16.16</h1>
+<p>Release Date: 2007-03-22</p>
+<ul>
+  <li>
+    Added direct link to <var>auditContext</var> in [ConnInfo].
+  </li>
+  <li>
+    Stripped down HTML output in [Locate] to one &lt;div&gt; of class <var>Main</var>
+    to correct wrong display with fixed-style CSS.
+  </li>
+  <li>
+    Added plug-in classes for MS AD attribute types <var>groupType</var>
+    and <var>searchFlags</var>.
+  </li>
+  <li>
+    Fixed displaying error message for <var>ldap.TIMEOUT</var> exception.
+  </li>
+  <li>
+    Slightly changed text of submit button in login form.
+  </li>
+  <li>
+    Grab attribute <var>monitoredInfo</var> from OpenLDAP's monitor entry if
+    attribute <var>monitorContext</var> is present in <var>rootDSE</var>
+    to display it instead vendor info in [ConnInfo].
+  </li>
+</ul>
+
+<h1 id="r0.16.15">0.16.15</h1>
+<p>Release Date: 2006-12-07</p>
+<ul>
+  <li>
+    If no group entries are found a clear error message gives
+    a hint to select another group search root.
+  </li>
+  <li>
+    Search requests for LDIF/DSML export add <var>*</var> to requested attributes.
+    This fixes limited export if configuration parameter
+    <a href="web2ldapcnf_hosts.html#requested_attrs">requested_attrs</a> is set.
+  </li>
+</ul>
+
+<h1 id="r0.16.14">0.16.14</h1>
+<p>Release Date: 2006-11-30</p>
+<ul>
+  <li>
+    More graceful handling during connect when the server disallows anon bind
+    and restricts access to root DSE.
+  </li>
+  <li>
+    Function <var>escape_filter_chars()</var> from ldap.filter instead of
+    ldaputil.base is used.
+  </li>
+</ul>
+
+<h1 id="r0.16.13">0.16.13</h1>
+<p>Release Date: 2006-11-03</p>
+<ul>
+  <li>
+    Multiple attribute values are not sorted in input forms anymore.
+  </li>
+  <li>
+    In the login form only the available SASL mechs are displayed now in the
+    select field for choosing authentication mechanism.
+  </li>
+  <li>
+    If scope is not specified in LDAP URL the search form properly
+    sets default of search scope to <var>sub</var>.
+  </li>
+  <li>
+    Simplified displaying error messages by deleting backward-compatible
+    code for older versions of python-ldap.
+  </li>
+</ul>
+
+<h1 id="r0.16.12">0.16.12</h1>
+<p>Release Date: 2006-09-27</p>
+<ul>
+  <li>
+    When displaying a select field for choosing the groups
+    to add to or delete from the <var>title</var> attribute
+    contains the first value of attribute <var>description</var> or the DN
+    of the group entry (for bubble help in browser).
+  </li>
+  <li>
+    Some updates to configuration data.
+  </li>
+</ul>
+
+<h1 id="r0.16.11">0.16.11</h1>
+<p>Release Date: 2006-04-26</p>
+<ul>
+  <li>
+    Added <var>title</var> attribute for [Read] links when displaying
+    search result list (for bubble help in browser).
+    The text contains attributes <var>description</var>
+    and <var>structuralObjectClass</var> if present in the entry.
+  </li>
+  <li>
+    Default values set in <var>utctime.strptime()</var> and
+    <var>mspki.utctime.__strptime__()</var> are now exactly
+    like that of <var>time.strptime()</var>.
+  </li>
+</ul>
+
+<h1 id="r0.16.10">0.16.10</h1>
+<p>Release Date: 2006-03-23</p>
+<ul>
+  <li>
+    Changed behaviour when displaying input form for entries with
+    object class <var>extensibleObject</var> since it was unhandy for
+    many available attribute types: There are only input fields displayed
+    for the <var>MUST</var> and <var>MAY</var> attributes of other object
+    classes. But the select lists for additional attribute values now contain
+    all existing attribute types.
+  </li>
+  <li>
+    Recursive deletion now continues if server-side administrative
+    limits (<var>ldap.ADMINLIMIT_EXCEEDED</var> exception) are in effect.
+  </li>
+  <li>
+    When adding / editing an entry the input form can now be switched
+    from table- to template-based and vice versa without loss of data input so far.
+  </li>
+</ul>
+
+<h1 id="r0.16.9">0.16.9</h1>
+<p>Release Date: 2006-03-04</p>
+<ul>
+  <li>
+    Brought usage of <var>manage DIT</var> control in line with
+    <a href="https://tools.ietf.org/html/draft-zeilenga-ldap-managedit">draft-zeilenga-ldap-managedit-00.txt</a>
+  </li>
+  <li>
+    DIT content rules marked as <var>OBSOLETE</var> are now correctly ignored
+    in object class selection form.
+  </li>
+</ul>
+
+<h1 id="r0.16.8">0.16.8</h1>
+<p>Release Date: 2006-02-23</p>
+<ul>
+  <li>
+    Special treatment for an empty attribute value list when displaying
+    a table view of a single LDAP entry in [Read].
+  </li>
+  <li>
+    Attributes <var>countImmSubordinates</var> and
+    <var>countTotSubordinates</var> are now used to determine number
+    of direct and total subordinate entries.
+  </li>
+  <li>
+    Fix for displaying a search continuation received for one-level
+    search from root naming context.
+  </li>
+</ul>
+
+<h1 id="r0.16.7">0.16.7</h1>
+<p>Release Date: 2006-01-08</p>
+<ul>
+  <li>
+    Relaxed error handling when <var>ldap.INSUFFICIENT_ACCESS</var>
+    is raised during connecting to an ill-configured server.
+  </li>
+  <li>
+    Again the DIT navigation menu changed.
+  </li>
+  <li>
+    Some more small fixes.
+  </li>
+  <li>
+    Better detection whether subschema is accessible on LDAP server or when to
+    display the local schema.
+  </li>
+  <li>
+    Number of cached subschema DN mappings displayed in [ConnInfo].
+  </li>
+  <li>
+    Added plug-in module for Kerberos V schema.
+  </li>
+  <li>
+    Fixed syntax class <var>NameAndOptionalUID</var>.
+  </li>
+</ul>
+
+<h1 id="r0.16.6">0.16.6</h1>
+<p>Release Date: 2005-11-18</p>
+<ul>
+  <li>
+    Follow SUP references when displaying DIT structure rules.
+  </li>
+  <li>
+    Fixed detailed view of name forms.
+  </li>
+</ul>
+
+<h1 id="r0.16.5">0.16.5</h1>
+<p>Release Date: 2005-11-18</p>
+<ul>
+  <li>
+    Schema browser displays DIT structure rules and name forms
+    with all forward and backward references to attribute types
+    and object classes.
+  </li>
+  <li>
+    Again fixed error handling when setting <var>userPassword</var>
+    in case <var>simpleSecurityObject</var> is defined as STRUCTURAL
+    in a broken schema.
+  </li>
+</ul>
+
+<h1 id="r0.16.4">0.16.4</h1>
+<p>Release Date: 2005-11-18</p>
+<ul>
+  <li>
+    Fixed <var>ldapsession.LDAPSession.subOrdinates()</var>
+    to return correct results also when the server does not
+    return the operational attributes used to determine that.
+  </li>
+  <li>
+    Corrected title message of <var>monitor</var> and <var>locate</var>.
+  </li>
+  <li>
+    The link [Display all] is only displayed if only partial search results
+    are displayed.
+  </li>
+  <li>
+    In the object class selection form the classes currently
+    not selected are sorted.
+  </li>
+  <li>
+    Fixed relogin when referral is received.
+  </li>
+  <li>
+    When setting the password for an entry for which the attribute <var>userPassword</var>
+    is not allowed in the schema one of the object classes <var>simpleSecurityObject</var> or
+    <a href="http://www.alvestrand.no/objectid/1.2.840.113533.7.67.5.html"><var>simpleAuthObject</var></a>
+    is added if present in the schema and declared as <var>AUXILIARY</var>.
+  </li>
+</ul>
+
+<h1 id="r0.16.3">0.16.3</h1>
+<p>Release Date: 2005-11-14</p>
+<ul>
+  <li>
+    Added missing plug-in for DirX (which has no function at the moment).
+  </li>
+  <li>
+    Setting the TLS-related options does not care about
+    old python-ldap versions anymore.
+  </li>
+</ul>
+
+<h1 id="r0.16.2">0.16.2</h1>
+<p>Release Date: 2005-11-11</p>
+<ul>
+  <li>
+    Stripped all formatting attributes from HTML templates
+    and slightly modified default.css to be nicer to MS IE.
+  </li>
+  <li>
+    If an attribute has more than two values the number
+    of attribute values is displayed in the table view
+    when displaying a single entry (in [Read]).
+  </li>
+</ul>
+
+<h1 id="r0.16.1">0.16.1</h1>
+<p>Release Date: 2005-11-11</p>
+<dl>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Major overhaul of web layout also affecting HTML generated.
+        Finally implemented three column layout with CSS which hopefully is
+        more user-friendly.
+      </li>
+      <li>
+        Added DIT navigation list to status bar which allows
+        quick access to upper DIT entries.
+      </li>
+      <li>
+        Reordered and hopefully cleaned up login form.
+      </li>
+      <li>
+        Flipped order of links [Down] and [Up] in main menu to better
+        reflect function in three column CSS layout.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug Fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        Fixed Unicode error in [ConnInfo] if the current DN is NON-ASCII.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h1 id="r0.16.0">0.16.0</h1>
+<p>Release Date: 2005-11-07</p>
+<dl>
+  <dt>Installation and Configuration changes</dt>
+  <dd>
+    <ul>
+      <li>
+        <strong>Note:</strong> This release requires upgrading to
+        <a href="https://www.python.org/">Python 2.3.x or newer</a>.
+      </li>
+      <li>
+        <strong>Note:</strong> This release requires upgrading to
+        <a href="https://www.python-ldap.org/">python-ldap 2.0.10</a>
+        which supports LDAPv3 extended controls.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Support for controls which are handled exactly like ManageDSAIT
+        in the user interface (see [ConnInfo]):
+        <ul>
+          <li>
+            ManageDIT (1.3.6.1.4.1.4203.666.5.12)
+          </li>
+          <li>
+            Two different controls for searching subentries
+            (see <a href="https://tools.ietf.org/html/rfc3672">RFC 3672</a>
+            and <a href="https://tools.ietf.org/html/draft-ietf-ldup-subentry/draft-ietf-ldup-subentry-07.txt">draft-ietf-ldup-subentry-07.txt</a>)
+          </li>
+        </ul>
+      </li>
+      <li>
+        When displaying entries or an input form with the
+        help of HTML templates the templates are applied in the order
+        of the kind of the object classes. Order is STRUCTURAL, AUXILIARY, ABSTRACT.
+      </li>
+      <li>
+        Added plug-in class for <var>pilotPerson</var>
+        (see <a href="https://tools.ietf.org/html/rfc1274">RFC 1274</a>).
+      </li>
+      <li>
+        All cached LDAP information (entries and sub schema) can be flushed
+        (see [ConnInfo]).
+      </li>
+      <li>
+        Transfer subtype ;binary is used when creating input fields
+        for attributes which needs this transfer type.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug Fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        The letter small x is now allowed in the syntax classes
+        for telephone and FAX numbers.
+      </li>
+      <li>
+        If an error causes the input form to be re-displayed
+        the values entered for binary attributes are omitted.
+      </li>
+      <li>
+        Setting TLS-related options is more robust now.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<!--#include file="ssi/footer.html" -->

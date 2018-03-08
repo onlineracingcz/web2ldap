@@ -1,0 +1,251 @@
+<!--#set var="web2ldap_subtitle" value="Changes 0.12.x" -->
+<!--#set var="web2ldap_pagedescription" value="History of released versions" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#include file="ssi/changes_navigation.html" -->
+
+<h1 id="r0.12.5">0.12.5</h1>
+<p>Release Date: 2004-03-17</p>
+<ul>
+  <li>
+    Strictly use constants from module ldap when evaluating
+    the search result types in <var>w2lapp.search</var>. This fixes
+    a compability issue with fixes in upcoming
+    <a href="https://www.python-ldap.org/">python-ldap 2.0.0pre20+</a>
+    related to backward compability issues with the OpenLDAP 2.2 libs.
+  </li>
+</ul>
+
+<h1 id="r0.12.4">0.12.4</h1>
+<p>Release Date: 2004-02-19</p>
+<ul>
+  <li>
+    The schema viewer displays all attribute types which use a certain
+    matching rule.
+  </li>
+</ul>
+
+<h1 id="r0.12.3">0.12.3</h1>
+<p>Release Date: 2004-01-22</p>
+<ul>
+  <li>
+    Template-based input forms similar to what is done
+    with <var>read_template</var>'s when displaying a single entry
+    (see option <a href="web2ldapcnf_hosts.html#input_template">
+    input_template</a>). Unfortunately this does not allow fine-tuned
+    HTML design but it's a start.
+  </li>
+  <li>
+    Fixed an error related to disabling <var>cleanUpThread</var>
+    during shutdown.
+  </li>
+  <li>
+    Apply HTML entity escaping when displaying attribute types
+    in modify lists to fix a potential security hole (CSS attack).
+  </li>
+  <li>
+    Apply HTML entity escaping when displaying error messages
+    in the referral handler to fix a potential security hole (CSS attack).
+  </li>
+  <li>
+    New form parameter <var>search_opattrs</var> used to let the
+    user specify whether all operational attributes should be requested
+    or not.
+  </li>
+  <li>
+    Added support for setting LAN Manager hash password for Samba/LDAP
+    in attribute <var>lmPassword</var> or <var>sambaLMPassword</var>
+    (needs <a href="http://www.amk.ca/python/code/crypto.html">pycrypto</a>).
+  </li>
+  <li>
+    The LDAP URLs in the status on top of each page and in the search
+    results contain <var>bindname</var> LDAP URL extension if not bound
+    anonymously.
+  </li>
+  <li>
+    New form parameter <var>passwd_settimesync</var> used to
+    let the user specify whether the password set time is set
+    when changing password(s).
+  </li>
+  <li>
+    Appropriate error handling for search references / referrals
+    with an URI which is not a LDAP URL.
+  </li>
+</ul>
+
+<h1 id="r0.12.2">0.12.2</h1>
+<p>Release Date: 2003-11-30</p>
+<ul>
+  <li>
+    Extracted session handling into new application module
+    <var>w2lapp.session</var>.
+  </li>
+  <li>
+    Decoupled cyclic importing of <var>w2lapp.cnf</var> and
+    <var>w2lapp.core</var> which confused
+    <a href="http://pychecker.sourceforge.net">pychecker</a>.
+  </li>
+  <li>
+    Tons of small fixes for issues found with
+    <a href="http://pychecker.sourceforge.net">pychecker</a>.
+  </li>
+</ul>
+
+<h1 id="r0.12.1">0.12.1</h1>
+<p>Release Date: 2003-11-12</p>
+<ul>
+  <li>
+    Allow hyphens in attribute type input fields.
+  </li>
+</ul>
+
+<h1 id="r0.12.0">0.12.0</h1>
+<p>Release Date: 2003-11-11</p>
+<dl>
+  <dt>Installation and Configuration changes</dt>
+  <dd>
+    <ul>
+      <li>
+        <strong>Note:</strong> This release requires upgrading to
+        <a href="https://www.stroeder.com/pylib/PyWebLib/">PyWebLib 1.3.0</a>!
+      </li>
+      <li>
+        <strong>Note:</strong> This release requires upgrading to
+        <a href="https://www.python-ldap.org/">python-ldap 2.0.0pre15+</a>!
+      </li>
+      <li>
+        New script <code>sbin/checkinst.py</code> for checking
+        <a href="install.html#Prerequisites">installation prerequisites</a>.
+      </li>
+      <li>
+        <a href="http://www.amk.ca/python/code/crypto.html">pycrypto</a>
+        can be alternatively used for generating MD4 hashes for Samba NT passwords
+        (<var>ntPassword</var>/<var>sambaNTPassword</var>).
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Experimental support for file upload of single-valued
+        binary attributes, e.g. <var>jpegPhoto</var> or
+        <var>userCertificate</var>.
+      </li>
+      <li>
+        Experimental support for setting password in Active Directory
+        (attribute <var>unicodePwd</var>).
+      </li>
+      <li>
+        Added &lt;label&gt; tag to entry input form.
+      </li>
+      <li>
+        <var>w2lapp.groupadm</var>:
+        Full DNs are displayed in group selection fields.
+      </li>
+      <li>
+        Added universal <var>title</var> attribute to a lot of HTML tags
+        to have sort of a bubble-help in browsers which support that.
+      </li>
+      <li>
+        When processing RDN during adding entry the form
+        <code>'OID.&lt;oid&gt;'</code> the RDN attribute type is normalized
+        to <code>'&lt;oid&gt;'</code>.
+      </li>
+      <li>
+        If no subschema is available from server (e.g. when connected
+        to LDAPv2 server) the link text for entering schema browser in
+        context menu is &quot;Browse Local Schema&quot; to indicate
+        that a locally defined schema is displayed.
+      </li>
+      <li>
+        The password-syncing for Samba is now checked by attribute types
+        instead of object classes. This seems more robust and extensible in
+        regard to future changes of the Samba schema. Support for
+        setting Samba V3 attributes <var>sambaNTPassword</var> and
+        <var>sambaPwdLastSet</var> has been added.
+      </li>
+      <li>
+        After having successfully changed password all the password-related
+        attribute types (not values!) which were (re-)set are displayed.
+      </li>
+      <li>
+        Even more inherited schema element properties are displayed.
+      </li>
+      <li>
+        Added input field for navigating to a single entry by DN in [ConnInfo].
+      </li>
+      <li>
+        Added HTTP header
+        <code>Content-Disposition: inline; filename=...</code> when
+        generating export output for specifying the default file name.
+      </li>
+      <li>
+        Added vCard template file for object class <var>organization</var>.
+      </li>
+      <li>
+        DIT content rules extracted from sub schema sub entry attribute
+        <var>dITContentRules</var> are displayed in schema viewer.
+      </li>
+    </ul>
+  </dd>
+  <dt>Bug Fixes</dt>
+  <dd>
+    <ul>
+      <li>
+        Relaxed handling of attribute types not present in schema
+        when generating entry input form.
+      </li>
+      <li>
+        Removed false extra check when catching <var>ldap.PROTOCOL_ERROR</var>
+        on LDAPv2 servers in <var>ldapsession.LDAPSession._supportedLDAPVersion()</var>.
+      </li>
+      <li>
+        Allow characters &quot;*&quot; and &quot;+&quot; in form parameter
+        <var>search_attrs</var>.
+      </li>
+      <li>
+        Fixed compability problems with Python versions prior to 2.2.
+      </li>
+      <li>
+        vCard template is processed line by line:
+        If no attribute is present needed for a certain line
+        the line is dropped to avoid problems with vCard parsers
+        not capable of handling empty values.
+      </li>
+      <li>
+        When setting the password in <var>w2lapp.passwd</var> the
+        presence of attributes in subschema is now correctly checked
+        by OID instead of attribute type name.
+      </li>
+      <li>
+        Corrected handling of inherited syntaxes when displaying
+        attribute values or input fields.
+      </li>
+      <li>
+        Fixed charset handling for X.500 DNs in certificate parser.
+      </li>
+      <li>
+        Whitespaces are stripped from object class and attribute type names
+        used in <a href="web2ldapcnf_hosts.html#groupadm_defs">groupadm_defs</a>.
+      </li>
+      <li>
+        Solved <a href="https://www.python.org/">Python 2.3</a>
+        incompability issues in modules <var>ipadr</var>, <var>mspki</var>,
+        <var>w2lapp.conninfo</var>.
+      </li>
+      <li>
+        Repaired the handling of empty <var>hostport</var> part
+        in LDAP URLs regarding SRV DNS RR lookup.
+      </li>
+      <li>
+        <var>CleanUpThread</var> instance again created in all
+        start-up scripts to avoid problems with
+        <var>os.setuid()</var> when started by user <var>root</var>.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<!--#include file="ssi/footer.html" -->

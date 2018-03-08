@@ -1,0 +1,113 @@
+<!--#set var="web2ldap_subtitle" value="Changes 1.3.x" -->
+<!--#set var="web2ldap_pagedescription" value="History of released versions" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<!--#include file="ssi/changes_navigation.html" -->
+
+<h1 id="r1.3.11">1.3.11</h1>
+<p>Release Date: 2018-04-xx</p>
+<ul>
+  <li>
+    Replaced configuration sub-module <var>web2ldapcnf.countries</var>
+    by <em>.properties</em> files.
+  </li>
+</ul>
+
+<h1 id="r1.3.10">1.3.10</h1>
+<p>Release Date: 2018-03-07</p>
+<ul>
+  <li>
+    Some fixes in plugin module for &AElig;-DIR.
+  </li>
+  <li>
+    Module <a href="http://www.python-excel.org/">xlwt</a> is used for
+    Excel data export instead of unmaintained <var>pyExcelerator</var>.
+  </li>
+</ul>
+
+<h1 id="r1.3.9">1.3.9</h1>
+<p>Release Date: 2018-02-28</p>
+<ul>
+  <li>Removed debug print statement.</li>
+</ul>
+
+<h1 id="r1.3.8">1.3.8</h1>
+<p>Release Date: 2018-02-27</p>
+<dl>
+  <dt>License change</dt>
+  <dd>
+    The license was changed to
+    <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License Version 2.0</a>
+    using machine-readable SPDX license identifier
+    <a href="https://spdx.org/licenses/Apache-2.0.html">Apache-2.0</a>.
+  </dd>
+  <dt>Installation and configuration changes</dt>
+  <dd>
+    The following changes to system installation and local configuration were made:
+    <ul>
+      <li>
+        Requires Python 2.7.9+
+      </li>
+      <li>
+        It is now possible to install with PIP.
+      </li>
+      <li>
+        If you do not use the PIP-based installation note that some
+        module dependencies have changed:
+        <ul>
+          <li>
+            Module <a href="https://pypi.python.org/pypi/ldap0">ldap0</a>
+            used instead of <var>python-ldap</var>.
+          </li>
+          <li>
+            Module <a href="https://pypi.python.org/pypi/ipaddress">ipaddress</a>
+            used instead of <var>netaddr</var> (and formerly <var>ipaddr</var>).
+          </li>
+        </ul>
+      </li>
+      <li>
+        LDAP OID registry is no longer considered local configuration and
+        was thus moved to an internal module.
+      </li>
+      <li>
+        Config module <var>web2ldapcnf</var> was moved to top-level directory.
+      </li>
+    </ul>
+  </dd>
+  <dt>New features/enhancements</dt>
+  <dd>
+    <ul>
+      <li>
+        Runs a WSGI application.
+      </li>
+    </ul>
+  </dd>
+  <dt>Dropped features</dt>
+  <dd>
+    <ul>
+      <li>
+        Dropped configuration variable <var>pylibdirs</var> which caused
+        too much hen-and-egg problems and thus was not useful.
+      </li>
+      <li>
+        Dropped configuration variable <var>bind_address</var> for
+        stand-alone mode.
+      </li>
+      <li>
+        No separate error and debug log configuration variables anymore.
+        Errors now always go to <var>stderr</var> which was the default anyway.
+      </li>
+      <li>
+        The half-baken <var>SIGHUP</var> config reload handler was removed.
+        Actually it was never really useful.
+      </li>
+      <li>
+        Abandoned internal gzip compressing because it is much better to
+        leave this to the invoking web server.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<!--#include file="ssi/footer.html" -->

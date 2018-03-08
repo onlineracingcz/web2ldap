@@ -1,0 +1,162 @@
+<!--#set var="web2ldap_subtitle" value="Installing" -->
+<!--#set var="web2ldap_pagedescription" value="A brief description on how to install it" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<p>
+  <strong>
+    Note that this installation description is for
+    release <!--#include file="ssi/release.shtml" -->!
+  </strong>
+</p>
+
+<h1 id="Installing">Quick installation</h1>
+
+<p>Notes:</p>
+<ul>
+  <li>
+    This simple install receipt requires that the machine has Internet (proxy)
+    access to load packages from <a href="https://pypi.python.org">PyPI repository</a>.
+  </li>
+  <li>
+    Some C wrapper modules have to be compiled. So you have to install
+    a C compiler and build tools for your particular OS.
+  </li>
+</ul>
+
+<p>Install in a Python virtual environment:</p>
+<pre>
+virtualenv -p python2.7 --no-site-packages /opt/web2ldap
+/opt/web2ldap/bin/pip2 install --find-links https://www.web2ldap.de/download.html web2ldap
+</pre>
+
+<p>
+  Start simple stand-alone web server by default listening
+  on localhost, port 1760:
+</p>
+<pre>
+/opt/web2ldap/bin/web2ldap 127.0.0.1 1760
+</pre>
+
+<p>
+  See directories <var>etc/apache2/</var> and <var>etc/uwsgi/</var>
+  in source distribution for web server integration examples.
+</p>
+
+<h1 id="Prerequisites">Prerequisites</h1>
+<p>
+  If you are packaging web2ldap you need packages for various other modules.
+</p>
+
+<table>
+  <tr><th>Package</th><th>Required</th><th>Description</th></tr>
+  <tr>
+    <td>
+      <a href="https://www.python.org/">Python 2.7.0+</a>
+      (<a href="https://www.python.org/downloads/release/python-2711/">2.7.11+</a> recommended)<br>
+      or <a href="https://pypy.org/">PyPy 5.0.1</a> (earlier versions do not work!)<br>
+      Python 3.x or PyPy3 not supported!
+    </td>
+      <td>mandatory</td>
+    <td>
+      The programming language needed to run.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://www.stroeder.com/pyweblib.html">PyWebLib 1.3.8+ (1.3.12+ recommended)</a>
+    </td>
+      <td>mandatory</td>
+    <td>
+      Module package for web application programming.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/ldap0">ldap0 0.0.57+</a>
+    </td>
+      <td>mandatory</td>
+    <td>
+      A wrapper module for accessing the OpenLDAP libs from Python
+      and other LDAP-related modules.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://www.openldap.org">OpenLDAP 2.4.11+</a> client libs (2.4.42+ recommended)
+    </td>
+    <td>mandatory</td>
+    <td>
+      Required to build <var>ldap0</var> module package.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/pyasn1">pyasn1</a> and
+      <a href="https://pypi.python.org/pypi/pyasn1-modules">pyasn1-modules</a>
+    </td>
+      <td>mandatory</td>
+    <td>
+      <strong>Two</strong> separate module packages for processing ASN.1 data directly.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/ipaddress">ipaddress</a>
+    </td>
+      <td>mandatory</td>
+    <td>
+      Module package for processing IP addresses (<var>netaddr</var> preferred)
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/pydns">PyDNS</a> (2.3.6+ recommended)
+    </td>
+    <td>optional</td>
+    <td>
+      If you want to make use of SRV RR's to automatically locate your
+      LDAP server for a given dc-style DN you have to install this DNS module.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/M2Crypto">M2Crypto</a>
+    </td>
+    <td>optional</td>
+    <td>
+      For displaying short overview of X.509 certificates.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://pypi.python.org/pypi/paramiko">paramiko</a>
+    </td>
+    <td>optional</td>
+    <td>
+      For displaying short overview of SSH public keys.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://python-pillow.github.io/">Pillow (PIL fork, recommended)</a> or
+      <a href="http://www.pythonware.com/products/pil/index.htm">Python Imaging Library (PIL)</a>
+    </td>
+    <td>optional</td>
+    <td>
+      For automatically converting image data to required format (e.g. JPEGImage syntax).
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="http://www.python-excel.org/">xlwt</a>
+    </td>
+    <td>optional</td>
+    <td>
+      For Excel data export.
+    </td>
+  </tr>
+</table>
+
+
+<!--#include file="ssi/footer.html" -->
