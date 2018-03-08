@@ -1500,11 +1500,20 @@ syntax_registry.registerAttrType(
 )
 
 
-class AEPersonMailaddress(DynamicValueSelectList):
+class AEPersonMailaddress(DynamicValueSelectList,RFC822Address):
   oid = 'AEPersonMailaddress-oid'
   maxValues = 1
   ldap_url = 'ldap:///_?mail,mail?sub?'
   input_fallback = True
+  html_tmpl = RFC822Address.html_tmpl
+
+  def _validate(self,attrValue):
+    if not RFC822Address._validate(self,attrValue):
+      return False
+    attr_value_dict = self._get_attr_value_dict()
+    if not attr_value_dict or attr_value_dict.keys()==[u'']:
+      return True
+    return DynamicValueSelectList._validate(self,attrValue)
 
   def _determineFilter(self):
     return (
