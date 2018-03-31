@@ -288,7 +288,7 @@ class AAAARecord(IPv6HostAddress):
   def displayValue(self,valueindex=0,commandbutton=0):
     r = [IPv6HostAddress.displayValue(self,valueindex,commandbutton)]
     if commandbutton:
-      ip_addr = self.addr_class(self.attrValue)
+      ip_addr = self.addr_class(self.attrValue.decode('ascii'))
       try:
         ip_addr.reverse_dns
       except AttributeError:
@@ -305,7 +305,7 @@ class AAAARecord(IPv6HostAddress):
           ),
           title=u'Search PTR RR for this AAAA address',
         ))
-    return u' '.join(r)
+    return web2ldap.app.cnf.misc.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
   AAAARecord.oid,[
