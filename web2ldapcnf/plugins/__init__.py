@@ -236,6 +236,11 @@ import web2ldap.app.plugins.freeradius
 
 import web2ldap.app.plugins.dns
 
+# to allow trailing dot in fully-qualified domain names in all plugin
+# classes derived from syntax base class DNSDomain
+#import re, web2ldap.app.schema.syntaxes
+#web2ldap.app.schema.syntaxes.DNSDomain.reObj = re.compile('^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*)*$')
+
 #---------------------------------------------------------------------------
 # Univention Corporate Server
 #---------------------------------------------------------------------------
@@ -276,7 +281,7 @@ import web2ldap.app.plugins.aedir
 #   title="DNS entry">DNS</a>
 #"""
 
-# for mapping username to bind-DN of form 
+# for mapping username to bind-DN of form
 #import ldapsession
 #ldapsession.LDAPSession = web2ldap.app.plugins.aedir.AEDirLDAPSession
 #web2ldap.app.plugins.aedir.AEDirLDAPSession.binddn_tmpl = u'uid={username},ou=ae-dir'
