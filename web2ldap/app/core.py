@@ -17,7 +17,12 @@ from types import StringType,UnicodeType
 
 import os,time
 
+# Switch off processing .ldaprc or ldap.conf
+os.environ['LDAPNOINIT']='1'
+
 import ldap0
+
+import web2ldapcnf.misc,web2ldapcnf.hosts
 
 import web2ldap.app.cnf
 
@@ -49,11 +54,8 @@ from exceptions import UnicodeWarning
 from warnings import filterwarnings
 filterwarnings(action="error", category=UnicodeWarning)
 
-# Switch off processing .ldaprc or ldap.conf
-os.environ['LDAPNOINIT']='1'
-
-ldap0._trace_level=web2ldap.app.cnf.misc.ldap_trace_level
-ldap0.set_option(ldap0.OPT_DEBUG_LEVEL,web2ldap.app.cnf.misc.ldap_opt_debug_level)
+ldap0._trace_level=web2ldapcnf.misc.ldap_trace_level
+ldap0.set_option(ldap0.OPT_DEBUG_LEVEL,web2ldapcnf.misc.ldap_opt_debug_level)
 ldap0.set_option(ldap0.OPT_RESTART,0)
 ldap0.set_option(ldap0.OPT_DEREF,0)
 ldap0.set_option(ldap0.OPT_REFERRALS,0)
@@ -61,4 +63,4 @@ ldap0.set_option(ldap0.OPT_REFERRALS,0)
 startUpTime = time.time()
 
 # Set up configuration for restricting access to the preconfigured LDAP URI list
-ldap_uri_list_check_dict = web2ldap.app.cnf.PopulateCheckDict(web2ldap.app.cnf.hosts.ldap_uri_list)
+ldap_uri_list_check_dict = web2ldap.app.cnf.PopulateCheckDict(web2ldapcnf.hosts.ldap_uri_list)

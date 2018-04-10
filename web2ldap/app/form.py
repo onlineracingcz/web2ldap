@@ -28,7 +28,8 @@ import pyweblib.forms
 from pyweblib.forms import escapeHTML
 
 import web2ldap.ldaputil.base,web2ldap.ldapsession
-import web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.passwd,web2ldap.app.searchform,web2ldap.app.ldapparams,web2ldap.app.session
+import web2ldapcnf.misc
+import web2ldap.app.core,web2ldap.app.gui,web2ldap.app.passwd,web2ldap.app.searchform,web2ldap.app.ldapparams,web2ldap.app.session
 # OID description dictionary from configuration directory
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 from web2ldap.app.session import session_store
@@ -43,9 +44,9 @@ CONNTYPE2URLSCHEME = {
 
 class Web2LDAPForm(pyweblib.forms.Form):
 
-  cookie_length = web2ldap.app.cnf.misc.cookie_length
-  cookie_max_age = web2ldap.app.cnf.misc.cookie_max_age
-  cookie_domain = web2ldap.app.cnf.misc.cookie_domain
+  cookie_length = web2ldapcnf.misc.cookie_length
+  cookie_max_age = web2ldapcnf.misc.cookie_max_age
+  cookie_domain = web2ldapcnf.misc.cookie_domain
   cookie_name_prefix = 'web2ldap_'
 
   def __init__(self,inf,env):
@@ -340,7 +341,7 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
       '.*',
       size=90,
     ))
-    self.addField(pyweblib.forms.Input('searchform_template',u'Search form template name',60,web2ldap.app.cnf.misc.max_searchparams,u'[a-zA-Z0-9. ()_-]+'))
+    self.addField(pyweblib.forms.Input('searchform_template',u'Search form template name',60,web2ldapcnf.misc.max_searchparams,u'[a-zA-Z0-9. ()_-]+'))
     self.addField(
       pyweblib.forms.Select(
         'search_resnumber',u'Number of results to display',1,
@@ -371,10 +372,10 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
     )
     self.addField(InclOpAttrsCheckbox('search_opattrs',u'Request operational attributes',default="yes",checked=0))
     self.addField(pyweblib.forms.Select('search_mode',u'Search Mode',1,options=[ur'(&%s)',ur'(|%s)']))
-    self.addField(pyweblib.forms.Input('search_attr',u'Attribute(s) to be searched',1000,web2ldap.app.cnf.misc.max_searchparams,ur'[\w,_;-]+'))
-    self.addField(pyweblib.forms.Input('search_mr',u'Matching Rule',1000,web2ldap.app.cnf.misc.max_searchparams,ur'[\w,_;-]+'))
-    self.addField(pyweblib.forms.Select('search_option',u'Search option',web2ldap.app.cnf.misc.max_searchparams,options=web2ldap.app.searchform.search_options))
-    self.addField(pyweblib.forms.Input('search_string',u'Search string',100,web2ldap.app.cnf.misc.max_searchparams,u'.*',size=60))
+    self.addField(pyweblib.forms.Input('search_attr',u'Attribute(s) to be searched',1000,web2ldapcnf.misc.max_searchparams,ur'[\w,_;-]+'))
+    self.addField(pyweblib.forms.Input('search_mr',u'Matching Rule',1000,web2ldapcnf.misc.max_searchparams,ur'[\w,_;-]+'))
+    self.addField(pyweblib.forms.Select('search_option',u'Search option',web2ldapcnf.misc.max_searchparams,options=web2ldap.app.searchform.search_options))
+    self.addField(pyweblib.forms.Input('search_string',u'Search string',100,web2ldapcnf.misc.max_searchparams,u'.*',size=60))
     self.addField(SearchAttrs())
 
 
@@ -436,13 +437,13 @@ class Web2LDAPForm_input(Web2LDAPForm):
       '(Template|Table|LDIF|[+-][0-9]+)',
     ))
     self.addField(pyweblib.forms.Select('in_oft',u'Type of input form',1,options=[u'Template',u'Table',u'LDIF'],default=u'Template'))
-    self.addField(AttributeType('in_at',u'Attribute type',web2ldap.app.cnf.misc.input_maxattrs))
-    self.addField(AttributeType('in_avi',u'Value index',web2ldap.app.cnf.misc.input_maxattrs))
+    self.addField(AttributeType('in_at',u'Attribute type',web2ldapcnf.misc.input_maxattrs))
+    self.addField(AttributeType('in_avi',u'Value index',web2ldapcnf.misc.input_maxattrs))
     self.addField(
       AttributeValueInput(
         'in_av',u'Attribute Value',
-        web2ldap.app.cnf.misc.input_maxfieldlen,
-        web2ldap.app.cnf.misc.input_maxattrs,
+        web2ldapcnf.misc.input_maxfieldlen,
+        web2ldapcnf.misc.input_maxattrs,
         ('.*',re.U|re.M|re.S)
       )
     )
@@ -453,7 +454,7 @@ class Web2LDAPForm_add(Web2LDAPForm_input):
     Web2LDAPForm_input.addCommandFields(self)
     self.addField(pyweblib.forms.Input('add_rdn','RDN of new entry',255,1,u'.*',size=50))
     self.addField(DistinguishedNameInput('add_clonedn','DN of template entry'))
-    self.addField(pyweblib.forms.Input('add_template',u'LDIF template name',60,web2ldap.app.cnf.misc.max_searchparams,u'.+'))
+    self.addField(pyweblib.forms.Input('add_template',u'LDIF template name',60,web2ldapcnf.misc.max_searchparams,u'.+'))
     self.addField(pyweblib.forms.Input('add_basedn',u'Base DN of new entry',1024,1,u'.*',size=50))
     self.addField(pyweblib.forms.Select(
       'in_ocf',u'Object class form mode',1,
@@ -467,8 +468,8 @@ class Web2LDAPForm_add(Web2LDAPForm_input):
 class Web2LDAPForm_modify(Web2LDAPForm_input):
   def addCommandFields(self):
     Web2LDAPForm_input.addCommandFields(self)
-    self.addField(AttributeType('in_oldattrtypes',u'Old attribute types',web2ldap.app.cnf.misc.input_maxattrs))
-    self.addField(AttributeType('in_wrtattroids',u'Writeable attribute types',web2ldap.app.cnf.misc.input_maxattrs))
+    self.addField(AttributeType('in_oldattrtypes',u'Old attribute types',web2ldapcnf.misc.input_maxattrs))
+    self.addField(AttributeType('in_wrtattroids',u'Writeable attribute types',web2ldapcnf.misc.input_maxattrs))
     self.addField(pyweblib.forms.Input('in_assertion',u'Assertion filter string',2000,1,'.*',required=0))
 
 class Web2LDAPForm_dds(Web2LDAPForm):
@@ -512,12 +513,12 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
       8,1,
       '(Template|Table|LDIF|[+-][0-9]+)',
     ))
-    self.addField(AttributeType('bulkmod_at',u'Attribute type',web2ldap.app.cnf.misc.input_maxattrs))
+    self.addField(AttributeType('bulkmod_at',u'Attribute type',web2ldapcnf.misc.input_maxattrs))
     self.addField(
       pyweblib.forms.Select(
         'bulkmod_op',
         u'Modification type',
-        web2ldap.app.cnf.misc.input_maxattrs,
+        web2ldapcnf.misc.input_maxattrs,
         options=(
           (u'',u''),
           (unicode(ldap0.MOD_ADD),u'add'),
@@ -531,8 +532,8 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
     self.addField(
       AttributeValueInput(
         'bulkmod_av',u'Attribute Value',
-        web2ldap.app.cnf.misc.input_maxfieldlen,
-        web2ldap.app.cnf.misc.input_maxattrs,
+        web2ldapcnf.misc.input_maxfieldlen,
+        web2ldapcnf.misc.input_maxattrs,
         ('.*',re.U|re.M|re.S),
         size=30,
       )
@@ -687,7 +688,7 @@ class LDIFTextArea(pyweblib.forms.Textarea):
   ):
     pyweblib.forms.Textarea.__init__(
       self,
-      name,text,web2ldap.app.cnf.misc.ldif_maxbytes,1,'^.*$',
+      name,text,web2ldapcnf.misc.ldif_maxbytes,1,'^.*$',
       required=required,
     )
     self._max_entries = max_entries
@@ -698,7 +699,7 @@ class LDIFTextArea(pyweblib.forms.Textarea):
       return list(ldap0.ldif.LDIFParser.fromstring(
         '\n'.join(self.value).encode(self.charset),
         ignored_attr_types=[],
-        process_url_schemes=web2ldap.app.cnf.misc.ldif_url_schemes
+        process_url_schemes=web2ldapcnf.misc.ldif_url_schemes
       ).parse(max_entries=self._max_entries))
     else:
       return []

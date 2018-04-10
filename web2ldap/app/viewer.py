@@ -19,6 +19,7 @@ import binascii
 import pyweblib.forms
 import pyweblib.helper
 
+import web2ldapcnf
 import web2ldap.app.gui
 import web2ldap.app.core
 
@@ -74,7 +75,7 @@ CertificateParserError = ValueError
 
 # Get OID dictionary
 try:
-  asn1helper.oids = asn1helper.ParseCfg(web2ldap.app.cnf.misc.dumpasn1cfg)
+  asn1helper.oids = asn1helper.ParseCfg(web2ldapcnf.misc.dumpasn1cfg)
 except IOError:
   asn1helper.oids = {}
 

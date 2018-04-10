@@ -19,6 +19,8 @@ import ldap0
 
 import pyweblib.forms,pyweblib.sslenv,pyweblib.helper,pyweblib.session
 
+import web2ldapcnf.misc,web2ldapcnf.hosts
+
 import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.ldapsession
 
 from ipaddress import ip_network
@@ -81,7 +83,7 @@ class AppHandler:
     required_ssl_level = web2ldap.app.cnf.GetParam(ls,'ssl_minlevel',0)
     current_ssl_level = pyweblib.sslenv.SecLevel(
       self.env,
-      web2ldap.app.cnf.misc.sec_sslacceptedciphers,
+      web2ldapcnf.misc.sec_sslacceptedciphers,
       web2ldap.app.cnf.GetParam(ls,'ssl_valid_dn',''),
       web2ldap.app.cnf.GetParam(ls,'ssl_valid_idn','')
     )
@@ -221,7 +223,7 @@ class AppHandler:
     target_url = target_url or self.script_name
     url_redirect_template_str = web2ldap.app.gui.ReadTemplate(
       self.form,None,None,u'redirect',
-      tmpl_filename=web2ldap.app.cnf.misc.redirect_template
+      tmpl_filename=web2ldapcnf.misc.redirect_template
     )
     if refresh_time:
       message_class = 'ErrorMessage'
@@ -248,7 +250,7 @@ class AppHandler:
       self.url_redirect(u'Rejected malformed/suspicious redirect URL!')
     # Check for valid session
     elif session_store.sessiondict.has_key(self.sid) or \
-         self.form.query_string in web2ldap.app.cnf.misc.good_redirect_targets:
+         self.form.query_string in web2ldapcnf.misc.good_redirect_targets:
       # URL redirecting has absolutely nothing to do with rest
       self.url_redirect(
         u'Redirecting to %s...' % (
@@ -268,7 +270,7 @@ class AppHandler:
     self.sid = session_store.newSession(self.env)
     ls = LDAPSession(
       self.guess_client_addr(),
-      web2ldap.app.cnf.misc.ldap_trace_level,
+      web2ldapcnf.misc.ldap_trace_level,
       self.env['wsgi.errors'],
     )
     ls.cookie = self.form.setNewCookie(str(id(ls)))
@@ -293,8 +295,8 @@ class AppHandler:
         cookie_name = ''.join((self.form.cookie_name_prefix,str(id(ls))))
         if not (cookie_name in self.form.cookies and ls.cookie[cookie_name].value==self.form.cookies[cookie_name].value):
           raise web2ldap.app.session.WrongSessionCookie()
-      if web2ldap.app.cnf.misc.session_paranoid and \
-         self.current_access_time-last_session_timestamp>web2ldap.app.cnf.misc.session_paranoid:
+      if web2ldapcnf.misc.session_paranoid and \
+         self.current_access_time-last_session_timestamp>web2ldapcnf.misc.session_paranoid:
         # Store session with new session ID
         self.sid = session_store.renameSession(self.sid,self.env)
     else:
@@ -517,13 +519,13 @@ class AppHandler:
           del ls
           ls = LDAPSession(
             self.guess_client_addr(),
-            web2ldap.app.cnf.misc.ldap_trace_level,
+            web2ldapcnf.misc.ldap_trace_level,
             self.env['wsgi.errors'],
           )
           ls.cookie = self.form.setNewCookie(str(id(ls)))
           session_store.storeSession(self.sid,ls)
           # Check whether gateway access to target LDAP server is allowed
-          if web2ldap.app.cnf.hosts.restricted_ldap_uri_list and \
+          if web2ldapcnf.hosts.restricted_ldap_uri_list and \
              not initializeUrl in web2ldap.app.core.ldap_uri_list_check_dict:
             raise web2ldap.app.core.ErrorExit(u'Only pre-configured LDAP servers allowed.')
           startTLSextop = input_ldapurl.get_starttls_extop(
@@ -765,7 +767,7 @@ class AppHandler:
         web2ldap.app.login.w2l_Login(
           self.sid,self.outf,self.command,self.form,ls,dn,input_ldapurl,
           login_search_root,
-          login_msg=web2ldap.app.cnf.misc.command_link_separator.join([
+          login_msg=web2ldapcnf.misc.command_link_separator.join([
             web2ldap.app.gui.LDAPError2ErrMsg(e,self.form,ls.charset),
             self.form.applAnchor(
               'search','Show',self.sid,

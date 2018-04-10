@@ -8,6 +8,8 @@ from __future__ import absolute_import
 
 import uuid,ldap0.filter,web2ldap.app.cnf
 
+import web2ldapcnf.misc
+
 from web2ldap.mspki.util import HexString
 
 from web2ldap.app.schema.syntaxes import DirectoryString,Integer,OctetString, \
@@ -127,7 +129,7 @@ class OctetStringGUID(OctetString):
     else:
       # GUID of an referenced entry is just displayed as in Console 1 / iManager
       # with a link for searching the entry
-      return web2ldap.app.cnf.misc.command_link_separator.join((
+      return web2ldapcnf.misc.command_link_separator.join((
         self._guid2assoc_c1(self.attrValue),
         self._form.applAnchor(
             'searchform','&raquo;',self._sid,

@@ -30,7 +30,8 @@ import web2ldapcnf
 import web2ldap.msbase
 import web2ldap.mspki.asn1helper
 import web2ldap.ldaputil.base
-import web2ldap.app.viewer,web2ldap.app.form,web2ldap.app.gui,web2ldap.app.cnf
+import web2ldapcnf
+import web2ldap.app.viewer,web2ldap.app.form,web2ldap.app.gui
 import web2ldap.utctime
 from web2ldap.ldaputil.base import is_dn
 
@@ -147,8 +148,8 @@ class LDAPSyntax:
   oid=''
   desc='Any LDAP syntax'
   inputSize = 50
-  maxLen = web2ldap.app.cnf.misc.input_maxfieldlen
-  maxValues = web2ldap.app.cnf.misc.input_maxattrs
+  maxLen = web2ldapcnf.misc.input_maxfieldlen
+  maxValues = web2ldapcnf.misc.input_maxattrs
   mimeType = 'application/octet-stream'
   fileExt = 'bin'
   editable = 1
@@ -484,7 +485,7 @@ class DistinguishedName(DirectoryString):
     ]
     if commandbutton:
       r.extend(self._additional_links())
-    return web2ldap.app.cnf.misc.command_link_separator.join(r)
+    return web2ldapcnf.misc.command_link_separator.join(r)
 
 
 class BindDN(DistinguishedName):
@@ -537,7 +538,7 @@ class NameAndOptionalUID(DistinguishedName):
     if len(value)==1 or not value[1]:
       return dn_str
     else:
-      return web2ldap.app.cnf.misc.command_link_separator.join([self._form.utf2display(self._ls.uc_decode(value[1])),dn_str])
+      return web2ldapcnf.misc.command_link_separator.join([self._form.utf2display(self._ls.uc_decode(value[1])),dn_str])
 
 
 class BitString(DirectoryString):

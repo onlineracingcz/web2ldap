@@ -19,7 +19,7 @@ import sys,time,traceback,collections
 import pyweblib.session
 
 from web2ldap.ldapsession import LDAPSession
-import web2ldap.app.cnf
+import web2ldapcnf
 
 
 class InvalidSessionInstance(pyweblib.session.SessionException):
@@ -183,11 +183,11 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
 global session_store
 sys.stderr.write('Initialize web2ldap session store\n')
 session_store = Session(
-  expireDeactivate=web2ldap.app.cnf.misc.session_remove,
-  expireRemove=web2ldap.app.cnf.misc.session_remove,
-  crossCheckVars = web2ldap.app.cnf.misc.session_checkvars,
-  maxSessionCount = web2ldap.app.cnf.misc.session_limit,
-  maxSessionCountPerIP = web2ldap.app.cnf.misc.session_per_ip_limit,
+  expireDeactivate=web2ldapcnf.misc.session_remove,
+  expireRemove=web2ldapcnf.misc.session_remove,
+  crossCheckVars = web2ldapcnf.misc.session_checkvars,
+  maxSessionCount = web2ldapcnf.misc.session_limit,
+  maxSessionCountPerIP = web2ldapcnf.misc.session_per_ip_limit,
 )
 
 global cleanUpThread

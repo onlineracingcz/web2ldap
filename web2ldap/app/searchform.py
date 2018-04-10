@@ -14,7 +14,11 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import types,ldap0,pyweblib.forms,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.cnf
+import types,ldap0,pyweblib.forms
+
+import web2ldapcnf.misc
+
+import web2ldap.app.core,web2ldap.app.gui,web2ldap.app.cnf
 
 searchform_mode_text = {
   'adv':'Advanced',
@@ -119,7 +123,7 @@ def SearchForm_adv(form,ls,dn,sub_schema):
       del search_string_list[del_row_num]
   elif search_submit.startswith('+'):
     insert_row_num = int(search_submit[1:])
-    if len(search_attr_list)<web2ldap.app.cnf.misc.max_searchparams:
+    if len(search_attr_list)<web2ldapcnf.misc.max_searchparams:
       search_option_list.insert(insert_row_num+1,search_option_list[insert_row_num])
       search_attr_list.insert(insert_row_num+1,search_attr_list[insert_row_num])
       search_mr_list.insert(insert_row_num+1,search_mr_list[insert_row_num])
@@ -151,7 +155,7 @@ def SearchForm_adv(form,ls,dn,sub_schema):
   # Create a select field instance for matching rule name
   search_mr_select = pyweblib.forms.Select(
     'search_mr',u'Matching rule used',
-    web2ldap.app.cnf.misc.max_searchparams,
+    web2ldapcnf.misc.max_searchparams,
     options=mr_list,
   )
   search_mr_select.setCharset(form.accept_charset)

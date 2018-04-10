@@ -7,8 +7,11 @@ See http://tools.ietf.org/draft/draft-ietf-dhc-ldap-schema/
 
 from __future__ import absolute_import
 
-import re,web2ldap.app.schema.syntaxes,ipaddress,web2ldap.app.cnf
+import re,ipaddress
 
+import web2ldapcnf.misc
+
+import web2ldap.app.searchform
 from web2ldap.app.schema.syntaxes import \
   syntax_registry, \
   MultilineText,IA5String,SelectList,Integer,BitArrayInteger, \
@@ -79,7 +82,7 @@ class DHCPConfigStatement(MultilineText):
           search_params,
           title=u'Search related DNS RR entries',
         ))
-    return web2ldap.app.cnf.misc.command_link_separator.join(r)
+    return web2ldapcnf.misc.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
   DHCPConfigStatement.oid,[

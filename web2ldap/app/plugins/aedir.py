@@ -14,15 +14,17 @@ import re,time,socket
 import ldap0
 from ldap0.filter import escape_filter_chars
 from ldap0.pw import random_string
+from ldap0.controls.readentry import PreReadControl
+from ldap0.controls.deref import DereferenceControl
 
 # from pyweblib
 from pyweblib.forms import HiddenInput
 
+import web2ldapcnf.misc
+
 # from internal base modules
 import web2ldap.ldaputil.base
 from web2ldap.ldaputil.base import compose_filter, map_filter_parts
-from ldap0.controls.readentry import PreReadControl
-from ldap0.controls.deref import DereferenceControl
 
 # web2ldap's internal application modules
 import web2ldap.app.searchform,web2ldap.app.plugins.inetorgperson,web2ldap.app.plugins.sudoers,web2ldap.app.plugins.ppolicy
@@ -672,7 +674,7 @@ class AEGroupDN(DynamicDNSelectList):
     ]
     if commandbutton:
       r.extend(self._additional_links())
-    return web2ldap.app.cnf.misc.command_link_separator.join(r)
+    return web2ldapcnf.misc.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
   AEGroupDN.oid,[

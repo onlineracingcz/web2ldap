@@ -11,9 +11,8 @@ import SocketServer
 import wsgiref.util
 import wsgiref.simple_server
 
+import web2ldap.app.core
 import web2ldapcnf
-import web2ldap.__about__
-import web2ldap.app.cnf
 import web2ldap.app.handler
 
 BASE_URL = '/web2ldap'

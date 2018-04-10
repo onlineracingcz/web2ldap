@@ -18,6 +18,8 @@ import time
 
 import ldap0
 
+import web2ldapcnf.misc
+
 import web2ldap.ldapsession,web2ldap.ldaputil.base
 import web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.ldapparams
 
@@ -104,7 +106,7 @@ def bulkmod_input_form(
       del bulkmod_av[del_row_num]
   elif bulkmod_submit and bulkmod_submit.startswith('+'):
     insert_row_num = int(bulkmod_submit[1:])
-    if len(bulkmod_at)<web2ldap.app.cnf.misc.max_searchparams:
+    if len(bulkmod_at)<web2ldapcnf.misc.max_searchparams:
       bulkmod_at.insert(insert_row_num+1,bulkmod_at[insert_row_num])
       bulkmod_op.insert(insert_row_num+1,bulkmod_op[insert_row_num])
       bulkmod_av.insert(insert_row_num+1,u'')

@@ -25,6 +25,8 @@ from pyweblib.forms import escapeHTML
 
 import ldap0,ldap0.ldif,ldap0.schema
 
+import web2ldapcnf.misc
+
 import web2ldap.ldapsession
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.form,web2ldap.app.gui,web2ldap.app.read,web2ldap.app.modify,web2ldap.app.schema
 from web2ldap.app.schema.viewer import displayNameOrOIDList
@@ -401,8 +403,8 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
       </fieldset>
   """.format(
       value_ldif=self.form.utf2display(f.getvalue().decode('utf-8'),sp_entity='  ',lf_entity='\n'),
-      value_ldifmaxbytes=web2ldap.app.cnf.misc.ldif_maxbytes,
-      text_ldifurlschemes=', '.join(web2ldap.app.cnf.misc.ldif_url_schemes))
+      value_ldifmaxbytes=web2ldapcnf.misc.ldif_maxbytes,
+      text_ldifurlschemes=', '.join(web2ldapcnf.misc.ldif_url_schemes))
     )
     return # ldif_input()
 
@@ -811,7 +813,7 @@ def ReadLDIFTemplate(ls,form,template_name):
     dn,entry = list(ldap0.ldif.LDIFParser(
       ldif_file,
       ignored_attr_types=[],
-      process_url_schemes=web2ldap.app.cnf.misc.ldif_url_schemes
+      process_url_schemes=web2ldapcnf.misc.ldif_url_schemes
     ).parse(max_entries=1))[0]
   except (IOError,ValueError):
     raise web2ldap.app.core.ErrorExit(u'Value error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
