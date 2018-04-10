@@ -367,7 +367,12 @@ class LDAPSession:
     if not self.uri.lower().startswith('ldapi:') and ldap0.TLS_AVAIL:
       # Only set the options if ldap0 was built with TLS support
       for ldap_opt,ldap_opt_value in tls_options.items():
-        self.l.set_option(ldap_opt,ldap_opt_value)
+        try:
+          self.l.set_option(ldap_opt,ldap_opt_value)
+        except ValueError as value_error:
+            if sys.platform != 'darwin' and \
+               str(value_error) != 'ValueError: option error':
+              raise
       self.l.set_option(ldap0.OPT_X_TLS_REQUIRE_CERT,ldap0.OPT_X_TLS_DEMAND)
       self.l.set_option(ldap0.OPT_X_TLS_NEWCTX,0)
     return # setTLSOptions()
