@@ -11,6 +11,17 @@
   </li>
   <li>
     See <a href="changes-1.3.html">1.3.x changes</a> for details
+    of changes already done.
+  </li>
+  <li>
+    Reimplement logging in a thread-safe and consistent manner for all run modes with module
+    <a href="https://docs.python.org/lib/module-logging.html">logging</a>.
+  </li>
+  <li>
+    HTTP-LDAP login bindings:<br>
+    Define binding conditions between HTTP connection parameters
+    (<var>REMOTE_ADDR</var>, <var>REMOTE_USER</var>, etc.) and a LDAP
+    authz-DN entry which is result of a LDAP bind.
   </li>
 </ul>
 
@@ -66,10 +77,6 @@
     by one click.
   </li>
   <li>
-    Reimplement logging in a thread-safe and consistent manner for all run modes with module
-    <a href="https://docs.python.org/lib/module-logging.html">logging</a>.
-  </li>
-  <li>
     Reimplement certificate/CRL viewer based on
     <a href="https://pypi.python.org/pypi/asn1crypto">asn1crypto</a>
     to get rid of Pisces license.
@@ -91,15 +98,6 @@
         <a href="https://tools.ietf.org/html/draft-chu-ldap-xordered">X-ORDERED</a> set.
       </li>
     </ul>
-  </li>
-  <li>
-    Run as service under Windows if needed (and configured).
-  </li>
-  <li>
-    HTTP-LDAP login bindings:<br>
-    Define binding conditions between HTTP connection parameters
-    (<var>REMOTE_ADDR</var>, <var>REMOTE_USER</var>, etc.) and a LDAP
-    authz-DN entry which is result of a LDAP bind.
   </li>
   <li>
     LDAP transaction support (see
