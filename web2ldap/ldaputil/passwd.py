@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 ldaputil.passwd - client-side password setting
-(c) by Michael Stroeder <michael@stroeder.com>
 
 web2ldap - a web-based LDAP Client,
 see https://www.web2ldap.de for details

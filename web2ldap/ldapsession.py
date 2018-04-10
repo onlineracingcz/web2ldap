@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 ldapsession.py - higher-level class for handling LDAP connections
-(c) by Michael Stroeder <michael@stroeder.com>
 
 web2ldap - a web-based LDAP Client,
 see https://www.web2ldap.de for details

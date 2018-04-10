@@ -1,6 +1,5 @@
 """
 nsext.py - classes for X.509v3 extensions specified by Netscape
-(c) by Michael Stroeder <michael@stroeder.com>
 
 web2ldap - a web-based LDAP Client,
 see https://www.web2ldap.de for details

@@ -1,6 +1,5 @@
 """
 asn1helper.py - some utilities to make life easier with asn1.py
-(c) by Michael Stroeder <michael@stroeder.com>
 
 web2ldap - a web-based LDAP Client,
 see https://www.web2ldap.de for details

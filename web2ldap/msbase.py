@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-msbase.py -
-(c) by Michael Stroeder <michael@stroeder.com>
+msbase.py - some basic stuff
 
 web2ldap - a web-based LDAP Client,
 see https://www.web2ldap.de for details
