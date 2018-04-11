@@ -85,7 +85,7 @@ def check_inst():
     ('pyweblib',1,'1.3.8','http://www.stroeder.com/pylib/PyWebLib/','Yet another web application module package'),
     ('crypt',0,None,'https://www.python.org','Unix crypt hash module for client-side hashed LDAP passwords'),
     ('DNS',0,None,'http://pydns.sf.net','module for DNS lookups, e.g. SRV RRs'),
-    ('M2Crypto',1,None,'https://pypi.python.org/pypi/M2Crypto','Python wrapper module for OpenSSL'),
+    ('asn1crypto',1,None,'https://github.com/wbond/asn1crypto','Pure Python library for parsing and serializing ASN.1 structures'),
     ('paramiko',0,None,'https://pypi.python.org/pypi/paramiko','Python implementation of SSH protocol'),
     ('PIL',0,None,'http://www.pythonware.com/products/pil/index.htm','Python Imaging Library'),
     ('xlwt',0,None,'http://www.python-excel.org/','Generates/imports Excel files'),

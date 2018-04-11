@@ -71,7 +71,7 @@ setup(
         'ldap0>=0.0.56',
         'pyweblib',
         'ipaddress',
-        'M2Crypto',
+        'asn1crypto',
         'xlwt',
         'pydns',
         'paramiko',

@@ -12,10 +12,34 @@ from __future__ import absolute_import
 
 import ldap0.dn
 
-import M2Crypto
+import asn1crypto.pem, asn1crypto.x509
 
 from web2ldap.mspki.util import pem2der
 from web2ldap.app.schema.syntaxes import ASN1Object,Binary,GSER,syntax_registry
+
+
+def x509name2ldapdn(x509name,subschema=None):
+  dn_list = []
+  for rdn in reversed(x509name.chosen):
+    rdn_list = []
+    for ava in rdn:
+      type_oid = ava['type'].dotted.encode('ascii')
+      type_name = type_oid
+      if subschema is not None:
+        try:
+          at_obj = subschema.get_obj(ldap0.schema.models.AttributeType,type_oid,raise_keyerror=1)
+        except (KeyError, IndexError):
+          pass
+        else:
+          type_name = at_obj.names[0]
+      rdn_list.append((
+          type_name,
+          ava['value'].native.encode('utf-8'),
+          0,
+      ))
+    dn_list.append(rdn_list)
+  return ldap0.dn.dn2str(dn_list).decode('utf-8')
+  # end of x509name2ldapdn()
 
 
 class AttributeCertificate(Binary):
@@ -44,10 +68,12 @@ class Certificate(Binary):
     """
 
   def sanitizeInput(self,attrValue):
-    try:
-      return pem2der(attrValue)
-    except (ValueError,IndexError):
-      return attrValue
+    if asn1crypto.pem.detect(attrValue):
+      try:
+        _, _, attrValue = asn1crypto.pem.unarmor(attrValue, multiple=False)
+      except ValueError:
+        pass
+    return attrValue
 
   def displayValue(self,valueindex=0,commandbutton=0):
     links_html = '%d bytes | %s' % (
@@ -63,36 +89,17 @@ class Certificate(Binary):
       )
     )
     try:
-      x509 = M2Crypto.X509.load_cert_string(self.attrValue,M2Crypto.X509.FORMAT_DER)
-    except M2Crypto.X509.X509Error:
+      x509 = asn1crypto.x509.Certificate.load(self.attrValue)
+    except ValueError:
       cert_html = ''
     else:
-      cert_issuer_dn = ','.join(
-        ldap0.dn.explode_dn(x509.get_issuer().as_text(flags=M2Crypto.m2.XN_FLAG_RFC2253))
-      ).decode('utf-8')
-      cert_subject_dn = ','.join(
-        ldap0.dn.explode_dn(x509.get_subject().as_text(flags=M2Crypto.m2.XN_FLAG_RFC2253))
-      ).decode('utf-8')
-      cert_serial_number = int(x509.get_serial_number())
-      try:
-        cert_not_before = x509.get_not_before().get_datetime()
-      except (ValueError,NameError):
-        cert_not_before = 'ValueError'
-      else:
-        cert_not_before = cert_not_before.strftime('%Y-%m-%dT%H-%M-%S %Z')
-      try:
-        cert_not_after = x509.get_not_after().get_datetime()
-      except (ValueError,NameError):
-        cert_not_after = 'ValueError'
-      else:
-        cert_not_after = cert_not_after.strftime('%Y-%m-%dT%H-%M-%S %Z')
       cert_html = self.cert_display_template.format(
-        cert_issuer_dn = self._form.utf2display(cert_issuer_dn),
-        cert_subject_dn = self._form.utf2display(cert_subject_dn),
-        cert_serial_number_dec = str(cert_serial_number),
-        cert_serial_number_hex = hex(cert_serial_number),
-        cert_not_before = cert_not_before,
-        cert_not_after = cert_not_after,
+        cert_issuer_dn = self._form.utf2display(x509name2ldapdn(x509.issuer,self._schema)),
+        cert_subject_dn = self._form.utf2display(x509name2ldapdn(x509.subject,self._schema)),
+        cert_serial_number_dec = str(x509.serial_number),
+        cert_serial_number_hex = hex(x509.serial_number),
+        cert_not_before = x509['tbs_certificate']['validity']['not_before'].native,
+        cert_not_after = x509['tbs_certificate']['validity']['not_after'].native,
       )
     return ''.join((cert_html,links_html))
 
