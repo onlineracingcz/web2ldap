@@ -12,7 +12,7 @@ from __future__ import absolute_import
 
 import ldap0.dn
 
-import asn1crypto.pem, asn1crypto.x509
+import asn1crypto.pem, asn1crypto.x509, asn1crypto.crl
 
 from web2ldap.mspki.util import pem2der
 from web2ldap.app.schema.syntaxes import ASN1Object,Binary,GSER,syntax_registry
@@ -94,12 +94,12 @@ class Certificate(Binary):
       cert_html = ''
     else:
       cert_html = self.cert_display_template.format(
-        cert_issuer_dn = self._form.utf2display(x509name2ldapdn(x509.issuer,self._schema)),
-        cert_subject_dn = self._form.utf2display(x509name2ldapdn(x509.subject,self._schema)),
-        cert_serial_number_dec = str(x509.serial_number),
-        cert_serial_number_hex = hex(x509.serial_number),
-        cert_not_before = x509['tbs_certificate']['validity']['not_before'].native,
-        cert_not_after = x509['tbs_certificate']['validity']['not_after'].native,
+        cert_issuer_dn=self._form.utf2display(x509name2ldapdn(x509.issuer,self._schema)),
+        cert_subject_dn=self._form.utf2display(x509name2ldapdn(x509.subject,self._schema)),
+        cert_serial_number_dec=str(x509.serial_number),
+        cert_serial_number_hex=hex(x509.serial_number),
+        cert_not_before=x509['tbs_certificate']['validity']['not_before'].native,
+        cert_not_after=x509['tbs_certificate']['validity']['not_after'].native,
       )
     return ''.join((cert_html,links_html))
 
@@ -118,6 +118,49 @@ class CertificateList(Binary):
   desc = 'Certificate Revocation List'
   mimeType = 'application/pkix-crl'
   fileExt = 'crl'
+  crl_display_template = """
+    <dl>
+      <dt>Issuer:</dt>
+      <dd>{crl_issuer_dn}</dd>
+      <dt>This update</dt>
+      <dd>{crl_this_update}</dd>
+      <dt>Next update</dt>
+      <dd>{crl_next_update}</dd>
+    </dl>
+    """
+
+  def sanitizeInput(self,attrValue):
+    if asn1crypto.pem.detect(attrValue):
+      try:
+        _, _, attrValue = asn1crypto.pem.unarmor(attrValue, multiple=False)
+      except ValueError:
+        pass
+    return attrValue
+
+  def displayValue(self,valueindex=0,commandbutton=0):
+    links_html = '%d bytes | %s' % (
+      len(self.attrValue),
+      self._form.applAnchor(
+        'read','View/Load',self._sid,
+        [
+          ('dn',self._dn),
+          ('read_attr',self.attrType),
+          ('read_attrindex',str(valueindex)),
+          ('read_attrmode','view'),
+        ]
+      )
+    )
+    try:
+      x509 = asn1crypto.crl.CertificateList.load(self.attrValue)
+    except ValueError:
+      crl_html = ''
+    else:
+      crl_html = self.crl_display_template.format(
+        crl_issuer_dn=self._form.utf2display(x509name2ldapdn(x509.issuer,self._schema)),
+        crl_this_update=x509['tbs_cert_list']['this_update'].native,
+        crl_next_update=x509['tbs_cert_list']['next_update'].native,
+      )
+    return ''.join((crl_html,links_html))
 
 
 class CertificatePair(ASN1Object):
