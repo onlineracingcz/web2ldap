@@ -349,10 +349,10 @@ class DHCPDnsStatus(BitArrayInteger):
   """
   oid = 'DHCPDnsStatus-oid'
   flag_desc_table = (
-    ('(C): name to address (such as A RR) update successfully completed',0x0001),
-    ('(A): Server is controlling A RR on behalf of the client',0x0002),
-    ('(D): address to name (such as PTR RR) update successfully completed (Done)',0x0004),
-    ('(P): Server is controlling PTR RR on behalf of the client',0x0008),
+    (u'(C): name to address (such as A RR) update successfully completed',0x0001),
+    (u'(A): Server is controlling A RR on behalf of the client',0x0002),
+    (u'(D): address to name (such as PTR RR) update successfully completed (Done)',0x0004),
+    (u'(P): Server is controlling PTR RR on behalf of the client',0x0008),
   )
 
 syntax_registry.registerAttrType(

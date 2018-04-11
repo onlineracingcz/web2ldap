@@ -273,13 +273,13 @@ class GroupType(BitArrayInteger):
   oid = 'GroupType-oid'
   desc = 'Group-Type in MS AD'
   flag_desc_table = (
-    ('Group created by system',0x00000001),
-    ('Group with global scope',0x00000002),
-    ('Group with domain local scope',0x00000004),
-    ('Group with universal scope',0x00000008),
-    ('APP_BASIC group Authz Mgr',0x00000010),
-    ('APP_QUERY group Authz Mgr.',0x00000020),
-    ('Security group',0x80000000),
+    (u'Group created by system',0x00000001),
+    (u'Group with global scope',0x00000002),
+    (u'Group with domain local scope',0x00000004),
+    (u'Group with universal scope',0x00000008),
+    (u'APP_BASIC group Authz Mgr',0x00000010),
+    (u'APP_QUERY group Authz Mgr.',0x00000020),
+    (u'Security group',0x80000000),
   )
 
 
@@ -325,29 +325,29 @@ class UserAccountControl(BitArrayInteger):
   """
   oid = 'UserAccountControl-oid'
   flag_desc_table = (
-    ('SCRIPT',0x0001),
-    ('ACCOUNTDISABLE',0x0002),
-    ('HOMEDIR_REQUIRED',0x0008),
-    ('LOCKOUT',0x0010),
-    ('PASSWD_NOTREQD',0x0020),
-    ('PASSWD_CANT_CHANGE',0x0040),
-    ('ENCRYPTED_TEXT_PWD_ALLOWED',0x0080),
-    ('TEMP_DUPLICATE_ACCOUNT',0x0100),
-    ('NORMAL_ACCOUNT',0x0200),
-    ('INTERDOMAIN_TRUST_ACCOUNT',0x0800),
-    ('WORKSTATION_TRUST_ACCOUNT',0x1000),
-    ('SERVER_TRUST_ACCOUNT',0x2000),
-    ('DONT_EXPIRE_PASSWORD',0x10000),
-    ('MNS_LOGON_ACCOUNT',0x20000),
-    ('SMARTCARD_REQUIRED',0x40000),
-    ('TRUSTED_FOR_DELEGATION',0x80000),
-    ('NOT_DELEGATED',0x100000),
-    ('USE_DES_KEY_ONLY',0x200000),
-    ('DONT_REQ_PREAUTH',0x400000),
-    ('PASSWORD_EXPIRED',0x800000),
-    ('TRUSTED_TO_AUTH_FOR_DELEGATION',0x1000000),
-    ('NO_AUTH_DATA_REQUIRED',0x2000000),
-    ('PARTIAL_SECRETS_ACCOUNT',0x4000000),
+    (u'SCRIPT',0x0001),
+    (u'ACCOUNTDISABLE',0x0002),
+    (u'HOMEDIR_REQUIRED',0x0008),
+    (u'LOCKOUT',0x0010),
+    (u'PASSWD_NOTREQD',0x0020),
+    (u'PASSWD_CANT_CHANGE',0x0040),
+    (u'ENCRYPTED_TEXT_PWD_ALLOWED',0x0080),
+    (u'TEMP_DUPLICATE_ACCOUNT',0x0100),
+    (u'NORMAL_ACCOUNT',0x0200),
+    (u'INTERDOMAIN_TRUST_ACCOUNT',0x0800),
+    (u'WORKSTATION_TRUST_ACCOUNT',0x1000),
+    (u'SERVER_TRUST_ACCOUNT',0x2000),
+    (u'DONT_EXPIRE_PASSWORD',0x10000),
+    (u'MNS_LOGON_ACCOUNT',0x20000),
+    (u'SMARTCARD_REQUIRED',0x40000),
+    (u'TRUSTED_FOR_DELEGATION',0x80000),
+    (u'NOT_DELEGATED',0x100000),
+    (u'USE_DES_KEY_ONLY',0x200000),
+    (u'DONT_REQ_PREAUTH',0x400000),
+    (u'PASSWORD_EXPIRED',0x800000),
+    (u'TRUSTED_TO_AUTH_FOR_DELEGATION',0x1000000),
+    (u'NO_AUTH_DATA_REQUIRED',0x2000000),
+    (u'PARTIAL_SECRETS_ACCOUNT',0x4000000),
   )
 
 syntax_registry.registerAttrType(
@@ -366,18 +366,18 @@ class SystemFlags(BitArrayInteger):
   """
   oid = 'SystemFlags-oid'
   flag_desc_table = (
-    ('ADS_SYSTEMFLAG_DISALLOW_DELETE',0x80000000),
-    ('ADS_SYSTEMFLAG_CONFIG_ALLOW_RENAME',0x40000000),
-    ('ADS_SYSTEMFLAG_CONFIG_ALLOW_MOVE',0x20000000),
-    ('ADS_SYSTEMFLAG_CONFIG_ALLOW_LIMITED_MOVE',0x10000000),
-    ('ADS_SYSTEMFLAG_DOMAIN_DISALLOW_RENAME',0x08000000),
-    ('ADS_SYSTEMFLAG_DOMAIN_DISALLOW_MOVE',0x04000000),
-    ('ADS_SYSTEMFLAG_CR_NTDS_NC',0x00000001),
-    ('ADS_SYSTEMFLAG_CR_NTDS_DOMAIN',0x00000002),
-    ('ADS_SYSTEMFLAG_ATTR_NOT_REPLICATED',0x00000001),
-    ('ADS_SYSTEMFLAG_ATTR_IS_CONSTRUCTED',0x00000004),
-    ('IS_CATEGORY_1_OBJECT',0x00000010),
-    ('IS_NOT_MOVED_TO_THE_DELETED_OBJECTS',0x02000000),
+    (u'ADS_SYSTEMFLAG_DISALLOW_DELETE',0x80000000),
+    (u'ADS_SYSTEMFLAG_CONFIG_ALLOW_RENAME',0x40000000),
+    (u'ADS_SYSTEMFLAG_CONFIG_ALLOW_MOVE',0x20000000),
+    (u'ADS_SYSTEMFLAG_CONFIG_ALLOW_LIMITED_MOVE',0x10000000),
+    (u'ADS_SYSTEMFLAG_DOMAIN_DISALLOW_RENAME',0x08000000),
+    (u'ADS_SYSTEMFLAG_DOMAIN_DISALLOW_MOVE',0x04000000),
+    (u'ADS_SYSTEMFLAG_CR_NTDS_NC',0x00000001),
+    (u'ADS_SYSTEMFLAG_CR_NTDS_DOMAIN',0x00000002),
+    (u'ADS_SYSTEMFLAG_ATTR_NOT_REPLICATED',0x00000001),
+    (u'ADS_SYSTEMFLAG_ATTR_IS_CONSTRUCTED',0x00000004),
+    (u'IS_CATEGORY_1_OBJECT',0x00000010),
+    (u'IS_NOT_MOVED_TO_THE_DELETED_OBJECTS',0x02000000),
   )
 
 syntax_registry.registerAttrType(
@@ -401,18 +401,18 @@ class SearchFlags(BitArrayInteger):
   """
   oid = 'SearchFlags-oid'
   flag_desc_table = (
-    ('Indexed',0x0001),
-    ('Indexed in each container',0x0002),
-    ('Ambiguous Name Resolution (ANR)',0x0004),
-    ('Preserve in tombstone object',0x0008),
-    ('Copy value when object copied',0x0010),
-    ('tuple index',0x0020),
-    ('VLV index (Subtree Index in ADAM)',0x0040),
-    ('CONFIDENTIAL',0x0080),
-    ('NEVER_AUDIT_VALUE',0x0100),
-    ('RODC_FILTERED',0x0200),
-    ('',0x0400),
-    ('',0x0800),
+    (u'Indexed',0x0001),
+    (u'Indexed in each container',0x0002),
+    (u'Ambiguous Name Resolution (ANR)',0x0004),
+    (u'Preserve in tombstone object',0x0008),
+    (u'Copy value when object copied',0x0010),
+    (u'tuple index',0x0020),
+    (u'VLV index (Subtree Index in ADAM)',0x0040),
+    (u'CONFIDENTIAL',0x0080),
+    (u'NEVER_AUDIT_VALUE',0x0100),
+    (u'RODC_FILTERED',0x0200),
+    (u'',0x0400),
+    (u'',0x0800),
   )
 
 syntax_registry.registerAttrType(

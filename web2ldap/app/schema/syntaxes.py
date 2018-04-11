@@ -1818,7 +1818,7 @@ class BitArrayInteger(MultilineText,Integer):
       Integer.displayValue(self,valueindex,commandbutton),
       '\n'.join([
         '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
-          desc,
+          self._form.utf2display(desc),
           hex(flag_value),
           {0:'-',1:'on'}[int((attrValue_int & flag_value)>0)]
         )

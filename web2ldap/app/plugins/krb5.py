@@ -49,20 +49,20 @@ class Krb5KDCFlagsSyntax(BitArrayInteger):
   """
   oid = '1.3.6.1.4.1.5322.10.0.1'
   flag_desc_table = (
-    ('initial',0x0001),
-    ('forwardable',0x0002),
-    ('proxiable',0x0004),
-    ('renewable',0x0008),
-    ('postdate',0x0010),
-    ('server',0x0020),
-    ('client',0x0040),
-    ('invalid',0x0080),
-    ('require-preauth',0x0100),
-    ('change-pw',0x0200),
-    ('require-hwauth',0x0800),
-    ('ok-as-delegate',0x1000),
-    ('user-to-user',0x2000),
-    ('immutable',0x4000),
+    (u'initial',0x0001),
+    (u'forwardable',0x0002),
+    (u'proxiable',0x0004),
+    (u'renewable',0x0008),
+    (u'postdate',0x0010),
+    (u'server',0x0020),
+    (u'client',0x0040),
+    (u'invalid',0x0080),
+    (u'require-preauth',0x0100),
+    (u'change-pw',0x0200),
+    (u'require-hwauth',0x0800),
+    (u'ok-as-delegate',0x1000),
+    (u'user-to-user',0x2000),
+    (u'immutable',0x4000),
   )
 
 syntax_registry.registerAttrType(
@@ -88,18 +88,18 @@ syntax_registry.registerAttrType(
 class KrbTicketFlags(BitArrayInteger):
   oid = 'KrbTicketFlags-oid'
   flag_desc_table = (
-    ('DISALLOW_POSTDATED',0x00000001),
-    ('DISALLOW_FORWARDABLE',0x00000002),
-    ('DISALLOW_TGT_BASED',0x00000004),
-    ('DISALLOW_RENEWABLE',0x00000008),
-    ('DISALLOW_PROXIABLE',0x00000010),
-    ('DISALLOW_DUP_SKEY',0x00000020),
-    ('DISALLOW_ALL_TIX',0x00000040),
-    ('REQUIRES_PRE_AUTH',0x00000080),
-    ('REQUIRES_HW_AUTH',0x00000100),
-    ('REQUIRES_PWCHANGE',0x00000200),
-    ('DISALLOW_SVR',0x00001000),
-    ('PWCHANGE_SERVICE',0x00002000),
+    (u'DISALLOW_POSTDATED',0x00000001),
+    (u'DISALLOW_FORWARDABLE',0x00000002),
+    (u'DISALLOW_TGT_BASED',0x00000004),
+    (u'DISALLOW_RENEWABLE',0x00000008),
+    (u'DISALLOW_PROXIABLE',0x00000010),
+    (u'DISALLOW_DUP_SKEY',0x00000020),
+    (u'DISALLOW_ALL_TIX',0x00000040),
+    (u'REQUIRES_PRE_AUTH',0x00000080),
+    (u'REQUIRES_HW_AUTH',0x00000100),
+    (u'REQUIRES_PWCHANGE',0x00000200),
+    (u'DISALLOW_SVR',0x00001000),
+    (u'PWCHANGE_SERVICE',0x00002000),
   )
 
 syntax_registry.registerAttrType(
