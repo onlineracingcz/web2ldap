@@ -10,7 +10,9 @@ Currently untested!
 
 from __future__ import absolute_import
 
-from ldap0.dn import explode_dn
+import ldap0.dn
+
+import M2Crypto
 
 from web2ldap.mspki.util import pem2der
 from web2ldap.app.schema.syntaxes import ASN1Object,Binary,GSER,syntax_registry
@@ -23,11 +25,23 @@ class AttributeCertificate(Binary):
   fileExt = 'cer'
 
 
-class CertificateSimpleClass(Binary):
-  oid = 'CertificateSimpleClass-oid'
+class Certificate(Binary):
+  oid = '1.3.6.1.4.1.1466.115.121.1.8'
   desc = 'X.509 Certificate'
   mimeType = 'application/pkix-cert'
   fileExt = 'cer'
+  cert_display_template = """
+    <dl>
+      <dt>Issuer:</dt>
+      <dd>{cert_issuer_dn}</dd>
+      <dt>Subject</dt>
+      <dd>{cert_subject_dn}</dd>
+      <dt>Serial No.</dt>
+      <dd>{cert_serial_number_dec} ({cert_serial_number_hex})</dd>
+      <dt>Validity period</dt>
+      <dd>from {cert_not_before} until {cert_not_after}</dd>
+    </dl>
+    """
 
   def sanitizeInput(self,attrValue):
     try:
@@ -35,13 +49,8 @@ class CertificateSimpleClass(Binary):
     except (ValueError,IndexError):
       return attrValue
 
-  def getMimeType(self):
-    if self._form.browser_type in ['Mozilla','Opera']:
-      return 'application/x-x509-email-cert'
-    return self.mimeType
-
   def displayValue(self,valueindex=0,commandbutton=0):
-    return '%d bytes | %s' % (
+    links_html = '%d bytes | %s' % (
       len(self.attrValue),
       self._form.applAnchor(
         'read','View/Load',self._sid,
@@ -53,70 +62,39 @@ class CertificateSimpleClass(Binary):
         ]
       )
     )
-
-
-try:
-  import M2Crypto
-except ImportError:
-
-  class Certificate(CertificateSimpleClass):
-    oid = '1.3.6.1.4.1.1466.115.121.1.8'
-
-else:
-
-  class CertificateM2Class(CertificateSimpleClass):
-    oid = 'CertificateM2Class-oid'
-    cert_display_template = """
-      <dl>
-        <dt>Issuer:</dt>
-        <dd>{cert_issuer_dn}</dd>
-        <dt>Subject</dt>
-        <dd>{cert_subject_dn}</dd>
-        <dt>Serial No.</dt>
-        <dd>{cert_serial_number_dec} ({cert_serial_number_hex})</dd>
-        <dt>Validity period</dt>
-        <dd>from {cert_not_before} until {cert_not_after}</dd>
-      </dl>
-      """
-
-    def displayValue(self,valueindex=0,commandbutton=0):
-      links_html = CertificateSimpleClass.displayValue(self,valueindex,commandbutton)
+    try:
+      x509 = M2Crypto.X509.load_cert_string(self.attrValue,M2Crypto.X509.FORMAT_DER)
+    except M2Crypto.X509.X509Error:
+      cert_html = ''
+    else:
+      cert_issuer_dn = ','.join(
+        ldap0.dn.explode_dn(x509.get_issuer().as_text(flags=M2Crypto.m2.XN_FLAG_RFC2253))
+      ).decode('utf-8')
+      cert_subject_dn = ','.join(
+        ldap0.dn.explode_dn(x509.get_subject().as_text(flags=M2Crypto.m2.XN_FLAG_RFC2253))
+      ).decode('utf-8')
+      cert_serial_number = int(x509.get_serial_number())
       try:
-        x509 = M2Crypto.X509.load_cert_string(self.attrValue,M2Crypto.X509.FORMAT_DER)
-      except M2Crypto.X509.X509Error:
-        cert_html = ''
+        cert_not_before = x509.get_not_before().get_datetime()
+      except (ValueError,NameError):
+        cert_not_before = 'ValueError'
       else:
-        cert_issuer_dn = ','.join(
-          explode_dn(x509.get_issuer().as_text(flags=M2Crypto.m2.XN_FLAG_RFC2253))
-        ).decode('utf-8')
-        cert_subject_dn = ','.join(
-          explode_dn(x509.get_subject().as_text(flags=M2Crypto.m2.XN_FLAG_RFC2253))
-        ).decode('utf-8')
-        cert_serial_number = int(x509.get_serial_number())
-        try:
-          cert_not_before = x509.get_not_before().get_datetime()
-        except (ValueError,NameError):
-          cert_not_before = 'ValueError'
-        else:
-          cert_not_before = cert_not_before.strftime('%Y-%m-%dT%H-%M-%S %Z')
-        try:
-          cert_not_after = x509.get_not_after().get_datetime()
-        except (ValueError,NameError):
-          cert_not_after = 'ValueError'
-        else:
-          cert_not_after = cert_not_after.strftime('%Y-%m-%dT%H-%M-%S %Z')
-        cert_html = self.cert_display_template.format(
-          cert_issuer_dn = self._form.utf2display(cert_issuer_dn),
-          cert_subject_dn = self._form.utf2display(cert_subject_dn),
-          cert_serial_number_dec = str(cert_serial_number),
-          cert_serial_number_hex = hex(cert_serial_number),
-          cert_not_before = cert_not_before,
-          cert_not_after = cert_not_after,
-        )
-      return ''.join((cert_html,links_html))
-
-  class Certificate(CertificateM2Class):
-    oid = '1.3.6.1.4.1.1466.115.121.1.8'
+        cert_not_before = cert_not_before.strftime('%Y-%m-%dT%H-%M-%S %Z')
+      try:
+        cert_not_after = x509.get_not_after().get_datetime()
+      except (ValueError,NameError):
+        cert_not_after = 'ValueError'
+      else:
+        cert_not_after = cert_not_after.strftime('%Y-%m-%dT%H-%M-%S %Z')
+      cert_html = self.cert_display_template.format(
+        cert_issuer_dn = self._form.utf2display(cert_issuer_dn),
+        cert_subject_dn = self._form.utf2display(cert_subject_dn),
+        cert_serial_number_dec = str(cert_serial_number),
+        cert_serial_number_hex = hex(cert_serial_number),
+        cert_not_before = cert_not_before,
+        cert_not_after = cert_not_after,
+      )
+    return ''.join((cert_html,links_html))
 
 
 class CACertificate(Certificate):
@@ -128,16 +106,11 @@ class CACertificate(Certificate):
     return self.mimeType
 
 
-class CertificateList(CertificateSimpleClass):
+class CertificateList(Binary):
   oid = '1.3.6.1.4.1.1466.115.121.1.9'
   desc = 'Certificate Revocation List'
   mimeType = 'application/pkix-crl'
   fileExt = 'crl'
-
-  def getMimeType(self):
-    if self._form.browser_type in ['Mozilla','Opera']:
-      return 'application/x-pkcs7-crl'
-    return self.mimeType
 
 
 class CertificatePair(ASN1Object):
