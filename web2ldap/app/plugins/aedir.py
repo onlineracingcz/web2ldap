@@ -163,7 +163,7 @@ class AEObjectUtil:
     if not person_filter_parts:
       return []
     ldap_result = self._ls.l.search_s(
-      self._determineSearchDN(self._dn,self.lu_obj.dn),
+      self._ls.uc_encode(self._determineSearchDN(self._dn,self.lu_obj.dn))[0],
       ldap0.SCOPE_SUBTREE,
       '(&{0})'.format(
         ''.join(person_filter_parts)
@@ -1309,7 +1309,7 @@ class AEPerson2(AEPerson):
     )
     try:
       ldap_result = self._ls.l.search_s(
-        self._determineSearchDN(self._dn,self.lu_obj.dn),
+        self._ls.uc_encode(self._determineSearchDN(self._dn,self.lu_obj.dn))[0],
         ldap0.SCOPE_SUBTREE,
         sanitize_filter,
         attrlist=self.lu_obj.attrs,
@@ -2162,7 +2162,7 @@ class AERFC822MailMember(DynamicValueSelectList):
       map_filter_parts('entryDN',self._entry['member']),
     )
     ldap_result = self._ls.l.search_s(
-      self._determineSearchDN(self._dn,self.lu_obj.dn),
+      self._ls.uc_encode(self._determineSearchDN(self._dn,self.lu_obj.dn))[0],
       ldap0.SCOPE_SUBTREE,
       entrydn_filter,
       attrlist=['mail'],
