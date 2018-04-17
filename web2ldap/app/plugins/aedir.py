@@ -830,7 +830,7 @@ class AESameZoneObject(DynamicDNSelectList,AEObjectUtil):
 class AESrvGroup(AESameZoneObject):
   oid = 'AESrvGroup-oid'
   desc = 'AE-DIR: DN of referenced aeSrvGroup entry'
-  ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0))'
+  ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
 
   def _determineFilter(self):
     filter_str = self.lu_obj.filterstr or '(objectClass=*)'
