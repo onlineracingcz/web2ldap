@@ -16,12 +16,15 @@ RUN zypper --non-interactive --gpg-auto-import-keys refresh
 # install non-standard Python modules
 RUN zypper --non-interactive install --no-confirm --no-recommends python-pydns python-ldap0
 
+# Install AppArmor profile
+ADD opt.web2ldap.bin.web2ldap /etc/apparmor.d/opt.web2ldap.bin.web2ldap
+
 # install web2ldap in virtual env
 RUN virtualenv-2.7 -p python2.7 --system-site-packages /opt/web2ldap
 RUN /opt/web2ldap/bin/pip2 install --no-cache-dir --find-links https://www.web2ldap.de/download.html web2ldap
 
-# override config module files
-COPY web2ldapcnf/local.py /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf/local.py
+# Override web2ldap's config module files
+ADD web2ldapcnf /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf
 RUN chmod 644 /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf/*.py
 
 # run web2ldap and expose its TCP port 1760 for web access
