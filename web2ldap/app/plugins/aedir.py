@@ -65,6 +65,7 @@ AE_AUTHCTOKEN_OID = AE_OID_PREFIX+'.6.25'
 AE_DEPT_OID = AE_OID_PREFIX+'.6.29'
 AE_CONTACT_OID = AE_OID_PREFIX+'.6.5'
 AE_LOCATION_OID = AE_OID_PREFIX+'.6.35'
+AE_NWDEVICE_OID = AE_OID_PREFIX+'.6.2'
 
 
 syntax_registry.registerAttrType(
@@ -2299,6 +2300,36 @@ syntax_registry.registerAttrType(
   AESSHPermissions.oid,[
     AE_OID_PREFIX+'.4.47', # aeSSHPermissions
   ]
+)
+
+
+class AERemoteHostAEHost(DynamicValueSelectList):
+  oid = 'AERemoteHostAEHost-oid'
+  desc = 'AE-DIR: aeRemoteHost in aeHost entry'
+  ldap_url = 'ldap:///.?ipHostNumber,aeFqdn?one?(&(objectClass=aeNwDevice)(aeStatus=0))'
+  input_fallback = True # fallback to normal input field
+
+syntax_registry.registerAttrType(
+  AERemoteHostAEHost.oid,[
+    AE_OID_PREFIX+'.4.8',  # aeRemoteHost
+  ],
+  structural_oc_oids=[AE_HOST_OID], # aeHost
+)
+
+
+class AEDescriptionAENwDevice(ComposedAttribute):
+  oid = 'AEDescriptionAENwDevice-oid'
+  desc = 'Attribute description in object class  aeNwDevice'
+  compose_templates = (
+    '{cn}: {aeFqdn} {ipHostNumber})',
+    '{cn}: {ipHostNumber})',
+  )
+
+syntax_registry.registerAttrType(
+  AEDescriptionAENwDevice.oid,[
+    '2.5.4.13', # description
+  ],
+  structural_oc_oids=[AE_NWDEVICE_OID], # aeNwDevice
 )
 
 
