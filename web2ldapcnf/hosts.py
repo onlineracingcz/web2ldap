@@ -39,7 +39,7 @@ ldap_uri_list = [
     u'Local OpenLDAP 2.x server'
   ),
   (
-    'ldapi://%2Ftmp%2Fopenldap-socket',
+    'ldapi://%2Frun%2Fslapd%2Fldapi',
     u'Local OpenLDAP 2.x server (Unix domain socket)'
   ),
   ('ldaps://demo.ae-dir.com/ou=ae-dir????bindname=uid%3Daead%2Cou%3Dae-dir,X-BINDPW=CorrectHorseBatteryStaple',u'Æ-DIR demo role Æ admin'),
