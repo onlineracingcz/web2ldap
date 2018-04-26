@@ -74,10 +74,10 @@ def check_inst():
   missing = []
 
   for modulename,mandantory,min_version,url,desc in [
-    ('ldap0',1,'0.0.54','https://pypi.python.org/pypi/ldap0','Module package for accessing LDAP servers'),
+    ('ldap0',1,'0.0.54','https://pypi.org/project/ldap0','Module package for accessing LDAP servers'),
     ('pyasn1',1,None,'http://pyasn1.sf.net','ASN.1 module'),
     ('pyasn1_modules',1,None,'http://pyasn1.sf.net','ASN.1 LDAP module'),
-    ('ipaddress',1,None,'https://pypi.python.org/pypi/ipaddress','IP address module'),
+    ('ipaddress',1,None,'https://pypi.org/project/ipaddress','IP address module'),
     ('xml.sax',1,None,'https://www.python.org',"Python's built-in XML support"),
     ('xml.sax.handler',1,None,'https://www.python.org',"Python's built-in XML support"),
     ('hashlib',1,None,'https://www.python.org','Module useful for generating hashed LDAP passwords'),
@@ -86,7 +86,7 @@ def check_inst():
     ('crypt',0,None,'https://www.python.org','Unix crypt hash module for client-side hashed LDAP passwords'),
     ('DNS',0,None,'http://pydns.sf.net','module for DNS lookups, e.g. SRV RRs'),
     ('asn1crypto',1,None,'https://github.com/wbond/asn1crypto','Pure Python library for parsing and serializing ASN.1 structures'),
-    ('paramiko',0,None,'https://pypi.python.org/pypi/paramiko','Python implementation of SSH protocol'),
+    ('paramiko',0,None,'https://pypi.org/project/paramiko','Python implementation of SSH protocol'),
     ('PIL',0,None,'http://www.pythonware.com/products/pil/index.htm','Python Imaging Library'),
     ('xlwt',0,None,'http://www.python-excel.org/','Generates/imports Excel files'),
   ]:
