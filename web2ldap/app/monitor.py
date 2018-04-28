@@ -19,7 +19,7 @@ import web2ldap.__about__
 import os,time,socket,threading
 
 
-import web2ldapcnf.misc,web2ldapcnf.monitor
+import web2ldapcnf.misc
 
 import web2ldap.app.core,web2ldap.app.gui
 
@@ -37,7 +37,7 @@ from ipaddress import ip_address,ip_network
 
 def check_monitor_access(env):
   a = ip_address(env['REMOTE_ADDR'].decode('ascii'))
-  for n in web2ldapcnf.monitor.access_allowed:
+  for n in web2ldapcnf.misc.monitor_access_allowed:
     if a in ip_network(n,strict=False):
       return True
   return False

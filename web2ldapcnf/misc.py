@@ -59,7 +59,7 @@ redirect_template = os.path.join(web2ldapcnf.templates_dir,'redirect.html')
 command_link_separator = ' &bull; '
 
 ########################################################################
-# Security options
+# Global security options
 ########################################################################
 
 # Maximum number of concurrent web sessions stored
@@ -178,3 +178,19 @@ good_redirect_targets=set((
   'https://web2ldap.de/',
   'https://www.web2ldap.de/',
 ))
+
+########################################################################
+# Options for web2ldap's monitor page
+########################################################################
+
+# List of accepted address/net mask strings of
+# accepted client addresses.
+# Use [u'0.0.0.0/0.0.0.0','::0'] to allow access to every client but think twice!
+# IPv6 network addresses without brackets!
+monitor_access_allowed = [
+  u'127.0.0.0/255.0.0.0',
+  u'::1',
+  u'fe00::0',
+#  u'10.0.0.0/255.0.0.0',
+#  u'0.0.0.0/0.0.0.0','::0',
+]
