@@ -15,11 +15,11 @@ import sys,os
 web2ldap_dir = os.environ.get('WEB2LDAP_HOME', sys.prefix)
 
 # Default directory for [web2ldap]/etc
-etc_dir = os.path.join(web2ldap_dir,'etc')
-#etc_dir = '/etc'
+etc_dir = os.environ.get('WEB2LDAP_ETC', os.path.join(web2ldap_dir,'etc','web2ldap'))
+#etc_dir = '/etc/web2ldap'
 
 # Default directory for [web2ldap]/etc/web2ldap/templates
-templates_dir = os.path.join(etc_dir,os.path.join('web2ldap','templates'))
+templates_dir = os.path.join(etc_dir,'templates')
 
 import web2ldapcnf.misc
 import web2ldapcnf.hosts
