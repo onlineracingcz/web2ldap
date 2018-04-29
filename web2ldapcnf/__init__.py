@@ -193,17 +193,30 @@ good_redirect_targets=set((
   'https://www.web2ldap.de/',
 ))
 
-# List of accepted address/net mask strings of
-# accepted client addresses.
+# Dictionary specifying accepted address/net mask strings of
+# accepted client addresses for certain URL commands.
 # Use [u'0.0.0.0/0.0.0.0','::0'] to allow access to every client but think twice!
 # IPv6 network addresses without brackets!
-monitor_access_allowed = [
-  u'127.0.0.0/255.0.0.0',
-  u'::1',
-  u'fe00::0',
-#  u'10.0.0.0/255.0.0.0',
-#  u'0.0.0.0/0.0.0.0','::0',
-]
+access_allowed = {
+  u'_':[
+#    u'0.0.0.0/0.0.0.0','::0',
+    u'127.0.0.0/255.0.0.0',
+    u'::1',
+    u'fe00::0',
+#    u'10.0.0.0/255.0.0.0',
+  ],
+  u'monitor':[
+    u'127.0.0.0/255.0.0.0',
+    u'::1',
+    u'fe00::0',
+  ],
+#    u'0.0.0.0/0.0.0.0','::0',
+    u'127.0.0.0/255.0.0.0',
+    u'::1',
+    u'fe00::0',
+#    u'10.0.0.0/255.0.0.0',
+  ],
+}
 
 #---------------------------------------------------------------------------
 # Optionally import a local sub-config file

@@ -23,7 +23,7 @@ import web2ldapcnf,web2ldapcnf.hosts
 
 import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.ldapsession
 
-from ipaddress import ip_network
+from ipaddress import ip_address,ip_network
 
 import web2ldap.__about__
 
@@ -67,6 +67,18 @@ SIMPLE_MSG_HTML = """
   </body>
 </html>
 """
+
+
+def check_access(env,command):
+  remote_addr = ip_address(env['REMOTE_ADDR'].decode('ascii'))
+  access_allowed = web2ldapcnf.access_allowed.get(
+    command.decode('ascii'),
+    web2ldapcnf.access_allowed['_']
+  )
+  for net in access_allowed:
+    if remote_addr in ip_network(net,strict=False):
+      return True
+  return False
 
 
 class AppHandler:
@@ -421,6 +433,10 @@ class AppHandler:
 
       try:
 
+        # Check access here
+        if not check_access(self.env,self.command):
+          raise web2ldap.app.core.ErrorExit(u'Access denied.')
+
         # handle the early-exit commands
         if self.command=='urlredirect':
           if isLDAPUrl(self.form.query_string):
@@ -605,8 +621,6 @@ class AppHandler:
         # Store session data in case anything goes wrong after here
         # to give the exception handler a good chance
         session_store.storeSession(self.sid,ls)
-
-        # TODO: Check backend specific access control here
 
         # Execute the command module
         try:

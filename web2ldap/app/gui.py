@@ -241,9 +241,10 @@ def CommandTable(
 
 def EntryMainMenu(form,env):
   main_menu = [form.applAnchor('','Connect',None,[])]
-  if web2ldap.app.monitor.check_monitor_access(env):
+  if web2ldap.app.handler.check_access(env,'monitor'):
     main_menu.append(form.applAnchor('monitor','Monitor',None,[]))
-  main_menu.append(form.applAnchor('locate','DNS lookup',None,[]))
+  if web2ldap.app.handler.check_access(env,'locate'):
+    main_menu.append(form.applAnchor('locate','DNS lookup',None,[]))
   return main_menu
 
 

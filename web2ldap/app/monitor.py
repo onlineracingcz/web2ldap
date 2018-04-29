@@ -32,24 +32,11 @@ from web2ldap.app.session import session_store,cleanUpThread
 from web2ldap.utctime import strftimeiso8601
 from web2ldap.ldapsession import LDAPSession
 
-from ipaddress import ip_address,ip_network
-
-
-def check_monitor_access(env):
-  a = ip_address(env['REMOTE_ADDR'].decode('ascii'))
-  for n in web2ldapcnf.monitor_access_allowed:
-    if a in ip_network(n,strict=False):
-      return True
-  return False
-
 
 def w2l_Monitor(outf,command,form,env):
   """
   List several general gateway stats
   """
-
-  if not check_monitor_access(env):
-    raise web2ldap.app.core.ErrorExit(u'Access denied.')
 
   uptime = (time.time()-web2ldap.app.core.startUpTime)/60
 

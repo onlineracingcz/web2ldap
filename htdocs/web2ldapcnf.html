@@ -251,17 +251,22 @@ Security options
     without a session.
   </dd>
 
-  <dt id="monitor_access_allowed">monitor_access_allowed</dt>
+  <dt id="access_allowed">access_allowed</dt>
   <dd>
-    List of accepted address/net mask strings of
-    client addresses permitted to access the monitor page.
-    <p>Example for accepting only clients from loopback network:</p>
+    Dictionary which defines for each URL command a list of accepted
+    address/net mask strings of client addresses permitted to access a
+    certain page.
+    <p>Example for accepting only clients from loopback network for all commands:</p>
     <samp>
-      monitor_access_allowed = ['127.0.0.1/255.0.0.0']
+      access_allowed = {'_':[u'127.0.0.1/255.0.0.0']}
     </samp>
-    <p>Example for allowing access to all clients:</p>
+    <p>Example for allowing access to all clients for all commands:</p>
     <samp>
-      monitor_access_allowed = ['0.0.0.0/0.0.0.0']
+      access_allowed = {'_':[u'0.0.0.0/0.0.0.0']}
+    </samp>
+    <p>Example for allowing access to all clients for all commands except monitor page:</p>
+    <samp>
+      access_allowed = {'_':[u'0.0.0.0/0.0.0.0'],'monitor':[u'127.0.0.1/255.255.255.255']}
     </samp>
   </dd>
 
