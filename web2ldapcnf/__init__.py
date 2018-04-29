@@ -195,11 +195,11 @@ good_redirect_targets=set((
 
 # Dictionary specifying accepted address/net mask strings of
 # accepted client addresses for certain URL commands.
-# Use [u'0.0.0.0/0.0.0.0','::0'] to allow access to every client but think twice!
+# Use [u'0.0.0.0/0.0.0.0',u'::0'] to allow access to every client but think twice!
 # IPv6 network addresses without brackets!
 access_allowed = {
   u'_':[
-#    u'0.0.0.0/0.0.0.0','::0',
+#    u'0.0.0.0/0.0.0.0',u'::0',
     u'127.0.0.0/255.0.0.0',
     u'::1',
     u'fe00::0',
@@ -210,7 +210,8 @@ access_allowed = {
     u'::1',
     u'fe00::0',
   ],
-#    u'0.0.0.0/0.0.0.0','::0',
+  u'locate':[
+#    u'0.0.0.0/0.0.0.0',u'::0',
     u'127.0.0.0/255.0.0.0',
     u'::1',
     u'fe00::0',
