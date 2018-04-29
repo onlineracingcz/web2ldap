@@ -78,7 +78,7 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
 </p>
 
 <table>
-  <tr><th>Package</th><th>Required</th><th>Description</th></tr>
+  <tr><th>Package</th><th>Description</th></tr>
   <tr>
     <td>
       <a href="https://www.python.org/">Python 2.7.0+</a>
@@ -86,7 +86,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
       or <a href="https://pypy.org/">PyPy 5.0.1</a> (earlier versions do not work!)<br>
       Python 3.x or PyPy3 not supported!
     </td>
-      <td>mandatory</td>
     <td>
       The programming language needed to run.
     </td>
@@ -95,7 +94,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
     <td>
       <a href="https://www.stroeder.com/pyweblib.html">PyWebLib 1.3.13</a>
     </td>
-      <td>mandatory</td>
     <td>
       Module package for web application programming.
     </td>
@@ -104,7 +102,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
     <td>
       <a href="https://pypi.org/project/ldap0">ldap0 0.0.60+</a>
     </td>
-      <td>mandatory</td>
     <td>
       A wrapper module for accessing the OpenLDAP libs from Python
       and other LDAP-related modules.
@@ -114,7 +111,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
     <td>
       <a href="https://www.openldap.org">OpenLDAP 2.4.11+</a> client libs (2.4.42+ recommended)
     </td>
-    <td>mandatory</td>
     <td>
       Required to build <var>ldap0</var> module package.
     </td>
@@ -124,7 +120,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
       <a href="https://pypi.org/project/pyasn1">pyasn1</a> and
       <a href="https://pypi.org/project/pyasn1-modules">pyasn1-modules</a>
     </td>
-      <td>mandatory</td>
     <td>
       <strong>Two</strong> separate module packages for processing ASN.1 data directly.
     </td>
@@ -133,7 +128,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
     <td>
       <a href="https://pypi.org/project/ipaddress">ipaddress</a>
     </td>
-      <td>mandatory</td>
     <td>
       Module package for processing IP addresses (<var>netaddr</var> preferred)
     </td>
@@ -142,7 +136,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
     <td>
       <a href="http://www.dnspython.org/">dnspython</a>
     </td>
-    <td>mandatory</td>
     <td>
       Module used for looking up SRV RRs in DNS.
     </td>
@@ -151,7 +144,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
     <td>
       <a href="https://github.com/wbond/asn1crypto">asn1crypto</a>
     </td>
-    <td>mandatory</td>
     <td>
       For displaying short overview of X.509 certificates and CRLs.
     </td>
@@ -160,7 +152,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
     <td>
       <a href="https://pypi.org/project/paramiko">paramiko</a>
     </td>
-    <td>optional</td>
     <td>
       For displaying short overview of SSH public keys.
     </td>
@@ -169,7 +160,6 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
     <td>
       <a href="https://python-pillow.github.io/">Pillow</a>
     </td>
-    <td>optional</td>
     <td>
       For automatically converting image data to required format (e.g. JPEGImage syntax).
     </td>
@@ -178,12 +168,10 @@ cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
     <td>
       <a href="http://www.python-excel.org/">xlwt</a>
     </td>
-    <td>optional</td>
     <td>
       For Excel data export.
     </td>
   </tr>
 </table>
-
 
 <!--#include file="ssi/footer.html" -->
