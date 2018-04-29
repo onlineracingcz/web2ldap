@@ -5,16 +5,14 @@ MAINTAINER Michael Stroeder <michael@stroeder.com>
 RUN zypper --non-interactive dup --auto-agree-with-licenses --no-allow-vendor-change --no-recommends
 
 # install Python2 and some modules from openSUSE standard repo
-RUN zypper --non-interactive install --no-confirm --no-recommends ca-certificates ca-certificates-mozilla python-2.7.14 python2-virtualenv python2-setuptools python-pyweblib python-ipaddress python2-asn1crypto python2-xlwt python2-paramiko python2-Pillow python2-certifi python2-bcrypt python2-pyasn1-modules
+RUN zypper --non-interactive install --no-confirm --no-recommends ca-certificates ca-certificates-mozilla python-2.7.14 python2-virtualenv python2-setuptools python-pyweblib python-ipaddress python2-asn1crypto python2-xlwt python2-paramiko python2-Pillow python2-certifi python2-bcrypt python2-pyasn1-modules python2-dnspython
 
 # add AE-DIR repo
 RUN zypper --non-interactive addrepo --enable --refresh https://download.opensuse.org/repositories/home:/stroeder:/AE-DIR/openSUSE_Tumbleweed/home:stroeder:AE-DIR.repo
-# add OBS Python devel repo
-RUN zypper --non-interactive addrepo --enable --refresh https://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_Tumbleweed/devel:languages:python.repo
 # refresh repo cache
 RUN zypper --non-interactive --gpg-auto-import-keys refresh
 # install non-standard Python modules
-RUN zypper --non-interactive install --no-confirm --no-recommends python-pydns python-ldap0
+RUN zypper --non-interactive install --no-confirm --no-recommends python-ldap0
 
 # Install AppArmor profile
 ADD opt.web2ldap.bin.web2ldap /etc/apparmor.d/opt.web2ldap.bin.web2ldap
