@@ -148,8 +148,8 @@ class LDAPSyntax:
   oid=''
   desc='Any LDAP syntax'
   inputSize = 50
-  maxLen = web2ldapcnf.misc.input_maxfieldlen
-  maxValues = web2ldapcnf.misc.input_maxattrs
+  maxLen = web2ldapcnf.input_maxfieldlen
+  maxValues = web2ldapcnf.input_maxattrs
   mimeType = 'application/octet-stream'
   fileExt = 'bin'
   editable = 1
@@ -485,7 +485,7 @@ class DistinguishedName(DirectoryString):
     ]
     if commandbutton:
       r.extend(self._additional_links())
-    return web2ldapcnf.misc.command_link_separator.join(r)
+    return web2ldapcnf.command_link_separator.join(r)
 
 
 class BindDN(DistinguishedName):
@@ -538,7 +538,7 @@ class NameAndOptionalUID(DistinguishedName):
     if len(value)==1 or not value[1]:
       return dn_str
     else:
-      return web2ldapcnf.misc.command_link_separator.join([self._form.utf2display(self._ls.uc_decode(value[1])),dn_str])
+      return web2ldapcnf.command_link_separator.join([self._form.utf2display(self._ls.uc_decode(value[1])),dn_str])
 
 
 class BitString(DirectoryString):
@@ -1738,7 +1738,7 @@ class CountryString(PropertiesSelectList):
   oid = '1.3.6.1.4.1.1466.115.121.1.11'
   desc = 'Two letter country string as listed in ISO 3166-2'
   properties_pathname = os.path.join(
-    web2ldapcnf.etc_dir,'web2ldap','properties','attribute_select_c.properties'
+    web2ldapcnf.etc_dir,'properties','attribute_select_c.properties'
   )
   simpleSanitizers = (
     str.strip,

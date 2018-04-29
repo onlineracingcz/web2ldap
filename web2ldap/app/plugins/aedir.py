@@ -20,7 +20,7 @@ from ldap0.controls.deref import DereferenceControl
 # from pyweblib
 from pyweblib.forms import HiddenInput
 
-import web2ldapcnf.misc
+import web2ldapcnf
 
 # from internal base modules
 import web2ldap.ldaputil.base
@@ -675,7 +675,7 @@ class AEGroupDN(DynamicDNSelectList):
     ]
     if commandbutton:
       r.extend(self._additional_links())
-    return web2ldapcnf.misc.command_link_separator.join(r)
+    return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
   AEGroupDN.oid,[

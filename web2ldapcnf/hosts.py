@@ -263,7 +263,7 @@ ae_dir_config = Web2LDAPConfig(
     'aeUser':r'<span title="%(displayName)s: %(description)s">%(uid)s: %(description)s</span>',
   },
   session_track_control=1,
-  supplement_schema=os.path.join(web2ldapcnf.etc_dir,'web2ldap','ae-suppl-schema.ldif'),
+  supplement_schema=os.path.join(web2ldapcnf.etc_dir,'ae-suppl-schema.ldif'),
   modify_constant_attrs=[
     # Mostly OpenLDAP
     'entryCSN','entryDN','entryUUID',
@@ -691,14 +691,14 @@ ldap_def = {
       # you should really set this!
       ldap0.OPT_X_TLS_REQUIRE_CERT:ldap0.OPT_X_TLS_DEMAND,
       # Directory containing all the trusted root CA certs (symbolic hash links required!)
-#      LDAP_OPT_X_TLS_CACERTDIR = os.path.sep.join([web2ldapcnf.etc_dir,'web2ldap', 'ssl', 'crt']),
+#      LDAP_OPT_X_TLS_CACERTDIR = os.path.sep.join(web2ldapcnf.etc_dir,'ssl','crt'),
       # File containing all the trusted root CA certs
-#      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','trusted-certs.crt'),
+#      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'ssl','crt','trusted-certs.crt'),
       ldap0.OPT_X_TLS_CACERTFILE:certifi.where(),
 #      ldap0.OPT_X_TLS_CIPHER_SUITE:'ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA',
       ldap0.OPT_X_TLS_PROTOCOL_MIN:3,
 #      ldap0.OPT_X_TLS_CRLCHECK:ldap0.OPT_X_TLS_CRL_PEER,
-#      ldap0.OPT_X_TLS_CRLFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','peers.crl'),
+#      ldap0.OPT_X_TLS_CRLFILE:os.path.join(web2ldapcnf.etc_dir,'ssl','crt','peers.crl'),
     },
     # regular expression of subject DNs in client certs
     ssl_valid_dn=r'/.*',
@@ -986,7 +986,7 @@ ldap_def = {
     },
 
     # LDIF file used as locally stored pseudo LDAPv3 schema
-    schema_uri='file:'+os.path.join(web2ldapcnf.etc_dir,'web2ldap','localschema.ldif'),
+    schema_uri='file:'+os.path.join(web2ldapcnf.etc_dir,'localschema.ldif'),
 
     # Whether to apply strict subschema consistency check (e.g. uniqueness)
     schema_strictcheck=True,
@@ -1042,7 +1042,7 @@ ldap_def = {
     ssl_valid_idn=r'^/C=ZA/ST=Western Cape/L=Durbanville/O=Thawte/OU=Certificate Services/CN=Personal Freemail RSA 1999\.9\.16$',
     session_track_control=1,
     # LDIF file used to extended the server's schema
-#    schema_supplement=os.path.join(web2ldapcnf.etc_dir,'web2ldap','stroeder-dit-structure.ldif'),
+#    schema_supplement=os.path.join(web2ldapcnf.etc_dir,'stroeder-dit-structure.ldif'),
     searchform_search_root_url=u'ldap:///dc=stroeder,dc=de??sub?(&(|(ou=Private)(ou:dn:=Bizness)(ou:dn:=Kultur))(|(objectClass=msOrganization)(objectClass=organizationalUnit))(hasSubordinates=TRUE)(|(organizationalStatus=0)(!(organizationalStatus=*))))',
     search_attrs=[
       'authTimestamp','createTimestamp','creatorsName','modifiersName','modifyTimestamp',
@@ -1078,7 +1078,7 @@ ldap_def = {
 #    login_default_mech='EXTERNAL',
 #    passwd_hashtypes=['ssha',''],
 #    schema_uri='ldapi://%2Ftmp%2Fopenldap-socket/cn=Subschema',
-#    schema_uri='file:'+os.path.join(web2ldapcnf.etc_dir,os.path.join('web2ldap','localschema.ldif')),
+#    schema_uri='file:'+os.path.join(web2ldapcnf.etc_dir,'localschema.ldif'),
   ),
 
   # Example for OpenLDAP's accesslog database
@@ -1103,7 +1103,7 @@ ldap_def = {
   'ldaps://demo.ae-dir.com': Web2LDAPConfig(
     description=u'AE-DIR demo',
     tls_options={
-      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'web2ldap','ssl','crt','DST_Root_CA_X3.pem'),
+      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'ssl','crt','DST_Root_CA_X3.pem'),
     },
   )
 

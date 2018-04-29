@@ -516,7 +516,7 @@ class CountryCode(PropertiesSelectList):
   oid = 'CountryCode-oid'
   desc = 'Numerical country code'
   properties_pathname = os.path.join(
-    web2ldapcnf.etc_dir,'web2ldap','properties','attribute_select_countryCode.properties'
+    web2ldapcnf.etc_dir,'properties','attribute_select_countryCode.properties'
   )
   simpleSanitizers = (
     str.strip,

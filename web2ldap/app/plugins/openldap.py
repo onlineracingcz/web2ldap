@@ -11,7 +11,7 @@ from pyasn1.codec.ber import decoder as ber_decoder
 
 import ldap0.ldapurl,ldap0.controls
 
-import web2ldapcnf.misc
+import web2ldapcnf
 
 import web2ldap.app.gui
 from web2ldap.mspki.util import HexString
@@ -279,7 +279,7 @@ class AuditContext(NamingContexts):
           title=u'List audit log entries of all write operations',
         ),
       ])
-    return web2ldapcnf.misc.command_link_separator.join(r)
+    return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
   AuditContext.oid,
@@ -411,7 +411,7 @@ class ReqEntryUUID(UUID):
   def displayValue(self,valueindex=0,commandbutton=0):
     display_value = UUID.displayValue(self,valueindex,commandbutton)
     if commandbutton:
-      return web2ldapcnf.misc.command_link_separator.join((
+      return web2ldapcnf.command_link_separator.join((
         display_value,
         self._form.applAnchor(
             'search','Search target',self._sid,
@@ -442,7 +442,7 @@ class ReqSession(Integer):
   def displayValue(self,valueindex=0,commandbutton=0):
     display_value = Integer.displayValue(self,valueindex,commandbutton)
     if commandbutton:
-      return web2ldapcnf.misc.command_link_separator.join((
+      return web2ldapcnf.command_link_separator.join((
         display_value,
         self._form.applAnchor(
             'search','&raquo;',self._sid,

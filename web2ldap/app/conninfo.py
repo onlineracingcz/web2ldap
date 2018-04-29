@@ -22,7 +22,7 @@ import ldap0
 
 import web2ldap.utctime
 import web2ldap.ldaputil.base
-import web2ldapcnf.misc
+import web2ldapcnf
 import web2ldap.app.core,web2ldap.app.gui
 from web2ldap.app.session import session_store
 
@@ -147,7 +147,7 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
   if ls.who:
     who_html = '%s<br>( %s )' % (
       web2ldap.app.gui.DisplayDN(sid,form,ls,ls.who,commandbutton=0),
-      web2ldapcnf.misc.command_link_separator.join((
+      web2ldapcnf.command_link_separator.join((
         form.applAnchor(
           'read','Read',sid,[('dn',ls.who)],
           title=u'Read bound entry\r\n%s' % (ls.who),
@@ -340,5 +340,5 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
   )
   ssl_valid_dn = web2ldap.app.cnf.GetParam(ls,'ssl_valid_dn','')
   ssl_valid_idn = web2ldap.app.cnf.GetParam(ls,'ssl_valid_idn','')
-  pyweblib.sslenv.PrintSecInfo(form.env,web2ldapcnf.misc.sec_sslacceptedciphers,ssl_valid_dn,ssl_valid_idn,outf)
+  pyweblib.sslenv.PrintSecInfo(form.env,web2ldapcnf.sec_sslacceptedciphers,ssl_valid_dn,ssl_valid_idn,outf)
   web2ldap.app.gui.Footer(outf,form)

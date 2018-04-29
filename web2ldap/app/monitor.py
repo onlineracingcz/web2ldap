@@ -19,7 +19,7 @@ import web2ldap.__about__
 import os,time,socket,threading
 
 
-import web2ldapcnf.misc
+import web2ldapcnf
 
 import web2ldap.app.core,web2ldap.app.gui
 
@@ -37,7 +37,7 @@ from ipaddress import ip_address,ip_network
 
 def check_monitor_access(env):
   a = ip_address(env['REMOTE_ADDR'].decode('ascii'))
-  for n in web2ldapcnf.misc.monitor_access_allowed:
+  for n in web2ldapcnf.monitor_access_allowed:
     if a in ip_network(n,strict=False):
       return True
   return False
@@ -179,8 +179,8 @@ def w2l_Monitor(outf,command,form,env):
       int_maxconcurrentsessions=session_store.max_concurrent_sessions,
       int_maxconcurrentsessionsperip=session_store.max_concurrent_sessions,
       int_removedsessions=cleanUpThread.removed_sessions,
-      int_sessionlimit=web2ldapcnf.misc.session_limit,
-      int_sessionlimitperip=web2ldapcnf.misc.session_per_ip_limit,
+      int_sessionlimit=web2ldapcnf.session_limit,
+      int_sessionlimitperip=web2ldapcnf.session_per_ip_limit,
       int_sessionremoveperiod=session_store.expireRemove,
       int_currentnumremoteipaddrs=len(session_store.remote_ip_sessions),
       int_numremoteipaddrs=len(session_store.remote_ip_counter),

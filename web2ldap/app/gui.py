@@ -27,7 +27,7 @@ import ldap0.ldapurl
 from ldap0.ldapurl import LDAPUrl
 from ldap0.filter import escape_filter_chars
 
-import web2ldapcnf.misc
+import web2ldapcnf
 
 import web2ldap.__about__
 import web2ldap.ldaputil,web2ldap.msbase
@@ -198,7 +198,7 @@ def DisplayDN(sid,form,ls,dn,commandbutton=0):
       dn_str,
       form.applAnchor('read','Read',sid,[('dn',dn)])
     ]
-    return web2ldapcnf.misc.command_link_separator.join(command_buttons)
+    return web2ldapcnf.command_link_separator.join(command_buttons)
   else:
     return dn_str
 
@@ -529,7 +529,7 @@ def TopSection(sid,outf,command,form,ls,dn,title,main_menu_list,context_menu_lis
   template_dict = {
     'main_div_id':main_div_id,
     'accept_charset':form.accept_charset,
-    'refresh_time':str(web2ldapcnf.misc.session_remove+10),
+    'refresh_time':str(web2ldapcnf.session_remove+10),
     'sid':sid or '',
     'title_text':title,
     'script_name':script_name,
@@ -689,7 +689,7 @@ def gen_headers(content_type='text/html',charset='utf-8',more_headers=None):
   headers.append(('Date',current_datetime))
   headers.append(('Last-Modified',current_datetime))
   headers.append(('Expires',current_datetime))
-  for h,v in web2ldapcnf.misc.http_headers.items():
+  for h,v in web2ldapcnf.http_headers.items():
     headers.append((h,v))
   headers.extend(more_headers or [])
   return headers # Header()
@@ -701,7 +701,7 @@ def Header(outf,form,content_type='text/html',charset=None,more_headers=None):
     for _, cookie in form.next_cookie.items():
       headers.append(('Set-Cookie',str(cookie)[12:]))
   if form.env.get('HTTPS','off')=='on' and \
-     'Strict-Transport-Security' not in web2ldapcnf.misc.http_headers:
+     'Strict-Transport-Security' not in web2ldapcnf.http_headers:
     headers.append(('Strict-Transport-Security','max-age=15768000 ; includeSubDomains'))
   outf.set_headers(headers)
   return headers # Header()

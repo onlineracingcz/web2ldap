@@ -9,7 +9,20 @@
 <p>Release Date: 2018-05-xx</p>
 <ul>
   <li>
-    Dropped separate config sub-module <var>web2ldapcnf.monitor</var>.
+    Refactored configuration module package:
+    <ul>
+      <li>
+        Dropped separate config sub-module <var>web2ldapcnf.monitor</var>.
+      </li>
+      <li>
+        Merged separate config sub-module <var>web2ldapcnf.misc</var>
+        into <var>web2ldapcnf</var> (__init__.py).
+      </li>
+      <li>
+        Config variable <var>web2ldapcnf.etc_dir</var> now points directly to
+        the web2ldap-specific sub-directory.
+      </li>
+    </ul>
   </li>
 </ul>
 

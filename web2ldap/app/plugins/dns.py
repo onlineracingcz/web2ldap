@@ -9,7 +9,7 @@ from __future__ import absolute_import
 
 import re,string,hashlib,ldap0,ldap0.schema.models
 
-import web2ldapcnf.misc
+import web2ldapcnf
 
 import web2ldap.app.searchform
 from web2ldap.ldaputil.base import match_dnlist
@@ -163,7 +163,7 @@ class AssociatedDomain(DNSDomain):
               ),
               title=u'Search DHCP host(s) for this A address',
             ))
-    return web2ldapcnf.misc.command_link_separator.join(r)
+    return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
   AssociatedDomain.oid,[
@@ -274,7 +274,7 @@ class ARecord(IPv4HostAddress):
             ),
             title=u'Search DHCP host(s) for this A address',
           ))
-    return web2ldapcnf.misc.command_link_separator.join(r)
+    return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
   ARecord.oid,[
@@ -307,7 +307,7 @@ class AAAARecord(IPv6HostAddress):
           ),
           title=u'Search PTR RR for this AAAA address',
         ))
-    return web2ldapcnf.misc.command_link_separator.join(r)
+    return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
   AAAARecord.oid,[

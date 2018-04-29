@@ -183,11 +183,11 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
 global session_store
 sys.stderr.write('Initialize web2ldap session store\n')
 session_store = Session(
-  expireDeactivate=web2ldapcnf.misc.session_remove,
-  expireRemove=web2ldapcnf.misc.session_remove,
-  crossCheckVars = web2ldapcnf.misc.session_checkvars,
-  maxSessionCount = web2ldapcnf.misc.session_limit,
-  maxSessionCountPerIP = web2ldapcnf.misc.session_per_ip_limit,
+  expireDeactivate=web2ldapcnf.session_remove,
+  expireRemove=web2ldapcnf.session_remove,
+  crossCheckVars = web2ldapcnf.session_checkvars,
+  maxSessionCount = web2ldapcnf.session_limit,
+  maxSessionCountPerIP = web2ldapcnf.session_per_ip_limit,
 )
 
 global cleanUpThread

@@ -17,7 +17,7 @@ from __future__ import absolute_import
 import types,time,pyweblib.forms
 
 # Modules shipped with web2ldap
-import web2ldapcnf.misc,web2ldapcnf.hosts
+import web2ldapcnf,web2ldapcnf.hosts
 import web2ldap.app.core,web2ldap.app.gui
 
 ##############################################################################
@@ -28,7 +28,7 @@ def w2l_Connect(outf,form,env,Msg='Connect',ErrorMsg=''):
 
   connect_template_str = web2ldap.app.gui.ReadTemplate(
     form,None,None,u'connect form',
-    tmpl_filename=web2ldapcnf.misc.connect_template
+    tmpl_filename=web2ldapcnf.connect_template
   )
 
   if web2ldapcnf.hosts.ldap_uri_list:

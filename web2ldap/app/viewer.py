@@ -75,7 +75,7 @@ CertificateParserError = ValueError
 
 # Get OID dictionary
 try:
-  asn1helper.oids = asn1helper.ParseCfg(web2ldapcnf.misc.dumpasn1cfg)
+  asn1helper.oids = asn1helper.ParseCfg(web2ldapcnf.dumpasn1cfg)
 except IOError:
   asn1helper.oids = {}
 

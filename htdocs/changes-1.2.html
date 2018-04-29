@@ -291,8 +291,8 @@
   </li>
   <li>
     Added new general config parameter
-    <a href="web2ldapcnf_misc.html#good_redirect_targets">
-    web2ldapcnf.misc.good_redirect_targets</a>.
+    <a href="web2ldapcnf.html#good_redirect_targets">
+    web2ldapcnf.good_redirect_targets</a>.
   </li>
   <li>
     Updates in plugin module for <a href="https://ae-dir.com">&AElig;-DIR</a>.
@@ -358,7 +358,7 @@
   <li>
     Added HTTP header <a href="https://www.w3.org/TR/referrer-policy/">
     Referrer-Policy</a> with value &quot;no-referrer&quot; to default values of
-    <a href="web2ldapcnf_misc.html#http_headers">web2ldapcnf.misc.http_headers</a>.
+    <a href="web2ldapcnf.html#http_headers">web2ldapcnf.http_headers</a>.
   </li>
   <li>
     SASL hostname canonicalization is disabled in case <var>GSSAPI</var> is
@@ -544,7 +544,7 @@
   </li>
   <li>
     Added <var>SSL_CLIENT_VERIFY</var> and <var>SSL_SECURE_RENEG</var> to
-    <a href="web2ldapcnf_misc.html#session_checkvars">web2ldapcnf.misc.session_checkvars</a>.
+    <a href="web2ldapcnf.html#session_checkvars">web2ldapcnf.session_checkvars</a>.
   </li>
   <li>
     Ignore empty attribute values when building assertion filter.
@@ -1971,7 +1971,7 @@
   <li>
     Implemented per remote IP session limits additionally to the global limit.
     This requires new global parameter
-    <a href="web2ldapcnf_misc.html#session_per_ip_limit">session_per_ip_limit</a>
+    <a href="web2ldapcnf.html#session_per_ip_limit">session_per_ip_limit</a>
     to be set in your configuration.
   </li>
   <li>
@@ -2443,7 +2443,7 @@
         against web2ldap's session ID to prevent attacks in
         case web server's access logs is not kept confidential.
         Cookie usage is enabled by setting
-        <a href="web2ldapcnf_misc.html#cookie_length">cookie_length</a>
+        <a href="web2ldapcnf.html#cookie_length">cookie_length</a>
         to a non-zero cookie value length.
       </li>
       <li>
@@ -2472,7 +2472,7 @@
       </li>
       <li>
         HTTP headers pre-configured with
-        <a href="web2ldapcnf_misc.html#http_headers">http_headers</a>
+        <a href="web2ldapcnf.html#http_headers">http_headers</a>
         are now consequently used for every HTTP response generated.
       </li>
       <li>
@@ -2528,7 +2528,7 @@
       </li>
       <li>
         The redirect page can also be defined with a HTML template file referenced by
-        <a href="web2ldapcnf_misc.html#redirect_template">redirect_template</a>.
+        <a href="web2ldapcnf.html#redirect_template">redirect_template</a>.
       </li>
       <li>
         Added <a href="http://www.opensearch.org/Specifications/OpenSearch">OpenSearch</a> example file.
@@ -2546,7 +2546,7 @@
   <dd>
     <ul>
       <li>
-        Support for normally unused parameter <var>web2ldapcnf.misc.sec_expire</var>
+        Support for normally unused parameter <var>web2ldapcnf.sec_expire</var>
         was removed also due to security issues with setting it to non-zero value.
       </li>
       <li>

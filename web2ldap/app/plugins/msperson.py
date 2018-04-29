@@ -23,7 +23,7 @@ class Gender(PropertiesSelectList):
   oid = 'Gender-oid'
   desc = 'Representation of human sex (see ISO 5218)'
   properties_pathname = os.path.join(
-    web2ldapcnf.etc_dir,'web2ldap','properties','attribute_select_gender.properties'
+    web2ldapcnf.etc_dir,'properties','attribute_select_gender.properties'
   )
 
 syntax_registry.registerAttrType(
