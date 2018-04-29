@@ -73,7 +73,7 @@ setup(
         'ipaddress',
         'asn1crypto',
         'xlwt',
-        'pydns',
+        'dnspython',
         'paramiko',
         'Pillow',
         'certifi',

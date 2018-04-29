@@ -16,16 +16,13 @@ from __future__ import absolute_import
 
 import socket,ldap0
 
-try:
-  import DNS
-except ImportError:
-  DNS = None
+from dns import resolver
 
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 from ldap0.ldapurl import LDAPUrlExtension,LDAPUrlExtensions
 
 # Modules shipped with web2ldap
-import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.schema.syntaxes
+import web2ldap.ldaputil.base,web2ldap.ldaputil.dns,web2ldap.app.gui
 
 
 ldap_hostname_aliases = [
@@ -45,9 +42,6 @@ def w2l_Locate(outf,command,form,env):
   """
   Try to locate a LDAP server in DNS by several heuristics
   """
-  # Check if DNS module is present
-  if DNS is None:
-    raise web2ldap.app.core.ErrorExit(u'Could not import DNS module.')
 
   locate_name = form.getInputValue('locate_name',[''])[0].strip()
 
@@ -106,8 +100,20 @@ def w2l_Locate(outf,command,form,env):
             srv_prefix = '_%s._tcp' % (url_scheme)
             try:
               dns_result = web2ldap.ldaputil.dns.ldapSRV(dns_name,srv_prefix=srv_prefix)
-            except (DNS.Error,socket.error) as e:
-              outf_lines.append(u'DNS or socket error when querying %s: %s' % (srv_prefix,str(e)))
+            except (
+              resolver.NoAnswer,
+              resolver.NoNameservers,
+              resolver.NotAbsolute,
+              resolver.NoRootSOA,
+              resolver.NXDOMAIN,
+              socket.error,
+            ) as e:
+              outf_lines.append(
+                'DNS or socket error when querying %s: %s' % (
+                  srv_prefix,
+                  form.utf2display(unicode(e)),
+                )
+              )
             else:
               if dns_result:
                 ldap_srv_results.append((url_scheme,dns_result))

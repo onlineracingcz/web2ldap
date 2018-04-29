@@ -18,17 +18,7 @@ import socket
 
 from .base import explode_dn
 
-try:
-  import DNS
-except ImportError:
-  dns_module_avail=0
-else:
-  try:
-    DNS.ParseResolvConf()
-  except:
-    dns_module_avail=0
-  else:
-    dns_module_avail=1
+from dns import rdatatype, resolver
 
 def dcdn2dnsdomain(dn=''):
   """convert dc-style DN to DNS domain name (see RFC 2247)"""
@@ -65,33 +55,36 @@ def ldapSRV(dns_name,dns_resolver=None,srv_prefix='_ldap._tcp'):
   """
   if not dns_name:
     return []
-  if dns_resolver is None:
-    srv_req = DNS.Request(qtype='srv')
-  else:
-    srv_req = DNS.Request(qtype='srv',server=dns_resolver)
-  srv_result = srv_req.req('%s.%s' % (srv_prefix,dns_name.encode('idna')))
+  srv_result = resolver.query('%s.%s' % (srv_prefix,dns_name.encode('idna')), 'SRV')
   if not srv_result:
     return []
   srv_result_answers = [
     # priority,weight,port,hostname
     (
-      res['data'][0],
-      res['data'][1],
-      res['data'][2],
-      res['data'][3]
+      res.priority,
+      res.weight,
+      res.port,
+      res.target.to_text().rstrip('.'),
     )
-    for res in srv_result.answers
-    if res['typename']=='SRV'
+    for res in srv_result
+#    if res['typename']=='SRV'
   ]
   srv_result_answers.sort()
   return srv_result_answers
 
 
 def dcDNSLookup(dn):
-  if dn and dns_module_avail:
+  if dn:
     try:
-      dns_result = ldapSRV(dcdn2dnsdomain(dn))
-    except (DNS.Error,socket.error):
+      dns_result = ldapSRV(dcdn2dnsdomain(dn).encode('idna'))
+    except (
+      resolver.NoAnswer,
+      resolver.NoNameservers,
+      resolver.NotAbsolute,
+      resolver.NoRootSOA,
+      resolver.NXDOMAIN,
+      socket.error,
+    ):
       return []
     else:
       return [

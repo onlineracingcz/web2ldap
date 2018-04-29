@@ -243,8 +243,7 @@ def EntryMainMenu(form,env):
   main_menu = [form.applAnchor('','Connect',None,[])]
   if web2ldap.app.monitor.check_monitor_access(env):
     main_menu.append(form.applAnchor('monitor','Monitor',None,[]))
-  if web2ldap.app.locate.DNS:
-    main_menu.append(form.applAnchor('locate','DNS lookup',None,[]))
+  main_menu.append(form.applAnchor('locate','DNS lookup',None,[]))
   return main_menu
 
 
