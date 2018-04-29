@@ -700,11 +700,6 @@ ldap_def = {
 #      ldap0.OPT_X_TLS_CRLCHECK:ldap0.OPT_X_TLS_CRL_PEER,
 #      ldap0.OPT_X_TLS_CRLFILE:os.path.join(web2ldapcnf.etc_dir,'ssl','crt','peers.crl'),
     },
-    # regular expression of subject DNs in client certs
-    ssl_valid_dn=r'/.*',
-    # regular expression of subject DNs in issuer certs
-    ssl_valid_idn=r'/.*',
-    sec_reqlevel=0,
 
     # Send session track control
     session_track_control=0,
@@ -1038,8 +1033,6 @@ ldap_def = {
   # Adjust the settings to reflect your local LDAP installation
   'ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de': Web2LDAPConfig(
     description=u'My Address Book',
-    ssl_valid_dn=r'^/S=Stroeder/G=Michael/CN=Michael Stroeder/Email=michael@stroeder.com$',
-    ssl_valid_idn=r'^/C=ZA/ST=Western Cape/L=Durbanville/O=Thawte/OU=Certificate Services/CN=Personal Freemail RSA 1999\.9\.16$',
     session_track_control=1,
     # LDIF file used to extended the server's schema
 #    schema_supplement=os.path.join(web2ldapcnf.etc_dir,'stroeder-dit-structure.ldif'),

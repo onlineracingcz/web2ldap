@@ -691,11 +691,6 @@ ldap_def = {
 #      ldap0.OPT_X_TLS_CRLCHECK:ldap0.OPT_X_TLS_CRL_PEER,
 #      ldap0.OPT_X_TLS_CRLFILE:os.path.join(web2ldapcnf.etc_dir,'ssl','crt','peers.crl'),
     },
-    # regular expression of subject DNs in client certs
-    ssl_valid_dn=r'/.*',
-    # regular expression of subject DNs in issuer certs
-    ssl_valid_idn=r'/.*',
-    sec_reqlevel=0,
 
     # Send session track control
     session_track_control=0,

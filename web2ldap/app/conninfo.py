@@ -325,7 +325,6 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
       <tr><td>User-Agent header:</td><td>%s</td></tr>
       <tr><td>Browser detected:</td><td>%s %s</td></tr>
     </table>
-    <h3>SSL</h3>
     """ % (
       ls.onBehalf,
       form.utf2display(unicode(form.env.get('REMOTE_ADDR',''))),
@@ -338,7 +337,4 @@ def w2l_ConnInfo(sid,outf,command,form,ls,dn):
       form.browser_version or '',
     )
   )
-  ssl_valid_dn = web2ldap.app.cnf.GetParam(ls,'ssl_valid_dn','')
-  ssl_valid_idn = web2ldap.app.cnf.GetParam(ls,'ssl_valid_idn','')
-  pyweblib.sslenv.PrintSecInfo(form.env,web2ldapcnf.sec_sslacceptedciphers,ssl_valid_dn,ssl_valid_idn,outf)
   web2ldap.app.gui.Footer(outf,form)

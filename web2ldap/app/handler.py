@@ -79,22 +79,6 @@ class AppHandler:
     self.command,self.sid = self.path_info()
     return
 
-  def check_sec_level(self,ls):
-    required_ssl_level = web2ldap.app.cnf.GetParam(ls,'ssl_minlevel',0)
-    current_ssl_level = pyweblib.sslenv.SecLevel(
-      self.env,
-      web2ldapcnf.sec_sslacceptedciphers,
-      web2ldap.app.cnf.GetParam(ls,'ssl_valid_dn',''),
-      web2ldap.app.cnf.GetParam(ls,'ssl_valid_idn','')
-    )
-    if current_ssl_level < required_ssl_level:
-      raise web2ldap.app.core.ErrorExit(
-        u'Access denied. SSL security level %d not sufficient. Must be at least %d.' % (
-          current_ssl_level,required_ssl_level
-        )
-      )
-    return # check_sec_level()
-
   def guess_client_addr(self):
     """
     Guesses the host name or IP address of the HTTP client by looking
@@ -622,8 +606,7 @@ class AppHandler:
         # to give the exception handler a good chance
         session_store.storeSession(self.sid,ls)
 
-        # Check backend specific required SSL level
-        self.check_sec_level(ls)
+        # TODO: Check backend specific access control here
 
         # Execute the command module
         try:
