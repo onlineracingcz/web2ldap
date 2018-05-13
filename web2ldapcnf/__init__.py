@@ -138,13 +138,16 @@ http_headers = {
   'Referrer-Policy':'no-referrer',
   # Content Security Policy
   'Content-Security-Policy':' '.join((
-    "default-src 'none';",
-    "img-src 'self' data:;",
-    "style-src 'self';",
-    "connect-src 'none';",
-    "font-src 'self';",
-    "frame-src 'none';",
-    "script-src 'none';",
+      "child-src 'none';",
+      "connect-src 'none';",
+      "default-src 'none';",
+      "font-src 'self';",
+      "form-action 'self';",
+      "frame-ancestors 'none';",
+      "frame-src 'none';",
+      "img-src 'self' data:;",
+      "script-src 'none';",
+      "style-src 'self';",
 #    "report-uri https://logger.example.com/csp-error-handler",
   )),
 }
