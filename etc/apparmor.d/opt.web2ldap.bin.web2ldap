@@ -10,6 +10,13 @@
   /opt/web2ldap/bin/python2.7 ix,
   /opt/web2ldap/** r,
 
+  # write temporary files
+  /tmp/ rw,
+  owner /tmp/** rwkl,
+
+  # read access to CA cert bundle
+  /etc/ssl/ca-bundle.pem r,
+
   # allow r/w access to Unix domain socket of local slapd
   /run/slapd/ldapi rw,
 }
