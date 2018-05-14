@@ -1,0 +1,79 @@
+<!--#set var="web2ldap_subtitle" value="Installing on openSUSE/SLE" -->
+<!--#set var="web2ldap_pagedescription" value="A brief description on how to install it on openSUSE or SUSE Linux Enterprise" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<p>
+  <strong>
+    Note that this installation description is for
+    release <!--#include file="ssi/release.shtml" -->!
+  </strong>
+</p>
+
+<p>Notes:</p>
+<ul>
+  <li>
+    This simple install receipt requires that the machine has Internet (proxy)
+    access to load packages from <a href="https://pypi.org">PyPI repository</a>
+    and a separate <em>zypper</em> repo.
+  </li>
+  <li>
+    Does not need C compiler installed.
+  </li>
+  <li>
+    Also look for the <var>Dockerfile</var> in the source distribution for
+    automated installation into container running
+    <a href="https://www.opensuse.org">openSUSE Tumbleweed</a>.
+  </li>
+</ul>
+
+<p>Additional repository:</p>
+<pre>
+export SUSE_RELEASE="$(lsb_release -d |cut -d ' ' -f2)"
+zypper add --no-recommends ca-certificates-mozilla
+zypper addrepo --refresh https://download.opensuse.org/repositories/home:/stroeder:/AE-DIR/openSUSE_${SUSE_RELEASE}/
+</pre>
+
+<p>Install required packages:</p>
+
+<pre>
+zypper install python-2.7 python-setuptools python-xml python-pyweblib python-ldap0 python-pyasn1 python-pyasn1-modules python-pyweblib python-ipaddress python-dnspython python-asn1crypto python-Pillow python-xlwt python-paramiko python-certifi
+</pre>
+
+<p>Install in a Python virtual environment:</p>
+<pre>
+virtualenv -p python2.7 --system-site-packages --no-setuptools --no-wheel /opt/web2ldap
+/opt/web2ldap/bin/pip2 install --no-deps --find-links https://www.web2ldap.de/download.html web2ldap
+</pre>
+
+<p>
+  Start simple stand-alone web server by default listening
+  on localhost, port 1760:
+</p>
+<pre>
+/opt/web2ldap/bin/web2ldap 127.0.0.1 1760
+</pre>
+
+<h1 id="Installing">Upgrade instructions</h1>
+
+<p>
+  If you've customized web2ldap configuration backup your local config
+  changes first:
+</p>
+<pre>
+cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
+</pre>
+
+<p>
+  Then install the web2ldap upgrade (without necessarily upgrading other modules) like this:
+</p>
+<pre>
+/opt/web2ldap/bin/pip2 install --upgrade --no-deps --upgrade-strategy only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap
+</pre>
+
+<p>
+  Restore your customized web2ldap configuration e.g. from backup or via
+  config management.
+</p>
+
+<!--#include file="ssi/footer.html" -->
