@@ -71,9 +71,9 @@ class Name(asn1.Sequence):
     self._name = []
     for i in val:
       try:
-        attr_value = unicode(i[0].val[1].val,strtag2charset[i[0].val[1].tag])
+        attr_value = i[0].val[1].val.decode(strtag2charset[i[0].val[1].tag])
       except UnicodeError:
-        attr_value = unicode(repr(i[0].val[1].val)[1:-1],'ascii')
+        attr_value = repr(i[0].val[1].val)[1:-1].decode('ascii')
       self._name.append((i[0].val[0],attr_value))
 
   def descr(self,oids=None,charset='utf-8'):
