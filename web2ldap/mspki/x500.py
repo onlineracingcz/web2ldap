@@ -13,8 +13,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-# Additional encodings
-from web2ldap import t61_8
 # Pisces
 from web2ldap.pisces import asn1
 # mspki itself
@@ -22,7 +20,6 @@ from . import asn1helper
 
 strtag2charset = {
   asn1.PRINTABLE_STRING:'ascii',
-  asn1.T61STRING:'t61-8',
   asn1.IA5STRING:'ascii',
   asn1.UTF8STRING:'utf-8',
   asn1.BMPSTRING:'utf-16-be',
@@ -72,7 +69,7 @@ class Name(asn1.Sequence):
     for i in val:
       try:
         attr_value = i[0].val[1].val.decode(strtag2charset[i[0].val[1].tag])
-      except UnicodeError:
+      except (UnicodeError,KeyError):
         attr_value = repr(i[0].val[1].val)[1:-1].decode('ascii')
       self._name.append((i[0].val[0],attr_value))
 
