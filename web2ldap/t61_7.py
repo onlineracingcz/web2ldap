@@ -34,7 +34,7 @@ class StreamReader(Codec,codecs.StreamReader):
 
 ### encodings module API
 
-def getregentry():
+def getregentry(*args, **kwargs):
   try:
     return codecs.CodecInfo(
         name='t61-7',
