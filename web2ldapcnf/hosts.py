@@ -526,7 +526,7 @@ ae_dir_config = Web2LDAPConfig(
     'msPwdResetObject':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_msPwdResetObject.html'),
     'posixAccount':os.path.join(web2ldapcnf.templates_dir,'read_posixAccount.html'),
     'aePolicy':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aePolicy.html'),
-    'pwdPolicy':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_pwdPolicy.html'),
+    'pwdPolicy':os.path.join(web2ldapcnf.templates_dir,'read_pwdPolicy.html'),
     'msPwdResetPolicy':os.path.join(web2ldapcnf.templates_dir,'read_msPwdResetPolicy.html'),
     'aeRoot':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeRoot.html'),
     'aeGroup':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeGroup.html'),
