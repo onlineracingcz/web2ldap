@@ -1,8 +1,8 @@
 #!/bin/sh
 
 python2 setup.py clean --all
-rm -r MANIFEST .coverage dist/ldap0* build/* *.egg-info .tox docs/.build/*
-rm _libldap0.so _libldap0.cpython*.so ldap0/*.py? ldap0/*/*.py? tests/*.py? *.py?
+rm -r MANIFEST .coverage dist/web2ldap* build/* *.egg-info .tox docs/.build/*
+rm web2ldap/*.py? web2ldap/*/*.py? tests/*.py? *.py?
 find -name "*.py?" -delete
 find -name __pycache__ | xargs -n1 -iname rm -r name
 rm -r slapdtest-[0-9]*
