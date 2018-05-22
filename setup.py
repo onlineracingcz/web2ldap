@@ -1,7 +1,7 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
 """
-package/install module package ekca-client
+package/install web2ldap
 """
 
 import sys
