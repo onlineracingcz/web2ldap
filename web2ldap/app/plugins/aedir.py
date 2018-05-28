@@ -1456,7 +1456,7 @@ class AEUserMailaddress(AEPersonAttribute,SelectList):
     }
     attr_value_dict.update([
       (addr.decode(self._ls.charset),addr.decode(self._ls.charset))
-      for addr in self._entry.get('mailLocalAddress',['foobar@stroeder.com'])
+      for addr in self._entry.get('mailLocalAddress',[])
     ])
     return attr_value_dict
 
