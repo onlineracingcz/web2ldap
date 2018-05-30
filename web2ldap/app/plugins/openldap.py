@@ -231,6 +231,23 @@ syntax_registry.registerAttrType(
 )
 
 
+class OlcMemberOfDangling(SelectList):
+  oid = 'OlcMemberOfDangling-oid'
+  desc = 'Behavior in case of dangling references during modification'
+  attr_value_dict = {
+    u'':u'-/-',
+    u'ignore':u'ignore',
+    u'drop':u'drop',
+    u'error':u'error',
+  }
+
+syntax_registry.registerAttrType(
+  OlcMemberOfDangling.oid,[
+    '1.3.6.1.4.1.4203.1.12.2.3.3.18.1', # olcMemberOfDangling
+  ]
+)
+
+
 #---------------------------------------------------------------------------
 # slapo-accesslog
 #---------------------------------------------------------------------------
