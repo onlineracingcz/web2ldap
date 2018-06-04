@@ -84,12 +84,12 @@ def application(environ, start_response):
                 [('Content-type', 'text/css')],
                 [('Content-Length', css_size)],
             )
-        except IOError:
+        except (IOError, OSError):
             start_response(
                 '404 not found',
                 [('Content-type', 'text/plain')],
             )
-            return []
+            return ['404 - Not found.']
         else:
             return wsgiref.util.FileWrapper(css_file)
     if not environ['SCRIPT_NAME']:
