@@ -284,7 +284,7 @@ def w2l_Read(
   read_output = form.getInputValue('read_output',[u'template'])[0]
   filterstr = form.getInputValue('filterstr',[u'(objectClass=*)'])[0]
 
-  read_nocache = int(form.getInputValue('read_nocache',['0'])[0])
+  read_nocache = int(form.getInputValue('read_nocache',['0'])[0] or '0')
 
   # Specific attributes requested with form parameter read_attr?
   wanted_attrs = [
