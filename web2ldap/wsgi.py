@@ -79,10 +79,11 @@ def application(environ, start_response):
         try:
             css_size = os.stat(css_filename).st_size
             css_file = open(css_filename, 'rb')
+            css_http_headers = [('Content-type', 'text/css'), ('Content-Length', str(css_size))]
+            css_http_headers.extend(web2ldapcnf.http_headers.items())
             start_response(
                 '200 OK',
-                [('Content-type', 'text/css')],
-                [('Content-Length', css_size)],
+                css_http_headers,
             )
         except (IOError, OSError):
             start_response(
