@@ -12,15 +12,20 @@
     Added plugin class for OpenLDAP attribute <var>olcMemberOfDangling</var>.
   </li>
   <li>
-    Gracefully handle empty string passed to form parameter
-    <var>read_nocache</var>.
-  </li>
-  <li>
-    Also return HTTP response code <var>404</var> in case an
-    <var>OSError</var> was raised when reading CSS files.
-  </li>
-  <li>
-    Fixed sending correct HTTP headers when serving CSS files.
+    Web service robustness:
+    <ul>
+      <li>
+        Gracefully handle empty string passed to form parameter
+        <var>read_nocache</var>.
+      </li>
+      <li>
+        Also return HTTP response code <var>404</var> in case an
+        <var>OSError</var> was raised when reading CSS files.
+      </li>
+      <li>
+        Fixed sending correct HTTP headers when serving CSS files.
+      </li>
+    </ul>
   </li>
 </ul>
 
