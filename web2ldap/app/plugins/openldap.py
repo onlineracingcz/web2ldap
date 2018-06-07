@@ -213,6 +213,19 @@ syntax_registry.registerAttrType(
 )
 
 
+class OlmSeeAlso(DynamicDNSelectList):
+  oid = 'OlmSeeAlso-oid'
+  desc = 'DN of a overlase or database object in back-monitor'
+  ldap_url = 'ldap:///_?monitoredInfo?sub?(&(objectClass=monitoredObject)(|(entryDN:dnOneLevelMatch:=cn=Databases,cn=Monitor)(entryDN:dnOneLevelMatch:=cn=Overlays,cn=Monitor)(entryDN:dnOneLevelMatch:=cn=Backends,cn=Monitor)))'
+
+syntax_registry.registerAttrType(
+  OlmSeeAlso.oid,[
+    '2.5.4.34', # seeAlso
+  ],
+  structural_oc_oids=['1.3.6.1.4.1.4203.666.3.16.8'], # monitoredObject
+)
+
+
 class OlcPPolicyDefault(DistinguishedName,DynamicDNSelectList):
   oid = 'OlcPPolicyDefault-oid'
   desc = 'DN of a pwdPolicy object for uncustomized objects'
