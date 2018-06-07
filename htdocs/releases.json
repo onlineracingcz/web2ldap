@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.3.19",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "more OpenLDAP customization, better web error handling for some corner-cases",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.3.19.tar.gz",
+         "published": "2018-06-07T12:00:00+00:00"
+      },
+      {
          "version": "1.3.18",
          "state": "stable",
          "scope": "minor feature",
