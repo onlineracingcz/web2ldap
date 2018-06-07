@@ -1,4 +1,4 @@
-dn: uniqueIdentifier=,cn=people,ou=ae-dir
+dn: cn=,cn=people,ou=ae-dir
 objectClass: locality
 objectClass: aeLocation
 objectClass: aeObject
