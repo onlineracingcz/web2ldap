@@ -1847,7 +1847,7 @@ class UUID(IA5String):
 class DNSDomain(IA5String):
   oid = 'DNSDomain-oid'
   desc = 'DNS domain name (see RFC 1035)'
-  reObj = re.compile('^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$')
+  reObj = re.compile('^(\*|[a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)*$')
   maxLen = min(255,IA5String.maxLen) # (see https://tools.ietf.org/html/rfc2181#section-11)
   simpleSanitizers = (
     str.lower,
@@ -1919,7 +1919,7 @@ class RFC822Address(IA5String,DNSDomain):
 class DomainComponent(DNSDomain):
   oid = 'DomainComponent-oid'
   desc = 'DNS domain name component'
-  reObj = re.compile('^[a-zA-Z0-9_-]+$')
+  reObj = re.compile('^(\*|[a-zA-Z0-9_-]+)$')
   maxLen = min(63,DNSDomain.maxLen) # (see https://tools.ietf.org/html/rfc2181#section-11)
 
 
