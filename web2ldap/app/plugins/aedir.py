@@ -684,6 +684,7 @@ syntax_registry.registerAttrType(
   structural_oc_oids=[
     AE_USER_OID,    # aeUser
     AE_SERVICE_OID, # aeService
+    AE_CONTACT_OID, # aeContact
   ],
 )
 
