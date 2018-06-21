@@ -214,8 +214,8 @@ td.InputAttrType {
   white-space: nowrap;
 }
 
-td#About {
-  text-align:center;
+td.About {
+  text-align:right;
   vertical-align:middle;
 }
 
