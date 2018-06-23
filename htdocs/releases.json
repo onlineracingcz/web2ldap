@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.3.21",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "some minor feature improvements",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.3.21.tar.gz",
+         "published": "2018-07-xxT12:00:00+00:00"
+      },
+      {
          "version": "1.3.20",
          "state": "stable",
          "scope": "minor feature",
