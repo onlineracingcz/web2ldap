@@ -1,0 +1,49 @@
+# AppArmor profile for UWSGI service web2ldap
+# installed in virtual env /opt/web2ldap
+
+#include <tunables/global>
+
+profile web2ldap {
+
+  #include <abstractions/web2ldap/base>
+  #include <abstractions/web2ldap/nameservice>
+  #include <abstractions/python>
+
+  # Python and its modules
+  /opt/web2ldap/bin/python2.7 ix,
+  /opt/web2ldap/lib/python2.7/site-packages/ r,
+  /opt/web2ldap/lib/python2.7/site-packages/** r,
+  /opt/web2ldap/lib/python2.7/orig-prefix.txt r,
+  /opt/web2ldap/lib/python2.7/**.py{,c,o} r,
+  /opt/web2ldap/lib/python2.7/**.so* rm,
+
+  # access to web2ldap application config
+  /opt/web2ldap/etc/web2ldap/** r,
+
+  # access to CA cert bundle
+  /var/lib/ca-certificates/ca-bundle.pem r,
+
+  # access to uwsgi config
+  /etc/uwsgi/web2ldap.ini r,
+
+  # allow r/w access to own Unix domain socket
+  /run/uwsgi/web2ldap/web2ldap.sock rw,
+
+  # we need MIME types
+  /etc/mime.types r,
+
+  # uwsgi needs to look at mounts
+  @{PROC}/filesystems r,
+
+  # write temporary files
+  /tmp/ rw,
+  owner /tmp/** rwkl,
+
+  # for loading the Python 2.7 plugin
+  /usr/lib64/uwsgi/python_plugin.so rm,
+
+  deny /bin/bash r,
+
+  @{PROC}/sys/net/core/somaxconn r,
+
+}

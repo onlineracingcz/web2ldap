@@ -1,0 +1,52 @@
+# AppArmor profile for apache
+
+#include <tunables/global>
+
+profile apache {
+
+  #include <abstractions/web2ldap/base>
+  #include <abstractions/web2ldap/nameservice>
+
+  capability setuid,
+  capability setgid,
+  capability kill,
+  capability net_bind_service,
+
+  # Allow unconfined processes to send us signals by default
+  signal (receive) peer=unconfined,
+  # Allow us to signal ourselves
+  signal peer=@{profile_name},
+
+  # access to dynamically loadable modules
+  /usr/lib64/apache2/mod_*.so rm,
+
+  # access to config files
+  /etc/apache2/srv2.stroeder.com.conf r,
+  /etc/mime.types r,
+
+  # the PID file
+  /run/httpd.pid rw,
+
+  # allow r/w access to SSL session cache
+  /var/lib/apache2/ssl_scache rw,
+
+  # allow r/w access to log files
+  /var/log/apache2/access_log* rw,
+  /var/log/apache2/error_log rw,
+
+  # access to TLS-related files
+  /var/lib/ca-certificates/ca-bundle.pem r,
+  /etc/apache2/ssl.crt/*.crt r,
+  /etc/apache2/ssl.key/*.key r,
+
+  # access to static htdocs/ files
+  /srv/www/** r,
+  /opt/web2ldap/htdocs/** r,
+
+  # access to web2ldap's static CSS files
+  /opt/web2ldap/etc/web2ldap/css/*.css r,
+
+  # access to UWSGI's Unix domain sockets
+  /run/uwsgi/web2ldap/web2ldap.sock r,
+
+}
