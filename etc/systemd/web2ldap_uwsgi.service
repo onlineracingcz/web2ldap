@@ -11,7 +11,10 @@ After=local-fs.target remote-fs.target network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/sbin/uwsgi --ini /opt/web2ldap/etc/uwsgi-web2ldap.ini
+Environment=LDAPNOINIT=1
+Environment=PYTHONOPTIMIZE=2
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/sbin/uwsgi --ini /etc/uwsgi/web2ldap.ini
 User=web2ldap
 Group=web2ldap
 Restart=always
@@ -19,6 +22,19 @@ KillSignal=SIGQUIT
 Type=notify
 StandardError=syslog
 NotifyAccess=all
+# various hardening options
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+NoNewPrivileges=yes
+MountFlags=private
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+PrivateDevices=yes
+AppArmorProfile=web2ldap
 
 [Install]
 WantedBy=multi-user.target

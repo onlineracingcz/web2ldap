@@ -11,6 +11,9 @@ After=local-fs.target remote-fs.target network.target
 
 [Service]
 Type=simple
+Environment=LDAPNOINIT=1
+Environment=PYTHONOPTIMIZE=2
+Environment=PYTHONDONTWRITEBYTECODE=1
 # listen on 0.0.0.0:1760
 ExecStart=/opt/web2ldap/sbin/web2ldap.py 1760
 User=web2ldap
@@ -20,6 +23,19 @@ KillSignal=SIGQUIT
 Type=notify
 StandardError=syslog
 NotifyAccess=all
+# various hardening options
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+NoNewPrivileges=yes
+MountFlags=private
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+PrivateDevices=yes
+AppArmorProfile=web2ldap
 
 [Install]
 WantedBy=multi-user.target
