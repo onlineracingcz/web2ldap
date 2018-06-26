@@ -2049,9 +2049,9 @@ class HashAlgorithmOID(SelectList,AlgorithmOID):
 
 class HMACAlgorithmOID(SelectList,AlgorithmOID):
   oid = 'HMACAlgorithmOID-oid'
-  desc = 'values from RFC 2898'
+  desc = 'values from RFC 8018'
   attr_value_dict = {
-    # from RFC 2898
+    # from RFC 8018
     u'1.2.840.113549.2.7':u'hmacWithSHA1',
     u'1.2.840.113549.2.8':u'hmacWithSHA224',
     u'1.2.840.113549.2.9':u'hmacWithSHA256',
