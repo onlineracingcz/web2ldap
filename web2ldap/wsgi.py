@@ -70,9 +70,7 @@ def application(environ, start_response):
     """
     if environ['PATH_INFO'].startswith('/css/web2ldap'):
         css_filename = os.path.join(
-            web2ldapcnf.web2ldap_dir,
-            'etc',
-            'web2ldap',
+            web2ldapcnf.etc_dir,
             'css',
             os.path.basename(environ['PATH_INFO'])
         )
