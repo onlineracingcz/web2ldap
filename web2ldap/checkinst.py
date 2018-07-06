@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7 -ROO
 # -*- coding: utf-8 -*-
 """
 This script checks all the prerequisites for running
