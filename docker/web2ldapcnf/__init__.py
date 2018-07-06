@@ -15,12 +15,16 @@ import sys,os
 # General options
 #---------------------------------------------------------------------------
 
-# Directory where web2ldap is started
-web2ldap_dir = os.environ.get('WEB2LDAP_HOME', sys.prefix)
-
-# Default directory for [web2ldap]/etc
-etc_dir = os.environ.get('WEB2LDAP_ETC', os.path.join(web2ldap_dir,'etc','web2ldap'))
-#etc_dir = '/etc/web2ldap'
+# Path name of [web2ldap]/etc/web2ldap
+if 'WEB2LDAP_HOME' in os.environ:
+  # env var points to web2ldap root directory
+  etc_dir = os.path.join(os.environ['WEB2LDAP_HOME'],'etc','web2ldap')
+elif os.name=='posix' and sys.prefix=='/usr':
+  # OS-wide installation on POSIX platform (Linux, BSD, etc.)
+  etc_dir = '/etc/web2ldap'
+else:
+  # virtual env
+  etc_dir = os.path.join(sys.prefix,'etc','web2ldap')
 
 # Default directory for [web2ldap]/etc/web2ldap/templates
 templates_dir = os.path.join(etc_dir,'templates')
