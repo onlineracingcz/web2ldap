@@ -60,7 +60,7 @@
 </p>
   <p>Example:</p>
 <samp>
-  <pre>
+  <pre class="cli">
 ldap_uri_list = [
   'ldap://localhost',
   ('ldap://ldap.openldap.org',u"OpenLDAP's demo server"),
@@ -110,7 +110,7 @@ ldap_uri_list = [
 
 <h2 id="example_config">Configuration Example</h2>
 <samp>
-  <pre>
+  <pre class="cli">
 ldap_def = {
 
   '_': Web2LDAPConfig(
@@ -167,7 +167,7 @@ off a certain behaviour.
       determines the standard template directory):</dt>
       <dd>
         <samp>
-          <pre>
+          <pre class="cli">
 addform_entry_templates={
   'Person':os.path.join(web2ldapcnf.templates_dir,'add_person.ldif'),
   'My User Account':'/home/web2ldap/lib/add_myuser.ldif'),
@@ -294,7 +294,7 @@ addform_entry_templates={
       <dt>Example:</dt>
       <dd>
         <samp>
-          <pre>
+          <pre class="cli">
 groupadm_defs={
   'groupOfNames':       ('member',None),
   'groupOfUniqueNames': ('uniqueMember',None),
@@ -426,7 +426,7 @@ groupadm_defs={
       <dt>Example:</dt>
       <dd>
         <samp>
-          <pre>
+          <pre class="cli">
 print_template={
   # 'object class':'pathname of printable HTML template file'
   'person':os.path.join(web2ldapcnf.templates_dir,'print_person.html'),
@@ -454,7 +454,7 @@ print_template={
       <dt>Example:</dt>
       <dd>
         <samp>
-          <pre>
+          <pre class="cli">
 read_tablemaxcount={
   'member':100,
   'allowedAttributes':2,
@@ -478,7 +478,7 @@ read_tablemaxcount={
       <dt>Example:</dt>
       <dd>
         <samp>
-          <pre>
+          <pre class="cli">
 read_template={
   # 'object class':'pathname of HTML template file'
   'inetOrgPerson':os.path.join(web2ldapcnf.templates_dir,'read_inetOrgPerson.html'),
@@ -504,7 +504,7 @@ read_template={
       <dt>Example:</dt>
       <dd>
         <samp>
-          <pre>
+          <pre class="cli">
 input_template={
   'inetOrgPerson':os.path.join(web2ldapcnf.templates_dir,'inputform_inetOrgPerson.html'),
   'posixAccount':os.path.join(web2ldapcnf.templates_dir,'inputform_posixAccount.html'),
@@ -550,7 +550,7 @@ input_template={
       <dt>Example:</dt>
       <dd>
         <samp>
-          <pre>
+          <pre class="cli">
 rename_supsearchurl={
   u'Search for organizational units':'ldap:///dc=stroeder,dc=de??sub?(objectClass=organizationalUnit)',
   u'Search for organizations':'ldap:///dc=stroeder,dc=de??sub?(objectClass=organization)',
@@ -631,7 +631,7 @@ rename_supsearchurl={
       <dt>Example:</dt>
       <dd>
         <samp>
-          <pre>
+          <pre class="cli">
 searchform_bases=(
   '..',
   'ou=Bizness,dc=example,dc=com',
@@ -693,7 +693,7 @@ searchform_bases=(
       <dt>Example:</dt>
       <dd>
         <samp>
-          <pre>
+          <pre class="cli">
 searchform_template= {
   u'_':os.path.join(web2ldapcnf.templates_dir,'searchform_Base.html'),
   u'Users':os.path.join(web2ldapcnf.templates_dir,'searchform_users.html'),
@@ -757,7 +757,7 @@ searchform_template= {
       <dd><code>{}</code></dd>
       <dt>Example:</dt>
       <dd>
-        <pre>
+        <pre class="cli">
 tls_options={
   ldap.OPT_X_TLS_REQUIRE_CERT:ldap.OPT_X_TLS_DEMAND,
   # File containing all the trusted root CA certs

@@ -30,7 +30,7 @@
 </ul>
 
 <p>Install in a Python virtual environment:</p>
-<pre>
+<pre class="cli">
 virtualenv -p python2.7 --no-site-packages /opt/web2ldap
 /opt/web2ldap/bin/pip2 install --find-links https://www.web2ldap.de/download.html web2ldap
 </pre>
@@ -39,7 +39,7 @@ virtualenv -p python2.7 --no-site-packages /opt/web2ldap
   Start simple stand-alone web server by default listening
   on localhost, port 1760:
 </p>
-<pre>
+<pre class="cli">
 /opt/web2ldap/bin/web2ldap 127.0.0.1 1760
 </pre>
 
@@ -54,14 +54,14 @@ virtualenv -p python2.7 --no-site-packages /opt/web2ldap
   If you've customized web2ldap configuration backup your local config
   changes first:
 </p>
-<pre>
+<pre class="cli">
 cp -av /opt/web2ldap/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
 </pre>
 
 <p>
   Then install the web2ldap upgrade (without necessarily upgrading other modules) like this:
 </p>
-<pre>
+<pre class="cli">
 /opt/web2ldap/bin/pip2 install --upgrade --upgrade-strategy only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap
 </pre>
 
