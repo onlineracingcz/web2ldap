@@ -142,13 +142,16 @@ http_headers = {
   'Referrer-Policy':'no-referrer',
   # Content Security Policy
   'Content-Security-Policy':' '.join((
-    "default-src 'none';",
-    "img-src 'self' data:;",
-    "style-src 'self';",
-    "connect-src 'none';",
-    "font-src 'self';",
-    "frame-src 'none';",
-    "script-src 'none';",
+      "child-src 'none';",
+      "connect-src 'none';",
+      "default-src 'none';",
+      "font-src 'self';",
+      "form-action 'self';",
+      "frame-ancestors 'none';",
+      "frame-src 'none';",
+      "img-src 'self' data:;",
+      "script-src 'none';",
+      "style-src 'self';",
 #    "report-uri https://logger.example.com/csp-error-handler",
   )),
 }
@@ -197,17 +200,27 @@ good_redirect_targets=set((
   'https://www.web2ldap.de/',
 ))
 
-# List of accepted address/net mask strings of
-# accepted client addresses.
-# Use [u'0.0.0.0/0.0.0.0','::0'] to allow access to every client but think twice!
+# Dictionary specifying accepted address/net mask strings of
+# accepted client addresses for certain URL commands.
+# Use [u'0.0.0.0/0.0.0.0',u'::0'] to allow access to every client but think twice!
 # IPv6 network addresses without brackets!
-monitor_access_allowed = [
-  u'127.0.0.0/255.0.0.0',
-  u'::1',
-  u'fe00::0',
-#  u'10.0.0.0/255.0.0.0',
-#  u'0.0.0.0/0.0.0.0','::0',
-]
+access_allowed = {
+  u'_':[
+    u'0.0.0.0/0.0.0.0',u'::0',
+  ],
+  u'monitor':[
+    u'0.0.0.0/0.0.0.0',u'::0',
+  ],
+  u'locate':[
+    u'0.0.0.0/0.0.0.0',u'::0',
+  ],
+}
+
+#---------------------------------------------------------------------------
+# Import plugins in sub-config
+#---------------------------------------------------------------------------
+
+import web2ldapcnf.plugins
 
 #---------------------------------------------------------------------------
 # Optionally import a local sub-config file

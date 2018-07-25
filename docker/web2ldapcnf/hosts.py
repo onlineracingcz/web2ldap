@@ -1002,10 +1002,6 @@ ldap_def = {
 
   ),
 
-  'ldap://localhost': Web2LDAPConfig(
-    description=u'My poorly configured LDAP host',
-  ),
-
   'ldap://ipa.demo1.freeipa.org': Web2LDAPConfig(
     description=u'freeIPA demo host',
     # work around 389-DS bug here
@@ -1042,3 +1038,4 @@ ldap_def = {
 
 # You can apply sections defined above to other configuration keys
 ldap_def['ldap://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com']
+
