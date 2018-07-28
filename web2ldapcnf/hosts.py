@@ -56,6 +56,7 @@ ldap_uri_list = [
   ('ldap://ldap.sbca.telesec.de/c=de??one',u'T-Systems Shared Business'),
   ('ldap://ldap.crl.esecure.datev.de/??one',u'Datev'),
   ('ldap://directory.swisssign.net/o=SwissSign,c=CH??one',u'SwissSign AG'),
+  ('ldap://ldap.forumsys.com/dc=example,dc=com????bindname=cn%3Dread-only-admin%2Cdc%3Dexample%2Cdc%3Dcom,X-BINDPW=password',u'ldap.forumsys.com'),
 ]
 
 # Set to True (or 1) if LDAP access should be restricted to the LDAP servers
