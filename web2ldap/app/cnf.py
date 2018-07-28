@@ -20,10 +20,25 @@ import ldap0,ldap0.ldapurl,ldap0.schema
 from ldap0.cidict import cidict
 from ldap0.ldapurl import LDAPUrl
 
+
+class Web2LDAPConfig:
+  """
+  Base class for a web2ldap host-/backend configuration section.
+  """
+
+  def __init__(self,**kwargs):
+    self.__dict__.update(kwargs)
+
+  def get(self,name,default=None):
+    self.__dict__.get(name,default)
+
+
+# these imports must happen after declaring class Web2LDAPConfig!
 import web2ldapcnf.hosts
 
 from web2ldap.ldapsession import LDAPSession
 import web2ldap.app.schema
+
 
 class Web2LDAPConfigDict(cidict):
 

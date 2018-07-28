@@ -4,25 +4,14 @@ web2ldapcnf/hosts.py - Host-related options
 (c) by Michael Stroeder <michael@stroeder.com>
 """
 
-# Leave this alone
+from __future__ import absolute_import
+
+# Leave these import lines alone
 import os
-
 import ldap0
-
 import certifi
-
 import web2ldapcnf
-
-class Web2LDAPConfig:
-  """
-  Base class for a web2ldap host-/backend configuration section.
-
-  Leave untouched!!!
-  """
-  def __init__(self,**kwargs):
-    self.__dict__.update(kwargs)
-  def get(self,name,default=None):
-    self.__dict__.get(name,default)
+from web2ldap.app.cnf import Web2LDAPConfig
 
 
 ########################################################################
