@@ -8,6 +8,8 @@ Some features might be too special so consider this file to be subject
 of local configuration and tweak it to your needs.
 """
 
+from __future__ import absolute_import
+
 import re
 
 #---------------------------------------------------------------------------
@@ -328,7 +330,6 @@ import web2ldap.app.plugins.oath
 import web2ldap.app.plugins.mspwdreset
 
 #---------------------------------------------------------------------------
-# Add more local or experimental plugins from
-# etc/web2ldap/web2ldapcnf/plugins/ here
+# Add more local or experimental plugins from here
 #---------------------------------------------------------------------------
 

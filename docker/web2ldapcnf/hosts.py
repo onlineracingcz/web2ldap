@@ -4,25 +4,14 @@ web2ldapcnf/hosts.py - Host-related options
 (c) by Michael Stroeder <michael@stroeder.com>
 """
 
-# Leave this alone
+from __future__ import absolute_import
+
+# Leave these import lines alone
 import os
-
 import ldap0
-
 import certifi
-
 import web2ldapcnf
-
-class Web2LDAPConfig:
-  """
-  Base class for a web2ldap host-/backend configuration section.
-
-  Leave untouched!!!
-  """
-  def __init__(self,**kwargs):
-    self.__dict__.update(kwargs)
-  def get(self,name,default=None):
-    self.__dict__.get(name,default)
+from web2ldap.app.cnf import Web2LDAPConfig
 
 
 ########################################################################
@@ -47,6 +36,7 @@ ldap_uri_list = [
   ('ldap://ldap.sbca.telesec.de/c=de??one',u'T-Systems Shared Business'),
   ('ldap://ldap.crl.esecure.datev.de/??one',u'Datev'),
   ('ldap://directory.swisssign.net/o=SwissSign,c=CH??one',u'SwissSign AG'),
+  ('ldap://ldap.forumsys.com/dc=example,dc=com????bindname=cn%3Dread-only-admin%2Cdc%3Dexample%2Cdc%3Dcom,X-BINDPW=password',u'ldap.forumsys.com'),
 ]
 
 # Set to True (or 1) if LDAP access should be restricted to the LDAP servers

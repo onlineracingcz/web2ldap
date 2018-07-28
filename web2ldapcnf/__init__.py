@@ -4,10 +4,9 @@ Module web2ldapcnf
 (c) by Michael Stroeder <michael@stroeder.com>
 
 Some variables to configure the basic behaviour of web2ldap.py
-This directory should reside in /etc/web2ldap on Unix systems or
-either %SystemRoot%\web2ldap or %windir%\web2ldap on Windows systems.
-All code must be valid Python syntax.
 """
+
+from __future__ import absolute_import
 
 import sys,os
 
