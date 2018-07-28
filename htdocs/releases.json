@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.3.23",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "some changes in config module, fixed Docker examples",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.3.23.tar.gz",
+         "published": "2018-07-28T12:00:00+00:00"
+      },
+      {
          "version": "1.3.22",
          "state": "stable",
          "scope": "minor feature",
