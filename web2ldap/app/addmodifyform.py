@@ -1182,7 +1182,7 @@ def w2l_ModifyForm(sid,outf,command,form,ls,dn,entry,Msg='',invalid_attrs=None):
     form.hiddenFieldHTML('in_assertion',AssertionFilter(ls,entry),u''),
     '\n'.join([
       form.hiddenFieldHTML('in_oldattrtypes',at_name.decode('ascii'),u'')
-      for at_name in entry.keys()
+      for at_name in form.getInputValue('in_oldattrtypes',entry.keys())
     ]),
     in_wrtattroids_values,
   )))
