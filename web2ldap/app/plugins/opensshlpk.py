@@ -129,7 +129,10 @@ else:
       valid = SshPublicKey._validate(self,attrValue)
       if not valid:
         return False
-      pk_type,_,pk_bin,_ = self._extract_pk_params(attrValue)
+      try:
+        pk_type,_,pk_bin,_ = self._extract_pk_params(attrValue)
+      except ValueError:
+        return False
       if pk_type not in self.min_key_size:
         # no min-size defined for key type
         return True
