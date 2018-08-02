@@ -14,12 +14,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-# Fetch at most this number of entries when searching below a node
-DIT_SEARCH_SIZELIMIT = 50
-# Timelimit [s] for searching
-DIT_SEARCH_TIMELIMIT = 10
-# Allow maximum this number of levels
-DIT_MAX_LEVELS = 6
 # Alltributes to be read for nodes
 DIT_ATTR_LIST = [
   'objectClass',
@@ -46,7 +40,7 @@ def decode_dict(d,charset):
   return r
 
 
-def DIT_HTML(sid,outf,form,ls,anchor_dn,dit_dict,entry_dict,max_levels=DIT_MAX_LEVELS):
+def DIT_HTML(sid,outf,form,ls,anchor_dn,dit_dict,entry_dict,max_levels):
 
   def meta_results(d):
     """
@@ -145,7 +139,7 @@ def DIT_HTML(sid,outf,form,ls,anchor_dn,dit_dict,entry_dict,max_levels=DIT_MAX_L
     # Subordinate nodes' HTML
     r.append('<dd>')
     if max_levels and d:
-      r.extend(DIT_HTML(sid,outf,form,ls,anchor_dn,d,entry_dict,max_levels=max_levels-1))
+      r.extend(DIT_HTML(sid,outf,form,ls,anchor_dn,d,entry_dict,max_levels-1))
     r.append('</dd>')
 
   # Finish node's HTML
@@ -164,7 +158,8 @@ def w2l_DIT(sid,outf,command,form,ls,dn):
   root_dit_dict = dit_dict
 
   dn_levels = len(dn_components)
-  cut_off_levels = max(0,dn_levels-DIT_MAX_LEVELS)
+  dit_max_levels = int(form.getInputValue('dit_max_levels',['10'])[0])
+  cut_off_levels = max(0,dn_levels-dit_max_levels)
 
   for i in range(1,dn_levels-cut_off_levels+1):
     search_base = u','.join(dn_components[dn_levels-cut_off_levels-i:])
@@ -175,8 +170,8 @@ def w2l_DIT(sid,outf,command,form,ls,dn):
         ldap0.SCOPE_ONELEVEL,
         '(objectClass=*)',
         attrlist=DIT_ATTR_LIST,
-        timeout=DIT_SEARCH_TIMELIMIT,
-        sizelimit=DIT_SEARCH_SIZELIMIT,
+        timeout=int(form.getInputValue('dit_search_timelimit',['10'])[0]),
+        sizelimit=int(form.getInputValue('dit_search_sizelimit',['50'])[0]),
       )
       for res_type,res_data,_,_ in ls.l.results(msg_id):
         # FIX ME! Search continuations are ignored for now
@@ -204,7 +199,8 @@ def w2l_DIT(sid,outf,command,form,ls,dn):
   if root_dit_dict:
     outf_lines = DIT_HTML(
       sid,outf,form,ls,dn,
-      root_dit_dict,entry_dict
+      root_dit_dict,entry_dict,
+      dit_max_levels,
     )
   else:
     if dn:

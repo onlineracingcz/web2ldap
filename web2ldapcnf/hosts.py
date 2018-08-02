@@ -829,6 +829,14 @@ ldap_def = {
     # Default for number of results shown per page
     search_resultsperpage=10,
 
+    # Parameters for tree-viewer
+    # Allow maximum this number of levels
+    dit_max_levels=10,
+    # Fetch at most this number of entries when searching below a node
+    dit_search_sizelimit=50,
+    # Timelimit [secs] for searching
+    dit_search_timelimit=10,
+
     # HTML template file used for displaying entries of specific object class
     read_template={
       # 'object class':'pathname of HTML template file'

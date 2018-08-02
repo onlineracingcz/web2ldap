@@ -14,6 +14,9 @@
   [<a href="#boundas_template">boundas_template</a>]
   [<a href="#bulkmod_delold">bulkmod_delold</a>]
   [<a href="#description">description</a>]
+  [<a href="#dit_max_levels">dit_max_levels</a>]
+  [<a href="#dit_search_sizelimit">dit_search_sizelimit</a>]
+  [<a href="#dit_search_timelimit">dit_search_timelimit</a>]
   [<a href="#groupadm_defs">groupadm_defs</a>]
   [<a href="#groupadm_filterstr_template">groupadm_filterstr_template</a>]
   [<a href="#groupadm_optgroup_bounds">groupadm_optgroup_bounds</a>]
@@ -146,7 +149,7 @@ off a certain behaviour.
   <dd>
     This parameter allows to define a list of attributes which must be
     readable in the parent entry for a LDIF template to be displayed.
-    If the bound user does not have sufficient access rights the LDIF 
+    If the bound user does not have sufficient access rights the LDIF
     template will be supressed.
     <dl>
       <dt>Default:</dt><dd><code>[]</code></dd>
@@ -228,6 +231,24 @@ addform_entry_templates={
         </samp>
       </dd>
     </dl>
+  </dd>
+
+  <dt id="dit_max_levels">dit_max_levels</dt>
+  <dd>
+    Allow maximum this number of levels in tree browser.
+    <dl><dt>Default:</dt><dd><code>10</code></dd></dl>
+  </dd>
+
+  <dt id="dit_search_sizelimit">dit_search_sizelimit</dt>
+  <dd>
+    Fetch at most this number of entries when searching below a node in tree browser.
+    <dl><dt>Default:</dt><dd><code>50</code></dd></dl>
+  </dd>
+
+  <dt id="dit_search_timelimit">dit_search_timelimit</dt>
+  <dd>
+    Timelimit [secs] for searching in tree browser.
+    <dl><dt>Default:</dt><dd><code>10</code></dd></dl>
   </dd>
 
   <dt id="login_template">login_template</dt>
