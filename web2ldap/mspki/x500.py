@@ -22,6 +22,7 @@ strtag2charset = {
   asn1.PRINTABLE_STRING:'ascii',
   asn1.IA5STRING:'ascii',
   asn1.UTF8STRING:'utf-8',
+  asn1.T61STRING:'iso-8859-1',
   asn1.BMPSTRING:'utf-16-be',
 }
 
