@@ -62,9 +62,6 @@ T61STRING = 0x14
 IA5STRING = 0x16  # IA5 == ASCII
 UTCTIME = 0x17
 BOOLEAN = 0x01
-
-# Constants added by Michael Stroeder <michael@stroeder.com>
-# without knowing exactly about it...
 UNIVERSALSTRING = 28
 BMPSTRING = 30
 UTF8STRING = 12
