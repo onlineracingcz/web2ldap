@@ -8,10 +8,12 @@ dITStructureRules: ( 102 NAME 'aeRoot-top-SR-dc' FORM aeRoot-top-NF-dc )
 nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.102 NAME 'aeRoot-top-NF-dc' OC aeRoot MUST ( dc ) )
 dITStructureRules: ( 103 NAME 'aeRoot-top-SR-cn' FORM aeRoot-top-NF-cn )
 nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.103 NAME 'aeRoot-top-NF-cn' OC aeRoot MUST ( cn ) )
+dITStructureRules: ( 104 NAME 'aeRoot-top-SR-o' FORM aeRoot-top-NF-o )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.103 NAME 'aeRoot-top-NF-o' OC aeRoot MUST ( o ) )
 #
 # aeZone is direct subordinate of aeRoot
 #
-dITStructureRules: ( 2 NAME 'aeZone-aeRoot-SR' FORM aeZone-aeRoot-NF SUP ( 101 102 103 ) )
+dITStructureRules: ( 2 NAME 'aeZone-aeRoot-SR' FORM aeZone-aeRoot-NF SUP ( 101 102 103 104 ) )
 nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.2 NAME 'aeZone-aeRoot-NF' OC aeZone MUST ( cn ) )
 #
 # Possible direct subordinates of aeZone:
