@@ -330,6 +330,6 @@ import web2ldap.app.plugins.oath
 import web2ldap.app.plugins.mspwdreset
 
 #---------------------------------------------------------------------------
-# Add more local or experimental plugins from here
+# Add more local plugins here
 #---------------------------------------------------------------------------
 
