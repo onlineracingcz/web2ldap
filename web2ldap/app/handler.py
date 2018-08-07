@@ -238,15 +238,27 @@ class AppHandler:
     return # url_redirect()
 
   def _handle_urlredirect(self):
-    try:
-      tu = urlparse.urlparse(self.form.query_string)
-    except:
-      tu = None
-    if not tu or not tu.scheme or not tu.netloc:
-      self.url_redirect(u'Rejected malformed/suspicious redirect URL!')
-    # Check for valid session
-    elif session_store.sessiondict.has_key(self.sid) or \
-         self.form.query_string in web2ldapcnf.good_redirect_targets:
+    # accept configured trusted redirect targets no matter what
+    redirect_ok = self.form.query_string in web2ldapcnf.good_redirect_targets
+    if not redirect_ok:
+      # Check for valid target URL syntax
+      try:
+        tu = urlparse.urlparse(self.form.query_string)
+      except:
+        redirect_ok = False
+        error_msg = u'Rejected non-parseable redirect URL!'
+      else:
+        redirect_ok = True
+        # further checks
+        if not tu or not tu.scheme or not tu.netloc:
+          redirect_ok = False
+          error_msg = u'Rejected malformed/suspicious redirect URL!'
+        # Check for valid session
+        if self.sid not in session_store.sessiondict:
+          redirect_ok = False
+          error_msg = u'Rejected redirect without session-ID!'
+    # finally send return redirect to browser
+    if redirect_ok:
       # URL redirecting has absolutely nothing to do with rest
       self.url_redirect(
         u'Redirecting to %s...' % (
@@ -256,7 +268,7 @@ class AppHandler:
         target_url=self.form.query_string,
       )
     else:
-      self.url_redirect(u'Redirecting without valid session disallowed!')
+      self.url_redirect(error_msg)
     return # end of handle_urlredirect()
 
   def _new_session(self):
