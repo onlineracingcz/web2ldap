@@ -7,4 +7,4 @@ then
 fi
 export WEB2LDAP_HOME
 
-PYTHONPATH="${WEB2LDAP_HOME}" python2 "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${WEB2LDAP_HOME}" python2 "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
