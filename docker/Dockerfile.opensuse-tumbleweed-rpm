@@ -17,12 +17,12 @@ RUN zypper --non-interactive --gpg-auto-import-keys refresh
 RUN zypper --non-interactive install --no-confirm --no-recommends web2ldap
 
 # Override web2ldap's config module files
-ADD --chown=root:root web2ldapcnf/*.py /usr/lib/python2.7/site-packages/web2ldapcnf/
-ADD --chown=root:root web2ldapcnf/plugins/*.py /usr/lib/python2.7/site-packages/web2ldapcnf/plugins/
-RUN rm /usr/lib/python2.7/site-packages/web2ldapcnf/*.py? /usr/lib/python2.7/site-packages/web2ldapcnf/plugins/*.py?
-RUN chmod a+rx /usr/lib/python2.7/site-packages/web2ldapcnf /usr/lib/python2.7/site-packages/web2ldapcnf/plugins
+ADD --chown=root:root web2ldapcnf/*.py /etc/web2ldap/web2ldapcnf/
+ADD --chown=root:root web2ldapcnf/plugins/*.py /etc/web2ldap/web2ldapcnf/plugins/
+RUN rm /etc/web2ldap/web2ldapcnf/*.py? /etc/web2ldap/web2ldapcnf/plugins/*.py?
+RUN chmod a+rx /usr/lib/python2.7/site-packages/web2ldapcnf /etc/web2ldap/web2ldapcnf/plugins
 RUN chmod -R a+r /usr/lib/python2.7/site-packages/web2ldapcnf
-RUN ls -al /usr/lib/python2.7/site-packages/web2ldapcnf/*
+RUN ls -al /etc/web2ldap/web2ldapcnf/*
 
 # run web2ldap and expose its TCP port 1760 for web access
 USER web2ldap

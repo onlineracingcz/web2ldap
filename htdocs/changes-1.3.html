@@ -13,6 +13,12 @@
     ISO-8859-1 because this seems, although wrong, the most common practice.
   </li>
   <li>
+    Config module <var>web2ldapcnf</var> was moved back to 
+    <var>etc/web2ldap/</var> and now gets installed as 
+    <var>data-files</var>. This allows to mark those files as config files 
+    when building OS packages (RPM etc.).
+  </li>
+  <li>
     The configuration sub-module <var>web2ldapcnf.plugins</var> is now a
     single file and not a separate sub-directory.
   </li>

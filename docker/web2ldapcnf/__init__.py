@@ -10,23 +10,11 @@ from __future__ import absolute_import
 
 import sys,os
 
+from web2ldap.app.core import etc_dir,templates_dir
+
 #---------------------------------------------------------------------------
 # General options
 #---------------------------------------------------------------------------
-
-# Path name of [web2ldap]/etc/web2ldap
-if 'WEB2LDAP_HOME' in os.environ:
-  # env var points to web2ldap root directory
-  etc_dir = os.path.join(os.environ['WEB2LDAP_HOME'],'etc','web2ldap')
-elif os.name=='posix' and sys.prefix=='/usr':
-  # OS-wide installation on POSIX platform (Linux, BSD, etc.)
-  etc_dir = '/etc/web2ldap'
-else:
-  # virtual env
-  etc_dir = os.path.join(sys.prefix,'etc','web2ldap')
-
-# Default directory for [web2ldap]/etc/web2ldap/templates
-templates_dir = os.path.join(etc_dir,'templates')
 
 # Trace output of the LDAP connection can be written to error
 # output (if not started with python -O).

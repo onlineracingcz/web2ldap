@@ -10,9 +10,10 @@ from __future__ import absolute_import
 import os
 import ldap0
 import certifi
+
+from web2ldap.app.core import etc_dir,templates_dir
 import web2ldapcnf
 from web2ldap.app.cnf import Web2LDAPConfig
-
 
 ########################################################################
 # List of all LDAP hosts to use. These hosts will appear in the
@@ -55,7 +56,7 @@ restricted_ldap_uri_list = 0
 msad_config = Web2LDAPConfig(
   description=u'MS Active Directory',
   searchform_template= {
-    u'_':os.path.join(web2ldapcnf.templates_dir,'searchform_msad.html'),
+    u'_':os.path.join(templates_dir,'searchform_msad.html'),
   },
   requested_attrs=[
     'structuralObjectClass','subschemaSubentry',
@@ -102,7 +103,7 @@ openldap_accesslog_config = Web2LDAPConfig(
                       &rArr; %(reqResult)s: %(reqMessage)s<br>Abandonded %(reqId)s by %(reqAuthzID)s""",
   },
   searchform_template= {
-    u'_':os.path.join(web2ldapcnf.templates_dir,'searchform_accesslog.html'),
+    u'_':os.path.join(templates_dir,'searchform_accesslog.html'),
   },
   search_attrs=[
     'objectClass',
@@ -110,10 +111,10 @@ openldap_accesslog_config = Web2LDAPConfig(
     'reqResult','reqSession','reqStart','reqType',
   ],
   read_template={
-    'auditAdd':os.path.join(web2ldapcnf.templates_dir,'openldap','read_auditAdd.html'),
-    'auditModify':os.path.join(web2ldapcnf.templates_dir,'openldap','read_auditAdd.html'),
-    'auditModRDN':os.path.join(web2ldapcnf.templates_dir,'openldap','read_auditModRDN.html'),
-    'auditDelete':os.path.join(web2ldapcnf.templates_dir,'openldap','read_auditDelete.html'),
+    'auditAdd':os.path.join(templates_dir,'openldap','read_auditAdd.html'),
+    'auditModify':os.path.join(templates_dir,'openldap','read_auditAdd.html'),
+    'auditModRDN':os.path.join(templates_dir,'openldap','read_auditModRDN.html'),
+    'auditDelete':os.path.join(templates_dir,'openldap','read_auditDelete.html'),
   },
 )
 
@@ -127,14 +128,14 @@ changelog_config = Web2LDAPConfig(
     'changelogentry':r'No. %(changenumber)s at %(changetime)s<br>%(changetype)s %(targetdn)s (%(targetentryuuid)s)<br>by %(changeInitiatorsName)s',
   },
   searchform_template= {
-    u'_':os.path.join(web2ldapcnf.templates_dir,'searchform_changelog.html'),
+    u'_':os.path.join(templates_dir,'searchform_changelog.html'),
   },
   search_attrs=[
     'changeType','targetDN','targetEntryUUID','changeTime',
     'changeLogCookie','replicaIdentifier','replicationCSN','changeInitiatorsName',
   ],
   read_template={
-    'changeLogEntry':os.path.join(web2ldapcnf.templates_dir,'read_changeLogEntry.html'),
+    'changeLogEntry':os.path.join(templates_dir,'read_changeLogEntry.html'),
   },
 )
 
@@ -162,7 +163,7 @@ openldap_monitor_config = Web2LDAPConfig(
   },
   read_template={
     # for OpenLDAP
-    'monitorConnection':os.path.join(web2ldapcnf.templates_dir,'read_monitorConnection.html'),
+    'monitorConnection':os.path.join(templates_dir,'read_monitorConnection.html'),
   },
 )
 
@@ -195,15 +196,15 @@ cn_config = Web2LDAPConfig(
   },
   read_template={
     # for OpenLDAP
-    'olcGlobal':os.path.join(web2ldapcnf.templates_dir,'openldap','read_olcGlobal.html'),
-    'olcHdbConfig':os.path.join(web2ldapcnf.templates_dir,'openldap','read_olcHdbConfig.html'),
-    'olcMdbConfig':os.path.join(web2ldapcnf.templates_dir,'openldap','read_olcMdbConfig.html'),
+    'olcGlobal':os.path.join(templates_dir,'openldap','read_olcGlobal.html'),
+    'olcHdbConfig':os.path.join(templates_dir,'openldap','read_olcHdbConfig.html'),
+    'olcMdbConfig':os.path.join(templates_dir,'openldap','read_olcMdbConfig.html'),
   },
   input_template={
     # for OpenLDAP
-    'olcGlobal':os.path.join(web2ldapcnf.templates_dir,'openldap','inputform_olcGlobal.html'),
-    'olcHdbConfig':os.path.join(web2ldapcnf.templates_dir,'openldap','inputform_olcHdbConfig.html'),
-    'olcMdbConfig':os.path.join(web2ldapcnf.templates_dir,'openldap','inputform_olcMdbConfig.html'),
+    'olcGlobal':os.path.join(templates_dir,'openldap','inputform_olcGlobal.html'),
+    'olcHdbConfig':os.path.join(templates_dir,'openldap','inputform_olcHdbConfig.html'),
+    'olcMdbConfig':os.path.join(templates_dir,'openldap','inputform_olcMdbConfig.html'),
   },
   # HTML template strings used to display the superior entry
   # in the input form when adding/modifying entries
@@ -217,16 +218,16 @@ cn_config = Web2LDAPConfig(
   },
   addform_entry_templates={
     # for OpenLDAP
-    u'Modules':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcModuleList.ldif'),
-    u'Database - Adress book (back-hdb)':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcHdbConfig_AddressBook.ldif'),
-    u'Database - Unix Users (back-hdb)':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcHdbConfig_UnixUsers.ldif'),
-    u'Database - Accesslog (back-hdb)':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcHdbConfig_accesslog.ldif'),
-    u'Database - LDAP-Proxy (back-ldap)':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcLdapConfig.ldif'),
-    u'Database - back-mdb':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcMdbConfig.ldif'),
-    u'Overlay - Syncrepl-Provider (slapo-syncprov)':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcHdbConfig_accesslog.ldif'),
-    u'Overlay - Accesslog (slapo-accesslog)':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcHdbConfig_accesslog.ldif'),
-    u'Overlay - Accesslog (slapo-accesslog)':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcHdbConfig_accesslog.ldif'),
-    u'Schema config':os.path.join(web2ldapcnf.templates_dir,'openldap','add_olcSchemaConfig.ldif'),
+    u'Modules':os.path.join(templates_dir,'openldap','add_olcModuleList.ldif'),
+    u'Database - Adress book (back-hdb)':os.path.join(templates_dir,'openldap','add_olcHdbConfig_AddressBook.ldif'),
+    u'Database - Unix Users (back-hdb)':os.path.join(templates_dir,'openldap','add_olcHdbConfig_UnixUsers.ldif'),
+    u'Database - Accesslog (back-hdb)':os.path.join(templates_dir,'openldap','add_olcHdbConfig_accesslog.ldif'),
+    u'Database - LDAP-Proxy (back-ldap)':os.path.join(templates_dir,'openldap','add_olcLdapConfig.ldif'),
+    u'Database - back-mdb':os.path.join(templates_dir,'openldap','add_olcMdbConfig.ldif'),
+    u'Overlay - Syncrepl-Provider (slapo-syncprov)':os.path.join(templates_dir,'openldap','add_olcHdbConfig_accesslog.ldif'),
+    u'Overlay - Accesslog (slapo-accesslog)':os.path.join(templates_dir,'openldap','add_olcHdbConfig_accesslog.ldif'),
+    u'Overlay - Accesslog (slapo-accesslog)':os.path.join(templates_dir,'openldap','add_olcHdbConfig_accesslog.ldif'),
+    u'Schema config':os.path.join(templates_dir,'openldap','add_olcSchemaConfig.ldif'),
   },
 )
 
@@ -236,20 +237,20 @@ cn_config = Web2LDAPConfig(
 
 ae_dir_config = Web2LDAPConfig(
   description=u'Æ-DIR',
-  top_template= os.path.join(web2ldapcnf.templates_dir,'ae-dir','top.html'),
+  top_template= os.path.join(templates_dir,'ae-dir','top.html'),
   binddnsearch=ur'(|(uid=%s)(uidNumber=%s))',
   boundas_template= {
     'aeUser':r'<span title="%(displayName)s: %(description)s">%(uid)s: %(description)s</span>',
   },
   session_track_control=1,
-  supplement_schema=os.path.join(web2ldapcnf.etc_dir,'ae-suppl-schema.ldif'),
+  supplement_schema=os.path.join(etc_dir,'ae-suppl-schema.ldif'),
   modify_constant_attrs=[
     # Mostly OpenLDAP
     'entryCSN','entryDN','entryUUID',
     # see RFC
     'createTimestamp','modifyTimestamp','creatorsName','modifiersName',
   ],
-  login_template=os.path.join(web2ldapcnf.templates_dir,'ae-dir','login.html'),
+  login_template=os.path.join(templates_dir,'ae-dir','login.html'),
   addform_parent_attrs=['entryUUID'],
   search_attrs=[
     'aeDept',
@@ -376,7 +377,7 @@ ae_dir_config = Web2LDAPConfig(
   ],
   searchform_search_root_url='ldap:///ou=ae-dir??one?(|(objectClass=aeZone))',
   searchform_template= {
-    u'_':os.path.join(web2ldapcnf.templates_dir,'ae-dir','searchform_aedir.html'),
+    u'_':os.path.join(templates_dir,'ae-dir','searchform_aedir.html'),
   },
   search_tdtemplate= {
     'aeUser':r"""
@@ -504,72 +505,72 @@ ae_dir_config = Web2LDAPConfig(
     """,
   },
   read_template={
-    'msPwdResetObject':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_msPwdResetObject.html'),
-    'posixAccount':os.path.join(web2ldapcnf.templates_dir,'read_posixAccount.html'),
-    'aePolicy':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aePolicy.html'),
-    'pwdPolicy':os.path.join(web2ldapcnf.templates_dir,'read_pwdPolicy.html'),
-    'msPwdResetPolicy':os.path.join(web2ldapcnf.templates_dir,'read_msPwdResetPolicy.html'),
-    'aeRoot':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeRoot.html'),
-    'aeGroup':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeGroup.html'),
-    'aeMailGroup':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeMailGroup.html'),
-    'aeDept':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeDept.html'),
-    'aeLocation':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeLocation.html'),
-    'aePerson':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aePerson.html'),
-    'aeHost':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeHost.html'),
-    'aeService':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeService.html'),
-    'aeSrvGroup':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeSrvGroup.html'),
-    'aeSudoRule':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeSudoRule.html'),
-    'aeTag':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeTag.html'),
-    'aeUser':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeUser.html'),
-    'aeAuthcToken':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeAuthcToken.html'),
-    'aeZone':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeZone.html'),
-    'aePerson':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aePerson.html'),
-    'aeContact':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aeContact.html'),
-    'aePosixIdRanges':os.path.join(web2ldapcnf.templates_dir,'ae-dir','read_aePosixIdRanges.html'),
-    'mailboxRelatedObject':os.path.join(web2ldapcnf.templates_dir,'read_mailboxRelatedObject.html'),
-    'namedObject':os.path.join(web2ldapcnf.templates_dir,'read_namedObject.html'),
-    'namedPolicy':os.path.join(web2ldapcnf.templates_dir,'read_namedPolicy.html'),
-    'inetLocalMailRecipient':os.path.join(web2ldapcnf.templates_dir,'read_inetLocalMailRecipient.html'),
-    'oathHOTPUser':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathHOTPUser.html'),
-    'oathTOTPUser':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathTOTPUser.html'),
-    'oathHOTPToken':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathHOTPToken.html'),
-    'oathTOTPToken':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathTOTPToken.html'),
-    'oathParams':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathParams.html'),
-    'oathHOTPParams':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathHOTPParams.html'),
-    'oathTOTPParams':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathTOTPParams.html'),
+    'msPwdResetObject':os.path.join(templates_dir,'ae-dir','read_msPwdResetObject.html'),
+    'posixAccount':os.path.join(templates_dir,'read_posixAccount.html'),
+    'aePolicy':os.path.join(templates_dir,'ae-dir','read_aePolicy.html'),
+    'pwdPolicy':os.path.join(templates_dir,'read_pwdPolicy.html'),
+    'msPwdResetPolicy':os.path.join(templates_dir,'read_msPwdResetPolicy.html'),
+    'aeRoot':os.path.join(templates_dir,'ae-dir','read_aeRoot.html'),
+    'aeGroup':os.path.join(templates_dir,'ae-dir','read_aeGroup.html'),
+    'aeMailGroup':os.path.join(templates_dir,'ae-dir','read_aeMailGroup.html'),
+    'aeDept':os.path.join(templates_dir,'ae-dir','read_aeDept.html'),
+    'aeLocation':os.path.join(templates_dir,'ae-dir','read_aeLocation.html'),
+    'aePerson':os.path.join(templates_dir,'ae-dir','read_aePerson.html'),
+    'aeHost':os.path.join(templates_dir,'ae-dir','read_aeHost.html'),
+    'aeService':os.path.join(templates_dir,'ae-dir','read_aeService.html'),
+    'aeSrvGroup':os.path.join(templates_dir,'ae-dir','read_aeSrvGroup.html'),
+    'aeSudoRule':os.path.join(templates_dir,'ae-dir','read_aeSudoRule.html'),
+    'aeTag':os.path.join(templates_dir,'ae-dir','read_aeTag.html'),
+    'aeUser':os.path.join(templates_dir,'ae-dir','read_aeUser.html'),
+    'aeAuthcToken':os.path.join(templates_dir,'ae-dir','read_aeAuthcToken.html'),
+    'aeZone':os.path.join(templates_dir,'ae-dir','read_aeZone.html'),
+    'aePerson':os.path.join(templates_dir,'ae-dir','read_aePerson.html'),
+    'aeContact':os.path.join(templates_dir,'ae-dir','read_aeContact.html'),
+    'aePosixIdRanges':os.path.join(templates_dir,'ae-dir','read_aePosixIdRanges.html'),
+    'mailboxRelatedObject':os.path.join(templates_dir,'read_mailboxRelatedObject.html'),
+    'namedObject':os.path.join(templates_dir,'read_namedObject.html'),
+    'namedPolicy':os.path.join(templates_dir,'read_namedPolicy.html'),
+    'inetLocalMailRecipient':os.path.join(templates_dir,'read_inetLocalMailRecipient.html'),
+    'oathHOTPUser':os.path.join(templates_dir,'oath','read_oathHOTPUser.html'),
+    'oathTOTPUser':os.path.join(templates_dir,'oath','read_oathTOTPUser.html'),
+    'oathHOTPToken':os.path.join(templates_dir,'oath','read_oathHOTPToken.html'),
+    'oathTOTPToken':os.path.join(templates_dir,'oath','read_oathTOTPToken.html'),
+    'oathParams':os.path.join(templates_dir,'oath','read_oathParams.html'),
+    'oathHOTPParams':os.path.join(templates_dir,'oath','read_oathHOTPParams.html'),
+    'oathTOTPParams':os.path.join(templates_dir,'oath','read_oathTOTPParams.html'),
   },
   input_template={
-    'msPwdResetObject':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_msPwdResetObject.html'),
-    'posixAccount':os.path.join(web2ldapcnf.templates_dir,'inputform_posixAccount.html'),
-    'aePolicy':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aePolicy.html'),
-    'pwdPolicy':os.path.join(web2ldapcnf.templates_dir,'inputform_pwdPolicy.html'),
-    'msPwdResetPolicy':os.path.join(web2ldapcnf.templates_dir,'inputform_msPwdResetPolicy.html'),
-    'aeDept':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeDept.html'),
-    'aeLocation':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeLocation.html'),
-    'aeGroup':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeGroup.html'),
-    'aeMailGroup':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeMailGroup.html'),
-    'aeHost':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeHost.html'),
-    'aeService':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeService.html'),
-    'aeSrvGroup':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeSrvGroup.html'),
-    'aeSudoRule':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeSudoRule.html'),
-    'aeTag':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeTag.html'),
-    'aeUser':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeUser.html'),
-    'aeAuthcToken':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeAuthcToken.html'),
-    'aeZone':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeZone.html'),
-    'aePerson':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aePerson.html'),
-    'aeContact':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aeContact.html'),
-    'aePosixIdRanges':os.path.join(web2ldapcnf.templates_dir,'ae-dir','inputform_aePosixIdRanges.html'),
-    'mailboxRelatedObject':os.path.join(web2ldapcnf.templates_dir,'inputform_mailboxRelatedObject.html'),
-    'namedObject':os.path.join(web2ldapcnf.templates_dir,'inputform_namedObject.html'),
-    'namedPolicy':os.path.join(web2ldapcnf.templates_dir,'inputform_namedPolicy.html'),
-    'inetLocalMailRecipient':os.path.join(web2ldapcnf.templates_dir,'inputform_inetLocalMailRecipient.html'),
-    'oathHOTPUser':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathHOTPUser.html'),
-    'oathTOTPUser':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathTOTPUser.html'),
-    'oathHOTPToken':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathHOTPToken.html'),
-    'oathTOTPToken':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathTOTPToken.html'),
-    'oathParams':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathParams.html'),
-    'oathHOTPParams':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathHOTPParams.html'),
-    'oathTOTPParams':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathTOTPParams.html'),
+    'msPwdResetObject':os.path.join(templates_dir,'ae-dir','inputform_msPwdResetObject.html'),
+    'posixAccount':os.path.join(templates_dir,'inputform_posixAccount.html'),
+    'aePolicy':os.path.join(templates_dir,'ae-dir','inputform_aePolicy.html'),
+    'pwdPolicy':os.path.join(templates_dir,'inputform_pwdPolicy.html'),
+    'msPwdResetPolicy':os.path.join(templates_dir,'inputform_msPwdResetPolicy.html'),
+    'aeDept':os.path.join(templates_dir,'ae-dir','inputform_aeDept.html'),
+    'aeLocation':os.path.join(templates_dir,'ae-dir','inputform_aeLocation.html'),
+    'aeGroup':os.path.join(templates_dir,'ae-dir','inputform_aeGroup.html'),
+    'aeMailGroup':os.path.join(templates_dir,'ae-dir','inputform_aeMailGroup.html'),
+    'aeHost':os.path.join(templates_dir,'ae-dir','inputform_aeHost.html'),
+    'aeService':os.path.join(templates_dir,'ae-dir','inputform_aeService.html'),
+    'aeSrvGroup':os.path.join(templates_dir,'ae-dir','inputform_aeSrvGroup.html'),
+    'aeSudoRule':os.path.join(templates_dir,'ae-dir','inputform_aeSudoRule.html'),
+    'aeTag':os.path.join(templates_dir,'ae-dir','inputform_aeTag.html'),
+    'aeUser':os.path.join(templates_dir,'ae-dir','inputform_aeUser.html'),
+    'aeAuthcToken':os.path.join(templates_dir,'ae-dir','inputform_aeAuthcToken.html'),
+    'aeZone':os.path.join(templates_dir,'ae-dir','inputform_aeZone.html'),
+    'aePerson':os.path.join(templates_dir,'ae-dir','inputform_aePerson.html'),
+    'aeContact':os.path.join(templates_dir,'ae-dir','inputform_aeContact.html'),
+    'aePosixIdRanges':os.path.join(templates_dir,'ae-dir','inputform_aePosixIdRanges.html'),
+    'mailboxRelatedObject':os.path.join(templates_dir,'inputform_mailboxRelatedObject.html'),
+    'namedObject':os.path.join(templates_dir,'inputform_namedObject.html'),
+    'namedPolicy':os.path.join(templates_dir,'inputform_namedPolicy.html'),
+    'inetLocalMailRecipient':os.path.join(templates_dir,'inputform_inetLocalMailRecipient.html'),
+    'oathHOTPUser':os.path.join(templates_dir,'oath','inputform_oathHOTPUser.html'),
+    'oathTOTPUser':os.path.join(templates_dir,'oath','inputform_oathTOTPUser.html'),
+    'oathHOTPToken':os.path.join(templates_dir,'oath','inputform_oathHOTPToken.html'),
+    'oathTOTPToken':os.path.join(templates_dir,'oath','inputform_oathTOTPToken.html'),
+    'oathParams':os.path.join(templates_dir,'oath','inputform_oathParams.html'),
+    'oathHOTPParams':os.path.join(templates_dir,'oath','inputform_oathHOTPParams.html'),
+    'oathTOTPParams':os.path.join(templates_dir,'oath','inputform_oathTOTPParams.html'),
   },
   inputform_supentrytemplate={
     'aeRoot':r'<em>%(entryDN)s</em><br>%(description)s (aeRoot)',
@@ -578,31 +579,31 @@ ae_dir_config = Web2LDAPConfig(
     'aeHost':r'<em>%(entryDN)s</em><br>Host/server <strong>%(host)s</strong>: <br>%(description)s',
   },
   addform_entry_templates={
-    u'Æ-DIR tag':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeTag.ldif'),
-    u'Æ-DIR user group':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeGroup.ldif'),
-    u'Æ-DIR mail group':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeMailGroup.ldif'),
-    u'Æ-DIR primary user account':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeUser_inetLocalMailRecipient.ldif'),
-    u'Æ-DIR personal user account':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeUser.ldif'),
-    u'Æ-DIR OATH-HOTP token':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_oath_hotp_token.ldif'),
-#    u'Æ-DIR OATH-TOTP token':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_oath_totp_token.ldif'),
-    u'Æ-DIR password policy':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_pwdPolicy.ldif'),
-    u'Æ-DIR OATH-HOTP parameters':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_oathHOTPParams.ldif'),
-    u'Æ-DIR person':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aePerson.ldif'),
-    u'Æ-DIR contact':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeContact.ldif'),
-    u'Æ-DIR department':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeDept.ldif'),
-    u'Æ-DIR location':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeLocation.ldif'),
-    u'Æ-DIR network device':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeNwDevice.ldif'),
-    u'Æ-DIR server/service group':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeSrvGroup.ldif'),
-    u'Æ-DIR server/host':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeHost.ldif'),
-    u'Æ-DIR service/tool account':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeService.ldif'),
-    u'Æ-DIR zone':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeZone.ldif'),
-    u'Æ-DIR zone admins group':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeGroup_zone-admins.ldif'),
-    u'Æ-DIR zone auditors group':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeGroup_zone-auditors.ldif'),
-    u'Æ-DIR replica account':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_slapd-replica.ldif'),
-    u'Æ-DIR login proxy':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_login-proxy.ldif'),
-    u'Æ-DIR sudo su - root':os.path.join(web2ldapcnf.templates_dir,'ae-dir','add_aeSudoRule_su_root.ldif'),
+    u'Æ-DIR tag':os.path.join(templates_dir,'ae-dir','add_aeTag.ldif'),
+    u'Æ-DIR user group':os.path.join(templates_dir,'ae-dir','add_aeGroup.ldif'),
+    u'Æ-DIR mail group':os.path.join(templates_dir,'ae-dir','add_aeMailGroup.ldif'),
+    u'Æ-DIR primary user account':os.path.join(templates_dir,'ae-dir','add_aeUser_inetLocalMailRecipient.ldif'),
+    u'Æ-DIR personal user account':os.path.join(templates_dir,'ae-dir','add_aeUser.ldif'),
+    u'Æ-DIR OATH-HOTP token':os.path.join(templates_dir,'ae-dir','add_oath_hotp_token.ldif'),
+#    u'Æ-DIR OATH-TOTP token':os.path.join(templates_dir,'ae-dir','add_oath_totp_token.ldif'),
+    u'Æ-DIR password policy':os.path.join(templates_dir,'ae-dir','add_pwdPolicy.ldif'),
+    u'Æ-DIR OATH-HOTP parameters':os.path.join(templates_dir,'ae-dir','add_oathHOTPParams.ldif'),
+    u'Æ-DIR person':os.path.join(templates_dir,'ae-dir','add_aePerson.ldif'),
+    u'Æ-DIR contact':os.path.join(templates_dir,'ae-dir','add_aeContact.ldif'),
+    u'Æ-DIR department':os.path.join(templates_dir,'ae-dir','add_aeDept.ldif'),
+    u'Æ-DIR location':os.path.join(templates_dir,'ae-dir','add_aeLocation.ldif'),
+    u'Æ-DIR network device':os.path.join(templates_dir,'ae-dir','add_aeNwDevice.ldif'),
+    u'Æ-DIR server/service group':os.path.join(templates_dir,'ae-dir','add_aeSrvGroup.ldif'),
+    u'Æ-DIR server/host':os.path.join(templates_dir,'ae-dir','add_aeHost.ldif'),
+    u'Æ-DIR service/tool account':os.path.join(templates_dir,'ae-dir','add_aeService.ldif'),
+    u'Æ-DIR zone':os.path.join(templates_dir,'ae-dir','add_aeZone.ldif'),
+    u'Æ-DIR zone admins group':os.path.join(templates_dir,'ae-dir','add_aeGroup_zone-admins.ldif'),
+    u'Æ-DIR zone auditors group':os.path.join(templates_dir,'ae-dir','add_aeGroup_zone-auditors.ldif'),
+    u'Æ-DIR replica account':os.path.join(templates_dir,'ae-dir','add_slapd-replica.ldif'),
+    u'Æ-DIR login proxy':os.path.join(templates_dir,'ae-dir','add_login-proxy.ldif'),
+    u'Æ-DIR sudo su - root':os.path.join(templates_dir,'ae-dir','add_aeSudoRule_su_root.ldif'),
   },
-  passwd_template= os.path.join(web2ldapcnf.templates_dir,'ae-dir','passwd.html'),
+  passwd_template= os.path.join(templates_dir,'ae-dir','passwd.html'),
   passwd_hashtypes=['ssha',''],
   passwd_genchars=ur'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
   passwd_genlength=24,
@@ -670,14 +671,14 @@ ldap_def = {
       # you should really set this!
       ldap0.OPT_X_TLS_REQUIRE_CERT:ldap0.OPT_X_TLS_DEMAND,
       # Directory containing all the trusted root CA certs (symbolic hash links required!)
-#      LDAP_OPT_X_TLS_CACERTDIR = os.path.sep.join(web2ldapcnf.etc_dir,'ssl','crt'),
+#      LDAP_OPT_X_TLS_CACERTDIR = os.path.sep.join(etc_dir,'ssl','crt'),
       # File containing all the trusted root CA certs
-#      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'ssl','crt','trusted-certs.crt'),
+#      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(etc_dir,'ssl','crt','trusted-certs.crt'),
       ldap0.OPT_X_TLS_CACERTFILE:certifi.where(),
 #      ldap0.OPT_X_TLS_CIPHER_SUITE:'ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA',
       ldap0.OPT_X_TLS_PROTOCOL_MIN:3,
 #      ldap0.OPT_X_TLS_CRLCHECK:ldap0.OPT_X_TLS_CRL_PEER,
-#      ldap0.OPT_X_TLS_CRLFILE:os.path.join(web2ldapcnf.etc_dir,'ssl','crt','peers.crl'),
+#      ldap0.OPT_X_TLS_CRLFILE:os.path.join(etc_dir,'ssl','crt','peers.crl'),
     },
 
     # Send session track control
@@ -737,43 +738,43 @@ ldap_def = {
     # vCard template files
     vcard_template={
       # 'object class':'pathname of vCard template file'
-      'person':os.path.join(web2ldapcnf.templates_dir,'vcard_person.txt'),
-      'inetOrgPerson':os.path.join(web2ldapcnf.templates_dir,'vcard_person.txt'),
-      'organization':os.path.join(web2ldapcnf.templates_dir,'vcard_organization.txt'),
+      'person':os.path.join(templates_dir,'vcard_person.txt'),
+      'inetOrgPerson':os.path.join(templates_dir,'vcard_person.txt'),
+      'organization':os.path.join(templates_dir,'vcard_organization.txt'),
     },
 
     # HTML template files for printing table entries
     print_template={
       # 'object class':'pathname of printable HTML template file'
-      'person':os.path.join(web2ldapcnf.templates_dir,'print_person.html'),
-      'organization':os.path.join(web2ldapcnf.templates_dir,'print_organization.html'),
-      'organizationalUnit':os.path.join(web2ldapcnf.templates_dir,'print_organizationalUnit.html'),
+      'person':os.path.join(templates_dir,'print_person.html'),
+      'organization':os.path.join(templates_dir,'print_organization.html'),
+      'organizationalUnit':os.path.join(templates_dir,'print_organizationalUnit.html'),
     },
 
     # HTML template file for search options fieldset in search forms
-    searchoptions_template=os.path.join(web2ldapcnf.templates_dir,'searchform_search_options.html'),
+    searchoptions_template=os.path.join(templates_dir,'searchform_search_options.html'),
 
     # HTML template file for Basic Search form
     searchform_template= {
-      u'_':os.path.join(web2ldapcnf.templates_dir,'searchform_base.html'),
-      u'NIS':os.path.join(web2ldapcnf.templates_dir,'searchform_nis.html'),
-      u'DHCP':os.path.join(web2ldapcnf.templates_dir,'searchform_dhcp.html'),
-      u'DNS':os.path.join(web2ldapcnf.templates_dir,'searchform_dns.html'),
-      u'Kerberos':os.path.join(web2ldapcnf.templates_dir,'searchform_mit_krb.html'),
-      u'MS AD':os.path.join(web2ldapcnf.templates_dir,'searchform_msad.html'),
+      u'_':os.path.join(templates_dir,'searchform_base.html'),
+      u'NIS':os.path.join(templates_dir,'searchform_nis.html'),
+      u'DHCP':os.path.join(templates_dir,'searchform_dhcp.html'),
+      u'DNS':os.path.join(templates_dir,'searchform_dns.html'),
+      u'Kerberos':os.path.join(templates_dir,'searchform_mit_krb.html'),
+      u'MS AD':os.path.join(templates_dir,'searchform_msad.html'),
     },
 
     # HTML template file for rename form
-    rename_template= os.path.join(web2ldapcnf.templates_dir,'rename.html'),
+    rename_template= os.path.join(templates_dir,'rename.html'),
 
     # HTML template file for whole top section
-    top_template=os.path.join(web2ldapcnf.templates_dir,'top.html'),
+    top_template=os.path.join(templates_dir,'top.html'),
 
     # HTML template file for password change form
-    passwd_template=os.path.join(web2ldapcnf.templates_dir,'passwd.html'),
+    passwd_template=os.path.join(templates_dir,'passwd.html'),
 
     # HTML template file for Login form
-    login_template=os.path.join(web2ldapcnf.templates_dir,'login.html'),
+    login_template=os.path.join(templates_dir,'login.html'),
     # Default mechanism for BindRequest (empty string for simple bind)
     login_default_mech='',
 
@@ -820,40 +821,48 @@ ldap_def = {
     # Default for number of results shown per page
     search_resultsperpage=10,
 
+    # Parameters for tree-viewer
+    # Allow maximum this number of levels
+    dit_max_levels=10,
+    # Fetch at most this number of entries when searching below a node
+    dit_search_sizelimit=50,
+    # Timelimit [secs] for searching
+    dit_search_timelimit=10,
+
     # HTML template file used for displaying entries of specific object class
     read_template={
       # 'object class':'pathname of HTML template file'
-      'inetOrgPerson':os.path.join(web2ldapcnf.templates_dir,'read_inetOrgPerson.html'),
-      'account':os.path.join(web2ldapcnf.templates_dir,'read_account.html'),
-      'organizationalPerson':os.path.join(web2ldapcnf.templates_dir,'read_inetOrgPerson.html'),
-      'msPerson':os.path.join(web2ldapcnf.templates_dir,'read_msPerson.html'),
-      'organization':os.path.join(web2ldapcnf.templates_dir,'read_organization.html'),
-      'organizationalUnit':os.path.join(web2ldapcnf.templates_dir,'read_organizationalUnit.html'),
-      'msOrganization':os.path.join(web2ldapcnf.templates_dir,'read_msOrganization.html'),
-      'groupOfNames':os.path.join(web2ldapcnf.templates_dir,'read_groupOfNames.html'),
-      'posixAccount':os.path.join(web2ldapcnf.templates_dir,'read_posixAccount.html'),
-      'posixGroup':os.path.join(web2ldapcnf.templates_dir,'read_posixGroup.html'),
-      'eduPerson':os.path.join(web2ldapcnf.templates_dir,'read_eduPerson.html'),
-      'mailboxRelatedObject':os.path.join(web2ldapcnf.templates_dir,'read_mailboxRelatedObject.html'),
-      'namedObject':os.path.join(web2ldapcnf.templates_dir,'read_namedObject.html'),
-      'namedPolicy':os.path.join(web2ldapcnf.templates_dir,'read_namedPolicy.html'),
-      'pwdPolicy':os.path.join(web2ldapcnf.templates_dir,'read_pwdPolicy.html'),
-      'msPwdResetPolicy':os.path.join(web2ldapcnf.templates_dir,'read_msPwdResetPolicy.html'),
-      'sambaDomain':os.path.join(web2ldapcnf.templates_dir,'read_sambaDomain.html'),
-      'sambaSamAccount':os.path.join(web2ldapcnf.templates_dir,'read_sambaSamAccount.html'),
-      'sambaGroupMapping':os.path.join(web2ldapcnf.templates_dir,'read_sambaGroupMapping.html'),
-      'dhcpHost':os.path.join(web2ldapcnf.templates_dir,'dhcp','read_dhcpHost.html'),
-      'dhcpServer':os.path.join(web2ldapcnf.templates_dir,'dhcp','read_dhcpServer.html'),
-      'dhcpService':os.path.join(web2ldapcnf.templates_dir,'dhcp','read_dhcpService.html'),
-      'dhcpSubnet':os.path.join(web2ldapcnf.templates_dir,'dhcp','read_dhcpSubnet.html'),
-      'inetLocalMailRecipient':os.path.join(web2ldapcnf.templates_dir,'read_inetLocalMailRecipient.html'),
-      'oathHOTPUser':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathHOTPUser.html'),
-      'oathTOTPUser':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathTOTPUser.html'),
-      'oathHOTPToken':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathHOTPToken.html'),
-      'oathTOTPToken':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathTOTPToken.html'),
-      'oathParams':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathParams.html'),
-      'oathHOTPParams':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathHOTPParams.html'),
-      'oathTOTPParams':os.path.join(web2ldapcnf.templates_dir,'oath','read_oathTOTPParams.html'),
+      'inetOrgPerson':os.path.join(templates_dir,'read_inetOrgPerson.html'),
+      'account':os.path.join(templates_dir,'read_account.html'),
+      'organizationalPerson':os.path.join(templates_dir,'read_inetOrgPerson.html'),
+      'msPerson':os.path.join(templates_dir,'read_msPerson.html'),
+      'organization':os.path.join(templates_dir,'read_organization.html'),
+      'organizationalUnit':os.path.join(templates_dir,'read_organizationalUnit.html'),
+      'msOrganization':os.path.join(templates_dir,'read_msOrganization.html'),
+      'groupOfNames':os.path.join(templates_dir,'read_groupOfNames.html'),
+      'posixAccount':os.path.join(templates_dir,'read_posixAccount.html'),
+      'posixGroup':os.path.join(templates_dir,'read_posixGroup.html'),
+      'eduPerson':os.path.join(templates_dir,'read_eduPerson.html'),
+      'mailboxRelatedObject':os.path.join(templates_dir,'read_mailboxRelatedObject.html'),
+      'namedObject':os.path.join(templates_dir,'read_namedObject.html'),
+      'namedPolicy':os.path.join(templates_dir,'read_namedPolicy.html'),
+      'pwdPolicy':os.path.join(templates_dir,'read_pwdPolicy.html'),
+      'msPwdResetPolicy':os.path.join(templates_dir,'read_msPwdResetPolicy.html'),
+      'sambaDomain':os.path.join(templates_dir,'read_sambaDomain.html'),
+      'sambaSamAccount':os.path.join(templates_dir,'read_sambaSamAccount.html'),
+      'sambaGroupMapping':os.path.join(templates_dir,'read_sambaGroupMapping.html'),
+      'dhcpHost':os.path.join(templates_dir,'dhcp','read_dhcpHost.html'),
+      'dhcpServer':os.path.join(templates_dir,'dhcp','read_dhcpServer.html'),
+      'dhcpService':os.path.join(templates_dir,'dhcp','read_dhcpService.html'),
+      'dhcpSubnet':os.path.join(templates_dir,'dhcp','read_dhcpSubnet.html'),
+      'inetLocalMailRecipient':os.path.join(templates_dir,'read_inetLocalMailRecipient.html'),
+      'oathHOTPUser':os.path.join(templates_dir,'oath','read_oathHOTPUser.html'),
+      'oathTOTPUser':os.path.join(templates_dir,'oath','read_oathTOTPUser.html'),
+      'oathHOTPToken':os.path.join(templates_dir,'oath','read_oathHOTPToken.html'),
+      'oathTOTPToken':os.path.join(templates_dir,'oath','read_oathTOTPToken.html'),
+      'oathParams':os.path.join(templates_dir,'oath','read_oathParams.html'),
+      'oathHOTPParams':os.path.join(templates_dir,'oath','read_oathHOTPParams.html'),
+      'oathTOTPParams':os.path.join(templates_dir,'oath','read_oathTOTPParams.html'),
     },
 
     # Maximum count of attribute values displayed when displaying a single entry
@@ -878,42 +887,42 @@ ldap_def = {
     # of specific object class
     input_template={
       # 'object class':'pathname of HTML template file'
-      'inetOrgPerson':os.path.join(web2ldapcnf.templates_dir,'inputform_inetOrgPerson.html'),
-      'account':os.path.join(web2ldapcnf.templates_dir,'inputform_account.html'),
-      'msPerson':os.path.join(web2ldapcnf.templates_dir,'inputform_msPerson.html'),
-      'posixAccount':os.path.join(web2ldapcnf.templates_dir,'inputform_posixAccount.html'),
-      'posixGroup':os.path.join(web2ldapcnf.templates_dir,'inputform_posixGroup.html'),
-      'organization':os.path.join(web2ldapcnf.templates_dir,'inputform_organization.html'),
-      'organizationalUnit':os.path.join(web2ldapcnf.templates_dir,'inputform_organizationalUnit.html'),
-      'msOrganization':os.path.join(web2ldapcnf.templates_dir,'inputform_msOrganization.html'),
-      'groupOfNames':os.path.join(web2ldapcnf.templates_dir,'inputform_groupOfNames.html'),
-      'eduPerson':os.path.join(web2ldapcnf.templates_dir,'inputform_eduPerson.html'),
-      'mailboxRelatedObject':os.path.join(web2ldapcnf.templates_dir,'inputform_mailboxRelatedObject.html'),
-      'namedObject':os.path.join(web2ldapcnf.templates_dir,'inputform_namedObject.html'),
-      'namedPolicy':os.path.join(web2ldapcnf.templates_dir,'inputform_namedPolicy.html'),
-      'pwdPolicy':os.path.join(web2ldapcnf.templates_dir,'inputform_pwdPolicy.html'),
-      'msPwdResetPolicy':os.path.join(web2ldapcnf.templates_dir,'inputform_msPwdResetPolicy.html'),
-      'sambaDomain':os.path.join(web2ldapcnf.templates_dir,'inputform_sambaDomain.html'),
-      'sambaSamAccount':os.path.join(web2ldapcnf.templates_dir,'inputform_sambaSamAccount.html'),
-      'sambaGroupMapping':os.path.join(web2ldapcnf.templates_dir,'inputform_sambaGroupMapping.html'),
-      'dhcpHost':os.path.join(web2ldapcnf.templates_dir,'dhcp','inputform_dhcpHost.html'),
-      'dhcpServer':os.path.join(web2ldapcnf.templates_dir,'dhcp','inputform_dhcpServer.html'),
-      'dhcpService':os.path.join(web2ldapcnf.templates_dir,'dhcp','inputform_dhcpService.html'),
-      'dhcpSubnet':os.path.join(web2ldapcnf.templates_dir,'dhcp','inputform_dhcpSubnet.html'),
-      'dNSDomain2':os.path.join(web2ldapcnf.templates_dir,'inputform_dNSDomain2.html'),
-      'inetLocalMailRecipient':os.path.join(web2ldapcnf.templates_dir,'inputform_inetLocalMailRecipient.html'),
-      'oathHOTPUser':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathHOTPUser.html'),
-      'oathTOTPUser':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathTOTPUser.html'),
-      'oathHOTPToken':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathHOTPToken.html'),
-      'oathTOTPToken':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathTOTPToken.html'),
-      'oathParams':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathParams.html'),
-      'oathHOTPParams':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathHOTPParams.html'),
-      'oathTOTPParams':os.path.join(web2ldapcnf.templates_dir,'oath','inputform_oathTOTPParams.html'),
+      'inetOrgPerson':os.path.join(templates_dir,'inputform_inetOrgPerson.html'),
+      'account':os.path.join(templates_dir,'inputform_account.html'),
+      'msPerson':os.path.join(templates_dir,'inputform_msPerson.html'),
+      'posixAccount':os.path.join(templates_dir,'inputform_posixAccount.html'),
+      'posixGroup':os.path.join(templates_dir,'inputform_posixGroup.html'),
+      'organization':os.path.join(templates_dir,'inputform_organization.html'),
+      'organizationalUnit':os.path.join(templates_dir,'inputform_organizationalUnit.html'),
+      'msOrganization':os.path.join(templates_dir,'inputform_msOrganization.html'),
+      'groupOfNames':os.path.join(templates_dir,'inputform_groupOfNames.html'),
+      'eduPerson':os.path.join(templates_dir,'inputform_eduPerson.html'),
+      'mailboxRelatedObject':os.path.join(templates_dir,'inputform_mailboxRelatedObject.html'),
+      'namedObject':os.path.join(templates_dir,'inputform_namedObject.html'),
+      'namedPolicy':os.path.join(templates_dir,'inputform_namedPolicy.html'),
+      'pwdPolicy':os.path.join(templates_dir,'inputform_pwdPolicy.html'),
+      'msPwdResetPolicy':os.path.join(templates_dir,'inputform_msPwdResetPolicy.html'),
+      'sambaDomain':os.path.join(templates_dir,'inputform_sambaDomain.html'),
+      'sambaSamAccount':os.path.join(templates_dir,'inputform_sambaSamAccount.html'),
+      'sambaGroupMapping':os.path.join(templates_dir,'inputform_sambaGroupMapping.html'),
+      'dhcpHost':os.path.join(templates_dir,'dhcp','inputform_dhcpHost.html'),
+      'dhcpServer':os.path.join(templates_dir,'dhcp','inputform_dhcpServer.html'),
+      'dhcpService':os.path.join(templates_dir,'dhcp','inputform_dhcpService.html'),
+      'dhcpSubnet':os.path.join(templates_dir,'dhcp','inputform_dhcpSubnet.html'),
+      'dNSDomain2':os.path.join(templates_dir,'inputform_dNSDomain2.html'),
+      'inetLocalMailRecipient':os.path.join(templates_dir,'inputform_inetLocalMailRecipient.html'),
+      'oathHOTPUser':os.path.join(templates_dir,'oath','inputform_oathHOTPUser.html'),
+      'oathTOTPUser':os.path.join(templates_dir,'oath','inputform_oathTOTPUser.html'),
+      'oathHOTPToken':os.path.join(templates_dir,'oath','inputform_oathHOTPToken.html'),
+      'oathTOTPToken':os.path.join(templates_dir,'oath','inputform_oathTOTPToken.html'),
+      'oathParams':os.path.join(templates_dir,'oath','inputform_oathParams.html'),
+      'oathHOTPParams':os.path.join(templates_dir,'oath','inputform_oathHOTPParams.html'),
+      'oathTOTPParams':os.path.join(templates_dir,'oath','inputform_oathTOTPParams.html'),
     },
 
     # HTML template file used for displaying operational attributes
     # in a footer when displaying a single entry
-    read_operationalattrstemplate=os.path.join(web2ldapcnf.templates_dir,'read_operationalattrs.html'),
+    read_operationalattrstemplate=os.path.join(templates_dir,'read_operationalattrs.html'),
 
     # Number of columns for print output
     print_cols=4,
@@ -928,16 +937,16 @@ ldap_def = {
     # Dictionary { description : LDIF file name } for displaying
     # link for quickly choosing LDIF templates for new entries
     addform_entry_templates={
-      u'Person / Contact':os.path.join(web2ldapcnf.templates_dir,'add_person.ldif'),
-      u'Organization (Company etc.)':os.path.join(web2ldapcnf.templates_dir,'add_organization.ldif'),
-      u'Organizational Unit':os.path.join(web2ldapcnf.templates_dir,'add_orgunit.ldif'),
-      u'Group':os.path.join(web2ldapcnf.templates_dir,'add_group.ldif'),
-      u'Locality':os.path.join(web2ldapcnf.templates_dir,'add_locality.ldif'),
-      u'POSIX user':os.path.join(web2ldapcnf.templates_dir,'add_user.ldif'),
-      u'Mail user':os.path.join(web2ldapcnf.templates_dir,'add_mailaccount.ldif'),
-      u'DNS sub-domain':os.path.join(web2ldapcnf.templates_dir,'add_dnsdomain2.ldif'),
-      u'DNS zone (SOA)':os.path.join(web2ldapcnf.templates_dir,'add_dnsdomain2_soa.ldif'),
-      u'Application process':os.path.join(web2ldapcnf.templates_dir,'add_applicationprocess.ldif'),
+      u'Person / Contact':os.path.join(templates_dir,'add_person.ldif'),
+      u'Organization (Company etc.)':os.path.join(templates_dir,'add_organization.ldif'),
+      u'Organizational Unit':os.path.join(templates_dir,'add_orgunit.ldif'),
+      u'Group':os.path.join(templates_dir,'add_group.ldif'),
+      u'Locality':os.path.join(templates_dir,'add_locality.ldif'),
+      u'POSIX user':os.path.join(templates_dir,'add_user.ldif'),
+      u'Mail user':os.path.join(templates_dir,'add_mailaccount.ldif'),
+      u'DNS sub-domain':os.path.join(templates_dir,'add_dnsdomain2.ldif'),
+      u'DNS zone (SOA)':os.path.join(templates_dir,'add_dnsdomain2_soa.ldif'),
+      u'Application process':os.path.join(templates_dir,'add_applicationprocess.ldif'),
     },
 
     # HTML template strings used to display the superior entry
@@ -960,7 +969,7 @@ ldap_def = {
     },
 
     # LDIF file used as locally stored pseudo LDAPv3 schema
-    schema_uri='file:'+os.path.join(web2ldapcnf.etc_dir,'localschema.ldif'),
+    schema_uri='file:'+os.path.join(etc_dir,'localschema.ldif'),
 
     # Whether to apply strict subschema consistency check (e.g. uniqueness)
     schema_strictcheck=True,
@@ -1020,7 +1029,7 @@ ldap_def = {
   'ldaps://demo.ae-dir.com': Web2LDAPConfig(
     description=u'AE-DIR demo',
     tls_options={
-      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(web2ldapcnf.etc_dir,'ssl','crt','DST_Root_CA_X3.pem'),
+      ldap0.OPT_X_TLS_CACERTFILE:os.path.join(etc_dir,'ssl','crt','DST_Root_CA_X3.pem'),
     },
   )
 

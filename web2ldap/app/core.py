@@ -15,12 +15,28 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 from types import StringType,UnicodeType
 
-import os,time
+import sys,os,time
 
 # Switch off processing .ldaprc or ldap.conf
 os.environ['LDAPNOINIT']='1'
 
 import ldap0
+
+# Path name of [web2ldap]/etc/web2ldap
+if 'WEB2LDAP_HOME' in os.environ:
+  # env var points to web2ldap root directory
+  etc_dir = os.path.join(os.environ['WEB2LDAP_HOME'],'etc','web2ldap')
+elif os.name=='posix' and sys.prefix=='/usr':
+  # OS-wide installation on POSIX platform (Linux, BSD, etc.)
+  etc_dir = '/etc/web2ldap'
+else:
+  # virtual env
+  etc_dir = os.path.join(sys.prefix,'etc','web2ldap')
+
+# Default directory for [web2ldap]/etc/web2ldap/templates
+templates_dir = os.path.join(etc_dir,'templates')
+
+sys.path.append(etc_dir)
 
 import web2ldapcnf,web2ldapcnf.hosts
 
