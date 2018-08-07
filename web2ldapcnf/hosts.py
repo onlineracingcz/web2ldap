@@ -624,7 +624,7 @@ ae_dir_config = Web2LDAPConfig(
   },
   read_tablemaxcount={
     'member':40,
-    'memberUID':40,
+    'memberUid':40,
     'memberOf':30,
   },
   requested_attrs=[
@@ -882,7 +882,7 @@ ldap_def = {
       'allowedChildClassesEffective':2,
       'member':40,
       'memberOf':30,
-      'memberUID':40,
+      'memberUid':40,
       'pwdHistory':2,
       'roleOccupant':40,
       'tokenGroups':4,

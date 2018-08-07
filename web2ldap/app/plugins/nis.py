@@ -111,7 +111,7 @@ class MemberUID(IA5String,DynamicValueSelectList):
 
 syntax_registry.registerAttrType(
   MemberUID.oid,[
-    '1.3.6.1.1.1.1.12', # memberUID
+    '1.3.6.1.1.1.1.12', # memberUid
   ]
 )
 

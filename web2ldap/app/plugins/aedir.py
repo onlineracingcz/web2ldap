@@ -646,7 +646,7 @@ class AEMemberUid(MemberUID):
 
 syntax_registry.registerAttrType(
   AEMemberUid.oid,[
-    '1.3.6.1.1.1.1.12', # memberUID
+    '1.3.6.1.1.1.1.12', # memberUid
   ],
   structural_oc_oids=[
     AE_GROUP_OID,     # aeGroup
