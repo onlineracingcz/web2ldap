@@ -303,13 +303,14 @@ addform_entry_templates={
 
   <dt id="groupadm_defs">groupadm_defs</dt>
   <dd>
-    Dictionary containing definitions about group entries
-    storing members in multi-valued member attributes. This is
-    used in the group admin mask. The dictionary's keys are
-    the name of the group entry object classes. The dictionary
-    values are 2-tuples representing the name of the multi-valued
-    member attribute in the group entry and the attribute type name
-    of the user attribute which is put to/removed from the group entry.
+    Dictionary containing definitions about group entries storing members
+    in multi-valued member attributes. This is used in the group admin
+    mask. The dictionary's keys are the name of the group entry object
+    classes. The dictionary values are either 2-tuples representing the
+    name of the multi-valued member attribute in the group entry and the
+    attribute type name of the user attribute which is put to/removed from
+    the group entry, or 3-tuples with additional flag indicating whether
+    this definition shall be used for determining group membership.
     <dl>
       <dt>Default:</dt><dd><code>{}</code></dd>
       <dt>Example:</dt>

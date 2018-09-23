@@ -619,9 +619,9 @@ ae_dir_config = Web2LDAPConfig(
   groupadm_filterstr_template=r'(&(|(objectClass=aeGroup)(objectClass=aeMailGroup))(aeStatus=0)(!(memberURL=*))(|%s))',
   groupadm_optgroup_bounds=(-2,-1),
   groupadm_defs={
-    'groupOfEntries':('member',None),
-    'posixGroup':('memberUid','uid'),
-    'nisMailAlias':('rfc822MailMember','mail'),
+    'groupOfEntries':('member',None,True),
+    'posixGroup':('memberUid','uid',False),
+    'nisMailAlias':('rfc822MailMember','mail',False),
   },
   read_tablemaxcount={
     'member':40,

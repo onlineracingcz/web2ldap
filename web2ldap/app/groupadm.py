@@ -111,9 +111,9 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
   groupadm_defs_keys = groupadm_defs.keys()
 
   all_membership_attrs = [
-    user_entry_attrtype
-    for group_member_attrtype,user_entry_attrtype in groupadm_defs.values()
-    if not user_entry_attrtype is None
+    gad[1]
+    for gad in groupadm_defs.values()
+    if not gad[1] is None
   ]
 
   sub_schema = ls.retrieveSubSchema(
@@ -136,7 +136,9 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
 
   filter_components = []
   for oc in groupadm_defs.keys():
-    group_member_attrtype,user_entry_attrtype = groupadm_defs[oc]
+    if len(groupadm_defs[oc])==3 and not groupadm_defs[oc][2]:
+      continue
+    group_member_attrtype,user_entry_attrtype = groupadm_defs[oc][:2]
     if user_entry_attrtype is None:
       user_entry_attrvalue = dn.encode(ls.charset)
     else:
@@ -211,7 +213,7 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
         modlist = []
         for oc in groupadm_defs_keys:
           if oc.lower() in [ v.lower() for v in all_groups_dict[group_dn].get('objectClass',[]) ]:
-            group_member_attrtype,user_entry_attrtype = groupadm_defs[oc]
+            group_member_attrtype,user_entry_attrtype = groupadm_defs[oc][0:2]
             if user_entry_attrtype is None:
               member_value = dn.encode(ls.charset)
             else:
