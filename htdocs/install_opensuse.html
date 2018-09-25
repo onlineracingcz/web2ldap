@@ -46,22 +46,4 @@ zypper install web2ldap
 /usr/bin/web2ldap 127.0.0.1 1760
 </pre>
 
-<h1 id="Installing">Upgrade instructions</h1>
-
-<p>
-  If you've customized web2ldap configuration backup your local config
-  changes first:
-</p>
-<pre class="cli">
-cp -av /etc/web2ldap/* /usr/lib/python2.7/site-packages/web2ldapcnf /path/to/backupdir/
-</pre>
-
-<p>
-  Then install the web2ldap upgrade (without necessarily upgrading other modules).
-</p>
-<p>
-  After the upgrade restore and merge your customized web2ldap
-  configuration e.g. from backup or via config management.
-</p>
-
 <!--#include file="ssi/footer.html" -->
