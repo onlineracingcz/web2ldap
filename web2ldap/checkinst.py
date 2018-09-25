@@ -74,8 +74,8 @@ def check_inst():
 
   for modulename,mandantory,min_version,url,desc in [
     ('ldap0',1,'0.0.54','https://pypi.org/project/ldap0','Module package for accessing LDAP servers'),
-    ('pyasn1',1,None,'http://pyasn1.sf.net','ASN.1 module'),
-    ('pyasn1_modules',1,None,'http://pyasn1.sf.net','ASN.1 LDAP module'),
+    ('pyasn1',1,None,'https://pypi.org/project/pyasn1','ASN.1 module'),
+    ('pyasn1_modules',1,None,'https://pypi.org/project/pyasn1-modules','ASN.1 LDAP module'),
     ('ipaddress',1,None,'https://pypi.org/project/ipaddress','IP address module'),
     ('xml.sax',1,None,'https://www.python.org',"Python's built-in XML support"),
     ('xml.sax.handler',1,None,'https://www.python.org',"Python's built-in XML support"),
