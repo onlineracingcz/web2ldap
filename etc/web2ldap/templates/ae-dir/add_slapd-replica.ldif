@@ -10,5 +10,5 @@ description: System user for OpenLDAP replica on .ae-dir.example.com
 aeStatus: 0
 pwdPolicySubentry: cn=ppolicy-sasl-external,cn=ae,ou=ae-dir
 aeNotBefore: now
-loginShell: /bin/true
+loginShell: /usr/sbin/nologin
 

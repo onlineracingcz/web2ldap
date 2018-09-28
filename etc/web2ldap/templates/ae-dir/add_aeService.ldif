@@ -6,7 +6,7 @@ objectClass: posixAccount
 objectClass: ldapPublicKey
 aeStatus: 0
 uid: system_
-loginShell: /bin/true
+loginShell: /usr/sbin/nologin
 pwdPolicySubentry: cn=ppolicy-systems,cn=ae,ou=ae-dir
 aeNotBefore: now
 

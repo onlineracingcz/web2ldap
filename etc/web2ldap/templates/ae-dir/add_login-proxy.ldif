@@ -7,7 +7,7 @@ aeStatus: 0
 uid: system_
 cn: system_
 description: System user for a login proxy
-loginShell: /bin/true
+loginShell: /usr/sbin/nologin
 pwdPolicySubentry: cn=ppolicy-systems,cn=ae,ou=ae-dir
 aeNotBefore: now
 authzTo: {0}ldap:///ou=ae-dir??sub?(&(aeStatus=0)(|(objectClass=aeHost)(objectClass=aeService)))
