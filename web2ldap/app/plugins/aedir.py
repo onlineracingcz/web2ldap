@@ -2248,6 +2248,7 @@ class AELoginShell(Shell):
     u'/bin/bash':u'/bin/bash',
     u'/bin/true':u'/bin/true',
     u'/bin/false':u'/bin/false',
+    u'/usr/sbin/nologin':u'/usr/sbin/nologin',
   }
 
 syntax_registry.registerAttrType(

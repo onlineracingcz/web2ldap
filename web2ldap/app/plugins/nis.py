@@ -153,6 +153,7 @@ class Shell(SelectList):
     u'/usr/bin/tcsh':u'/usr/bin/csh',
     u'/usr/bin/ksh':u'Korn shell /usr/bin/ksh',
     u'/usr/bin/zsh':u'Zsh /usr/bin/zsh',
+    u'/usr/sbin/nologin':u'Login denied /usr/sbin/nologin',
   }
 
 syntax_registry.registerAttrType(
