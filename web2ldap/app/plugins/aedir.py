@@ -766,6 +766,7 @@ syntax_registry.registerAttrType(
     AE_OID_PREFIX+'.4.4',  # aeLoginGroups
     AE_OID_PREFIX+'.4.6',  # aeSetupGroups
     AE_OID_PREFIX+'.4.7',  # aeLogStoreGroups
+    AE_OID_PREFIX+'.4.37', # aeABAccessGroups
   ]
 )
 
@@ -2248,7 +2249,6 @@ class AELoginShell(Shell):
     u'/bin/bash':u'/bin/bash',
     u'/bin/true':u'/bin/true',
     u'/bin/false':u'/bin/false',
-    u'/usr/sbin/nologin':u'/usr/sbin/nologin',
   }
 
 syntax_registry.registerAttrType(
