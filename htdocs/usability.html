@@ -110,7 +110,7 @@ HTML templates can be are chosen based on language configuration in your browser
 <p>
   web2ldap internally handles many aspects of displaying attribute
   values or input fields with the help of Python classes (derived from
-  <var>w2lapp.schema.syntaxes.LDAPSyntax</var>) registered for LDAP syntax OIDs
+  <var>web2ldap.app.schema.syntaxes.LDAPSyntax</var>) registered for LDAP syntax OIDs
   and/or attribute types.<br>
   Plug-in classes have access to various data:
 </p>
@@ -128,10 +128,10 @@ HTML templates can be are chosen based on language configuration in your browser
   <li>Static or dynamic select classes</li>
 </ul>
 <p>
-  Look into files <samp>web2ldap/w2lapp/schema/plugins/*.py</samp> for examples.
+  Look into files <samp>web2ldap/app/plugins/*.py</samp> for examples.
   Best pratice is to stuff self-implemented custom classes in a module in
-  directory <code>etc/web2ldap/web2ldapcnf/plugins/</code> and import this
-  module in file <code>etc/web2ldap/web2ldapcnf/plugins/__init__.py</code>.
+  directory <code>etc/web2ldap/web2ldapcnf/</code> and import this
+  module in file <code>etc/web2ldap/web2ldapcnf/plugins.py</code>.
   Order of the <var>import</var>-statements is significant.
 </p>
 <p>
