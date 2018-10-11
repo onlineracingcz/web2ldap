@@ -12,6 +12,10 @@
     Aligned plugin module for <a href="https://ae-dir.com">&AElig;-DIR</a>
     with upstream.
   </li>
+  <li>
+    Fixed examples in <em>docker/</em> to match simpler plugin file layout
+    introduced in <a href="#r1.3.26">1.3.26</a>.
+  </li>
 </ul>
 
 <h1 id="r1.3.29">1.3.29</h1>
@@ -48,9 +52,9 @@
     ISO-8859-1 because this seems, although wrong, the most common practice.
   </li>
   <li>
-    Config module <var>web2ldapcnf</var> was moved back to 
-    <var>etc/web2ldap/</var> and now gets installed as 
-    <var>data-files</var>. This allows to mark those files as config files 
+    Config module <var>web2ldapcnf</var> was moved back to
+    <var>etc/web2ldap/</var> and now gets installed as
+    <var>data-files</var>. This allows to mark those files as config files
     when building OS packages (RPM etc.).
   </li>
   <li>
