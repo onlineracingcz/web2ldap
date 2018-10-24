@@ -280,6 +280,7 @@ class AppHandler:
       self.guess_client_addr(),
       web2ldapcnf.ldap_trace_level,
       self.env['wsgi.errors'],
+      web2ldapcnf.ldap_cache_ttl,
     )
     ls.cookie = self.form.setNewCookie(str(id(ls)))
     session_store.storeSession(self.sid,ls)
@@ -533,6 +534,7 @@ class AppHandler:
             self.guess_client_addr(),
             web2ldapcnf.ldap_trace_level,
             self.env['wsgi.errors'],
+            web2ldapcnf.ldap_cache_ttl,
           )
           ls.cookie = self.form.setNewCookie(str(id(ls)))
           session_store.storeSession(self.sid,ls)

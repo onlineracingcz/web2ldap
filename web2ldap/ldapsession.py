@@ -40,8 +40,6 @@ try:
 except:
   SubschemaError = None
 
-LDAP_CACHE_TTL = 5.0
-
 START_TLS_NO = 0
 START_TLS_TRY = 1
 START_TLS_REQUIRED = 2
@@ -144,6 +142,7 @@ class MyLDAPObject(ReconnectLDAPObject):
     trace_stack_limit=5,
     retry_max=PYLDAP_RETRY_MAX,
     retry_delay=PYLDAP_RETRY_DELAY,
+    cache_ttl=5.0,
   ):
     self._serverctrls = {
       '**all**':[],      # all LDAP operations
@@ -168,7 +167,7 @@ class MyLDAPObject(ReconnectLDAPObject):
       trace_level,trace_file,trace_stack_limit,
       retry_max=retry_max,
       retry_delay=retry_delay,
-      cache_ttl=LDAP_CACHE_TTL,
+      cache_ttl=cache_ttl,
     )
 
   def _get_server_ctrls(self,method):
@@ -330,7 +329,7 @@ class LDAPSession:
   Class for handling LDAP connection objects
   """
 
-  def __init__(self,onBehalf,traceLevel,traceFile):
+  def __init__(self,onBehalf,traceLevel,traceFile,cache_ttl):
     """Initialize a LDAPSession object"""
     # Set to not connected
     self.uri = None
@@ -360,6 +359,7 @@ class LDAPSession:
     self.sessionStartTime = time.time()
     self.connStartTime = None
     self.setDN(u'')
+    self._cache_ttl = cache_ttl
     return # __init__()
 
   def setTLSOptions(self,tls_options=None):
@@ -409,6 +409,7 @@ class LDAPSession:
           uri,
           trace_level=self._traceLevel,
           trace_file=self._traceFile,
+          cache_ttl=self._cache_ttl,
         )
         self.uri = uri
         self.setTLSOptions(tls_options)

@@ -42,6 +42,7 @@
   [<a href="#http_headers">http_headers</a>]
   [<a href="#input_maxattrs">input_maxattrs</a>]
   [<a href="#input_maxfieldlen">input_maxfieldlen</a>]
+  [<a href="#ldap_cache_ttl">ldap_cache_ttl</a>]
   [<a href="#ldap_opt_debug_level">ldap_opt_debug_level</a>]
   [<a href="#ldap_trace_level">ldap_trace_level</a>]
   [<a href="#ldif_maxbytes">ldif_maxbytes</a>]
@@ -150,6 +151,13 @@ General options
     <samp>
       search_attrsonly=1
     </samp>
+  </dd>
+
+  <dt id="ldap_cache_ttl">ldap_cache_ttl</dt>
+  <dd>
+    Time (seconds) search results retrieved with a synchronous search
+    operation will be kept in a short-time cache used per LDAP connection.
+    E.g. this affects performance of dynamic select lists.
   </dd>
 
   <dt id="ldap_opt_debug_level">ldap_opt_debug_level</dt>
