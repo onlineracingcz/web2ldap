@@ -79,15 +79,9 @@ def application(environ, start_response):
             css_file = open(css_filename, 'rb')
             css_http_headers = [('Content-type', 'text/css'), ('Content-Length', str(css_size))]
             css_http_headers.extend(web2ldapcnf.http_headers.items())
-            start_response(
-                '200 OK',
-                css_http_headers,
-            )
+            start_response('200 OK',css_http_headers)
         except (IOError, OSError):
-            start_response(
-                '404 not found',
-                [('Content-type', 'text/plain')],
-            )
+            start_response('404 not found',[('Content-type', 'text/plain')])
             return ['404 - Not found.']
         else:
             return wsgiref.util.FileWrapper(css_file)
@@ -97,10 +91,7 @@ def application(environ, start_response):
     app = web2ldap.app.handler.AppHandler(environ, outf)
     app.run()
     outf.headers.append(('Content-Length', str(outf._bytelen)))
-    start_response(
-        '200 OK',
-        outf.headers,
-    )
+    start_response('200 OK',outf.headers)
     return outf._lines
 
 
