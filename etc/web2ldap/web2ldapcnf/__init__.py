@@ -24,7 +24,7 @@ from web2ldap.app.core import etc_dir,templates_dir
 ldap_trace_level = 0
 
 # Time (seconds) search results will be kept in a short-time cache
-ldap_cache_ttl = 30
+ldap_cache_ttl = 6.0
 
 # If non-zero this turns on debug output of the OpenLDAP libs.
 # Warning! Confidential information might be disclosed to the log!
