@@ -596,7 +596,7 @@ class LDAPSession:
         ldap0.RES_SEARCH_ENTRY:0,
         ldap0.RES_SEARCH_REFERENCE:0,
       }
-      for res_type,res_data,_,_ in self.l.allresults(msg_id):
+      for res_type,res_data,_,_ in self.l.results(msg_id):
         count_dict[res_type] += len(res_data)
       num_entries,num_referrals = (count_dict[ldap0.RES_SEARCH_ENTRY],count_dict[ldap0.RES_SEARCH_REFERENCE])
     return num_entries,num_referrals
@@ -615,7 +615,7 @@ class LDAPSession:
       subordinate_attrs,
       timeout=self.timeout
     )
-    hasSubordinates = None; numSubordinates = None; numAllSubordinates = None
+    hasSubordinates = numSubordinates = numAllSubordinates = numSubordinates_attr = None
     if ldap_result:
       entry = ldap0.cidict.cidict(ldap_result[0][1])
       for a in ('subordinateCount','numSubordinates','msDS-Approx-Immed-Subordinates'):
@@ -624,6 +624,7 @@ class LDAPSession:
         except KeyError:
           pass
         else:
+          numSubordinates_attr = a
           break
       try:
         numAllSubordinates = int(entry['numAllSubordinates'][0])
@@ -632,13 +633,13 @@ class LDAPSession:
           ldap_result = self.l.search_s(
             self.uc_encode(dn)[0],
             ldap0.SCOPE_SUBTREE,
-            '(numSubordinates>=1)',
-            attrlist=['numSubordinates'],
+            '(objectClass=*)',
+            attrlist=[numSubordinates_attr],
             timeout=COUNT_TIMEOUT
           )
           numAllSubordinates = 0
           for _,ldap_entry in ldap_result:
-            numAllSubordinates += int(ldap_entry['numSubordinates'][0])
+            numAllSubordinates += int(ldap_entry[numSubordinates_attr][0])
       try:
         hasSubordinates = entry['hasSubordinates'][0].upper()=='TRUE'
       except KeyError:
