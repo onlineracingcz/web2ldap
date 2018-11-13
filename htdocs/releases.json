@@ -9,8 +9,8 @@
       {
          "version": "1.3.32",
          "state": "stable",
-         "scope": "minor feature",
-         "changes": "Small enhancements and fixes",
+         "scope": "minor bugfix",
+         "changes": "Small fix",
          "download": "https://www.web2ldap.de/download/web2ldap-1.3.32.tar.gz",
          "published": "2018-11-13T20:00:00+00:00"
       },
