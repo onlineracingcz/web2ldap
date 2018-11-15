@@ -372,10 +372,10 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
     )
     self.addField(InclOpAttrsCheckbox('search_opattrs',u'Request operational attributes',default="yes",checked=0))
     self.addField(pyweblib.forms.Select('search_mode',u'Search Mode',1,options=[ur'(&%s)',ur'(|%s)']))
-    self.addField(pyweblib.forms.Input('search_attr',u'Attribute(s) to be searched',1000,web2ldapcnf.max_searchparams,ur'[\w,_;-]+'))
-    self.addField(pyweblib.forms.Input('search_mr',u'Matching Rule',1000,web2ldapcnf.max_searchparams,ur'[\w,_;-]+'))
+    self.addField(pyweblib.forms.Input('search_attr',u'Attribute(s) to be searched',100,web2ldapcnf.max_searchparams,ur'[\w,_;-]+'))
+    self.addField(pyweblib.forms.Input('search_mr',u'Matching Rule',100,web2ldapcnf.max_searchparams,ur'[\w,_;-]+'))
     self.addField(pyweblib.forms.Select('search_option',u'Search option',web2ldapcnf.max_searchparams,options=web2ldap.app.searchform.search_options))
-    self.addField(pyweblib.forms.Input('search_string',u'Search string',100,web2ldapcnf.max_searchparams,u'.*',size=60))
+    self.addField(pyweblib.forms.Input('search_string',u'Search string',600,web2ldapcnf.max_searchparams,u'.*',size=60))
     self.addField(SearchAttrs())
 
 
