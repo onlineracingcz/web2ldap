@@ -122,15 +122,6 @@ class SyntaxRegistry:
     return attr_instance
 
 
-url_pattern  = r'^(ftp|http|https|news|snews|ldap|ldaps|mailto):(|//)[^ ]*'
-url_regex  = re.compile(url_pattern)
-labeleduri_regex = re.compile(url_pattern+r' .*')
-timestamp_pattern = r'^([0-9]){12,14}((\.|,)[0-9]+)*(Z|(\+|-)[0-9]{4})$'
-timestamp_regex  = re.compile(timestamp_pattern)
-mail_pattern = r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$'
-mail_regex = re.compile(mail_pattern)
-
-
 ####################################################################
 # Classes of known syntaxes
 ####################################################################
@@ -300,11 +291,11 @@ class LDAPSyntax:
   def displayValue(self,valueindex=0,commandbutton=0):
     if ldap0.ldapurl.isLDAPUrl(self.attrValue):
       displayer_class = LDAPUrl
-    elif url_regex.search(self.attrValue)!=None:
+    elif Uri.reObj.match(self.attrValue)!=None:
       displayer_class = Uri
-    elif timestamp_regex.match(self.attrValue)!=None:
+    elif GeneralizedTime.reObj.match(self.attrValue)!=None:
       displayer_class = GeneralizedTime
-    elif mail_regex.match(self.attrValue)!=None:
+    elif RFC822Address.reObj.match(self.attrValue)!=None:
       displayer_class = RFC822Address
     else:
       displayer_class = DirectoryString
@@ -565,7 +556,7 @@ class GeneralizedTime(IA5String):
   desc = 'Generalized Time'
   inputSize = 24
   maxLen=24
-  reObj=timestamp_regex
+  reObj=re.compile(r'^([0-9]){12,14}((\.|,)[0-9]+)*(Z|(\+|-)[0-9]{4})$')
   timeDefault = None
   notBefore = None
   notAfter = None
@@ -869,7 +860,7 @@ class Uri(DirectoryString):
   """
   oid = 'Uri-OID'
   desc = 'URI'
-  reObj = url_regex
+  reObj = re.compile(r'^(ftp|http|https|news|snews|ldap|ldaps|mailto):(|//)[^ ]*')
   simpleSanitizers = (
     str.strip,
   )
@@ -1895,7 +1886,7 @@ class DNSDomain(IA5String):
 class RFC822Address(IA5String,DNSDomain):
   oid = 'RFC822Address-oid'
   desc = 'RFC 822 mail address'
-  reObj = re.compile(mail_pattern)
+  reObj = re.compile(r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$')
   html_tmpl = '<a href="mailto:{av}">{av}</a>'
 
   def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
