@@ -881,6 +881,10 @@ class Uri(DirectoryString):
         self._form.utf2display(label),
         self._form.utf2display(display_url),
       )
+    elif url.lower().find('javascript:')>=0:
+      return '<code>%s</code>' % (
+        DirectoryString.displayValue(self,valueindex=0,commandbutton=0)
+      )
     else:
       return '<a href="%s/urlredirect/%s?%s">%s%s</a>' % (
         self._form.script_name,
