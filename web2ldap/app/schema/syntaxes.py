@@ -622,16 +622,27 @@ class GeneralizedTime(IA5String):
   def sanitizeInput(self,attrValue):
     attrValue = attrValue.strip().upper()
     # Special cases first
-    if attrValue in ('N','NOW'):
+    if attrValue in ('N','NOW','0'):
       return datetime.datetime.strftime(datetime.datetime.utcnow(),r'%Y%m%d%H%M%SZ')
+    # a single integer value is interpreted as seconds relative to now
+    try:
+      float_val = float(attrValue)
+    except ValueError:
+      pass
+    else:
+      now = datetime.datetime.utcnow()
+      return datetime.datetime.strftime(
+          datetime.datetime.utcnow()+datetime.timedelta(seconds=float_val),
+          r'%Y%m%d%H%M%SZ',
+      )
     if self.timeDefault:
       date_format = r'%Y%m%d'+self.timeDefault+'Z'
       if attrValue in ('T','TODAY'):
         return datetime.datetime.strftime(datetime.datetime.utcnow(),date_format)
       elif attrValue in ('Y','YESTERDAY'):
-        return datetime.datetime.strftime(datetime.datetime.today()-datetime.timedelta(1),date_format)
+        return datetime.datetime.strftime(datetime.datetime.today()-datetime.timedelta(days=1),date_format)
       elif attrValue in ('T','TOMORROW'):
-        return datetime.datetime.strftime(datetime.datetime.today()-datetime.timedelta(1),date_format)
+        return datetime.datetime.strftime(datetime.datetime.today()+datetime.timedelta(days=1),date_format)
     # Try to parse various datetime syntaxes
     for time_format in self.dtFormats:
       try:
