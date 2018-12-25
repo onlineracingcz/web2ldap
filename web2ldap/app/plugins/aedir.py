@@ -268,12 +268,11 @@ class AEGIDNumber(GidNumber):
     pre-read entry control
     """
     prc = PreReadControl(criticality=True, attrList=[self.attrType])
-    msg_id = self._ls.l.modify(
+    _, _, _, resp_ctrls = self._ls.l.modify_s(
         self._get_id_pool_dn(),
         [(ldap0.MOD_INCREMENT, self.attrType, '1')],
         serverctrls=[prc],
     )
-    _, _, _, resp_ctrls, _, _ = self._ls.l.result(msg_id)
     return int(resp_ctrls[0].entry[self.attrType][0])
 
   def transmute(self,attrValues):

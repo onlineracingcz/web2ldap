@@ -884,15 +884,13 @@ class LDAPSession:
       rename_serverctrls.append(PostReadControl(criticality=False,attrList=['entryUUID']))
     rename_serverctrls = rename_serverctrls or None
     # Send ModRDNRequest
-    rename_msg_id = self.l.rename(
+    _,_,_,rename_resp_ctrls = self.l.rename_s(
       self.uc_encode(dn)[0],
       self.uc_encode(new_rdn)[0],
       new_superior_str,
       delold,
       serverctrls=rename_serverctrls
     )
-    # Receive result
-    _,_,_,rename_resp_ctrls,_,_ = self.l.result(rename_msg_id)
     # Try to extract Read Entry controls from response
     prec_ctrls = dict([
       (c.controlType,c)

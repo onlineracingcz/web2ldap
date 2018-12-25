@@ -214,12 +214,11 @@ def w2l_Add(sid,outf,command,form,ls,dn):
 
   # Try to add the new entry
   try:
-    add_msg_id = ls.l.add(
+    _,_,_,add_resp_ctrls = ls.l.add(
       new_dn,
       modlist,
       serverctrls=add_serverctrls
     )
-    _,_,_,add_resp_ctrls,_,_ = ls.l.result(add_msg_id)
   except ldap0.NO_SUCH_OBJECT as e:
     raise web2ldap.app.core.ErrorExit(
       u"""
