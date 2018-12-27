@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.3.37",
+         "state": "stable",
+         "scope": "major fix",
+         "changes": "Fixed regression when adding entries",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.3.37.tar.gz",
+         "published": "2018-12-27T20:00:00+00:00"
+      },
+      {
          "version": "1.3.36",
          "state": "stable",
          "scope": "minor fix",
