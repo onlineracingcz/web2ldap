@@ -9,7 +9,7 @@ nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.102 NAME 'aeRoot-top-NF-dc' OC aeRoot 
 dITStructureRules: ( 103 NAME 'aeRoot-top-SR-cn' FORM aeRoot-top-NF-cn )
 nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.103 NAME 'aeRoot-top-NF-cn' OC aeRoot MUST ( cn ) )
 dITStructureRules: ( 104 NAME 'aeRoot-top-SR-o' FORM aeRoot-top-NF-o )
-nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.103 NAME 'aeRoot-top-NF-o' OC aeRoot MUST ( o ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.104 NAME 'aeRoot-top-NF-o' OC aeRoot MUST ( o ) )
 #
 # aeZone is direct subordinate of aeRoot
 #
@@ -77,8 +77,8 @@ nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.20 NAME 'aeService-aeZone-or-aeSrvGrou
 #
 # aeHost must be subordinate of aeSrvGroup
 #
-dITStructureRules: ( 21 NAME 'aeHost-aeSrvGroup-SR' FORM aeHost-aeSrvGroup-NF SUP ( 5 ) )
-nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.21 NAME 'aeHost-aeSrvGroup-NF' OC aeHost MUST ( host ) )
+dITStructureRules: ( 22 NAME 'aeHost-aeSrvGroup-SR' FORM aeHost-aeSrvGroup-NF SUP ( 5 ) )
+nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.22 NAME 'aeHost-aeSrvGroup-NF' OC aeHost MUST ( host ) )
 #
 # aeNwDevice must be subordinate of aeHost
 #
