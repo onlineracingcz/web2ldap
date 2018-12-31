@@ -82,5 +82,5 @@ nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.22 NAME 'aeHost-aeSrvGroup-NF' OC aeHo
 #
 # aeNwDevice must be subordinate of aeHost
 #
-dITStructureRules: ( 30 NAME 'aeNwDevice-aeHost-SR' FORM aeNwDevice-aeHost-NF SUP ( 21 ) )
+dITStructureRules: ( 30 NAME 'aeNwDevice-aeHost-SR' FORM aeNwDevice-aeHost-NF SUP ( 22 ) )
 nameForms: ( 1.3.6.1.4.1.5427.1.389.42.15.30 NAME 'aeNwDevice-aeHost-NF' OC aeNwDevice MUST ( cn ) )
