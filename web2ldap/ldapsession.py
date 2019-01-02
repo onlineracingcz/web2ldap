@@ -138,8 +138,6 @@ class MyLDAPObject(ReconnectLDAPObject):
   def __init__(
     self,uri,
     trace_level=0,
-    trace_file=None,
-    trace_stack_limit=5,
     retry_max=PYLDAP_RETRY_MAX,
     retry_delay=PYLDAP_RETRY_DELAY,
     cache_ttl=5.0,
@@ -164,7 +162,7 @@ class MyLDAPObject(ReconnectLDAPObject):
     self.flush_cache()
     ReconnectLDAPObject.__init__(
       self,uri,
-      trace_level,trace_file,trace_stack_limit,
+      trace_level,
       retry_max=retry_max,
       retry_delay=retry_delay,
       cache_ttl=cache_ttl,
@@ -408,7 +406,6 @@ class LDAPSession:
         self.l = MyLDAPObject(
           uri,
           trace_level=self._traceLevel,
-          trace_file=self._traceFile,
           cache_ttl=self._cache_ttl,
         )
         self.uri = uri
