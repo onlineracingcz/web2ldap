@@ -12,6 +12,8 @@ LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.INFO)
 
 LOG_FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 
+LOG_DATEFMT = '%Y-%M-%D'
+
 
 class LogHelper:
     """
@@ -29,13 +31,12 @@ def init_logger():
     """
     Create logger instance
     """
+    logging.basicConfig(
+        level=LOG_LEVEL,
+        format=LOG_FORMAT,
+        datefmt=LOG_DATEFMT,
+    )
     logger = logging.getLogger()
-    logger.setLevel(LOG_LEVEL)
-    stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(LOG_LEVEL)
-    formatter = logging.Formatter(LOG_FORMAT)
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
     return logger
 
 
