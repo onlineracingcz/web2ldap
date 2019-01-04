@@ -334,7 +334,6 @@ class LDAPSession:
     self.namingContexts = None
     self._auditContextCache = ldap0.cidict.cidict()
     self._traceLevel = traceLevel
-    self._traceFile = traceFile or sys.stdout
     # Character set/encoding of data stored on this particular host
     self.charset = 'utf-8'
     conn_codec = codecs.lookup(self.charset)
