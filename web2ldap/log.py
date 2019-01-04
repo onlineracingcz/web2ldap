@@ -9,7 +9,8 @@ import os
 import logging
 
 LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.INFO)
-LOG_FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
+
+LOG_FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 
 
 class LogHelper:
