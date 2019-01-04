@@ -13,15 +13,15 @@ LOG_FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 
 
 class LogHelper:
-  """
-  mix-in class for logging with a class-specific log prefix
-  """
+    """
+    mix-in class for logging with a class-specific log prefix
+    """
 
-  def _log_prefix(self):
-      return '%s[%x] ' % (self.__class__.__name__, id(self))
+    def _log_prefix(self):
+        return '%s[%x] ' % (self.__class__.__name__, id(self))
 
-  def log(self, level, msg, *args, **kwargs):
-      logger.log(level, ' '.join((self._log_prefix(), msg)), *args, **kwargs)
+    def log(self, level, msg, *args, **kwargs):
+        logger.log(level, ' '.join((self._log_prefix(), msg)), *args, **kwargs)
 
 
 def init_logger():
