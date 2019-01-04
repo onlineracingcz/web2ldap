@@ -81,9 +81,10 @@ def application(environ, start_response):
             css_http_headers = [('Content-type', 'text/css'), ('Content-Length', str(css_size))]
             css_http_headers.extend(web2ldapcnf.http_headers.items())
             start_response('200 OK',css_http_headers)
-        except (IOError, OSError):
+        except (IOError, OSError) as err:
+            logger.error('Error reading CSS file %r: %s', css_filename, err)
             start_response('404 not found',[('Content-type', 'text/plain')])
-            return ['404 - Not found.']
+            return ['404 - CSS file not found.']
         else:
             return wsgiref.util.FileWrapper(css_file)
     if not environ['SCRIPT_NAME']:
