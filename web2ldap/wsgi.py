@@ -69,7 +69,6 @@ def application(environ, start_response):
     """
     the main WSGI application function
     """
-    logger.debug('Entering %s[%x].application()', __name__)
     if environ['PATH_INFO'].startswith('/css/web2ldap'):
         css_filename = os.path.join(
             web2ldapcnf.etc_dir,
@@ -79,12 +78,15 @@ def application(environ, start_response):
         try:
             css_size = os.stat(css_filename).st_size
             css_file = open(css_filename, 'rb')
-            css_http_headers = [('Content-type', 'text/css'), ('Content-Length', str(css_size))]
+            css_http_headers = [
+                ('Content-type', 'text/css'),
+                ('Content-Length', str(css_size)),
+            ]
             css_http_headers.extend(web2ldapcnf.http_headers.items())
             start_response('200 OK',css_http_headers)
         except (IOError, OSError) as err:
             logger.error('Error reading CSS file %r: %s', css_filename, err)
-            start_response('404 not found',[('Content-type', 'text/plain')])
+            start_response('404 not found', (('Content-type', 'text/plain')))
             return ['404 - CSS file not found.']
         else:
             return wsgiref.util.FileWrapper(css_file)
@@ -94,12 +96,11 @@ def application(environ, start_response):
     app = web2ldap.app.handler.AppHandler(environ, outf)
     app.run()
     outf.headers.append(('Content-Length', str(outf._bytelen)))
-    start_response('200 OK',outf.headers)
-    logger.debug('Exiting %s[%x].application()', __name__)
+    start_response('200 OK', outf.headers)
     return outf._lines
 
 
-def start_server():
+def run_standalone():
     """
     start a simple stand-alone web server
     """
@@ -128,9 +129,11 @@ def start_server():
         # Serve until process is killed
         httpd.serve_forever()
     except KeyboardInterrupt:
-        logger.info('Stopping service http://%s:%s/web2ldap', host, port)
-        # Stop clean-up thread
-        web2ldap.app.session.cleanUpThread.enabled = 0
+        pass
+    logger.info('Stopping service http://%s:%s/web2ldap', host, port)
+    # Stop clean-up thread
+    web2ldap.app.session.cleanUpThread.enabled = 0
+    return # end of run_standalone()
 
 if __name__ == '__main__':
-    start_server()
+    run_standalone()
