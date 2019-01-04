@@ -12,7 +12,7 @@ LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.INFO)
 
 LOG_FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 
-LOG_DATEFMT = '%Y-%M-%D'
+LOG_DATEFMT = '%Y-%m-%d'
 
 
 class LogHelper:
