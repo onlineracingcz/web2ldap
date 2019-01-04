@@ -28,13 +28,13 @@ def init_logger():
     """
     Create logger instance
     """
-    logger = logging.getLogger('web2ldap')
+    logger = logging.getLogger()
     logger.setLevel(LOG_LEVEL)
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(LOG_LEVEL)
     formatter = logging.Formatter(LOG_FORMAT)
     stream_handler.setFormatter(formatter)
-#    logger.addHandler(stream_handler)
+    logger.addHandler(stream_handler)
     return logger
 
 
