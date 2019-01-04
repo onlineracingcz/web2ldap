@@ -12,6 +12,7 @@ import wsgiref.util
 import wsgiref.simple_server
 
 import web2ldap.app.core
+from web2ldap.log import logger
 import web2ldapcnf
 import web2ldap.app.handler
 
@@ -116,12 +117,12 @@ def start_server():
         handler_class=W2lWSGIRequestHandler,
     )
     host, port = httpd.socket.getsockname()
-    print "Serving http://%s:%s/web2ldap" % (host, port)
+    logger.info('Serving http://%s:%s/web2ldap', host, port)
     try:
         # Serve until process is killed
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print "Stopping service on port 1760..."
+        logger.info('Stopping service http://%s:%s/web2ldap', host, port)
         # Stop clean-up thread
         web2ldap.app.session.cleanUpThread.enabled = 0
 

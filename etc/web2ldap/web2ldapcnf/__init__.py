@@ -8,8 +8,9 @@ Some variables to configure the basic behaviour of web2ldap.py
 
 from __future__ import absolute_import
 
-import sys,os
+import os
 
+from web2ldap.log import logger
 from web2ldap.app.core import etc_dir,templates_dir
 
 #---------------------------------------------------------------------------
@@ -228,5 +229,5 @@ import web2ldapcnf.plugins
 
 try:
   import web2ldapcnf.local
-except ImportError,e:
-  sys.stderr.write('WARNING: Importing local config failed: %s\n' % (str(e)))
+except ImportError, import_error:
+  logger.info('Importing web2ldapcnf.local failed: %s\n', str(import_error))

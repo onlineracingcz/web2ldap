@@ -13,12 +13,18 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 from __future__ import absolute_import
+
 from types import StringType,UnicodeType
 
 import sys,os,time
 
-# Switch off processing .ldaprc or ldap.conf
+import web2ldap.__about__
+from web2ldap.log import logger
+
+logger.info('Starting web2ldap %s', web2ldap.__about__.__version__)
+# this has to be done before import module package ldap0
 os.environ['LDAPNOINIT']='1'
+logger.debug('Disabled processing .ldaprc or ldap.conf (LDAPNOINIT=%s)', os.environ['LDAPNOINIT'])
 
 import ldap0
 
@@ -64,6 +70,8 @@ class ErrorExit(Exception):
 ########################################################################
 # Initialize some constants
 ########################################################################
+
+logger.debug('End of module %s', __name__)
 
 # Raise UnicodeError instead of output of UnicodeWarning
 from exceptions import UnicodeWarning

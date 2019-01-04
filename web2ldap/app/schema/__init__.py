@@ -147,8 +147,8 @@ def parse_fake_schema(ldap_def):
     else:
       try:
         _,schema = ldap0.schema.util.urlfetch(schema_uri)
-      except (IOError,OSError,ldap0.LDAPError) as e:
-        sys.stderr.write('Error retrieving schema from %s: %s\n' % (schema_uri,str(e)))
+      except (IOError,OSError,ldap0.LDAPError) as err:
+        logging.error('Error retrieving schema from %r: %s', schema_uri, err)
       else:
         if schema!=None:
           # Store the pre-parsed schema in the configuration

@@ -14,13 +14,13 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import sys,time,traceback,collections
+import time,traceback,collections
 
 import pyweblib.session
 
 from web2ldap.ldapsession import LDAPSession
 import web2ldapcnf
-
+from web2ldap.log import logger
 
 class InvalidSessionInstance(pyweblib.session.SessionException):
   pass
@@ -58,6 +58,7 @@ class Session(pyweblib.session.WebSession):
     self.session_ip_addr = {}
     self.maxSessionCountPerIP = maxSessionCountPerIP or self.maxSessionCount/4
     self.remote_ip_counter = collections.Counter()
+    logger.debug('Initialized clean-up thread %s[%x]', self.__class__.__name__, id(self))
 
   def _remote_ip(self,env):
     return env.get('FORWARDED_FOR',
@@ -138,10 +139,13 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
     self.removed_sessions = 0
     self.run_counter = 0
     self.last_run_time = 0
+    self.enabled = True
 
   def run(self):
     """Thread function for cleaning up session database"""
-    while not self._stop_event.isSet():
+    logger.debug('Entering %s[%x].run()', self.__class__.__name__, id(self))
+    while self.enabled and not self._stop_event.isSet():
+      logger.debug('%s[%x].run()', self.__class__.__name__, id(self))
       self.run_counter += 1
       current_time = time.time()
       try:
@@ -164,15 +168,17 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
               self._sessionInstance.deleteSession(session_id)
               self.removed_sessions+=1
         self.last_run_time = current_time
-      except:
+      except KeyboardInterrupt:
+        logger.debug('Caught KeyboardInterrupt exception in %s[%x].run()', self.__class__.__name__, id(self))
+        break
+      except Exception as err:
         # Catch all exceptions to avoid thread being killed.
-        if __debug__:
-          traceback.print_exc()
-        pass
+        logger.error('Unhandled exception in %s[%x].run()', self.__class__.__name__, id(self), exc_info=True)
 
       # Sleeping until next turn
       self._stop_event.wait(self._interval)
 
+    logger.debug('Exiting %s[%x].run()', self.__class__.__name__, id(self))
     return # CleanUpThread.run()
 
 
@@ -181,7 +187,6 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
 ########################################################################
 
 global session_store
-sys.stderr.write('Initialize web2ldap session store\n')
 session_store = Session(
   expireDeactivate=web2ldapcnf.session_remove,
   expireRemove=web2ldapcnf.session_remove,
@@ -189,8 +194,9 @@ session_store = Session(
   maxSessionCount = web2ldapcnf.session_limit,
   maxSessionCountPerIP = web2ldapcnf.session_per_ip_limit,
 )
+logger.debug('Initialized web2ldap session store %r', session_store)
 
 global cleanUpThread
-sys.stderr.write('Initialize web2ldap clean-up thread\n')
 cleanUpThread = CleanUpThread(session_store,interval=5)
 cleanUpThread.start()
+logger.debug('Started clean-up thread %s[%x]', cleanUpThread.__class__.__name__, id(cleanUpThread))

@@ -15,6 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 import sys,os,re,imghdr,sndhdr,urllib,uuid,datetime,time,json,xml.etree.ElementTree
+import logging
 from collections import defaultdict
 from xml.etree.ElementTree import ParseError as XMLParseError
 from types import StringType,UnicodeType,ClassType,TupleType
@@ -83,11 +84,12 @@ class SyntaxRegistry:
 # A better approach for unique attribute type registration which
 # allows overriding older registration is needed.
         if a in self.at2syntax and oc_oid in self.at2syntax[a]:
-          sys.stderr.write('WARNING: Registering attribute type %s with syntax %s overrides existing registration with syntax %s\n' % (
-            repr(a),
-            repr(syntax_oid),
-            repr(self.at2syntax[a]),
-          ))
+          logging.warn(
+            'Registering attribute type %r with syntax %r overrides existing registration with syntax %r',
+            a,
+            syntax_oid,
+            self.at2syntax[a],
+          )
         self.at2syntax[a][oc_oid] = syntax_oid
 
   def syntaxClass(self,schema,attrtype_nameoroid,structural_oc=None):
