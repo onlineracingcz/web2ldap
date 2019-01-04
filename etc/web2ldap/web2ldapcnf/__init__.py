@@ -229,5 +229,5 @@ import web2ldapcnf.plugins
 
 try:
   import web2ldapcnf.local
-except ImportError, import_error:
-  logger.info('Importing web2ldapcnf.local failed: %s\n', str(import_error))
+except ImportError as import_error:
+  logger.info('Importing web2ldapcnf.local failed: %s', import_error)
