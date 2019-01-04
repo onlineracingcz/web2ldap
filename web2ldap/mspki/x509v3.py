@@ -225,6 +225,4 @@ oidreg = {
   '2.16.840.1.113730.1.13':nsext.NsComment,
   # Entrust extensions
   '1.2.840.113533.7.65.0':vendorext.EntrustVersInfo,
-  # Verisign extensions
-  '2.16.840.1.113733.1.6.3':vendorext.VerisignCZAG,
 }

@@ -71,10 +71,3 @@ class VerisignCZAG(asn1.IA5String):
       <dd>%(gender)s</dd>
     </dl>
     """ % self.__dict__
-
-if __name__ == '__main__':
-  print VerisignCZAG(
-    asn1.IA5String(
-      'd4652bd63f2047029298763c9d2f275069c7359bed1b059da75bc4bc9701747da5d3f2141beadb2bd2e89215ae6bf0d311499da1b845fef3ea450c'
-    )
-  ).html()
