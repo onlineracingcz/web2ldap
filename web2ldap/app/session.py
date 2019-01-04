@@ -14,7 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import time,collections,pprint
+import time,collections
 import logging
 
 import pyweblib.session
@@ -70,7 +70,6 @@ class Session(pyweblib.session.WebSession, LogHelper):
 
   def newSession(self,env=None):
     self.log(logging.DEBUG, 'newSession(): creating a new session')
-#    self.log(logging.DEBUG, 'newSession(): env = %s', pprint.pformat(env, indent=4))
     remote_ip = self._remote_ip(env)
     self.log(logging.DEBUG, 'newSession(): remote_ip = %r', remote_ip)
     remote_ip_sessions = self.remote_ip_sessions.get(remote_ip,set())
