@@ -100,15 +100,17 @@ def start_server():
     """
     start a simple stand-alone web server
     """
-    try:
+    if len(sys.argv) == 1:
+        host_arg = '127.0.0.1'
+        port_arg = 1760
+    elif len(sys.argv) == 2:
+        host_arg = '127.0.0.1'
+        port_arg = int(sys.argv[1])
+    elif len(sys.argv) == 3:
         port_arg = int(sys.argv[2])
         host_arg = sys.argv[1]
-    except IndexError:
-        host_arg = '127.0.0.1'
-        try:
-            port_arg = int(sys.argv[1])
-        except IndexError:
-            port_arg = 1760
+    else:
+        raise ValueError('Command-line arguments must be: [host] port')
     httpd = wsgiref.simple_server.make_server(
         host_arg,
         port_arg,
