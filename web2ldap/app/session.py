@@ -14,13 +14,14 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import time,traceback,collections
+import time,collections,pprint
+import logging
 
 import pyweblib.session
 
 from web2ldap.ldapsession import LDAPSession
 import web2ldapcnf
-from web2ldap.log import logger
+from web2ldap.log import logger, LogHelper
 
 class InvalidSessionInstance(pyweblib.session.SessionException):
   pass
@@ -30,7 +31,7 @@ class WrongSessionCookie(pyweblib.session.SessionException):
   pass
 
 
-class Session(pyweblib.session.WebSession):
+class Session(pyweblib.session.WebSession, LogHelper):
 
   def __init__(
     self,
@@ -58,7 +59,7 @@ class Session(pyweblib.session.WebSession):
     self.session_ip_addr = {}
     self.maxSessionCountPerIP = maxSessionCountPerIP or self.maxSessionCount/4
     self.remote_ip_counter = collections.Counter()
-    logger.debug('Initialized clean-up thread %s[%x]', self.__class__.__name__, id(self))
+    self.log(logging.DEBUG, 'Initialized clean-up thread %s[%x]', self.__class__.__name__, id(self))
 
   def _remote_ip(self,env):
     return env.get('FORWARDED_FOR',
@@ -68,9 +69,19 @@ class Session(pyweblib.session.WebSession):
            env.get('REMOTE_ADDR','__UNKNOWN__')))))
 
   def newSession(self,env=None):
+    self.log(logging.DEBUG, 'newSession(): creating a new session')
+#    self.log(logging.DEBUG, 'newSession(): env = %s', pprint.pformat(env, indent=4))
     remote_ip = self._remote_ip(env)
+    self.log(logging.DEBUG, 'newSession(): remote_ip = %r', remote_ip)
     remote_ip_sessions = self.remote_ip_sessions.get(remote_ip,set())
     if len(remote_ip_sessions)>=self.maxSessionCountPerIP:
+      self.log(logging.DEBUG,
+          '.newSession(): remote_ip = %r exceeded max. %d sessions',
+          self.__class__.__name__,
+          id(self),
+          remote_ip,
+          self.maxSessionCountPerIP,
+      )
       raise pyweblib.session.MaxSessionCountExceeded(self.maxSessionCountPerIP)
     session_id = pyweblib.session.WebSession.newSession(self,env)
     current_concurrent_sessions = len(self.sessiondict)/2
@@ -79,6 +90,7 @@ class Session(pyweblib.session.WebSession):
     self.session_ip_addr[session_id] = remote_ip
     self.remote_ip_counter.update({remote_ip:1})
     self.remote_ip_sessions[remote_ip].add(session_id)
+    self.log(logging.INFO, 'newSession(): created new session for remote_ip = %r', remote_ip)
     return session_id
 
   def _remove_ip_assoc(self,sid,remote_ip):
@@ -108,6 +120,7 @@ class Session(pyweblib.session.WebSession):
     return new_sid
 
   def deleteSession(self,sid):
+    self.log(logging.DEBUG, 'deleteSession(%r): remove session', sid)
     try:
       ls_local = self.sessiondict[sid][1]
     except KeyError:
@@ -116,6 +129,7 @@ class Session(pyweblib.session.WebSession):
       if isinstance(ls_local,LDAPSession):
         ls_local.unbind()
     pyweblib.session.WebSession.deleteSession(self,sid)
+    self.log(logging.INFO, 'deleteSession(%r): removed session', sid)
     # Remove old remote IP associations
     try:
       remote_ip = self.session_ip_addr[sid]
@@ -126,7 +140,7 @@ class Session(pyweblib.session.WebSession):
     return # deleteSession()
 
 
-class CleanUpThread(pyweblib.session.CleanUpThread):
+class CleanUpThread(pyweblib.session.CleanUpThread, LogHelper):
   """
   Thread class for clean-up thread
 
@@ -143,10 +157,15 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
 
   def run(self):
     """Thread function for cleaning up session database"""
-    logger.debug('Entering %s[%x].run()', self.__class__.__name__, id(self))
+    self.log(logging.DEBUG, 'Entering .run()')
     while self.enabled and not self._stop_event.isSet():
-      logger.debug('%s[%x].run()', self.__class__.__name__, id(self))
       self.run_counter += 1
+      self.log(logging.DEBUG,
+          'run() %d. expiry run on %s[%x]',
+          self.run_counter,
+          self._sessionInstance.__class__.__name__,
+          id(self._sessionInstance),
+      )
       current_time = time.time()
       try:
         sessiondict_keys = [
@@ -168,17 +187,17 @@ class CleanUpThread(pyweblib.session.CleanUpThread):
               self._sessionInstance.deleteSession(session_id)
               self.removed_sessions+=1
         self.last_run_time = current_time
-      except KeyboardInterrupt:
-        logger.debug('Caught KeyboardInterrupt exception in %s[%x].run()', self.__class__.__name__, id(self))
-        break
+      except (KeyboardInterrupt, SystemExit) as exit_exc:
+        self.log(logging.DEBUG, 'Caught exit exception in run(): %s', exit_exc)
+        self.enabled = False
       except Exception as err:
         # Catch all exceptions to avoid thread being killed.
-        logger.error('Unhandled exception in %s[%x].run()', self.__class__.__name__, id(self), exc_info=True)
+        self.log(logging.ERROR, 'Unhandled exception in run()', exc_info=True)
 
       # Sleeping until next turn
       self._stop_event.wait(self._interval)
 
-    logger.debug('Exiting %s[%x].run()', self.__class__.__name__, id(self))
+    self.log(logging.DEBUG, 'Exiting run()')
     return # CleanUpThread.run()
 
 
