@@ -69,6 +69,7 @@ def application(environ, start_response):
     """
     the main WSGI application function
     """
+    logger.debug('Entering %s[%x].application()', __name__)
     if environ['PATH_INFO'].startswith('/css/web2ldap'):
         css_filename = os.path.join(
             web2ldapcnf.etc_dir,
@@ -94,6 +95,7 @@ def application(environ, start_response):
     app.run()
     outf.headers.append(('Content-Length', str(outf._bytelen)))
     start_response('200 OK',outf.headers)
+    logger.debug('Exiting %s[%x].application()', __name__)
     return outf._lines
 
 
@@ -101,6 +103,7 @@ def start_server():
     """
     start a simple stand-alone web server
     """
+    logger.debug('Start stand-alone WSGI server')
     if len(sys.argv) == 1:
         host_arg = '127.0.0.1'
         port_arg = 1760
