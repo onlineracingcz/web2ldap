@@ -43,10 +43,7 @@ try:
 except ImportError:
   PILImage = None
 
-try:
-  from cStringIO import StringIO
-except ImportError:
-  from StringIO import StringIO
+from cStringIO import StringIO
 
 try:
   from web2ldap.ldaputil.oidreg import oid as oid_desc_reg

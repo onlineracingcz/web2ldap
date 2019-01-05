@@ -15,10 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 import urllib,uuid,codecs,re,Cookie
-try:
-  from cStringIO import StringIO
-except ImportError:
-  from StringIO import StringIO
+from cStringIO import StringIO
 from types import UnicodeType
 
 import ldap0.ldif,ldap0.schema

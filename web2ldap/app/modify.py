@@ -20,10 +20,7 @@ import web2ldap.ldapsession
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.addmodifyform,web2ldap.app.add,web2ldap.app.schema
 from web2ldap.app.schema.syntaxes import syntax_registry,LDAPSyntaxValueError
 
-try:
-  from cStringIO import StringIO
-except ImportError:
-  from StringIO import StringIO
+from cStringIO import StringIO
 
 from ldap0.schema.models import AttributeType
 from ldap0.modlist import modify_modlist2
