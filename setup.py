@@ -47,7 +47,7 @@ setup(
     data_files=data_files,
     install_requires=[
         'setuptools',
-        'ldap0>=0.2.1',
+        'ldap0>=0.2.2',
         'pyweblib',
         'ipaddress',
         'asn1crypto',
