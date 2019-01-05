@@ -180,13 +180,13 @@ class CleanUpThread(pyweblib.session.CleanUpThread, LogHelper):
         self.log(logging.DEBUG, 'Entering .run()')
         while self.enabled and not self._stop_event.isSet():
             self.run_counter += 1
-            self.log(
-                logging.DEBUG,
-                'run() %d. expiry run on %s[%x]',
-                self.run_counter,
-                self._sessionInstance.__class__.__name__,
-                id(self._sessionInstance),
-            )
+#            self.log(
+#                logging.DEBUG,
+#                'run() %d. expiry run on %s[%x]',
+#                self.run_counter,
+#                self._sessionInstance.__class__.__name__,
+#                id(self._sessionInstance),
+#            )
             current_time = time.time()
             try:
                 sessiondict_keys = [
