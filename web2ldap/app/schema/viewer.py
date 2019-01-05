@@ -105,14 +105,14 @@ def SchemaContextMenu(sid,form,ls,dn):
   context_menu_list = []
   subschemaSubentryDN = None
   try:
-    subschemaSubentryDN = ls.searchSubSchemaEntryDN(dn)
+    subschemaSubentryDN = ls.l.search_subschemasubentry_s(dn.encode(ls.charset))
     subschemaSubentry = ls.retrieveSubSchema(dn,None,None,False)
   except ldap0.LDAPError:
     pass
   else:
-    if subschemaSubentryDN!=None:
+    if subschemaSubentryDN is not None:
       form_param_list = [
-        ('dn',subschemaSubentryDN),
+        ('dn',subschemaSubentryDN.decode(ls.charset)),
         ('filterstr',u'(objectClass=subschema)'),
       ]
       for schema_attr in SCHEMA_ATTRS+['objectClass','cn']:
