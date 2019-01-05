@@ -279,7 +279,6 @@ class AppHandler:
     ls = LDAPSession(
       self.guess_client_addr(),
       web2ldapcnf.ldap_trace_level,
-      self.env['wsgi.errors'],
       web2ldapcnf.ldap_cache_ttl,
     )
     ls.cookie = self.form.setNewCookie(str(id(ls)))
@@ -533,7 +532,6 @@ class AppHandler:
           ls = LDAPSession(
             self.guess_client_addr(),
             web2ldapcnf.ldap_trace_level,
-            self.env['wsgi.errors'],
             web2ldapcnf.ldap_cache_ttl,
           )
           ls.cookie = self.form.setNewCookie(str(id(ls)))
@@ -591,7 +589,7 @@ class AppHandler:
           )
           return
 
-        elif (who!=None and cred!=None) or login_mech in web2ldap.ldapsession.NON_INTERACTIVE_LOGIN_MECHS:
+        elif (who!=None and cred!=None) or login_mech in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
           # real bind operation
           #------------------------------
           login_search_root = self.form.getInputValue('login_search_root',[None])[0]
