@@ -10,6 +10,7 @@ import re
 from pyasn1.codec.ber import decoder as ber_decoder
 
 import ldap0.ldapurl,ldap0.controls
+import ldap0.openldap
 
 import web2ldapcnf
 
@@ -144,64 +145,20 @@ class OlcSyncRepl(OlcMultilineText,LDAPUrl):
   oid = 'OlcSyncRepl-oid'
   desc = 'OpenLDAP syncrepl directive'
   minInputRows = 5
-  known_keywords = (
-    'rid','provider',
-    'searchbase','scope','filter','attrs','exattrs','attrsonly',
-    'binddn','bindmethod','credentials','authcid','authzid','saslmech','realm','secprops',
-    'type','syncdata','logbase','logfilter','suffixmassage','schemachecking',
-    'keepalive','interval','retry',
-    'sizelimit','network-timeout','timelimit','timeout',
-    'starttls','tls_cacert','tls_cacertdir','tls_cert','tls_cipher_suite',
-    'tls_crlcheck','tls_key','tls_reqcert','tls_protocol_min',
-  )
 
   def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
     OlcMultilineText.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry)
-    # strip all white spaces from syncrepl statement parameters
-    syncrepl_statement = (self.attrValue or '').strip()
-    if syncrepl_statement:
-      # Set class attributes for all known keywords
-      for k in self.known_keywords:
-        setattr(self,k.replace('-','_'),None)
-      b = []
-      for k in self.known_keywords:
-        k_pos = syncrepl_statement.find(k)
-        if k_pos==0 or (k_pos>0 and syncrepl_statement[k_pos-1]==' '):
-          b.append(k_pos)
-      b.sort()
-      for i in range(len(b)-1):
-        k,v = syncrepl_statement[b[i]:b[i+1]].split('=',1)
-        k = k.strip()
-        v = v.strip()
-        if v[0]=='"' and v[-1]=='"':
-          v = v[1:-1]
-        setattr(self,k.replace('-','_'),v)
+    self._sync_repl_desc = ldap0.openldap.SyncReplDesc(attrValue)
     return # __init__()
-
-  def ldap_url(self):
-    """
-    Return ldap0.ldapurl.LDAPUrl object representing some syncrepl parameters
-    as close as possible.
-    """
-    lu = ldap0.ldapurl.LDAPUrl(self.provider)
-    lu.dn = self.searchbase
-    lu.scope = {
-      'sub':ldap0.SCOPE_SUBTREE,
-      'one':ldap0.SCOPE_ONELEVEL,
-      'base':ldap0.SCOPE_BASE,
-      'subord':ldap0.SCOPE_SUBTREE, # FIX ME: this is a work-around
-    }[self.scope]
-    lu.filterstr = self.filter
-    lu.who = self.authcid or self.binddn or ''
-    lu.cred = self.credentials
-    lu.attrs = filter(None,[ a.strip() for a in (self.attrs or '').strip().replace(' ',',').split(',') ]) or ['*','+']
-    return lu
 
   def displayValue(self,valueindex=0,commandbutton=0):
     if commandbutton and self.attrValue:
       return ' '.join((
         OlcMultilineText.displayValue(self,valueindex,commandbutton),
-        web2ldap.app.gui.LDAPURLButton(self._sid,self._form,self._ls,self.ldap_url()),
+        web2ldap.app.gui.LDAPURLButton(
+            self._sid, self._form, self._ls,
+            self._sync_repl_desc.ldap_url(),
+        ),
       ))
     else:
       OlcMultilineText.displayValue(self,valueindex,commandbutton)
