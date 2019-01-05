@@ -13,8 +13,8 @@ import wsgiref.simple_server
 
 import web2ldap.app.core
 from web2ldap.log import logger
-import web2ldapcnf
 import web2ldap.app.handler
+import web2ldapcnf
 
 BASE_URL = '/web2ldap'
 
@@ -83,7 +83,7 @@ def application(environ, start_response):
                 ('Content-Length', str(css_size)),
             ]
             css_http_headers.extend(web2ldapcnf.http_headers.items())
-            start_response('200 OK',css_http_headers)
+            start_response('200 OK', css_http_headers)
         except (IOError, OSError) as err:
             logger.error('Error reading CSS file %r: %s', css_filename, err)
             start_response('404 not found', (('Content-type', 'text/plain')))
