@@ -36,8 +36,7 @@ def init_logger():
         format=LOG_FORMAT,
         datefmt=LOG_DATEFMT,
     )
-    logger = logging.getLogger()
-    return logger
+    return logging.getLogger()
 
 
 global logger
