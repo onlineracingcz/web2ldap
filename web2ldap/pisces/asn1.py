@@ -39,12 +39,7 @@ import types
 import UserList
 import UserString
 import time
-try:
-    import cStringIO
-    StringIO = cStringIO.StringIO
-except ImportError:
-    import StringIO
-    StringIO = StringIO.StringIO
+from cStringIO import StringIO
 
 class EOFError(IOError):
     pass
