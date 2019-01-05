@@ -21,21 +21,13 @@ syntax_registry.registerAttrType(
   ]
 )
 
-try:
-  from web2ldap.app.plugins.opensshlpk import ParamikoSshPublicKey
-except ImportError:
-  from web2ldap.app.plugins.opensshlpk import SshPublicKey
-  syntax_registry.registerAttrType(
-    SshPublicKey.oid,[
-      '2.16.840.1.113730.3.8.11.31', # ipaSshPubKey
-    ]
-  )
-else:
-  syntax_registry.registerAttrType(
-    ParamikoSshPublicKey.oid,[
-      '2.16.840.1.113730.3.8.11.31', # ipaSshPubKey
-    ]
-  )
+from web2ldap.app.plugins.opensshlpk import ParamikoSshPublicKey
+
+syntax_registry.registerAttrType(
+  ParamikoSshPublicKey.oid,[
+    '2.16.840.1.113730.3.8.11.31', # ipaSshPubKey
+  ]
+)
 
 syntax_registry.registerAttrType(
   SambaSID.oid,[

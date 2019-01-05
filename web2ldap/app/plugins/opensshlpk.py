@@ -10,6 +10,8 @@ import re,hashlib
 
 from base64 import b64encode
 
+import paramiko
+
 from web2ldap.app.schema.syntaxes import DirectoryString,syntax_registry
 
 class SshPublicKey(DirectoryString):
@@ -85,30 +87,16 @@ class SshPublicKey(DirectoryString):
     result.append('</dl>')
     return '\n'.join(result)
 
-try:
-
-  import paramiko
-
-except ImportError:
-
-  syntax_registry.registerAttrType(
-    SshPublicKey.oid,[
-      '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
-    ]
-  )
-
-else:
-
-  PARAMIKO_KEYCLASS = {
-    'ssh-rsa':paramiko.RSAKey,
-    'ssh-dss':paramiko.DSSKey,
-  }
+PARAMIKO_KEYCLASS = {
+  'ssh-rsa':paramiko.RSAKey,
+  'ssh-dss':paramiko.DSSKey,
+}
 #  PARAMIKO_KEYCLASS.update({
 #    'ecdsa-sha2-nistp256':,
 #    'ssh-ed25519':,
 #  })
 
-  class ParamikoSshPublicKey(SshPublicKey):
+class ParamikoSshPublicKey(SshPublicKey):
     oid = 'ParamikoSshPublicKey-oid'
     # minimum secure key size per algorithm
     min_key_size = {
@@ -149,11 +137,11 @@ else:
           result.append('<dt>Key size:</dt><dd>%d</dd>' % (pk_size))
       return result
 
-  syntax_registry.registerAttrType(
-    ParamikoSshPublicKey.oid,[
-      '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
-    ]
-  )
+syntax_registry.registerAttrType(
+  ParamikoSshPublicKey.oid,[
+    '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
+  ]
+)
 
 
 # Register all syntax classes in this module

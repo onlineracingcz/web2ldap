@@ -17,17 +17,11 @@ from __future__ import absolute_import
 import web2ldap.__about__
 
 import os,time,socket,threading
-
+import pwd
 
 import web2ldapcnf
 
 import web2ldap.app.core,web2ldap.app.gui
-
-try:
-  import pwd
-except ImportError:
-  pwd = None
-
 from web2ldap.app.session import session_store,cleanUpThread
 from web2ldap.utctime import strftimeiso8601
 from web2ldap.ldapsession import LDAPSession
