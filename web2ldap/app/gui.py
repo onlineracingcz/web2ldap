@@ -34,8 +34,9 @@ import web2ldap.ldaputil,web2ldap.msbase
 
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.schema.syntaxes,web2ldap.app.locate,web2ldap.app.searchform,web2ldap.app.monitor
 
+import web2ldap.ldaputil.base
 from web2ldap.ldaputil.base import \
-  ParentDN,ParentDNList,explode_dn,logdb_filter, \
+  explode_dn,logdb_filter, \
   AD_LDAP49_ERROR_CODES,AD_LDAP49_ERROR_PREFIX
 
 from web2ldap.msbase import GrabKeys
@@ -257,7 +258,7 @@ def ContextMenuSingleEntry(sid,form,ls,dn,vcard_link=0,dds_link=0,entry_uuid=Non
     form.applAnchor('read','Raw',sid,[('dn',dn),('read_output','table'),('read_expandattr','*')],title=u'Display entry\r\n%s\r\nas raw attribute type/value list' % (dn_disp)),
   ]
   if dn:
-    parent_dn = ParentDN(dn)
+    parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
     ldap_url_obj = ls.ldapUrl('',add_login=False)
     result.extend([
       form.applAnchor(
@@ -411,7 +412,7 @@ def MainMenu(sid,form,ls,dn):
   if ls!=None and ls.uri!=None:
 
     if dn:
-      parent_dn = ParentDN(dn)
+      parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
       cl.append(
         form.applAnchor(
           'search','Up',sid,
@@ -746,7 +747,7 @@ def SearchRootField(
       return ''
 
   if dn:
-    dn_select_list = [dn]+ParentDNList(dn,ls.getSearchRoot(dn,naming_contexts=naming_contexts))
+    dn_select_list = [dn]+web2ldap.ldaputil.base.parent_dn_list(dn,ls.getSearchRoot(dn,naming_contexts=naming_contexts))
   else:
     dn_select_list = []
   dn_select_list = web2ldap.msbase.union(ls.namingContexts,dn_select_list)

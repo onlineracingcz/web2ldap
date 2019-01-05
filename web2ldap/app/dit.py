@@ -29,7 +29,7 @@ DIT_ATTR_LIST = [
 
 import ldap0,web2ldap.app.gui
 
-from web2ldap.ldaputil.base import explode_dn,SplitRDN,ParentDN
+from web2ldap.ldaputil.base import explode_dn, split_rdn, parent_dn
 from web2ldap.app.gui import dn_anchor_hash
 
 
@@ -64,7 +64,7 @@ def DIT_HTML(sid,outf,form,ls,anchor_dn,dit_dict,entry_dict,max_levels):
 
     # Generate anchor for this node
     if dn:
-      rdn,_ = SplitRDN(dn)
+      rdn,_ = split_rdn(dn)
     else:
       rdn = u'Root DSE'
 
@@ -107,7 +107,7 @@ def DIT_HTML(sid,outf,form,ls,anchor_dn,dit_dict,entry_dict,max_levels):
     if has_subordinates:
       if dn==anchor_dn:
         link_text = '&lsaquo;&lsaquo;'
-        next_dn = ParentDN(dn)
+        next_dn = parent_dn(dn)
       else:
         link_text = '&rsaquo;&rsaquo;'
         next_dn = dn

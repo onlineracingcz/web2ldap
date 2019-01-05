@@ -369,7 +369,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
 
         old_dn = dn
         if scope==ldap0.SCOPE_SUBTREE and delete_filter==None:
-          dn = web2ldap.ldaputil.base.ParentDN(dn)
+          dn = web2ldap.ldaputil.base.parent_dn(dn)
           ls.setDN(dn)
         web2ldap.app.gui.SimpleMessage(
           sid,outf,command,form,ls,dn,
@@ -434,7 +434,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
 
         ls.deleteEntry(dn)
         old_dn = dn
-        dn = web2ldap.ldaputil.base.ParentDN(dn)
+        dn = web2ldap.ldaputil.base.parent_dn(dn)
         ls.setDN(dn)
         web2ldap.app.gui.SimpleMessage(
           sid,outf,command,form,ls,dn,

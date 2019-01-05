@@ -454,7 +454,7 @@ def w2l_Read(
       if not dn:
         outf.write('<h1>Root DSE</h1>')
       else:
-        h1_display_name = entry.get('displayName',entry.get('cn',['']))[0].decode(ls.charset) or web2ldap.ldaputil.base.SplitRDN(dn)[0]
+        h1_display_name = entry.get('displayName',entry.get('cn',['']))[0].decode(ls.charset) or web2ldap.ldaputil.base.split_rdn(dn)[0]
         outf.write(
           '<h1>{0}</h1>\n<p class="EntryDN">{1}</p>\n'.format(
             form.utf2display(h1_display_name),

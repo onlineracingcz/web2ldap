@@ -93,7 +93,7 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
     # Output input form
     # ---------------------------------------
 
-    old_rdn,old_superior = web2ldap.ldaputil.base.SplitRDN(dn)
+    old_rdn,old_superior = web2ldap.ldaputil.base.split_rdn(dn)
 
     form.field['rename_newrdn'].setDefault(old_rdn)
 

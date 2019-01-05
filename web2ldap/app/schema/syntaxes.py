@@ -1584,13 +1584,13 @@ class DynamicValueSelectList(SelectList,DirectoryString):
     elif ldap_url_dn=='.':
       result_dn = current_dn
     elif ldap_url_dn=='..':
-      result_dn = web2ldap.ldaputil.base.ParentDN(current_dn)
+      result_dn = web2ldap.ldaputil.base.parent_dn(current_dn)
     elif ldap_url_dn.endswith(',_'):
       result_dn = ','.join((ldap_url_dn[:-2],self._ls.getSearchRoot(self._dn)))
     elif ldap_url_dn.endswith(',.'):
       result_dn = ','.join((ldap_url_dn[:-2],current_dn))
     elif ldap_url_dn.endswith(',..'):
-      result_dn = ','.join((ldap_url_dn[:-3],web2ldap.ldaputil.base.ParentDN(current_dn)))
+      result_dn = ','.join((ldap_url_dn[:-3],web2ldap.ldaputil.base.parent_dn(current_dn)))
     else:
       result_dn = ldap_url_dn
     if result_dn.endswith(','):

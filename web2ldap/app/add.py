@@ -20,8 +20,6 @@ import ldap0,ldap0.modlist,pyweblib.forms, \
 from ldap0.dn import escape_dn_chars
 from ldap0.controls.readentry import PostReadControl
 
-from web2ldap.ldaputil.base import ParentDN
-
 # Attribute types always ignored for add requests
 ADD_IGNORE_ATTR_TYPES = {
   'entryDN',
@@ -60,21 +58,6 @@ def ModlistTable(schema,modlist):
   return '\n'.join(s) # ModlistTable()
 
 
-def SearchMissingParentEntries(ls,new_dn):
-  parent_dn = ParentDN(new_dn)
-  missing_parentdns = []
-  while parent_dn.lower():
-    try:
-      ls.l.search_s(
-        parent_dn.encode('utf-8'),ldap0.SCOPE_BASE,
-        '(objectClass=*)',['objectClass']
-      )
-    except ldap0.NO_SUCH_OBJECT:
-      missing_parentdns.append(parent_dn)
-    parent_dn = ParentDN(parent_dn)
-  return missing_parentdns
-
-
 ########################################################################
 # Add new entry
 ########################################################################
@@ -109,7 +92,7 @@ def w2l_Add(sid,outf,command,form,ls,dn):
 
   if add_clonedn:
     entry,_ = web2ldap.app.addmodifyform.ReadOldEntry(ls,add_clonedn,sub_schema,None,{'*':'*'})
-    add_rdn,add_basedn = web2ldap.ldaputil.base.SplitRDN(add_clonedn)
+    add_rdn,add_basedn = web2ldap.ldaputil.base.split_rdn(add_clonedn)
     add_rdn_dnlist = ldap0.dn.str2dn(add_rdn.encode(ls.charset))
     add_rdn = u'+'.join(['%s=' % (at) for at,_,_ in add_rdn_dnlist[0]]).decode(ls.charset)
     add_basedn = add_basedn or dn
@@ -117,7 +100,7 @@ def w2l_Add(sid,outf,command,form,ls,dn):
   elif add_template:
     add_dn,entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(ls,form,add_template)
     entry = ldap0.schema.models.Entry(sub_schema,None,entry)
-    add_rdn,add_basedn = web2ldap.ldaputil.base.SplitRDN(add_dn.decode(ls.charset))
+    add_rdn,add_basedn = web2ldap.ldaputil.base.split_rdn(add_dn.decode(ls.charset))
     add_basedn = add_basedn or dn
 
   else:

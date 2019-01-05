@@ -402,7 +402,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
             ))
         # Apply the modrdn request
         if bulkmod_newsuperior:
-          old_rdn,_ = web2ldap.ldaputil.base.SplitRDN(ldap_dn)
+          old_rdn,_ = web2ldap.ldaputil.base.split_rdn(ldap_dn)
           try:
             if bulkmod_cp:
               ls.copyEntry(ldap_dn,old_rdn,new_superior=bulkmod_newsuperior)

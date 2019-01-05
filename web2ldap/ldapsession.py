@@ -923,7 +923,7 @@ class LDAPSession:
         self.l.uncache(dn.encode(self.charset))
         if not new_superior is None:
             self.l.uncache(new_superior.encode(self.charset))
-        old_superior_str = web2ldap.ldaputil.base.ParentDN(web2ldap.ldaputil.base.normalize_dn(dn))
+        old_superior_str = web2ldap.ldaputil.base.parent_dn(web2ldap.ldaputil.base.normalize_dn(dn))
         if new_superior is not None:
             if old_superior_str == web2ldap.ldaputil.base.normalize_dn(new_superior):
                 new_superior_str = None
@@ -1264,7 +1264,7 @@ class LDAPSession:
         possible_dit_structure_rules = {}.fromkeys((
             entry.get_possible_dit_structure_rules(self.uc_encode(dn)[0]) or []
         ))
-        parent_dn = web2ldap.ldaputil.base.ParentDN(dn)
+        parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
         administrative_roles = entry.get('administrativeRole', [])
         if 'subschemaAdminSpecificArea' in administrative_roles or not parent_dn:
             # If the current entry is a subschema administrative point all

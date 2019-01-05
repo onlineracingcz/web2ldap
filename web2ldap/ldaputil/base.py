@@ -111,7 +111,7 @@ def rdn_dict(dn):
     assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
     if not dn:
         return {}
-    rdn, _ = SplitRDN(dn)
+    rdn, _ = split_rdn(dn)
     if isinstance(rdn, unicode):
         rdn = rdn.encode('utf-8')
     result = {}
@@ -189,7 +189,7 @@ def match_dnlist(dn, dnlist):
     return max_match_name
 
 
-def ParentDN(dn):
+def parent_dn(dn):
     """returns parent-DN of dn"""
     dn_comp = explode_dn(dn)
     if len(dn_comp) > 1:
@@ -199,20 +199,20 @@ def ParentDN(dn):
     return None
 
 
-def ParentDNList(dn, rootdn=u''):
+def parent_dn_list(dn, rootdn=u''):
     """returns a list of parent-DNs of dn"""
     result = []
-    DNComponentList = explode_dn(dn)
+    dn_components = explode_dn(dn)
     if rootdn:
-        max_level = len(DNComponentList) - len(explode_dn(rootdn))
+        max_level = len(dn_components) - len(explode_dn(rootdn))
     else:
-        max_level = len(DNComponentList)
+        max_level = len(dn_components)
     for i in range(1, max_level):
-        result.append(u','.join(DNComponentList[i:]))
+        result.append(u','.join(dn_components[i:]))
     return result
 
 
-def SplitRDN(dn):
+def split_rdn(dn):
     """returns tuple (RDN,base DN) of dn"""
     if not dn:
         raise ValueError('Empty DN cannot be splitted.')
@@ -270,11 +270,11 @@ def negate_filter(filterstr):
     return u'(!%s)' % filterstr
 
 
-def logdb_filter(
-        logdb_objectclass,
-        dn,
-        entry_uuid=None,
-    ):
+def logdb_filter(logdb_objectclass, dn, entry_uuid=None):
+    """
+    returns a filter for querying a changelog or accesslog DB for
+    changes to a certain entry referenced by :dn: or :entry_uuid:
+    """
     if logdb_objectclass.startswith(u'audit'):
         logdb_dn_attr = u'reqDN'
         logdb_entryuuid_attr = u'reqEntryUUID'

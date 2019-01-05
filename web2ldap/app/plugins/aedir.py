@@ -837,7 +837,7 @@ class AESrvGroup(AESameZoneObject):
   def _determineFilter(self):
     filter_str = self.lu_obj.filterstr or '(objectClass=*)'
     dn_u = self._dn.decode(self._ls.charset)
-    parent_dn = web2ldap.ldaputil.base.ParentDN(dn_u)
+    parent_dn = web2ldap.ldaputil.base.parent_dn(dn_u)
     return '(&%s(!(entryDN=%s)))' % (
       filter_str,
       parent_dn.encode(self._ls.charset),
@@ -944,7 +944,7 @@ class AEEntryDNAEHost(DistinguishedName):
 
   def _additional_links(self):
     attr_value_u = self.attrValue.decode(self._ls.charset)
-    parent_dn = web2ldap.ldaputil.base.ParentDN(attr_value_u)
+    parent_dn = web2ldap.ldaputil.base.parent_dn(attr_value_u)
     aesrvgroup_filter = u''.join([
       u'(aeSrvGroup=%s)' % av.decode(self._ls.charset)
       for av in self._entry.get('aeSrvGroup',[])

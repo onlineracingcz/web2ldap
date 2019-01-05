@@ -640,7 +640,7 @@ def ObjectClassForm(
     add_tmpl_dict = {}
     for template_name in addform_entry_templates_keys:
       ldif_dn,ldif_entry = ReadLDIFTemplate(ls,form,template_name)
-      tmpl_parent_dn = web2ldap.ldaputil.base.ParentDN(ldif_dn.decode(ls.charset)).decode(ls.charset) or parent_dn
+      tmpl_parent_dn = web2ldap.ldaputil.base.parent_dn(ldif_dn.decode(ls.charset)).decode(ls.charset) or parent_dn
       # first check whether mandatory attributes in parent entry are readable
       if addform_parent_attrs:
         try:
@@ -738,7 +738,7 @@ def ObjectClassForm(
   if command=='add':
     parent_dn = dn
   elif command=='modify':
-    parent_dn = web2ldap.ldaputil.base.ParentDN(dn)
+    parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
 
   # Build an select field based on config param 'addform_entry_templates'
   if command=='add' and in_ocf==u'tmpl':
@@ -1135,7 +1135,7 @@ def w2l_ModifyForm(sid,outf,command,form,ls,dn,entry,Msg='',invalid_attrs=None):
   required_attrs_dict,allowed_attrs_dict = input_form_entry.attribute_types()
   nomatching_attrs_dict = nomatching_attrs(sub_schema,input_form_entry,allowed_attrs_dict,required_attrs_dict)
 
-  supentry_display_string = SupentryDisplayString(sid,form,ls,web2ldap.ldaputil.base.ParentDN(dn),sub_schema)
+  supentry_display_string = SupentryDisplayString(sid,form,ls,web2ldap.ldaputil.base.parent_dn(dn),sub_schema)
 
   if writeable_attr_oids is None:
     in_wrtattroids_values = form.hiddenFieldHTML('in_wrtattroids',u'nonePseudoValue;x-web2ldap-None',u'')
