@@ -16,28 +16,24 @@ from __future__ import absolute_import
 
 import base64
 import hashlib
+import crypt
 
 from ldap0.pw import random_string, PWD_OCTETS_ALPHABET, PWD_UNIX_CRYPT_ALPHABET
 
 AVAIL_USERPASSWORD_SCHEMES = {
-    'sha':'SHA-1',
-    'ssha':'salted SHA-1',
-    'md5':'MD5',
-    'smd5':'salted MD5',
-    'sha256':'SHA-256',
-    'ssha256':'salted SHA-256',
-    'sha384':'SHA-384',
-    'ssha384':'salted SHA-384',
-    'sha512':'SHA-512',
-    'ssha512':'salted SHA-512',
-    '':'plain text',
+    'crypt': 'Unix crypt(3)',
+    'sha': 'SHA-1',
+    'ssha': 'salted SHA-1',
+    'md5': 'MD5',
+    'smd5': 'salted MD5',
+    'sha256': 'SHA-256',
+    'ssha256': 'salted SHA-256',
+    'sha384': 'SHA-384',
+    'ssha384': 'salted SHA-384',
+    'sha512': 'SHA-512',
+    'ssha512': 'salted SHA-512',
+    '': 'plain text',
 }
-try:
-    import crypt
-except ImportError:
-    pass
-else:
-    AVAIL_USERPASSWORD_SCHEMES['crypt'] = 'Unix crypt(3)'
 
 
 SALTED_USERPASSWORD_SCHEMES = {
