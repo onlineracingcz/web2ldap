@@ -22,6 +22,8 @@ import ldap0.cidict
 import ldap0.schema.models
 import ldap0.schema.util
 
+from web2ldap.log import logger
+
 
 NOT_HUMAN_READABLE_LDAP_SYNTAXES = set([
   '1.3.6.1.4.1.1466.115.121.1.4',  # Audio
@@ -148,7 +150,7 @@ def parse_fake_schema(ldap_def):
       try:
         _,schema = ldap0.schema.util.urlfetch(schema_uri)
       except (IOError,OSError,ldap0.LDAPError) as err:
-        logging.error('Error retrieving schema from %r: %s', schema_uri, err)
+        logger.error('Error retrieving schema from %r: %s', schema_uri, err)
       else:
         if schema!=None:
           # Store the pre-parsed schema in the configuration
