@@ -12,4 +12,11 @@ LOG_LEVEL=${LOG_LEVEL:-"DEBUG"}
 export LOG_LEVEL
 declare -p LOG_LEVEL
 
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${WEB2LDAP_HOME}" /usr/sbin/uwsgi --strict --ini "${WEB2LDAP_HOME}/etc/uwsgi/uwsgi-http1760-web2ldap.ini"
+PYTHONPATH=${WEB2LDAP_HOME}:${PYTHONPATH:-""}
+export PYTHONPATH
+declare -p PYTHONPATH
+
+PYTHONDONTWRITEBYTECODE="1"
+export PYTHONDONTWRITEBYTECODE
+
+/usr/sbin/uwsgi --strict --ini "${WEB2LDAP_HOME}/etc/uwsgi/uwsgi-http1760-web2ldap.ini"
