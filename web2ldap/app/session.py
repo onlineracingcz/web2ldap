@@ -18,28 +18,28 @@ import time
 import collections
 import logging
 
-import pyweblib.session
+import web2ldap.web.session
 
 from web2ldap.ldapsession import LDAPSession
 from web2ldap.log import logger, LogHelper
 import web2ldapcnf
 
 
-class InvalidSessionInstance(pyweblib.session.SessionException):
+class InvalidSessionInstance(web2ldap.web.session.SessionException):
     """
     Exception raised in case of invalid session
     """
     pass
 
 
-class WrongSessionCookie(pyweblib.session.SessionException):
+class WrongSessionCookie(web2ldap.web.session.SessionException):
     """
     Exception raised in case of invalid cookie
     """
     pass
 
 
-class Session(pyweblib.session.WebSession, LogHelper):
+class Session(web2ldap.web.session.WebSession, LogHelper):
     """
     session store
     """
@@ -47,19 +47,17 @@ class Session(pyweblib.session.WebSession, LogHelper):
     def __init__(
             self,
             dictobj=None,
-            expireDeactivate=0,
-            expireRemove=0,
+            session_ttl=0,
             crossCheckVars=None,
             maxSessionCount=None,
             sessionIDLength=12,
             sessionIDChars=None,
             max_session_count_per_ip=None,
         ):
-        pyweblib.session.WebSession.__init__(
+        web2ldap.web.session.WebSession.__init__(
             self,
             dictobj,
-            expireDeactivate,
-            expireRemove,
+            session_ttl,
             crossCheckVars,
             maxSessionCount,
             sessionIDLength,
@@ -101,8 +99,8 @@ class Session(pyweblib.session.WebSession, LogHelper):
                 remote_ip,
                 self.max_session_count_per_ip,
             )
-            raise pyweblib.session.MaxSessionCountExceeded(self.max_session_count_per_ip)
-        session_id = pyweblib.session.WebSession.newSession(self, env)
+            raise web2ldap.web.session.MaxSessionCountExceeded(self.max_session_count_per_ip)
+        session_id = web2ldap.web.session.WebSession.newSession(self, env)
         current_concurrent_sessions = len(self.sessiondict) / 2
         if current_concurrent_sessions > self.max_concurrent_sessions:
             self.max_concurrent_sessions = current_concurrent_sessions
@@ -130,7 +128,7 @@ class Session(pyweblib.session.WebSession, LogHelper):
         session_data = self.retrieveSession(old_sid, env)
         new_sid = self.newSession(env)
         self.storeSession(new_sid, session_data)
-        pyweblib.session.WebSession.deleteSession(self, old_sid)
+        web2ldap.web.session.WebSession.deleteSession(self, old_sid)
         # Set new remote IP associations
         remote_ip = self._remote_ip(env)
         self.session_ip_addr[new_sid] = remote_ip
@@ -147,7 +145,7 @@ class Session(pyweblib.session.WebSession, LogHelper):
         else:
             if isinstance(ls_local, LDAPSession):
                 ls_local.unbind()
-        pyweblib.session.WebSession.deleteSession(self, sid)
+        web2ldap.web.session.WebSession.deleteSession(self, sid)
         self.log(logging.INFO, 'deleteSession(%r): removed session', sid)
         # Remove old remote IP associations
         try:
@@ -159,17 +157,17 @@ class Session(pyweblib.session.WebSession, LogHelper):
         return # deleteSession()
 
 
-class CleanUpThread(pyweblib.session.CleanUpThread, LogHelper):
+class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
     """
     Thread class for clean-up thread
 
-    Mainly it overrides pyweblib.session.CleanUpThread.run()
+    Mainly it overrides web2ldap.web.session.CleanUpThread.run()
     to call ldapSession.unbind().
     """
 
 
     def __init__(self, *args, **kwargs):
-        pyweblib.session.CleanUpThread.__init__(self, *args, **kwargs)
+        web2ldap.web.session.CleanUpThread.__init__(self, *args, **kwargs)
         self.removed_sessions = 0
         self.run_counter = 0
         self.last_run_time = 0
@@ -203,7 +201,7 @@ class CleanUpThread(pyweblib.session.CleanUpThread, LogHelper):
                         self._sessionInstance.deleteSession(session_id)
                     else:
                         # Check expiration time
-                        if session_timestamp+self._sessionInstance.expireRemove < current_time:
+                        if session_timestamp+self._sessionInstance.session_ttl < current_time:
                             # Remove expired session
                             self._sessionInstance.deleteSession(session_id)
                             self.removed_sessions += 1
@@ -228,8 +226,7 @@ class CleanUpThread(pyweblib.session.CleanUpThread, LogHelper):
 
 global session_store
 session_store = Session(
-    expireDeactivate=web2ldapcnf.session_remove,
-    expireRemove=web2ldapcnf.session_remove,
+    session_ttl=web2ldapcnf.session_remove,
     crossCheckVars=web2ldapcnf.session_checkvars,
     maxSessionCount=web2ldapcnf.session_limit,
     max_session_count_per_ip=web2ldapcnf.session_per_ip_limit,

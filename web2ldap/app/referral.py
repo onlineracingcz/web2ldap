@@ -25,12 +25,12 @@ ErrorMessageDiv = """
 </p>
 """
 
-def w2l_ChaseReferral(sid,outf,command,form,ls,dn,e):
+def w2l_ChaseReferral(sid, outf, command, form, ls, dn,e):
 
   web2ldap.app.gui.TopSection(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     'Referral received',
-    web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+    web2ldap.app.gui.MainMenu(sid, form, ls, dn),
     context_menu_list=[]
   )
 
@@ -83,7 +83,7 @@ def w2l_ChaseReferral(sid,outf,command,form,ls,dn,e):
   login_fields = login_template_str.format(
     field_login_mech=form.field['login_mech'].inputHTML(),
     value_ldap_who=form.utf2display(ls.who),
-    value_ldap_filter=form.utf2display(web2ldap.app.cnf.GetParam(ls,'binddnsearch',ur'(uid=%s)'),'utf-8'),
+    value_ldap_filter=form.utf2display(web2ldap.app.cnf.GetParam(ls, 'binddnsearch',ur'(uid=%s)'),'utf-8'),
     field_login_search_root=login_search_root_field.inputHTML(),
     field_login_authzid_prefix=form.field['login_authzid_prefix'].inputHTML(),
     value_submit='Chase Referral',

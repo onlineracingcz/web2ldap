@@ -221,13 +221,13 @@ def w2l_DIT(sid,outf,command,form,ls,dn):
       )
 
   web2ldap.app.gui.SimpleMessage(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     'Tree view',
     """
     <h1>Directory Information Tree</h1>
     <div id="DIT">%s</div>
     """ % ('\n'.join(outf_lines)),
-    main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+    main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
     context_menu_list=[]
   )
 

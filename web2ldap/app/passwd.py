@@ -151,9 +151,9 @@ def PasswdForm(
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls,'_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'supplement_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'schema_strictcheck',True),
+    web2ldap.app.cnf.GetParam(ls, '_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
 
   if not user_objectclasses:
@@ -178,8 +178,8 @@ def PasswdForm(
 
   if not unicode_pwd_avail:
 
-  #  config_hashtypes = ls.rootDSE.get('supportedAuthPasswordSchemes',None) or web2ldap.app.cnf.GetParam(ls,'passwd_hashtypes',[])
-    config_hashtypes = web2ldap.app.cnf.GetParam(ls,'passwd_hashtypes',[])
+  #  config_hashtypes = ls.rootDSE.get('supportedAuthPasswordSchemes',None) or web2ldap.app.cnf.GetParam(ls, 'passwd_hashtypes',[])
+    config_hashtypes = web2ldap.app.cnf.GetParam(ls, 'passwd_hashtypes',[])
     if config_hashtypes:
       # The set of hash types are restricted by local configuration
       default_hashtypes = [
@@ -196,7 +196,7 @@ def PasswdForm(
 
   web2ldap.app.gui.TopSection(
     sid,outf,'passwd',form,ls,dn,'Change password',
-    web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+    web2ldap.app.gui.MainMenu(sid, form, ls, dn),
     context_menu_list=PasswdContextMenu(sid,form,dn,sub_schema),
     main_div_id='Input'
   )
@@ -209,7 +209,7 @@ def PasswdForm(
     value_passwd_action=form.hiddenFieldHTML('passwd_action',passwd_action,u''),
     value_passwd_who=form.hiddenFieldHTML('passwd_who',passwd_who,u''),
     text_desc={False:'Change password for',True:'Change own password of'}[own_pwd_change],
-    text_whoami=web2ldap.app.gui.WhoAmITemplate(sid,form,ls,dn,passwd_who),
+    text_whoami=web2ldap.app.gui.WhoAmITemplate(sid, form, ls, dn,passwd_who),
     disable_oldpw_start={0:'',1:'<!--'}[not own_pwd_change],
     disable_oldpw_end={0:'',1:'-->'}[not own_pwd_change],
     disable_ownuser_start={0:'',1:'<!--'}[own_pwd_change],
@@ -229,13 +229,13 @@ def PasswdForm(
   return # PasswdForm()
 
 
-def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
+def w2l_Passwd(sid, outf, command, form, ls, dn,connLDAPUrl):
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls,'_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'supplement_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'schema_strictcheck',True),
+    web2ldap.app.cnf.GetParam(ls, '_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
 
   # Determine the default value for passwd_action based on
@@ -280,8 +280,8 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
     no_passwd_input = not passwd_input
     if no_passwd_input:
       passwd_input = random_string(
-        alphabet=web2ldap.app.cnf.GetParam(ls,'passwd_genchars',PASSWD_GEN_CHARS),
-        length=web2ldap.app.cnf.GetParam(ls,'passwd_genlength',PASSWD_GEN_LENGTH),
+        alphabet=web2ldap.app.cnf.GetParam(ls, 'passwd_genchars',PASSWD_GEN_CHARS),
+        length=web2ldap.app.cnf.GetParam(ls, 'passwd_genlength',PASSWD_GEN_LENGTH),
       )
 
     passwd_forcechange = form.getInputValue('passwd_forcechange',['no'])[0]=='yes'
@@ -289,7 +289,7 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
 
     password_attr_types_msg = ''
 
-    passwd_modlist = web2ldap.app.cnf.GetParam(ls,'passwd_modlist',[])
+    passwd_modlist = web2ldap.app.cnf.GetParam(ls, 'passwd_modlist',[])
 
     # Extend with appropriate user-must-change-password-after-reset attribute
     if passwd_forcechange:
@@ -455,18 +455,18 @@ def w2l_Passwd(sid,outf,command,form,ls,dn,connLDAPUrl):
       else:
         passwd_link = ''
       web2ldap.app.gui.SimpleMessage(
-        sid,outf,command,form,ls,dn,
+        sid, outf, command, form, ls, dn,
         message="""
         <p class="SuccessMessage">Changed password of entry %s</p>
         <p>%s</p>
         <p>%s</p>
         """ % (
-          web2ldap.app.gui.DisplayDN(sid,form,ls,passwd_who),
+          web2ldap.app.gui.DisplayDN(sid, form, ls,passwd_who),
           password_attr_types_msg,
           passwd_link,
         ),
-        main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
-        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid,form,ls,dn)
+        main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
       )
 
   else:

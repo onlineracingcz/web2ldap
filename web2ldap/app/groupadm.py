@@ -103,9 +103,9 @@ def GroupSelectFieldHTML(
   )
 
 
-def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
+def w2l_GroupAdm(sid, outf, command, form, ls, dn,InfoMsg='',ErrorMsg=''):
 
-  groupadm_defs = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(ls,'groupadm_defs',{}))
+  groupadm_defs = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(ls, 'groupadm_defs',{}))
   if not groupadm_defs:
     raise web2ldap.app.core.ErrorExit(u'Group admin options empty or not set.')
   groupadm_defs_keys = groupadm_defs.keys()
@@ -118,9 +118,9 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls,'_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'supplement_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'schema_strictcheck',True),
+    web2ldap.app.cnf.GetParam(ls, '_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
 
   result_dnlist = ls.readEntry(dn,all_membership_attrs)
@@ -158,7 +158,7 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
   # Search all the group entries
   #################################################################
 
-  groupadm_filterstr_template = web2ldap.app.cnf.GetParam(ls,'groupadm_filterstr_template',r'(|%s)')
+  groupadm_filterstr_template = web2ldap.app.cnf.GetParam(ls, 'groupadm_filterstr_template',r'(|%s)')
 
   all_group_filterstr = groupadm_filterstr_template % (''.join(
     [
@@ -330,9 +330,9 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
   #########################################################
 
   web2ldap.app.gui.TopSection(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     'Group membership',
-    web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+    web2ldap.app.gui.MainMenu(sid, form, ls, dn),
     context_menu_list=[]
   )
 
@@ -349,7 +349,7 @@ def w2l_GroupAdm(sid,outf,command,form,ls,dn,InfoMsg='',ErrorMsg=''):
 
   if all_groups_dict:
 
-    optgroup_bounds = web2ldap.app.cnf.GetParam(ls,'groupadm_optgroup_bounds',(1,None))
+    optgroup_bounds = web2ldap.app.cnf.GetParam(ls, 'groupadm_optgroup_bounds',(1,None))
 
     outf.write("""
       %s\n%s\n%s\n

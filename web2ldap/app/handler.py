@@ -27,10 +27,9 @@ from ipaddress import ip_address, ip_network
 import ldap0
 from ldap0.ldapurl import isLDAPUrl
 
-import pyweblib.forms
-import pyweblib.sslenv
-import pyweblib.helper
-import pyweblib.session
+import web2ldap.web.forms
+import web2ldap.web.helper
+import web2ldap.web.session
 
 import web2ldapcnf
 import web2ldapcnf.hosts
@@ -82,6 +81,13 @@ SCOPE2COMMAND = {
     ldap0.SCOPE_ONELEVEL:'search',
     ldap0.SCOPE_SUBTREE:'search',
     ldap0.SCOPE_SUBORDINATE:'search',
+}
+
+CONNTYPE2URLSCHEME = {
+    0: 'ldap',
+    1: 'ldap',
+    2: 'ldaps',
+    3: 'ldapi',
 }
 
 SIMPLE_MSG_HTML = """
@@ -352,7 +358,7 @@ class AppHandler:
         else:
             try:
                 old_ls = session_store.retrieveSession(del_sid, self.env)
-            except pyweblib.session.SessionException:
+            except web2ldap.web.session.SessionException:
                 pass
             else:
                 # Remove session cookie
@@ -396,7 +402,7 @@ class AppHandler:
             else:
                 input_ldapurl = ExtendedLDAPUrl()
                 conntype = int(self.form.getInputValue('conntype', [0])[0])
-                input_ldapurl.urlscheme = web2ldap.app.form.CONNTYPE2URLSCHEME[conntype]
+                input_ldapurl.urlscheme = CONNTYPE2URLSCHEME[conntype]
                 input_ldapurl.hostport = self.form.getInputValue('host', [None])[0]
                 input_ldapurl.x_startTLS = str(web2ldap.ldapsession.START_TLS_REQUIRED * (conntype == 1))
 
@@ -689,7 +695,7 @@ class AppHandler:
                     # Store current session
                     session_store.storeSession(self.sid, ls)
 
-            except pyweblib.forms.FormException as e:
+            except web2ldap.web.forms.FormException as e:
                 if ls is None:
                     dn = None
                 else:
@@ -784,7 +790,7 @@ class AppHandler:
                 # Setup what's required to the case command=='passwd'
                 ls.setDN(dn or e.who)
                 self.form.addField(
-                    pyweblib.forms.Select(
+                    web2ldap.web.forms.Select(
                         'passwd_scheme',
                         u'Password hash scheme',
                         1,
@@ -793,7 +799,7 @@ class AppHandler:
                     )
                 )
                 self.form.addField(
-                    pyweblib.forms.Checkbox(
+                    web2ldap.web.forms.Checkbox(
                         'passwd_ntpasswordsync',
                         u'Sync ntPassword for Samba',
                         1,
@@ -802,7 +808,7 @@ class AppHandler:
                     )
                 )
                 self.form.addField(
-                    pyweblib.forms.Checkbox(
+                    web2ldap.web.forms.Checkbox(
                         'passwd_settimesync',
                         u'Sync password setting times',
                         1,
@@ -830,7 +836,7 @@ class AppHandler:
                 # Setup what's required to the case command=='passwd'
                 ls.setDN(dn or e.who)
                 self.form.addField(
-                    pyweblib.forms.Select(
+                    web2ldap.web.forms.Select(
                         'passwd_scheme',
                         u'Password hash scheme',
                         1,
@@ -839,7 +845,7 @@ class AppHandler:
                     )
                 )
                 self.form.addField(
-                    pyweblib.forms.Checkbox(
+                    web2ldap.web.forms.Checkbox(
                         'passwd_ntpasswordsync',
                         u'Sync ntPassword for Samba',
                         1,
@@ -848,7 +854,7 @@ class AppHandler:
                     )
                 )
                 self.form.addField(
-                    pyweblib.forms.Checkbox(
+                    web2ldap.web.forms.Checkbox(
                         'passwd_settimesync',
                         u'Sync password setting times',
                         1,
@@ -955,18 +961,14 @@ class AppHandler:
                     u'Error', e.Msg,
                 )
 
-            except pyweblib.session.MaxSessionCountExceeded:
+            except web2ldap.web.session.MaxSessionCountExceeded:
                 self.simple_msg('Too many web sessions! Try later...')
 
-            except pyweblib.session.SessionExpired:
-                self.url_redirect(u'Session expired.')
-                return
-
-            except pyweblib.session.InvalidSessionId:
+            except web2ldap.web.session.InvalidSessionId:
                 self.url_redirect(u'Session ID not found.')
                 return
 
-            except pyweblib.session.SessionHijacked:
+            except web2ldap.web.session.SessionHijacked:
                 if __debug__:
                     self.log_exception(ls)
                 self.url_redirect(u'Session hijacking detected. Access denied!')
@@ -982,11 +984,11 @@ class AppHandler:
                 self.url_redirect(u'Session hijacking detected by wrong cookie. Access denied!')
                 return
 
-            except pyweblib.session.SessionException:
+            except web2ldap.web.session.SessionException:
                 self.url_redirect(u'Other session handling error.')
                 return
 
-        except pyweblib.forms.InvalidRequestMethod:
+        except web2ldap.web.forms.InvalidRequestMethod:
             self.simple_msg('Invalid request method!')
 
         except Exception:

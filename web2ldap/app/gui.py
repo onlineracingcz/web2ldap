@@ -19,8 +19,8 @@ import os
 from types import UnicodeType
 from hashlib import md5
 
-import pyweblib.forms
-from pyweblib.forms import escapeHTML
+import web2ldap.web.forms
+from web2ldap.web.forms import escapeHTML
 
 import ldap0
 import ldap0.ldapurl
@@ -190,7 +190,7 @@ def repr2ts(time_divisors,ts_sep,value):
   return result
 
 
-def DisplayDN(sid,form,ls,dn,commandbutton=0):
+def DisplayDN(sid, form, ls, dn,commandbutton=0):
   """Display a DN as LDAP URL with or without button"""
   assert type(dn)==UnicodeType, "Argument 'dn' must be UnicodeType"
   dn_str = form.utf2display(dn or u'- World -')
@@ -249,7 +249,7 @@ def EntryMainMenu(form,env):
   return main_menu
 
 
-def ContextMenuSingleEntry(sid,form,ls,dn,vcard_link=0,dds_link=0,entry_uuid=None):
+def ContextMenuSingleEntry(sid, form, ls, dn,vcard_link=0,dds_link=0,entry_uuid=None):
   """
   Output the context menu for a single entry
   """
@@ -354,7 +354,7 @@ def ContextMenuSingleEntry(sid,form,ls,dn,vcard_link=0,dds_link=0,entry_uuid=Non
   return result # ContextMenuSingleEntry()
 
 
-def WhoAmITemplate(sid,form,ls,dn,who=None,entry=None):
+def WhoAmITemplate(sid, form, ls, dn,who=None,entry=None):
   if who==None:
     if hasattr(ls,'who') and ls.who:
       who = ls.who
@@ -363,13 +363,13 @@ def WhoAmITemplate(sid,form,ls,dn,who=None,entry=None):
       return 'anonymous'
   if web2ldap.ldaputil.base.is_dn(who):
     # Fall-back is to display the DN
-    result = DisplayDN(sid,form,ls,who,commandbutton=0)
+    result = DisplayDN(sid, form, ls,who,commandbutton=0)
     # Determine relevant templates dict
     sub_schema = ls.retrieveSubSchema(
       dn,
-      web2ldap.app.cnf.GetParam(ls,'_schema',None),
-      web2ldap.app.cnf.GetParam(ls,'supplement_schema',None),
-      web2ldap.app.cnf.GetParam(ls,'schema_strictcheck',True),
+      web2ldap.app.cnf.GetParam(ls, '_schema',None),
+      web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+      web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
     )
     bound_as_templates = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(
       ls.ldapUrl(ls.getSearchRoot(who)),'boundas_template',{}
@@ -389,7 +389,7 @@ def WhoAmITemplate(sid,form,ls,dn,who=None,entry=None):
         else:
           entry = {}
     if entry:
-      display_entry = web2ldap.app.read.DisplayEntry(sid,form,ls,dn,sub_schema,entry,'readSep',1)
+      display_entry = web2ldap.app.read.DisplayEntry(sid, form, ls, dn,sub_schema,entry,'readSep',1)
       user_structural_oc = display_entry.entry.get_structural_oc()
       for oc in bound_as_templates.keys():
         if sub_schema.getoid(ldap0.schema.models.ObjectClass,oc)==user_structural_oc:
@@ -403,7 +403,7 @@ def WhoAmITemplate(sid,form,ls,dn,who=None,entry=None):
 
 
 
-def MainMenu(sid,form,ls,dn):
+def MainMenu(sid, form, ls, dn):
   """
   Returns list of main menu items
   """
@@ -517,7 +517,7 @@ def DITNavigationList(sid,outf,form,ls,dn):
   return result # DITNavigationList()
 
 
-def TopSection(sid,outf,command,form,ls,dn,title,main_menu_list,context_menu_list=[],main_div_id='Message'):
+def TopSection(sid, outf, command, form, ls, dn,title,main_menu_list,context_menu_list=[],main_div_id='Message'):
 
   # First send the HTTP header
   Header(outf,form)
@@ -556,11 +556,11 @@ def TopSection(sid,outf,command,form,ls,dn,title,main_menu_list,context_menu_lis
     template_dict.update({
       'ldap_url':str(ls.ldapUrl(dn)),
       'ldap_uri':form.utf2display(ls.uri.decode('ascii')),
-      'description':escapeHTML(web2ldap.app.cnf.GetParam(ls,'description',u'').encode(form.accept_charset)),
+      'description':escapeHTML(web2ldap.app.cnf.GetParam(ls, 'description',u'').encode(form.accept_charset)),
       'dit_navi':',\n'.join(DITNavigationList(sid,outf,form,ls,dn)),
       'dn':form.utf2display(dn),
     })
-    template_dict['who'] =  WhoAmITemplate(sid,form,ls,dn)
+    template_dict['who'] =  WhoAmITemplate(sid, form, ls, dn)
 
   outf.write(top_template_str.format(**template_dict))
 
@@ -568,13 +568,13 @@ def TopSection(sid,outf,command,form,ls,dn,title,main_menu_list,context_menu_lis
 
 
 def SimpleMessage(
-  sid,outf,command,form,ls,dn,
+  sid, outf, command, form, ls, dn,
   title=u'',message=u'',
   main_div_id='Message',
   main_menu_list=[],context_menu_list=[]
 ):
   TopSection(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     title,
     main_menu_list,
     context_menu_list=context_menu_list,
@@ -599,7 +599,7 @@ def SchemaElementName(sid,form,dn,schema,se_nameoroid,se_class,name_template=r'%
   return '\n'.join(result)
 
 
-def LDAPURLButton(sid,form,ls,data):
+def LDAPURLButton(sid, form, ls,data):
   if isinstance(data,LDAPUrl):
     l = data
   else:
@@ -625,15 +625,15 @@ def LDAPURLButton(sid,form,ls,data):
     )
 
 
-def DataStr(sid,form,ls,dn,schema,attrtype_name,value,valueindex=0,commandbutton=0,entry=None):
+def DataStr(sid, form, ls, dn,schema,attrtype_name,value,valueindex=0,commandbutton=0,entry=None):
   """
   Return a pretty HTML-formatted string of the attribute value
   """
-  attr_instance = web2ldap.app.schema.syntaxes.syntax_registry.attrInstance(sid,form,ls,dn,schema,attrtype_name,value,entry)
+  attr_instance = web2ldap.app.schema.syntaxes.syntax_registry.attrInstance(sid, form, ls, dn,schema,attrtype_name,value,entry)
   try:
     result = attr_instance.displayValue(valueindex,commandbutton)
   except UnicodeError:
-    attr_instance = web2ldap.app.schema.syntaxes.OctetString(sid,form,ls,dn,schema,attrtype_name,value,entry)
+    attr_instance = web2ldap.app.schema.syntaxes.OctetString(sid, form, ls, dn,schema,attrtype_name,value,entry)
     result = attr_instance.displayValue(valueindex,commandbutton)
   return result
 
@@ -645,7 +645,7 @@ def AttributeTypeSelectField(
   default_attr_options=None
 ):
   """
-  Return pyweblib.forms.Select instance for choosing attribute type names
+  Return web2ldap.web.forms.Select instance for choosing attribute type names
   """
   attr_options_dict = {}
   for attr_type in (map(unicode,default_attr_options or []) or sub_schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
@@ -671,7 +671,7 @@ def AttributeTypeSelectField(
     for at in sorted(attr_options_dict.keys(),key=unicode.lower)
   ]
   # Create a select field instance for attribute type name
-  attr_select = pyweblib.forms.Select(
+  attr_select = web2ldap.web.forms.Select(
     field_name,field_desc,
     1,
     options=sorted_attr_options,
@@ -775,7 +775,7 @@ def SearchRootField(
   dn_select_list = list(set(dn_select_list))
   dn_select_list.sort(key=sortkey_func)
 #  srf = web2ldap.app.form.DataList(
-  srf = pyweblib.forms.Select(
+  srf = web2ldap.web.forms.Select(
     name,text,1,
 #    size=60,
     default=default or ls.getSearchRoot(dn),
@@ -786,7 +786,7 @@ def SearchRootField(
   return srf # SearchRootField()
 
 
-def ExceptionMsg(sid,outf,command,form,ls,dn,Heading,Msg):
+def ExceptionMsg(sid, outf, command, form, ls, dn,Heading,Msg):
   """
   Heading
     Unicode string with text for the <h1> heading
@@ -794,7 +794,7 @@ def ExceptionMsg(sid,outf,command,form,ls,dn,Heading,Msg):
     Raw string with HTML with text describing the exception
     (Security note: Must already be quoted/escaped!)
   """
-  TopSection(sid,outf,command,form,ls,dn,'Error',MainMenu(sid,form,ls,dn),context_menu_list=[])
+  TopSection(sid, outf, command, form, ls, dn,'Error',MainMenu(sid, form, ls, dn),context_menu_list=[])
   if type(Msg)==unicode:
     Msg = Msg.encode(form.accept_charset)
   outf.write("""

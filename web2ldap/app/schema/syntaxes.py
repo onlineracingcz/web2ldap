@@ -24,7 +24,7 @@ import ipaddress
 
 import ldap0,ldap0.ldapurl,ldap0.schema
 
-import pyweblib.forms
+import web2ldap.web.forms
 
 import web2ldapcnf
 
@@ -275,7 +275,7 @@ class LDAPSyntax:
     return (self.formField(),)
 
   def formField(self):
-    input_field = pyweblib.forms.Input(
+    input_field = web2ldap.web.forms.Input(
       self.attrType,
       ': '.join([self.attrType,self.desc]),
       self.maxLen,self.maxValues,None,default=None,size=min(self.maxLen,self.inputSize)
@@ -312,7 +312,7 @@ class Binary(LDAPSyntax):
   editable = 0
 
   def formField(self):
-    f = pyweblib.forms.File(
+    f = web2ldap.web.forms.File(
       self.attrType,
       ': '.join([self.attrType,self.desc]),
       self.maxLen,self.maxValues,None,default=self.attrValue,size=50
@@ -766,7 +766,7 @@ class Integer(IA5String):
   def formField(self):
     form_value = self.formValue()
     max_len = self._maxlen(form_value)
-    return pyweblib.forms.Input(
+    return web2ldap.web.forms.Input(
       self.attrType,
       ': '.join([self.attrType,self.desc]),
       max_len,self.maxValues,'[0-9]*',default=form_value,size=min(self.inputSize,max_len)
@@ -1103,7 +1103,7 @@ class OctetString(Binary):
 
   def formField(self):
     form_value = self.formValue()
-    return pyweblib.forms.Textarea(
+    return web2ldap.web.forms.Textarea(
       self.attrType,
       ': '.join([self.attrType,self.desc]),
       10000,1,
@@ -1146,7 +1146,7 @@ class MultilineText(DirectoryString):
 
   def formField(self):
     form_value=self.formValue()
-    return pyweblib.forms.Textarea(
+    return web2ldap.web.forms.Textarea(
       self.attrType,
       ': '.join([self.attrType,self.desc]),
       self.maxLen,self.maxValues,
@@ -1453,7 +1453,7 @@ class SelectList(DirectoryString):
        (not attr_value_dict or not filter(None,attr_value_dict.keys())):
       return DirectoryString.formField(self)
     else:
-      f = pyweblib.forms.Select(
+      f = web2ldap.web.forms.Select(
         self.attrType,
         ': '.join([self.attrType,self.desc]),1,
         options=self._sorted_select_options(),
@@ -1802,7 +1802,7 @@ class BitArrayInteger(MultilineText,Integer):
 
   def formField(self):
     form_value=self.formValue()
-    return pyweblib.forms.Textarea(
+    return web2ldap.web.forms.Textarea(
       self.attrType,
       ': '.join([self.attrType,self.desc]),
       self.maxLen,self.maxValues,
@@ -2108,7 +2108,7 @@ class ComposedAttribute(LDAPSyntax):
     return attr_values
 
   def formField(self):
-    input_field = pyweblib.forms.HiddenInput(
+    input_field = web2ldap.web.forms.HiddenInput(
       self.attrType,
       ': '.join([self.attrType,self.desc]),
       self.maxLen,self.maxValues,None,

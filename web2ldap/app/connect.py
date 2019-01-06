@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 import time
 
-import pyweblib.forms
+import web2ldap.web.forms
 
 # Modules shipped with web2ldap
 import web2ldapcnf
@@ -50,7 +50,7 @@ def w2l_Connect(outf, form, env, Msg='Connect', ErrorMsg=''):
                     web2ldapcnf.hosts.Web2LDAPConfig()
                 ).__dict__.get('description', uri)
             uri_select_list.append((uri.decode('ascii'), description))
-        uri_select_field = pyweblib.forms.Select('ldapurl', u'LDAP uri', 1, options=uri_select_list)
+        uri_select_field = web2ldap.web.forms.Select('ldapurl', u'LDAP uri', 1, options=uri_select_list)
         uri_select_field.charset = 'utf-8'
         uri_select_field_html = uri_select_field.inputHTML(
             title=u'List of pre-configured directories to connect to',

@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 import time
 
-import pyweblib.forms
+import web2ldap.web.forms
 
 import ldap0
 
@@ -24,6 +24,21 @@ import web2ldap.ldaputil.async,web2ldap.ldapsession,web2ldap.ldaputil.base
 import web2ldap.app.core,web2ldap.app.cnf,web2ldap.app.gui,web2ldap.app.ldapparams
 # OID description dictionary from configuration directory
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
+
+
+DELETE_FORM_TEMPLATE = """
+  {form_begin}
+    {inner_form}
+    <dl>
+      <dt>Additional extended controls to be used:</dt>
+      <dd>{field_delete_ctrl}</dd>
+    </dl>
+    <p class="WarningMessage">Are you sure?</p>
+    {field_hidden_dn}
+    <input type="submit" name="delete_confirm" value="yes">
+    <input type="submit" name="delete_confirm" value="no">
+  </form>
+"""
 
 
 class DeleteLeafs(web2ldap.ldaputil.async.AsyncSearchHandler):
@@ -166,191 +181,234 @@ def DeleteEntries(outf,ls,dn,scope,tree_delete_control,delete_server_ctrls,delet
     return deleted_entries_count,non_deletable_entries # DeleteEntries()
 
 
-def DelSingleEntryForm(sid,form,ls,dn):
+def DelSingleEntryForm(sid, form, ls, dn):
   return """
   <p class="WarningMessage">Delete whole entry %s?</p>
   """ % (
-    web2ldap.app.gui.DisplayDN(sid,form,ls,dn)
+    web2ldap.app.gui.DisplayDN(sid, form, ls, dn)
   )
 
 
-def DelSubtreeForm(sid,form,ls,dn,scope):
-  delete_scope_field = pyweblib.forms.Select(
-    'scope',u'Scope of delete operation',1,
-    options=(
-      (str(ldap0.SCOPE_BASE),'Only this entry'),
-      (str(ldap0.SCOPE_ONELEVEL),'All entries below this entry (recursive)'),
-      (str(ldap0.SCOPE_SUBTREE),'All entries including this entry (recursive)'),
-    ),
-    default=str(scope),
-  )
-  hasSubordinates,numSubordinates,numAllSubordinates = ls.subOrdinates(dn)
-  if not hasSubordinates:
-    return DelSingleEntryForm(sid,form,ls,dn)
-  if numSubordinates:
-    numSubordinates_html = '<p>Number of direct subordinates: %d</p>' % (numSubordinates)
-  else:
-    numSubordinates_html = ''
-  if numAllSubordinates:
-    numAllSubordinates_html = '<p>Total number of subordinates: %d</p>' % (numAllSubordinates)
-  else:
-    numAllSubordinates_html = ''
+def DelSubtreeForm(sid, form, ls, dn,scope):
+    delete_scope_field = web2ldap.web.forms.Select(
+      'scope',u'Scope of delete operation',1,
+      options=(
+        (str(ldap0.SCOPE_BASE),'Only this entry'),
+        (str(ldap0.SCOPE_ONELEVEL),'All entries below this entry (recursive)'),
+        (str(ldap0.SCOPE_SUBTREE),'All entries including this entry (recursive)'),
+      ),
+      default=unicode(scope),
+    )
+    hasSubordinates,numSubordinates,numAllSubordinates = ls.subOrdinates(dn)
+    if not hasSubordinates:
+      return DelSingleEntryForm(sid, form, ls, dn)
+    if numSubordinates:
+      numSubordinates_html = '<p>Number of direct subordinates: %d</p>' % (numSubordinates)
+    else:
+      numSubordinates_html = ''
+    if numAllSubordinates:
+      numAllSubordinates_html = '<p>Total number of subordinates: %d</p>' % (numAllSubordinates)
+    else:
+      numAllSubordinates_html = ''
 
-  return """
+    return """
+      <p class="WarningMessage">
+        Delete entries found below {text_dn}?<br>
+        {text_num_sub_ordinates}
+        {text_num_all_sub_ordinates}
+      </p>
+      <table>
+        <tr>
+          <td>Scope:</td>
+          <td>{field_delete_scope}</td>
+        </tr>
+        <tr>
+          <td>Use tree delete control:</td>
+          <td>
+            <input type="checkbox"
+                   name="delete_ctrl"
+                   value="{value_delete_ctrl_oid}"{value_delete_ctrl_checked}>
+          </td>
+        </tr>
+      </table>
+      <p><strong>
+          Use recursive delete with extreme care!
+          Might take some time.
+      </strong></p>
+    """.format(
+      text_dn=web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
+      text_num_sub_ordinates=numSubordinates_html,
+      text_num_all_sub_ordinates=numAllSubordinates_html,
+      field_delete_scope=delete_scope_field.inputHTML(),
+      value_delete_ctrl_oid=web2ldap.ldapsession.CONTROL_TREEDELETE,
+      value_delete_ctrl_checked=' checked'*int(
+        web2ldap.ldapsession.CONTROL_TREEDELETE in ls.supportedControl and \
+        not 'OpenLDAProotDSE' in ls.rootDSE.get('objectClass',[])
+      ),
+    )
+
+
+def DelAttrForm(sid, form, ls, dn,entry,delete_attr):
+    return """
+    <p class="WarningMessage">Delete following attribute(s) of entry %s?</p>
+    <p>%s</p>
+    """ % (
+      web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
+      '\n'.join([
+        '<input type="checkbox" name="delete_attr" value="%s"%s>%s<br>' % (
+          form.utf2display(attr_type,sp_entity='  '),
+          ' checked'*(attr_type in entry),
+          form.utf2display(attr_type),
+        )
+        for attr_type in delete_attr
+      ]),
+    )
+
+
+def DelSearchForm(sid, form, ls, dn,scope,delete_filter):
+    try:
+        num_entries,num_referrals = ls.count(
+            dn,
+            scope,
+            delete_filter,
+            sizelimit=1000,
+        )
+    except web2ldap.ldapsession.LDAPLimitErrors:
+      num_entries,num_referrals = ('unknown','unknown')
+    else:
+      if num_entries==None:
+        num_entries = 'unknown'
+      else:
+        num_entries = str(num_entries)
+      if num_referrals==None:
+        num_referrals = 'unknown'
+      else:
+        num_referrals = str(num_referrals)
+    return """
     <p class="WarningMessage">
-      Delete entries found below {text_dn}?<br>
-      {text_num_sub_ordinates}
-      {text_num_all_sub_ordinates}
+      Delete entries found with search?
     </p>
     <table>
-      <tr>
-        <td>Scope:</td>
-        <td>{field_delete_scope}</td>
-      </tr>
-      <tr>
-        <td>Use tree delete control:</td>
-        <td>
-          <input type="checkbox"
-                 name="delete_ctrl"
-                 value="{value_delete_ctrl_oid}"{value_delete_ctrl_checked}>
-        </td>
-      </tr>
+    <tr>
+      <td>Search base:</td><td>{text_dn}</td>
+    </tr>
+    <tr>
+      <td>Search scope:</td><td>{text_scope}</td>
+    </tr>
+    <tr>
+      <td>Delete filter:</td>
+      <td>
+        {value_delete_filter}
+      </td>
+    </tr>
+    <tr>
+      <td># affected entries / referrals:</td>
+      <td>
+        {num_entries} / {num_referrals}
+      </td>
+    </tr>
     </table>
-    <p><strong>
-        Use recursive delete with extreme care!
-        Might take some time.
-    </strong></p>
-  """.format(
-    text_dn=web2ldap.app.gui.DisplayDN(sid,form,ls,dn),
-    text_num_sub_ordinates=numSubordinates_html,
-    text_num_all_sub_ordinates=numAllSubordinates_html,
-    field_delete_scope=delete_scope_field.inputHTML(),
-    value_delete_ctrl_oid=web2ldap.ldapsession.CONTROL_TREEDELETE,
-    value_delete_ctrl_checked=' checked'*int(
-      web2ldap.ldapsession.CONTROL_TREEDELETE in ls.supportedControl and \
-      not 'OpenLDAProotDSE' in ls.rootDSE.get('objectClass',[])
-    ),
-  )
-
-
-def DelAttrForm(sid,form,ls,dn,entry,delete_attr):
-  return """
-  <p class="WarningMessage">Delete following attribute(s) of entry %s?</p>
-  <p>%s</p>
-  """ % (
-    web2ldap.app.gui.DisplayDN(sid,form,ls,dn),
-    '\n'.join([
-      '<input type="checkbox" name="delete_attr" value="%s"%s>%s<br>' % (
-        form.utf2display(attr_type,sp_entity='  '),
-        ' checked'*(attr_type in entry),
-        form.utf2display(attr_type),
-      )
-      for attr_type in delete_attr
-    ]),
-  )
-
-
-def DelSearchForm(sid,form,ls,dn,scope,delete_filter):
-  try:
-    num_entries,num_referrals = ls.count(
-      dn,
-      scope,
-      delete_filter,
-      sizelimit=1000,
+    <input type="hidden" name="filterstr" value="{value_delete_filter}">
+    <input type="hidden" name="scope" value="{value_delete_scope}">
+    """.format(
+      value_dn=form.utf2display(dn),
+      text_dn=web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
+      text_scope=web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
+      num_entries=num_entries,
+      num_referrals=num_referrals,
+      value_delete_filter=form.utf2display(delete_filter),
+      value_delete_scope=form.utf2display(unicode(scope)),
     )
-  except web2ldap.ldapsession.LDAPLimitErrors:
-    num_entries,num_referrals = ('unknown','unknown')
-  else:
-    if num_entries==None:
-      num_entries = 'unknown'
+
+
+def w2l_Delete(sid, outf, command, form, ls, dn,connLDAPUrl):
+
+    sub_schema = ls.retrieveSubSchema(
+      dn,
+      web2ldap.app.cnf.GetParam(ls, '_schema', None),
+      web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
+      web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    )
+
+    delete_confirm = form.getInputValue('delete_confirm',[None])[0]
+
+    delete_attr = form.getInputValue('delete_attr',[a.decode('ascii') for a in connLDAPUrl.attrs or []])
+    delete_attr.sort()
+    if delete_attr:
+      scope = ldap0.SCOPE_BASE
     else:
-      num_entries = str(num_entries)
-    if num_referrals==None:
-      num_referrals = 'unknown'
-    else:
-      num_referrals = str(num_referrals)
-  return """
-  <p class="WarningMessage">
-    Delete entries found with search?
-  </p>
-  <table>
-  <tr>
-    <td>Search base:</td><td>{text_dn}</td>
-  </tr>
-  <tr>
-    <td>Search scope:</td><td>{text_scope}</td>
-  </tr>
-  <tr>
-    <td>Delete filter:</td>
-    <td>
-      {value_delete_filter}
-    </td>
-  </tr>
-  <tr>
-    <td># affected entries / referrals:</td>
-    <td>
-      {num_entries} / {num_referrals}
-    </td>
-  </tr>
-  </table>
-  <input type="hidden" name="filterstr" value="{value_delete_filter}">
-  <input type="hidden" name="scope" value="{value_delete_scope}">
-  """.format(
-    value_dn=form.utf2display(dn),
-    text_dn=web2ldap.app.gui.DisplayDN(sid,form,ls,dn),
-    text_scope=web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
-    num_entries=num_entries,
-    num_referrals=num_referrals,
-    value_delete_filter=form.utf2display(delete_filter),
-    value_delete_scope=form.utf2display(unicode(scope)),
-  )
+      scope = int(form.getInputValue('scope',[str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
+
+    delete_filter = form.getInputValue('filterstr',[connLDAPUrl.filterstr])[0]
+
+    # Generate a list of requested LDAPv3 extended controls to be sent along
+    # with a modify or delete request
+    delete_ctrl_oids = form.getInputValue('delete_ctrl',[])
+    delete_ctrl_tree_delete = web2ldap.ldapsession.CONTROL_TREEDELETE in delete_ctrl_oids
+
+    if delete_confirm is None:
+        # First show delete confirmation and delete mode select form
+        # Read the editable attribute values of entry
+        try:
+            ldap_entry = ls.readEntry(
+                dn,
+                [a.encode(ls.charset) for a in delete_attr],
+                search_filter='(objectClass=*)',
+                no_cache=1,
+                server_ctrls=None,
+            )[0][1]
+        except IndexError:
+            ldap_entry = {}
+        entry = ldap0.schema.models.Entry(sub_schema,dn,ldap_entry)
+        if delete_attr:
+            inner_form = DelAttrForm(sid, form, ls, dn,entry,delete_attr)
+        elif delete_filter:
+            inner_form = DelSearchForm(sid, form, ls, dn,scope,delete_filter)
+        else:
+            inner_form = DelSubtreeForm(sid, form, ls, dn,scope)
+        # Output confirmation form
+        web2ldap.app.gui.TopSection(
+          sid, outf, command, form, ls, dn,
+          'Delete entry?',
+          web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+          context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+        )
+        outf.write(
+            DELETE_FORM_TEMPLATE.format(
+                form_begin=form.beginFormHTML('delete',sid,'POST'),
+                inner_form=inner_form,
+                field_delete_ctrl=form.field['delete_ctrl'].inputHTML(default=delete_ctrl_oids),
+                field_hidden_dn=form.hiddenFieldHTML('dn',dn,u''),
+            )
+        )
+        web2ldap.app.gui.Footer(outf,form)
+        return
 
 
-def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
+    if delete_confirm != 'yes':
+        web2ldap.app.gui.SimpleMessage(
+          sid, outf, command, form, ls, dn,
+          'Canceled delete',
+          '<p class="SuccessMessage">Canceled delete.</p>',
+          main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+          context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+        )
+        return
 
-  sub_schema = ls.retrieveSubSchema(
-    dn,
-    web2ldap.app.cnf.GetParam(ls,'_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'supplement_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'schema_strictcheck',True),
-  )
-
-  delete_confirm = form.getInputValue('delete_confirm',[None])[0]
-
-  delete_attr = form.getInputValue('delete_attr',[a.decode('ascii') for a in connLDAPUrl.attrs or []])
-  delete_attr.sort()
-  if delete_attr:
-    scope = ldap0.SCOPE_BASE
-  else:
-    scope = int(form.getInputValue('scope',[str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
-
-  delete_filter = form.getInputValue('filterstr',[connLDAPUrl.filterstr])[0]
-
-  # Generate a list of requested LDAPv3 extended controls to be sent along
-  # with a modify or delete request
-  delete_ctrl_oids = form.getInputValue('delete_ctrl',[])
-  delete_ctrl_tree_delete = web2ldap.ldapsession.CONTROL_TREEDELETE in delete_ctrl_oids
-
-  if delete_confirm:
-
-    if ls.l.protocol_version>=ldap0.VERSION3:
-      conn_server_ctrls = set([
+    # determine extended controls to be sent with delete operation
+    conn_server_ctrls = set([
         server_ctrl.controlType
         for server_ctrl in ls.l._serverctrls['**all**']+ls.l._serverctrls['**write**']+ls.l._serverctrls['delete']
-      ])
-      delete_server_ctrls = [
+    ])
+    delete_server_ctrls = [
         ldap0.controls.LDAPControl(ctrl_oid,1,None)
         for ctrl_oid in delete_ctrl_oids
         if not ctrl_oid in conn_server_ctrls
-      ] or None
-    else:
-      delete_server_ctrls = None
+    ] or None
 
-    if delete_confirm=='yes':
+    # Recursive delete of whole sub-tree
 
-      # Recursive delete of whole sub-tree
-
-      if scope!=ldap0.SCOPE_BASE:
+    if scope != ldap0.SCOPE_BASE:
 
         ##########################################################
         # Recursive delete of entries in sub-tree
@@ -372,7 +430,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
           dn = web2ldap.ldaputil.base.parent_dn(dn)
           ls.setDN(dn)
         web2ldap.app.gui.SimpleMessage(
-          sid,outf,command,form,ls,dn,
+          sid, outf, command, form, ls, dn,
           'Deleted entries',
           """
             <p class="SuccessMessage">Deleted entries.</p>
@@ -385,16 +443,16 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
             </table>
           """ % (
             deleted_entries_count,
-            web2ldap.app.gui.DisplayDN(sid,form,ls,old_dn),
+            web2ldap.app.gui.DisplayDN(sid, form, ls,old_dn),
             web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
             end_time_stamp-begin_time_stamp,
             len(non_deletable_entries),
           ),
-          main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
-          context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid,form,ls,dn)
+          main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+          context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
         )
 
-      elif scope==ldap0.SCOPE_BASE and delete_attr:
+    elif scope == ldap0.SCOPE_BASE and delete_attr:
 
         ##########################################################
         # Delete attribute(s) from an entry with modify request
@@ -406,7 +464,7 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
         ]
         ls.modifyEntry(dn,mod_list,serverctrls=delete_server_ctrls)
         web2ldap.app.gui.SimpleMessage(
-          sid,outf,command,form,ls,dn,
+          sid, outf, command, form, ls, dn,
           'Deleted Attribute(s)',
           """
           <p class="SuccessMessage">Deleted attribute(s) from entry %s</p>
@@ -416,98 +474,32 @@ def w2l_Delete(sid,outf,command,form,ls,dn,connLDAPUrl):
             </li>
           </ul>
           """ % (
-            web2ldap.app.gui.DisplayDN(sid,form,ls,dn),
+            web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
             '</li>\n<li>'.join([
               form.hiddenFieldHTML('delete_attr',attr_type,attr_type)
               for attr_type in delete_attr
             ]),
           ),
-          main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
-          context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid,form,ls,dn)
+          main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+          context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
         )
 
-      elif scope==ldap0.SCOPE_BASE:
+    elif scope == ldap0.SCOPE_BASE:
 
-        ##########################################################
-        # Delete a single whole entry
-        ##########################################################
+      ##########################################################
+      # Delete a single whole entry
+      ##########################################################
 
-        ls.deleteEntry(dn)
-        old_dn = dn
-        dn = web2ldap.ldaputil.base.parent_dn(dn)
-        ls.setDN(dn)
-        web2ldap.app.gui.SimpleMessage(
-          sid,outf,command,form,ls,dn,
-          'Deleted Entry',
-          '<p class="SuccessMessage">Deleted entry: %s</p>' % (
-            web2ldap.app.gui.DisplayDN(sid,form,ls,old_dn)
-          ),
-          main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
-          context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid,form,ls,dn)
-        )
-
-    else:
+      ls.deleteEntry(dn)
+      old_dn = dn
+      dn = web2ldap.ldaputil.base.parent_dn(dn)
+      ls.setDN(dn)
       web2ldap.app.gui.SimpleMessage(
-        sid,outf,command,form,ls,dn,
-        'Canceled delete',
-        '<p class="SuccessMessage">Canceled delete.</p>',
-        main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
-        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid,form,ls,dn)
+        sid, outf, command, form, ls, dn,
+        'Deleted Entry',
+        '<p class="SuccessMessage">Deleted entry: %s</p>' % (
+          web2ldap.app.gui.DisplayDN(sid, form, ls,old_dn)
+        ),
+        main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
       )
-
-  else:
-
-    ##########################################################
-    # Show delete confirmation and delete mode select form
-    ##########################################################
-
-
-    # Read the editable attribute values of entry
-    try:
-      ldap_entry = ls.readEntry(
-        dn,
-        [a.encode(ls.charset) for a in delete_attr],
-        search_filter='(objectClass=*)',
-        no_cache=1,
-        server_ctrls=None,
-      )[0][1]
-    except IndexError:
-      ldap_entry = {}
-
-    entry = ldap0.schema.models.Entry(sub_schema,dn,ldap_entry)
-
-    if delete_attr:
-      inner_form = DelAttrForm(sid,form,ls,dn,entry,delete_attr)
-    elif delete_filter:
-      inner_form = DelSearchForm(sid,form,ls,dn,scope,delete_filter)
-    else:
-      inner_form = DelSubtreeForm(sid,form,ls,dn,scope)
-
-    # Output confirmation form
-    web2ldap.app.gui.TopSection(
-      sid,outf,command,form,ls,dn,
-      'Delete entry?',
-      web2ldap.app.gui.MainMenu(sid,form,ls,dn),
-      context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid,form,ls,dn)
-    )
-
-    outf.write("""
-{form_begin}
-  {inner_form}
-  <dl>
-    <dt>Additional extended controls to be used:</dt>
-    <dd>{field_delete_ctrl}</dd>
-  </dl>
-  <p class="WarningMessage">Are you sure?</p>
-  {field_hidden_dn}
-  <input type="submit" name="delete_confirm" value="yes">
-  <input type="submit" name="delete_confirm" value="no">
-</form>
-""".format(
-      form_begin=form.beginFormHTML('delete',sid,'POST'),
-      inner_form=inner_form,
-      field_delete_ctrl=form.field['delete_ctrl'].inputHTML(default=delete_ctrl_oids),
-      field_hidden_dn=form.hiddenFieldHTML('dn',dn,u''),
-    ))
-    web2ldap.app.gui.Footer(outf,form)
-

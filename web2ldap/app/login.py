@@ -21,7 +21,7 @@ import time,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.cnf
 ##############################################################################
 
 def w2l_Login(
-  sid,outf,command,form,ls,dn,connLDAPUrl,login_search_root,
+  sid, outf, command, form, ls, dn,connLDAPUrl,login_search_root,
   title_msg=u'Bind',
   login_msg='',
   who='',relogin=0,nomenu=0,
@@ -44,9 +44,9 @@ def w2l_Login(
   if nomenu:
     main_menu_list=[]
   else:
-    main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn)
+    main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn)
   web2ldap.app.gui.TopSection(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     login_msg,
     main_menu_list,
     context_menu_list=[],
@@ -62,7 +62,7 @@ def w2l_Login(
   login_fields = login_template_str.format(
     field_login_mech=form.field['login_mech'].inputHTML(default=login_mech),
     value_ldap_who=form.utf2display(who),
-    value_ldap_filter=form.utf2display(unicode(web2ldap.app.cnf.GetParam(ls,'binddnsearch',r'(uid=%s)'))),
+    value_ldap_filter=form.utf2display(unicode(web2ldap.app.cnf.GetParam(ls, 'binddnsearch',r'(uid=%s)'))),
     field_login_search_root=login_search_root_field.inputHTML(),
     field_login_authzid_prefix=form.field['login_authzid_prefix'].inputHTML(),
     value_submit={0:'Login',1:'Retry w/login'}[relogin],

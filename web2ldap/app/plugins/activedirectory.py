@@ -5,7 +5,7 @@ web2ldap plugin classes for Active Directory (for some information see draft-arm
 
 from __future__ import absolute_import
 
-import os,time,struct,uuid,pyweblib,ldap0.cidict,web2ldap.app.searchform
+import os,time,struct,uuid,web2ldap.web,ldap0.cidict,web2ldap.app.searchform
 
 from web2ldap.utctime import strftimeiso8601
 
@@ -468,7 +468,7 @@ class LogonHours(OctetString):
 
   def formField(self):
     form_value = self.formValue()
-    return pyweblib.forms.Textarea(
+    return web2ldap.web.forms.Textarea(
       self.attrType,
       ': '.join([self.attrType,self.desc]),
       self.maxLen,1,

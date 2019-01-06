@@ -63,9 +63,9 @@ def w2l_LDAPParameters(sid,outf,command,form,ls,dn):
   context_menu_list = []
 
   web2ldap.app.gui.TopSection(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     'LDAP Connection Parameters',
-    web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+    web2ldap.app.gui.MainMenu(sid, form, ls, dn),
     context_menu_list=context_menu_list
   )
 

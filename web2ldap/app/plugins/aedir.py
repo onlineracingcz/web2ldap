@@ -17,8 +17,8 @@ from ldap0.pw import random_string
 from ldap0.controls.readentry import PreReadControl
 from ldap0.controls.deref import DereferenceControl
 
-# from pyweblib
-from pyweblib.forms import HiddenInput
+# from web2ldap.web
+from web2ldap.web.forms import HiddenInput
 
 import web2ldapcnf
 

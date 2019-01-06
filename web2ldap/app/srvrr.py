@@ -14,18 +14,18 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import pyweblib.forms,web2ldap.app.gui
+import web2ldap.web.forms,web2ldap.app.gui
 
-def w2l_ChaseSRVRecord(sid,outf,command,form,ls,dn,host_list):
+def w2l_ChaseSRVRecord(sid, outf, command, form, ls, dn, host_list):
 
-  host_select_field = pyweblib.forms.Select(
+  host_select_field = web2ldap.web.forms.Select(
     'host','Host selection',1,
     options=host_list,default=host_list[0],ignoreCase=1
   )
   web2ldap.app.gui.TopSection(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     'LDAP server located via DNS',
-    web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+    web2ldap.app.gui.MainMenu(sid, form, ls, dn),
     context_menu_list=[],
     main_div_id='Input'
   )

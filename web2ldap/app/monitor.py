@@ -163,7 +163,7 @@ def w2l_Monitor(outf, command, form, env):
             int_removedsessions=cleanUpThread.removed_sessions,
             int_sessionlimit=web2ldapcnf.session_limit,
             int_sessionlimitperip=web2ldapcnf.session_per_ip_limit,
-            int_sessionremoveperiod=session_store.expireRemove,
+            int_sessionremoveperiod=session_store.session_ttl,
             int_currentnumremoteipaddrs=len(session_store.remote_ip_sessions),
             int_numremoteipaddrs=len(session_store.remote_ip_counter),
             text_remoteiphitlist='\n'.join(

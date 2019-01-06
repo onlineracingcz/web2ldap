@@ -301,22 +301,22 @@ def w2l_Modify(sid,outf,command,form,ls,dn):
     else:
       # delete all cache entries referencing to old DN
       UserMsg = '<p class="SuccessMessage">Modified entry %s</p><p>%s</p><dt>LDIF change record:</dt>\n<dd>%s</dd>' % (
-        web2ldap.app.gui.DisplayDN(sid,form,ls,dn),
+        web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
         form.applAnchor('read','Read modified entry',sid,[('dn',dn)],title=u'Display modified entry %s' % dn),
         ModlistLDIF(dn,form,modlist),
       )
   else:
     UserMsg = '<p class="SuccessMessage">No attributes modified of entry %s</p><p>%s</p>' % (
-      web2ldap.app.gui.DisplayDN(sid,form,ls,dn),
+      web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
       form.applAnchor('read','Read entry',sid,[('dn',dn)],title=u'Display entry %s' % dn),
     )
 
   # Output comes here
   web2ldap.app.gui.SimpleMessage(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     'Modify result',
     UserMsg,
-    main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
-    context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid,form,ls,dn)
+    main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+    context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
   )
 

@@ -21,7 +21,7 @@ from ldap0.schema.subentry import \
 from ldap0.schema.models import \
   LDAPSyntax,AttributeType,ObjectClass,MatchingRule,MatchingRuleUse,DITContentRule,DITStructureRule,NameForm
 
-from pyweblib.forms import escapeHTML
+from web2ldap.web.forms import escapeHTML
 
 OBSOLETE_TEMPL = {
   0:'%s',

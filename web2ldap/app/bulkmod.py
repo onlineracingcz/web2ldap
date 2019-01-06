@@ -29,7 +29,7 @@ from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 from web2ldap.app.schema.syntaxes import syntax_registry,LDAPSyntaxValueError
 
 
-def input_modlist(sid,form,ls,sub_schema,bulkmod_at,bulkmod_op,bulkmod_av):
+def input_modlist(sid, form, ls,sub_schema,bulkmod_at,bulkmod_op,bulkmod_av):
 
   mod_dict = {}
   input_errors = set()
@@ -44,7 +44,7 @@ def input_modlist(sid,form,ls,sub_schema,bulkmod_at,bulkmod_op,bulkmod_av):
     if not mod_type:
       continue
 
-    attr_instance = syntax_registry.attrInstance(sid,form,ls,u'',sub_schema,mod_type,None,entry=None)
+    attr_instance = syntax_registry.attrInstance(sid, form, ls,u'',sub_schema,mod_type,None,entry=None)
     try:
       mod_val = attr_instance.sanitizeInput(bulkmod_av[i] or '')
     except LDAPSyntaxValueError:
@@ -119,9 +119,9 @@ def bulkmod_input_form(
   )
   # Output confirmation form
   web2ldap.app.gui.TopSection(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     'Bulk modification input',
-    web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+    web2ldap.app.gui.MainMenu(sid, form, ls, dn),
   )
   input_fields = '\n'.join([
     """
@@ -223,9 +223,9 @@ def bulkmod_confirmation_form(sid,outf,command,form,ls,sub_schema,dn,scope,bulkm
 
   # Output confirmation form
   web2ldap.app.gui.TopSection(
-    sid,outf,command,form,ls,dn,
+    sid, outf, command, form, ls, dn,
     'Modify entries?',
-    web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+    web2ldap.app.gui.MainMenu(sid, form, ls, dn),
     main_div_id='Input'
   )
   outf.write("""
@@ -296,13 +296,13 @@ def bulkmod_confirmation_form(sid,outf,command,form,ls,sub_schema,dn,scope,bulkm
   return # bulkmod_confirmation_form()
 
 
-def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
+def w2l_BulkMod(sid, outf, command, form, ls, dn,connLDAPUrl):
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls,'_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'supplement_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'schema_strictcheck',True),
+    web2ldap.app.cnf.GetParam(ls, '_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
 
   bulkmod_submit = form.getInputValue('bulkmod_submit',[None])[0]
@@ -326,15 +326,15 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
   if not (len(bulkmod_at)==len(bulkmod_op)==len(bulkmod_av)):
     raise web2ldap.app.core.ErrorExit(u'Invalid bulk modification input.')
 
-  bulk_mod_list,input_errors = input_modlist(sid,form,ls,sub_schema,bulkmod_at,bulkmod_op,bulkmod_av)
+  bulk_mod_list,input_errors = input_modlist(sid, form, ls,sub_schema,bulkmod_at,bulkmod_op,bulkmod_av)
 
   if bulkmod_submit==u'Cancel':
 
     web2ldap.app.gui.SimpleMessage(
-      sid,outf,command,form,ls,dn,
+      sid, outf, command, form, ls, dn,
       'Canceled bulk modification.',
       '<p class="SuccessMessage">Canceled bulk modification.</p>',
-      main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+      main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
     )
 
   elif not (bulk_mod_list or bulkmod_newsuperior) or \
@@ -411,7 +411,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
                 ldap_dn,
                 old_rdn,
                 new_superior=bulkmod_newsuperior,
-                delold=web2ldap.app.cnf.GetParam(ls,'bulkmod_delold',0),
+                delold=web2ldap.app.cnf.GetParam(ls, 'bulkmod_delold', 0),
               )
           except ldap0.LDAPError as e:
             ldap_error_html.append(
@@ -441,7 +441,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
     num_errors = len(ldap_error_html)
     num_sum = num_mods+num_errors
     web2ldap.app.gui.SimpleMessage(
-      sid,outf,command,form,ls,dn,
+      sid, outf, command, form, ls, dn,
       'Modified entries',
       """
         <p class="SuccessMessage">Modified entries.</p>
@@ -475,7 +475,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
         num_sum,num_mods,num_sum,num_mods,
         num_errors,
         num_sum,num_errors,num_errors,
-        web2ldap.app.gui.DisplayDN(sid,form,ls,dn),
+        web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
         web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
         end_time_stamp-begin_time_stamp,
         form.beginFormHTML('bulkmod',sid,'POST'),
@@ -483,7 +483,7 @@ def w2l_BulkMod(sid,outf,command,form,ls,dn,connLDAPUrl):
         error_messages,
         change_records,
       ),
-      main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+      main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
     )
 
   else:

@@ -21,42 +21,42 @@ import crypt
 from ldap0.pw import random_string, PWD_OCTETS_ALPHABET, PWD_UNIX_CRYPT_ALPHABET
 
 AVAIL_USERPASSWORD_SCHEMES = {
-    'crypt': 'Unix crypt(3)',
-    'sha': 'SHA-1',
-    'ssha': 'salted SHA-1',
-    'md5': 'MD5',
-    'smd5': 'salted MD5',
-    'sha256': 'SHA-256',
-    'ssha256': 'salted SHA-256',
-    'sha384': 'SHA-384',
-    'ssha384': 'salted SHA-384',
-    'sha512': 'SHA-512',
-    'ssha512': 'salted SHA-512',
-    '': 'plain text',
+    u'crypt': u'Unix crypt(3)',
+    u'sha': u'SHA-1',
+    u'ssha': u'salted SHA-1',
+    u'md5': u'MD5',
+    u'smd5': u'salted MD5',
+    u'sha256': u'SHA-256',
+    u'ssha256': u'salted SHA-256',
+    u'sha384': u'SHA-384',
+    u'ssha384': u'salted SHA-384',
+    u'sha512': u'SHA-512',
+    u'ssha512': u'salted SHA-512',
+    u'': u'plain text',
 }
 
 
 SALTED_USERPASSWORD_SCHEMES = {
-    'smd5',
-    'ssha',
-    'ssha256',
-    'ssha384',
-    'ssha512',
+    u'smd5',
+    u'ssha',
+    u'ssha256',
+    u'ssha384',
+    u'ssha512',
 }
 
 
 # map lower-cased password scheme to hash function
 SCHEME2HASHLIBFUNC = {
-    'sha': hashlib.sha1,
-    'ssha': hashlib.sha1,
-    'md5': hashlib.md5,
-    'smd5': hashlib.md5,
-    'sha256': hashlib.sha256,
-    'ssha256': hashlib.sha256,
-    'sha384': hashlib.sha384,
-    'ssha384': hashlib.sha384,
-    'sha512': hashlib.sha512,
-    'ssha512': hashlib.sha512,
+    u'sha': hashlib.sha1,
+    u'ssha': hashlib.sha1,
+    u'md5': hashlib.md5,
+    u'smd5': hashlib.md5,
+    u'sha256': hashlib.sha256,
+    u'ssha256': hashlib.sha256,
+    u'sha384': hashlib.sha384,
+    u'ssha384': hashlib.sha384,
+    u'sha512': hashlib.sha512,
+    u'ssha512': hashlib.sha512,
 }
 
 
@@ -69,12 +69,12 @@ def user_password_hash(password, scheme, salt=None):
         return password
     if scheme not in AVAIL_USERPASSWORD_SCHEMES.keys():
         raise ValueError('Hashing scheme %r not supported.' % (scheme))
-    if scheme == 'crypt':
+    if scheme == u'crypt':
         encoded_pw = crypt.crypt(
             password,
             random_string(PWD_UNIX_CRYPT_ALPHABET, 2)
         )
-    elif SCHEME2HASHLIBFUNC.has_key(scheme):
+    elif scheme in SCHEME2HASHLIBFUNC:
         salt = random_string(PWD_OCTETS_ALPHABET, 12)
         encoded_pw = base64.encodestring(
             SCHEME2HASHLIBFUNC[scheme](password+salt).digest()+salt

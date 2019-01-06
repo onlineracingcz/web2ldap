@@ -14,7 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import ldap0,ldap0.modlist,pyweblib.forms, \
+import ldap0,ldap0.modlist,web2ldap.web.forms, \
        web2ldap.app.cnf,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.schema,web2ldap.app.addmodifyform,web2ldap.app.modify
 
 from ldap0.dn import escape_dn_chars
@@ -47,11 +47,11 @@ def ModlistTable(schema,modlist):
       )
     else:
       tablestr = '<br>'.join([
-        pyweblib.forms.escapeHTML(repr(v))
+        web2ldap.web.forms.escapeHTML(repr(v))
         for v in attr_value
       ])
     s.append('<tr><td>%s</td><td>%s</td></tr>' % (
-      pyweblib.forms.escapeHTML(attr_type),tablestr
+      web2ldap.web.forms.escapeHTML(attr_type),tablestr
     )
   )
   s.append('</table>')
@@ -66,9 +66,9 @@ def w2l_Add(sid,outf,command,form,ls,dn):
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls,'_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'supplement_schema',None),
-    web2ldap.app.cnf.GetParam(ls,'schema_strictcheck',True),
+    web2ldap.app.cnf.GetParam(ls, '_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
 
   input_modrow = form.getInputValue('in_mr',['.'])[0]
@@ -210,7 +210,7 @@ def w2l_Add(sid,outf,command,form,ls,dn):
       Maybe wrong base DN in LDIF template?<br>
       """ % (
         web2ldap.app.gui.LDAPError2ErrMsg(e,form,ls.charset),
-        web2ldap.app.gui.DisplayDN(sid,form,ls,add_basedn.decode(ls.charset),commandbutton=0),
+        web2ldap.app.gui.DisplayDN(sid, form, ls,add_basedn.decode(ls.charset),commandbutton=0),
     ))
   except (
     ldap0.ALREADY_EXISTS,
@@ -254,9 +254,9 @@ def w2l_Add(sid,outf,command,form,ls,dn):
       </dl>
       """ % (
         form.applAnchor('read','Read added entry',sid,[('dn',new_dn_u)],title=u'Display added entry %s' % new_dn_u),
-        web2ldap.app.gui.DisplayDN(sid,form,ls,new_dn_u,commandbutton=0),
+        web2ldap.app.gui.DisplayDN(sid, form, ls,new_dn_u,commandbutton=0),
         ModlistTable(sub_schema,modlist)
       ),
-      main_menu_list=web2ldap.app.gui.MainMenu(sid,form,ls,dn),
+      main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
       context_menu_list=[]
     )

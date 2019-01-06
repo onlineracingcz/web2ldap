@@ -48,7 +48,6 @@ setup(
     install_requires=[
         'setuptools',
         'ldap0>=0.2.2',
-        'pyweblib',
         'ipaddress',
         'asn1crypto',
         'xlwt',

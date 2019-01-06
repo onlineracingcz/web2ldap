@@ -16,8 +16,8 @@ from __future__ import absolute_import
 
 from cStringIO import StringIO
 
-import pyweblib
-from pyweblib.forms import escapeHTML
+import web2ldap.web
+from web2ldap.web.forms import escapeHTML
 
 import ldap0
 import ldap0.ldif
@@ -1077,7 +1077,7 @@ def w2l_AddForm(
 
     if rdn_options and len(rdn_options) > 0:
         # <select> field
-        rdn_input_field = pyweblib.forms.Select('add_rdn', 'RDN variants', 1, options=rdn_options)
+        rdn_input_field = web2ldap.web.forms.Select('add_rdn', 'RDN variants', 1, options=rdn_options)
     else:
         # Just a normal <input> text field
         rdn_input_field = form.field['add_rdn']

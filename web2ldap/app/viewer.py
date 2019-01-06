@@ -16,8 +16,8 @@ from __future__ import absolute_import
 
 import binascii
 
-import pyweblib.forms
-import pyweblib.helper
+import web2ldap.web.forms
+import web2ldap.web.helper
 
 import web2ldapcnf
 import web2ldap.app.gui
@@ -121,7 +121,7 @@ class PiscesCRLDisplayer(x509v3.CRL):
           class_name = repr(type(e))
         extensions_html_list.append(
           '<dt>%s (%s)</dt><dd>%s</dd>' % (
-              pyweblib.forms.escapeHTML(class_name),
+              web2ldap.web.forms.escapeHTML(class_name),
               str(e.extnId),
               x509v3.htmlize(e.extnValue)
           )
