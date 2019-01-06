@@ -68,7 +68,7 @@ def user_password_hash(password, scheme, salt=None):
     if not scheme:
         return password
     if scheme not in AVAIL_USERPASSWORD_SCHEMES.keys():
-        raise ValueError, 'Hashing scheme %r not supported.' % (scheme)
+        raise ValueError('Hashing scheme %r not supported.' % (scheme))
     if scheme == 'crypt':
         encoded_pw = crypt.crypt(
             password,
