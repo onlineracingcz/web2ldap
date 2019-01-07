@@ -566,7 +566,7 @@ class AppHandler:
                     elif len(initializeUrl_list) == 1:
                         initializeUrl = initializeUrl_list[0]
                     else:
-                        web2ldap.app.srvrr.w2l_ChaseSRVRecord(
+                        web2ldap.app.srvrr.w2l_chasesrvrecord(
                             self.sid, self.outf, self.command, self.form, ls, dn,
                             initializeUrl_list
                         )
@@ -750,7 +750,7 @@ class AppHandler:
                     )
                 else:
                     # Found LDAP server for this naming context via DNS SRV RR
-                    web2ldap.app.srvrr.w2l_ChaseSRVRecord(self.sid, self.outf, self.command, self.form, ls, dn, host_list)
+                    web2ldap.app.srvrr.w2l_chasesrvrecord(self.sid, self.outf, self.command, self.form, ls, dn, host_list)
 
             except (ldap0.PARTIAL_RESULTS, ldap0.REFERRAL) as e:
                 web2ldap.app.referral.w2l_ChaseReferral(self.sid, self.outf, self.command, self.form, ls, dn, e)
