@@ -138,7 +138,7 @@ MONITOR_SESSIONS_JUST_CREATED_TMPL = """
 """
 
 
-def w2l_Monitor(outf, command, form, env):
+def w2l_monitor(outf, command, form, env):
     """
     List several general gateway stats
     """

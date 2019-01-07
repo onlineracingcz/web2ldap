@@ -505,7 +505,7 @@ class AppHandler:
                         return
                 elif self.command == 'monitor':
                     # Output simple monitor page. Does not require session handling.
-                    web2ldap.app.monitor.w2l_Monitor(self.outf, self.command, self.form, self.env)
+                    web2ldap.app.monitor.w2l_monitor(self.outf, self.command, self.form, self.env)
                     return
                 elif self.command == 'locate':
                     self.form.getInputFields(ignoreEmptyFields=0)
