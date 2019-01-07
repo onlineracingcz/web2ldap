@@ -753,7 +753,7 @@ class AppHandler:
                     web2ldap.app.srvrr.w2l_chasesrvrecord(self.sid, self.outf, self.command, self.form, ls, dn, host_list)
 
             except (ldap0.PARTIAL_RESULTS, ldap0.REFERRAL) as e:
-                web2ldap.app.referral.w2l_ChaseReferral(self.sid, self.outf, self.command, self.form, ls, dn, e)
+                web2ldap.app.referral.w2l_chasereferral(self.sid, self.outf, self.command, self.form, ls, dn, e)
 
             except (ldap0.INSUFFICIENT_ACCESS, ldap0.STRONG_AUTH_REQUIRED) as e:
                 web2ldap.app.login.w2l_Login(
