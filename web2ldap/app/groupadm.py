@@ -103,7 +103,7 @@ def GroupSelectFieldHTML(
   )
 
 
-def w2l_GroupAdm(sid, outf, command, form, ls, dn,InfoMsg='',ErrorMsg=''):
+def w2l_groupadm(sid, outf, command, form, ls, dn,InfoMsg='',ErrorMsg=''):
 
   groupadm_defs = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(ls, 'groupadm_defs',{}))
   if not groupadm_defs:
