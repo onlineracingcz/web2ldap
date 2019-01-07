@@ -54,7 +54,7 @@ def w2l_Login(
   )
 
   if ls.rootDSE:
-    form.field['login_mech'].setOptions(ls.rootDSE.get('supportedSASLMechanisms',None))
+    form.field['login_mech'].setOptions(ls.rootDSE.get('supportedSASLMechanisms', None))
 
   # Determine the bind mech to be used from the form data or the key-word argument login_default_mech
   login_mech = form.getInputValue('login_mech',[login_default_mech] or '')[0]
@@ -101,7 +101,7 @@ def w2l_Login(
 """  % (
       form.utf2display(title_msg),
       login_msg_html,
-      form.beginFormHTML(command,None,'POST',None),
+      form.beginFormHTML(command,None,'POST', None),
       form.hiddenFieldHTML('ldapurl',str(ls.ldapUrl('')).decode('ascii'),u''),
       form.hiddenFieldHTML('dn',dn,u''),
       form.hiddenFieldHTML('delsid',sid.decode('ascii'),u''),
@@ -122,5 +122,5 @@ def w2l_Login(
       ])
     ))
   outf.write('</form>\n')
-  web2ldap.app.gui.Footer(outf,form)
+  web2ldap.app.gui.Footer(outf, form)
 

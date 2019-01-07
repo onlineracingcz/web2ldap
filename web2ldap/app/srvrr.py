@@ -71,4 +71,4 @@ def w2l_ChaseSRVRecord(sid, outf, command, form, ls, dn, host_list):
   )
   form.hiddenInputFields(outf,['ldapurl','host','dn','who','cred'])
   outf.write('</form>\n')
-  web2ldap.app.gui.Footer(outf,form)
+  web2ldap.app.gui.Footer(outf, form)

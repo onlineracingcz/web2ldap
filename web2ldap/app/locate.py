@@ -248,4 +248,4 @@ def w2l_Locate(outf,command,form,env):
   )
 )
 
-  web2ldap.app.gui.Footer(outf,form)
+  web2ldap.app.gui.Footer(outf, form)

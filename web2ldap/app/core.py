@@ -90,4 +90,4 @@ ldap0.set_option(ldap0.OPT_REFERRALS, 0)
 STARTUP_TIME = time.time()
 
 # Set up configuration for restricting access to the preconfigured LDAP URI list
-ldap_uri_list_check_dict = web2ldap.app.cnf.PopulateCheckDict(web2ldapcnf.hosts.ldap_uri_list)
+ldap_uri_list_check_dict = web2ldap.app.cnf.set_target_check_dict(web2ldapcnf.hosts.ldap_uri_list)

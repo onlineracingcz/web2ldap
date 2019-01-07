@@ -174,4 +174,4 @@ def w2l_LDAPParameters(sid,outf,command,form,ls,dn):
     '\n'.join(control_table_rows),
   ))
 
-  web2ldap.app.gui.Footer(outf,form)
+  web2ldap.app.gui.Footer(outf, form)

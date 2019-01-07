@@ -381,7 +381,7 @@ def w2l_Delete(sid, outf, command, form, ls, dn,connLDAPUrl):
                 field_hidden_dn=form.hiddenFieldHTML('dn',dn,u''),
             )
         )
-        web2ldap.app.gui.Footer(outf,form)
+        web2ldap.app.gui.Footer(outf, form)
         return
 
 

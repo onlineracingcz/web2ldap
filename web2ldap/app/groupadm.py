@@ -118,8 +118,8 @@ def w2l_GroupAdm(sid, outf, command, form, ls, dn,InfoMsg='',ErrorMsg=''):
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls, '_schema',None),
-    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, '_schema', None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
     web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
 
@@ -416,4 +416,4 @@ def w2l_GroupAdm(sid, outf, command, form, ls, dn,InfoMsg='',ErrorMsg=''):
       ))
     outf.write('</dl>\n')
 
-  web2ldap.app.gui.Footer(outf,form)
+  web2ldap.app.gui.Footer(outf, form)

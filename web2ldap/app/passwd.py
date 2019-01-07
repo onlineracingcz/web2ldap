@@ -64,7 +64,7 @@ def PasswordChangeUrl(form,ls,passwd_who,passwd_input):
   passwd_who_ldapurl_obj.cred = passwd_input.encode(ls.charset)
   passwd_who_ldapurl_obj.saslMech = None
   return '?'.join((
-    form.actionUrlHTML('passwd',None),
+    form.actionUrlHTML('passwd', None),
     str(passwd_who_ldapurl_obj),
   ))
 
@@ -151,8 +151,8 @@ def PasswdForm(
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls, '_schema',None),
-    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, '_schema', None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
     web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
 
@@ -178,7 +178,7 @@ def PasswdForm(
 
   if not unicode_pwd_avail:
 
-  #  config_hashtypes = ls.rootDSE.get('supportedAuthPasswordSchemes',None) or web2ldap.app.cnf.GetParam(ls, 'passwd_hashtypes',[])
+  #  config_hashtypes = ls.rootDSE.get('supportedAuthPasswordSchemes', None) or web2ldap.app.cnf.GetParam(ls, 'passwd_hashtypes',[])
     config_hashtypes = web2ldap.app.cnf.GetParam(ls, 'passwd_hashtypes',[])
     if config_hashtypes:
       # The set of hash types are restricted by local configuration
@@ -225,7 +225,7 @@ def PasswdForm(
     form_field_passwd_settimesync=form.field['passwd_settimesync'].inputHTML(checked=(not own_pwd_change)),
   ))
 
-  web2ldap.app.gui.Footer(outf,form)
+  web2ldap.app.gui.Footer(outf, form)
   return # PasswdForm()
 
 
@@ -233,8 +233,8 @@ def w2l_Passwd(sid, outf, command, form, ls, dn,connLDAPUrl):
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls, '_schema',None),
-    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, '_schema', None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
     web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
 

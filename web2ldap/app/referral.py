@@ -48,7 +48,7 @@ def w2l_ChaseReferral(sid, outf, command, form, ls, dn,e):
         )
       )
     )
-    web2ldap.app.gui.Footer(outf,form)
+    web2ldap.app.gui.Footer(outf, form)
     return
   else:
     try:
@@ -61,7 +61,7 @@ def w2l_ChaseReferral(sid, outf, command, form, ls, dn,e):
           )
         )
       )
-      web2ldap.app.gui.Footer(outf,form)
+      web2ldap.app.gui.Footer(outf, form)
       return
     # Parse the referral LDAP URL
     try:
@@ -74,7 +74,7 @@ def w2l_ChaseReferral(sid, outf, command, form, ls, dn,e):
           )
         )
       )
-      web2ldap.app.gui.Footer(outf,form)
+      web2ldap.app.gui.Footer(outf, form)
       return
 
   login_template_str = web2ldap.app.gui.ReadTemplate(form,ls,'login_template',u'referral login form')
@@ -106,4 +106,4 @@ def w2l_ChaseReferral(sid, outf, command, form, ls, dn,e):
   form.hiddenInputFields(outf,['sid','host','dn','who','cred','login_search_root'])
   outf.write('</form>\n')
 
-  web2ldap.app.gui.Footer(outf,form)
+  web2ldap.app.gui.Footer(outf, form)

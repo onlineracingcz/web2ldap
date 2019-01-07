@@ -192,7 +192,7 @@ def bulkmod_input_form(
     ),
     field_bulkmod_cp=form.field['bulkmod_cp'].inputHTML(checked=bulkmod_cp),
   ))
-  web2ldap.app.gui.Footer(outf,form)
+  web2ldap.app.gui.Footer(outf, form)
   return # bulkmod_input_form()
 
 
@@ -292,7 +292,7 @@ def bulkmod_confirmation_form(sid,outf,command,form,ls,sub_schema,dn,scope,bulkm
       'dn','scope','filterstr','bulkmod_submit','bulkmod_newsuperior',
     ]),
   ))
-  web2ldap.app.gui.Footer(outf,form)
+  web2ldap.app.gui.Footer(outf, form)
   return # bulkmod_confirmation_form()
 
 
@@ -300,8 +300,8 @@ def w2l_BulkMod(sid, outf, command, form, ls, dn,connLDAPUrl):
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls, '_schema',None),
-    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, '_schema', None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
     web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
 

@@ -48,8 +48,8 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
 
   sub_schema = ls.retrieveSubSchema(
     dn,
-    web2ldap.app.cnf.GetParam(ls, '_schema',None),
-    web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+    web2ldap.app.cnf.GetParam(ls, '_schema', None),
+    web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
     web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
   )
   rename_supsearchurl_cfg = web2ldap.app.cnf.GetParam(ls, 'rename_supsearchurl',{})
@@ -194,4 +194,4 @@ def w2l_Rename(sid,outf,command,form,ls,dn):
       )
     )
 
-    web2ldap.app.gui.Footer(outf,form)
+    web2ldap.app.gui.Footer(outf, form)

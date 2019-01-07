@@ -173,7 +173,7 @@ class DisplayEntry(IterableUserDict):
 
 
 def getOperationAttrsTemplate(ls,accept_language):
-    template_pathname = web2ldap.app.cnf.GetParam(ls, 'read_operationalattrstemplate',None)
+    template_pathname = web2ldap.app.cnf.GetParam(ls, 'read_operationalattrstemplate', None)
     if not template_pathname:
       return ''
     template_filename = web2ldap.app.gui.GetVariantFilename(
@@ -276,8 +276,8 @@ def w2l_Read(
 
     sub_schema = ls.retrieveSubSchema(
         dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema',None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema',None),
+        web2ldap.app.cnf.GetParam(ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
         web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck',True),
     )
 
@@ -382,7 +382,7 @@ def w2l_Read(
         web2ldap.app.viewer.viewer_func[syntax_se.oid](
           sid,outf,command,form,dn,attr_type,entry,read_attrindex
         )
-        web2ldap.app.gui.Footer(outf,form)
+        web2ldap.app.gui.Footer(outf, form)
       else:
         # We have to create an instance to be able to call its methods
         attr_instance = syntax_se(sid, form, ls, dn,sub_schema,attr_type,None,entry)
@@ -519,7 +519,7 @@ def w2l_Read(
         ])
       ))
 
-      web2ldap.app.gui.Footer(outf,form)
+      web2ldap.app.gui.Footer(outf, form)
 
     elif read_output=='vcard':
 
