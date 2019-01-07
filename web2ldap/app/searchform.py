@@ -207,7 +207,7 @@ def SearchForm_adv(form, ls, dn, sub_schema):
     return result # SearchForm_adv()
 
 
-def w2l_SearchForm(
+def w2l_searchform(
         sid, outf, command, form, ls, dn,
         Msg='',
         filterstr='',

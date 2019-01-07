@@ -173,7 +173,7 @@ class AppHandler:
         """Execute function for self.command"""
         assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
         if self.command == 'searchform':
-            web2ldap.app.searchform.w2l_SearchForm(self.sid, self.outf, self.command, self.form, ls, dn)
+            web2ldap.app.searchform.w2l_searchform(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'search':
             web2ldap.app.search.w2l_Search(self.sid, self.outf, self.command, self.form, ls, dn, connLDAPUrl)
         elif self.command == 'add':

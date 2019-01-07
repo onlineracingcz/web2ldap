@@ -320,7 +320,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
     searchform_mode = form.getInputValue('searchform_mode', [u'exp'])[0]
 
     if search_submit != u'Search' and searchform_mode == 'adv':
-        web2ldap.app.searchform.w2l_SearchForm(
+        web2ldap.app.searchform.w2l_searchform(
             sid, outf, command, form, ls, dn,
             Msg='',
             filterstr=u'',
@@ -386,7 +386,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
     search_filter = filter(None, search_filter)
 
     if not search_filter:
-        web2ldap.app.searchform.w2l_SearchForm(
+        web2ldap.app.searchform.w2l_searchform(
             sid, outf, command, form, ls, dn,
             Msg='Empty search values.',
             filterstr=u'',
@@ -520,7 +520,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
         if not read_attrs:
             if searchform_mode == u'base':
                 searchform_mode = u'adv'
-            web2ldap.app.searchform.w2l_SearchForm(
+            web2ldap.app.searchform.w2l_searchform(
                 sid, outf, command, form, ls, dn,
                 Msg='Attributes to be read have to be explicitly defined for table-structured data export!',
                 filterstr=filterstr,
@@ -554,7 +554,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
             ldap0.INAPPROPRIATE_MATCHING,
         ) as e:
         # Give the user a chance to edit his bad search filter
-        web2ldap.app.searchform.w2l_SearchForm(
+        web2ldap.app.searchform.w2l_searchform(
             sid, outf, command, form, ls, dn,
             Msg=' '.join((
                 web2ldap.app.gui.LDAPError2ErrMsg(e, form, charset=ls.charset),
@@ -602,7 +602,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
                     pass
         except (ldap0.FILTER_ERROR, ldap0.INAPPROPRIATE_MATCHING) as e:
             # Give the user a chance to edit his bad search filter
-            web2ldap.app.searchform.w2l_SearchForm(
+            web2ldap.app.searchform.w2l_searchform(
                 sid, outf, command, form, ls, dn,
                 Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, form, charset=ls.charset),
                 filterstr=filterstr,
@@ -613,7 +613,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
             resind = result_handler.endResultBreak
             if dn or scope != ldap0.SCOPE_ONELEVEL:
                 # Give the user a chance to edit his bad search filter
-                web2ldap.app.searchform.w2l_SearchForm(
+                web2ldap.app.searchform.w2l_searchform(
                     sid, outf, command, form, ls, dn,
                     Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, form, charset=ls.charset),
                     filterstr=filterstr,
