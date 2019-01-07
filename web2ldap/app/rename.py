@@ -26,7 +26,7 @@ import web2ldap.app.gui
 import web2ldap.app.form
 import web2ldap.app.schema
 import web2ldap.app.schema.syntaxes
-from web2ldap.app.schema.viewer import displayNameOrOIDList
+from web2ldap.app.schema.viewer import display_nameoroid_list
 
 
 def new_superior_field(sid, form, ls, dn, sub_schema, sup_search_url, old_superior_dn):
@@ -177,7 +177,7 @@ def w2l_rename(sid, outf, command, form, ls, dn):
                 ).decode(ls.charset)
                 dit_structure_rule_html = 'DIT structure rules:<br>%s' % (
                     '<br>'.join(
-                        displayNameOrOIDList(
+                        display_nameoroid_list(
                             sid, form, dn, sub_schema,
                             sup_structural_ruleids,
                             ldap0.schema.models.DITStructureRule,

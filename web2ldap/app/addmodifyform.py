@@ -38,7 +38,7 @@ import web2ldap.app.gui
 import web2ldap.app.read
 import web2ldap.app.modify
 import web2ldap.app.schema
-from web2ldap.app.schema.viewer import displayNameOrOIDList
+from web2ldap.app.schema.viewer import display_nameoroid_list
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.msbase import GrabKeys
 
@@ -525,7 +525,7 @@ def ObjectClassForm(
                 if subord_structural_oc:
                     all_structural_oc = subord_structural_oc
                     dit_structure_rule_html = 'DIT structure rules:<br>%s' % ('<br>'.join(
-                        displayNameOrOIDList(
+                        display_nameoroid_list(
                             sid, form, dn, sub_schema,
                             subord_structural_ruleids,
                             DITStructureRule
