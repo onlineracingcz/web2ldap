@@ -47,6 +47,18 @@ import web2ldap.__about__
 
 SEARCH_NOOP_TIMEOUT = 5.0
 
+PAGE_COMMAND_TMPL = """
+<nav><table>
+  <tr>
+    <td width="20%">{0}</td>
+    <td width="20%">{1}</td>
+    <td width="20%">{2}</td>
+    <td width="20%">{3}</td>
+    <td width="20%">{4}</td>
+  </tr>
+</table></nav>
+"""
+
 SizeLimitMsg = """
 <p class="ErrorMessage">
   <strong>
@@ -851,221 +863,237 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
                     ))
 
             if page_command_list:
-               outf.write("""
-                  <nav><table>
-                    <tr>
-                      <td width="20%">{0}</td>
-                      <td width="20%">{1}</td>
-                      <td width="20%">{2}</td>
-                      <td width="20%">{3}</td>
-                      <td width="20%">{4}</td>
-                    </tr>
-                  </table></nav>
-               """.format(*page_command_list))
+                # output the paging links
+                outf.write(PAGE_COMMAND_TMPL.format(*page_command_list))
 
             outf.write('<table id="SrchResList">\n')
 
             for r in result_dnlist[0:resind]:
 
-              if r[0] in is_search_reference:
+                if r[0] in is_search_reference:
 
-                # Display a search continuation (search reference)
-                entry = ldap0.cidict.cidict({})
-                try:
-                  refUrl = ExtendedLDAPUrl(r[1][1][0])
-                except ValueError:
-                  command_table = []
-                  result_dd_str='Search reference (NON-LDAP-URI) =&gt; %s' % (form.utf2display(unicode(r[1][1][0])))
-                else:
-                  result_dd_str='Search reference =&gt; %s' % (refUrl.htmlHREF(hrefTarget=None))
-                  if scope==ldap0.SCOPE_SUBTREE:
-                    refUrl.scope = refUrl.scope or scope
-                    refUrl.filterstr = (unicode(refUrl.filterstr or '',ls.charset) or filterstr).encode(form.accept_charset)
-                    command_table = [
-                      form.applAnchor(
-                        'search','Continue search',
-                        {0:sid,1:None}[refUrl.initializeUrl()!=ls.uri],
-                        [('ldapurl',refUrl.unparse())],
-                        title=u'Follow this search continuation',
-                      )
-                    ]
-                  else:
-                    command_table = []
-                    refUrl.filterstr = filterstr
-                    refUrl.scope=ldap0.SCOPE_BASE
-                    command_table.append(form.applAnchor(
-                      'read','Read',
-                      {0:sid,1:None}[refUrl.initializeUrl()!=ls.uri],
-                      [('ldapurl',refUrl.unparse())],
-                      title=u'Display single entry following search continuation',
-                    ))
-                    refUrl.scope=ldap0.SCOPE_ONELEVEL
-                    command_table.append(form.applAnchor(
-                      'search','Down',
-                      {0:sid,1:None}[refUrl.initializeUrl()!=ls.uri],
-                      [('ldapurl',refUrl.unparse())],
-                      title=u'Descend into tree following search continuation',
-                    ))
-
-              elif r[0] in is_search_result:
-
-                # Display a search result with entry's data
-                dn,entry = unicode(r[1][0],ls.charset),ldap0.cidict.cidict(r[1][1])
-
-                if search_output == 'raw':
-
-                  # Output DN
-                  result_dd_str=utf2display(dn)
-
-                else:
-
-                  objectclasses_lower_set = set([o.lower() for o in entry.get('objectClass',[])])
-                  tdtemplate_oc = objectclasses_lower_set.intersection(search_tdtemplate_keys_lower)
-
-                  if tdtemplate_oc:
-
-                    template_attrs = set([])
-                    for oc in tdtemplate_oc:
-                      template_attrs.update(search_tdtemplate_attrs_lower[oc])
-                    tableentry_attrs = template_attrs.intersection(entry.data.keys())
-                    if tableentry_attrs:
-                      # Output entry with the help of pre-defined templates
-                      tableentry = web2ldap.app.read.DisplayEntry(sid, form, ls, dn,sub_schema,entry,'searchSep',0)
-                      tdlist = []
-                      for oc in tdtemplate_oc:
-                        tdlist.append(search_tdtemplate[oc] % tableentry)
-                      result_dd_str='<br>\n'.join(tdlist)
+                    # Display a search continuation (search reference)
+                    entry = ldap0.cidict.cidict({})
+                    try:
+                        refUrl = ExtendedLDAPUrl(r[1][1][0])
+                    except ValueError:
+                        command_table = []
+                        result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (form.utf2display(unicode(r[1][1][0])))
                     else:
-                      # Output DN
-                      result_dd_str=utf2display(dn)
+                        result_dd_str = 'Search reference =&gt; %s' % (refUrl.htmlHREF(hrefTarget=None))
+                        if scope == ldap0.SCOPE_SUBTREE:
+                            refUrl.scope = refUrl.scope or scope
+                            refUrl.filterstr = ((refUrl.filterstr or '').decode(ls.charset) or filterstr).encode(form.accept_charset)
+                            command_table = [
+                                form.applAnchor(
+                                    'search', 'Continue search',
+                                    {False:sid, True:None}[refUrl.initializeUrl() != ls.uri],
+                                    [('ldapurl', refUrl.unparse())],
+                                    title=u'Follow this search continuation',
+                                )
+                            ]
+                        else:
+                            command_table = []
+                            refUrl.filterstr = filterstr
+                            refUrl.scope = ldap0.SCOPE_BASE
+                            command_table.append(form.applAnchor(
+                                'read', 'Read',
+                                {False:sid, True:None}[refUrl.initializeUrl() != ls.uri],
+                                [('ldapurl', refUrl.unparse())],
+                                title=u'Display single entry following search continuation',
+                            ))
+                            refUrl.scope = ldap0.SCOPE_ONELEVEL
+                            command_table.append(form.applAnchor(
+                                'search', 'Down',
+                                {False:sid, True:None}[refUrl.initializeUrl() != ls.uri],
+                                [('ldapurl', refUrl.unparse())],
+                                title=u'Descend into tree following search continuation',
+                            ))
 
-                  elif entry.has_key('displayName'):
-                    result_dd_str = utf2display(ls.uc_decode(entry['displayName'][0])[0])
+                elif r[0] in is_search_result:
 
-                  elif search_tablistattrs and entry.has_key(search_tablistattrs[0]):
-                    tdlist = []
-                    for attr_type in search_tablistattrs:
-                      if entry.has_key(attr_type):
-                        tdlist.append(', '.join([
-                          web2ldap.app.gui.DataStr(
-                            sid, form, ls, dn,sub_schema,attr_type,value,commandbutton=0
-                          )
-                          for value in entry[attr_type]
-                        ]))
-                    result_dd_str='<br>\n'.join(filter(None,tdlist))
+                    # Display a search result with entry's data
+                    dn, entry = r[1][0].decode(ls.charset), ldap0.cidict.cidict(r[1][1])
 
-                  else:
-                    # Output DN
-                    result_dd_str=utf2display(dn)
+                    if search_output == 'raw':
 
-                # Build the list for link table
-                command_table = []
+                        # Output DN
+                        result_dd_str = utf2display(dn)
 
-                # A [Read] link is added in any case
-                read_title_list = [ dn ]
-                for attr_type in (u'description',u'structuralObjectClass'):
-                  try:
-                    first_attr_value = unicode(entry[attr_type][0],ls.charset)
-                  except KeyError:
-                    pass
-                  else:
-                    read_title_list.append(u'%s: %s' % (attr_type,first_attr_value))
-                command_table.append(
-                  form.applAnchor(
-                    'read','Read', sid,
-                    [('dn', dn)],
-                    title=u'\n'.join(read_title_list)
-                  )
+                    else:
+
+                        objectclasses_lower_set = set([o.lower() for o in entry.get('objectClass', [])])
+                        tdtemplate_oc = objectclasses_lower_set.intersection(search_tdtemplate_keys_lower)
+
+                        if tdtemplate_oc:
+
+                            template_attrs = set([])
+                            for oc in tdtemplate_oc:
+                                template_attrs.update(search_tdtemplate_attrs_lower[oc])
+                            tableentry_attrs = template_attrs.intersection(entry.data.keys())
+                            if tableentry_attrs:
+                                # Output entry with the help of pre-defined templates
+                                tableentry = web2ldap.app.read.DisplayEntry(sid, form, ls, dn, sub_schema, entry, 'searchSep', 0)
+                                tdlist = []
+                                for oc in tdtemplate_oc:
+                                    tdlist.append(search_tdtemplate[oc] % tableentry)
+                                result_dd_str = '<br>\n'.join(tdlist)
+                            else:
+                                # Output DN
+                                result_dd_str = utf2display(dn)
+
+                        elif entry.has_key('displayName'):
+                            result_dd_str = utf2display(ls.uc_decode(entry['displayName'][0])[0])
+
+                        elif search_tablistattrs and entry.has_key(search_tablistattrs[0]):
+                            tdlist = []
+                            for attr_type in search_tablistattrs:
+                                if entry.has_key(attr_type):
+                                    tdlist.append(', '.join([
+                                        web2ldap.app.gui.DataStr(
+                                            sid, form, ls, dn, sub_schema,
+                                            attr_type, value, commandbutton=0,
+                                        )
+                                        for value in entry[attr_type]
+                                    ]))
+                            result_dd_str = '<br>\n'.join(filter(None, tdlist))
+
+                        else:
+                            # Output DN
+                            result_dd_str = utf2display(dn)
+
+                    # Build the list for link table
+                    command_table = []
+
+                    # A [Read] link is added in any case
+                    read_title_list = [dn]
+                    for attr_type in (u'description', u'structuralObjectClass'):
+                        try:
+                            first_attr_value = entry[attr_type][0].decode(ls.charset)
+                        except KeyError:
+                            pass
+                        else:
+                            read_title_list.append(u'%s: %s' % (attr_type, first_attr_value))
+                    command_table.append(
+                        form.applAnchor(
+                            'read', 'Read', sid,
+                            [('dn', dn)],
+                            title=u'\n'.join(read_title_list)
+                        )
+                    )
+
+                    # Try to determine from entry's attributes if there are subordinates
+                    hasSubordinates = entry.get('hasSubordinates', ['TRUE'])[0].upper() == 'TRUE'
+                    try:
+                        subordinateCountFlag = int(
+                            entry.get(
+                                'subordinateCount',
+                                entry.get(
+                                    'numAllSubordinates',
+                                    entry.get('msDS-Approx-Immed-Subordinates', ['1'])))[0]
+                        )
+                    except ValueError:
+                        subordinateCountFlag = 1
+
+                    # If subordinates or unsure a [Down] link is added
+                    if hasSubordinates and subordinateCountFlag > 0:
+
+                        down_title_list = [u'List direct subordinates of %s' % (dn)]
+
+                        # Determine number of direct subordinates
+                        numSubOrdinates = entry.get(
+                            'numSubOrdinates',
+                            entry.get(
+                                'subordinateCount',
+                                entry.get(
+                                    'countImmSubordinates',
+                                    entry.get(
+                                        'msDS-Approx-Immed-Subordinates',
+                                        [None]))))[0]
+                        if numSubOrdinates is not None:
+                            numSubOrdinates = int(numSubOrdinates)
+                            down_title_list.append('direct: %d' % (numSubOrdinates))
+                        # Determine total number of subordinates
+                        numAllSubOrdinates = entry.get(
+                            'numAllSubOrdinates',
+                            entry.get('countTotSubordinates', [None])
+                        )[0]
+                        if numAllSubOrdinates is not None:
+                            numAllSubOrdinates = int(numAllSubOrdinates)
+                            down_title_list.append(u'total: %d' % (numAllSubOrdinates))
+
+                        command_table.append(form.applAnchor(
+                            'search', 'Down', sid,
+                            (
+                                ('dn', dn),
+                                ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
+                                ('searchform_mode', u'adv'),
+                                ('search_attr', u'objectClass'),
+                                ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
+                                ('search_string', ''),
+                            ),
+                            title=u'\r\n'.join(down_title_list),
+                        ))
+
+                else:
+                    raise ValueError('LDAP result of invalid type: %r' % (r[0]))
+
+                # write the search result table row
+                outf.write(
+                    """
+                    <tr>
+                      <td class="CommandTable">\n%s\n</td>
+                      <td class="SrchRes">\n%s\n</td>
+                    </tr>
+                    """ % (
+                        '\n'.join(command_table),
+                        result_dd_str
+                    )
                 )
 
-                # Try to determine from entry's attributes if there are subordinates
-                hasSubordinates = entry.get('hasSubordinates',['TRUE'])[0].upper()=='TRUE'
-                try:
-                  subordinateCountFlag = int(entry.get('subordinateCount',entry.get('numAllSubordinates',entry.get('msDS-Approx-Immed-Subordinates',['1'])))[0])
-                except ValueError:
-                  subordinateCountFlag = 1
-
-                # If subordinates or unsure a [Down] link is added
-                if hasSubordinates and subordinateCountFlag>0:
-
-                  down_title_list = [u'List direct subordinates of %s' % (dn)]
-
-                  # Determine number of direct subordinates
-                  numSubOrdinates = entry.get('numSubOrdinates',entry.get('subordinateCount',entry.get('countImmSubordinates',entry.get('msDS-Approx-Immed-Subordinates',[None]))))[0]
-                  if numSubOrdinates is not None:
-                    numSubOrdinates = int(numSubOrdinates)
-                    down_title_list.append('direct: %d' % (numSubOrdinates))
-                  # Determine total number of subordinates
-                  numAllSubOrdinates = entry.get('numAllSubOrdinates',entry.get('countTotSubordinates',[None]))[0]
-                  if numAllSubOrdinates is not None:
-                    numAllSubOrdinates = int(numAllSubOrdinates)
-                    down_title_list.append(u'total: %d' % (numAllSubOrdinates))
-
-                  command_table.append(form.applAnchor(
-                      'search','Down', sid,
-                      (
-                        ('dn', dn),
-                        ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
-                        ('searchform_mode',u'adv'),
-                        ('search_attr',u'objectClass'),
-                        ('search_option',web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
-                        ('search_string',''),
-                      ),
-                      title=u'\r\n'.join(down_title_list),
-                  ))
-
-              else:
-                raise ValueError,"LDAP result of invalid type %s." % (repr(r[0]))
-
-              outf.write("""
-              <tr>
-                <td class="CommandTable">\n%s\n</td>
-                <td class="SrchRes">\n%s\n</td>
-              </tr>
-              """ % (
-                  '\n'.join(command_table),
-                  result_dd_str
+            outf.write(
+                """
+                </table>
+                <a id="params"></a>
+                %s
+                  <h4>Export to other formats</h4>
+                  <p>%s &nbsp; Include operational attributes %s</p>
+                  <p><input type="submit" value="Export"></p>
+                </form>
+                """ % (
+                    '\n'.join((
+                        form.beginFormHTML('search', sid, 'GET', target='web2ldapexport'),
+                        form.hiddenFieldHTML('dn', dn, u''),
+                        form.hiddenFieldHTML('search_root', search_root, u''),
+                        form.hiddenFieldHTML('scope', unicode(scope), u''),
+                        form.hiddenFieldHTML('filterstr', filterstr, u''),
+                        form.hiddenFieldHTML('search_lastmod', unicode(search_lastmod), u''),
+                        form.hiddenFieldHTML('search_resnumber', u'0', u''),
+                        form.hiddenFieldHTML('search_attrs', u','.join(search_attrs), u''),
+                    )),
+                    export_field.inputHTML(),
+                    web2ldap.app.form.InclOpAttrsCheckbox(
+                        'search_opattrs',
+                        u'Request operational attributes',
+                        default="yes",
+                        checked=0,
+                    ).inputHTML(),
                 )
-              )
+            )
 
-            outf.write("""
-              </table>
-              <a id="params"></a>
-              %s
-                <h4>Export to other formats</h4>
-                <p>%s &nbsp; Include operational attributes %s</p>
-                <p><input type="submit" value="Export"></p>
-              </form>
-            """ % (
-              '\n'.join((
-                form.beginFormHTML('search', sid,'GET',target='web2ldapexport'),
-                form.hiddenFieldHTML('dn',dn,u''),
-                form.hiddenFieldHTML('search_root', search_root,u''),
-                form.hiddenFieldHTML('scope', unicode(scope),u''),
-                form.hiddenFieldHTML('filterstr', filterstr,u''),
-                form.hiddenFieldHTML('search_lastmod', unicode(search_lastmod),u''),
-                form.hiddenFieldHTML('search_resnumber',u'0',u''),
-                form.hiddenFieldHTML('search_attrs', u','.join(search_attrs),u''),
-              )),
-                export_field.inputHTML(),
-                web2ldap.app.form.InclOpAttrsCheckbox(
-                  'search_opattrs',
-                  u'Request operational attributes',
-                  default="yes",checked=0
-                ).inputHTML(),
-            ))
-
-            outf.write("""
-            <h4>Search parameters used</h4>
-            %s
-            <p>
-              Equivalent OpenLDAP command:<br>
-              <input value="%s" size="60" readonly>
-            </p>
-            """ % (
-              search_param_html,
-              utf2display(ldap_search_command),
-            ))
+            outf.write(
+                """
+                <h4>Search parameters used</h4>
+                %s
+                <p>
+                  Equivalent OpenLDAP command:<br>
+                  <input value="%s" size="60" readonly>
+                </p>
+                """ % (
+                    search_param_html,
+                    utf2display(ldap_search_command),
+                )
+            )
 
             web2ldap.app.gui.Footer(outf, form)
 
@@ -1073,6 +1101,6 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
     else:
 
         try:
-          result_handler.processResults(timeout=ls.timeout)
-        except (ldap0.SIZELIMIT_EXCEEDED,ldap0.ADMINLIMIT_EXCEEDED):
-          result_handler.postProcessing()
+            result_handler.processResults(timeout=ls.timeout)
+        except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
+            result_handler.postProcessing()
