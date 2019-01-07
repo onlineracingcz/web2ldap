@@ -1165,7 +1165,7 @@ def w2l_AddForm(
     return # w2l_AddForm()
 
 
-def w2l_ModifyForm(sid, outf, command, form, ls, dn, entry, Msg='', invalid_attrs=None):
+def w2l_modifyform(sid, outf, command, form, ls, dn, entry, Msg='', invalid_attrs=None):
 
     if Msg:
         Msg = '<p class="ErrorMessage">%s</p>' % (Msg)
@@ -1299,4 +1299,4 @@ def w2l_ModifyForm(sid, outf, command, form, ls, dn, entry, Msg='', invalid_attr
 
     outf.write('</form>')
     web2ldap.app.gui.Footer(outf, form)
-    return # w2l_ModifyForm()
+    return # w2l_modifyform()

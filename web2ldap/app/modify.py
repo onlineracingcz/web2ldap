@@ -204,7 +204,7 @@ def w2l_Modify(sid,outf,command,form,ls,dn):
      'in_mr' in form.inputFieldNames or \
      not new_entry or \
      invalid_attrs:
-    web2ldap.app.addmodifyform.w2l_ModifyForm(
+    web2ldap.app.addmodifyform.w2l_modifyform(
       sid,outf,'modify',form,ls,dn,
       new_entry,
       Msg=error_msg,
@@ -292,7 +292,7 @@ def w2l_Modify(sid,outf,command,form,ls,dn):
       ldap0.UNDEFINED_TYPE,
       ldap0.UNWILLING_TO_PERFORM,
     ),e:
-      web2ldap.app.addmodifyform.w2l_ModifyForm(
+      web2ldap.app.addmodifyform.w2l_modifyform(
         sid,outf,'modify',form,ls,dn,
         new_entry,
         Msg=web2ldap.app.gui.LDAPError2ErrMsg(e,form,ls.charset),
