@@ -165,7 +165,7 @@ def DIT_HTML(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
     return r # DIT_HTML()
 
 
-def w2l_DIT(sid, outf, command, form, ls, dn):
+def w2l_dit(sid, outf, command, form, ls, dn):
 
     dn_components = explode_dn(dn)
 
@@ -247,4 +247,4 @@ def w2l_DIT(sid, outf, command, form, ls, dn):
         context_menu_list=[]
     )
 
-    return # w2l_DIT()
+    return
