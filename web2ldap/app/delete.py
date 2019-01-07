@@ -401,9 +401,9 @@ def w2l_Delete(sid, outf, command, form, ls, dn,connLDAPUrl):
         for server_ctrl in ls.l._serverctrls['**all**']+ls.l._serverctrls['**write**']+ls.l._serverctrls['delete']
     ])
     delete_server_ctrls = [
-        ldap0.controls.LDAPControl(ctrl_oid,1,None)
+        ldap0.controls.LDAPControl(ctrl_oid, True, None)
         for ctrl_oid in delete_ctrl_oids
-        if not ctrl_oid in conn_server_ctrls
+        if ctrl_oid and ctrl_oid not in conn_server_ctrls
     ] or None
 
     # Recursive delete of whole sub-tree
