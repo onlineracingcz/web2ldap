@@ -192,37 +192,28 @@ class CRL(x509.CRL):
 
 # now pull all oidreg's in other modules holding classes
 # for various X.509v3 extension
-from . import pkix, nsext, vendorext
+from . import pkix, vendorext
 
 oidreg = {
-  # PKIX extensions
-  '2.5.29.9':pkix.SubjectDirectoryAttributes,
-  '2.5.29.10':pkix.BasicConstraints,
-  '2.5.29.14':pkix.SubjectKeyIdentifier,
-  '2.5.29.15':pkix.KeyUsage,
-  '2.5.29.16':pkix.PrivateKeyUsagePeriod,
-  '2.5.29.17':pkix.SubjectAltName,
-  '2.5.29.18':pkix.IssuerAltName,
-  '2.5.29.19':pkix.BasicConstraints,
-  '2.5.29.20':pkix.CRLNumber,
-  '2.5.29.28':pkix.IssuingDistributionPoint,
-  '2.5.29.31':pkix.CRLDistributionPoints,
-  '2.5.29.32':pkix.CertificatePolicies,
-  '2.5.29.35':pkix.AuthorityKeyIdentifier,
-  '2.5.29.36':pkix.PolicyConstraints,
-  '2.5.29.37':pkix.ExtendedKeyUsage,
-  '2.5.29.21':pkix.CRLReason,
-  '2.5.29.29':pkix.CertificateIssuer,
-  '1.3.6.1.5.5.7.1.1':pkix.AuthorityInfoAccessSyntax,
-  # Netscape extensions
-  '2.16.840.1.113730.1.1':nsext.NsCertType,
-  '2.16.840.1.113730.1.2':nsext.NsBaseUrl,
-  '2.16.840.1.113730.1.3':nsext.NsRevocationUrl,
-  '2.16.840.1.113730.1.4':nsext.NsCaRevocationUrl,
-  '2.16.840.1.113730.1.7':nsext.NsRenewalUrl,
-  '2.16.840.1.113730.1.8':nsext.NsCaPolicyUrl,
-  '2.16.840.1.113730.1.12':nsext.NsSslServerName,
-  '2.16.840.1.113730.1.13':nsext.NsComment,
-  # Entrust extensions
-  '1.2.840.113533.7.65.0':vendorext.EntrustVersInfo,
+    # PKIX extensions
+    '2.5.29.9': pkix.SubjectDirectoryAttributes,
+    '2.5.29.10': pkix.BasicConstraints,
+    '2.5.29.14': pkix.SubjectKeyIdentifier,
+    '2.5.29.15': pkix.KeyUsage,
+    '2.5.29.16': pkix.PrivateKeyUsagePeriod,
+    '2.5.29.17': pkix.SubjectAltName,
+    '2.5.29.18': pkix.IssuerAltName,
+    '2.5.29.19': pkix.BasicConstraints,
+    '2.5.29.20': pkix.CRLNumber,
+    '2.5.29.28': pkix.IssuingDistributionPoint,
+    '2.5.29.31': pkix.CRLDistributionPoints,
+    '2.5.29.32': pkix.CertificatePolicies,
+    '2.5.29.35': pkix.AuthorityKeyIdentifier,
+    '2.5.29.36': pkix.PolicyConstraints,
+    '2.5.29.37': pkix.ExtendedKeyUsage,
+    '2.5.29.21': pkix.CRLReason,
+    '2.5.29.29': pkix.CertificateIssuer,
+    '1.3.6.1.5.5.7.1.1': pkix.AuthorityInfoAccessSyntax,
+    # Entrust extensions
+    '1.2.840.113533.7.65.0': vendorext.EntrustVersInfo,
 }
