@@ -189,7 +189,7 @@ class AppHandler:
         elif self.command == 'dit':
             web2ldap.app.dit.w2l_DIT(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'rename':
-            web2ldap.app.rename.w2l_Rename(self.sid, self.outf, self.command, self.form, ls, dn)
+            web2ldap.app.rename.w2l_rename(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'passwd':
             web2ldap.app.passwd.w2l_Passwd(self.sid, self.outf, self.command, self.form, ls, dn, connLDAPUrl)
         elif self.command == 'read':
