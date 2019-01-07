@@ -28,6 +28,115 @@ from web2ldap.app.session import session_store, cleanUpThread
 from web2ldap.utctime import strftimeiso8601
 from ..ldapsession import LDAPSession
 
+MONITOR_TEMPLATE = """
+<h1>Monitor</h1>
+
+<h2>System information</h2>
+
+<table summary="System information">
+  <tr>
+    <td>web2ldap version:</td>
+    <td>{text_version}</td>
+  </tr>
+  <tr>
+    <td>Hostname:</td>
+    <td>{text_sysfqdn}</td>
+  </tr>
+  <tr>
+    <td>PID / PPID:</td>
+    <td>{int_pid} / {int_ppid}</td>
+  </tr>
+  <tr>
+    <td>UID:</td>
+    <td>{text_username} ({int_uid})</td>
+  </tr>
+</table>
+
+<h3>Time information</h3>
+<table summary="Time information">
+  <tr>
+    <td>Current time:</td>
+    <td>{text_currenttime}</td>
+  </tr>
+  <tr>
+    <td>Startup time:</td>
+    <td>{text_startuptime}</td>
+  </tr>
+  <tr>
+    <td>Uptime:</td>
+    <td>{text_uptime}</td>
+  </tr>
+</table>
+
+<h3>{int_numthreads:d} active threads:</h3>
+<ul>
+  {text_threadlist}
+</ul>
+
+<h2>Session counters</h2>
+<table summary="Session counters">
+  <tr>
+    <td>Web sessions initialized:</td>
+    <td>{int_sessioncounter:d}</td>
+  </tr>
+  <tr>
+    <td>Max. concurrent sessions:</td>
+    <td>{int_maxconcurrentsessions:d}</td>
+  </tr>
+  <tr>
+    <td>Sessions removed after timeout:</td>
+    <td>{int_removedsessions:d}</td>
+  </tr>
+  <tr>
+    <td>Web session limit:</td>
+    <td>{int_sessionlimit:d}</td>
+  </tr>
+  <tr>
+    <td>Web session limit per remote IP:</td>
+    <td>{int_sessionlimitperip:d}</td>
+  </tr>
+  <tr>
+    <td>Session removal time:</td>
+    <td>{int_sessionremoveperiod:d}</td>
+  </tr>
+  <tr>
+    <td>Currently active remote IPs:</td>
+    <td>{int_currentnumremoteipaddrs:d}</td>
+  </tr>
+</table>
+
+<h3>{int_numremoteipaddrs:d} remote IPs seen:</h3>
+<table>
+  <tr><th>Remote IP</th><th>Count</th><th>Rate</th></tr>
+  {text_remoteiphitlist}
+</table>
+
+<h2>Active sessions</h2>
+"""
+
+MONITOR_CONNECTIONS_TMPL = """
+<h3>%d active LDAP connections:</h3>
+<table summary="Active LDAP connections">
+  <tr>
+    <th>Remote IP</th>
+    <th>Last access time</th>
+    <th>Target URI</th>
+    <th>Bound as</th>
+  </tr>
+  %s
+</table>
+"""
+
+MONITOR_SESSIONS_JUST_CREATED_TMPL = """
+<h3>%d sessions just created:</h3>
+<table summary="Sessions not fully initialized">
+  <tr>
+    <th>Creation time</th>
+  </tr>
+  %s
+</table>
+"""
+
 
 def w2l_Monitor(outf, command, form, env):
     """
@@ -51,91 +160,7 @@ def w2l_Monitor(outf, command, form, env):
     )
 
     outf.write(
-        """
-        <h1>Monitor</h1>
-
-        <h2>System information</h2>
-
-        <table summary="System information">
-          <tr>
-            <td>web2ldap version:</td>
-            <td>{text_version}</td>
-          </tr>
-          <tr>
-            <td>Hostname:</td>
-            <td>{text_sysfqdn}</td>
-          </tr>
-          <tr>
-            <td>PID / PPID:</td>
-            <td>{int_pid} / {int_ppid}</td>
-          </tr>
-          <tr>
-            <td>UID:</td>
-            <td>{text_username} ({int_uid})</td>
-          </tr>
-        </table>
-
-        <h3>Time information</h3>
-        <table summary="Time information">
-          <tr>
-            <td>Current time:</td>
-            <td>{text_currenttime}</td>
-          </tr>
-          <tr>
-            <td>Startup time:</td>
-            <td>{text_startuptime}</td>
-          </tr>
-          <tr>
-            <td>Uptime:</td>
-            <td>{text_uptime}</td>
-          </tr>
-        </table>
-
-        <h3>{int_numthreads:d} active threads:</h3>
-        <ul>
-          {text_threadlist}
-        </ul>
-
-        <h2>Session counters</h2>
-        <table summary="Session counters">
-          <tr>
-            <td>Web sessions initialized:</td>
-            <td>{int_sessioncounter:d}</td>
-          </tr>
-          <tr>
-            <td>Max. concurrent sessions:</td>
-            <td>{int_maxconcurrentsessions:d}</td>
-          </tr>
-          <tr>
-            <td>Sessions removed after timeout:</td>
-            <td>{int_removedsessions:d}</td>
-          </tr>
-          <tr>
-            <td>Web session limit:</td>
-            <td>{int_sessionlimit:d}</td>
-          </tr>
-          <tr>
-            <td>Web session limit per remote IP:</td>
-            <td>{int_sessionlimitperip:d}</td>
-          </tr>
-          <tr>
-            <td>Session removal time:</td>
-            <td>{int_sessionremoveperiod:d}</td>
-          </tr>
-          <tr>
-            <td>Currently active remote IPs:</td>
-            <td>{int_currentnumremoteipaddrs:d}</td>
-          </tr>
-        </table>
-
-        <h3>{int_numremoteipaddrs:d} remote IPs seen:</h3>
-        <table>
-          <tr><th>Remote IP</th><th>Count</th><th>Rate</th></tr>
-          {text_remoteiphitlist}
-        </table>
-
-        <h2>Active sessions</h2>
-        """.format(
+        MONITOR_TEMPLATE.format(
             text_version=web2ldap.__about__.__version__,
             text_sysfqdn=socket.getfqdn(),
             int_pid=os.getpid(),
@@ -192,18 +217,7 @@ def w2l_Monitor(outf, command, form, env):
 
         if real_ldap_sessions:
             outf.write(
-                """
-                <h3>%d active LDAP connections:</h3>
-                <table summary="Active LDAP connections">
-                  <tr>
-                    <th>Remote IP</th>
-                    <th>Last access time</th>
-                    <th>Target URI</th>
-                    <th>Bound as</th>
-                  </tr>
-                  %s
-                </table>
-                """ % (
+                MONITOR_CONNECTIONS_TMPL % (
                     len(real_ldap_sessions),
                     '\n'.join([
                         '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(
@@ -219,15 +233,7 @@ def w2l_Monitor(outf, command, form, env):
 
         if fresh_ldap_sessions:
             outf.write(
-                """
-                <h3>%d sessions just created:</h3>
-                <table summary="Sessions not fully initialized">
-                  <tr>
-                    <th>Creation time</th>
-                  </tr>
-                  %s
-                </table>
-                """ % (
+                MONITOR_SESSIONS_JUST_CREATED_TMPL % (
                     len(fresh_ldap_sessions),
                     '\n'.join([
                         '<tr><td>{}</td></tr>'.format(strftimeiso8601(time.gmtime(i[0])))
