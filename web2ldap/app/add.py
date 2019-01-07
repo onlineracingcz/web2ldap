@@ -129,7 +129,7 @@ def w2l_Add(sid, outf, command, form, ls, dn):
             'in_oc' in form.inputFieldNames or
             'in_ft' in form.inputFieldNames
         ):
-        web2ldap.app.addmodifyform.w2l_AddForm(
+        web2ldap.app.addmodifyform.w2l_addform(
             sid, outf, 'add', form, ls, dn,
             add_rdn, add_basedn, entry,
             Msg=error_msg,
@@ -149,7 +149,7 @@ def w2l_Add(sid, outf, command, form, ls, dn):
             for rdn_comp in ldap0.dn.explode_rdn(add_rdn.encode(ls.charset))
         ]
     except ldap0.DECODING_ERROR:
-        web2ldap.app.addmodifyform.w2l_AddForm(
+        web2ldap.app.addmodifyform.w2l_addform(
             sid, outf, 'add', form, ls, dn,
             add_rdn, add_basedn, entry,
             Msg='Wrong format of RDN string.',
@@ -168,7 +168,7 @@ def w2l_Add(sid, outf, command, form, ls, dn):
             ):
             rdn_list[i] = rdn_attr_type, entry[rdn_attr_type][0]
         else:
-            web2ldap.app.addmodifyform.w2l_AddForm(
+            web2ldap.app.addmodifyform.w2l_addform(
                 sid, outf, 'add', form, ls, dn,
                 add_rdn.decode(ls.charset),
                 add_basedn, entry,
@@ -231,7 +231,7 @@ def w2l_Add(sid, outf, command, form, ls, dn):
             ldap0.UNWILLING_TO_PERFORM,
         ) as e:
         # Some error in user's input => present input form to edit input values
-        web2ldap.app.addmodifyform.w2l_AddForm(
+        web2ldap.app.addmodifyform.w2l_addform(
             sid, outf, 'add', form, ls, dn,
             add_rdn.decode(ls.charset), add_basedn.decode(ls.charset), entry,
             Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset),

@@ -1035,7 +1035,7 @@ def ReadOldEntry(ls, dn, sub_schema, assertion_filter, read_attrs=None):
     return entry, writeable_attr_oids # ReadOldEntry()
 
 
-def w2l_AddForm(
+def w2l_addform(
         sid, outf, command, form, ls, dn,
         add_rdn, add_basedn, entry, Msg='', invalid_attrs=None,
     ):
@@ -1162,7 +1162,7 @@ def w2l_AddForm(
 
     outf.write('</form>')
     web2ldap.app.gui.Footer(outf, form)
-    return # w2l_AddForm()
+    return # w2l_addform()
 
 
 def w2l_modifyform(sid, outf, command, form, ls, dn, entry, Msg='', invalid_attrs=None):
