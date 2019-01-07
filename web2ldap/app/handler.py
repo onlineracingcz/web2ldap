@@ -183,7 +183,7 @@ class AppHandler:
         elif self.command == 'dds':
             web2ldap.app.dds.w2l_DDS(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'bulkmod':
-            web2ldap.app.bulkmod.w2l_BulkMod(self.sid, self.outf, self.command, self.form, ls, dn, connLDAPUrl)
+            web2ldap.app.bulkmod.w2l_bulkmod(self.sid, self.outf, self.command, self.form, ls, dn, connLDAPUrl)
         elif self.command == 'delete':
             web2ldap.app.delete.w2l_Delete(self.sid, self.outf, self.command, self.form, ls, dn, connLDAPUrl)
         elif self.command == 'dit':
