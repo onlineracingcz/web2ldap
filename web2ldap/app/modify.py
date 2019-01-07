@@ -149,7 +149,7 @@ def ModlistLDIF(dn,form,modlist):
 # Modify existing entry
 ##############################################################################
 
-def w2l_Modify(sid,outf,command,form,ls,dn):
+def w2l_modify(sid,outf,command,form,ls,dn):
 
   sub_schema = ls.retrieveSubSchema(
     dn,

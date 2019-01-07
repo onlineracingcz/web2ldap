@@ -179,7 +179,7 @@ class AppHandler:
         elif self.command == 'add':
             web2ldap.app.add.w2l_Add(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'modify':
-            web2ldap.app.modify.w2l_Modify(self.sid, self.outf, self.command, self.form, ls, dn)
+            web2ldap.app.modify.w2l_modify(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'dds':
             web2ldap.app.dds.w2l_dds(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'bulkmod':
