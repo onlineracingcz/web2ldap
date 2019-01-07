@@ -20,7 +20,7 @@ import time,web2ldap.app.core,web2ldap.app.gui,web2ldap.app.cnf
 # Login form
 ##############################################################################
 
-def w2l_Login(
+def w2l_login(
   sid, outf, command, form, ls, dn,connLDAPUrl,login_search_root,
   title_msg=u'Bind',
   login_msg='',

@@ -444,7 +444,7 @@ def w2l_Passwd(sid, outf, command, form, ls, dn,connLDAPUrl):
         pass
       ls.who = None
       # Display login form
-      web2ldap.app.login.w2l_Login(
+      web2ldap.app.login.w2l_login(
         sid,outf,'searchform',form,ls,dn,connLDAPUrl,None,ls.getSearchRoot(passwd_who),
         login_msg='New login is required!<br>'+password_attr_types_msg,
         who=passwd_who,relogin=0,nomenu=1

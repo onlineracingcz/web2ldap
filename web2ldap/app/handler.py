@@ -202,7 +202,7 @@ class AppHandler:
         elif self.command == 'ldapparams':
             web2ldap.app.ldapparams.w2l_LDAPParameters(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'login':
-            web2ldap.app.login.w2l_Login(
+            web2ldap.app.login.w2l_login(
                 self.sid, self.outf, 'searchform', self.form, ls, dn, connLDAPUrl,
                 self.form.getInputValue('login_search_root', [ls.getSearchRoot(dn)])[0],
                 login_default_mech=connLDAPUrl.saslMech,
@@ -631,7 +631,7 @@ class AppHandler:
                 if who is not None and cred is None and login_mech not in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
                     # first ask for password in a login form
                     ls.setDN(dn)
-                    web2ldap.app.login.w2l_Login(
+                    web2ldap.app.login.w2l_login(
                         self.sid, self.outf, self.command, self.form, ls, dn, input_ldapurl,
                         self.form.getInputValue('login_search_root', [ls.getSearchRoot(dn)])[0],
                         login_msg='',
@@ -661,7 +661,7 @@ class AppHandler:
                         )
                     except ldap0.NO_SUCH_OBJECT as e:
                         ls.setDN(dn)
-                        web2ldap.app.login.w2l_Login(
+                        web2ldap.app.login.w2l_login(
                             self.sid, self.outf, self.command, self.form, ls, dn,
                             input_ldapurl, login_search_root,
                             login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self.form, ls.charset),
@@ -756,7 +756,7 @@ class AppHandler:
                 web2ldap.app.referral.w2l_chasereferral(self.sid, self.outf, self.command, self.form, ls, dn, e)
 
             except (ldap0.INSUFFICIENT_ACCESS, ldap0.STRONG_AUTH_REQUIRED) as e:
-                web2ldap.app.login.w2l_Login(
+                web2ldap.app.login.w2l_login(
                     self.sid, self.outf, self.command, self.form, ls, dn,
                     input_ldapurl,
                     self.form.getInputValue('login_search_root', [ls.getSearchRoot(dn)])[0],
@@ -769,7 +769,7 @@ class AppHandler:
                     ldap0.INVALID_CREDENTIALS,
                     web2ldap.ldapsession.USERNAME_NOT_FOUND,
                 ) as e:
-                web2ldap.app.login.w2l_Login(
+                web2ldap.app.login.w2l_login(
                     self.sid, self.outf, self.command, self.form, ls, dn,
                     input_ldapurl,
                     self.form.getInputValue('login_search_root', [ls.getSearchRoot(dn)])[0],
@@ -778,7 +778,7 @@ class AppHandler:
                 )
 
             except web2ldap.ldapsession.INVALID_SIMPLE_BIND_DN as e:
-                web2ldap.app.login.w2l_Login(
+                web2ldap.app.login.w2l_login(
                     self.sid, self.outf, self.command, self.form, ls, dn,
                     input_ldapurl,
                     self.form.getInputValue('login_search_root', [ls.getSearchRoot(dn)])[0],
@@ -873,7 +873,7 @@ class AppHandler:
 
             except web2ldap.ldapsession.USERNAME_NOT_UNIQUE as e:
                 login_search_root = self.form.getInputValue('login_search_root', [ls.getSearchRoot(dn)])[0]
-                web2ldap.app.login.w2l_Login(
+                web2ldap.app.login.w2l_login(
                     self.sid, self.outf, self.command, self.form, ls, dn,
                     input_ldapurl,
                     login_search_root,
