@@ -516,7 +516,7 @@ class AppHandler:
                     session_store.deleteSession(self.sid)
                     # Just output a connect form if there was not query string
                     if not self.form.query_string:
-                        web2ldap.app.connect.w2l_Connect(self.outf, self.form, self.env)
+                        web2ldap.app.connect.w2l_connect(self.outf, self.form, self.env)
                         return
 
                 self.ls = ls = self._get_session()
@@ -557,7 +557,7 @@ class AppHandler:
                     if not initializeUrl_list:
                         # No host specified in user's input
                         session_store.deleteSession(self.sid)
-                        web2ldap.app.connect.w2l_Connect(
+                        web2ldap.app.connect.w2l_connect(
                             self.outf, self.form, self.env,
                             Msg='Connect failed',
                             ErrorMsg='No host specified.'
@@ -612,7 +612,7 @@ class AppHandler:
 
                 if ls.uri is None:
                     session_store.deleteSession(self.sid)
-                    web2ldap.app.connect.w2l_Connect(
+                    web2ldap.app.connect.w2l_connect(
                         self.outf, self.form, self.env,
                         Msg='Connect failed',
                         ErrorMsg='No valid LDAP connection.'
@@ -714,7 +714,7 @@ class AppHandler:
                 # Server is down and reconnecting impossible => remove session
                 session_store.deleteSession(self.sid)
                 # Redirect to entry page
-                web2ldap.app.connect.w2l_Connect(
+                web2ldap.app.connect.w2l_connect(
                     self.outf, self.form, self.env,
                     Msg='Connect failed',
                     ErrorMsg='Connecting to %s impossible!<br>%s' % (

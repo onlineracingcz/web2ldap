@@ -29,7 +29,7 @@ import web2ldap.app.gui
 # Connect form
 ##############################################################################
 
-def w2l_Connect(outf, form, env, Msg='Connect', ErrorMsg=''):
+def w2l_connect(outf, form, env, Msg='Connect', ErrorMsg=''):
     """
     Display the landing page with a connect form
     """
