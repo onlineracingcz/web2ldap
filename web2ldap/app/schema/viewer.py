@@ -764,7 +764,7 @@ def DisplayAllSchemaelements(sid,outf,form,ls,dn,schema,se_classes,se_list):
   web2ldap.app.gui.Footer(outf,form)
 
 
-def w2l_DisplaySchemaElement(sid,outf,command,form,ls,dn):
+def w2l_schema_viewer(sid,outf,command,form,ls,dn):
 
   def contains_oid(x,oid):
     return x.__contains__(oid)

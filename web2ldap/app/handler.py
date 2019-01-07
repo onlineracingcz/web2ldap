@@ -210,7 +210,7 @@ class AppHandler:
         elif self.command == 'groupadm':
             web2ldap.app.groupadm.w2l_groupadm(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'oid':
-            web2ldap.app.schema.viewer.w2l_DisplaySchemaElement(self.sid, self.outf, self.command, self.form, ls, dn)
+            web2ldap.app.schema.viewer.w2l_schema_viewer(self.sid, self.outf, self.command, self.form, ls, dn)
         return # dispatch()
 
     @staticmethod
