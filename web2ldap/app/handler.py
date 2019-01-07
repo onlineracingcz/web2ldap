@@ -235,7 +235,7 @@ class AppHandler:
         """
         Output HTML text.
         """
-        web2ldap.app.gui.Header(self.outf, self.form)
+        web2ldap.app.gui.Header(self.outf, self.form, 'text/html', self.form.accept_charset)
         self.outf.write(SIMPLE_MSG_HTML.format(message=msg))
 
     def url_redirect(
@@ -257,7 +257,7 @@ class AppHandler:
             message_class = 'ErrorMessage'
         else:
             message_class = 'SuccessMessage'
-        web2ldap.app.gui.Header(self.outf, self.form)
+        web2ldap.app.gui.Header(self.outf, self.form, 'text/html', self.form.accept_charset)
         # Write out stub body with just a short redirect HTML snippet
         self.outf.write(
             url_redirect_template_str.format(

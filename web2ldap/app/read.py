@@ -387,7 +387,7 @@ def w2l_Read(
         # We have to create an instance to be able to call its methods
         attr_instance = syntax_se(sid, form, ls, dn,sub_schema,attr_type,None,entry)
         # Determine (hopefully) appropriate MIME-type
-        read_attrmimetype = form.getInputValue('read_attrmimetype',[attr_instance.getMimeType()])[0]
+        read_attrmimetype = form.getInputValue('read_attrmimetype', [attr_instance.getMimeType()])[0]
         # Determine (hopefully) appropriate file extension
         read_filename = form.getInputValue(
           'read_filename',
@@ -397,7 +397,7 @@ def w2l_Read(
         web2ldap.app.viewer.DisplayBinaryAttribute(
           sid,outf,form,dn,attr_type,entry,
           index=read_attrindex,
-          mimetype=read_attrmimetype,
+          mimetype=read_attrmimetype.encode('ascii'),
           attachment_filename=read_filename
         )
       return
@@ -551,7 +551,8 @@ def w2l_Read(
           web2ldap.app.gui.Header(
             outf,
             form,
-            content_type='text/x-vcard',
+            'text/x-vcard',
+            form.accept_charset,
             more_headers=[
               (
                 'Content-Disposition',

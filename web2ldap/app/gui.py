@@ -551,7 +551,7 @@ def TopSection(
     ):
 
     # First send the HTTP header
-    Header(outf, form)
+    Header(outf, form, 'text/html', form.accept_charset)
 
     # Read the template file for TopSection
     top_template_str = web2ldap.app.gui.ReadTemplate(form, ls, 'top_template', u'top section')
@@ -745,7 +745,9 @@ def AttributeTypeSelectField(
     return attr_select
 
 
-def gen_headers(content_type='text/html', charset='utf-8', more_headers=None):
+def gen_headers(content_type, charset, more_headers=None):
+    assert isinstance(content_type, bytes), TypeError("Type of argument 'content_type' must be str but was %r" % (content_type))
+    assert isinstance(charset, bytes), TypeError("Type of argument 'charset' must be str but was %r" % (charset))
     # Get current time as GMT (seconds since epoch)
     current_datetime = time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime(time.time()))
     headers = []
@@ -761,7 +763,7 @@ def gen_headers(content_type='text/html', charset='utf-8', more_headers=None):
     return headers # Header()
 
 
-def Header(outf, form, content_type='text/html', charset=None, more_headers=None):
+def Header(outf, form, content_type, charset, more_headers=None):
     headers = gen_headers(
         content_type=content_type,
         charset=charset,
