@@ -59,7 +59,7 @@ def DDSForm(sid, outf, form, ls, dn, Msg):
     return # DDSForm()
 
 
-def w2l_DDS(sid, outf, command, form, ls, dn):
+def w2l_dds(sid, outf, command, form, ls, dn):
 
     if 'dds_renewttlnum' in form.inputFieldNames and \
          'dds_renewttlfac' in form.inputFieldNames:
