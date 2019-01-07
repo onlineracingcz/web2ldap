@@ -25,16 +25,11 @@ from ldap0.schema.models import \
     MatchingRuleUse, \
     DITContentRule, \
     DITStructureRule, \
-    NameForm
+    NameForm, \
+    OBJECTCLASS_KIND_STR
 
 from web2ldap.web.forms import escapeHTML
 import web2ldap.app.gui
-
-OBJECTCLASS_KIND_STR = {
-    0: 'STRUCTURAL',
-    1: 'ABSTRACT',
-    2: 'AUXILIARY'
-}
 
 OBSOLETE_TEMPL = {
     False: '%s',
