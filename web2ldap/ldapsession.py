@@ -87,6 +87,8 @@ ROOTDSE_ATTRS = (
     'ibm-configurationnamingcontext',
     # see draft-good-ldap-changelog
     'changelog',
+    # AE-DIR
+    'aeRoot',
 )
 
 
