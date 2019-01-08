@@ -18,14 +18,14 @@ class HomeDirectory(IA5String):
   desc = 'Path of Unix home directory of the user'
   homeDirectoryTemplate = '/home/{uid}'
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     if not attrValues or not attrValues[0] or attrValues[0]==self.homeDirectoryTemplate.format(**{'uid':''}):
       e = Str1stValueDict(self._entry,'')
       attrValues = [self.homeDirectoryTemplate.format(**e)]
     return attrValues
 
 syntax_registry.registerAttrType(
-  HomeDirectory.oid,[
+  HomeDirectory.oid, [
     '1.3.6.1.1.1.1.3', # homeDirectory
   ]
 )
@@ -94,7 +94,7 @@ class AutogenUIDNumber(UidNumber,AutogenNumber):
     return form_value # formValue()
 
 syntax_registry.registerAttrType(
-  AutogenUIDNumber.oid,[
+  AutogenUIDNumber.oid, [
     '1.3.6.1.1.1.1.0', # uidNumber
   ]
 )
@@ -112,7 +112,7 @@ class AutogenGIDNumber(GidNumber,AutogenNumber):
     return form_value # formValue()
 
 syntax_registry.registerAttrType(
-  AutogenGIDNumber.oid,[
+  AutogenGIDNumber.oid, [
     '1.3.6.1.1.1.1.1', # gidNumber
   ]
 )

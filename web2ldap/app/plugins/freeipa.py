@@ -9,14 +9,14 @@ from web2ldap.app.plugins.samba import SambaSID
 
 
 syntax_registry.registerAttrType(
-  UUID.oid,[
+  UUID.oid, [
     '2.16.840.1.113730.3.8.3.1', # ipaUniqueID
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  DNSDomain.oid,[
+  DNSDomain.oid, [
     '2.16.840.1.113730.3.8.3.4', # fqdn
   ]
 )
@@ -24,13 +24,13 @@ syntax_registry.registerAttrType(
 from web2ldap.app.plugins.opensshlpk import ParamikoSshPublicKey
 
 syntax_registry.registerAttrType(
-  ParamikoSshPublicKey.oid,[
+  ParamikoSshPublicKey.oid, [
     '2.16.840.1.113730.3.8.11.31', # ipaSshPubKey
   ]
 )
 
 syntax_registry.registerAttrType(
-  SambaSID.oid,[
+  SambaSID.oid, [
     '2.16.840.1.113730.3.8.11.2', # ipaNTSecurityIdentifier
   ]
 )

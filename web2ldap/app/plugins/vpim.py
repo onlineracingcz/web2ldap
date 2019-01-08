@@ -9,7 +9,7 @@ from web2ldap.app.schema.syntaxes import SelectList,RFC822Address,syntax_registr
 
 
 syntax_registry.registerAttrType(
-  RFC822Address.oid,[
+  RFC822Address.oid, [
     '1.3.6.1.1.11.1.2.2', # vPIMRfc822Mailbox
   ]
 )
@@ -27,7 +27,7 @@ class VPIMExtendedAbsenceStatus(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  VPIMExtendedAbsenceStatus.oid,[
+  VPIMExtendedAbsenceStatus.oid, [
     '1.3.6.1.1.11.1.2.7', # vPIMExtendedAbsenceStatus
   ]
 )
@@ -45,7 +45,7 @@ class VPIMSupportedUABehaviors(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  VPIMSupportedUABehaviors.oid,[
+  VPIMSupportedUABehaviors.oid, [
     '1.3.6.1.1.11.1.2.8', # vPIMSupportedUABehaviors
   ]
 )
@@ -64,7 +64,7 @@ class VPIMSupportedAudioMediaTypes(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  VPIMSupportedAudioMediaTypes.oid,[
+  VPIMSupportedAudioMediaTypes.oid, [
     '1.3.6.1.1.11.1.2.5', # vPIMSupportedAudioMediaTypes
   ]
 )

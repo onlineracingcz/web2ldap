@@ -65,7 +65,7 @@ AE_NWDEVICE_OID = AE_OID_PREFIX+'.6.6.2'
 
 
 syntax_registry.registerAttrType(
-  DNSDomain.oid,[
+  DNSDomain.oid, [
     AE_OID_PREFIX+'.4.10',   # aeFqdn
   ]
 )
@@ -179,7 +179,7 @@ class AEHomeDirectory(HomeDirectory):
   )
   homeDirectoryHidden = '-/-'
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     if attrValue==self.homeDirectoryHidden:
       return True
     for prefix in self.homeDirectoryPrefixes:
@@ -188,7 +188,7 @@ class AEHomeDirectory(HomeDirectory):
         return attrValue.endswith(uid)
     return False
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     if attrValues==[self.homeDirectoryHidden]:
       return attrValues
     uid = self._entry.get('uid',[''])[0]
@@ -210,7 +210,7 @@ class AEHomeDirectory(HomeDirectory):
     return input_field
 
 syntax_registry.registerAttrType(
-  AEHomeDirectory.oid,[
+  AEHomeDirectory.oid, [
     '1.3.6.1.1.1.1.3', # homeDirectory
   ],
   structural_oc_oids=[AE_USER_OID,AE_SERVICE_OID], # aeUser and aeService
@@ -221,7 +221,7 @@ class AEUIDNumber(UidNumber):
   oid = 'AEUIDNumber-oid'
   desc = 'numeric Unix-UID'
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     return self._entry.get('gidNumber',[''])
 
   def formField(self):
@@ -235,7 +235,7 @@ class AEUIDNumber(UidNumber):
     return input_field
 
 syntax_registry.registerAttrType(
-  AEUIDNumber.oid,[
+  AEUIDNumber.oid, [
     '1.3.6.1.1.1.1.0', # uidNumber
   ],
   structural_oc_oids=[
@@ -271,7 +271,7 @@ class AEGIDNumber(GidNumber):
     )
     return int(resp_ctrls[0].entry[self.attrType][0])
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     attrValues = GidNumber.transmute(self,attrValues)
     if attrValues and attrValues[0]:
       return attrValues
@@ -301,7 +301,7 @@ class AEGIDNumber(GidNumber):
     return Integer.formField(self)
 
 syntax_registry.registerAttrType(
-  AEGIDNumber.oid,[
+  AEGIDNumber.oid, [
     '1.3.6.1.1.1.1.1', # gidNumber
   ],
   structural_oc_oids=[
@@ -338,7 +338,7 @@ class AEUserUid(AEUid):
     str.lower,
   )
 
-  def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
+  def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
     IA5String.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=entry)
 
   def _genUid(self):
@@ -375,11 +375,11 @@ class AEUserUid(AEUid):
       default=self.formValue()
     )
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     return attrValue.strip().lower()
 
 syntax_registry.registerAttrType(
-  AEUserUid.oid,[
+  AEUserUid.oid, [
     '0.9.2342.19200300.100.1.1', # uid
   ],
   structural_oc_oids=[
@@ -392,7 +392,7 @@ class AEServiceUid(AEUid):
   oid = 'AEServiceUid-oid'
 
 syntax_registry.registerAttrType(
-  AEServiceUid.oid,[
+  AEServiceUid.oid, [
     '0.9.2342.19200300.100.1.1', # uid
   ],
   structural_oc_oids=[
@@ -410,7 +410,7 @@ class AETicketId(IA5String):
   )
 
 syntax_registry.registerAttrType(
-  AETicketId.oid,[
+  AETicketId.oid, [
     AE_OID_PREFIX+'.4.3', # aeTicketId
   ]
 )
@@ -426,7 +426,7 @@ class AEZoneDN(DynamicDNSelectList):
   )
 
 syntax_registry.registerAttrType(
-  AEZoneDN.oid,[
+  AEZoneDN.oid, [
     AE_OID_PREFIX+'.4.36', # aeMemberZone
   ]
 )
@@ -442,7 +442,7 @@ class AEHost(DynamicDNSelectList):
   )
 
 syntax_registry.registerAttrType(
-  AEHost.oid,[
+  AEHost.oid, [
     AE_OID_PREFIX+'.4.28', # aeHost
   ]
 )
@@ -474,7 +474,7 @@ class AENwDevice(DynamicDNSelectList):
     return result_filter
 
 syntax_registry.registerAttrType(
-  AENwDevice.oid,[
+  AENwDevice.oid, [
     AE_OID_PREFIX+'.4.34', # aeNwDevice
   ]
 )
@@ -573,14 +573,14 @@ class AEGroupMember(DynamicDNSelectList,AEObjectUtil):
       pass
     return attr_value_dict # _get_attr_value_dict()
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     if 'memberURL' in self._entry:
       # reduce to simple DN syntax check for dynamic groups
       return DistinguishedName._validate(self,attrValue)
     return SelectList._validate(self,attrValue)
 
 syntax_registry.registerAttrType(
-  AEGroupMember.oid,[
+  AEGroupMember.oid, [
     '2.5.4.31', # member
   ],
   structural_oc_oids=[
@@ -596,7 +596,7 @@ class AEMailGroupMember(AEGroupMember):
   ldap_url = 'ldap:///_?displayName?sub?(&(|(objectClass=inetLocalMailRecipient)(objectClass=aeContact))(mail=*)(aeStatus=0))'
 
 syntax_registry.registerAttrType(
-  AEMailGroupMember.oid,[
+  AEMailGroupMember.oid, [
     '2.5.4.31', # member
   ],
   structural_oc_oids=[
@@ -619,11 +619,11 @@ class AEMemberUid(MemberUID):
 
   # Because AEMemberUid.transmute() always resets all attribute values it's
   # ok to not validate values thoroughly
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return MemberUID._validate(self,attrValue) and \
            attrValue in set(self._member_uids_from_member())
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     return filter(None,self._member_uids_from_member())
 
   def formValue(self):
@@ -640,7 +640,7 @@ class AEMemberUid(MemberUID):
     return input_field
 
 syntax_registry.registerAttrType(
-  AEMemberUid.oid,[
+  AEMemberUid.oid, [
     '1.3.6.1.1.1.1.12', # memberUid
   ],
   structural_oc_oids=[
@@ -658,7 +658,7 @@ class AEGroupDN(DynamicDNSelectList):
     ('memberOf',u'Members',None,u'Search all member entries of this user group'),
   )
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     dn_comp_list = ldap0.dn.str2dn(self.attrValue)
     group_cn = dn_comp_list[0][0][1].decode(self._ls.charset)
     parent_dn = ldap0.dn.dn2str(dn_comp_list[1:]).decode(self._ls.charset)
@@ -673,7 +673,7 @@ class AEGroupDN(DynamicDNSelectList):
     return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
-  AEGroupDN.oid,[
+  AEGroupDN.oid, [
     '1.2.840.113556.1.2.102', # memberOf
   ],
   structural_oc_oids=[
@@ -703,7 +703,7 @@ class AEZoneAdminGroupDN(AEGroupDN):
   )
 
 syntax_registry.registerAttrType(
-  AEZoneAdminGroupDN.oid,[
+  AEZoneAdminGroupDN.oid, [
     AE_OID_PREFIX+'.4.31',  # aeZoneAdmins
     AE_OID_PREFIX+'.4.33',  # aePasswordAdmins
   ]
@@ -732,7 +732,7 @@ class AEZoneAuditorGroupDN(AEGroupDN):
   )
 
 syntax_registry.registerAttrType(
-  AEZoneAuditorGroupDN.oid,[
+  AEZoneAuditorGroupDN.oid, [
     AE_OID_PREFIX+'.4.32',  # aeZoneAuditors
   ]
 )
@@ -757,7 +757,7 @@ class AESrvGroupRightsGroupDN(AEGroupDN):
   )
 
 syntax_registry.registerAttrType(
-  AESrvGroupRightsGroupDN.oid,[
+  AESrvGroupRightsGroupDN.oid, [
     AE_OID_PREFIX+'.4.4',  # aeLoginGroups
     AE_OID_PREFIX+'.4.6',  # aeSetupGroups
     AE_OID_PREFIX+'.4.7',  # aeLogStoreGroups
@@ -788,7 +788,7 @@ class AEDisplayNameGroups(AESrvGroupRightsGroupDN):
   )
 
 syntax_registry.registerAttrType(
-  AEDisplayNameGroups.oid,[
+  AEDisplayNameGroups.oid, [
     AE_OID_PREFIX+'.4.30', # aeDisplayNameGroups
   ]
 )
@@ -802,14 +802,14 @@ class AEVisibleGroups(AEDisplayNameGroups):
     'aeDisplayNameGroups',
   )
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     attrValues = set(attrValues)
     for attr_type in self.always_add_groups:
       attrValues.update(self._entry.get(attr_type,[]))
     return list(attrValues)
 
 syntax_registry.registerAttrType(
-  AEVisibleGroups.oid,[
+  AEVisibleGroups.oid, [
     AE_OID_PREFIX+'.4.20', # aeVisibleGroups
   ]
 )
@@ -840,7 +840,7 @@ class AESrvGroup(AESameZoneObject):
     )
 
 syntax_registry.registerAttrType(
-  AESrvGroup.oid,[
+  AESrvGroup.oid, [
     AE_OID_PREFIX+'.4.27',  # aeSrvGroup
   ]
 )
@@ -859,7 +859,7 @@ class AEProxyFor(AESameZoneObject,AEObjectUtil):
     )
 
 syntax_registry.registerAttrType(
-  AEProxyFor.oid,[
+  AEProxyFor.oid, [
     AE_OID_PREFIX+'.4.25',  # aeProxyFor
   ]
 )
@@ -871,7 +871,7 @@ class AETag(DynamicValueSelectList):
   ldap_url = 'ldap:///_?cn,cn?sub?(&(objectClass=aeTag)(aeStatus=0))'
 
 syntax_registry.registerAttrType(
-  AETag.oid,[
+  AETag.oid, [
     AE_OID_PREFIX+'.4.24',  # aeTag
   ]
 )
@@ -887,7 +887,7 @@ class AEEntryDNAEPerson(DistinguishedName):
   )
 
 syntax_registry.registerAttrType(
-  AEEntryDNAEPerson.oid,[
+  AEEntryDNAEPerson.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -922,7 +922,7 @@ class AEEntryDNAEUser(DistinguishedName):
     return r
 
 syntax_registry.registerAttrType(
-  AEEntryDNAEUser.oid,[
+  AEEntryDNAEUser.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -967,7 +967,7 @@ class AEEntryDNAEHost(DistinguishedName):
     return r
 
 syntax_registry.registerAttrType(
-  AEEntryDNAEHost.oid,[
+  AEEntryDNAEHost.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -1016,7 +1016,7 @@ class AEEntryDNAEZone(DistinguishedName):
     return r
 
 syntax_registry.registerAttrType(
-  AEEntryDNAEZone.oid,[
+  AEEntryDNAEZone.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -1034,7 +1034,7 @@ class AEEntryDNAEMailGroup(GroupEntryDN):
   ]
 
 syntax_registry.registerAttrType(
-  AEEntryDNAEMailGroup.oid,[
+  AEEntryDNAEMailGroup.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -1085,7 +1085,7 @@ class AEEntryDNAEGroup(GroupEntryDN):
     return r
 
 syntax_registry.registerAttrType(
-  AEEntryDNAEGroup.oid,[
+  AEEntryDNAEGroup.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -1123,7 +1123,7 @@ class AEEntryDNAESrvGroup(DistinguishedName):
 
 
 syntax_registry.registerAttrType(
-  AEEntryDNAESrvGroup.oid,[
+  AEEntryDNAESrvGroup.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -1140,7 +1140,7 @@ class AEEntryDNSudoRule(DistinguishedName):
   )
 
 syntax_registry.registerAttrType(
-  AEEntryDNSudoRule.oid,[
+  AEEntryDNSudoRule.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -1159,7 +1159,7 @@ class AEEntryDNAELocation(DistinguishedName):
   )
 
 syntax_registry.registerAttrType(
-  AEEntryDNAELocation.oid,[
+  AEEntryDNAELocation.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -1176,7 +1176,7 @@ class AELocation(DynamicDNSelectList):
   ref_attrs = AEEntryDNAELocation.ref_attrs
 
 syntax_registry.registerAttrType(
-  AELocation.oid,[
+  AELocation.oid, [
     AE_OID_PREFIX+'.4.35', # aeLocation
   ]
 )
@@ -1192,7 +1192,7 @@ class AEEntryDNAEDept(DistinguishedName):
   )
 
 syntax_registry.registerAttrType(
-  AEEntryDNAEDept.oid,[
+  AEEntryDNAEDept.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -1209,7 +1209,7 @@ class AEDept(DynamicDNSelectList):
   ref_attrs = AEEntryDNAEDept.ref_attrs
 
 syntax_registry.registerAttrType(
-  AEDept.oid,[
+  AEDept.oid, [
     AE_OID_PREFIX+'.4.29', # aeDept
   ]
 )
@@ -1224,7 +1224,7 @@ class AEOwner(DynamicDNSelectList):
   )
 
 syntax_registry.registerAttrType(
-  AEOwner.oid,[
+  AEOwner.oid, [
     AE_OID_PREFIX+'.4.2', # aeOwner
   ]
 )
@@ -1296,7 +1296,7 @@ class AEPerson2(AEPerson):
   def formField(self):
     return DistinguishedName.formField(self)
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     if not attrValues or not attrValues[0]:
       return attrValues
     sanitize_filter = '(&{0}{1})'.format(
@@ -1326,7 +1326,7 @@ class AEPerson2(AEPerson):
         return attrValues
 
 syntax_registry.registerAttrType(
-  AEPerson.oid,[
+  AEPerson.oid, [
     AE_OID_PREFIX+'.4.16', # aePerson
   ]
 )
@@ -1339,7 +1339,7 @@ class AEManager(DynamicDNSelectList):
   ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
 
 syntax_registry.registerAttrType(
-  AEManager.oid,[
+  AEManager.oid, [
     '0.9.2342.19200300.100.1.10', # manager
   ],
   structural_oc_oids=[
@@ -1376,7 +1376,7 @@ class AEDerefAttribute(DirectoryString):
         result = None
     return result
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     if self.deref_attribute_type in self._entry:
       ae_person_attribute = self._readPersonAttribute()
       if ae_person_attribute!=None:
@@ -1412,7 +1412,7 @@ class AEUserNames(AEPersonAttribute,DirectoryString):
   oid = 'AEUserNames-oid'
 
 syntax_registry.registerAttrType(
-  AEUserNames.oid,[
+  AEUserNames.oid, [
     '2.5.4.4', # sn
     '2.5.4.42', # givenName
   ],
@@ -1430,7 +1430,7 @@ class AEMailLocalAddress(RFC822Address):
   )
 
 syntax_registry.registerAttrType(
-  AEMailLocalAddress.oid,[
+  AEMailLocalAddress.oid, [
     '2.16.840.1.113730.3.1.13', # mailLocalAddress
   ],
   structural_oc_oids=[
@@ -1460,7 +1460,7 @@ class AEUserMailaddress(AEPersonAttribute,SelectList):
   def _is_mail_account(self):
     return 'inetLocalMailRecipient' in self._entry['objectClass']
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     if self._is_mail_account():
       return SelectList._validate(self,attrValue)
     else:
@@ -1472,7 +1472,7 @@ class AEUserMailaddress(AEPersonAttribute,SelectList):
     else:
       return AEPersonAttribute.formValue(self)
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     if self._is_mail_account():
       # make sure only non-empty strings are in attribute value list
       if not filter(None,map(str.strip,attrValues)):
@@ -1491,7 +1491,7 @@ class AEUserMailaddress(AEPersonAttribute,SelectList):
       return AEPersonAttribute.formField(self)
 
 syntax_registry.registerAttrType(
-  AEUserMailaddress.oid,[
+  AEUserMailaddress.oid, [
     '0.9.2342.19200300.100.1.3', # mail
   ],
   structural_oc_oids=[
@@ -1507,8 +1507,8 @@ class AEPersonMailaddress(DynamicValueSelectList,RFC822Address):
   input_fallback = True
   html_tmpl = RFC822Address.html_tmpl
 
-  def _validate(self,attrValue):
-    if not RFC822Address._validate(self,attrValue):
+  def _validate(self, attrValue):
+    if not RFC822Address._validate(self, attrValue):
       return False
     attr_value_dict = self._get_attr_value_dict()
     if not attr_value_dict or attr_value_dict.keys()==[u'']:
@@ -1527,7 +1527,7 @@ class AEPersonMailaddress(DynamicValueSelectList,RFC822Address):
     ) % self._ls.uc_encode(self._dn)[0]
 
 syntax_registry.registerAttrType(
-  AEPersonMailaddress.oid,[
+  AEPersonMailaddress.oid, [
     '0.9.2342.19200300.100.1.3', # mail
   ],
   structural_oc_oids=[
@@ -1543,7 +1543,7 @@ class AEDeptAttribute(AEDerefAttribute,DirectoryString):
   deref_attribute_type = 'aeDept'
 
 syntax_registry.registerAttrType(
-  AEDeptAttribute.oid,[
+  AEDeptAttribute.oid, [
     '2.16.840.1.113730.3.1.2', # departmentNumber
     '2.5.4.11',                # ou, organizationalUnitName
   ],
@@ -1558,8 +1558,8 @@ class AEHostname(DNSDomain):
   desc = 'Canonical hostname / FQDN'
   host_lookup = 0
 
-  def _validate(self,attrValue):
-    if not DNSDomain._validate(self,attrValue):
+  def _validate(self, attrValue):
+    if not DNSDomain._validate(self, attrValue):
       return False
     if self.host_lookup:
       try:
@@ -1575,7 +1575,7 @@ class AEHostname(DNSDomain):
           return reverse_hostname==attrValue
     return True
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     result = []
     for attr_value in attrValues:
       attr_value.lower().strip()
@@ -1591,7 +1591,7 @@ class AEHostname(DNSDomain):
     return attrValues
 
 syntax_registry.registerAttrType(
-  AEHostname.oid,[
+  AEHostname.oid, [
     '0.9.2342.19200300.100.1.9', # host
   ],
   structural_oc_oids=[
@@ -1609,7 +1609,7 @@ class AEDisplayNameUser(ComposedAttribute,DirectoryString):
   )
 
 syntax_registry.registerAttrType(
-  AEDisplayNameUser.oid,[
+  AEDisplayNameUser.oid, [
     '2.16.840.1.113730.3.1.241', # displayName
   ],
   structural_oc_oids=[AE_USER_OID], # aeUser
@@ -1625,7 +1625,7 @@ class AEDisplayNameContact(ComposedAttribute,DirectoryString):
   )
 
 syntax_registry.registerAttrType(
-  AEDisplayNameContact.oid,[
+  AEDisplayNameContact.oid, [
     '2.16.840.1.113730.3.1.241', # displayName
   ],
   structural_oc_oids=[AE_CONTACT_OID], # aeContact
@@ -1642,7 +1642,7 @@ class AEDisplayNameDept(ComposedAttribute,DirectoryString):
   )
 
 syntax_registry.registerAttrType(
-  AEDisplayNameDept.oid,[
+  AEDisplayNameDept.oid, [
     '2.16.840.1.113730.3.1.241', # displayName
   ],
   structural_oc_oids=[AE_DEPT_OID], # aeDept
@@ -1661,7 +1661,7 @@ class AEDisplayNameLocation(ComposedAttribute,DirectoryString):
   )
 
 syntax_registry.registerAttrType(
-  AEDisplayNameLocation.oid,[
+  AEDisplayNameLocation.oid, [
     '2.16.840.1.113730.3.1.241', # displayName
   ],
   structural_oc_oids=[AE_LOCATION_OID], # aeLocation
@@ -1680,7 +1680,7 @@ class AEDisplayNamePerson(DisplayNameInetOrgPerson):
   )
 
 syntax_registry.registerAttrType(
-  AEDisplayNamePerson.oid,[
+  AEDisplayNamePerson.oid, [
     '2.16.840.1.113730.3.1.241', # displayName
   ],
   structural_oc_oids=[AE_PERSON_OID], # aePerson
@@ -1692,7 +1692,7 @@ class AEUniqueIdentifier(DirectoryString):
   maxValues = 1
   gen_template = 'web2ldap-{timestamp}'
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     if not attrValues or not attrValues[0].strip():
       return [self.gen_template.format(timestamp=time.time())]
     else:
@@ -1709,7 +1709,7 @@ class AEUniqueIdentifier(DirectoryString):
     return input_field
 
 syntax_registry.registerAttrType(
-  AEUniqueIdentifier.oid,[
+  AEUniqueIdentifier.oid, [
     '0.9.2342.19200300.100.1.44', # uniqueIdentifier
   ],
   structural_oc_oids=[
@@ -1723,7 +1723,7 @@ class AEDepartmentNumber(DirectoryString):
   maxValues = 1
 
 syntax_registry.registerAttrType(
-  AEDepartmentNumber.oid,[
+  AEDepartmentNumber.oid, [
     '2.16.840.1.113730.3.1.2', # departmentNumber
   ],
   structural_oc_oids=[
@@ -1750,7 +1750,7 @@ class AECommonNameAEZone(AECommonName):
   )
 
 syntax_registry.registerAttrType(
-  AECommonNameAEZone.oid,[
+  AECommonNameAEZone.oid, [
     '2.5.4.3', # cn alias commonName
   ],
   structural_oc_oids=[
@@ -1764,7 +1764,7 @@ class AECommonNameAELocation(AECommonName):
   desc = 'AE-DIR: common name of aeLocation'
 
 syntax_registry.registerAttrType(
-  AECommonNameAELocation.oid,[
+  AECommonNameAELocation.oid, [
     '2.5.4.3', # cn alias commonName
   ],
   structural_oc_oids=[
@@ -1780,7 +1780,7 @@ class AECommonNameAEHost(AECommonName):
   host_begin_item = 0
   host_end_item = None
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     if self.derive_from_host:
       return list(set([
         '.'.join(av.strip().lower().split('.')[self.host_begin_item:self.host_end_item])
@@ -1790,7 +1790,7 @@ class AECommonNameAEHost(AECommonName):
       return attrValues
 
 syntax_registry.registerAttrType(
-  AECommonNameAEHost.oid,[
+  AECommonNameAEHost.oid, [
     '2.5.4.3', # cn alias commonName
   ],
   structural_oc_oids=[
@@ -1805,14 +1805,14 @@ class AEZonePrefixCommonName(AECommonName,AEObjectUtil):
   reObj = re.compile('^[a-z0-9]+-[a-z0-9-]+$')
   special_names = ('zone-admins','zone-auditors')
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     return attrValue.strip()
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     attrValues = [attrValues[0].lower()]
     return attrValues
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     result = DirectoryString._validate(self,attrValue)
     if result and attrValue:
       zone_cn = self._get_zone_name()
@@ -1834,7 +1834,7 @@ class AECommonNameAEGroup(AEZonePrefixCommonName):
   oid = 'AECommonNameAEGroup-oid'
 
 syntax_registry.registerAttrType(
-  AECommonNameAEGroup.oid,[
+  AECommonNameAEGroup.oid, [
     '2.5.4.3', # cn alias commonName
   ],
   structural_oc_oids=[
@@ -1848,7 +1848,7 @@ class AECommonNameAESrvGroup(AEZonePrefixCommonName):
   oid = 'AECommonNameAESrvGroup-oid'
 
 syntax_registry.registerAttrType(
-  AECommonNameAESrvGroup.oid,[
+  AECommonNameAESrvGroup.oid, [
     '2.5.4.3', # cn alias commonName
   ],
   structural_oc_oids=[
@@ -1860,8 +1860,8 @@ syntax_registry.registerAttrType(
 class AECommonNameAETag(AEZonePrefixCommonName):
   oid = 'AECommonNameAETag-oid'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    display_value = AEZonePrefixCommonName.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    display_value = AEZonePrefixCommonName.displayValue(self, valueindex, commandbutton)
     if commandbutton:
       search_anchor = self._form.applAnchor(
         'searchform','&raquo;',self._sid,
@@ -1880,7 +1880,7 @@ class AECommonNameAETag(AEZonePrefixCommonName):
     return ''.join((display_value,search_anchor))
 
 syntax_registry.registerAttrType(
-  AECommonNameAETag.oid,[
+  AECommonNameAETag.oid, [
     '2.5.4.3', # cn alias commonName
   ],
   structural_oc_oids=[
@@ -1893,7 +1893,7 @@ class AECommonNameAESudoRule(AEZonePrefixCommonName):
   oid = 'AECommonNameAESudoRule-oid'
 
 syntax_registry.registerAttrType(
-  AECommonNameAESudoRule.oid,[
+  AECommonNameAESudoRule.oid, [
     '2.5.4.3', # cn alias commonName
   ],
   structural_oc_oids=[
@@ -1903,7 +1903,7 @@ syntax_registry.registerAttrType(
 
 
 syntax_registry.registerAttrType(
-  web2ldap.app.plugins.inetorgperson.CNInetOrgPerson.oid,[
+  web2ldap.app.plugins.inetorgperson.CNInetOrgPerson.oid, [
     '2.5.4.3', # commonName
   ],
   structural_oc_oids=[
@@ -1920,7 +1920,7 @@ class AESudoRuleDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSudoRule)(aeStatus=0))'
 
 syntax_registry.registerAttrType(
-  AESudoRuleDN.oid,[
+  AESudoRuleDN.oid, [
     AE_OID_PREFIX+'.4.21', # aeVisibleSudoers
   ]
 )
@@ -1931,7 +1931,7 @@ class AENotBefore(NotBefore):
   desc = 'AE-DIR: begin of validity period'
 
 syntax_registry.registerAttrType(
-  AENotBefore.oid,[
+  AENotBefore.oid, [
     AE_OID_PREFIX+'.4.22', # aeNotBefore
   ]
 )
@@ -1941,7 +1941,7 @@ class AENotAfter(NotAfter):
   oid = 'AENotAfter-oid'
   desc = 'AE-DIR: begin of validity period'
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     result = NotAfter._validate(self,attrValue)
     if result:
       ae_not_after = time.strptime(attrValue,r'%Y%m%d%H%M%SZ')
@@ -1954,7 +1954,7 @@ class AENotAfter(NotAfter):
     return result
 
 syntax_registry.registerAttrType(
-  AENotAfter.oid,[
+  AENotAfter.oid, [
     AE_OID_PREFIX+'.4.23', # aeNotAfter
   ]
 )
@@ -1970,7 +1970,7 @@ class AEStatus(SelectList,Integer):
     u'2':u'archived',
   }
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     result = SelectList._validate(self,attrValue)
     if not result or not attrValue:
       return result
@@ -1992,7 +1992,7 @@ class AEStatus(SelectList,Integer):
       result = ae_status==-1
     return result
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     if not attrValues or not attrValues[0]:
       return attrValues
     ae_status = int(attrValues[0])
@@ -2019,14 +2019,14 @@ class AEStatus(SelectList,Integer):
             ae_status = ae_expiry_status
     return [str(ae_status)]
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     if not commandbutton:
       return Integer.displayValue(self,valueindex)
     else:
-      return SelectList.displayValue(self,valueindex,commandbutton)
+      return SelectList.displayValue(self, valueindex, commandbutton)
 
 syntax_registry.registerAttrType(
-  AEStatus.oid,[
+  AEStatus.oid, [
     AE_OID_PREFIX+'.4.5', # aeStatus
   ]
 )
@@ -2042,7 +2042,7 @@ class AEExpiryStatus(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  AEStatus.oid,[
+  AEStatus.oid, [
     AE_OID_PREFIX+'.4.46', # aeExpiryStatus
   ]
 )
@@ -2069,7 +2069,7 @@ class AESudoUser(web2ldap.app.plugins.sudoers.SudoUserGroup):
   )
 
 syntax_registry.registerAttrType(
-  AESudoUser.oid,[
+  AESudoUser.oid, [
     '1.3.6.1.4.1.15953.9.1.1', # sudoUser
   ],
   structural_oc_oids=[
@@ -2084,7 +2084,7 @@ class AEServiceSshPublicKey(SshPublicKey):
   reObj = re.compile('(^|.* )(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ssh-ed25519) (?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)? .+$')
 
 syntax_registry.registerAttrType(
-  AEServiceSshPublicKey.oid,[
+  AEServiceSshPublicKey.oid, [
     '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
   ],
   structural_oc_oids=[
@@ -2101,7 +2101,7 @@ class AEEntryDNAEAuthcToken(DistinguishedName):
   )
 
 syntax_registry.registerAttrType(
-  AEEntryDNAEAuthcToken.oid,[
+  AEEntryDNAEAuthcToken.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -2122,7 +2122,7 @@ class AEEntryDNAEPolicy(DistinguishedName):
   )
 
 syntax_registry.registerAttrType(
-  AEEntryDNAEPolicy.oid,[
+  AEEntryDNAEPolicy.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[
@@ -2136,7 +2136,7 @@ class AEUserSshPublicKey(SshPublicKey):
   desc = 'AE-DIR: aeUser:sshPublicKey'
 
 syntax_registry.registerAttrType(
-  AEUserSshPublicKey.oid,[
+  AEUserSshPublicKey.oid, [
     '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
   ],
   structural_oc_oids=[
@@ -2182,7 +2182,7 @@ class AERFC822MailMember(DynamicValueSelectList):
     return input_field
 
 syntax_registry.registerAttrType(
-  AERFC822MailMember.oid,[
+  AERFC822MailMember.oid, [
     '1.3.6.1.4.1.42.2.27.2.1.15', # rfc822MailMember
   ],
   structural_oc_oids=[
@@ -2197,7 +2197,7 @@ class AEPwdPolicy(web2ldap.app.plugins.ppolicy.PwdPolicySubentry):
   ldap_url = 'ldap:///_??sub?(&(objectClass=aePolicy)(objectClass=pwdPolicy)(aeStatus=0))'
 
 syntax_registry.registerAttrType(
-  AEPwdPolicy.oid,[
+  AEPwdPolicy.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.23', # pwdPolicySubentry
   ],
   structural_oc_oids=[
@@ -2214,7 +2214,7 @@ class AESudoHost(IA5String):
   maxValues = 1
   reobj = re.compile('^ALL$')
 
-  def transmute(self,attrValues):
+  def transmute(self, attrValues):
     return ['ALL']
 
   def formField(self):
@@ -2228,7 +2228,7 @@ class AESudoHost(IA5String):
     return input_field
 
 syntax_registry.registerAttrType(
-  AESudoHost.oid,[
+  AESudoHost.oid, [
     '1.3.6.1.4.1.15953.9.1.2', # sudoHost
   ],
   structural_oc_oids=[
@@ -2247,7 +2247,7 @@ class AELoginShell(Shell):
   }
 
 syntax_registry.registerAttrType(
-  AELoginShell.oid,[
+  AELoginShell.oid, [
     '1.3.6.1.1.1.1.4', # loginShell
   ],
   structural_oc_oids=[
@@ -2273,7 +2273,7 @@ class AEOathHOTPToken(OathHOTPToken):
     return OathHOTPToken._determineFilter(self)
 
 syntax_registry.registerAttrType(
-  AEOathHOTPToken.oid,[
+  AEOathHOTPToken.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.9.1', # oathHOTPToken
   ],
   structural_oc_oids=[AE_USER_OID], # aeUser
@@ -2294,7 +2294,7 @@ class AESSHPermissions(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  AESSHPermissions.oid,[
+  AESSHPermissions.oid, [
     AE_OID_PREFIX+'.4.47', # aeSSHPermissions
   ]
 )
@@ -2307,7 +2307,7 @@ class AERemoteHostAEHost(DynamicValueSelectList):
   input_fallback = True # fallback to normal input field
 
 syntax_registry.registerAttrType(
-  AERemoteHostAEHost.oid,[
+  AERemoteHostAEHost.oid, [
     AE_OID_PREFIX+'.4.8',  # aeRemoteHost
   ],
   structural_oc_oids=[AE_HOST_OID], # aeHost
@@ -2323,7 +2323,7 @@ class AEDescriptionAENwDevice(ComposedAttribute):
   )
 
 syntax_registry.registerAttrType(
-  AEDescriptionAENwDevice.oid,[
+  AEDescriptionAENwDevice.oid, [
     '2.5.4.13', # description
   ],
   structural_oc_oids=[AE_NWDEVICE_OID], # aeNwDevice

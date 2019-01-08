@@ -17,14 +17,14 @@ class SudoUserGroup(DynamicValueSelectList):
 
 
 syntax_registry.registerAttrType(
-  NotBefore.oid,[
+  NotBefore.oid, [
     '1.3.6.1.4.1.15953.9.1.8', # sudoNotBefore
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  NotAfter.oid,[
+  NotAfter.oid, [
     '1.3.6.1.4.1.15953.9.1.9', # sudoNotAfter
   ]
 )

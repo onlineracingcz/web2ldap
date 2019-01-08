@@ -21,7 +21,7 @@ class AddressListDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=addressList)'
 
 syntax_registry.registerAttrType(
-  AddressListDN.oid,[
+  AddressListDN.oid, [
     '2.16.840.1.101.2.2.1.61', # listPointer (see section 3.58 of draft-dally-acp133-and-ldap-01)
     '2.6.5.2.14',              # mhs-dl-related-lists (see section 3.70 of draft-dally-acp133-and-ldap-01)
   ]
@@ -38,7 +38,7 @@ class LMF(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  LMF.oid,[
+  LMF.oid, [
     '2.16.840.1.101.2.2.1.62', # lmf
   ]
 )
@@ -57,7 +57,7 @@ class TRC(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  TRC.oid,[
+  TRC.oid, [
     '2.16.840.1.101.2.2.1.97', # tRC
   ]
 )

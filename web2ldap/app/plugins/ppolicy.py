@@ -23,7 +23,7 @@ class PwdCheckQuality(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  PwdCheckQuality.oid,[
+  PwdCheckQuality.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.5', # pwdCheckQuality (see draft-behera-ldap-password-policy)
   ]
 )
@@ -36,11 +36,11 @@ class PwdAttribute(SelectList):
     u'2.5.4.35':u'userPassword',
   }
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return not attrValue or attrValue in ('2.5.4.35','userPassword')
 
 syntax_registry.registerAttrType(
-  PwdAttribute.oid,[
+  PwdAttribute.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.1', # pwdAttribute (see draft-behera-ldap-password-policy)
   ]
 )
@@ -52,7 +52,7 @@ class PwdPolicySubentry(DynamicDNSelectList):
   ldap_url = 'ldap:///_??sub?(|(objectClass=pwdPolicy)(objectClass=ds-cfg-password-policy))'
 
 syntax_registry.registerAttrType(
-  PwdPolicySubentry.oid,[
+  PwdPolicySubentry.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.23', # pwdPolicySubentry
   ]
 )
@@ -74,8 +74,8 @@ class PwdMaxAge(Timespan):
       ('search_string',self._search_timestamp(int(self.attrValue.strip()))),
     )
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    ts_dv = Timespan.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    ts_dv = Timespan.displayValue(self, valueindex, commandbutton)
     # Possibly display a link
     ocs = self._entry.object_class_oid_set()
     if not commandbutton or not 'pwdPolicy' in ocs:
@@ -98,7 +98,7 @@ class PwdMaxAge(Timespan):
     return ' '.join((ts_dv,search_link))
 
 syntax_registry.registerAttrType(
-  PwdMaxAge.oid,[
+  PwdMaxAge.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.3', # pwdMaxAge
   ]
 )
@@ -124,7 +124,7 @@ class PwdExpireWarning(PwdMaxAge):
     )
 
 syntax_registry.registerAttrType(
-  PwdExpireWarning.oid,[
+  PwdExpireWarning.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.7', # pwdExpireWarning
   ]
 )
@@ -137,18 +137,18 @@ class PwdAccountLockedTime(GeneralizedTime):
     '000001010000Z':'permanently locked',
   }
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return attrValue in self.magic_values or GeneralizedTime._validate(self,attrValue)
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    gt_disp_html = GeneralizedTime.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    gt_disp_html = GeneralizedTime.displayValue(self, valueindex, commandbutton)
     if self.attrValue in self.magic_values:
       return '%s (%s)' % (gt_disp_html,self.magic_values[self.attrValue])
     else:
       return gt_disp_html
 
 syntax_registry.registerAttrType(
-  PwdAccountLockedTime.oid,[
+  PwdAccountLockedTime.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.17', # pwdAccountLockedTime
   ]
 )
@@ -159,8 +159,8 @@ class PwdChangedTime(GeneralizedTime):
   desc = 'user entry: Last password change time'
   time_divisors = Timespan.time_divisors
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    gt_disp_html = GeneralizedTime.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    gt_disp_html = GeneralizedTime.displayValue(self, valueindex, commandbutton)
     try:
       pwd_changed_dt = strptime(self.attrValue)
     except ValueError:
@@ -210,21 +210,21 @@ class PwdChangedTime(GeneralizedTime):
 
 
 syntax_registry.registerAttrType(
-  PwdChangedTime.oid,[
+  PwdChangedTime.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.16', # pwdChangedTime
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  UserPassword.oid,[
+  UserPassword.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.20', # pwdHistory
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  Timespan.oid,[
+  Timespan.oid, [
     '1.3.6.1.4.1.42.2.27.8.1.2',  # pwdMinAge
     '1.3.6.1.4.1.42.2.27.8.1.12', # pwdFailureCountInterval
     '1.3.6.1.4.1.42.2.27.8.1.10', # pwdLockoutDuration

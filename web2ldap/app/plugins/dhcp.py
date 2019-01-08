@@ -24,9 +24,9 @@ class DHCPConfigStatement(MultilineText):
   lineSep = u''
   whitespace_cleaning = False
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     r = ['<code>%s</code>' % (
-      MultilineText.displayValue(self,valueindex,commandbutton)
+      MultilineText.displayValue(self, valueindex, commandbutton)
     )]
     if commandbutton:
       try:
@@ -85,7 +85,7 @@ class DHCPConfigStatement(MultilineText):
     return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
-  DHCPConfigStatement.oid,[
+  DHCPConfigStatement.oid, [
     '2.16.840.1.113719.1.203.4.3', # dhcpStatements
     '2.16.840.1.113719.1.203.6.9', # dhcpOptions
     '2.16.840.1.113719.1.203.4.7', # dhcpOption
@@ -99,7 +99,7 @@ class DHCPServerDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpServer)'
 
 syntax_registry.registerAttrType(
-  DHCPServerDN.oid,[
+  DHCPServerDN.oid, [
     '2.16.840.1.113719.1.203.4.1', # dhcpPrimaryDN
     '2.16.840.1.113719.1.203.4.2', # dhcpSecondaryDN
     '2.16.840.1.113719.1.203.4.54', # dhcpFailOverPeerDN
@@ -113,7 +113,7 @@ class DHCPOptionsDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpOptions)'
 
 syntax_registry.registerAttrType(
-  DHCPOptionsDN.oid,[
+  DHCPOptionsDN.oid, [
     '2.16.840.1.113719.1.203.4.9', # dhcpOptionsDN
   ]
 )
@@ -125,7 +125,7 @@ class DHCPHostDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpHost)'
 
 syntax_registry.registerAttrType(
-  DHCPHostDN.oid,[
+  DHCPHostDN.oid, [
     '2.16.840.1.113719.1.203.4.10', # dhcpHostDN
     '2.16.840.1.113719.1.203.4.31', # dhcpReservedForClient
     '2.16.840.1.113719.1.203.4.32', # dhcpAssignedToClient
@@ -139,7 +139,7 @@ class DHCPPoolDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_??sub?(objectClass=dhcpPool)'
 
 syntax_registry.registerAttrType(
-  DHCPPoolDN.oid,[
+  DHCPPoolDN.oid, [
     '2.16.840.1.113719.1.203.4.11', # dhcpPoolDN
   ]
 )
@@ -151,7 +151,7 @@ class DHCPGroupDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpGroup)'
 
 syntax_registry.registerAttrType(
-  DHCPGroupDN.oid,[
+  DHCPGroupDN.oid, [
     '2.16.840.1.113719.1.203.4.12', # dhcpGroupDN
   ]
 )
@@ -163,7 +163,7 @@ class DHCPSubnetDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpSubnet)'
 
 syntax_registry.registerAttrType(
-  DHCPSubnetDN.oid,[
+  DHCPSubnetDN.oid, [
     '2.16.840.1.113719.1.203.4.13', # dhcpSubnetDN
   ]
 )
@@ -175,7 +175,7 @@ class DHCPLeasesDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpLeases)'
 
 syntax_registry.registerAttrType(
-  DHCPLeasesDN.oid,[
+  DHCPLeasesDN.oid, [
     '2.16.840.1.113719.1.203.4.14', # dhcpLeaseDN
     '2.16.840.1.113719.1.203.4.15', # dhcpLeasesDN
   ]
@@ -188,7 +188,7 @@ class DHCPClassesDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpClass)'
 
 syntax_registry.registerAttrType(
-  DHCPClassesDN.oid,[
+  DHCPClassesDN.oid, [
     '2.16.840.1.113719.1.203.4.16', # dhcpClassesDN
   ]
 )
@@ -200,7 +200,7 @@ class DHCPSubclassesDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpSubclass)'
 
 syntax_registry.registerAttrType(
-  DHCPSubclassesDN.oid,[
+  DHCPSubclassesDN.oid, [
     '2.16.840.1.113719.1.203.4.17', # dhcpSubclassesDN
   ]
 )
@@ -212,7 +212,7 @@ class DHCPSharedNetworkDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpSharedNetwork)'
 
 syntax_registry.registerAttrType(
-  DHCPSharedNetworkDN.oid,[
+  DHCPSharedNetworkDN.oid, [
     '2.16.840.1.113719.1.203.4.18', # dhcpSharedNetworkDN
   ]
 )
@@ -224,7 +224,7 @@ class DHCPServiceDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpService)'
 
 syntax_registry.registerAttrType(
-  DHCPServiceDN.oid,[
+  DHCPServiceDN.oid, [
     '2.16.840.1.113719.1.203.4.19', # dhcpServiceDN
   ]
 )
@@ -234,9 +234,9 @@ class DHCPHWAddress(MacAddress):
   oid = 'DHCPHWAddress-oid'
   desc = 'Network classifier and MAC address'
   maxLen = 26
-  reObj=re.compile(r'^(ethernet|token-ring|fddi) ([0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}$')
+  reObj = re.compile(r'^(ethernet|token-ring|fddi) ([0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}$')
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     attrValue = attrValue.strip()
     if len(attrValue)==17:
       return 'ethernet %s' % attrValue
@@ -244,7 +244,7 @@ class DHCPHWAddress(MacAddress):
       return attrValue
 
 syntax_registry.registerAttrType(
-  DHCPHWAddress.oid,[
+  DHCPHWAddress.oid, [
     '2.16.840.1.113719.1.203.4.34', # dhcpHWAddress
   ]
 )
@@ -261,7 +261,7 @@ class DHCPNetMask(Integer):
     return self.inputSize
 
 syntax_registry.registerAttrType(
-  DHCPNetMask.oid,[
+  DHCPNetMask.oid, [
     '2.16.840.1.113719.1.203.4.6', # dhcpNetMask
   ]
 )
@@ -286,10 +286,10 @@ class DHCPRange(IA5String):
         pass
     return form_value
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     return attrValue.strip().replace('  ',' ').replace('-',' ').replace('..',' ')
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     try:
       l,h = attrValue.split(' ',1)
     except (IndexError,ValueError):
@@ -311,7 +311,7 @@ class DHCPRange(IA5String):
 
 
 syntax_registry.registerAttrType(
-  DHCPRange.oid,[
+  DHCPRange.oid, [
     '2.16.840.1.113719.1.203.4.4', # dhcpRange
   ]
 )
@@ -356,21 +356,21 @@ class DHCPDnsStatus(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  DHCPDnsStatus.oid,[
+  DHCPDnsStatus.oid, [
     '2.16.840.1.113719.1.203.4.28', # dhcpDnsStatus
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  DNSDomain.oid,[
+  DNSDomain.oid, [
     '2.16.840.1.113719.1.203.4.27', # dhcpDomainName
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  DHCPAddressState.oid,[
+  DHCPAddressState.oid, [
     '2.16.840.1.113719.1.203.4.22', # dhcpAddressState
   ]
 )

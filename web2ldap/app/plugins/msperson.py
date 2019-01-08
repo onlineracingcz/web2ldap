@@ -27,7 +27,7 @@ class Gender(PropertiesSelectList):
   )
 
 syntax_registry.registerAttrType(
-  Gender.oid,[
+  Gender.oid, [
     '1.3.6.1.4.1.5427.1.389.4.7', # gender (defined for msPerson)
   ]
 )
@@ -46,7 +46,7 @@ class DateOfBirth(ISO8601Date):
       age = age-1
     return age
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     try:
       birth_dt = datetime.datetime.strptime(attrValue,self.storageFormat)
     except ValueError:
@@ -54,8 +54,8 @@ class DateOfBirth(ISO8601Date):
     else:
       return self._age(birth_dt)>=0
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    raw_date = ISO8601Date.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    raw_date = ISO8601Date.displayValue(self, valueindex, commandbutton)
     try:
       birth_dt = datetime.datetime.strptime(self.attrValue,self.storageFormat)
     except ValueError:
@@ -64,7 +64,7 @@ class DateOfBirth(ISO8601Date):
       return '%s (%s years old)' % (raw_date,self._age(birth_dt))
 
 syntax_registry.registerAttrType(
-  DateOfBirth.oid,[
+  DateOfBirth.oid, [
     '1.3.6.1.4.1.5427.1.389.4.2', # dateOfBirth
   ]
 )
@@ -80,7 +80,7 @@ class LabeledBICandIBAN(DirectoryString):
   desc = 'International bank account number (IBAN) syntax (see ISO 13616:1997)'
 
 syntax_registry.registerAttrType(
-  LabeledBICandIBAN.oid,[
+  LabeledBICandIBAN.oid, [
     '1.3.6.1.4.1.5427.1.389.4.13', # labeledBICandIBAN
   ]
 )
@@ -94,7 +94,7 @@ class EuVATId(IA5String):
   """
   oid = 'EuVATId-oid'
   desc = 'Value Added Tax Ident Number of organizations within European Union'
-  reObj=re.compile(
+  reObj = re.compile(
     r'^((AT)?U[0-9]{8}|' +
     r'(BE)?[0-9]{10}|' +
     r'(BG)?[0-9]{9,10}|' +
@@ -124,17 +124,17 @@ class EuVATId(IA5String):
     r'(SK)?[0-9]{10})$'
   )
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     if vatnumber:
       return vatnumber.check_vat(attrValue)
     else:
       return IA5String._validate(self,attrValue)
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     return attrValue.upper().replace(' ','')
 
 syntax_registry.registerAttrType(
-  EuVATId.oid,[
+  EuVATId.oid, [
     '1.3.6.1.4.1.5427.1.389.4.11', # euVATId
   ]
 )

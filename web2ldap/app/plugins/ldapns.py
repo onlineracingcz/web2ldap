@@ -35,7 +35,7 @@ class AuthorizedService(SelectList):
 
 
 syntax_registry.registerAttrType(
-  AuthorizedService.oid,[
+  AuthorizedService.oid, [
     '1.3.6.1.4.1.5322.17.2.1', # authorizedService
   ]
 )

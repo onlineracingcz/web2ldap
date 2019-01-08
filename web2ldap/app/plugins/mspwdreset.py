@@ -10,7 +10,7 @@ from web2ldap.app.schema.syntaxes import \
 
 
 syntax_registry.registerAttrType(
-  HashAlgorithmOID.oid,[
+  HashAlgorithmOID.oid, [
     '1.3.6.1.4.1.5427.1.389.4.336' , # msPwdResetHashAlgorithm
   ]
 )

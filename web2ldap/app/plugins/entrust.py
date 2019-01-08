@@ -11,7 +11,7 @@ from web2ldap.app.schema.syntaxes import Binary,syntax_registry
 # and treats these attribute types as not human-readable and
 # not editable binary blobs
 syntax_registry.registerAttrType(
-  Binary.oid,[
+  Binary.oid, [
     '1.2.840.113533.7.68.22', # entrustRoamFileEncInfo
     '1.2.840.113533.7.79.0',  # entrustRoamingCAPAB
     '1.2.840.113533.7.68.28', # entrustRoamingEOP

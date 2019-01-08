@@ -20,21 +20,21 @@ class UniventionPolicyReference(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=univentionPolicy)'
 
 syntax_registry.registerAttrType(
-  UniventionPolicyReference.oid,[
+  UniventionPolicyReference.oid, [
     '1.3.6.1.4.1.10176.1000', # univentionPolicyReference
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  DateOfBirth.oid,[
+  DateOfBirth.oid, [
     '1.3.6.1.4.1.10176.99', # univentionBirthday
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  RFC822Address.oid,[
+  RFC822Address.oid, [
     '1.3.6.1.4.1.10176.1010.1.1', # mailPrimaryAddress
   ]
 )
@@ -44,7 +44,7 @@ class UniventionLDAPACLData(Binary,MultilineText):
   oid = 'UniventionLDAPACLData-oid'
   desc = 'bzip2-ed LDAP ACL data in Univention'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     attr_value = bz2.decompress(self.attrValue)
     attr_value_u = self._ls.uc_decode(attr_value)[0]
     lines = [
@@ -58,7 +58,7 @@ class UniventionLDAPACLData(Binary,MultilineText):
     )
 
 syntax_registry.registerAttrType(
-  UniventionLDAPACLData.oid,[
+  UniventionLDAPACLData.oid, [
     '1.3.6.1.4.1.10176.4202.1.22', # univentionLDAPACLData
   ]
 )

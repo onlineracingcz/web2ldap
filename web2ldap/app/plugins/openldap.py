@@ -46,7 +46,7 @@ class CSN(IA5String):
 
 
 syntax_registry.registerAttrType(
-  CSN.oid,[
+  CSN.oid, [
     '1.3.6.1.4.1.4203.666.1.25', # contextCSN
     '1.3.6.1.4.1.4203.666.1.7', # entryCSN
     '1.3.6.1.4.1.4203.666.1.13', # namingCSN
@@ -61,7 +61,7 @@ syntax_registry.registerAttrType(
 
 
 syntax_registry.registerAttrType(
-  NamingContexts.oid,[
+  NamingContexts.oid, [
     '1.3.6.1.4.1.4203.1.12.2.3.2.0.10', # olcSuffix
   ]
 )
@@ -70,11 +70,11 @@ syntax_registry.registerAttrType(
 class OlcDbIndex(DirectoryString):
   oid = 'OlcDbIndex-oid'
   desc = 'OpenLDAP indexing directive'
-  reObj=re.compile("^[a-zA-Z]?[a-zA-Z0-9.,;-]* (pres|eq|sub)(,(pres|eq|sub))*$")
+  reObj = re.compile("^[a-zA-Z]?[a-zA-Z0-9.,;-]* (pres|eq|sub)(,(pres|eq|sub))*$")
 
 
 syntax_registry.registerAttrType(
-  OlcDbIndex.oid,[
+  OlcDbIndex.oid, [
     '1.3.6.1.4.1.4203.1.12.2.3.2.0.2', # olcDbIndex
   ]
 )
@@ -90,7 +90,7 @@ class OlcSubordinate(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OlcSubordinate.oid,[
+  OlcSubordinate.oid, [
     '1.3.6.1.4.1.4203.1.12.2.3.2.0.15', # olcSubordinate
   ]
 )
@@ -116,7 +116,7 @@ class OlcRootDN(BindDN):
     return form_value
 
 syntax_registry.registerAttrType(
-  OlcRootDN.oid,[
+  OlcRootDN.oid, [
     '1.3.6.1.4.1.4203.1.12.2.3.2.0.8', # olcRootDN
   ]
 )
@@ -129,12 +129,12 @@ class OlcMultilineText(MultilineText):
   minInputRows = 3
   whitespace_cleaning = False
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    return '<code>%s</code>' % MultilineText.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    return '<code>%s</code>' % MultilineText.displayValue(self, valueindex, commandbutton)
 
 
 syntax_registry.registerAttrType(
-  OlcMultilineText.oid,[
+  OlcMultilineText.oid, [
     '1.3.6.1.4.1.4203.1.12.2.3.0.1', # olcAccess
     '1.3.6.1.4.1.4203.1.12.2.3.0.6', # olcAuthIDRewrite
     '1.3.6.1.4.1.4203.1.12.2.3.0.8', # olcAuthzRegexp
@@ -146,25 +146,25 @@ class OlcSyncRepl(OlcMultilineText,LDAPUrl):
   desc = 'OpenLDAP syncrepl directive'
   minInputRows = 5
 
-  def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
-    OlcMultilineText.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry)
+  def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+    OlcMultilineText.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
     self._sync_repl_desc = ldap0.openldap.SyncReplDesc(attrValue)
     return # __init__()
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     if commandbutton and self.attrValue:
       return ' '.join((
-        OlcMultilineText.displayValue(self,valueindex,commandbutton),
+        OlcMultilineText.displayValue(self, valueindex, commandbutton),
         web2ldap.app.gui.LDAPURLButton(
             self._sid, self._form, self._ls,
             self._sync_repl_desc.ldap_url(),
         ),
       ))
     else:
-      OlcMultilineText.displayValue(self,valueindex,commandbutton)
+      OlcMultilineText.displayValue(self, valueindex, commandbutton)
 
 syntax_registry.registerAttrType(
-  OlcSyncRepl.oid,[
+  OlcSyncRepl.oid, [
     '1.3.6.1.4.1.4203.1.12.2.3.2.0.11', # olcSyncrepl
   ]
 )
@@ -176,7 +176,7 @@ class OlmSeeAlso(DynamicDNSelectList):
   ldap_url = 'ldap:///_?monitoredInfo?sub?(&(objectClass=monitoredObject)(|(entryDN:dnOneLevelMatch:=cn=Databases,cn=Monitor)(entryDN:dnOneLevelMatch:=cn=Overlays,cn=Monitor)(entryDN:dnOneLevelMatch:=cn=Backends,cn=Monitor)))'
 
 syntax_registry.registerAttrType(
-  OlmSeeAlso.oid,[
+  OlmSeeAlso.oid, [
     '2.5.4.34', # seeAlso
   ],
   structural_oc_oids=['1.3.6.1.4.1.4203.666.3.16.8'], # monitoredObject
@@ -188,14 +188,14 @@ class OlcPPolicyDefault(DistinguishedName,DynamicDNSelectList):
   desc = 'DN of a pwdPolicy object for uncustomized objects'
   ldap_url = 'ldap:///_?cn?sub?(objectClass=pwdPolicy)'
 
-  def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
+  def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
     DynamicDNSelectList.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=entry)
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return DynamicDNSelectList._validate(self,attrValue)
 
 syntax_registry.registerAttrType(
-  OlcPPolicyDefault.oid,[
+  OlcPPolicyDefault.oid, [
     '1.3.6.1.4.1.4203.1.12.2.3.3.12.1', # olcPPolicyDefault
   ]
 )
@@ -212,7 +212,7 @@ class OlcMemberOfDangling(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OlcMemberOfDangling.oid,[
+  OlcMemberOfDangling.oid, [
     '1.3.6.1.4.1.4203.1.12.2.3.3.18.1', # olcMemberOfDangling
   ]
 )
@@ -224,7 +224,7 @@ syntax_registry.registerAttrType(
 
 
 syntax_registry.registerAttrType(
-  NotBefore.oid,[
+  NotBefore.oid, [
     '1.3.6.1.4.1.4203.666.11.5.1.2','reqStart',
     '1.3.6.1.4.1.4203.666.11.5.1.3','reqEnd',
   ]
@@ -235,8 +235,8 @@ class AuditContext(NamingContexts):
   oid = 'AuditContext'
   desc = 'OpenLDAP DN pointing to audit naming context'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    r = [DistinguishedName.displayValue(self,valueindex,commandbutton)]
+  def displayValue(self, valueindex=False, commandbutton=False):
+    r = [DistinguishedName.displayValue(self, valueindex, commandbutton)]
     if commandbutton:
       r.extend([
         self._form.applAnchor(
@@ -281,7 +281,7 @@ class ReqResult(LDAPv3ResultCode):
   oid = 'ReqResult-oid'
 
 syntax_registry.registerAttrType(
-  ReqResult.oid,[
+  ReqResult.oid, [
     '1.3.6.1.4.1.4203.666.11.5.1.7','reqResult', # reqResult
   ]
 )
@@ -292,7 +292,7 @@ class ReqMod(OctetString,DirectoryString):
   desc = 'List of modifications/old values'
   known_modtypes = set(('+','-','=','#',''))
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     if self.attrValue==':':
       # magic value used for fixing OpenLDAP ITS#6545
       return self.attrValue
@@ -300,14 +300,14 @@ class ReqMod(OctetString,DirectoryString):
       mod_attr_type,mod_attr_rest = self.attrValue.split(':',1)
       mod_type = mod_attr_rest[0].strip()
     except (ValueError,IndexError):
-      return OctetString.displayValue(self,valueindex,commandbutton)
+      return OctetString.displayValue(self, valueindex, commandbutton)
     if not mod_type in self.known_modtypes:
-      return OctetString.displayValue(self,valueindex,commandbutton)
+      return OctetString.displayValue(self, valueindex, commandbutton)
     if len(mod_attr_rest)>1:
       try:
         mod_type,mod_attr_value = mod_attr_rest.split(' ',1)
       except ValueError:
-        return OctetString.displayValue(self,valueindex,commandbutton)
+        return OctetString.displayValue(self, valueindex, commandbutton)
     else:
       mod_attr_value = ''
     mod_attr_type_u = mod_attr_type.decode(self._ls.charset)
@@ -324,11 +324,11 @@ class ReqMod(OctetString,DirectoryString):
         )[:-1]
       )
     else:
-      return DirectoryString.displayValue(self,valueindex,commandbutton)
+      return DirectoryString.displayValue(self, valueindex, commandbutton)
     raise ValueError
 
 syntax_registry.registerAttrType(
-  ReqMod.oid,[
+  ReqMod.oid, [
     '1.3.6.1.4.1.4203.666.11.5.1.16','reqMod',
     '1.3.6.1.4.1.4203.666.11.5.1.17','reqOld',
   ]
@@ -339,8 +339,8 @@ class ReqControls(IA5String):
   oid = '1.3.6.1.4.1.4203.666.11.5.3.1'
   desc = 'List of LDAPv3 extended controls sent along with a request'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    result_lines = [IA5String.displayValue(self,valueindex,commandbutton)]
+  def displayValue(self, valueindex=False, commandbutton=False):
+    result_lines = [IA5String.displayValue(self, valueindex, commandbutton)]
     # Eliminate X-ORDERED prefix
     _,rest = self.attrValue.strip().split('}{',1)
     # check whether it ends with }
@@ -385,7 +385,7 @@ class ReqControls(IA5String):
     return '<br>'.join(result_lines)
 
 syntax_registry.registerAttrType(
-  ReqControls.oid,[
+  ReqControls.oid, [
     '1.3.6.1.4.1.4203.666.11.5.1.10','reqControls',
     '1.3.6.1.4.1.4203.666.11.5.1.11','reqRespControls',
   ]
@@ -395,8 +395,8 @@ syntax_registry.registerAttrType(
 class ReqEntryUUID(UUID):
   oid = 'ReqEntryUUID-oid'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    display_value = UUID.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    display_value = UUID.displayValue(self, valueindex, commandbutton)
     if commandbutton:
       return web2ldapcnf.command_link_separator.join((
         display_value,
@@ -417,7 +417,7 @@ class ReqEntryUUID(UUID):
       return display_value
 
 syntax_registry.registerAttrType(
-  ReqEntryUUID.oid,[
+  ReqEntryUUID.oid, [
     '1.3.6.1.4.1.4203.666.11.5.1.31','reqEntryUUID', # reqEntryUUID
   ]
 )
@@ -426,8 +426,8 @@ syntax_registry.registerAttrType(
 class ReqSession(Integer):
   oid = 'ReqSession-oid'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    display_value = Integer.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    display_value = Integer.displayValue(self, valueindex, commandbutton)
     if commandbutton:
       return web2ldapcnf.command_link_separator.join((
         display_value,
@@ -448,7 +448,7 @@ class ReqSession(Integer):
       return display_value
 
 syntax_registry.registerAttrType(
-  ReqSession.oid,[
+  ReqSession.oid, [
     '1.3.6.1.4.1.4203.666.11.5.1.5','reqSession', # reqSession
   ]
 )
@@ -465,7 +465,7 @@ class Authz(DirectoryString):
 
 
 syntax_registry.registerAttrType(
-  AuthzDN.oid,[
+  AuthzDN.oid, [
     'monitorConnectionAuthzDN',
     '1.3.6.1.4.1.4203.666.1.55.7', # monitorConnectionAuthzDN
     'reqAuthzID',
@@ -513,7 +513,7 @@ syntax_registry.registerAttrType(
 
 
 syntax_registry.registerAttrType(
-  Uri.oid,['monitorConnectionListener']
+  Uri.oid, ['monitorConnectionListener']
 )
 
 
@@ -523,7 +523,7 @@ for symbol_name in dir():
 
 
 syntax_registry.registerAttrType(
-  DistinguishedName.oid,[
+  DistinguishedName.oid, [
     'entryDN',
     'reqDN',
   ]

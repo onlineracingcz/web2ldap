@@ -12,7 +12,7 @@ class Member(DistinguishedName):
   desc = 'member attribute in a group entry'
 
 syntax_registry.registerAttrType(
-  Member.oid,[
+  Member.oid, [
     '2.5.4.31', # member
   ]
 )
@@ -26,7 +26,7 @@ class MemberOf(DistinguishedName):
   )
 
 syntax_registry.registerAttrType(
-  MemberOf.oid,[
+  MemberOf.oid, [
     '1.2.840.113556.1.2.102', # memberOf
   ]
 )
@@ -40,7 +40,7 @@ class GroupEntryDN(DistinguishedName):
   )
 
 syntax_registry.registerAttrType(
-  GroupEntryDN.oid,[
+  GroupEntryDN.oid, [
     '1.3.6.1.1.20', # entryDN
   ],
   structural_oc_oids=[

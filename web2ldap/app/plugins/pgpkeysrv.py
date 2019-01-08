@@ -12,7 +12,7 @@ from web2ldap.app.schema.syntaxes import \
 
 
 syntax_registry.registerAttrType(
-  GeneralizedTime.oid,[
+  GeneralizedTime.oid, [
     '1.3.6.1.4.1.3401.8.2.17', # pgpKeyCreateTime
     '1.3.6.1.4.1.3401.8.2.22', # pgpKeyExpireTime
   ]
@@ -22,13 +22,13 @@ syntax_registry.registerAttrType(
 class PgpKey(PreformattedMultilineText):
   oid = 'PgpKey-oid'
   desc = 'PGP key'
-  reObj=re.compile('^-----BEGIN PGP PUBLIC KEY BLOCK-----[a-zA-Z0-9.: ()+/ =\n-]+-----END PGP PUBLIC KEY BLOCK-----$',re.S+re.M)
+  reObj = re.compile('^-----BEGIN PGP PUBLIC KEY BLOCK-----[a-zA-Z0-9.: ()+/ =\n-]+-----END PGP PUBLIC KEY BLOCK-----$',re.S+re.M)
   lineSep = '\n'
   mimeType = 'application/pgp-keys'
   cols = 64
 
 syntax_registry.registerAttrType(
-  PgpKey.oid,[
+  PgpKey.oid, [
     '1.3.6.1.4.1.3401.8.2.11', # pgpKey
   ]
 )
@@ -40,7 +40,7 @@ class PgpCertID(DirectoryString):
   reObj = re.compile('^[a-fA-F0-9]{16}$')
 
 syntax_registry.registerAttrType(
-  PgpCertID.oid,[
+  PgpCertID.oid, [
     '1.3.6.1.4.1.3401.8.2.12', # pgpCertID
   ]
 )
@@ -50,11 +50,11 @@ class OtherPgpCertID(DynamicValueSelectList,PgpCertID):
   oid = 'OtherPgpCertID-oid'
   ldap_url = 'ldap:///_?pgpCertID,pgpCertID?sub?(objectClass=pgpKeyInfo)'
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return PgpCertID._validate(self,attrValue)
 
 syntax_registry.registerAttrType(
-  OtherPgpCertID.oid,[
+  OtherPgpCertID.oid, [
     '1.3.6.1.4.1.3401.8.2.18', # pgpSignerID
   ]
 )

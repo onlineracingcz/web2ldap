@@ -28,7 +28,7 @@ class EduPersonAffiliation(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  EduPersonAffiliation.oid,[
+  EduPersonAffiliation.oid, [
     '1.3.6.1.4.1.5923.1.1.1.1', # eduPersonAffiliation
     '1.3.6.1.4.1.5923.1.1.1.5', # eduPersonPrimaryAffiliation
   ]
@@ -41,7 +41,7 @@ class EduPersonScopedAffiliation(IA5String):
   reObj = re.compile('^(faculty|student|staff|alum|member|affiliate|employee|library-walk-in)@[a-zA-Z0-9.-]+$')
 
 syntax_registry.registerAttrType(
-  EduPersonScopedAffiliation.oid,[
+  EduPersonScopedAffiliation.oid, [
     '1.3.6.1.4.1.5923.1.1.1.9', # eduPersonScopedAffiliation
   ]
 )
@@ -53,7 +53,7 @@ class EduPersonOrgUnitDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_??sub?(objectClass=organizationalUnit)'
 
 syntax_registry.registerAttrType(
-  EduPersonOrgUnitDN.oid,[
+  EduPersonOrgUnitDN.oid, [
     '1.3.6.1.4.1.5923.1.1.1.4', # eduPersonOrgUnitDN
     '1.3.6.1.4.1.5923.1.1.1.8', # eduPersonPrimaryOrgUnitDN
   ]
@@ -66,7 +66,7 @@ class EduPersonOrgDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_??sub?(objectClass=organization)'
 
 syntax_registry.registerAttrType(
-  EduPersonOrgDN.oid,[
+  EduPersonOrgDN.oid, [
     '1.3.6.1.4.1.5923.1.1.1.3', # eduPersonOrgDN
   ]
 )

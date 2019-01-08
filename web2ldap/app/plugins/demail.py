@@ -18,7 +18,7 @@ class DemailMaxAuthLevel(PropertiesSelectList):
   )
 
 syntax_registry.registerAttrType(
-  DemailMaxAuthLevel.oid,[
+  DemailMaxAuthLevel.oid, [
     '1.3.6.1.4.1.7924.2.1.1.1', # demailMaxAuthLevel
   ]
 )

@@ -22,7 +22,7 @@ class AssociatedDomain(DNSDomain):
   oid = 'AssociatedDomain-oid'
   desc = 'Associated DNS domain name (see RFC 4524, section 2.1.)'
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     result = DNSDomain._validate(self,attrValue)
     ocs = self._entry.object_class_oid_set()
     if 'dNSDomain' in ocs or 'dNSDomain2' in ocs:
@@ -60,7 +60,7 @@ class AssociatedDomain(DNSDomain):
             pass
     return result
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     attrValue = DNSDomain.sanitizeInput(self,attrValue)
     if not attrValue:
       parent_domain = (self._parent_domain() or u'').encode(self._ls.charset)
@@ -84,8 +84,8 @@ class AssociatedDomain(DNSDomain):
         form_value = u'.'.join((dc_value,parent_domain))
     return form_value
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    r = [DNSDomain.displayValue(self,valueindex,commandbutton)]
+  def displayValue(self, valueindex=False, commandbutton=False):
+    r = [DNSDomain.displayValue(self, valueindex, commandbutton)]
     if commandbutton:
       av = self._ls.uc_decode(self.attrValue)[0].lower()
       r.append(self._form.applAnchor(
@@ -166,7 +166,7 @@ class AssociatedDomain(DNSDomain):
     return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
-  AssociatedDomain.oid,[
+  AssociatedDomain.oid, [
     '0.9.2342.19200300.100.1.37', # associatedDomain
   ],
 #  structural_oc_oids=[
@@ -180,14 +180,14 @@ class ResourceRecord(DNSDomain,DynamicValueSelectList):
   desc = 'A resource record pointing to another DNS RR'
   ldap_url = 'ldap:///_?associatedDomain,associatedDomain?sub?(objectClass=domainRelatedObject)'
 
-  def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
-    DynamicValueSelectList.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry)
+  def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+    DynamicValueSelectList.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    return DynamicValueSelectList.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    return DynamicValueSelectList.displayValue(self, valueindex, commandbutton)
 
 syntax_registry.registerAttrType(
-  ResourceRecord.oid,[
+  ResourceRecord.oid, [
     '1.3.6.1.4.1.2428.20.1.12',   # pTRRecord
     '0.9.2342.19200300.100.1.29', # nSRecord
   ]
@@ -200,7 +200,7 @@ class CNAMERecord(ResourceRecord):
   maxValues = 1 # It's illegal to have multiple CNAME RR values
 
 syntax_registry.registerAttrType(
-  CNAMERecord.oid,[
+  CNAMERecord.oid, [
     '0.9.2342.19200300.100.1.31', # cNAMERecord
   ]
 )
@@ -211,7 +211,7 @@ class MXRecord(ResourceRecord):
   desc = 'A resource record pointing to a mail exchanger (MX)'
   reObj = re.compile('^[0-9]+[ ]+[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$')
 
-  def _searchReferencedEntry(self,attrValue):
+  def _searchReferencedEntry(self, attrValue):
     try:
       _,hostname = attrValue.split(' ',1)
     except ValueError:
@@ -220,7 +220,7 @@ class MXRecord(ResourceRecord):
       return ResourceRecord._searchReferencedEntry(self,hostname.strip())
 
 syntax_registry.registerAttrType(
-  MXRecord.oid,[
+  MXRecord.oid, [
     '0.9.2342.19200300.100.1.28',   # mXRecord
   ]
 )
@@ -230,8 +230,8 @@ class ARecord(IPv4HostAddress):
   oid = 'ARecord-oid'
   desc = 'A resource record pointing to IPv4 address'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    r = [IPv4HostAddress.displayValue(self,valueindex,commandbutton)]
+  def displayValue(self, valueindex=False, commandbutton=False):
+    r = [IPv4HostAddress.displayValue(self, valueindex, commandbutton)]
     if commandbutton:
       ip_addr = self.addr_class(self.attrValue.decode('ascii'))
       try:
@@ -277,7 +277,7 @@ class ARecord(IPv4HostAddress):
     return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
-  ARecord.oid,[
+  ARecord.oid, [
     '0.9.2342.19200300.100.1.26', # aRecord
   ]
 )
@@ -287,8 +287,8 @@ class AAAARecord(IPv6HostAddress):
   oid = 'AAAARecord-oid'
   desc = 'AAAA resource record pointing to IPv6 address'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    r = [IPv6HostAddress.displayValue(self,valueindex,commandbutton)]
+  def displayValue(self, valueindex=False, commandbutton=False):
+    r = [IPv6HostAddress.displayValue(self, valueindex, commandbutton)]
     if commandbutton:
       ip_addr = self.addr_class(self.attrValue.decode('ascii'))
       try:
@@ -310,7 +310,7 @@ class AAAARecord(IPv6HostAddress):
     return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.registerAttrType(
-  AAAARecord.oid,[
+  AAAARecord.oid, [
     '1.3.6.1.4.1.2428.20.1.28', # aAAARecord
   ]
 )
@@ -337,7 +337,7 @@ class SSHFPRecord(IA5String):
     '2':2*hashlib.sha256().digest_size,
   }
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     if not attrValue:
       return attrValue
     try:
@@ -350,7 +350,7 @@ class SSHFPRecord(IA5String):
     else:
       return ' '.join((key_algo,fp_algo,fp_value))
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     try:
       key_algo,fp_algo,fp_value = filter(None,map(string.strip,attrValue.split(' ')))
     except ValueError:
@@ -365,8 +365,8 @@ class SSHFPRecord(IA5String):
         result = result and len(fp_value)==fp_algo_len
     return result
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    display_value = IA5String.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    display_value = IA5String.displayValue(self, valueindex, commandbutton)
     try:
       key_algo,fp_algo,_ = filter(None,map(string.strip,self.attrValue.split(' ')))
     except ValueError:
@@ -388,7 +388,7 @@ class SSHFPRecord(IA5String):
     return r
 
 syntax_registry.registerAttrType(
-  SSHFPRecord.oid,[
+  SSHFPRecord.oid, [
     '1.3.6.1.4.1.2428.20.1.44', # sSHFPRecord
   ]
 )

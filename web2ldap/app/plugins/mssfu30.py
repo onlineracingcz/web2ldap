@@ -15,7 +15,7 @@ class MsSFU30NisDomain(DynamicValueSelectList):
   ldap_url = 'ldap:///_?cn,cn?sub?(objectClass=msSFU30DomainInfo)'
 
 syntax_registry.registerAttrType(
-  MsSFU30NisDomain.oid,[
+  MsSFU30NisDomain.oid, [
     '1.2.840.113556.1.6.18.1.339', # msSFU30NisDomain
   ]
 )

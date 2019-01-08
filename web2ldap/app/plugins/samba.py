@@ -14,7 +14,7 @@ from web2ldap.app.schema.syntaxes import \
 
 
 syntax_registry.registerAttrType(
-  SecondsSinceEpoch.oid,[
+  SecondsSinceEpoch.oid, [
     '1.3.6.1.4.1.7165.2.1.3', # pwdLastSet
     '1.3.6.1.4.1.7165.2.1.5', # logonTime
     '1.3.6.1.4.1.7165.2.1.6', # logoffTime
@@ -34,7 +34,7 @@ syntax_registry.registerAttrType(
 from web2ldap.app.plugins.activedirectory import LogonHours
 
 syntax_registry.registerAttrType(
-  LogonHours.oid,[
+  LogonHours.oid, [
     '1.3.6.1.4.1.7165.2.1.55', # sambaLogonHours
   ]
 )
@@ -42,7 +42,7 @@ syntax_registry.registerAttrType(
 class SambaAcctFlags(IA5String):
   oid = 'SambaAcctFlags-oid'
   desc = 'Samba 3 account flags'
-  reObj=re.compile('^\[[NDHTUMWSLXI ]{0,16}\]$')
+  reObj = re.compile('^\[[NDHTUMWSLXI ]{0,16}\]$')
   flags_dict = {
     'N':'<b>N</b>o password.',
     'D':'<b>D</b>isabled.',
@@ -57,7 +57,7 @@ class SambaAcctFlags(IA5String):
     'I':'<b>I</b>nterdomain trust account.',
   }
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     flags = self.attrValue[1:-1] # trim brackets
     table_rows = [
       '<tr><td>%s</td><td>%s</td></tr>\n' % ({1:'*',0:''}[f in flags],d)
@@ -69,7 +69,7 @@ class SambaAcctFlags(IA5String):
     )
 
 syntax_registry.registerAttrType(
-  SambaAcctFlags.oid,[
+  SambaAcctFlags.oid, [
     '1.3.6.1.4.1.7165.2.1.26', # sambaAcctFlags
     '1.3.6.1.4.1.7165.2.1.4',  # acctFlags
   ]
@@ -79,7 +79,7 @@ syntax_registry.registerAttrType(
 class SambaSID(IA5String):
   oid = 'SambaSID-oid'
   desc = 'Samba 3 account flags'
-  reObj=re.compile('^S(-[0-9]+)+$',re.IGNORECASE)
+  reObj = re.compile('^S(-[0-9]+)+$',re.IGNORECASE)
 
   def _search_domain_entry(self,domain_name):
     try:
@@ -146,7 +146,7 @@ class SambaSID(IA5String):
     return result
 
 syntax_registry.registerAttrType(
-  SambaSID.oid,[
+  SambaSID.oid, [
     '1.3.6.1.4.1.7165.2.1.20', # sambaSID
   ]
 )
@@ -162,7 +162,7 @@ class SambaForceLogoff(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  SambaForceLogoff.oid,[
+  SambaForceLogoff.oid, [
     '1.3.6.1.4.1.7165.2.1.66', # sambaForceLogoff
   ]
 )
@@ -177,7 +177,7 @@ class SambaLogonToChgPwd(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  SambaLogonToChgPwd.oid,[
+  SambaLogonToChgPwd.oid, [
     '1.3.6.1.4.1.7165.2.1.60', # sambaLogonToChgPwd
   ]
 )
@@ -193,7 +193,7 @@ class SambaGroupType(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  SambaGroupType.oid,[
+  SambaGroupType.oid, [
     '1.3.6.1.4.1.7165.2.1.19', # sambaGroupType
   ]
 )
@@ -205,7 +205,7 @@ class ReferencedSID(DynamicValueSelectList):
   ldap_url = 'ldap:///_?sambaSID,cn?sub?'
 
 syntax_registry.registerAttrType(
-  ReferencedSID.oid,[
+  ReferencedSID.oid, [
     '1.3.6.1.4.1.7165.2.1.51', # sambaSIDList
   ]
 )
@@ -217,7 +217,7 @@ class SambaGroupSID(DynamicValueSelectList):
   ldap_url = 'ldap:///_?sambaSID,cn?sub?(objectClass=sambaGroupMapping)'
 
 syntax_registry.registerAttrType(
-  SambaGroupSID.oid,[
+  SambaGroupSID.oid, [
     '1.3.6.1.4.1.7165.2.1.23', # sambaPrimaryGroupSID
   ]
 )
@@ -229,14 +229,14 @@ class SambaDomainName(DynamicValueSelectList):
   ldap_url = 'ldap:///_?sambaDomainName,sambaDomainName?sub?(objectClass=sambaDomain)'
 
 syntax_registry.registerAttrType(
-  SambaDomainName.oid,[
+  SambaDomainName.oid, [
     '1.3.6.1.4.1.7165.2.1.38', # sambaDomainName
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  DirectoryString.oid,[
+  DirectoryString.oid, [
     '1.3.6.1.4.1.7165.2.1.38', # sambaDomainName
   ],
   structural_oc_oids=[
@@ -257,7 +257,7 @@ class SambaHomeDrive(SelectList):
   ])
 
 syntax_registry.registerAttrType(
-  SambaHomeDrive.oid,[
+  SambaHomeDrive.oid, [
     '1.3.6.1.4.1.7165.2.1.33', # sambaHomeDrive
   ]
 )

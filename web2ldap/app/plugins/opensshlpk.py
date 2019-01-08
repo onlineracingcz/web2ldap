@@ -22,13 +22,13 @@ class SshPublicKey(DirectoryString):
   hash_algorithms = ('md5','sha1','sha256','sha512')
   fileExt = 'pub'
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     if attrValue:
       return DirectoryString.sanitizeInput(self,attrValue).strip().replace('\r','').replace('\n','')
     else:
       return attrValue
 
-  def _extract_pk_params(self,attrValue):
+  def _extract_pk_params(self, attrValue):
     attr_value = attrValue.decode(self._ls.charset)
     try:
       pk_type,pk_base64,pk_comment = attr_value.split(' ',2)
@@ -54,7 +54,7 @@ class SshPublicKey(DirectoryString):
   def _display_lines(self,valueindex,commandbutton,pk_type,pk_comment,pk_bin,pk_fingerprints):
     result = []
     result.append('<dt>SSH Key:</dt><dd><input readonly size="70" value="{}"></dd>'.format(
-      DirectoryString.displayValue(self,valueindex,commandbutton)
+      DirectoryString.displayValue(self, valueindex, commandbutton)
     ))
     if pk_comment:
       result.append('<dt>Key comment:</dt><dd>{}</dd>'.format(self._form.utf2display(pk_comment)))
@@ -80,7 +80,7 @@ class SshPublicKey(DirectoryString):
       result.append('</dl></dd>')
     return result
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     pk_type,pk_comment,pk_bin,pk_fingerprints = self._extract_pk_params(self.attrValue)
     result = ['<dl>']
     result.extend(self._display_lines(valueindex,commandbutton,pk_type,pk_comment,pk_bin,pk_fingerprints))
@@ -113,7 +113,7 @@ class ParamikoSshPublicKey(SshPublicKey):
         pk_size = p.get_bits()
       return pk_size
 
-    def _validate(self,attrValue):
+    def _validate(self, attrValue):
       valid = SshPublicKey._validate(self,attrValue)
       if not valid:
         return False
@@ -138,7 +138,7 @@ class ParamikoSshPublicKey(SshPublicKey):
       return result
 
 syntax_registry.registerAttrType(
-  ParamikoSshPublicKey.oid,[
+  ParamikoSshPublicKey.oid, [
     '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
   ]
 )

@@ -27,7 +27,7 @@ class AdministrativeRole(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  AdministrativeRole.oid,[
+  AdministrativeRole.oid, [
     '2.5.18.5', # administrativeRole (defined in RFC 3672)
   ]
 )

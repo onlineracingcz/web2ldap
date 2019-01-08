@@ -11,7 +11,7 @@ from web2ldap.app.schema.syntaxes import XmlValue,UUID,DynamicValueSelectList,sy
 
 
 syntax_registry.registerAttrType(
-  UUID.oid,[
+  UUID.oid, [
     '1.3.6.1.4.1.63.1000.1.1.1.1.20', # apple-generateduid
   ]
 )
@@ -21,7 +21,7 @@ class UUIDReference(DynamicValueSelectList,UUID):
   oid = 'UUIDReference-oid'
   ldap_url = 'ldap:///_?apple-generateduid,entryDN?sub?(apple-generateduid=*)'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     value_disp = self._form.utf2display(self._ls.uc_decode(self.attrValue)[0])
     return ' '.join((
       value_disp,
@@ -42,7 +42,7 @@ class UUIDReference(DynamicValueSelectList,UUID):
     return DynamicValueSelectList.formField(self)
 
 syntax_registry.registerAttrType(
-  UUIDReference.oid,[
+  UUIDReference.oid, [
     '1.3.6.1.4.1.63.1000.1.1.1.14.7', # apple-group-memberguid
     '1.3.6.1.4.1.63.1000.1.1.1.14.10', # apple-ownerguid
   ]
@@ -50,7 +50,7 @@ syntax_registry.registerAttrType(
 
 
 syntax_registry.registerAttrType(
-  XmlValue.oid,[
+  XmlValue.oid, [
     '1.3.6.1.4.1.63.1000.1.1.1.19.6', # apple-serviceinfo
     '1.3.6.1.4.1.63.1000.1.1.1.17.1', # apple-xmlplist
     '1.3.6.1.4.1.63.1000.1.1.1.14.8', # apple-group-services

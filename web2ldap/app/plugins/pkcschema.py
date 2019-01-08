@@ -21,7 +21,7 @@ else:
   # and treats these attribute types as not human-readable and
   # not editable binary blobs
   syntax_registry.registerAttrType(
-    DumpASN1CfgOID.oid,[
+    DumpASN1CfgOID.oid, [
     '1.3.6.1.4.1.10126.1.5.3.3', # x509signatureAlgorithm
     '1.3.6.1.4.1.10126.1.5.3.8', # x509subjectPublicKeyInfoAlgorithm
     '1.3.6.1.4.1.10126.1.5.3.16', # x509policyInformationIdentifier
@@ -36,10 +36,10 @@ class PkcX509Issuer(DynamicValueSelectList,DistinguishedName):
   oid = 'PkcX509Issuer-oid'
   ldap_url = 'ldap:///_?x509subject,x509subject?sub?(objectClass=x509caCertificate)'
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return DistinguishedName._validate(self,attrValue)
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     r = [ DistinguishedName.displayValue(self,valueindex,commandbutton=0) ]
     r.append(self._form.applAnchor(
         'search','&raquo;',self._sid,
@@ -58,7 +58,7 @@ class PkcX509Issuer(DynamicValueSelectList,DistinguishedName):
     return ' '.join(r)
 
 syntax_registry.registerAttrType(
-  PkcX509Issuer.oid,[
+  PkcX509Issuer.oid, [
     '1.3.6.1.4.1.10126.1.5.3.4', # x509issuer
   ]
 )
@@ -80,7 +80,7 @@ class X509KeyUsage(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  X509KeyUsage.oid,[
+  X509KeyUsage.oid, [
     '1.3.6.1.4.1.10126.1.5.3.15', # x509keyUsage
   ]
 )

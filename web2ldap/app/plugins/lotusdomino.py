@@ -12,7 +12,7 @@ from web2ldap.app.schema.syntaxes import MultilineText,YesNoIntegerFlag,\
 
 
 syntax_registry.registerAttrType(
-  YesNoIntegerFlag.oid,[
+  YesNoIntegerFlag.oid, [
     '2.16.840.1.113678.2.2.2.2.4',  # AvailableForDirSync
     '2.16.840.1.113678.2.2.2.2.18', # EncryptIncomingMail
   ]
@@ -27,7 +27,7 @@ class DominoCertificate(MultilineText):
   mimeType = 'text/plain'
   cols = 36
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     lines = [
       self._form.utf2display(l)
       for l in self._split_lines(self.attrValue.decode('ascii'))
@@ -35,7 +35,7 @@ class DominoCertificate(MultilineText):
     return '<code>%s</code>' % '<br>'.join(lines)
 
 syntax_registry.registerAttrType(
-  DominoCertificate.oid,[
+  DominoCertificate.oid, [
     '2.16.840.1.113678.2.2.2.2.22', # dominoCertificate
     '2.16.840.1.113678.2.2.2.2.45', # Certificate-NoEnc
     'inetpublickey',
@@ -53,7 +53,7 @@ class CheckPassword(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  CheckPassword.oid,[
+  CheckPassword.oid, [
     '2.16.840.1.113678.2.2.2.2.29' # CheckPassword
   ]
 )
@@ -65,7 +65,7 @@ class MailServer(DynamicDNSelectList):
   ldap_url = 'ldap:///?displayname?sub?(objectClass=dominoServer)'
 
 syntax_registry.registerAttrType(
-  MailServer.oid,[
+  MailServer.oid, [
     '2.16.840.1.113678.2.2.2.2.12', # MailServer
   ]
 )

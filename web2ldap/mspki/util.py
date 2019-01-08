@@ -66,25 +66,6 @@ def extract_pem(cert_text):
     result.append((begin_type,cert_base64.strip()))
   return result
 
-def der2pem(cert_der,cert_type='CERTIFICATE'):
-  """
-  Convert single binary DER-encoded certificate to base64 encoded format
-  """
-  return """-----BEGIN %s-----
-%s-----END %s-----
-""" % (cert_type,base64.encodestring(cert_der),cert_type)
-
-def pem2der(cert_text):
-  """
-  Convert single base64 encoded certificate to binary DER-encoded format
-  """
-  _,cert_base64  = extract_pem(cert_text)[0]
-  return base64.decodestring(cert_base64.strip())
-
-
-# longtobytes and bytestolong are stolen from
-# amkCrypto.Util.numbers
-
 import struct
 
 def longtobytes(n, blocksize=0):

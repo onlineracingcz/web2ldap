@@ -33,7 +33,7 @@ class ObjectCategory(DynamicDNSelectList,DistinguishedName):
   )
 
 syntax_registry.registerAttrType(
-  ObjectCategory.oid,[
+  ObjectCategory.oid, [
     '1.2.840.113556.1.4.782', # objectCategory
     '1.2.840.113556.1.4.783', # defaultObjectCategory
   ]
@@ -58,12 +58,12 @@ class ObjectVersion(Integer,SelectList):
     u'14247':u'Exchange 2010 SP2',
   }
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    return SelectList.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    return SelectList.displayValue(self, valueindex, commandbutton)
 
 # Register certain attribute types for syntax classes
 syntax_registry.registerAttrType(
-  ObjectVersion.oid,[
+  ObjectVersion.oid, [
     '1.2.840.113556.1.2.76', # objectVersion
   ]
 )
@@ -108,7 +108,7 @@ class ObjectSID(OctetString,IA5String):
     ])
     return ''.join(result_list)
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     if attrValue:
       return self._sddl2sid(attrValue)
     else:
@@ -123,18 +123,18 @@ class ObjectSID(OctetString,IA5String):
   def formField(self):
     return IA5String.formField(self)
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     sddl_str = unicode(self._sid2sddl(self.attrValue),'ascii')
     return '%s<br>%s' % (
       self._form.utf2display(sddl_str),
-      OctetString.displayValue(self,valueindex,commandbutton),
+      OctetString.displayValue(self, valueindex, commandbutton),
     )
 
 
 
 # Register certain attribute types for syntax classes
 syntax_registry.registerAttrType(
-  ObjectSID.oid,[
+  ObjectSID.oid, [
     '1.2.840.113556.1.4.146', # objectSID
     '1.2.840.113556.1.4.609', # sIDHistory
   ]
@@ -193,7 +193,7 @@ class OtherSID(ObjectSID):
     'S-1-5-32-556':'BUILTIN_NETWORK_CONF_OPERATORS',
   }
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     sddl_str = unicode(self._sid2sddl(self.attrValue),'ascii')
     search_anchor = self.well_known_sids.get(sddl_str,'')
     if commandbutton and not sddl_str in self.well_known_sids:
@@ -211,12 +211,12 @@ class OtherSID(ObjectSID):
     return '%s %s<br>%s' % (
       self._form.utf2display(sddl_str),
       search_anchor,
-      OctetString.displayValue(self,valueindex,commandbutton),
+      OctetString.displayValue(self, valueindex, commandbutton),
     )
 
 # Register certain attribute types for syntax classes
 syntax_registry.registerAttrType(
-  OtherSID.oid,[
+  OtherSID.oid, [
     '1.2.840.113556.1.4.1301', # tokenGroups
     '1.2.840.113556.1.4.1418', # tokenGroupsGlobalAndUniversal
     '1.2.840.113556.1.4.1303', # tokenGroupsNoGCAcceptable
@@ -233,7 +233,7 @@ class SAMAccountName(DirectoryString):
 
 # Register certain attribute types for syntax classes
 syntax_registry.registerAttrType(
-  SAMAccountName.oid,[
+  SAMAccountName.oid, [
     '1.2.840.113556.1.4.221', # sAMAccountName
   ]
 )
@@ -260,7 +260,7 @@ class SAMAccountType(SelectList):
 
 # Register certain attribute types for syntax classes
 syntax_registry.registerAttrType(
-  SAMAccountType.oid,[
+  SAMAccountType.oid, [
     '1.2.840.113556.1.4.302', # sAMAccountType
   ]
 )
@@ -285,7 +285,7 @@ class GroupType(BitArrayInteger):
 
 # Register certain attribute types for syntax classes
 syntax_registry.registerAttrType(
-  GroupType.oid,[
+  GroupType.oid, [
     '1.2.840.113556.1.4.750', # groupType
   ]
 )
@@ -312,7 +312,7 @@ class DomainRID(SelectList):
 
 # Register certain attribute types for syntax classes
 syntax_registry.registerAttrType(
-  DomainRID.oid,[
+  DomainRID.oid, [
     '1.2.840.113556.1.4.98', # primaryGroupID
   ]
 )
@@ -351,7 +351,7 @@ class UserAccountControl(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  UserAccountControl.oid,[
+  UserAccountControl.oid, [
     '1.2.840.113556.1.4.8', # userAccountControl
   ]
 )
@@ -381,7 +381,7 @@ class SystemFlags(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  SystemFlags.oid,[
+  SystemFlags.oid, [
     '1.2.840.113556.1.4.375', # systemFlags
   ]
 )
@@ -416,7 +416,7 @@ class SearchFlags(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  SearchFlags.oid,[
+  SearchFlags.oid, [
     '1.2.840.113556.1.2.334', # searchFlags
   ]
 )
@@ -438,7 +438,7 @@ class LogonHours(OctetString):
     # For whatever reason the list has to be shifted one hour
     return hour_flags
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     if not attrValue:
       return ''
     attrValue = attrValue.replace('\r','').replace('\n','')
@@ -452,7 +452,7 @@ class LogonHours(OctetString):
     ]
     return ''.join(r)
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return len(attrValue)==21
 
   def formValue(self):
@@ -477,7 +477,7 @@ class LogonHours(OctetString):
       rows=7,cols=24
     )
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     hour_flags = self._extractHours(self.attrValue)
     result_lines = [
       """<tr>
@@ -500,13 +500,13 @@ class LogonHours(OctetString):
           '</td><td>'.join(day_bits)
       ))
     return '<p>%s</p><table>%s</table>' % (
-      OctetString.displayValue(self,valueindex,commandbutton),
+      OctetString.displayValue(self, valueindex, commandbutton),
       '\n'.join(result_lines)
     )
 
 
 syntax_registry.registerAttrType(
-  LogonHours.oid,[
+  LogonHours.oid, [
     '1.2.840.113556.1.4.64', # logonHours
   ]
 )
@@ -522,13 +522,13 @@ class CountryCode(PropertiesSelectList):
     str.strip,
   )
 
-  def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
+  def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
     self.attr_value_dict[u'0'] = u'-/-'
-    SelectList.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry)
+    SelectList.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
 
 
 syntax_registry.registerAttrType(
-  CountryCode.oid,[
+  CountryCode.oid, [
     '1.2.840.113556.1.4.25', # countryCode
   ]
 )
@@ -549,7 +549,7 @@ class InstanceType(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  InstanceType.oid,[
+  InstanceType.oid, [
     '1.2.840.113556.1.2.1', # instanceType
   ]
 )
@@ -561,7 +561,7 @@ class DNWithOctetString(DistinguishedName):
   octetTag = 'B'
   stringCharset = 'ascii'
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     try:
       octet_tag,count,octet_string,dn = self.attrValue.split(':')
     except ValueError:
@@ -577,7 +577,7 @@ class DNWithOctetString(DistinguishedName):
     dn_u = self._ls.uc_decode(dn)[0]
     return len(octet_string)==count and octet_tag.upper()==self.octetTag and is_dn(dn_u)
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     try:
       octet_tag,count,octet_string,dn = self.attrValue.split(':',3)
     except ValueError:
@@ -611,7 +611,7 @@ class MsAdGUID(OctetString):
   oid = 'MsAdGUID-oid'
   desc = 'GUID in Active Directory'
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     try:
       object_guid_uuid = uuid.UUID(attrValue.replace(':',''))
     except ValueError:
@@ -619,7 +619,7 @@ class MsAdGUID(OctetString):
     else:
       return object_guid_uuid.bytes
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     object_guid_uuid = uuid.UUID(bytes=self.attrValue)
     return '{%s}<br>%s' % (
       str(object_guid_uuid),
@@ -627,7 +627,7 @@ class MsAdGUID(OctetString):
     )
 
 syntax_registry.registerAttrType(
-  MsAdGUID.oid,[
+  MsAdGUID.oid, [
     '1.2.840.113556.1.4.2',    # objectGUID
     '1.2.840.113556.1.4.1224', # parentGUID
     '1.2.840.113556.1.4.340',  # rightsGuid
@@ -640,17 +640,17 @@ class Interval(MicrosoftLargeInteger):
   oid = 'Interval-oid'
   desc = 'Large integer with timestamp expressed as 100 nanoseconds since 1601-01-01 00:00'
 
-  def _delta(self,attrValue):
+  def _delta(self, attrValue):
     return (long(attrValue)-116444736000000000L)/10000000
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     if self.attrValue=='9223372036854775807':
       return '-1: unlimited/off'
     else:
       delta = self._delta(self.attrValue)
       if delta>=0:
         return '%s (%s)' % (
-          MicrosoftLargeInteger.displayValue(self,valueindex,commandbutton),
+          MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton),
         self._form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
         )
       else:
@@ -661,20 +661,20 @@ class LockoutTime(Interval):
   oid = 'LockoutTime-oid'
   desc = 'Timestamp of password failure lockout'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     delta = self._delta(self.attrValue)
     if delta==0:
-      return '%s (not locked)' % (MicrosoftLargeInteger.displayValue(self,valueindex,commandbutton))
+      return '%s (not locked)' % (MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton))
     elif delta<0:
-      return MicrosoftLargeInteger.displayValue(self,valueindex,commandbutton)
+      return MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton)
     else:
       return '%s (locked since %s)' % (
-        MicrosoftLargeInteger.displayValue(self,valueindex,commandbutton),
+        MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton),
         self._form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
       )
 
 syntax_registry.registerAttrType(
-  LockoutTime.oid,[
+  LockoutTime.oid, [
     '1.2.840.113556.1.4.662', # lockoutTime
   ]
 )
@@ -695,7 +695,7 @@ class DomainFunctionality(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  DomainFunctionality.oid,[
+  DomainFunctionality.oid, [
     'domainFunctionality', # no schema information available
     'forestFunctionality', # no schema information available
   ]
@@ -717,7 +717,7 @@ class DomainControllerFunctionality(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  DomainFunctionality.oid,[
+  DomainFunctionality.oid, [
     'domainControllerFunctionality', # no schema information available
   ]
 )
@@ -725,7 +725,7 @@ syntax_registry.registerAttrType(
 
 # Register certain attribute types for Interval
 syntax_registry.registerAttrType(
-  Interval.oid,[
+  Interval.oid, [
     '1.2.840.113556.1.4.159',  # accountExpires
     '1.2.840.113556.1.4.49',   # badPasswordTime
     '1.2.840.113556.1.4.52',   # lastLogon
@@ -746,7 +746,7 @@ class ServerStatus(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  ServerStatus.oid,[
+  ServerStatus.oid, [
     '1.2.840.113556.1.4.154', # serverStatus
   ]
 )
@@ -762,7 +762,7 @@ class ObjectClassCategory(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  ObjectClassCategory.oid,[
+  ObjectClassCategory.oid, [
     '1.2.840.113556.1.2.370', # objectClassCategory
   ]
 )
@@ -773,11 +773,11 @@ class ClassSchemaLDAPName(DynamicValueSelectList,OID):
   desc = 'lDAPDisplayName of the classSchema entry'
   ldap_url = 'ldap:///_?lDAPDisplayName,lDAPDisplayName?one?(objectClass=classSchema)'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    return OID.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    return OID.displayValue(self, valueindex, commandbutton)
 
 syntax_registry.registerAttrType(
-  ClassSchemaLDAPName.oid,[
+  ClassSchemaLDAPName.oid, [
     '1.2.840.113556.1.2.351', # auxiliaryClass
     '1.2.840.113556.1.4.198', # systemAuxiliaryClass
     '1.2.840.113556.1.2.8', # possSuperiors
@@ -791,11 +791,11 @@ class AttributeSchemaLDAPName(DynamicValueSelectList,OID):
   desc = 'lDAPDisplayName of the classSchema entry'
   ldap_url = 'ldap:///_?lDAPDisplayName,lDAPDisplayName?one?(objectClass=attributeSchema)'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    return OID.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    return OID.displayValue(self, valueindex, commandbutton)
 
 syntax_registry.registerAttrType(
-  AttributeSchemaLDAPName.oid,[
+  AttributeSchemaLDAPName.oid, [
     '1.2.840.113556.1.2.25', # mayContain
     '1.2.840.113556.1.4.196', # systemMayContain
     '1.2.840.113556.1.2.24', # mustContain
@@ -819,7 +819,7 @@ class PwdProperties(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  PwdProperties.oid,[
+  PwdProperties.oid, [
     '1.2.840.113556.1.4.93', # pwdProperties
   ]
 )
@@ -836,7 +836,7 @@ class MsDSSupportedEncryptionTypes(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  MsDSSupportedEncryptionTypes.oid,[
+  MsDSSupportedEncryptionTypes.oid, [
     '1.2.840.113556.1.4.1963', # msDS-SupportedEncryptionTypes
   ]
 )
@@ -848,7 +848,7 @@ class ShowInAddressBook(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=addressBookContainer)'
 
 syntax_registry.registerAttrType(
-  ShowInAddressBook.oid,[
+  ShowInAddressBook.oid, [
     '1.2.840.113556.1.4.644', # showInAddressBook
   ]
 )
@@ -858,18 +858,18 @@ class MsDS_ReplAttributeMetaData(XmlValue):
   oid = 'MsDS_ReplAttributeMetaData-oid'
   editable = 0
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return attrValue.endswith('\n\x00') and XmlValue._validate(self,attrValue[:-1])
 
 syntax_registry.registerAttrType(
-  MsDS_ReplAttributeMetaData.oid,[
+  MsDS_ReplAttributeMetaData.oid, [
     '1.2.840.113556.1.4.1707',   # msDS-ReplAttributeMetaData
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  GroupEntryDN.oid,[
+  GroupEntryDN.oid, [
     '2.5.4.49', # distinguishedName
   ],
   structural_oc_oids=[
@@ -893,7 +893,7 @@ syntax_registry.oid2syntax['DirectoryString'] = DirectoryString
 syntax_registry.oid2syntax['GeneralizedTime'] = GeneralizedTime
 
 syntax_registry.registerAttrType(
-  DistinguishedName.oid,[
+  DistinguishedName.oid, [
     'configurationNamingContext',
     'defaultNamingContext',
     'dsServiceName',
@@ -906,7 +906,7 @@ syntax_registry.registerAttrType(
 # MS AD declares these attributes with OctetString
 # syntax but Binary syntax is more suitable
 syntax_registry.registerAttrType(
-  Binary.oid,[
+  Binary.oid, [
     '1.2.840.113556.1.4.645', # userCert
     '1.2.840.113556.1.4.4',   # replUpToDateVector
     '1.2.840.113556.1.2.91',  # repsFrom
@@ -918,13 +918,13 @@ syntax_registry.registerAttrType(
 # MS AD declares these attributes with DirectoryString
 # syntax but OctetString syntax is more suitable
 syntax_registry.registerAttrType(
-  OctetString.oid,[
+  OctetString.oid, [
     '1.2.840.113556.1.4.138',    # userParameters
   ]
 )
 
 syntax_registry.registerAttrType(
-  Uri.oid,[
+  Uri.oid, [
     '1.2.840.113556.1.4.583', # meetingURL
     '1.2.840.113556.1.2.464', # wWWHomePage
     '1.2.840.113556.1.4.749', # url
@@ -932,7 +932,7 @@ syntax_registry.registerAttrType(
 )
 
 syntax_registry.registerAttrType(
-  DNSDomain.oid,[
+  DNSDomain.oid, [
     '1.2.840.113556.1.4.619',   # dNSHostName
   ]
 )

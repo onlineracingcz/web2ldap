@@ -9,7 +9,7 @@ from web2ldap.app.schema.syntaxes import OnOffFlag,syntax_registry
 
 
 syntax_registry.registerAttrType(
-  OnOffFlag.oid,[
+  OnOffFlag.oid, [
     '2.16.840.1.113730.3.1.102', # passwordChange, pwdAllowUserChange
     '2.16.840.1.113730.3.1.103', # passwordCheckSyntax, pwdCheckSyntax
     '2.16.840.1.113730.3.1.98',  # passwordExp

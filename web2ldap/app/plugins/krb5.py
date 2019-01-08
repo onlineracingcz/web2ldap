@@ -16,14 +16,14 @@ from web2ldap.app.schema.syntaxes import \
 #-----------------------------------------------------------------
 
 syntax_registry.registerAttrType(
-  DirectoryString.oid,[
+  DirectoryString.oid, [
     '1.3.6.1.4.1.5322.10.1.1',  # krb5PrincipalName
     '1.3.6.1.4.1.5322.10.1.12', # krb5RealmName
   ]
 )
 
 syntax_registry.registerAttrType(
-  OctetString.oid,[
+  OctetString.oid, [
     '1.3.6.1.4.1.5322.10.1.10', # krb5Key
   ]
 )
@@ -66,14 +66,14 @@ class Krb5KDCFlagsSyntax(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  Krb5KDCFlagsSyntax.oid,[
+  Krb5KDCFlagsSyntax.oid, [
     '1.3.6.1.4.1.5322.10.1.5', # krb5KDCFlags
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  Timespan.oid,[
+  Timespan.oid, [
     '1.3.6.1.4.1.5322.10.1.3', # krb5MaxLife
   ]
 )
@@ -103,7 +103,7 @@ class KrbTicketFlags(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  KrbTicketFlags.oid,[
+  KrbTicketFlags.oid, [
     '2.16.840.1.113719.1.301.4.8.1', # krbTicketFlags
   ]
 )
@@ -117,7 +117,7 @@ class KrbSearchScope(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  KrbSearchScope.oid,[
+  KrbSearchScope.oid, [
     '2.16.840.1.113719.1.301.4.25.1', # krbSearchScope
   ]
 )
@@ -139,7 +139,7 @@ class KrbPrincipalType(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  KrbPrincipalType.oid,[
+  KrbPrincipalType.oid, [
     '2.16.840.1.113719.1.301.4.3.1', # krbPrincipalType
   ]
 )
@@ -151,7 +151,7 @@ class KrbTicketPolicyReference(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=krbTicketPolicy)'
 
 syntax_registry.registerAttrType(
-  KrbTicketPolicyReference.oid,[
+  KrbTicketPolicyReference.oid, [
     '2.16.840.1.113719.1.301.4.40.1', # krbTicketPolicyReference
   ]
 )
@@ -163,14 +163,14 @@ class KrbPwdPolicyReference(DynamicDNSelectList):
   ldap_url = 'ldap:///_?cn?sub?(objectClass=krbPwdPolicy)'
 
 syntax_registry.registerAttrType(
-  KrbPwdPolicyReference.oid,[
+  KrbPwdPolicyReference.oid, [
     '2.16.840.1.113719.1.301.4.36.1', # krbPwdPolicyReference
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  Timespan.oid,[
+  Timespan.oid, [
     '1.2.840.113554.1.4.1.6.3',       # krbPwdMaxLife
     '1.2.840.113554.1.4.1.6.4',       # krbPwdMaxRenewableLife
     '1.3.6.1.4.1.5322.21.2.3',        # krbPwdLockoutDuration

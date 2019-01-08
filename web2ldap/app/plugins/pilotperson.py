@@ -22,7 +22,7 @@ class MailPreferenceOption(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  MailPreferenceOption.oid,[
+  MailPreferenceOption.oid, [
     '0.9.2342.19200300.100.1.47', # mailPreferenceOption (defined for pilotPerson)
   ]
 )

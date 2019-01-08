@@ -61,19 +61,19 @@ syntax_registry.registerAttrType(
 )
 
 syntax_registry.registerAttrType(
-  Uri.oid,[
+  Uri.oid, [
     '1.3.6.1.4.1.250.1.57', # labeledURI
   ]
 )
 
 syntax_registry.registerAttrType(
-  Boolean.oid,[
+  Boolean.oid, [
     '2.5.18.9', # hasSubordinates
   ]
 )
 
 syntax_registry.registerAttrType(
-  PostalAddress.oid,[
+  PostalAddress.oid, [
     '2.5.4.16',                   # postalAddress
     '2.5.4.26',                   # registeredAddress
     '0.9.2342.19200300.100.1.39', # homePostalAddress
@@ -81,13 +81,13 @@ syntax_registry.registerAttrType(
 )
 
 syntax_registry.registerAttrType(
-  LDAPUrl.oid,[
+  LDAPUrl.oid, [
     '2.16.840.1.113730.3.1.34', # ref
   ]
 )
 
 syntax_registry.registerAttrType(
-  UTCTime.oid,[
+  UTCTime.oid, [
     '2.5.18.1', # createTimestamp
     '2.5.18.2', # modifyTimestamp
     'createtimestamp-oid', # createtimestamp on Netscape DS 4.x
@@ -96,7 +96,7 @@ syntax_registry.registerAttrType(
 )
 
 syntax_registry.registerAttrType(
-  CountryString.oid,[
+  CountryString.oid, [
     'c',
     'countryName',
     '2.5.4.6', # c
@@ -106,21 +106,21 @@ syntax_registry.registerAttrType(
 # Some LDAP servers (e.g. MS AD) declare these attributes with OctetString
 # syntax but Binary syntax is more suitable
 syntax_registry.registerAttrType(
-  Binary.oid,[
+  Binary.oid, [
     '2.16.840.1.113730.3.1.216', # userPKCS12
     '2.16.840.1.113730.3.140',   # userSMIMECertificate
   ]
 )
 
 syntax_registry.registerAttrType(
-  AuthzDN.oid,[
+  AuthzDN.oid, [
     '2.5.18.3', # creatorsName
     '2.5.18.4', # modifiersName
   ]
 )
 
 syntax_registry.registerAttrType(
-  DomainComponent.oid,[
+  DomainComponent.oid, [
     '0.9.2342.19200300.100.1.25', # dc (alias domainComponent)
     'dc',
     'domainComponent',
@@ -131,15 +131,15 @@ syntax_registry.registerAttrType(
 class UserPassword(OctetString,DirectoryString):
   oid = 'UserPassword-oid'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     try:
-      result = DirectoryString.displayValue(self,valueindex,commandbutton)
+      result = DirectoryString.displayValue(self, valueindex, commandbutton)
     except UnicodeDecodeError:
-      result = OctetString.displayValue(self,valueindex,commandbutton)
+      result = OctetString.displayValue(self, valueindex, commandbutton)
     return result
 
 syntax_registry.registerAttrType(
-  UserPassword.oid,[
+  UserPassword.oid, [
     '2.5.4.35', # userPassword
   ]
 )
@@ -245,7 +245,7 @@ class NamingContexts(DistinguishedName):
     return r
 
 syntax_registry.registerAttrType(
-  NamingContexts.oid,[
+  NamingContexts.oid, [
     'namingContexts',
     '1.3.6.1.4.1.1466.101.120.5', # namingContexts
   ]
@@ -264,7 +264,7 @@ class AltServer(LDAPUrl):
     return ldap_url_obj
 
 syntax_registry.registerAttrType(
-  AltServer.oid,[
+  AltServer.oid, [
     'altServer',
     '1.3.6.1.4.1.1466.101.120.6', # altServer
   ]

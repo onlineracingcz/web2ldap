@@ -13,14 +13,14 @@ from web2ldap.app.plugins.msperson import Gender
 
 
 syntax_registry.registerAttrType(
-  CountryString.oid,[
+  CountryString.oid, [
     '1.3.6.1.4.1.25178.1.2.5',  # schacCountryOfCitizenship
     '1.3.6.1.4.1.25178.1.2.11', # schacCountryOfResidence
   ]
 )
 
 syntax_registry.registerAttrType(
-  DNSDomain.oid,[
+  DNSDomain.oid, [
     '1.3.6.1.4.1.25178.1.2.9', # schacHomeOrganization
   ]
 )
@@ -31,14 +31,14 @@ class SchacMotherTongue(IA5String):
   reObj = re.compile('^[a-zA-Z]{2,8}(-[a-zA-Z0-9]{2,8})*$')
 
 syntax_registry.registerAttrType(
-  SchacMotherTongue.oid,[
+  SchacMotherTongue.oid, [
     '1.3.6.1.4.1.25178.1.2.1', # schacMotherTongue
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  Gender.oid,[
+  Gender.oid, [
     '1.3.6.1.4.1.25178.1.2.2', # schacGender
   ]
 )
@@ -57,7 +57,7 @@ class SchacDateOfBirth(NumstringDate):
       age = age-1
     return age
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     try:
       birth_dt = datetime.datetime.strptime(attrValue,self.storageFormat)
     except ValueError:
@@ -65,8 +65,8 @@ class SchacDateOfBirth(NumstringDate):
     else:
       return self._age(birth_dt)>=0
 
-  def displayValue(self,valueindex=0,commandbutton=0):
-    raw_date = NumstringDate.displayValue(self,valueindex,commandbutton)
+  def displayValue(self, valueindex=False, commandbutton=False):
+    raw_date = NumstringDate.displayValue(self, valueindex, commandbutton)
     try:
       birth_dt = datetime.datetime.strptime(self.attrValue,self.storageFormat)
     except ValueError:
@@ -75,7 +75,7 @@ class SchacDateOfBirth(NumstringDate):
       return '%s (%s years old)' % (raw_date,self._age(birth_dt))
 
 syntax_registry.registerAttrType(
-  SchacDateOfBirth.oid,[
+  SchacDateOfBirth.oid, [
     '1.3.6.1.4.1.25178.1.2.3', # schacDateOfBirth
   ]
 )
@@ -87,7 +87,7 @@ class SchacYearOfBirth(NumericString):
   maxLen = 4
   reObj = re.compile('^[0-9]{4}$')
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     try:
       birth_year = int(attrValue)
     except ValueError:
@@ -96,7 +96,7 @@ class SchacYearOfBirth(NumericString):
       return birth_year<=datetime.date.today().year
 
 syntax_registry.registerAttrType(
-  SchacYearOfBirth.oid,[
+  SchacYearOfBirth.oid, [
     '1.3.6.1.4.1.25178.1.0.2.3', # schacYearOfBirth
   ]
 )
@@ -108,7 +108,7 @@ class SchacUrn(DirectoryString):
   reObj = re.compile('^urn:mace:terena.org:schac:.+$')
 
 syntax_registry.registerAttrType(
-  SchacUrn.oid,[
+  SchacUrn.oid, [
     '1.3.6.1.4.1.25178.1.2.10', # schacHomeOrganizationType
     '1.3.6.1.4.1.25178.1.2.13', # schacPersonalPosition
     '1.3.6.1.4.1.25178.1.2.14', # schacPersonalUniqueCode

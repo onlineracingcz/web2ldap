@@ -18,7 +18,7 @@ from web2ldap.mspki.util import HexString
 from web2ldap.app.schema import no_humanreadable_attr
 
 syntax_registry.registerAttrType(
-  MemberOf.oid,[
+  MemberOf.oid, [
     '1.3.6.1.4.1.42.2.27.9.1.792', # isMemberOf
   ]
 )
@@ -30,7 +30,7 @@ class OpenDSCfgPasswordPolicy(DynamicDNSelectList):
   ldap_url = 'ldap:///cn=Password Policies,cn=config?cn?one?(objectClass=ds-cfg-password-policy)'
 
 syntax_registry.registerAttrType(
-  OpenDSCfgPasswordPolicy.oid,[
+  OpenDSCfgPasswordPolicy.oid, [
     '1.3.6.1.4.1.26027.1.1.161', # ds-cfg-default-password-policy
     '1.3.6.1.4.1.26027.1.1.244', # ds-pwp-password-policy-dn
   ]
@@ -43,7 +43,7 @@ class OpenDSCfgPasswordStorageScheme(DynamicDNSelectList):
   ldap_url = 'ldap:///cn=Password Storage Schemes,cn=config?cn?one?(objectClass=ds-cfg-password-storage-scheme)'
 
 syntax_registry.registerAttrType(
-  OpenDSCfgPasswordStorageScheme.oid,[
+  OpenDSCfgPasswordStorageScheme.oid, [
     '1.3.6.1.4.1.26027.1.1.137', # ds-cfg-default-password-storage-scheme
   ]
 )
@@ -54,7 +54,7 @@ class OpenDSCfgPasswordGenerator(DynamicDNSelectList):
   ldap_url = 'ldap:///cn=Password Generators,cn=config?cn?one?(objectClass=ds-cfg-password-generator)'
 
 syntax_registry.registerAttrType(
-  OpenDSCfgPasswordGenerator.oid,[
+  OpenDSCfgPasswordGenerator.oid, [
     '1.3.6.1.4.1.26027.1.1.153', # ds-cfg-password-generator
   ]
 )
@@ -66,7 +66,7 @@ class OpenDSCfgIdentityMapper(DynamicDNSelectList):
   ldap_url = 'ldap:///cn=Identity Mappers,cn=config?cn?one?(objectClass=ds-cfg-identity-mapper)'
 
 syntax_registry.registerAttrType(
-  OpenDSCfgIdentityMapper.oid,[
+  OpenDSCfgIdentityMapper.oid, [
     '1.3.6.1.4.1.26027.1.1.113', # ds-cfg-identity-mapper
     '1.3.6.1.4.1.26027.1.1.114', # ds-cfg-proxied-authorization-identity-mapper
   ]
@@ -79,7 +79,7 @@ class OpenDSCfgCertificateMapper(DynamicDNSelectList):
   ldap_url = 'ldap:///cn=Certificate Mappers,cn=config?cn?one?(objectClass=ds-cfg-certificate-mapper)'
 
 syntax_registry.registerAttrType(
-  OpenDSCfgCertificateMapper.oid,[
+  OpenDSCfgCertificateMapper.oid, [
     '1.3.6.1.4.1.26027.1.1.262', # ds-cfg-certificate-mapper
   ]
 )
@@ -91,7 +91,7 @@ class OpenDSCfgKeyManagerProvider(DynamicDNSelectList):
   ldap_url = 'ldap:///cn=Key Manager Providers,cn=config?cn?one?(objectClass=ds-cfg-key-manager-provider)'
 
 syntax_registry.registerAttrType(
-  OpenDSCfgKeyManagerProvider.oid,[
+  OpenDSCfgKeyManagerProvider.oid, [
     '1.3.6.1.4.1.26027.1.1.263', # ds-cfg-key-manager-provider
   ]
 )
@@ -103,7 +103,7 @@ class OpenDSCfgTrustManagerProvider(DynamicDNSelectList):
   ldap_url = 'ldap:///cn=Trust Manager Providers,cn=config?cn?one?(objectClass=ds-cfg-trust-manager-provider)'
 
 syntax_registry.registerAttrType(
-  OpenDSCfgTrustManagerProvider.oid,[
+  OpenDSCfgTrustManagerProvider.oid, [
     '1.3.6.1.4.1.26027.1.1.264', # ds-cfg-trust-manager-provider
   ]
 )
@@ -119,7 +119,7 @@ class OpenDSCfgSSLClientAuthPolicy(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OpenDSCfgSSLClientAuthPolicy.oid,[
+  OpenDSCfgSSLClientAuthPolicy.oid, [
     '1.3.6.1.4.1.26027.1.1.90', # ds-cfg-ssl-client-auth-policy
   ]
 )
@@ -135,7 +135,7 @@ class OpenDSCfgSNMPSecurityLevel(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OpenDSCfgSNMPSecurityLevel.oid,[
+  OpenDSCfgSNMPSecurityLevel.oid, [
     '1.3.6.1.4.1.26027.1.1.452', # ds-cfg-security-level
   ]
 )
@@ -152,7 +152,7 @@ class OpenDSCfgInvalidSchemaBehaviour(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OpenDSCfgInvalidSchemaBehaviour.oid,[
+  OpenDSCfgInvalidSchemaBehaviour.oid, [
     '1.3.6.1.4.1.26027.1.1.31', # ds-cfg-invalid-attribute-syntax-behavior
     '1.3.6.1.4.1.26027.1.1.88', # ds-cfg-single-structural-objectclass-behavior
   ]
@@ -168,7 +168,7 @@ class OpenDSCfgEtimeResolution(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OpenDSCfgEtimeResolution.oid,[
+  OpenDSCfgEtimeResolution.oid, [
     '1.3.6.1.4.1.26027.1.1.442', # ds-cfg-etime-resolution
   ]
 )
@@ -184,7 +184,7 @@ class OpenDSCfgWritabilityMode(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OpenDSCfgWritabilityMode.oid,[
+  OpenDSCfgWritabilityMode.oid, [
     '1.3.6.1.4.1.26027.1.1.123', # ds-cfg-writability-mode
   ]
 )
@@ -200,7 +200,7 @@ class OpenDSCfgCertificateValidationPolicy(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OpenDSCfgCertificateValidationPolicy.oid,[
+  OpenDSCfgCertificateValidationPolicy.oid, [
     '1.3.6.1.4.1.26027.1.1.16', # ds-cfg-certificate-validation-policy
   ]
 )
@@ -225,7 +225,7 @@ class OpenDSCfgAccountStatusNotificationType(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OpenDSCfgAccountStatusNotificationType.oid,[
+  OpenDSCfgAccountStatusNotificationType.oid, [
     '1.3.6.1.4.1.26027.1.1.238', # ds-cfg-account-status-notification-type
   ]
 )
@@ -244,7 +244,7 @@ class OpenDSCfgSslProtocol(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OpenDSCfgSslProtocol.oid,[
+  OpenDSCfgSslProtocol.oid, [
     '1.3.6.1.4.1.26027.1.1.391', # ds-cfg-ssl-protocol
   ]
 )
@@ -315,7 +315,7 @@ class OpenDSCfgSslCipherSuite(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OpenDSCfgSslCipherSuite.oid,[
+  OpenDSCfgSslCipherSuite.oid, [
     '1.3.6.1.4.1.26027.1.1.392', # ds-cfg-ssl-cipher-suite
   ]
 )
@@ -353,7 +353,7 @@ class OpenDSCfgPrivilege(SelectList):
 
 
 syntax_registry.registerAttrType(
-  OpenDSCfgPrivilege.oid,[
+  OpenDSCfgPrivilege.oid, [
     '1.3.6.1.4.1.26027.1.1.261', # ds-cfg-default-root-privilege-name
     '1.3.6.1.4.1.26027.1.1.387', # ds-cfg-disabled-privilege
     '1.3.6.1.4.1.26027.1.1.260', # ds-privilege-name
@@ -364,10 +364,10 @@ syntax_registry.registerAttrType(
 class OpenDSCfgTimeInterval(DirectoryString):
   oid = 'OpenDSCfgTimeInterval-oid'
   desc = 'A time interval consisting of integer value and time unit'
-  reObj=re.compile('^[0-9]+ (seconds|minutes|hours|days)$')
+  reObj = re.compile('^[0-9]+ (seconds|minutes|hours|days)$')
 
 syntax_registry.registerAttrType(
-  OpenDSCfgTimeInterval.oid,[
+  OpenDSCfgTimeInterval.oid, [
     '1.3.6.1.4.1.26027.1.1.142', # ds-cfg-idle-lockout-interval
     '1.3.6.1.4.1.26027.1.1.145', # ds-cfg-lockout-duration
     '1.3.6.1.4.1.26027.1.1.147', # ds-cfg-lockout-failure-expiration-interval
@@ -384,11 +384,11 @@ class OpenDSSyncHist(OctetString,DirectoryString):
   oid = 'OpenDSSyncHist-oid'
   desc = 'List of modifications'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     try:
       mod_attr_type,mod_number,mod_type,mod_value = self.attrValue.split(':',3)
     except ValueError:
-      return OctetString.displayValue(self,valueindex,commandbutton)
+      return OctetString.displayValue(self, valueindex, commandbutton)
     else:
       first_str = self._form.utf2display(':'.join((mod_attr_type,mod_number,mod_type)).decode(self._ls.charset))
       if no_humanreadable_attr(self._schema,mod_attr_type):
@@ -401,7 +401,7 @@ class OpenDSSyncHist(OctetString,DirectoryString):
       return ':<br>'.join((first_str,mod_value_html))
 
 syntax_registry.registerAttrType(
-  OpenDSSyncHist.oid,[
+  OpenDSSyncHist.oid, [
     '1.3.6.1.4.1.26027.1.1.119', # ds-sync-hist
   ]
 )
@@ -439,7 +439,7 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
     return result
 
 syntax_registry.registerAttrType(
-  OpenDSdsCfgAlternatebindDn.oid,[
+  OpenDSdsCfgAlternatebindDn.oid, [
     '1.3.6.1.4.1.26027.1.1.13', # ds-cfg-alternate-bind-dn
   ]
 )
@@ -455,7 +455,7 @@ class ChangeLogChanges(MultilineText):
   cols = 77
 
 syntax_registry.registerAttrType(
-  ChangeLogChanges.oid,[
+  ChangeLogChanges.oid, [
     '2.16.840.1.113730.3.1.8', # changes
   ]
 )
@@ -465,7 +465,7 @@ syntax_registry.registerAttrType(
 #-----------------------------------
 
 syntax_registry.registerAttrType(
-  Certificate.oid,[
+  Certificate.oid, [
     '1.3.6.1.4.1.26027.1.1.408', # ds-cfg-public-key-certificate
   ]
 )

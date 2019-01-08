@@ -51,7 +51,7 @@ class OctetStringGUID(OctetString):
   oid = 'OctetStringGUID-oid'
   desc = 'GUID of eDirectory entries represented as 16 byte octet string'
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return len(attrValue)==16
 
   def _guid2association(self,s):
@@ -108,7 +108,7 @@ class OctetStringGUID(OctetString):
         s1[16:32],
     ))
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     if self.attrType==u'GUID':
       # GUID of an entry is displayed in several variants
       return """
@@ -120,7 +120,7 @@ class OctetStringGUID(OctetString):
         <tr><td>C1/iManager assoc.</td><td>%s</td></tr>
       </table>
       """ % (
-        OctetString.displayValue(self,valueindex,commandbutton),
+        OctetString.displayValue(self, valueindex, commandbutton),
         str(uuid.UUID(bytes=self.attrValue)),
         self._guid2association(self.attrValue),
         self._guid2assoc(self.attrValue),
@@ -144,7 +144,7 @@ class OctetStringGUID(OctetString):
 
 
 syntax_registry.registerAttrType(
-  OctetStringGUID.oid,[
+  OctetStringGUID.oid, [
     '2.16.840.1.113719.1.1.4.1.501',   # GUID
     '2.16.840.1.113719.1.280.4.931.1', # ASAM-inputGUID
     '2.16.840.1.113719.1.14.4.1.50',   # DirXML-ServerGUID
@@ -166,7 +166,7 @@ class IndexDefinition(DollarSeparatedMultipleLines):
   oid = 'IndexDefinition-oid'
   desc = 'Index Definition'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     try:
       version,index_name,state,matching_rule,index_type,value_state,nds_attribute_name = self.attrValue.split('$')
       version = int(version)
@@ -177,7 +177,7 @@ class IndexDefinition(DollarSeparatedMultipleLines):
       value_state = int(value_state)
       nds_attribute_name = self._ls.uc_decode(nds_attribute_name)[0]
     except (ValueError,UnicodeDecodeError):
-      return DollarSeparatedMultipleLines.displayValue(self,valueindex,commandbutton)
+      return DollarSeparatedMultipleLines.displayValue(self, valueindex, commandbutton)
     else:
       return """
         <table>
@@ -199,7 +199,7 @@ class IndexDefinition(DollarSeparatedMultipleLines):
         )
 
 syntax_registry.registerAttrType(
-  IndexDefinition.oid,[
+  IndexDefinition.oid, [
     '2.16.840.1.113719.1.1.4.1.512', # indexDefinition
   ]
 )
@@ -209,12 +209,12 @@ class TaggedNameAndString(DirectoryString):
   oid = '2.16.840.1.113719.1.1.5.1.15'
   desc = 'Tagged Name And String'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     try:
       ind2 = self.attrValue.rindex('#')
       ind1 = self.attrValue.rindex('#',0,ind2-1)
     except ValueError:
-      return DirectoryString.displayValue(self,valueindex,commandbutton)
+      return DirectoryString.displayValue(self, valueindex, commandbutton)
     dn = self._ls.uc_decode(self.attrValue[0:ind1])[0]
     number = self.attrValue[ind1+1:ind2]
     dstring = self.attrValue[ind2+1:]
@@ -225,7 +225,7 @@ class TaggedNameAndString(DirectoryString):
         dstring,delimiter=':',wrap=64,linesep='<br>'
       )
     else:
-      dstring_disp = DirectoryString.displayValue(self,valueindex,commandbutton)
+      dstring_disp = DirectoryString.displayValue(self, valueindex, commandbutton)
     return '<dl><dt>name:</dt><dd>%s</dd><dt>number:</dt><dd>%s</dd><dt>dstring:</dt><dd>%s</dd></dl>' % (
       DisplayDN(self._sid,self._form,self._ls,dn,commandbutton=commandbutton),
       number,
@@ -285,7 +285,7 @@ class EntryFlags(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  EntryFlags.oid,[
+  EntryFlags.oid, [
     '2.16.840.1.113719.1.27.4.48', # entryFlags
   ]
 )
@@ -310,7 +310,7 @@ class NspmConfigurationOptions(BitArrayInteger):
   )
 
 syntax_registry.registerAttrType(
-  NspmConfigurationOptions.oid,[
+  NspmConfigurationOptions.oid, [
     '2.16.840.1.113719.1.39.43.4.100', # nspmConfigurationOptions
   ]
 )
@@ -323,7 +323,7 @@ class SnmpTrapDescription(MultilineText):
   cols = 30
 
 syntax_registry.registerAttrType(
-  SnmpTrapDescription.oid,[
+  SnmpTrapDescription.oid, [
     '2.16.840.1.113719.1.6.4.4', # snmpTrapDescription
   ]
 )
@@ -335,7 +335,7 @@ class SASVendorSupport(PreformattedMultilineText):
   cols = 50
 
 syntax_registry.registerAttrType(
-  SASVendorSupport.oid,[
+  SASVendorSupport.oid, [
     '2.16.840.1.113719.1.39.42.1.0.12', # sASVendorSupport
   ]
 )
@@ -347,7 +347,7 @@ class NspmPasswordPolicyDN(DynamicDNSelectList):
   ldap_url = 'ldap:///cn=Password Policies,cn=Security?cn?sub?(objectClass=nspmPasswordPolicy)'
 
 syntax_registry.registerAttrType(
-  NspmPasswordPolicyDN.oid,[
+  NspmPasswordPolicyDN.oid, [
     '2.16.840.1.113719.1.39.43.4.6', # nspmPasswordPolicyDN
   ]
 )
@@ -362,7 +362,7 @@ class DirXMLDriverStartOption(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  DirXMLDriverStartOption.oid,[
+  DirXMLDriverStartOption.oid, [
     '2.16.840.1.113719.1.14.4.1.13', # DirXML-DriverStartOption
   ]
 )
@@ -379,7 +379,7 @@ class DirXMLState(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  DirXMLState.oid,[
+  DirXMLState.oid, [
     '2.16.840.1.113719.1.14.4.1.14', # DirXML-State
   ]
 )
@@ -393,13 +393,13 @@ for symbol_name in dir():
 # Workarounds for eDirectory
 
 syntax_registry.registerAttrType(
-  Certificate.oid,[
+  Certificate.oid, [
     '2.16.840.1.113719.1.48.4.1.3', # nDSPKIPublicKeyCertificate
   ]
 )
 
 syntax_registry.registerAttrType(
-  CertificateList.oid,[
+  CertificateList.oid, [
     '2.16.840.1.113719.1.48.4.1.34', # certificateRevocationList in Novell eDirectory
   ]
 )
@@ -412,13 +412,13 @@ syntax_registry.registerAttrType(
 )
 
 syntax_registry.registerAttrType(
-  NullTerminatedDirectoryString.oid,[
+  NullTerminatedDirectoryString.oid, [
     '2.16.840.1.113719.1.27.4.42', # extensionInfo
   ]
 )
 
 syntax_registry.registerAttrType(
-  Binary.oid,[
+  Binary.oid, [
     '2.16.840.1.113719.1.48.4.1.4',  # nDSPKICertificateChain
     '2.16.840.1.113719.1.48.4.1.2',  # nDSPKIPrivateKey
     '2.16.840.1.113719.1.48.4.1.1',  # nDSPKIPublicKey
@@ -431,7 +431,7 @@ syntax_registry.registerAttrType(
 )
 
 syntax_registry.registerAttrType(
-  XmlValue.oid,[
+  XmlValue.oid, [
     '2.16.840.1.113719.1.1.4.1.295', # emboxConfig
     '2.16.840.1.113719.1.14.4.1.3',  # XmlData
     '2.16.840.1.113719.1.14.4.1.8',  # DirXML-ShimConfigInfo

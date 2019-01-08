@@ -16,15 +16,15 @@ class EntryTTL(Timespan):
   oid = 'EntryTTL-oid'
   desc = 'Time-to-live of dynamic entry'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     expiration_time = time.time()+int(self.attrValue)
     return '%s, expires %s' % (
-      Timespan.displayValue(self,valueindex,commandbutton),
+      Timespan.displayValue(self, valueindex, commandbutton),
       strftimeiso8601(time.gmtime(expiration_time)),
     )
 
 syntax_registry.registerAttrType(
-  EntryTTL.oid,[
+  EntryTTL.oid, [
     '1.3.6.1.4.1.1466.101.119.3', # entryTTL
   ]
 )
@@ -52,7 +52,7 @@ class DynamicSubtrees(DistinguishedName):
     return r
 
 syntax_registry.registerAttrType(
-  DynamicSubtrees.oid,[
+  DynamicSubtrees.oid, [
     '1.3.6.1.4.1.1466.101.119.4', # dynamicSubtrees
   ]
 )

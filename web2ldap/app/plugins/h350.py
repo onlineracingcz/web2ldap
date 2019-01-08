@@ -14,7 +14,7 @@ class CommURI(LDAPUrl):
   desc = 'Labeled URI format to point to the distinguished name of the commUniqueId'
 
 syntax_registry.registerAttrType(
-  CommURI.oid,[
+  CommURI.oid, [
     '0.0.8.350.1.1.1.1.1', # commURI
     '0.0.8.350.1.1.2.1.2', # commOwner
   ]
@@ -22,7 +22,7 @@ syntax_registry.registerAttrType(
 
 
 syntax_registry.registerAttrType(
-  Uri.oid,[
+  Uri.oid, [
     '0.0.8.350.1.1.6.1.1', # SIPIdentitySIPURI
   ]
 )

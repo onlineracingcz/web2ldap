@@ -16,7 +16,7 @@ from web2ldap.app.schema.syntaxes import SelectList,IA5String,Integer, \
 class RFC2307BootParameter(IA5String):
   oid = '1.3.6.1.1.1.0.1'
   desc = 'RFC2307 Boot Parameter'
-  reObj=None # just a stub, should be made stricter
+  reObj = None # just a stub, should be made stricter
 
 
 class GidNumber(DynamicValueSelectList,Integer):
@@ -26,14 +26,14 @@ class GidNumber(DynamicValueSelectList,Integer):
   maxValue = 4294967295L
   ldap_url = 'ldap:///_?gidNumber,cn?sub?(objectClass=posixGroup)'
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     return Integer._validate(self,attrValue)
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     # Possibly display a link
     ocs = self._entry.object_class_oid_set()
     if 'posixAccount' in ocs or 'shadowAccount' in ocs:
-      return DynamicValueSelectList.displayValue(self,valueindex,commandbutton)
+      return DynamicValueSelectList.displayValue(self, valueindex, commandbutton)
     else:
       r = [Integer.displayValue(self,valueindex,commandbutton=0)]
       if not commandbutton:
@@ -69,7 +69,7 @@ class GidNumber(DynamicValueSelectList,Integer):
       return Integer.formField(self)
 
 syntax_registry.registerAttrType(
-  GidNumber.oid,[
+  GidNumber.oid, [
     '1.3.6.1.1.1.1.1', # gidNumber
   ]
 )
@@ -81,18 +81,18 @@ class MemberUID(IA5String,DynamicValueSelectList):
   ldap_url = None
 #  ldap_url = 'ldap:///_?uid,cn?sub?(objectClass=posixAccount)'
 
-  def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
-    IA5String.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry)
+  def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+    IA5String.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
     if self.ldap_url:
-      DynamicValueSelectList.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry)
+      DynamicValueSelectList.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     if self.ldap_url:
       return DynamicValueSelectList._validate(self,attrValue)
     else:
       return IA5String._validate(self,attrValue)
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     r = [IA5String.displayValue(self,valueindex,commandbutton=0)]
     if commandbutton:
       r.append(self._form.applAnchor(
@@ -110,7 +110,7 @@ class MemberUID(IA5String,DynamicValueSelectList):
     return ' '.join(r)
 
 syntax_registry.registerAttrType(
-  MemberUID.oid,[
+  MemberUID.oid, [
     '1.3.6.1.1.1.1.12', # memberUid
   ]
 )
@@ -119,7 +119,7 @@ syntax_registry.registerAttrType(
 class RFC2307NISNetgroupTriple(IA5String):
   oid = '1.3.6.1.1.1.0.0'
   desc = 'RFC2307 NIS Netgroup Triple'
-  reObj=re.compile('^\([a-z0-9.-]*,[a-z0-9.-]*,[a-z0-9.-]*\)$')
+  reObj = re.compile('^\([a-z0-9.-]*,[a-z0-9.-]*,[a-z0-9.-]*\)$')
 
 
 class UidNumber(Integer):
@@ -129,7 +129,7 @@ class UidNumber(Integer):
   maxValue = 4294967295L
 
 syntax_registry.registerAttrType(
-  UidNumber.oid,[
+  UidNumber.oid, [
     '1.3.6.1.1.1.1.0', # uidNumber
   ]
 )
@@ -157,7 +157,7 @@ class Shell(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  Shell.oid,[
+  Shell.oid, [
     '1.3.6.1.1.1.1.4', # loginShell
   ]
 )
@@ -173,14 +173,14 @@ class IpServiceProtocol(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  IpServiceProtocol.oid,[
+  IpServiceProtocol.oid, [
     '1.3.6.1.1.1.1.16' , # ipServiceProtocol
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  IPHostAddress.oid,[
+  IPHostAddress.oid, [
     '1.3.6.1.1.1.1.19', # ipHostNumber
     '1.3.6.1.1.1.1.20', # ipNetworkNumber
   ]
@@ -188,14 +188,14 @@ syntax_registry.registerAttrType(
 
 
 syntax_registry.registerAttrType(
-  DNSDomain.oid,[
+  DNSDomain.oid, [
     '1.3.6.1.1.1.1.30', # nisDomain
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  DaysSinceEpoch.oid,[
+  DaysSinceEpoch.oid, [
     '1.3.6.1.1.1.1.10', # shadowExpire
     '1.3.6.1.1.1.1.5', # shadowLastChange
   ]
@@ -203,14 +203,14 @@ syntax_registry.registerAttrType(
 
 
 syntax_registry.registerAttrType(
-  IPServicePortNumber.oid,[
+  IPServicePortNumber.oid, [
     '1.3.6.1.1.1.1.15', # ipServicePort
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  MacAddress.oid,[
+  MacAddress.oid, [
     '1.3.6.1.1.1.1.22', # macAddress
   ]
 )

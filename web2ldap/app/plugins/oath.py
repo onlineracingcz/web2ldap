@@ -19,7 +19,7 @@ from web2ldap.app.schema.syntaxes import \
 
 
 syntax_registry.registerAttrType(
-  JSONValue.oid,[
+  JSONValue.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.12', # oathEncKey
     '1.3.6.1.4.1.5427.1.389.4226.4.14', # oathTokenPIN
   ]
@@ -35,7 +35,7 @@ class OathOTPLength(SelectList):
   }
 
 syntax_registry.registerAttrType(
-  OathOTPLength.oid,[
+  OathOTPLength.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.5', # oathOTPLength
   ]
 )
@@ -50,7 +50,7 @@ class OathHOTPParams(DynamicDNSelectList):
   )
 
 syntax_registry.registerAttrType(
-  OathHOTPParams.oid,[
+  OathHOTPParams.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.5.1', # oathHOTPParams
   ]
 )
@@ -60,7 +60,7 @@ class OathResultCode(LDAPv3ResultCode):
   oid = 'OathResultCode-oid'
 
 syntax_registry.registerAttrType(
-  OathResultCode.oid,[
+  OathResultCode.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.13.1', # oathSuccessResultCode
     '1.3.6.1.4.1.5427.1.389.4226.4.13.2', # oathFailureResultCode
   ]
@@ -76,7 +76,7 @@ class OathHOTPToken(DynamicDNSelectList):
   )
 
 syntax_registry.registerAttrType(
-  OathHOTPToken.oid,[
+  OathHOTPToken.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.9.1', # oathHOTPToken
   ]
 )
@@ -91,7 +91,7 @@ class OathTOTPParams(DynamicDNSelectList):
   )
 
 syntax_registry.registerAttrType(
-  OathTOTPParams.oid,[
+  OathTOTPParams.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.5.2', # oathTOTPParams
   ]
 )
@@ -106,7 +106,7 @@ class OathTOTPToken(DynamicDNSelectList):
   )
 
 syntax_registry.registerAttrType(
-  OathTOTPToken.oid,[
+  OathTOTPToken.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.9.2', # oathTOTPToken
   ]
 )
@@ -122,7 +122,7 @@ class OathTokenIdentifier(DirectoryString):
   reObj = re.compile('^[a-zA-Z0-9]{12}$')
 
 syntax_registry.registerAttrType(
-  OathTokenIdentifier.oid,[
+  OathTokenIdentifier.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.3', # oathTokenIdentifier
   ]
 )
@@ -132,21 +132,21 @@ class OathInitPwAlphabet(DirectoryString):
   oid = 'OathInitPwAlphabet-oid'
   desc = 'Alphabet used to generate init passwords'
 
-  def sanitizeInput(self,attrValue):
+  def sanitizeInput(self, attrValue):
     return ''.join([
       self._ls.uc_encode(c)[0]
       for c in sorted(set(self._ls.uc_decode(attrValue or '')[0].replace(u' ','')))
     ])
 
 syntax_registry.registerAttrType(
-  HMACAlgorithmOID.oid,[
+  HMACAlgorithmOID.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.6',  # oathHMACAlgorithm
   ]
 )
 
 
 syntax_registry.registerAttrType(
-  Timespan.oid,[
+  Timespan.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.4.1', # oathTOTPTimeStepPeriod
     '1.3.6.1.4.1.5427.1.389.4226.4.8',  # oathSecretMaxAge
   ]
@@ -157,14 +157,14 @@ class OathSecret(OctetString):
   oid = 'OathSecret-oid'
   desc = 'OATH shared secret'
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     return '<br>'.join((
       self._form.utf2display(base64.b32encode(self.attrValue).decode('ascii')),
-      OctetString.displayValue(self,valueindex,commandbutton),
+      OctetString.displayValue(self, valueindex, commandbutton),
     ))
 
 syntax_registry.registerAttrType(
-  OathSecret.oid,[
+  OathSecret.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.1',  # oathSecret
   ]
 )
@@ -175,9 +175,9 @@ class OathSecretTime(GeneralizedTime):
   desc = 'OATH secret change time'
   time_divisors = Timespan.time_divisors
 
-  def displayValue(self,valueindex=0,commandbutton=0):
+  def displayValue(self, valueindex=False, commandbutton=False):
     ocs = self._entry.object_class_oid_set()
-    gt_disp_html = GeneralizedTime.displayValue(self,valueindex,commandbutton)
+    gt_disp_html = GeneralizedTime.displayValue(self, valueindex, commandbutton)
     if 'oathHOTPToken' in ocs:
       oath_params_dn_attr = 'oathHOTPParams'
     elif 'oathTOTPToken' in ocs:
@@ -229,7 +229,7 @@ class OathSecretTime(GeneralizedTime):
 
 
 syntax_registry.registerAttrType(
-  OathSecretTime.oid,[
+  OathSecretTime.oid, [
     '1.3.6.1.4.1.5427.1.389.4226.4.7.3', # oathSecretTime
   ]
 )

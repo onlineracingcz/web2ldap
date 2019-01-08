@@ -16,10 +16,10 @@ class MemberUrl(LDAPUrl):
   desc = 'LDAP URL describing search parameters used to lookup group members'
   ldap_url = None
 
-  def __init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry=None):
-    LDAPUrl.__init__(self,sid,form,ls,dn,schema,attrType,attrValue,entry)
+  def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+    LDAPUrl.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
 
-  def _validate(self,attrValue):
+  def _validate(self, attrValue):
     try:
       self.lu_obj = ldap0.ldapurl.LDAPUrl(attrValue)
     except ValueError:
@@ -44,7 +44,7 @@ class MemberUrl(LDAPUrl):
 
 
 syntax_registry.registerAttrType(
-  MemberUrl.oid,[
+  MemberUrl.oid, [
     '2.16.840.1.113730.3.1.198', # memberUrl
   ]
 )

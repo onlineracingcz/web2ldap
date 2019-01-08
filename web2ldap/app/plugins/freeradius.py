@@ -14,7 +14,7 @@ class RadiusProfileDN(DynamicDNSelectList):
   ldap_url = 'ldap:///_??sub?(&(objectClass=radiusprofile)(!(radiusProfileDn=*)))'
 
 syntax_registry.registerAttrType(
-  RadiusProfileDN.oid,[
+  RadiusProfileDN.oid, [
     '1.3.6.1.4.1.3317.4.3.1.49' , # radiusProfileDn
   ]
 )
