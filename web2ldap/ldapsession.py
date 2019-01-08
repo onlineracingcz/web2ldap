@@ -371,7 +371,7 @@ class USERNAME_NOT_UNIQUE(LDAPSessionException):
     """
 
 
-class LDAPSession:
+class LDAPSession(object):
     """
     Class for handling LDAP connection objects
     """
