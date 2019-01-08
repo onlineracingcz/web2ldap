@@ -39,7 +39,7 @@ class PkcX509Issuer(DynamicValueSelectList,DistinguishedName):
   def _validate(self, attrValue):
     return DistinguishedName._validate(self,attrValue)
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     r = [ DistinguishedName.displayValue(self,valueindex,commandbutton=0) ]
     r.append(self._form.applAnchor(
         'search','&raquo;',self._sid,
@@ -68,15 +68,15 @@ class X509KeyUsage(SelectList):
   oid = 'X509KeyUsage-oid'
   desc = 'Key usage extension'
   attr_value_dict = {
-    u'digitalSignature':u'digitalSignature',
-    u'nonRepudiation':u'nonRepudiation',
-    u'keyEncipherment':u'keyEncipherment',
-    u'dataEncipherment':u'dataEncipherment',
-    u'keyAgreement':u'keyAgreement',
-    u'keyCertSign':u'keyCertSign',
-    u'cRLSign':u'cRLSign',
-    u'encipherOnly':u'encipherOnly',
-    u'decipherOnly':u'decipherOnly',
+    u'digitalSignature': u'digitalSignature',
+    u'nonRepudiation': u'nonRepudiation',
+    u'keyEncipherment': u'keyEncipherment',
+    u'dataEncipherment': u'dataEncipherment',
+    u'keyAgreement': u'keyAgreement',
+    u'keyCertSign': u'keyCertSign',
+    u'cRLSign': u'cRLSign',
+    u'encipherOnly': u'encipherOnly',
+    u'decipherOnly': u'decipherOnly',
   }
 
 syntax_registry.registerAttrType(
@@ -88,4 +88,4 @@ syntax_registry.registerAttrType(
 
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
+    syntax_registry.registerSyntaxClass(eval(name))

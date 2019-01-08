@@ -148,7 +148,7 @@ syntax_registry.registerAttrType(
 class UserPassword(OctetString, DirectoryString):
     oid = 'UserPassword-oid'
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         try:
             result = DirectoryString.displayValue(self, valueindex, commandbutton)
         except UnicodeDecodeError:

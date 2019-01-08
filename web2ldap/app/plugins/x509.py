@@ -80,7 +80,7 @@ class Certificate(Binary):
                 pass
         return attrValue
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         links_html = '%d bytes | %s' % (
             len(self.attrValue),
             self._form.applAnchor(
@@ -142,7 +142,7 @@ class CertificateList(Binary):
                 pass
         return attrValue
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         links_html = '%d bytes | %s' % (
             len(self.attrValue),
             self._form.applAnchor(

@@ -658,7 +658,7 @@ class AEGroupDN(DynamicDNSelectList):
     ('memberOf',u'Members',None,u'Search all member entries of this user group'),
   )
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     dn_comp_list = ldap0.dn.str2dn(self.attrValue)
     group_cn = dn_comp_list[0][0][1].decode(self._ls.charset)
     parent_dn = ldap0.dn.dn2str(dn_comp_list[1:]).decode(self._ls.charset)
@@ -1449,7 +1449,7 @@ class AEUserMailaddress(AEPersonAttribute,SelectList):
 
   def _get_attr_value_dict(self):
     attr_value_dict = {
-      u'':u'-/-',
+      u'': u'-/-',
     }
     attr_value_dict.update([
       (addr.decode(self._ls.charset),addr.decode(self._ls.charset))
@@ -1860,7 +1860,7 @@ syntax_registry.registerAttrType(
 class AECommonNameAETag(AEZonePrefixCommonName):
   oid = 'AECommonNameAETag-oid'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     display_value = AEZonePrefixCommonName.displayValue(self, valueindex, commandbutton)
     if commandbutton:
       search_anchor = self._form.applAnchor(
@@ -1964,10 +1964,10 @@ class AEStatus(SelectList,Integer):
   oid = 'AEStatus-oid'
   desc = 'AE-DIR: Status of object'
   attr_value_dict = {
-    u'-1':u'requested',
-    u'0':u'active',
-    u'1':u'deactivated',
-    u'2':u'archived',
+    u'-1': u'requested',
+    u'0': u'active',
+    u'1': u'deactivated',
+    u'2': u'archived',
   }
 
   def _validate(self, attrValue):
@@ -2019,7 +2019,7 @@ class AEStatus(SelectList,Integer):
             ae_status = ae_expiry_status
     return [str(ae_status)]
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     if not commandbutton:
       return Integer.displayValue(self,valueindex)
     else:
@@ -2036,9 +2036,9 @@ class AEExpiryStatus(SelectList):
   oid = 'AEExpiryStatus-oid'
   desc = 'AE-DIR: Expiry status of object'
   attr_value_dict = {
-    u'-/-':u'',
-    u'1':u'deactivated',
-    u'2':u'archived',
+    u'-/-': u'',
+    u'1': u'deactivated',
+    u'2': u'archived',
   }
 
 syntax_registry.registerAttrType(
@@ -2241,9 +2241,9 @@ class AELoginShell(Shell):
   oid = 'AELoginShell-oid'
   desc = 'AE-DIR: Login shell for POSIX users'
   attr_value_dict = {
-    u'/bin/bash':u'/bin/bash',
-    u'/bin/true':u'/bin/true',
-    u'/bin/false':u'/bin/false',
+    u'/bin/bash': u'/bin/bash',
+    u'/bin/true': u'/bin/true',
+    u'/bin/false': u'/bin/false',
   }
 
 syntax_registry.registerAttrType(
@@ -2286,11 +2286,11 @@ class AESSHPermissions(SelectList):
   oid = 'AESSHPermissions-oid'
   desc = 'AE-DIR: Status of object'
   attr_value_dict = {
-    u'pty':u'PTY allocation',
-    u'X11-forwarding':u'X11 forwarding',
-    u'agent-forwarding':u'Key agent forwarding',
-    u'port-forwarding':u'Port forwarding',
-    u'user-rc':u'Execute ~/.ssh/rc',
+    u'pty': u'PTY allocation',
+    u'X11-forwarding': u'X11 forwarding',
+    u'agent-forwarding': u'Key agent forwarding',
+    u'port-forwarding': u'Port forwarding',
+    u'user-rc': u'Execute ~/.ssh/rc',
   }
 
 syntax_registry.registerAttrType(

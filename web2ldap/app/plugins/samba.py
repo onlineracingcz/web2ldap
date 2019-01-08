@@ -64,7 +64,7 @@ class SambaAcctFlags(IA5String):
         'I': '<b>I</b>nterdomain trust account.',
     }
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         flags = self.attrValue[1:-1] # trim brackets
         table_rows = [
             '<tr><td>%s</td><td>%s</td></tr>\n' % ({True:'*', False:''}[f in flags], d)

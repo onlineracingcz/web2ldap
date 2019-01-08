@@ -27,3 +27,8 @@ syntax_registry.registerAttrType(
     '1.3.18.0.2.4.3116', # ibm-slapdCryptoSync
   ]
 )
+
+
+# Register all syntax classes in this module
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

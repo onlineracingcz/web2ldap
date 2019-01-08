@@ -112,8 +112,8 @@ class KrbSearchScope(SelectList):
   oid = 'KrbSearchScope-oid'
   desc = 'Kerberos search scope'
   attr_value_dict = {
-    u'1':u'ONE_LEVEL',
-    u'2':u'SUB_TREE',
+    u'1': u'ONE_LEVEL',
+    u'2': u'SUB_TREE',
   }
 
 syntax_registry.registerAttrType(
@@ -127,15 +127,15 @@ class KrbPrincipalType(SelectList):
   oid = 'KrbPrincipalType-oid'
   desc = 'Kerberos V Principal Type (see RFC 4120, section 6.2)'
   attr_value_dict = {
-     u'0':u'NT-UNKNOWN',        # Name type not known
-     u'1':u'NT-PRINCIPAL',      # Just the name of the principal as in DCE, or for users
-     u'2':u'NT-SRV-INST',       # Service and other unique instance (krbtgt)
-     u'3':u'NT-SRV-HST',        # Service with host name as instance (telnet, rcommands)
-     u'4':u'NT-SRV-XHST',       # Service with host as remaining components
-     u'5':u'NT-UID',            # Unique ID
-     u'6':u'NT-X500-PRINCIPAL', # Encoded X.509 Distinguished name [RFC2253]
-     u'7':u'NT-SMTP-NAME',      # Name in form of SMTP email name (e.g., user@example.com)
-    u'10':u'NT-ENTERPRISE',     # Enterprise name - may be mapped to principal name
+     u'0': u'NT-UNKNOWN',        # Name type not known
+     u'1': u'NT-PRINCIPAL',      # Just the name of the principal as in DCE, or for users
+     u'2': u'NT-SRV-INST',       # Service and other unique instance (krbtgt)
+     u'3': u'NT-SRV-HST',        # Service with host name as instance (telnet, rcommands)
+     u'4': u'NT-SRV-XHST',       # Service with host as remaining components
+     u'5': u'NT-UID',            # Unique ID
+     u'6': u'NT-X500-PRINCIPAL', # Encoded X.509 Distinguished name [RFC2253]
+     u'7': u'NT-SMTP-NAME',      # Name in form of SMTP email name (e.g., user@example.com)
+    u'10': u'NT-ENTERPRISE',     # Enterprise name - may be mapped to principal name
   }
 
 syntax_registry.registerAttrType(
@@ -183,5 +183,5 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for symbol_name in dir():
-  syntax_registry.registerSyntaxClass(eval(symbol_name))
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

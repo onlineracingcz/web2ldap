@@ -84,7 +84,7 @@ class AssociatedDomain(DNSDomain):
         form_value = u'.'.join((dc_value,parent_domain))
     return form_value
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     r = [DNSDomain.displayValue(self, valueindex, commandbutton)]
     if commandbutton:
       av = self._ls.uc_decode(self.attrValue)[0].lower()
@@ -183,7 +183,7 @@ class ResourceRecord(DNSDomain,DynamicValueSelectList):
   def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
     DynamicValueSelectList.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     return DynamicValueSelectList.displayValue(self, valueindex, commandbutton)
 
 syntax_registry.registerAttrType(
@@ -230,7 +230,7 @@ class ARecord(IPv4HostAddress):
   oid = 'ARecord-oid'
   desc = 'A resource record pointing to IPv4 address'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     r = [IPv4HostAddress.displayValue(self, valueindex, commandbutton)]
     if commandbutton:
       ip_addr = self.addr_class(self.attrValue.decode('ascii'))
@@ -287,7 +287,7 @@ class AAAARecord(IPv6HostAddress):
   oid = 'AAAARecord-oid'
   desc = 'AAAA resource record pointing to IPv6 address'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     r = [IPv6HostAddress.displayValue(self, valueindex, commandbutton)]
     if commandbutton:
       ip_addr = self.addr_class(self.attrValue.decode('ascii'))
@@ -365,7 +365,7 @@ class SSHFPRecord(IA5String):
         result = result and len(fp_value)==fp_algo_len
     return result
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     display_value = IA5String.displayValue(self, valueindex, commandbutton)
     try:
       key_algo,fp_algo,_ = filter(None,map(string.strip,self.attrValue.split(' ')))
@@ -396,5 +396,4 @@ syntax_registry.registerAttrType(
 
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
-
+    syntax_registry.registerSyntaxClass(eval(name))

@@ -17,9 +17,9 @@ class PwdCheckQuality(SelectList):
   oid = 'PwdCheckQuality-oid'
   desc = 'Password quality checking enforced'
   attr_value_dict = {
-    u'0':u'quality checking not be enforced',
-    u'1':u'quality checking enforced, accepting un-checkable passwords',
-    u'2':u'quality checking always enforced',
+    u'0': u'quality checking not be enforced',
+    u'1': u'quality checking enforced, accepting un-checkable passwords',
+    u'2': u'quality checking always enforced',
   }
 
 syntax_registry.registerAttrType(
@@ -33,7 +33,7 @@ class PwdAttribute(SelectList):
   oid = 'PwdAttribute-oid'
   desc = 'Password attribute'
   attr_value_dict = {
-    u'2.5.4.35':u'userPassword',
+    u'2.5.4.35': u'userPassword',
   }
 
   def _validate(self, attrValue):
@@ -74,7 +74,7 @@ class PwdMaxAge(Timespan):
       ('search_string',self._search_timestamp(int(self.attrValue.strip()))),
     )
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     ts_dv = Timespan.displayValue(self, valueindex, commandbutton)
     # Possibly display a link
     ocs = self._entry.object_class_oid_set()
@@ -140,7 +140,7 @@ class PwdAccountLockedTime(GeneralizedTime):
   def _validate(self, attrValue):
     return attrValue in self.magic_values or GeneralizedTime._validate(self,attrValue)
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     gt_disp_html = GeneralizedTime.displayValue(self, valueindex, commandbutton)
     if self.attrValue in self.magic_values:
       return '%s (%s)' % (gt_disp_html,self.magic_values[self.attrValue])
@@ -159,7 +159,7 @@ class PwdChangedTime(GeneralizedTime):
   desc = 'user entry: Last password change time'
   time_divisors = Timespan.time_divisors
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     gt_disp_html = GeneralizedTime.displayValue(self, valueindex, commandbutton)
     try:
       pwd_changed_dt = strptime(self.attrValue)
@@ -234,5 +234,4 @@ syntax_registry.registerAttrType(
 
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
-
+    syntax_registry.registerSyntaxClass(eval(name))

@@ -61,5 +61,5 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for symbol_name in dir():
-  syntax_registry.registerSyntaxClass(eval(symbol_name))
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

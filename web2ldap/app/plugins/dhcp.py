@@ -24,7 +24,7 @@ class DHCPConfigStatement(MultilineText):
   lineSep = u''
   whitespace_cleaning = False
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     r = ['<code>%s</code>' % (
       MultilineText.displayValue(self, valueindex, commandbutton)
     )]
@@ -322,20 +322,20 @@ class DHCPAddressState(SelectList):
   desc = 'DHCP address state'
 
   attr_value_dict = {
-    u'':u'',
-    u'FREE':u'FREE',
-    u'ACTIVE':u'ACTIVE',
-    u'EXPIRED':u'EXPIRED',
-    u'RELEASED':u'RELEASED',
-    u'RESET':u'RESET',
-    u'ABANDONED':u'ABANDONED',
-    u'BACKUP':u'BACKUP',
-    u'UNKNOWN':u'UNKNOWN',
-    u'RESERVED':u'RESERVED (an address that is managed by DHCP that is reserved for a specific client)',
-    u'RESERVED-ACTIVE':u'RESERVED-ACTIVE (same as reserved, but address is currently in use)',
-    u'ASSIGNED':u'ASSIGNED (assigned manually or by some other mechanism)',
-    u'UNASSIGNED':u'UNASSIGNED',
-    u'NOTASSIGNABLE':u'NOTASSIGNABLE',
+    u'': u'',
+    u'FREE': u'FREE',
+    u'ACTIVE': u'ACTIVE',
+    u'EXPIRED': u'EXPIRED',
+    u'RELEASED': u'RELEASED',
+    u'RESET': u'RESET',
+    u'ABANDONED': u'ABANDONED',
+    u'BACKUP': u'BACKUP',
+    u'UNKNOWN': u'UNKNOWN',
+    u'RESERVED': u'RESERVED (an address that is managed by DHCP that is reserved for a specific client)',
+    u'RESERVED-ACTIVE': u'RESERVED-ACTIVE (same as reserved, but address is currently in use)',
+    u'ASSIGNED': u'ASSIGNED (assigned manually or by some other mechanism)',
+    u'UNASSIGNED': u'UNASSIGNED',
+    u'NOTASSIGNABLE': u'NOTASSIGNABLE',
   }
 
 
@@ -377,5 +377,5 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for symbol_name in dir():
-  syntax_registry.registerSyntaxClass(eval(symbol_name))
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

@@ -84,9 +84,9 @@ class OlcSubordinate(SelectList):
   oid = 'OlcSubordinate-oid'
   desc = 'Indicates whether backend is subordinate'
   attr_value_dict = {
-    u'':u'-/- (FALSE)',
-    u'TRUE':u'TRUE',
-    u'advertise':u'advertise',
+    u'': u'-/- (FALSE)',
+    u'TRUE': u'TRUE',
+    u'advertise': u'advertise',
   }
 
 syntax_registry.registerAttrType(
@@ -129,7 +129,7 @@ class OlcMultilineText(MultilineText):
   minInputRows = 3
   whitespace_cleaning = False
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     return '<code>%s</code>' % MultilineText.displayValue(self, valueindex, commandbutton)
 
 
@@ -151,7 +151,7 @@ class OlcSyncRepl(OlcMultilineText,LDAPUrl):
     self._sync_repl_desc = ldap0.openldap.SyncReplDesc(attrValue)
     return # __init__()
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     if commandbutton and self.attrValue:
       return ' '.join((
         OlcMultilineText.displayValue(self, valueindex, commandbutton),
@@ -205,10 +205,10 @@ class OlcMemberOfDangling(SelectList):
   oid = 'OlcMemberOfDangling-oid'
   desc = 'Behavior in case of dangling references during modification'
   attr_value_dict = {
-    u'':u'-/-',
-    u'ignore':u'ignore',
-    u'drop':u'drop',
-    u'error':u'error',
+    u'': u'-/-',
+    u'ignore': u'ignore',
+    u'drop': u'drop',
+    u'error': u'error',
   }
 
 syntax_registry.registerAttrType(
@@ -235,7 +235,7 @@ class AuditContext(NamingContexts):
   oid = 'AuditContext'
   desc = 'OpenLDAP DN pointing to audit naming context'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     r = [DistinguishedName.displayValue(self, valueindex, commandbutton)]
     if commandbutton:
       r.extend([
@@ -292,7 +292,7 @@ class ReqMod(OctetString,DirectoryString):
   desc = 'List of modifications/old values'
   known_modtypes = set(('+','-','=','#',''))
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     if self.attrValue==':':
       # magic value used for fixing OpenLDAP ITS#6545
       return self.attrValue
@@ -339,7 +339,7 @@ class ReqControls(IA5String):
   oid = '1.3.6.1.4.1.4203.666.11.5.3.1'
   desc = 'List of LDAPv3 extended controls sent along with a request'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     result_lines = [IA5String.displayValue(self, valueindex, commandbutton)]
     # Eliminate X-ORDERED prefix
     _,rest = self.attrValue.strip().split('}{',1)
@@ -395,7 +395,7 @@ syntax_registry.registerAttrType(
 class ReqEntryUUID(UUID):
   oid = 'ReqEntryUUID-oid'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     display_value = UUID.displayValue(self, valueindex, commandbutton)
     if commandbutton:
       return web2ldapcnf.command_link_separator.join((
@@ -426,7 +426,7 @@ syntax_registry.registerAttrType(
 class ReqSession(Integer):
   oid = 'ReqSession-oid'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     display_value = Integer.displayValue(self, valueindex, commandbutton)
     if commandbutton:
       return web2ldapcnf.command_link_separator.join((
@@ -517,14 +517,13 @@ syntax_registry.registerAttrType(
 )
 
 
-# Register all syntax classes in this module
-for symbol_name in dir():
-  syntax_registry.registerSyntaxClass(eval(symbol_name))
-
-
 syntax_registry.registerAttrType(
   DistinguishedName.oid, [
     'entryDN',
     'reqDN',
   ]
 )
+
+# Register all syntax classes in this module
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

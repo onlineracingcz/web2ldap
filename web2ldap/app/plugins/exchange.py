@@ -29,3 +29,8 @@ syntax_registry.registerAttrType(
     '1.2.840.113556.1.4.7000.102.11058', # msExchMailboxGuid
   ]
 )
+
+
+# Register all syntax classes in this module
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

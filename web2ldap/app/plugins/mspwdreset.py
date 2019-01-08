@@ -14,3 +14,8 @@ syntax_registry.registerAttrType(
     '1.3.6.1.4.1.5427.1.389.4.336' , # msPwdResetHashAlgorithm
   ]
 )
+
+
+# Register all syntax classes in this module
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

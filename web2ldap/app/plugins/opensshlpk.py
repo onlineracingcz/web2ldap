@@ -80,7 +80,7 @@ class SshPublicKey(DirectoryString):
       result.append('</dl></dd>')
     return result
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     pk_type,pk_comment,pk_bin,pk_fingerprints = self._extract_pk_params(self.attrValue)
     result = ['<dl>']
     result.extend(self._display_lines(valueindex,commandbutton,pk_type,pk_comment,pk_bin,pk_fingerprints))
@@ -145,5 +145,5 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for symbol_name in dir():
-  syntax_registry.registerSyntaxClass(eval(symbol_name))
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

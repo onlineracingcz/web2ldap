@@ -16,15 +16,15 @@ class EduPersonAffiliation(SelectList):
   desc = 'Affiliation (see eduPerson)'
 
   attr_value_dict = {
-    u'':u'',
-    u'faculty':u'faculty',
-    u'student':u'student',
-    u'staff':u'staff',
-    u'alum':u'alum',
-    u'member':u'member',
-    u'affiliate':u'affiliate',
-    u'employee':u'employee',
-    u'library-walk-in':u'library-walk-in',
+    u'': u'',
+    u'faculty': u'faculty',
+    u'student': u'student',
+    u'staff': u'staff',
+    u'alum': u'alum',
+    u'member': u'member',
+    u'affiliate': u'affiliate',
+    u'employee': u'employee',
+    u'library-walk-in': u'library-walk-in',
   }
 
 syntax_registry.registerAttrType(
@@ -73,5 +73,5 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for symbol_name in dir():
-  syntax_registry.registerSyntaxClass(eval(symbol_name))
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

@@ -30,8 +30,8 @@ class OathOTPLength(SelectList):
   oid = 'OathOTPLength-oid'
   desc = 'number of OTP digits'
   attr_value_dict = {
-    u'6':u'6',
-    u'8':u'8',
+    u'6': u'6',
+    u'8': u'8',
   }
 
 syntax_registry.registerAttrType(
@@ -157,7 +157,7 @@ class OathSecret(OctetString):
   oid = 'OathSecret-oid'
   desc = 'OATH shared secret'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     return '<br>'.join((
       self._form.utf2display(base64.b32encode(self.attrValue).decode('ascii')),
       OctetString.displayValue(self, valueindex, commandbutton),
@@ -175,7 +175,7 @@ class OathSecretTime(GeneralizedTime):
   desc = 'OATH secret change time'
   time_divisors = Timespan.time_divisors
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     ocs = self._entry.object_class_oid_set()
     gt_disp_html = GeneralizedTime.displayValue(self, valueindex, commandbutton)
     if 'oathHOTPToken' in ocs:
@@ -237,4 +237,4 @@ syntax_registry.registerAttrType(
 
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
+    syntax_registry.registerSyntaxClass(eval(name))

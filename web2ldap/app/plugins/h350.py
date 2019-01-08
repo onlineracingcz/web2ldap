@@ -27,6 +27,7 @@ syntax_registry.registerAttrType(
   ]
 )
 
+
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
+    syntax_registry.registerSyntaxClass(eval(name))

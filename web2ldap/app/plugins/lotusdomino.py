@@ -27,7 +27,7 @@ class DominoCertificate(MultilineText):
   mimeType = 'text/plain'
   cols = 36
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     lines = [
       self._form.utf2display(l)
       for l in self._split_lines(self.attrValue.decode('ascii'))
@@ -47,9 +47,9 @@ class CheckPassword(SelectList):
   oid = 'CheckPassword-oid'
   desc = ''
   attr_value_dict = {
-    u'0':u'Do not check password',
-    u'1':u'Check password',
-    u'2':u'ID is locked',
+    u'0': u'Do not check password',
+    u'1': u'Check password',
+    u'2': u'ID is locked',
   }
 
 syntax_registry.registerAttrType(
@@ -72,5 +72,5 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for symbol_name in dir():
-  syntax_registry.registerSyntaxClass(eval(symbol_name))
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

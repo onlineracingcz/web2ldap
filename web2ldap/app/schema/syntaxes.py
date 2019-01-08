@@ -304,7 +304,7 @@ class LDAPSyntax:
     def getMimeType(self):
         return self.mimeType
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         if ldap0.ldapurl.isLDAPUrl(self.attrValue):
             displayer_class = LDAPUrl
         elif Uri.reObj.match(self.attrValue) is not None:
@@ -337,7 +337,7 @@ class Binary(LDAPSyntax):
         f.mimeType = self.mimeType
         return f
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         return '%d bytes | %s' % (
             len(self.attrValue),
             self._form.applAnchor(
@@ -362,7 +362,7 @@ class Audio(Binary):
             res = sndhdr.test_au(attrValue, fileobj)
         return res is not None
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         mimetype = self.getMimeType()
         return """
             <embed
@@ -400,7 +400,7 @@ class DirectoryString(LDAPSyntax):
             self._ls.uc_encode(self._form.uc_decode(attrValue)[0])[0],
         )
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         return self.html_tmpl.format(
             av=self._form.utf2display(self._ls.uc_decode(self.attrValue)[0])
         )
@@ -494,7 +494,7 @@ class DistinguishedName(DirectoryString):
             ))
         return r
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         attr_value_u = self._ls.uc_decode(self.attrValue)[0]
         r = [
             web2ldap.app.gui.DisplayDN(
@@ -520,7 +520,7 @@ class AuthzDN(DistinguishedName):
     oid = 'AuthzDN-oid'
     desc = 'Authz Distinguished Name'
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         result = DistinguishedName.displayValue(self, valueindex, commandbutton)
         if commandbutton:
             simple_display_str = DistinguishedName.displayValue(self, valueindex, commandbutton=0)
@@ -552,7 +552,7 @@ class NameAndOptionalUID(DistinguishedName):
         dn, _ = self._splitDNandUID(self._ls.uc_decode(attrValue)[0])
         return is_dn(dn)
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         value = self.attrValue.split('#')
         dn_str = web2ldap.app.gui.DisplayDN(
             self._sid,
@@ -687,7 +687,7 @@ class GeneralizedTime(IA5String):
                     break
         return result # sanitizeInput()
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         try:
             dt_utc = web2ldap.utctime.strptime(self.attrValue)
         except ValueError:
@@ -744,7 +744,7 @@ class NullTerminatedDirectoryString(DirectoryString):
     def formValue(self):
         return self._ls.uc_decode((self.attrValue or chr(0))[:-1])[0]
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         return self._form.utf2display(self._ls.uc_decode((self.attrValue or chr(0))[:-1])[0])
 
 
@@ -890,7 +890,7 @@ class Uri(DirectoryString):
         str.strip,
     )
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         attr_value = self._ls.uc_decode(self.attrValue)[0]
         try:
             url, label = attr_value.split(u' ', 1)
@@ -946,7 +946,7 @@ class Image(Binary):
                 f.close()
         return attrValue
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         maxwidth, maxheight = 100, 150
         width, height = None, None
         size_attr_html = ''
@@ -1022,7 +1022,7 @@ class OID(IA5String):
                 pass
         return attrValue
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         try:
             name, description, reference = oid_desc_reg[self.attrValue]
         except (KeyError, ValueError):
@@ -1064,7 +1064,7 @@ class LDAPUrl(Uri):
     def _command_ldap_url(self, ldap_url):
         return ldap_url
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         try:
             if commandbutton:
                 commandbuttonstr = web2ldap.app.gui.LDAPURLButton(
@@ -1100,7 +1100,7 @@ class OctetString(Binary):
             raise LDAPSyntaxValueError('Illegal human-readable OctetString representation: %s' % e)
         return result_str
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         lines = [
             '<tr><td><code>%0.6X</code></td><td><code>%s</code></td><td><code>%s</code></td></tr>'% (
                 i*self.bytes_split,
@@ -1150,7 +1150,7 @@ class MultilineText(DirectoryString):
     def sanitizeInput(self, attrValue):
         return attrValue.replace(u'\r', u'').replace(u'\n', self.lineSep).encode(self._ls.charset)
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         lines = [
             self._form.utf2display(l)
             for l in self._split_lines(self._ls.uc_decode(self.attrValue)[0])
@@ -1188,7 +1188,7 @@ class PreformattedMultilineText(MultilineText):
             for l in self._split_lines(attrValue.decode(self._form.accept_charset))
         ]).encode(self._ls.charset)
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         lines = [
             self._form.utf2display(l, self.tab_identiation)
             for l in self._split_lines(self._ls.uc_decode(self.attrValue)[0])
@@ -1263,7 +1263,7 @@ class ObjectGUID(LDAPSyntax):
     desc = 'Object GUID'
     charset = 'ascii'
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         objectguid_str = ''.join([
             '%02X' % ord(c)
             for c in self.attrValue
@@ -1328,7 +1328,7 @@ class SecondsSinceEpoch(Integer):
     oid = 'SecondsSinceEpoch-oid'
     desc = 'Seconds since epoch (1970-01-01 00:00:00)'
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         int_str = Integer.displayValue(self, valueindex, commandbutton)
         try:
             return '%s (%s)' % (
@@ -1343,7 +1343,7 @@ class DaysSinceEpoch(Integer):
     oid = 'DaysSinceEpoch-oid'
     desc = 'Days since epoch (1970-01-01)'
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         int_str = Integer.displayValue(self, valueindex, commandbutton)
         try:
             return '%s (%s)' % (
@@ -1387,7 +1387,7 @@ class Timespan(Integer):
             result = Integer.formValue(self)
         return result
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         try:
             result = self._form.utf2display('%s (%s)' % (
                 web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, int(self.attrValue)),
@@ -1445,7 +1445,7 @@ class SelectList(DirectoryString):
         attr_value_dict = self._get_attr_value_dict()
         return self._ls.uc_decode(attrValue)[0] in attr_value_dict
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         attr_value_str = DirectoryString.displayValue(self, valueindex, commandbutton)
         attr_value_dict = self._get_attr_value_dict()
         try:
@@ -1565,7 +1565,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             return False
         return self._searchReferencedEntry(attrValue) is not None
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         if commandbutton and self.lu_obj.attrs:
             ref_result = self._searchReferencedEntry(self.attrValue)
             if ref_result:
@@ -1718,7 +1718,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
     def _validate(self, attrValue):
         return self._readReferencedEntry(attrValue) is not None
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         if commandbutton and self.lu_obj.attrs:
             ref_entry = self._readReferencedEntry(self.attrValue) or {}
             try:
@@ -1756,7 +1756,7 @@ class Boolean(SelectList, IA5String):
             return SelectList._validate(self, attrValue.upper())
         return SelectList._validate(self, attrValue)
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         return IA5String.displayValue(self, valueindex, commandbutton)
 
 
@@ -1836,7 +1836,7 @@ class BitArrayInteger(MultilineText, Integer):
             cols=max([len(desc) for desc, _ in self.flag_desc_table])+1
         )
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         attrValue_int = int(self.attrValue)
         return (
             '%s<br>'
@@ -1901,7 +1901,7 @@ class DNSDomain(IA5String):
             result = u'!!!snipped because of UnicodeDecodeError!!!'
         return result
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         if self.attrValue.decode('ascii') != self.attrValue.decode('idna'):
             return '%s (%s)' % (
                 IA5String.displayValue(self, valueindex, commandbutton),
@@ -2020,7 +2020,7 @@ class ASN1Object(Binary):
     oid = 'ASN1Object-oid'
     desc = 'BER encoded ASN.1 data'
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         asn1obj = asn1.parse(self.attrValue)
         return ''.join((
             '<code>',
@@ -2035,7 +2035,7 @@ class DumpASN1CfgOID(OID):
     oid = 'DumpASN1Cfg-oid'
     desc = "OID registered in Peter Gutmann's dumpasn1.cfg"
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         attrValue = self.attrValue.encode('ascii')
         try:
             pisces_oid = asn1.OID(tuple(map(int, attrValue.split('.'))))

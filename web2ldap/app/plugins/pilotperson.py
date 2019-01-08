@@ -15,10 +15,10 @@ class MailPreferenceOption(SelectList):
   desc = 'RFC1274: mail preference option syntax'
 
   attr_value_dict = {
-    u'':u'',
-    u'0':u'no-list-inclusion',
-    u'1':u'any-list-inclusion',
-    u'2':u'professional-list-inclusion',
+    u'': u'',
+    u'0': u'no-list-inclusion',
+    u'1': u'any-list-inclusion',
+    u'2': u'professional-list-inclusion',
   }
 
 syntax_registry.registerAttrType(
@@ -29,5 +29,4 @@ syntax_registry.registerAttrType(
 
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
-
+    syntax_registry.registerSyntaxClass(eval(name))

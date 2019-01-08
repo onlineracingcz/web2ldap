@@ -29,7 +29,7 @@ class GidNumber(DynamicValueSelectList,Integer):
   def _validate(self, attrValue):
     return Integer._validate(self,attrValue)
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     # Possibly display a link
     ocs = self._entry.object_class_oid_set()
     if 'posixAccount' in ocs or 'shadowAccount' in ocs:
@@ -92,7 +92,7 @@ class MemberUID(IA5String,DynamicValueSelectList):
     else:
       return IA5String._validate(self,attrValue)
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     r = [IA5String.displayValue(self,valueindex,commandbutton=0)]
     if commandbutton:
       r.append(self._form.applAnchor(
@@ -139,21 +139,21 @@ class Shell(SelectList):
   oid = 'Shell-oid'
   desc = 'Shell for user of Posix systems'
   attr_value_dict = {
-    u'/bin/sh':u'Standard shell /bin/sh',
-    u'/bin/bash':u'Bourne-Again SHell /bin/bash',
-    u'/bin/csh':u'/bin/csh',
-    u'/bin/tcsh':u'/bin/tcsh',
-    u'/bin/ksh':u'Korn shell /bin/ksh',
-    u'/bin/passwd':u'Password change /bin/passwd',
-    u'/bin/true':u'/bin/true',
-    u'/bin/false':u'/bin/false',
-    u'/bin/zsh':u'Zsh /bin/zsh',
-    u'/usr/bin/bash':u'Bourne-Again SHell /usr/bin/bash',
-    u'/usr/bin/csh':u'/usr/bin/csh',
-    u'/usr/bin/tcsh':u'/usr/bin/csh',
-    u'/usr/bin/ksh':u'Korn shell /usr/bin/ksh',
-    u'/usr/bin/zsh':u'Zsh /usr/bin/zsh',
-    u'/usr/sbin/nologin':u'Login denied /usr/sbin/nologin',
+    u'/bin/sh': u'Standard shell /bin/sh',
+    u'/bin/bash': u'Bourne-Again SHell /bin/bash',
+    u'/bin/csh': u'/bin/csh',
+    u'/bin/tcsh': u'/bin/tcsh',
+    u'/bin/ksh': u'Korn shell /bin/ksh',
+    u'/bin/passwd': u'Password change /bin/passwd',
+    u'/bin/true': u'/bin/true',
+    u'/bin/false': u'/bin/false',
+    u'/bin/zsh': u'Zsh /bin/zsh',
+    u'/usr/bin/bash': u'Bourne-Again SHell /usr/bin/bash',
+    u'/usr/bin/csh': u'/usr/bin/csh',
+    u'/usr/bin/tcsh': u'/usr/bin/csh',
+    u'/usr/bin/ksh': u'Korn shell /usr/bin/ksh',
+    u'/usr/bin/zsh': u'Zsh /usr/bin/zsh',
+    u'/usr/sbin/nologin': u'Login denied /usr/sbin/nologin',
   }
 
 syntax_registry.registerAttrType(
@@ -168,8 +168,8 @@ class IpServiceProtocol(SelectList):
   desc = 'RFC 2307: IP service protocol'
 
   attr_value_dict = {
-    u'tcp':u'tcp',
-    u'udp':u'udp',
+    u'tcp': u'tcp',
+    u'udp': u'udp',
   }
 
 syntax_registry.registerAttrType(
@@ -218,7 +218,4 @@ syntax_registry.registerAttrType(
 
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
-
-
-
+    syntax_registry.registerSyntaxClass(eval(name))

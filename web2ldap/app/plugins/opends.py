@@ -113,9 +113,9 @@ class OpenDSCfgSSLClientAuthPolicy(SelectList):
   oid = 'OpenDSCfgSSLClientAuthPolicy-oid'
   desc = 'Specifies the policy regarding client SSL certificates'
   attr_value_dict = {
-    u'disabled':u'Client certificate is not requested',
-    u'optional':u'Client certificate is requested but not required',
-    u'required':u'Client certificate is required',
+    u'disabled': u'Client certificate is not requested',
+    u'optional': u'Client certificate is requested but not required',
+    u'required': u'Client certificate is required',
   }
 
 syntax_registry.registerAttrType(
@@ -129,9 +129,9 @@ class OpenDSCfgSNMPSecurityLevel(SelectList):
   oid = 'OpenDSCfgSNMPSecurityLevel-oid'
   desc = 'Specifies the policy regarding client SSL certificates'
   attr_value_dict = {
-    u'authnopriv':u'Authentication activated with no privacy.',
-    u'authpriv':u'Authentication with privacy activated.',
-    u'noauthnopriv':u'No security mechanisms activated.',
+    u'authnopriv': u'Authentication activated with no privacy.',
+    u'authpriv': u'Authentication with privacy activated.',
+    u'noauthnopriv': u'No security mechanisms activated.',
   }
 
 syntax_registry.registerAttrType(
@@ -145,10 +145,10 @@ class OpenDSCfgInvalidSchemaBehaviour(SelectList):
   oid = 'OpenDSCfgInvalidSchemaBehaviour-oid'
   desc = 'Specifies how OpenDS behaves in case of schema errors'
   attr_value_dict = {
-    u'reject':u'reject',
-    u'default':u'default',
-    u'accept':u'accept',
-    u'warn':u'warn',
+    u'reject': u'reject',
+    u'default': u'default',
+    u'accept': u'accept',
+    u'warn': u'warn',
   }
 
 syntax_registry.registerAttrType(
@@ -163,8 +163,8 @@ class OpenDSCfgEtimeResolution(SelectList):
   oid = 'OpenDSCfgEtimeResolution-oid'
   desc = 'Specifies the resolution to use for operation elapsed processing time (etime) measurements.'
   attr_value_dict = {
-    u'milliseconds':u'milliseconds',
-    u'nanoseconds':u'nanoseconds',
+    u'milliseconds': u'milliseconds',
+    u'nanoseconds': u'nanoseconds',
   }
 
 syntax_registry.registerAttrType(
@@ -178,9 +178,9 @@ class OpenDSCfgWritabilityMode(SelectList):
   oid = 'OpenDSCfgWritabilityMode-oid'
   desc = 'Specifies the kinds of write operations the Directory Server can process.'
   attr_value_dict = {
-    u'disabled':u'all write operations are rejected',
-    u'enabled':u'all write operations are processed',
-    u'internal-only':u'write operations requested as internal/sync operations are processed',
+    u'disabled': u'all write operations are rejected',
+    u'enabled': u'all write operations are processed',
+    u'internal-only': u'write operations requested as internal/sync operations are processed',
   }
 
 syntax_registry.registerAttrType(
@@ -210,16 +210,16 @@ class OpenDSCfgAccountStatusNotificationType(SelectList):
   oid = 'OpenDSCfgAccountStatusNotificationType-oid'
   desc = 'Specifies when the generate a notification about account status'
   attr_value_dict = {
-    u'account-disabled':u'User account has been disabled by an administrator',
-    u'account-enabled':u'User account has been enabled by an administrator',
-    u'account-expired':u'User authentication has failed because the account has expired',
-    u'account-idle-locked':u'User account has been locked because it was idle for too long',
-    u'account-permanently-locked':u'User account has been permanently locked after too many failed attempts',
-    u'account-reset-locked':u'User account has been locked, because the password had been reset by an administrator but not changed by the User within the required interval',
-    u'account-temporarily-locked':u'User account has been temporarily locked after too many failed attempts',
-    u'account-unlocked':u'User account has been unlocked by an administrator',
-    u'password-changed':u'User changes his/her own password',
-    u'password-expired':u'User authentication has failed because the password has expired',
+    u'account-disabled': u'User account has been disabled by an administrator',
+    u'account-enabled': u'User account has been enabled by an administrator',
+    u'account-expired': u'User authentication has failed because the account has expired',
+    u'account-idle-locked': u'User account has been locked because it was idle for too long',
+    u'account-permanently-locked': u'User account has been permanently locked after too many failed attempts',
+    u'account-reset-locked': u'User account has been locked, because the password had been reset by an administrator but not changed by the User within the required interval',
+    u'account-temporarily-locked': u'User account has been temporarily locked after too many failed attempts',
+    u'account-unlocked': u'User account has been unlocked by an administrator',
+    u'password-changed': u'User changes his/her own password',
+    u'password-expired': u'User authentication has failed because the password has expired',
     u'password-expiring':u"Password expiration warning is encountered for user's password for the first time.",
     u'password-reset':u"User's password was reset by an administrator.",
   }
@@ -240,7 +240,7 @@ class OpenDSCfgSslProtocol(SelectList):
     u'SSLv3':  u'SSL version 3',
     u'TLS':    u'any version of TLS',
     u'TLSv1':  u'TLS version 1.0 (RFC 2246)',
-    u'TLSv1.1':u'TLS version 1.1 (RFC 4346)',
+    u'TLSv1.1': u'TLS version 1.1 (RFC 4346)',
   }
 
 syntax_registry.registerAttrType(
@@ -254,64 +254,64 @@ class OpenDSCfgSslCipherSuite(SelectList):
   oid = 'OpenDSCfgSslCipherSuite-oid'
   desc = 'Specifies the used cipher suites.'
   attr_value_dict = {
-    u'SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA':u'SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA',
-    u'SSL_DHE_DSS_EXPORT1024_WITH_RC4_56_SHA':u'SSL_DHE_DSS_EXPORT1024_WITH_RC4_56_SHA',
-    u'SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA':u'SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA',
-    u'SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA':u'SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA',
-    u'SSL_DHE_DSS_WITH_DES_CBC_SHA':u'SSL_DHE_DSS_WITH_DES_CBC_SHA',
-    u'SSL_DHE_DSS_WITH_RC4_128_SHA':u'SSL_DHE_DSS_WITH_RC4_128_SHA',
-    u'SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA':u'SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA',
-    u'SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA':u'SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA',
-    u'SSL_DHE_RSA_WITH_DES_CBC_SHA':u'SSL_DHE_RSA_WITH_DES_CBC_SHA',
-    u'SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA':u'SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA',
-    u'SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA':u'SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA',
-    u'SSL_DH_DSS_WITH_DES_CBC_SHA':u'SSL_DH_DSS_WITH_DES_CBC_SHA',
-    u'SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA':u'SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA',
-    u'SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA':u'SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA',
-    u'SSL_DH_RSA_WITH_DES_CBC_SHA':u'SSL_DH_RSA_WITH_DES_CBC_SHA',
-    u'SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA':u'SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA',
-    u'SSL_DH_anon_EXPORT_WITH_RC4_40_MD5':u'SSL_DH_anon_EXPORT_WITH_RC4_40_MD5',
-    u'SSL_DH_anon_WITH_3DES_EDE_CBC_SHA':u'SSL_DH_anon_WITH_3DES_EDE_CBC_SHA',
-    u'SSL_DH_anon_WITH_DES_CBC_SHA':u'SSL_DH_anon_WITH_DES_CBC_SHA',
-    u'SSL_DH_anon_WITH_RC4_128_MD5':u'SSL_DH_anon_WITH_RC4_128_MD5',
-    u'SSL_FORTEZZA_DMS_WITH_FORTEZZA_CBC_SHA':u'SSL_FORTEZZA_DMS_WITH_FORTEZZA_CBC_SHA',
-    u'SSL_FORTEZZA_DMS_WITH_NULL_SHA':u'SSL_FORTEZZA_DMS_WITH_NULL_SHA',
-    u'SSL_RSA_EXPORT1024_WITH_DES_CBC_SHA':u'SSL_RSA_EXPORT1024_WITH_DES_CBC_SHA',
-    u'SSL_RSA_EXPORT1024_WITH_RC4_56_SHA':u'SSL_RSA_EXPORT1024_WITH_RC4_56_SHA',
-    u'SSL_RSA_EXPORT_WITH_DES40_CBC_SHA':u'SSL_RSA_EXPORT_WITH_DES40_CBC_SHA',
-    u'SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5':u'SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5',
-    u'SSL_RSA_EXPORT_WITH_RC4_40_MD5':u'SSL_RSA_EXPORT_WITH_RC4_40_MD5',
-    u'SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA':u'SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA',
-    u'SSL_RSA_FIPS_WITH_DES_CBC_SHA':u'SSL_RSA_FIPS_WITH_DES_CBC_SHA',
-    u'SSL_RSA_WITH_3DES_EDE_CBC_SHA':u'SSL_RSA_WITH_3DES_EDE_CBC_SHA',
-    u'SSL_RSA_WITH_DES_CBC_SHA':u'SSL_RSA_WITH_DES_CBC_SHA',
-    u'SSL_RSA_WITH_IDEA_CBC_SHA':u'SSL_RSA_WITH_IDEA_CBC_SHA',
-    u'SSL_RSA_WITH_NULL_MD5':u'SSL_RSA_WITH_NULL_MD5',
-    u'SSL_RSA_WITH_NULL_SHA':u'SSL_RSA_WITH_NULL_SHA',
-    u'SSL_RSA_WITH_RC4_128_MD5':u'SSL_RSA_WITH_RC4_128_MD5',
-    u'SSL_RSA_WITH_RC4_128_SHA':u'SSL_RSA_WITH_RC4_128_SHA',
-    u'TLS_DHE_DSS_WITH_AES_128_CBC_SHA':u'TLS_DHE_DSS_WITH_AES_128_CBC_SHA',
-    u'TLS_DHE_DSS_WITH_AES_256_CBC_SHA':u'TLS_DHE_DSS_WITH_AES_256_CBC_SHA',
-    u'TLS_DHE_RSA_WITH_AES_128_CBC_SHA':u'TLS_DHE_RSA_WITH_AES_128_CBC_SHA',
-    u'TLS_DHE_RSA_WITH_AES_256_CBC_SHA':u'TLS_DHE_RSA_WITH_AES_256_CBC_SHA',
-    u'TLS_DH_anon_WITH_AES_128_CBC_SHA':u'TLS_DH_anon_WITH_AES_128_CBC_SHA',
-    u'TLS_DH_anon_WITH_AES_256_CBC_SHA':u'TLS_DH_anon_WITH_AES_256_CBC_SHA',
-    u'TLS_KRB5_EXPORT_WITH_DES_CBC_40_MD5':u'TLS_KRB5_EXPORT_WITH_DES_CBC_40_MD5',
-    u'TLS_KRB5_EXPORT_WITH_DES_CBC_40_SHA':u'TLS_KRB5_EXPORT_WITH_DES_CBC_40_SHA',
-    u'TLS_KRB5_EXPORT_WITH_RC2_CBC_40_MD5':u'TLS_KRB5_EXPORT_WITH_RC2_CBC_40_MD5',
-    u'TLS_KRB5_EXPORT_WITH_RC2_CBC_40_SHA':u'TLS_KRB5_EXPORT_WITH_RC2_CBC_40_SHA',
-    u'TLS_KRB5_EXPORT_WITH_RC4_40_MD5':u'TLS_KRB5_EXPORT_WITH_RC4_40_MD5',
-    u'TLS_KRB5_EXPORT_WITH_RC4_40_SHA':u'TLS_KRB5_EXPORT_WITH_RC4_40_SHA',
-    u'TLS_KRB5_WITH_3DES_EDE_CBC_MD5':u'TLS_KRB5_WITH_3DES_EDE_CBC_MD5',
-    u'TLS_KRB5_WITH_3DES_EDE_CBC_SHA':u'TLS_KRB5_WITH_3DES_EDE_CBC_SHA',
-    u'TLS_KRB5_WITH_DES_CBC_MD5':u'TLS_KRB5_WITH_DES_CBC_MD5',
-    u'TLS_KRB5_WITH_DES_CBC_SHA':u'TLS_KRB5_WITH_DES_CBC_SHA',
-    u'TLS_KRB5_WITH_IDEA_CBC_MD5':u'TLS_KRB5_WITH_IDEA_CBC_MD5',
-    u'TLS_KRB5_WITH_IDEA_CBC_SHA':u'TLS_KRB5_WITH_IDEA_CBC_SHA',
-    u'TLS_KRB5_WITH_RC4_128_MD5':u'TLS_KRB5_WITH_RC4_128_MD5',
-    u'TLS_KRB5_WITH_RC4_128_SHA':u'TLS_KRB5_WITH_RC4_128_SHA',
-    u'TLS_RSA_WITH_AES_128_CBC_SHA':u'TLS_RSA_WITH_AES_128_CBC_SHA',
-    u'TLS_RSA_WITH_AES_256_CBC_SHA':u'TLS_RSA_WITH_AES_256_CBC_SHA',
+    u'SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA': u'SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA',
+    u'SSL_DHE_DSS_EXPORT1024_WITH_RC4_56_SHA': u'SSL_DHE_DSS_EXPORT1024_WITH_RC4_56_SHA',
+    u'SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA': u'SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA',
+    u'SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA': u'SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA',
+    u'SSL_DHE_DSS_WITH_DES_CBC_SHA': u'SSL_DHE_DSS_WITH_DES_CBC_SHA',
+    u'SSL_DHE_DSS_WITH_RC4_128_SHA': u'SSL_DHE_DSS_WITH_RC4_128_SHA',
+    u'SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA': u'SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA',
+    u'SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA': u'SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA',
+    u'SSL_DHE_RSA_WITH_DES_CBC_SHA': u'SSL_DHE_RSA_WITH_DES_CBC_SHA',
+    u'SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA': u'SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA',
+    u'SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA': u'SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA',
+    u'SSL_DH_DSS_WITH_DES_CBC_SHA': u'SSL_DH_DSS_WITH_DES_CBC_SHA',
+    u'SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA': u'SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA',
+    u'SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA': u'SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA',
+    u'SSL_DH_RSA_WITH_DES_CBC_SHA': u'SSL_DH_RSA_WITH_DES_CBC_SHA',
+    u'SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA': u'SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA',
+    u'SSL_DH_anon_EXPORT_WITH_RC4_40_MD5': u'SSL_DH_anon_EXPORT_WITH_RC4_40_MD5',
+    u'SSL_DH_anon_WITH_3DES_EDE_CBC_SHA': u'SSL_DH_anon_WITH_3DES_EDE_CBC_SHA',
+    u'SSL_DH_anon_WITH_DES_CBC_SHA': u'SSL_DH_anon_WITH_DES_CBC_SHA',
+    u'SSL_DH_anon_WITH_RC4_128_MD5': u'SSL_DH_anon_WITH_RC4_128_MD5',
+    u'SSL_FORTEZZA_DMS_WITH_FORTEZZA_CBC_SHA': u'SSL_FORTEZZA_DMS_WITH_FORTEZZA_CBC_SHA',
+    u'SSL_FORTEZZA_DMS_WITH_NULL_SHA': u'SSL_FORTEZZA_DMS_WITH_NULL_SHA',
+    u'SSL_RSA_EXPORT1024_WITH_DES_CBC_SHA': u'SSL_RSA_EXPORT1024_WITH_DES_CBC_SHA',
+    u'SSL_RSA_EXPORT1024_WITH_RC4_56_SHA': u'SSL_RSA_EXPORT1024_WITH_RC4_56_SHA',
+    u'SSL_RSA_EXPORT_WITH_DES40_CBC_SHA': u'SSL_RSA_EXPORT_WITH_DES40_CBC_SHA',
+    u'SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5': u'SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5',
+    u'SSL_RSA_EXPORT_WITH_RC4_40_MD5': u'SSL_RSA_EXPORT_WITH_RC4_40_MD5',
+    u'SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA': u'SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA',
+    u'SSL_RSA_FIPS_WITH_DES_CBC_SHA': u'SSL_RSA_FIPS_WITH_DES_CBC_SHA',
+    u'SSL_RSA_WITH_3DES_EDE_CBC_SHA': u'SSL_RSA_WITH_3DES_EDE_CBC_SHA',
+    u'SSL_RSA_WITH_DES_CBC_SHA': u'SSL_RSA_WITH_DES_CBC_SHA',
+    u'SSL_RSA_WITH_IDEA_CBC_SHA': u'SSL_RSA_WITH_IDEA_CBC_SHA',
+    u'SSL_RSA_WITH_NULL_MD5': u'SSL_RSA_WITH_NULL_MD5',
+    u'SSL_RSA_WITH_NULL_SHA': u'SSL_RSA_WITH_NULL_SHA',
+    u'SSL_RSA_WITH_RC4_128_MD5': u'SSL_RSA_WITH_RC4_128_MD5',
+    u'SSL_RSA_WITH_RC4_128_SHA': u'SSL_RSA_WITH_RC4_128_SHA',
+    u'TLS_DHE_DSS_WITH_AES_128_CBC_SHA': u'TLS_DHE_DSS_WITH_AES_128_CBC_SHA',
+    u'TLS_DHE_DSS_WITH_AES_256_CBC_SHA': u'TLS_DHE_DSS_WITH_AES_256_CBC_SHA',
+    u'TLS_DHE_RSA_WITH_AES_128_CBC_SHA': u'TLS_DHE_RSA_WITH_AES_128_CBC_SHA',
+    u'TLS_DHE_RSA_WITH_AES_256_CBC_SHA': u'TLS_DHE_RSA_WITH_AES_256_CBC_SHA',
+    u'TLS_DH_anon_WITH_AES_128_CBC_SHA': u'TLS_DH_anon_WITH_AES_128_CBC_SHA',
+    u'TLS_DH_anon_WITH_AES_256_CBC_SHA': u'TLS_DH_anon_WITH_AES_256_CBC_SHA',
+    u'TLS_KRB5_EXPORT_WITH_DES_CBC_40_MD5': u'TLS_KRB5_EXPORT_WITH_DES_CBC_40_MD5',
+    u'TLS_KRB5_EXPORT_WITH_DES_CBC_40_SHA': u'TLS_KRB5_EXPORT_WITH_DES_CBC_40_SHA',
+    u'TLS_KRB5_EXPORT_WITH_RC2_CBC_40_MD5': u'TLS_KRB5_EXPORT_WITH_RC2_CBC_40_MD5',
+    u'TLS_KRB5_EXPORT_WITH_RC2_CBC_40_SHA': u'TLS_KRB5_EXPORT_WITH_RC2_CBC_40_SHA',
+    u'TLS_KRB5_EXPORT_WITH_RC4_40_MD5': u'TLS_KRB5_EXPORT_WITH_RC4_40_MD5',
+    u'TLS_KRB5_EXPORT_WITH_RC4_40_SHA': u'TLS_KRB5_EXPORT_WITH_RC4_40_SHA',
+    u'TLS_KRB5_WITH_3DES_EDE_CBC_MD5': u'TLS_KRB5_WITH_3DES_EDE_CBC_MD5',
+    u'TLS_KRB5_WITH_3DES_EDE_CBC_SHA': u'TLS_KRB5_WITH_3DES_EDE_CBC_SHA',
+    u'TLS_KRB5_WITH_DES_CBC_MD5': u'TLS_KRB5_WITH_DES_CBC_MD5',
+    u'TLS_KRB5_WITH_DES_CBC_SHA': u'TLS_KRB5_WITH_DES_CBC_SHA',
+    u'TLS_KRB5_WITH_IDEA_CBC_MD5': u'TLS_KRB5_WITH_IDEA_CBC_MD5',
+    u'TLS_KRB5_WITH_IDEA_CBC_SHA': u'TLS_KRB5_WITH_IDEA_CBC_SHA',
+    u'TLS_KRB5_WITH_RC4_128_MD5': u'TLS_KRB5_WITH_RC4_128_MD5',
+    u'TLS_KRB5_WITH_RC4_128_SHA': u'TLS_KRB5_WITH_RC4_128_SHA',
+    u'TLS_RSA_WITH_AES_128_CBC_SHA': u'TLS_RSA_WITH_AES_128_CBC_SHA',
+    u'TLS_RSA_WITH_AES_256_CBC_SHA': u'TLS_RSA_WITH_AES_256_CBC_SHA',
   }
 
 syntax_registry.registerAttrType(
@@ -325,30 +325,30 @@ class OpenDSCfgPrivilege(SelectList):
   oid = 'OpenDSCfgPrivilege-oid'
   desc = 'Specifies the name of a privilege that should not be evaluated by the server.'
   attr_value_dict = {
-    u'backend-backup':u'Request backup tasks',
-    u'backend-restore':u'Request restore tasks',
-    u'bypass-acl':u'Bypass access control checks',
-    u'bypass-lockdown':u'Bypass server lockdown mode',
-    u'cancel-request':u'Cancel operations of other client connections',
-    u'config-read':u'Read server configuration',
-    u'config-write':u'Update the server configuration',
-    u'data-sync':u'Participate in data synchronization',
-    u'disconnect-client':u'Terminate other client connections',
-    u'jmx-notify':u'Subscribe to receive JMX notifications',
-    u'jmx-read':u'Perform JMX read operations',
-    u'jmx-write':u'Perform JMX write operations',
-    u'ldif-export':u'Request LDIF export tasks',
-    u'ldif-import':u'Request LDIF import tasks',
+    u'backend-backup': u'Request backup tasks',
+    u'backend-restore': u'Request restore tasks',
+    u'bypass-acl': u'Bypass access control checks',
+    u'bypass-lockdown': u'Bypass server lockdown mode',
+    u'cancel-request': u'Cancel operations of other client connections',
+    u'config-read': u'Read server configuration',
+    u'config-write': u'Update the server configuration',
+    u'data-sync': u'Participate in data synchronization',
+    u'disconnect-client': u'Terminate other client connections',
+    u'jmx-notify': u'Subscribe to receive JMX notifications',
+    u'jmx-read': u'Perform JMX read operations',
+    u'jmx-write': u'Perform JMX write operations',
+    u'ldif-export': u'Request LDIF export tasks',
+    u'ldif-import': u'Request LDIF import tasks',
     u'modify-acl':u"Modify the server's access control configuration",
-    u'password-reset':u'Reset user passwords',
-    u'privilege-change':u'Make changes to specific root privileges and user privileges',
-    u'proxied-auth':u'Use proxied authorization control or SASL authz ID',
-    u'server-lockdown':u'Lockdown a server',
-    u'server-restart':u'Request server to perform an in-core restart',
-    u'server-shutdown':u'Request server shut down',
-    u'subentry-write':u'Perform write ops on LDAP subentries',
-    u'unindexed-search':u'Request unindexed searches',
-    u'update-schema':u'Change server schema',
+    u'password-reset': u'Reset user passwords',
+    u'privilege-change': u'Make changes to specific root privileges and user privileges',
+    u'proxied-auth': u'Use proxied authorization control or SASL authz ID',
+    u'server-lockdown': u'Lockdown a server',
+    u'server-restart': u'Request server to perform an in-core restart',
+    u'server-shutdown': u'Request server shut down',
+    u'subentry-write': u'Perform write ops on LDAP subentries',
+    u'unindexed-search': u'Request unindexed searches',
+    u'update-schema': u'Change server schema',
   }
 
 
@@ -384,7 +384,7 @@ class OpenDSSyncHist(OctetString,DirectoryString):
   oid = 'OpenDSSyncHist-oid'
   desc = 'List of modifications'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     try:
       mod_attr_type,mod_number,mod_type,mod_value = self.attrValue.split(':',3)
     except ValueError:
@@ -482,4 +482,4 @@ syntax_registry.registerAttrType(
 
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
+    syntax_registry.registerSyntaxClass(eval(name))

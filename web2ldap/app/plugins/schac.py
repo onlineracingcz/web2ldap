@@ -78,7 +78,7 @@ class SchacDateOfBirth(NumstringDate):
             return False
         return self._age(birth_dt) >= 0
 
-    def displayValue(self, valueindex=False, commandbutton=False):
+    def displayValue(self, valueindex=0, commandbutton=False):
         raw_date = NumstringDate.displayValue(self, valueindex, commandbutton)
         try:
             birth_dt = datetime.datetime.strptime(self.attrValue, self.storageFormat)

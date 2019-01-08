@@ -108,7 +108,7 @@ class OctetStringGUID(OctetString):
         s1[16:32],
     ))
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     if self.attrType==u'GUID':
       # GUID of an entry is displayed in several variants
       return """
@@ -166,7 +166,7 @@ class IndexDefinition(DollarSeparatedMultipleLines):
   oid = 'IndexDefinition-oid'
   desc = 'Index Definition'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     try:
       version,index_name,state,matching_rule,index_type,value_state,nds_attribute_name = self.attrValue.split('$')
       version = int(version)
@@ -209,7 +209,7 @@ class TaggedNameAndString(DirectoryString):
   oid = '2.16.840.1.113719.1.1.5.1.15'
   desc = 'Tagged Name And String'
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     try:
       ind2 = self.attrValue.rindex('#')
       ind1 = self.attrValue.rindex('#',0,ind2-1)
@@ -356,9 +356,9 @@ class DirXMLDriverStartOption(SelectList):
   oid = 'DirXML-DriverStartOption-oid'
   desc = 'Start option for a DirXML driver'
   attr_value_dict = {
-    u'0':u'disabled',
-    u'1':u'manual',
-    u'2':u'auto',
+    u'0': u'disabled',
+    u'1': u'manual',
+    u'2': u'auto',
   }
 
 syntax_registry.registerAttrType(
@@ -372,10 +372,10 @@ class DirXMLState(SelectList):
   oid = 'DirXML-State-DriverStartOption-oid'
   desc = 'Current state of a DirXML driver'
   attr_value_dict = {
-    u'0':u'stopped',
-    u'1':u'starting',
-    u'2':u'running',
-    u'3':u'stopping',
+    u'0': u'stopped',
+    u'1': u'starting',
+    u'2': u'running',
+    u'3': u'stopping',
   }
 
 syntax_registry.registerAttrType(
@@ -448,3 +448,8 @@ syntax_registry.registerAttrType(
     '2.16.840.1.113719.1.347.4.1',   # NAuditConfiguration
   ]
 )
+
+
+# Register all syntax classes in this module
+for name in dir():
+    syntax_registry.registerSyntaxClass(eval(name))

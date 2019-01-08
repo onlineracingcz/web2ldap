@@ -54,7 +54,7 @@ class DateOfBirth(ISO8601Date):
     else:
       return self._age(birth_dt)>=0
 
-  def displayValue(self, valueindex=False, commandbutton=False):
+  def displayValue(self, valueindex=0, commandbutton=False):
     raw_date = ISO8601Date.displayValue(self, valueindex, commandbutton)
     try:
       birth_dt = datetime.datetime.strptime(self.attrValue,self.storageFormat)
@@ -142,5 +142,4 @@ syntax_registry.registerAttrType(
 
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
-
+    syntax_registry.registerSyntaxClass(eval(name))
