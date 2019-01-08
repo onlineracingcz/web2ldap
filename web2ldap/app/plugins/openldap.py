@@ -203,7 +203,7 @@ syntax_registry.registerAttrType(
 )
 
 
-class OlcPPolicyDefault(DistinguishedName, DynamicDNSelectList):
+class OlcPPolicyDefault(DynamicDNSelectList, DistinguishedName):
     oid = 'OlcPPolicyDefault-oid'
     desc = 'DN of a pwdPolicy object for uncustomized objects'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=pwdPolicy)'

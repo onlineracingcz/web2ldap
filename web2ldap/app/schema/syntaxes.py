@@ -153,7 +153,7 @@ class LDAPSyntaxRegexNoMatch(LDAPSyntaxValueError):
     pass
 
 
-class LDAPSyntax:
+class LDAPSyntax(object):
     oid = ''
     desc = 'Any LDAP syntax'
     inputSize = 50
@@ -1911,7 +1911,7 @@ class DNSDomain(IA5String):
             return IA5String.displayValue(self, valueindex, commandbutton)
 
 
-class RFC822Address(IA5String, DNSDomain):
+class RFC822Address(DNSDomain, IA5String):
     oid = 'RFC822Address-oid'
     desc = 'RFC 822 mail address'
     reObj = re.compile(r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$')
