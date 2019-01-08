@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 from web2ldap.app.schema.syntaxes import UUID, DNSDomain, syntax_registry
 from web2ldap.app.plugins.samba import SambaSID
-from web2ldap.app.plugins.opensshlpk import ParamikoSshPublicKey
+from web2ldap.app.plugins.opensshlpk import SshPublicKey
 
 
 syntax_registry.registerAttrType(
@@ -22,7 +22,7 @@ syntax_registry.registerAttrType(
 )
 
 syntax_registry.registerAttrType(
-    ParamikoSshPublicKey.oid, [
+    SshPublicKey.oid, [
         '2.16.840.1.113730.3.8.11.31', # ipaSshPubKey
     ]
 )

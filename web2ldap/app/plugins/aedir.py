@@ -39,7 +39,7 @@ from web2ldap.app.plugins.nis import UidNumber,GidNumber,MemberUID,Shell
 from web2ldap.app.plugins.inetorgperson import DisplayNameInetOrgPerson
 from web2ldap.app.plugins.groups import GroupEntryDN
 from web2ldap.app.plugins.oath import OathHOTPToken
-from web2ldap.app.plugins.opensshlpk import ParamikoSshPublicKey as SshPublicKey
+from web2ldap.app.plugins.opensshlpk import SshPublicKey as SshPublicKey
 from web2ldap.app.plugins.posixautogen import HomeDirectory
 
 # OID arc for AE-DIR, see stroeder.com-oid-macros.schema
