@@ -92,7 +92,6 @@ import web2ldap.app.plugins.opends
 
 import web2ldap.app.plugins.activedirectory
 import web2ldap.app.plugins.exchange
-#import web2ldap.app.plugins.mssfu30
 
 #---------------------------------------------------------------------------
 # Various syntaxes and attribute types for Entrust PKI
