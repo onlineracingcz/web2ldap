@@ -7,24 +7,24 @@ see also RFC1274
 
 from __future__ import absolute_import
 
-from web2ldap.app.schema.syntaxes import SelectList,syntax_registry
+from web2ldap.app.schema.syntaxes import SelectList, syntax_registry
 
 
 class MailPreferenceOption(SelectList):
-  oid = 'MailPreferenceOption-oid'
-  desc = 'RFC1274: mail preference option syntax'
+    oid = 'MailPreferenceOption-oid'
+    desc = 'RFC1274: mail preference option syntax'
 
-  attr_value_dict = {
-    u'': u'',
-    u'0': u'no-list-inclusion',
-    u'1': u'any-list-inclusion',
-    u'2': u'professional-list-inclusion',
-  }
+    attr_value_dict = {
+        u'': u'',
+        u'0': u'no-list-inclusion',
+        u'1': u'any-list-inclusion',
+        u'2': u'professional-list-inclusion',
+    }
 
 syntax_registry.registerAttrType(
-  MailPreferenceOption.oid, [
-    '0.9.2342.19200300.100.1.47', # mailPreferenceOption (defined for pilotPerson)
-  ]
+    MailPreferenceOption.oid, [
+        '0.9.2342.19200300.100.1.47', # mailPreferenceOption
+    ]
 )
 
 # Register all syntax classes in this module
