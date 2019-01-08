@@ -254,9 +254,9 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                 attr_type_tags = []
                 attr_type_name = unicode(nameoroid).split(';')[0]
                 if nameoroid_se:
-                    attr_type_name = (nameoroid_se.names or [nameoroid_se.oid])[0].decode('utf-8')
+                    attr_type_name = (nameoroid_se.names or [nameoroid_se.oid])[0].decode(self.ls.charset)
                     try:
-                        attr_title = nameoroid_se.desc.decode('utf-8')
+                        attr_title = (nameoroid_se.desc or '').decode(self.ls.charset)
                     except UnicodeError:
                         # This happens sometimes because of wrongly encoded schema files
                         attr_title = u''
