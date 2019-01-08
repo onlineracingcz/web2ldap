@@ -1,0 +1,22 @@
+[run]
+branch = True
+source =
+    web2ldap/
+omit =
+
+[paths]
+source =
+    web2ldap/
+    .tox/*/lib/python*/site-packages/
+
+[report]
+ignore_errors = False
+precision = 1
+exclude_lines =
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+
+[html]
+directory = build/htmlcov
+title = aedir coverage report
