@@ -484,7 +484,6 @@ class AppHandler:
                 return
 
             self.form = FORM_CLASS[self.command](self.inf, self.env)
-            self.outf = self.form.outFileObject(self.outf)
 
             #---------------------------------------------------------------
             # try-except block for gracefully exception handling in the UI
