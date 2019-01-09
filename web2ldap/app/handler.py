@@ -193,7 +193,7 @@ class AppHandler:
         elif self.command == 'passwd':
             web2ldap.app.passwd.w2l_Passwd(self.sid, self.outf, self.command, self.form, ls, dn, connLDAPUrl)
         elif self.command == 'read':
-            web2ldap.app.read.w2l_Read(
+            web2ldap.app.read.w2l_read(
                 self.sid, self.outf, self.command, self.form, ls, dn,
                 wanted_attrs={False:connLDAPUrl.attrs, True:[]}[connLDAPUrl.attrs is None],
             )

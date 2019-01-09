@@ -202,7 +202,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.syntaxClass(
             self.entry._s,
             nameoroid,
-            self.structuralObjectClass,
+            self.soc,
         )
         try:
             attr_values = self.entry.__getitem__(nameoroid)
@@ -407,7 +407,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         outf_lines = []
         for attr_type, attr_values in self.entry.items():
             at_oid = self.entry._at2key(attr_type)[0]
-            syntax_class = syntax_registry.syntaxClass(self.entry._s, attr_type, self.structuralObjectClass)
+            syntax_class = syntax_registry.syntaxClass(self.entry._s, attr_type, self.soc)
             if syntax_class.editable and \
                not web2ldap.app.schema.no_userapp_attr(self.entry._s, attr_type) and \
                not at_oid in displayed_attrs:
