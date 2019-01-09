@@ -14,6 +14,7 @@ from __future__ import absolute_import
 import sys
 import re
 import urllib
+import uuid
 
 from . import helper
 
@@ -678,7 +679,7 @@ class DataList(Input, Select):
             )
         ]
         s.append(
-            web2ldap.web.forms.Select.inputHTML(
+            Select.inputHTML(
                 self,
                 default=default,
                 id_value=datalist_id,
