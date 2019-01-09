@@ -338,7 +338,7 @@ def w2l_searchform(
                 field_search_lastmod=form.field['search_lastmod'].inputHTML(
                     default=form.getInputValue('search_lastmod', [unicode(-1)])[0]
                 ),
-                value_search_attrs=form.utf2display(form.getInputValue('search_attrs', [''])[0]),
+                value_search_attrs=form.utf2display(form.getInputValue('search_attrs', [u''])[0]),
             ),
         )
     )
