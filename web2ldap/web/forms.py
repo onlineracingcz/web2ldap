@@ -907,6 +907,7 @@ class Form:
     """
     Class for declaring and processing a whole <form>
     """
+    valid_request_methods = {'POST', 'GET'}
 
     def __init__(self, inf, env):
         """
@@ -935,7 +936,7 @@ class Form:
         # Set the preferred character set
         self.accept_charset = self.http_accept_charset.preferred()
         # Determine query string and content length dependent on request method
-        self.checkRequestMethod()
+        self._check_request_method()
         self.query_string = self._get_query_string(env)
         return # Form.__init__()
 
@@ -949,11 +950,11 @@ class Form:
             query_string_u = env.get('QUERY_STRING','').decode('iso-8859-1')
         return query_string_u.encode(self.accept_charset)
 
-    def checkRequestMethod(self):
+    def _check_request_method(self):
         """
         Checks whether the HTTP request method is accepted
         """
-        if not self.request_method in {'POST', 'GET'}:
+        if not self.request_method in self.valid_request_methods:
             raise InvalidRequestMethod(self.request_method)
 
     def getContentType(self):
