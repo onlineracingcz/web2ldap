@@ -936,7 +936,18 @@ class Form:
         self.accept_charset = self.http_accept_charset.preferred()
         # Determine query string and content length dependent on request method
         self.checkRequestMethod()
+        self.query_string = self._get_query_string(env)
         return # Form.__init__()
+
+    def _get_query_string(self,env):
+        """
+        Returns re-coded QUERY_STRING env var
+        """
+        try:
+            query_string_u = env.get('QUERY_STRING','').decode(self.accept_charset)
+        except UnicodeError:
+            query_string_u = env.get('QUERY_STRING','').decode('iso-8859-1')
+        return query_string_u.encode(self.accept_charset)
 
     def checkRequestMethod(self):
         """
