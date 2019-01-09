@@ -581,6 +581,14 @@ class Select(Radio):
         self.ignoreCase = ignoreCase
         Radio.__init__(self, name, text, maxValues, required, default, accessKey, options)
 
+    def _defaultValue(self, default):
+        """returns default value"""
+        if default:
+            return default
+        if self.multiSelect:
+            return self.default or set()
+        return self.default
+
     def inputHTML(self, default=None, id_value=None, title=None):
         res = ['<select %stitle="%s" name="%s" %s  size="%d" %s>' % (
             self.idAttrStr(id_value),
