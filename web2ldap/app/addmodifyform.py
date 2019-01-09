@@ -106,6 +106,22 @@ INPUT_FORM_BEGIN_TMPL = """
   </button>
 """
 
+INPUT_FORM_LDIF_TMPL = """
+<fieldset>
+  <legend>Raw LDIF data</legend>
+  <textarea name="in_ldif" rows="50" cols="80" wrap="off">{value_ldif}</textarea>
+  <p>
+    Notes:
+  </p>
+  <ul>
+    <li>Lines containing "dn:" will be ignored</li>
+    <li>Only the first entry (until first empty line) will be accepted</li>
+    <li>Maximum length is set to {value_ldifmaxbytes} bytes</li>
+    <li>Allowed URL schemes: {text_ldifurlschemes}</li>
+  </ul>
+</fieldset>
+"""
+
 
 class InputFormEntry(web2ldap.app.read.DisplayEntry):
 
@@ -427,21 +443,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                 ]
         ldif_writer.unparse(self.dn.encode(self.ls.charset), ldap_entry)
         outf.write(
-            """
-            <fieldset>
-              <legend>Raw LDIF data</legend>
-              <textarea name="in_ldif" rows="50" cols="80" wrap="off">{value_ldif}</textarea>
-              <p>
-                Notes:
-              </p>
-              <ul>
-                <li>Lines containing "dn:" will be ignored</li>
-                <li>Only the first entry (until first empty line) will be accepted</li>
-                <li>Maximum length is set to {value_ldifmaxbytes} bytes</li>
-                <li>Allowed URL schemes: {text_ldifurlschemes}</li>
-              </ul>
-            </fieldset>
-            """.format(
+            INPUT_FORM_LDIF_TMPL.format(
                 value_ldif=self.form.utf2display(
                     f.getvalue().decode('utf-8'),
                     sp_entity='  ',
@@ -825,7 +827,6 @@ def ObjectClassForm(
     else:
         context_menu_list = web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
 
-    # Write HTML output of object class input form
     web2ldap.app.gui.TopSection(
         sid, outf, command, form, ls, dn,
         H1_MSG[command],
@@ -834,23 +835,19 @@ def ObjectClassForm(
         main_div_id='Input'
     )
 
+    # Write HTML output of object class input form
     outf.write(
-        """
-          <h1>%s</h1>
-            %s
-            %s
-            %s
-            %s
-            </form>
-        """ % (
+        '<h1>%s</h1>\n%s\n</form>' % (
             H1_MSG[command],
-            form.beginFormHTML(command, sid, 'POST', None),
-            ''.join([
-                form.hiddenFieldHTML(param_name, param_value, u'')
-                for param_name, param_value in command_hidden_fields
-            ]),
-            Msg,
-            add_template_field_html,
+            '\n'.join((
+                form.beginFormHTML(command, sid, 'POST', None),
+                ''.join([
+                    form.hiddenFieldHTML(param_name, param_value, u'')
+                    for param_name, param_value in command_hidden_fields
+                ]),
+                Msg,
+                add_template_field_html,
+            ))
         )
     )
     web2ldap.app.gui.Footer(outf, form)
