@@ -624,6 +624,62 @@ class Select(Radio):
         return self.inputHTMLTemplate % '\n'.join(res)
 
 
+class DataList(Input, Select):
+    """
+    Input field combined with HTML5 <datalist>
+    """
+
+    def __init__(
+            self,
+            name,
+            text,
+            maxLen=100,
+            maxValues=1,
+            pattern='.*',
+            required=0,
+            default=None,
+            accessKey='',
+            options=None,
+            size=None,
+            ignoreCase=0,
+        ):
+        Input.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accessKey)
+    #    if size==None:
+    #      # FIX ME!
+    #      size = max(map(lambda x:max(len(x),len(x[1])),options or []))
+        self.size = size or 20
+        self.multiSelect = 0
+        self.ignoreCase = ignoreCase
+        self.setOptions(options)
+        self.setDefault(default)
+
+    def inputHTML(self, default=None, id_value=None, title=None):
+        datalist_id = str(uuid.uuid4())
+        s = [
+            self.inputHTMLTemplate % (
+                '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d" value="%s" list="%s">' % (
+                    self.idAttrStr(id_value),
+                    self.titleHTML(title),
+                    self.name,
+                    self._accessKeyAttr(),
+                    self.maxLen,
+                    self.size,
+                    self._defaultHTML(default),
+                    datalist_id,
+                )
+            )
+        ]
+        s.append(
+            web2ldap.web.forms.Select.inputHTML(
+                self,
+                default=default,
+                id_value=datalist_id,
+                title=title
+            ).replace('<select ', '<datalist ').replace('</select>', '</datalist>')
+        )
+        return '\n'.join(s)
+
+
 class Checkbox(Field):
     """
     Check boxes:
