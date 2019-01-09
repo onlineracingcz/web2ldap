@@ -829,7 +829,6 @@ def SearchRootField(
     dn_select_list.append((u'', u'- World -'))
     dn_select_list = list(set(dn_select_list))
     dn_select_list.sort(key=sortkey_func)
-    #srf = web2ldap.app.form.DataList(
     srf = web2ldap.web.forms.Select(
         name, text, 1,
         #size=60,
