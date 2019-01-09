@@ -940,14 +940,15 @@ class Form:
         self.query_string = self._get_query_string(env)
         return # Form.__init__()
 
-    def _get_query_string(self,env):
+    def _get_query_string(self, env):
         """
         Returns re-coded QUERY_STRING env var
         """
+        qstr = env.get('QUERY_STRING', '')
         try:
-            query_string_u = env.get('QUERY_STRING','').decode(self.accept_charset)
+            query_string_u = qstr.decode(self.accept_charset)
         except UnicodeError:
-            query_string_u = env.get('QUERY_STRING','').decode('iso-8859-1')
+            query_string_u = qstr.decode('iso-8859-1')
         return query_string_u.encode(self.accept_charset)
 
     def _check_request_method(self):
