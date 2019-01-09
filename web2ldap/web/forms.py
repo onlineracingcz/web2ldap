@@ -521,7 +521,6 @@ class Radio(Field):
         Mainly this is used if self.default shall be changed after
         initializing the field object.
         """
-        default = default or u''
         # generate a set of existing option values
         option_vals = set()
         for i in self.options:
@@ -540,8 +539,8 @@ class Radio(Field):
                 for v in default
                 if v not in option_vals
             ])
-        else:
-            raise TypeError('Expected unicode or list for argument default, got %r' % (default,))
+        elif default is not None:
+            raise TypeError('Expected None, unicode or list for argument default, got %r' % (default))
         self.default = default
 
 
