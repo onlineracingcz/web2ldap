@@ -312,6 +312,7 @@ def w2l_searchform(
         {form_search_html}
           <input type="hidden" name="searchform_mode" value="{searchform_mode}">
           <input type="hidden" name="searchform_template" value="{searchform_template}">
+          <input type="hidden" name="search_output" value="{search_output}">
           <p>
             <input type="submit" name="search_submit" value="Search">
             <input type="reset" value="Reset">
@@ -324,6 +325,7 @@ def w2l_searchform(
             form_search_html=form.beginFormHTML('search', sid, 'GET'),
             searchform_mode=form.utf2display(searchform_mode),
             searchform_template=form.utf2display(searchform_template_name),
+            search_output=form.getInputValue('search_output', [u'table'])[0],
             msg_html=msg_html,
             inner_searchform_html=inner_searchform_html,
             form_dn_html=form.hiddenFieldHTML('dn', dn, u''),

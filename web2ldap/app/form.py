@@ -377,6 +377,7 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
         self.addField(web2ldap.web.forms.Select('search_option', u'Search option', web2ldapcnf.max_searchparams, options=web2ldap.app.searchform.search_options))
         self.addField(web2ldap.web.forms.Input('search_string', u'Search string', 600, web2ldapcnf.max_searchparams, u'.*', size=60))
         self.addField(SearchAttrs())
+        self.addField(ExportFormatSelect('search_output'))
 
 
 class Web2LDAPForm_search(Web2LDAPForm_searchform):
@@ -399,7 +400,6 @@ class Web2LDAPForm_search(Web2LDAPForm_searchform):
                 u'[0-9]+',
             )
         )
-        self.addField(ExportFormatSelect('search_output'))
 
 
 class Web2LDAPForm_conninfo(Web2LDAPForm):
