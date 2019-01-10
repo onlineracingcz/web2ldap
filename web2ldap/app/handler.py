@@ -508,7 +508,7 @@ class AppHandler:
                     return
                 elif self.command == 'locate':
                     self.form.getInputFields(ignoreEmptyFields=0)
-                    web2ldap.app.locate.w2l_Locate(self.outf, self.command, self.form, self.env)
+                    web2ldap.app.locate.w2l_locate(self.outf, self.command, self.form, self.env)
                     return
                 elif self.command == '':
                     # New connect => remove old session if necessary
