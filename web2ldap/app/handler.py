@@ -200,7 +200,7 @@ class AppHandler:
         elif self.command == 'conninfo':
             web2ldap.app.conninfo.w2l_ConnInfo(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'ldapparams':
-            web2ldap.app.ldapparams.w2l_LDAPParameters(self.sid, self.outf, self.command, self.form, ls, dn)
+            web2ldap.app.ldapparams.w2l_ldapparams(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'login':
             web2ldap.app.login.w2l_login(
                 self.sid, self.outf, 'searchform', self.form, ls, dn, connLDAPUrl,
