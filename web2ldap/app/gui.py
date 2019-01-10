@@ -202,7 +202,7 @@ def repr2ts(time_divisors, ts_sep, value):
     return result
 
 
-def DisplayDN(sid, form, ls, dn, commandbutton=0):
+def DisplayDN(sid, form, ls, dn, commandbutton=False):
     """Display a DN as LDAP URL with or without button"""
     assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
     dn_str = form.utf2display(dn or u'- World -')

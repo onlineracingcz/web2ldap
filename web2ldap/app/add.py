@@ -103,7 +103,7 @@ def w2l_Add(sid, outf, command, form, ls, dn):
         add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_dn.decode(ls.charset))
         add_basedn = add_basedn or dn
     else:
-        entry, invalid_attrs = web2ldap.app.modify.GetEntryfromInputForm(form, ls, dn, sub_schema)
+        entry, invalid_attrs = web2ldap.app.modify.get_entry_input(form, ls, dn, sub_schema)
         add_rdn = form.getInputValue('add_rdn', [''])[0]
         add_basedn = form.getInputValue('add_basedn', [dn])[0]
 
