@@ -185,7 +185,7 @@ class PwdChangedTime(GeneralizedTime):
                 pwd_policy_subentry_dn,
                 filterstr='(objectClass=pwdPolicy)',
                 attrlist=['pwdMaxAge', 'pwdExpireWarning'],
-            )[0]
+            )
         except LDAPError:
             return gt_disp_html
         try:
