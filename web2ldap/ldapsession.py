@@ -387,9 +387,9 @@ class LDAPSession(object):
         self.charset = 'utf-8'
         conn_codec = codecs.lookup(self.charset)
         self.uc_encode, self.uc_decode = conn_codec[0], conn_codec[1]
-        # This is a dictionary for storing arbitrary objects
-        # tied to a LDAP session
-        self.rootDSE = ldap0.cidict.cidict()
+        # initialize class attributes derived from rootDSE attributes later
+        self._reset_rootdse_attrs()
+        # security attributes of the connection
         self.secureConn = 0
         self.saslAuth = None
         self.startTLSOption = 0
@@ -537,14 +537,23 @@ class LDAPSession(object):
         self.flushCache()
         return # unbind()
 
-    def _forgetRootDSEAttrs(self):
+    def _reset_rootdse_attrs(self):
         """Forget all old RootDSE values"""
-        self.rootDSE = ldap0.cidict.cidict()
-        self.supportsAllOpAttr = 0
+        self.supportsAllOpAttr = False
         self.namingContexts = None
+        self.rootDSE = ldap0.cidict.cidict()
+        # some rootDSE attributes made available as class attributes
+        self.supportedLDAPVersion = frozenset([])
+        self.supportedControl = frozenset([])
+        self.supportedExtension = frozenset([])
+        self.supportedFeatures = frozenset([])
+        self.supportedSASLMechanisms = frozenset([])
+        self.supportsAllOpAttr = False
 
-    def _setRootDSEAttrs(self):
-        """Derive some class attributes from rootDSE attributes"""
+    def _update_rootdse_attrs(self):
+        """
+        Derive some class attributes from rootDSE attributes
+        """
         self.namingContexts = set([])
         self.namingContexts.update([
             unicode({'\x00':''}.get(v, v), self.charset)
@@ -572,19 +581,11 @@ class LDAPSession(object):
         self.supportsAllOpAttr = \
             ('1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures) or \
             ('OpenLDAProotDSE' in self.rootDSE.get('objectClass', []))
-        # Speed up sub schema sub entry retrieval by pre-filling cache
-        # with what is likely the sub schema for whole DIT
-        try:
-            schema_dn = self.rootDSE['subschemaSubEntry'][0]
-        except KeyError:
-            self.schema_dn_cache[u''] = None
-        else:
-            self.schema_dn_cache[u''] = unicode(schema_dn, self.charset)
-        return # _setRootDSEAttrs()
+        return # _update_rootdse_attrs()
 
-    def getRootDSE(self):
+    def init_rootdse(self):
         """Retrieve attributes from Root DSE"""
-        self._forgetRootDSEAttrs()
+        self._reset_rootdse_attrs()
         self.rootDSE = ldap0.cidict.cidict()
         try:
             ldap_result = self.readEntry('', ROOTDSE_ATTRS)
@@ -609,8 +610,8 @@ class LDAPSession(object):
             # Copy special rootDSE attributes to object attributes
             for attr_type, attr_values in (ldap_result or [('', {})])[0][1].items():
                 self.rootDSE[attr_type] = attr_values
-        self._setRootDSEAttrs()
-        return # getRootDSE()
+        self._update_rootdse_attrs()
+        return # init_rootdse()
 
     def getSearchRoot(self, dn, naming_contexts=None):
         """
@@ -620,7 +621,7 @@ class LDAPSession(object):
         naming_contexts is used if not None and LDAPSession.namingContexts is empty
         """
         if self.namingContexts is None and hasattr(self, 'l'):
-            self.getRootDSE()
+            self.init_rootdse()
         return web2ldap.ldaputil.base.match_dnlist(
             dn,
             self.namingContexts or naming_contexts or [],
@@ -1168,7 +1169,7 @@ class LDAPSession(object):
 
         # Access to root DSE might have changed after binding
         # as another entity
-        self.getRootDSE()
+        self.init_rootdse()
 
         # Try to look up the user entry's DN in case self.who is still not a DN
         if whoami_filtertemplate and \

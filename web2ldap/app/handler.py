@@ -669,7 +669,7 @@ class AppHandler:
                         return
                 else:
                     # anonymous access
-                    ls.getRootDSE()
+                    ls.init_rootdse()
 
                 ls.setDN(dn)
 
