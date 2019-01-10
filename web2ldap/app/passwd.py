@@ -18,7 +18,7 @@ import time
 
 import ldap0
 from ldap0.pw import random_string, unicode_pwd, ntlm_password_hash, PWD_ALPHABET
-from ldap0.schema.models import AttributeType, ObjectClass
+from ldap0.schema.models import AttributeType, ObjectClass, SchemaElementOIDSet
 from ldap0.extop.passmod import PassmodRequest
 
 import web2ldap.web.forms
@@ -62,7 +62,7 @@ def get_all_attributes(schema, oc_list):
     defined in the schema for a given list of object classes
     """
     required, allowed = schema.attribute_types(oc_list, raise_keyerror=False)
-    result = {}
+    result = SchemaElementOIDSet(schema, AttributeType, [])
     result.update(required)
     result.update(allowed)
     return result # get_all_attributes()
@@ -223,7 +223,7 @@ def passwd_form(
     # Determine whether user changes own password
     own_pwd_change = password_self_change(ls, passwd_who)
 
-    all_attrs_dict = get_all_attributes(sub_schema, user_objectclasses)
+    all_attrs = get_all_attributes(sub_schema, user_objectclasses)
 
     if not unicode_pwd_avail:
 
@@ -237,7 +237,7 @@ def passwd_form(
             ]
             form.field['passwd_scheme'].options = default_hashtypes
 
-    nthash_available = all_attrs_dict.has_key('1.3.6.1.4.1.7165.2.1.25')
+    nthash_available = '1.3.6.1.4.1.7165.2.1.25' in all_attrs
     show_clientside_pw_fields = passwd_action == 'setuserpassword' and not unicode_pwd_avail
 
     passwd_template_str = web2ldap.app.gui.ReadTemplate(
@@ -304,16 +304,12 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
     passwd_action = form.getInputValue('passwd_action', [None])[0] or passwd_action_default
     passwd_who = form.getInputValue('passwd_who', [dn])[0]
 
-    try:
-        user_objectclasses = [
-            oc.lower()
-            for oc in ls.getObjectClasses(passwd_who)[0]
-        ]
-    except (
-            ldap0.CONSTRAINT_VIOLATION,
-            ldap0.INSUFFICIENT_ACCESS
-        ):
-        user_objectclasses = []
+    user_entry = ls.l.read_s(passwd_who.encode(ls.charset), attrlist=['objectClass'])
+    user_objectclasses = SchemaElementOIDSet(
+        sub_schema,
+        ObjectClass,
+        user_entry.get('objectClass', []),
+    )
 
     if 'passwd_newpasswd' not in form.inputFieldNames:
 
@@ -405,40 +401,37 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
             else:
                 password_attr_types_msg = 'Password set by the server.'
 
-    elif passwd_action in ('setuserpassword', 'setunicodepwd'):
+    elif passwd_action in {'setuserpassword', 'setunicodepwd'}:
 
         # Modify password via Modify Request
         #------------------------------------
 
-        all_attrs_dict = get_all_attributes(sub_schema, user_objectclasses)
+        all_attrs = get_all_attributes(sub_schema, user_objectclasses)
 
-        if not all_attrs_dict.has_key('2.5.4.35'):
-            # Add a simple AUXILIARY object class for the userPassword attribute if
-            # current object classes of entry do not allow userPassword
-            for userpassword_class in PASSWD_USERPASSWORD_OBJECT_CLASSES:
+        if '2.5.4.35' not in all_attrs:
+            # Current set of object classes do not allow userPassword attribute
+            for aux_class in PASSWD_USERPASSWORD_OBJECT_CLASSES:
                 try:
-                    if (
-                            user_objectclasses and
-                            not userpassword_class.lower() in user_objectclasses and
-                            sub_schema.get_inheritedattr(
-                                ObjectClass, userpassword_class, 'kind'
-                            ) == 2
-                        ):
-                        passwd_modlist.append(
-                            (
-                                ldap0.MOD_ADD,
-                                'objectClass',
-                                [userpassword_class],
-                            )
-                        )
-                        break
+                    # Object classes must be visible
+                    # Hint: this does not ensure we see all object classes
+                    # but this check is definitely better than no check
+                    if not user_objectclasses:
+                        continue
+                    # Ensure supplemental class is really AUXILIARY
+                    if sub_schema.get_inheritedattr(ObjectClass, aux_class, 'kind') != 2:
+                        continue
+                    # Ensure supplemental class is not already in set of object classes
+                    if aux_class in user_objectclasses:
+                        continue
+                    passwd_modlist.append((ldap0.MOD_ADD, 'objectClass', [aux_class]))
+                    break
                 except KeyError:
                     pass
 
         passwd_scheme = form.getInputValue('passwd_scheme', [''])[0]
 
         # Set "standard" password of LDAP entry
-        if all_attrs_dict.has_key('1.2.840.113556.1.4.90'):
+        if '1.2.840.113556.1.4.90' in all_attrs:
             # Active Directory's password attribute unicodePwd
             passwd_attr_type = 'unicodePwd'
             new_passwd_value = unicode_pwd(password=passwd_input)
@@ -481,7 +474,7 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
 
         pwd_change_timestamp = time.time()
 
-        if passwd_settimesync and all_attrs_dict.has_key('1.3.6.1.1.1.1.5'):
+        if passwd_settimesync and '1.3.6.1.1.1.1.5' in all_attrs:
             passwd_modlist.append(
                 (
                     ldap0.MOD_REPLACE,
@@ -493,7 +486,7 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
         passwd_ntpasswordsync = form.getInputValue('passwd_ntpasswordsync', ['no'])[0] == 'yes'
 
         # Samba password synchronization if requested
-        if passwd_ntpasswordsync and all_attrs_dict.has_key('1.3.6.1.4.1.7165.2.1.25'):
+        if passwd_ntpasswordsync and '1.3.6.1.4.1.7165.2.1.25' in all_attrs:
             passwd_modlist.append(
                 (
                     ldap0.MOD_REPLACE,
@@ -501,7 +494,7 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
                     ntlm_password_hash(passwd_input),
                 )
             )
-            if passwd_settimesync and all_attrs_dict.has_key('1.3.6.1.4.1.7165.2.1.27'):
+            if passwd_settimesync and '1.3.6.1.4.1.7165.2.1.27' in all_attrs:
                 passwd_modlist.append(
                     (
                         ldap0.MOD_REPLACE,
