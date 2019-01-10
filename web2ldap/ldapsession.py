@@ -755,36 +755,6 @@ class LDAPSession(object):
                     pass
         return (hasSubordinates, numSubordinates, numAllSubordinates)
 
-    def getObjectClasses(self, dn):
-        """
-        Returns a 2-tuple with the list of object classes associated with an entry
-        and the structural object class
-        """
-        try:
-            search_result = self.readEntry(
-                dn,
-                ['objectClass', 'structuralObjectClass']
-            )
-        except ldap0.NO_SUCH_ATTRIBUTE:
-            search_result = self.readEntry(dn, ['objectClass'])
-        except (
-                ldap0.INSUFFICIENT_ACCESS,
-                ldap0.UNWILLING_TO_PERFORM,
-            ):
-            return [], None
-        if not search_result:
-            raise ldap0.NO_SUCH_OBJECT
-        entry = ldap0.cidict.cidict(search_result[0][1])
-        objectClass = entry.get('objectClass', [])
-        structuralObjectClass_values = entry.get('structuralObjectClass', [None])
-        # Attribute structuralObjectClass is supposed to be SINGLE-VALUE
-        # but some broken LDAPv3 server implementations return all the sup classes
-        if len(structuralObjectClass_values) == 1:
-            structuralObjectClass = structuralObjectClass_values[0]
-        else:
-            structuralObjectClass = None
-        return objectClass, structuralObjectClass # getObjectClasses()
-
     def retrieveSubSchema(self, dn, default, supplement_schema_ldif, strict_check=True):
         """Retrieve parsed sub schema sub entry for current part of DIT"""
         if dn is None:
