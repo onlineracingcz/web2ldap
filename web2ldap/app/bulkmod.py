@@ -27,7 +27,7 @@ import web2ldap.app.gui
 import web2ldap.app.ldapparams
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 from web2ldap.app.schema.syntaxes import syntax_registry, LDAPSyntaxValueError
-
+from web2ldap.app.modify import modlist_ldif
 
 def input_modlist(sid, form, ls, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av):
 
@@ -226,7 +226,7 @@ def bulkmod_confirmation_form(
 
     # generate an LDIF representation of the modifications
     if bulk_mod_list:
-        bulk_mod_list_ldif = web2ldap.app.modify.ModlistLDIF(
+        bulk_mod_list_ldif = modlist_ldif(
             'cn=bulkmod-dummy',
             form,
             bulk_mod_list,
@@ -440,7 +440,7 @@ def w2l_bulkmod(sid, outf, command, form, ls, dn, connLDAPUrl):
                             )
                         )
                     else:
-                        result_ldif_html.append(web2ldap.app.modify.ModlistLDIF(
+                        result_ldif_html.append(modlist_ldif(
                             ldap_dn, form, bulk_mod_list
                         ))
 
