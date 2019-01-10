@@ -645,30 +645,8 @@ class Web2LDAPForm_passwd(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(
-            web2ldap.web.forms.Select(
-                'passwd_action',
-                u'Password action',
-                1,
-                options=[
-                    (action, short_desc)
-                    for action, short_desc, _ in web2ldap.app.passwd.PASSWD_ACTIONS
-                ],
-                default=u'setuserpassword'
-            )
-        )
-        self.addField(DistinguishedNameInput('passwd_who', u'Password DN'))
-        self.addField(web2ldap.web.forms.Field('passwd_oldpasswd', u'Old password', 100, 1, '.*'))
-        self.addField(web2ldap.web.forms.Field('passwd_newpasswd', u'New password', 100, 2, '.*'))
-        self.addField(web2ldap.web.forms.Select(
-            'passwd_scheme', u'Password hash scheme', 1,
-            options=web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items(),
-            default=None,
-        ))
-        self.addField(web2ldap.web.forms.Checkbox('passwd_ntpasswordsync', u'Sync ntPassword for Samba', 1, default=u'yes', checked=1))
-        self.addField(web2ldap.web.forms.Checkbox('passwd_settimesync', u'Sync password setting times', 1, default=u'yes', checked=1))
-        self.addField(web2ldap.web.forms.Checkbox('passwd_forcechange', u'Force password change', 1, default=u'yes', checked=0))
-        self.addField(web2ldap.web.forms.Checkbox('passwd_inform', u'Password change inform action', 1, default="display_url", checked=0))
+        for field in web2ldap.app.passwd.passwd_fields():
+            self.addField(field)
 
 
 class Web2LDAPForm_read(Web2LDAPForm):

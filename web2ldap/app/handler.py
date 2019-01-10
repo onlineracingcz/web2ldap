@@ -786,37 +786,10 @@ class AppHandler:
                 )
 
             except web2ldap.ldapsession.PWD_EXPIRATION_WARNING as e:
-                # Setup what's required to the case command=='passwd'
+                # Setup what's required for executing command 'passwd'
                 ls.setDN(dn or e.who)
-                self.form.addField(
-                    web2ldap.web.forms.Select(
-                        'passwd_scheme',
-                        u'Password hash scheme',
-                        1,
-                        options=web2ldap.app.passwd.available_hashtypes,
-                        default=web2ldap.app.passwd.available_hashtypes[-1],
-                    )
-                )
-                self.form.addField(
-                    web2ldap.web.forms.Checkbox(
-                        'passwd_ntpasswordsync',
-                        u'Sync ntPassword for Samba',
-                        1,
-                        default="yes",
-                        checked=1,
-                    )
-                )
-                self.form.addField(
-                    web2ldap.web.forms.Checkbox(
-                        'passwd_settimesync',
-                        u'Sync password setting times',
-                        1,
-                        default="yes",
-                        checked=1,
-                    )
-                )
-                # Directly generate the change password form
-                web2ldap.app.passwd.PasswdForm(
+                # Output the change password form
+                web2ldap.app.passwd.passwd_form(
                     self.sid, self.outf, self.form, ls, dn,
                     None, None, e.who.decode(ls.charset), None,
                     'Password change needed',
@@ -832,37 +805,10 @@ class AppHandler:
                 )
 
             except web2ldap.ldapsession.PasswordPolicyException as e:
-                # Setup what's required to the case command=='passwd'
+                # Setup what's required for executing command 'passwd'
                 ls.setDN(dn or e.who)
-                self.form.addField(
-                    web2ldap.web.forms.Select(
-                        'passwd_scheme',
-                        u'Password hash scheme',
-                        1,
-                        options=web2ldap.app.passwd.available_hashtypes,
-                        default=web2ldap.app.passwd.available_hashtypes[-1],
-                    )
-                )
-                self.form.addField(
-                    web2ldap.web.forms.Checkbox(
-                        'passwd_ntpasswordsync',
-                        u'Sync ntPassword for Samba',
-                        1,
-                        default="yes",
-                        checked=1,
-                    )
-                )
-                self.form.addField(
-                    web2ldap.web.forms.Checkbox(
-                        'passwd_settimesync',
-                        u'Sync password setting times',
-                        1,
-                        default="yes",
-                        checked=1,
-                    )
-                )
-                # Directly generate the change password form
-                web2ldap.app.passwd.PasswdForm(
+                # Output the change password form
+                web2ldap.app.passwd.passwd_form(
                     self.sid, self.outf, self.form, ls, dn,
                     None, None,
                     e.who.decode(ls.charset), None,
