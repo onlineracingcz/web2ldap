@@ -504,7 +504,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
         read_attrs = search_attrs or ({False:['*'], True:['*', '+']}[ls.supportsAllOpAttr and search_opattrs]+requested_attrs) or None
         result_handler = LDIFWriter(ls.l, outf)
         if search_output == 'ldif1':
-            result_handler.headerStr = LDIF1_HEADER % (
+            result_handler.header = LDIF1_HEADER % (
                 web2ldap.__about__.__version__,
                 time.strftime(
                     '%A, %Y-%m-%d %H:%M:%S GMT',
