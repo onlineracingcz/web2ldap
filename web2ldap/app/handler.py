@@ -185,7 +185,7 @@ class AppHandler:
         elif self.command == 'bulkmod':
             web2ldap.app.bulkmod.w2l_bulkmod(self.sid, self.outf, self.command, self.form, ls, dn, connLDAPUrl)
         elif self.command == 'delete':
-            web2ldap.app.delete.w2l_Delete(self.sid, self.outf, self.command, self.form, ls, dn, connLDAPUrl)
+            web2ldap.app.delete.w2l_delete(self.sid, self.outf, self.command, self.form, ls, dn, connLDAPUrl)
         elif self.command == 'dit':
             web2ldap.app.dit.w2l_dit(self.sid, self.outf, self.command, self.form, ls, dn)
         elif self.command == 'rename':
