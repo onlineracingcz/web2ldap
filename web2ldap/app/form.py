@@ -30,6 +30,7 @@ from web2ldap.web.forms import escapeHTML
 import web2ldap.ldaputil.base
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 import web2ldap.ldapsession
+import web2ldap.ldaputil.passwd
 import web2ldap.app.core
 import web2ldap.app.gui
 import web2ldap.app.passwd
@@ -659,7 +660,11 @@ class Web2LDAPForm_passwd(Web2LDAPForm):
         self.addField(DistinguishedNameInput('passwd_who', u'Password DN'))
         self.addField(web2ldap.web.forms.Field('passwd_oldpasswd', u'Old password', 100, 1, '.*'))
         self.addField(web2ldap.web.forms.Field('passwd_newpasswd', u'New password', 100, 2, '.*'))
-        self.addField(web2ldap.web.forms.Select('passwd_scheme', u'Password hash scheme', 1, options=web2ldap.app.passwd.available_hashtypes, default=web2ldap.app.passwd.available_hashtypes[-1][0]))
+        self.addField(web2ldap.web.forms.Select(
+            'passwd_scheme', u'Password hash scheme', 1,
+            options=web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items(),
+            default=None,
+        ))
         self.addField(web2ldap.web.forms.Checkbox('passwd_ntpasswordsync', u'Sync ntPassword for Samba', 1, default=u'yes', checked=1))
         self.addField(web2ldap.web.forms.Checkbox('passwd_settimesync', u'Sync password setting times', 1, default=u'yes', checked=1))
         self.addField(web2ldap.web.forms.Checkbox('passwd_forcechange', u'Force password change', 1, default=u'yes', checked=0))
