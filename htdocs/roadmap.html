@@ -17,18 +17,12 @@
 
 <h1 id="r1.4">1.4</h1>
 <p>
-  Planned as medium rewrite summer 2019.
+  Already <a href="changes-1.4.html">started</a>, release planned for spring 2019.
 </p>
 <ul>
   <li>
     Will require software updates / different installation:
     <ul>
-      <li>
-        Handle LDIF change records for bulk operations
-      </li>
-      <li>
-        pyweblib 1.4.0+ for HTML5 features
-      </li>
       <li>
         Use module <a href="https://pypi.org/project/passlib">passlib</a>
         for generating client-side password hashes.
@@ -46,6 +40,13 @@
         regex-matching of arbitrary environment vars
       </li>
     </ul>
+  </li>
+  <li>
+    Reimplement logging in a thread-safe and consistent manner for all run modes with module
+    <a href="https://docs.python.org/lib/module-logging.html">logging</a>.
+  </li>
+  <li>
+    Handle LDIF change records for bulk operations
   </li>
   <li>
     Make use of HTML 5 features like &lt;datalist&gt; etc.
@@ -66,6 +67,25 @@
     <a href="https://pypi.org/project/asn1crypto">asn1crypto</a>
     to get rid of Pisces license.
   </li>
+  <li>
+    CSS style chooser.
+  </li>
+  <li>
+    Time zone chooser.
+  </li>
+  <li>
+    HTTP-LDAP login bindings:<br>
+    Define binding conditions between HTTP connection parameters
+    (<var>REMOTE_ADDR</var>, <var>REMOTE_USER</var>, etc.) and a LDAP
+    authz-DN entry which is result of a LDAP bind.
+  </li>
+</ul>
+
+<h1 id="r1.5">1.5</h1>
+<p>
+  Planned for end of 2019.
+</p>
+<ul>
   <li>
     More powerful handling of attribute input fields:
     <ul>
@@ -104,24 +124,7 @@
       </li>
     </ul>
   </li>
-  <li>
-    CSS style chooser.
-  </li>
-  <li>
-    Time zone chooser.
-  </li>
-  <li>
-    Reimplement logging in a thread-safe and consistent manner for all run modes with module
-    <a href="https://docs.python.org/lib/module-logging.html">logging</a>.
-  </li>
-  <li>
-    HTTP-LDAP login bindings:<br>
-    Define binding conditions between HTTP connection parameters
-    (<var>REMOTE_ADDR</var>, <var>REMOTE_USER</var>, etc.) and a LDAP
-    authz-DN entry which is result of a LDAP bind.
-  </li>
 </ul>
-
 <h1 id="r2.x">2.x</h1>
 <p>
   Planned as complete rewrite in rather far future especially regarding
