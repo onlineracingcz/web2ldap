@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Module web2ldapcnf
-(c) by Michael Stroeder <michael@stroeder.com>
+web2ldapcnf - Configure the basic behaviour of web2ldap.py
 
-Some variables to configure the basic behaviour of web2ldap.py
+See documentation for details:
+https://www.web2ldap.de/web2ldapcnf.html
+
+(c) 1998-2019 by Michael Stroeder <michael@stroeder.com>
 """
 
 from __future__ import absolute_import
@@ -176,35 +178,20 @@ good_redirect_targets = {
 # Use [u'0.0.0.0/0.0.0.0',u'::0'] to allow access to every client but think twice!
 # IPv6 network addresses without brackets!
 access_allowed = {
-    u'_':[
+    # default for all sub URLs
+    u'_': [
         # public access
-        #u'0.0.0.0/0.0.0.0', u'::0',
-        # Private IPv4 addresses (see RFC 1918)
-        #u'10.0.0.0/255.0.0.0',
-        #u'172.16.0.0/12',
-        #u'192.168.0.0/16',
-        # local host-only access
-        u'127.0.0.0/255.0.0.0',
-        u'::1',
-        u'fe00::0',
+        u'0.0.0.0/0.0.0.0', u'::0',
     ],
-    u'monitor':[
-        # local host-only access
-        u'127.0.0.0/255.0.0.0',
-        u'::1',
-        u'fe00::0',
-    ],
-    u'locate':[
+    # access to <base-URL>/monitor
+    u'monitor': [
         # public access
-        #u'0.0.0.0/0.0.0.0', u'::0',
-        # Private IPv4 addresses (see RFC 1918)
-        #u'10.0.0.0/255.0.0.0',
-        #u'172.16.0.0/12',
-        #u'192.168.0.0/16',
-        # local host-only access
-        u'127.0.0.0/255.0.0.0',
-        u'::1',
-        u'fe00::0',
+        u'0.0.0.0/0.0.0.0', u'::0',
+    ],
+    # access to <base-URL>/locate
+    u'locate': [
+        # public access
+        u'0.0.0.0/0.0.0.0', u'::0',
     ],
 }
 
