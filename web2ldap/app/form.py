@@ -709,7 +709,7 @@ class Web2LDAPForm_oid(Web2LDAPForm):
                 u'Schema element class',
                 1,
                 options=ldap0.schema.SCHEMA_ATTRS,
-                default=None,
+                default=u'',
             )
         )
 

@@ -834,15 +834,9 @@ def w2l_schema_viewer(sid, outf, command, form, ls, dn):
 
     # Get input parameter from form input
     oid = form.getInputValue('oid', [None])[0]
-    se_classes = [
-        SCHEMA_CLASS_MAPPING[se_name.strip()]
-        for se_name in form.getInputValue('oid_class', [])
-        if se_name
-    ]
-
-    if not oid or oid == '*':
+    if not oid:
         # Display entry page of schema browser
-        display_schema_elements(sid, outf, form, ls, dn, sub_schema, se_classes, None)
+        display_schema_elements(sid, outf, form, ls, dn, sub_schema, None, None)
         return
 
     # Sanitize oid
@@ -863,9 +857,18 @@ def w2l_schema_viewer(sid, outf, command, form, ls, dn):
     else:
         cmp_method = None
 
+    se_classes = [
+        SCHEMA_CLASS_MAPPING[se_name]
+        for se_name in form.getInputValue('oid_class', [])
+        if se_name
+    ]
+
     if len(se_classes) == 1 and cmp_method is None:
         # Display a single schema element referenced by OID and class
-        se_list = [sub_schema.get_obj(se_classes[0], oid, None)]
+        se_list = []
+        se_obj = sub_schema.get_obj(se_classes[0], oid, None)
+        if se_obj is not None:
+            se_list.append(se_obj)
     else:
         # Search schema element by OID
         se_list = []
@@ -917,7 +920,7 @@ def w2l_schema_viewer(sid, outf, command, form, ls, dn):
 
     # Directly display a single schema element
     se_obj = se_list[0]
-    if not SCHEMA_VIEWER_CLASS.has_key(se_obj.__class__):
+    if se_obj.__class__ not in SCHEMA_VIEWER_CLASS:
         raise web2ldap.app.core.ErrorExit(u'No viewer for this type of schema element!')
     schema_viewer = SCHEMA_VIEWER_CLASS[se_obj.__class__](sub_schema, se_obj)
     schema_viewer.display(sid, outf, form, ls, dn)
