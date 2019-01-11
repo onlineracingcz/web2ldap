@@ -176,6 +176,7 @@ good_redirect_targets = {
 # Use [u'0.0.0.0/0.0.0.0',u'::0'] to allow access to every client but think twice!
 # IPv6 network addresses without brackets!
 access_allowed = {
+    # default for all sub URLs
     u'_': [
         # public access
         #u'0.0.0.0/0.0.0.0', u'::0',
@@ -188,12 +189,14 @@ access_allowed = {
         u'::1',
         u'fe00::0',
     ],
+    # access to <base-URL>/monitor
     u'monitor': [
         # local host-only access
         u'127.0.0.0/255.0.0.0',
         u'::1',
         u'fe00::0',
     ],
+    # access to <base-URL>/locate
     u'locate': [
         # public access
         #u'0.0.0.0/0.0.0.0', u'::0',
