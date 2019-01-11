@@ -1025,7 +1025,6 @@ class Form:
             self,
             maxContentLength,
             ignoreEmptyFields,
-            ignoreUndeclaredFields,
             stripValues,
             unquote
         ):
@@ -1053,11 +1052,8 @@ class Form:
                     raise InvalidFormEncoding(param)
                 name = unquote(name).strip()
 
-                if not name in self.declaredFieldNames:
-                    if ignoreUndeclaredFields:
-                        continue
-                    else:
-                        raise UndeclaredFieldName(name)
+                if name not in self.declaredFieldNames:
+                    raise UndeclaredFieldName(name)
 
                 value = unquote(value)
                 if stripValues:
@@ -1084,7 +1080,6 @@ class Form:
             self,
             maxContentLength,
             ignoreEmptyFields,
-            ignoreUndeclaredFields,
         ):
 
         import cgi
@@ -1095,11 +1090,8 @@ class Form:
 
         for name in parts.keys():
 
-            if not name in self.declaredFieldNames:
-                if ignoreUndeclaredFields:
-                    continue
-                else:
-                    raise UndeclaredFieldName(name)
+            if name not in self.declaredFieldNames:
+                raise UndeclaredFieldName(name)
 
             for value in parts[name]:
 
@@ -1124,7 +1116,6 @@ class Form:
     def getInputFields(
             self,
             ignoreEmptyFields=0,
-            ignoreUndeclaredFields=0,
             stripValues=True,
             unquotePlus=False,
         ):
@@ -1136,8 +1127,6 @@ class Form:
         are raised.
 
         ignoreEmptyFields=0         Ignore fields with empty input.
-        ignoreUndeclaredFields=0    Ignore fields with names not declared.
-                                    Normally UndeclaredFieldName is raised.
         stripValues=1               If true leading and trailing whitespaces
                                     are stripped from all input values.
         unquotePlus=0
@@ -1157,7 +1146,6 @@ class Form:
             self._parseFormUrlEncoded(
                 maxContentLength,
                 ignoreEmptyFields,
-                ignoreUndeclaredFields,
                 stripValues,
                 unquote,
             )
@@ -1165,7 +1153,6 @@ class Form:
             self._parseMultipartFormData(
                 maxContentLength,
                 ignoreEmptyFields,
-                ignoreUndeclaredFields,
             )
         else:
             raise FormException('Invalid content received: %r' % (content_type))
