@@ -142,9 +142,13 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
             if r[0] in is_search_result:
                 entry = r[1][1]
                 objectclasses = entry.get('objectclass', entry.get('objectClass', []))
-                template_oc = list(set([o.lower() for o in objectclasses]).intersection(
-                    [s.lower() for s in self._p.keys()]
-                ))
+                template_oc = list(
+                    set(
+                        [o.lower() for o in objectclasses]
+                    ).intersection(
+                        [s.lower() for s in self._p.keys()]
+                    )
+                )
                 if template_oc:
                     tableentry = CaseinsensitiveStringKeyDict(default='')
                     attr_list = entry.keys()
