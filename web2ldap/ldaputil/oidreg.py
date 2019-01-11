@@ -2881,5 +2881,6 @@ def build_reg():
             )
         else:
             OID_REG[oid] = (name, desc, ref)
+    logger.debug('Added %d items to web2ldap.ldaputil.oidreg.OID_REG', len(OID_REG))
 
 build_reg()
