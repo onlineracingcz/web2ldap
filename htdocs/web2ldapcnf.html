@@ -59,29 +59,8 @@
   [<a href="#session_remove">session_remove</a>]
 </p>
 
-<h1>
-General options
-</h1>
+<h1>General options</h1>
 <dl>
-
-  <dt id="access_allowed">access_allowed</dt>
-  <dd>
-    Dictionary which defines for each URL command a list of accepted
-    address/net mask strings of client addresses permitted to access a
-    certain page.
-    <p>Example for accepting only clients from loopback network for all commands:</p>
-    <samp>
-      access_allowed = {'_':[u'127.0.0.1/255.0.0.0', u'::1']}
-    </samp>
-    <p>Example for allowing access to all clients for all commands:</p>
-    <samp>
-      access_allowed = {'_':[u'0.0.0.0/0.0.0.0', u'::0/0']}
-    </samp>
-    <p>Example for allowing access to all clients for all commands except monitor page:</p>
-    <samp>
-      access_allowed = {'_':[u'0.0.0.0/0.0.0.0', u'::0/0'], 'monitor':[u'127.0.0.1/255.255.255.255']}
-    </samp>
-  </dd>
 
   <dt id="connect_template">connect_template</dt>
   <dd>
@@ -210,9 +189,7 @@ General options
 
 </dl>
 
-<h1>
-HTML and HTTP options
-</h1>
+<h1>HTML and HTTP options</h1>
 <dl>
 
   <dt id="http_headers">http_headers</dt>
@@ -225,12 +202,29 @@ HTML and HTTP options
 </dl>
 
 
-<h1>
-Security options
-</h1>
+<h1>Security options</h1>
 <p>
   You should think about these parameters a little bit longer...
 </p>
+
+  <dt id="access_allowed">access_allowed</dt>
+  <dd>
+    Dictionary which defines for each URL command a list of accepted
+    address/net mask strings of client addresses permitted to access a
+    certain page.
+    <p>Example for accepting only clients from loopback network for all commands:</p>
+    <samp>
+      access_allowed = {'_':[u'127.0.0.1/255.0.0.0', u'::1']}
+    </samp>
+    <p>Example for allowing access to all clients for all commands:</p>
+    <samp>
+      access_allowed = {'_':[u'0.0.0.0/0.0.0.0', u'::0/0']}
+    </samp>
+    <p>Example for allowing access to all clients for all commands except monitor page:</p>
+    <samp>
+      access_allowed = {'_':[u'0.0.0.0/0.0.0.0', u'::0/0'], 'monitor':[u'127.0.0.1/255.255.255.255']}
+    </samp>
+  </dd>
 
 <dl>
   <dt id="session_limit">session_limit</dt>
