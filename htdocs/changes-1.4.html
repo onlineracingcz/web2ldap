@@ -40,6 +40,11 @@
           <li>
             Changed some optional imports to mandatory dependencies
           </li>
+          <li>
+            Handling the password policy response controls
+            (see <a href="https://tools.ietf.org/html/draft-behera-ldap-password-policy">draft-behera-ldap-password-policy</a>)
+            is now done within module package <var>ldap0</var>.
+          </li>
         </ul>
       </li>
       <li>
@@ -56,6 +61,11 @@
       </li>
       <li>
         Removed configuration parameter <var>web2ldapcnf.sec_sslacceptedciphers</var>.
+      </li>
+      <li>
+        Hunked out non-functional code for handling
+        &quot;Authorization Identity Request and Response Controls&quot;
+        (see <a href="https://tools.ietf.org/html/rfc3829">RFC 3829</a>).
       </li>
       <li>
         Removed obsolete X.509 certificate extension parser classes:

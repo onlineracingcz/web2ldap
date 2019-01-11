@@ -17,7 +17,6 @@ from __future__ import absolute_import
 import sys
 import socket
 import time
-import types
 import codecs
 
 import ldap0
@@ -32,7 +31,6 @@ from ldap0.schema.subentry import SubschemaError
 from ldap0.controls.openldap import SearchNoOpControl
 from ldap0.controls.libldap import AssertionControl
 from ldap0.controls.readentry import PreReadControl, PostReadControl
-from ldap0.controls import AuthorizationIdentityRequestControl, AuthorizationIdentityResponseControl
 from ldap0.controls.ppolicy import PasswordPolicyControl
 from ldap0.controls.sessiontrack import SessionTrackingControl, SESSION_TRACKING_FORMAT_OID_USERNAME
 
@@ -493,9 +491,9 @@ class LDAPSession(object):
         """
         if not uri:
             raise ValueError('Empty value for uri')
-        elif isinstance(uri, bytes) or isinstance(uri, unicode):
+        elif isinstance(uri, (bytes, unicode)):
             uri_list = [uri]
-        elif type(uri) == types.ListType:
+        elif isinstance(uri, (list, tuple)):
             uri_list = uri
         else:
             raise TypeError("Parameter uri must be either list of strings or single string.")
@@ -1078,7 +1076,6 @@ class LDAPSession(object):
                     pass
             else:
                 raise ldap0.LDAPError('SASL not supported by local installation.')
-            bind_srv_ctrls = []
 
         else:
             # Simple bind
@@ -1092,7 +1089,7 @@ class LDAPSession(object):
                 who = self.getBindDN(who, loginSearchRoot, binddn_filtertemplate)
             # Call simple bind
             try:
-                _, _, _, bind_srv_ctrls = self.l.simple_bind_s(
+                self.l.simple_bind_s(
                     self.uc_encode(who or u'')[0],
                     self.uc_encode(cred or u'')[0],
                     serverctrls=bind_server_ctrls,
@@ -1106,19 +1103,6 @@ class LDAPSession(object):
                 raise ldap_err
             else:
                 self.who = who
-
-        if bind_srv_ctrls:
-            authz_identity_ctrls = [
-                c
-                for c in bind_srv_ctrls
-                if c.controlType == AuthorizationIdentityResponseControl.controlType
-            ]
-            if authz_identity_ctrls:
-                authz_id = authz_identity_ctrls[0].authzId.decode(self.charset)
-                if authz_id.startswith('dn:'):
-                    self.who = authz_id[3:]
-                else:
-                    self.who = authz_id
 
         # Determine identity by sending LDAPv3 Who Am I? extended operation
         try:
@@ -1171,36 +1155,6 @@ class LDAPSession(object):
                 self.who = userEntryDN.decode(self.charset)
         else:
             self.userEntry = {}
-        # Extract the password policy response control and raise exceptions
-        if bind_srv_ctrls:
-            ppolicy_ctrls = [
-                c
-                for c in bind_srv_ctrls
-                if c.controlType == PasswordPolicyControl.controlType
-            ]
-            if ppolicy_ctrls and len(ppolicy_ctrls) == 1:
-                ppolicy_ctrl = ppolicy_ctrls[0]
-                if ppolicy_ctrl.error == 2:
-                    raise PWD_CHANGE_AFTER_RESET(
-                        who=self.who.encode(self.charset),
-                        desc='Password change is needed after reset!',
-                    )
-                elif ppolicy_ctrl.timeBeforeExpiration is not None:
-                    raise PWD_EXPIRATION_WARNING(
-                        who=self.who.encode(self.charset),
-                        desc='Password will expire in %d seconds!' % (
-                            ppolicy_ctrl.timeBeforeExpiration
-                        ),
-                        timeBeforeExpiration=ppolicy_ctrl.timeBeforeExpiration,
-                    )
-                elif ppolicy_ctrl.graceAuthNsRemaining is not None:
-                    raise PWD_EXPIRED(
-                        who=self.who.encode(self.charset),
-                        desc='Password expired! %d grace logins left.' % (
-                            ppolicy_ctrl.graceAuthNsRemaining
-                        ),
-                        graceAuthNsRemaining=ppolicy_ctrl.graceAuthNsRemaining,
-                    )
         return # bind()
 
     def getGoverningStructureRule(self, dn, schema):
