@@ -634,7 +634,10 @@ class AEMemberUid(MemberUID):
     # Because AEMemberUid.transmute() always resets all attribute values it's
     # ok to not validate values thoroughly
     def _validate(self, attrValue):
-        return MemberUID._validate(self, attrValue) and attrValue in set(self._member_uids_from_member())
+        return (
+            MemberUID._validate(self, attrValue) and
+            attrValue in set(self._member_uids_from_member())
+        )
 
     def transmute(self, attrValues):
         return filter(None, self._member_uids_from_member())
@@ -895,8 +898,14 @@ class AEEntryDNAEPerson(DistinguishedName):
     desc = 'AE-DIR: entryDN of aePerson entry'
     ref_attrs = (
         ('manager', u'Manages', None, u'Search all entries managed by this person'),
-        ('aePerson', u'Users', None, 'aeUser', u'Search all personal AE-DIR user accounts (aeUser entries) of this person.'),
-        ('aeOwner', u'Devices', None, 'aeDevice', u'Search all devices (aeDevice entries) assigned to this person.'),
+        (
+            'aePerson', u'Users', None, 'aeUser',
+            u'Search all personal AE-DIR user accounts (aeUser entries) of this person.'
+        ),
+        (
+            'aeOwner', u'Devices', None, 'aeDevice',
+            u'Search all devices (aeDevice entries) assigned to this person.'
+        ),
     )
 
 syntax_registry.registerAttrType(
@@ -968,13 +977,19 @@ class AEEntryDNAEHost(DistinguishedName):
                     ('searchform_mode', u'exp'),
                     (
                         'filterstr',
-                        u'(&(|(objectClass=aeHost)(objectClass=aeService))(|(entryDN:dnSubordinateMatch:=%s)%s))' % (
+                        (
+                            u'(&(|(objectClass=aeHost)(objectClass=aeService))'
+                            u'(|(entryDN:dnSubordinateMatch:=%s)%s))'
+                        ) % (
                             parent_dn,
                             aesrvgroup_filter,
                         )
                     ),
                 ),
-                title=u'Search all host entries which are member in at least one common server group(s) with this host',
+                title=(
+                    u'Search all host entries which are member in '
+                    u'at least one common server group(s) with this host'
+                ),
             ),
         ])
         return r
@@ -1024,7 +1039,9 @@ class AEEntryDNAEZone(DistinguishedName):
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_DN_SUBTREE),
                     ('search_string', attr_value_u),
                 ),
-                title=u'Search audit log entries for write operation within sub-tree %s' % (attr_value_u),
+                title=u'Search audit log entries for write operation within sub-tree %s' % (
+                    attr_value_u
+                ),
             ))
         return r
 
@@ -2347,13 +2364,22 @@ syntax_registry.registerAttrType(
 
 # Register all syntax classes in this module
 for name in dir():
-  syntax_registry.registerSyntaxClass(eval(name))
+    syntax_registry.registerSyntaxClass(eval(name))
 
 
 class AEDirLDAPSession(LDAPSessionOrig):
     binddn_tmpl = u'uid={username},{searchroot}'
 
     def getBindDN(self, username, searchroot, filtertemplate):
+      """
+      if username is not a bind-DN this returns a composed
+      bind-DN based in fixed AE-DIR search root
+      """
+      # if present prefer to get searchroot from rootDSE attribute aeRoot
+      searchroot = self.rootDSE.get(
+          'aeRoot',
+          [searchroot.encode(self.charset)]
+      )[0].decode(self.charset)
       if not username:
           return u''
       elif web2ldap.ldaputil.base.is_dn(username):
