@@ -50,7 +50,10 @@ def decode_dict(d, charset):
     return r
 
 
-def DIT_HTML(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
+def dit_html(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
+    """
+    Outputs HTML representation of a directory information tree (DIT)
+    """
 
     def meta_results(d):
         """
@@ -97,9 +100,11 @@ def DIT_HTML(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
         hasSubordinates = node_entry.get('hasSubordinates', ['TRUE'])[0].upper() == 'TRUE'
         try:
             subordinateCountFlag = int(
-                node_entry.get('subordinateCount',
-                node_entry.get('numAllSubordinates',
-                node_entry.get('msDS-Approx-Immed-Subordinates', ['1'])))[0]
+                node_entry.get(
+                    'subordinateCount',
+                    node_entry.get(
+                        'numAllSubordinates',
+                        node_entry.get('msDS-Approx-Immed-Subordinates', ['1'])))[0]
             )
         except ValueError:
             subordinateCountFlag = 1
@@ -156,13 +161,13 @@ def DIT_HTML(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
         # Subordinate nodes' HTML
         r.append('<dd>')
         if max_levels and d:
-            r.extend(DIT_HTML(sid, outf, form, ls, anchor_dn, d, entry_dict, max_levels-1))
+            r.extend(dit_html(sid, outf, form, ls, anchor_dn, d, entry_dict, max_levels-1))
         r.append('</dd>')
 
     # Finish node's HTML
     r.append('</dl>')
 
-    return r # DIT_HTML()
+    return r # dit_html()
 
 
 def w2l_dit(sid, outf, command, form, ls, dn):
@@ -214,7 +219,7 @@ def w2l_dit(sid, outf, command, form, ls, dn):
         dit_dict = dit_dict[search_base]
 
     if root_dit_dict:
-        outf_lines = DIT_HTML(
+        outf_lines = dit_html(
             sid, outf, form, ls, dn,
             root_dit_dict, entry_dict,
             dit_max_levels,
@@ -234,7 +239,7 @@ def w2l_dit(sid, outf, command, form, ls, dn):
                         ),
                         form.utf2display(naming_context),
                     )
-              )
+                )
 
     web2ldap.app.gui.SimpleMessage(
         sid, outf, command, form, ls, dn,
