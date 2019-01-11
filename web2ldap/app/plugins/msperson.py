@@ -12,6 +12,7 @@ import datetime
 import web2ldapcnf
 
 from web2ldap.app.schema.syntaxes import \
+    DateOfBirth, \
     DirectoryString, \
     IA5String, \
     ISO8601Date, \
@@ -38,38 +39,6 @@ syntax_registry.registerAttrType(
     ]
 )
 
-
-class DateOfBirth(ISO8601Date):
-    oid = 'DateOfBirth-oid'
-    desc = 'Date of birth: syntax YYYY-MM-DD, see ISO 8601'
-
-    def _age(self, birth_dt):
-        birth_date = datetime.date(
-            year=birth_dt.year,
-            month=birth_dt.month,
-            day=birth_dt.day,
-        )
-        current_date = datetime.date.today()
-        age = current_date.year - birth_date.year
-        if birth_date.month > current_date.month or \
-           (birth_date.month == current_date.month and birth_date.day > current_date.day):
-            age = age - 1
-        return age
-
-    def _validate(self, attrValue):
-        try:
-            birth_dt = datetime.datetime.strptime(attrValue, self.storageFormat)
-        except ValueError:
-            return False
-        return self._age(birth_dt) >= 0
-
-    def displayValue(self, valueindex=0, commandbutton=False):
-        raw_date = ISO8601Date.displayValue(self, valueindex, commandbutton)
-        try:
-            birth_dt = datetime.datetime.strptime(self.attrValue, self.storageFormat)
-        except ValueError:
-            return raw_date
-        return '%s (%s years old)' % (raw_date, self._age(birth_dt))
 
 syntax_registry.registerAttrType(
     DateOfBirth.oid, [
