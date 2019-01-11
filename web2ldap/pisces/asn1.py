@@ -9,7 +9,7 @@ BER encoding titled 'A Layman's Guide to a Subset of ASN.1, BER, and
 DER.'  It is available from http://www.rsasecurity.com/rsalabs/pkcs/.
 The text version is available at
     ftp://ftp.rsasecurity.com/pub/pkcs/ascii/layman.asc.
-    
+
 functions:
     parse(buf: string) -> ASN1Object
     display(obj: ASN1Object)
@@ -22,7 +22,7 @@ classes:
 constants:
     INTEGER, BIT_STRING, OCTET_STRING, NULL, OBJECT_IDENTIFIER,
     SEQUENCE, SET, PrintableString, T61String, IA5String, UTCTIME,
-    BOOLEAN 
+    BOOLEAN
 
 The following objects are not part of the user-visible API:
 Displayer
@@ -34,7 +34,6 @@ from __future__ import absolute_import
 
 import struct
 import sys
-import operator
 import types
 import UserList
 import UserString
@@ -104,7 +103,7 @@ class Displayer:
                     print " " * indent, "}"
         except AttributeError:
             print " " * indent, repr(obj)
-        
+
 def display(obj, indent=0):
     # XXX doesn't work on constructed yet
     try:
@@ -130,7 +129,7 @@ class ASN1Object:
 
     # XXX need to make sure this really works everywhere; it's a late
     # addition.  it requires that all objects have a val that is a
-    # list. 
+    # list.
     def __cmp__(self, other):
         if isinstance(other, ASN1Object):
             return cmp(self.val, other.val)
@@ -162,10 +161,10 @@ class Sequence(ASN1Object, UserList.UserList):
         if not val:
             val = []
         self.val = self.data = val
-            
+
     def __repr__(self):
         return "SEQUENCE {" + repr(self.val)[1:-1] + "}"
-    
+
     def _encode(self, io):
         encObjs = []
         for elt in self.data:
@@ -234,7 +233,7 @@ class GeneralizedTime(ASN1Object):
 
     def _encode(self, io):
         io.write(chr(GENERALIZEDTIME) + unparseLength(len(self.val)) + self.val)
-        
+
     def unparse(self, val):
         """Convert a Python time representation to UTC time.
 
@@ -242,7 +241,7 @@ class GeneralizedTime(ASN1Object):
         """
         # Python dates might be represented as seconds or time tuples.
         # I'll simply require that both times have the same repr.
-        
+
         # UTC is easier to cope with because the user can make sure a
         # time tuple is in  UTC, but it would be a pain for me to do that.
         self._val = time.mktime(val)
@@ -263,7 +262,7 @@ class GeneralizedTime(ASN1Object):
                 raise ValueError, "can't handle data that far in past"
         self.val = "%02d%02d%02d%02d%02d%02dZ" % (yy, val[1], val[2],
                                                   val[3], val[4], val[5])
-        
+
     def _parse(self):
         if self._val:
             return self._val
@@ -282,7 +281,7 @@ class GeneralizedTime(ASN1Object):
         self._val = time.mktime((yy, mm1, dd, hh, mm2, ss, -1, -1, -1)) \
                     - time.timezone
         return self._val
-        
+
 
 class UTCTime(ASN1Object):
     """Standard ASN.1 type for time expressed in GMT
@@ -311,7 +310,7 @@ class UTCTime(ASN1Object):
 
     def _encode(self, io):
         io.write(chr(UTCTIME) + unparseLength(len(self.val)) + self.val)
-        
+
     def unparse(self, val):
         """Convert a Python time representation to UTC time.
 
@@ -319,7 +318,7 @@ class UTCTime(ASN1Object):
         """
         # Python dates might be represented as seconds or time tuples.
         # I'll simply require that both times have the same repr.
-        
+
         # UTC is easier to cope with because the user can make sure a
         # time tuple is in  UTC, but it would be a pain for me to do that.
         self._val = time.mktime(val)
@@ -340,7 +339,7 @@ class UTCTime(ASN1Object):
                 raise ValueError, "can't handle data that far in past"
         self.val = "%02d%02d%02d%02d%02d%02dZ" % (yy, val[1], val[2],
                                                   val[3], val[4], val[5])
-        
+
     def _parse(self):
         if self._val:
             return self._val
@@ -359,7 +358,7 @@ class UTCTime(ASN1Object):
         self._val = time.mktime((yy, mm1, dd, hh, mm2, ss, -1, -1, -1)) \
                     - time.timezone
         return self._val
-        
+
 class Contextual(ASN1Object):
     """Wrapper for optional and choice encoded items (primarily)
 
@@ -371,7 +370,7 @@ class Contextual(ASN1Object):
     The solution is this thunk object.  When the decoded structure is
     actually used, it should be clear whether this is, say, an
     OPTIONAL integer type, some other tagged, known type, or an
-    encoded CHOICE.  Call the decode method when the encoding includes 
+    encoded CHOICE.  Call the decode method when the encoding includes
     the full DER encoding.  Call choose when the value doesn't have
     the appropriate tag/len info.
     """
@@ -397,7 +396,7 @@ class Contextual(ASN1Object):
             self.val = parse(self.val)
             self.unknown = 0
         return self.val
-    
+
     def choose(self, tag):
         if self.unknown:
             p = parse(self.val)
@@ -415,7 +414,7 @@ class Constructed(ASN1Object):
         self._parse(val)
 
     def _parse(self, val):
-        assert type(val)==types.StringType,'***bah!'
+        assert type(val) == types.StringType, '***bah!'
         p = ASN1Parser(StringIO(val))
         self.val = p.parse()
         self.val_tag = p.tag
@@ -431,7 +430,7 @@ class Constructed(ASN1Object):
 
     def _encode(self, io):
         io.write(chr(CONTEXTUAL | CONSTRUCTED | self.tag) + chr(self.length) \
-                 + encode(self.val))  
+                 + encode(self.val))
 
 
 class Boolean(ASN1Object):
@@ -490,7 +489,7 @@ class ASN1Parser:
     def __init__(self, io):
         self.io = io
         # all these instance variables store information about the
-        # more recently read tag  
+        # more recently read tag
         self.tag = None
         self.id = None
         self.length = 0
@@ -546,7 +545,7 @@ class ASN1Parser:
         if len(char) == 0:
             raise EOFError
         return ord(char)
-    
+
     def parse(self):
         try:
             self.tag = tag = self.getTag()
@@ -600,7 +599,7 @@ class ASN1Parser:
     def parseInteger(self):
         buf = self.getBody()
         if len(buf) == 0:
-           raise EOFError 
+           raise EOFError
         return getInteger(buf)
 
     def parseZero(self):
@@ -673,7 +672,7 @@ class ASN1Parser:
             y = y + (x - 2) * 40
             x = 2
         oid = [x, y]
-        
+
         num = None
         for octet in map(self.ord, buf[1:]):
             if octet & 0x80:
@@ -797,7 +796,7 @@ def unparseInteger(num):
     bytes.reverse()
     return chr(INTEGER) + unparseLength(len(bytes)) \
            + ''.join(map(chr, bytes))
-    
+
 def unparseLength(length):
     if length <= 127:
         return chr(length)
@@ -824,7 +823,7 @@ def parseCfg(io):
     """Parse dumpasn1 Object Identifier configuration file
 
     Returns a dictionary mapping OID objects to human-readable
-    descriptions. 
+    descriptions.
 
     The configuration file is available at the following URL:
     https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.cfg
