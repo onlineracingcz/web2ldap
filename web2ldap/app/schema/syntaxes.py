@@ -54,9 +54,9 @@ import web2ldap.app.viewer
 import web2ldap.app.form
 import web2ldap.app.gui
 import web2ldap.utctime
+from web2ldap.utctime import strftimeiso8601
 from web2ldap.ldaputil.base import is_dn
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
-
 
 class SyntaxRegistry:
 
@@ -1366,7 +1366,7 @@ class SecondsSinceEpoch(Integer):
         int_str = Integer.displayValue(self, valueindex, commandbutton)
         try:
             return '%s (%s)' % (
-                web2ldap.utctime.strftimeiso8601(time.gmtime(float(self.attrValue))).encode('ascii'),
+                strftimeiso8601(time.gmtime(float(self.attrValue))).encode('ascii'),
                 int_str,
             )
         except ValueError:
@@ -1381,7 +1381,7 @@ class DaysSinceEpoch(Integer):
         int_str = Integer.displayValue(self, valueindex, commandbutton)
         try:
             return '%s (%s)' % (
-                web2ldap.utctime.strftimeiso8601(time.gmtime(float(self.attrValue)*86400)).encode('ascii'),
+                strftimeiso8601(time.gmtime(float(self.attrValue)*86400)).encode('ascii'),
                 int_str,
             )
         except ValueError:
