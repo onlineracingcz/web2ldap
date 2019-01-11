@@ -40,17 +40,12 @@ def w2l_connect(outf, form, env, Msg='Connect', ErrorMsg=''):
     )
 
     if web2ldapcnf.hosts.ldap_uri_list:
-        uri_select_list = []
-        for uri in web2ldapcnf.hosts.ldap_uri_list:
-            if isinstance(uri, tuple):
-                uri, description = uri
-            else:
-                description = web2ldap.app.cnf.ldap_def.get(
-                    uri,
-                    web2ldapcnf.hosts.Web2LDAPConfig()
-                ).__dict__.get('description', uri)
-            uri_select_list.append((uri.decode('ascii'), description))
-        uri_select_field = web2ldap.web.forms.Select('ldapurl', u'LDAP uri', 1, options=uri_select_list)
+        uri_select_field = web2ldap.web.forms.Select(
+            'ldapurl',
+            u'LDAP uri',
+            1,
+            options=web2ldapcnf.hosts.ldap_uri_list,
+        )
         uri_select_field.charset = 'utf-8'
         uri_select_field_html = uri_select_field.inputHTML(
             title=u'List of pre-configured directories to connect to',

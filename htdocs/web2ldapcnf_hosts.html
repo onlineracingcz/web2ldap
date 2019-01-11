@@ -57,16 +57,18 @@
 
 <h1 id="ldap_uri_list">ldap_uri_list</h1>
 <p>
-  List of LDAP URLs which will appear in the default select list
-  of the login form. It may contain either strings (only a LDAP URL)
-  or 2-tuples of strings containing LDAP URL and description.
+  List of LDAP URLs which will appear in the default select list of the
+  connect form. List items are 2-tuples of Unicode strings containing LDAP
+  URL and description.
 </p>
   <p>Example:</p>
 <samp>
   <pre class="cli">
 ldap_uri_list = [
-  'ldap://localhost',
-  ('ldap://ldap.openldap.org',u"OpenLDAP's demo server"),
+    (
+        u'ldap://ldap.openldap.org',
+        u"OpenLDAP's demo server",
+    ),
 ]
   </pre>
 </samp>
