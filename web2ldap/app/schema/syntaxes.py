@@ -56,7 +56,8 @@ import web2ldap.app.gui
 import web2ldap.utctime
 from web2ldap.utctime import strftimeiso8601
 from web2ldap.ldaputil.base import is_dn
-from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
+from web2ldap.ldaputil.oidreg import OID_REG
+
 
 class SyntaxRegistry:
 
@@ -1024,7 +1025,7 @@ class OID(IA5String):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         try:
-            name, description, reference = oid_desc_reg[self.attrValue]
+            name, description, reference = OID_REG[self.attrValue]
         except (KeyError, ValueError):
             try:
                 se = self._schema.get_obj(ldap0.schema.models.ObjectClass, self.attrValue, raise_keyerror=1)

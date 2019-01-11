@@ -25,9 +25,10 @@ import web2ldap.ldaputil.base
 import web2ldap.app.cnf
 import web2ldap.app.gui
 import web2ldap.app.ldapparams
-from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
+from web2ldap.ldaputil.oidreg import OID_REG
 from web2ldap.app.schema.syntaxes import syntax_registry, LDAPSyntaxValueError
 from web2ldap.app.modify import modlist_ldif
+
 
 def input_modlist(sid, form, ls, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av):
 
@@ -289,7 +290,7 @@ def bulkmod_confirmation_form(
             form_begin=form.beginFormHTML('bulkmod', sid, 'POST'),
             field_bulkmod_ctrl='\n'.join([
                 '<li>%s (%s)</li>' % (
-                    form.utf2display(oid_desc_reg.get(ctrl_oid, (ctrl_oid,))[0]),
+                    form.utf2display(OID_REG.get(ctrl_oid, (ctrl_oid,))[0]),
                     form.utf2display(ctrl_oid),
                 )
                 for ctrl_oid in form.field['bulkmod_ctrl'].value or []

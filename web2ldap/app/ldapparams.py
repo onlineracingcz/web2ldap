@@ -20,7 +20,7 @@ import web2ldap.ldapsession
 import web2ldap.app.cnf
 import web2ldap.app.core
 import web2ldap.app.gui
-from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
+from web2ldap.ldaputil.oidreg import OID_REG
 
 AVAILABLE_BOOLEAN_CONTROLS = {
     web2ldap.ldapsession.CONTROL_SUBENTRIES: (
@@ -160,7 +160,7 @@ def w2l_ldapparams(sid, outf, command, form, ls, dn):
         control_enabled = (control_oid in enabled_controls)
         if not (control_enabled or ldapparam_all_controls or control_oid in ls.supportedControl):
             continue
-        name, description, _ = oid_desc_reg[control_oid]
+        name, description, _ = OID_REG[control_oid]
         control_oid_u = unicode(control_oid, 'ascii')
         control_table_rows.append(
             """

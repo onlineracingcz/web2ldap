@@ -29,7 +29,7 @@ from web2ldap.log import logger
 import web2ldap.web.forms
 from web2ldap.web import escape_html
 import web2ldap.ldaputil.base
-from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
+from web2ldap.ldaputil.oidreg import OID_REG
 import web2ldap.ldapsession
 import web2ldap.ldaputil.passwd
 import web2ldap.app.core
@@ -536,7 +536,7 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
         Web2LDAPForm._add_fields(self)
         self.addField(web2ldap.web.forms.Input('bulkmod_submit', u'Search form submit button', 6, 1, u'(Next>>|<<Back|Apply|Cancel|[+-][0-9]+)'))
         bulkmod_ctrl_options = [
-            (control_oid, oid_desc_reg.get(control_oid, (control_oid,))[0])
+            (control_oid, OID_REG.get(control_oid, (control_oid,))[0])
             for control_oid, control_spec in web2ldap.app.ldapparams.AVAILABLE_BOOLEAN_CONTROLS.items()
             if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'modify' in control_spec[0]
         ]
@@ -594,7 +594,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
         Web2LDAPForm._add_fields(self)
         self.addField(web2ldap.web.forms.Select('delete_confirm', u'Confirmation', 1, options=['yes', 'no'], default=u'no'))
         delete_ctrl_options = [
-            (control_oid, oid_desc_reg.get(control_oid, (control_oid,))[0])
+            (control_oid, OID_REG.get(control_oid, (control_oid,))[0])
             for control_oid, control_spec in web2ldap.app.ldapparams.AVAILABLE_BOOLEAN_CONTROLS.items()
             if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'delete' in control_spec[0]
         ]

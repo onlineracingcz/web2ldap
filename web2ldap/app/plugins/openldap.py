@@ -35,7 +35,7 @@ from web2ldap.app.schema.syntaxes import \
     Uri, \
     UUID, \
     syntax_registry
-from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
+from web2ldap.ldaputil.oidreg import OID_REG
 from web2ldap.app.plugins.quirks import NamingContexts
 
 #---------------------------------------------------------------------------
@@ -379,7 +379,7 @@ class ReqControls(IA5String):
             )
             ctrl_type = ctrl_tokens[0]
             try:
-                ctrl_name, _, _ = oid_desc_reg[ctrl_type]
+                ctrl_name, _, _ = OID_REG[ctrl_type]
             except (KeyError, ValueError):
                 try:
                     ctrl_name = KNOWN_RESPONSE_CONTROLS.get(ctrl_type).__class__.__name__
