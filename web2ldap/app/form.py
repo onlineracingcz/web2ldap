@@ -14,6 +14,8 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
+import sys
+import inspect
 import urllib
 import codecs
 import re
@@ -718,20 +720,17 @@ class Web2LDAPForm_dit(Web2LDAPForm):
     command = 'dit'
 
 
+logger.debug('Register form classes for commands')
 FORM_CLASS = {
     '': Web2LDAPForm,
     'monitor': Web2LDAPForm,
     'urlredirect': Web2LDAPForm,
     'disconnect': Web2LDAPForm,
 }
-
-logger.debug('Register form classes for commands')
-for _name in dir():
-    if _name.startswith('Web2LDAPForm_'):
-        c = eval(_name)
-        if c.command is not None:
-            logger.debug('Register class %s for command %r', c.__name__, c.command)
-            FORM_CLASS[c.command] = c
+for _, cls in inspect.getmembers(sys.modules[__name__], inspect.isclass):
+    if cls.__name__.startswith('Web2LDAPForm_') and cls.command is not None:
+        logger.debug('Register class %s for command %r', cls.__name__, cls.command)
+        FORM_CLASS[cls.command] = cls
 
 
 class DistinguishedNameInput(web2ldap.web.forms.Input):
