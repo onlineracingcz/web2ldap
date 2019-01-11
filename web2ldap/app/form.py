@@ -237,24 +237,6 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
         )
         return '\n'.join(form_str)
 
-    def allInputFields(self, fields=None, ignoreFieldNames=None):
-        """
-        Return list with all former input parameters.
-
-        ignoreFieldNames
-            Names of parameters to be excluded.
-        """
-        ignoreFieldNames = set(ignoreFieldNames or [])
-        result = list(fields) or []
-        for f in [
-                self.field[p]
-                for p in self.declaredFieldNames
-                if (p in self.inputFieldNames) and not (p in ignoreFieldNames)
-            ]:
-            for val in f.value:
-                result.append((f.name, val))
-        return result # allInputFields()
-
     def applAnchor(
             self,
             command,

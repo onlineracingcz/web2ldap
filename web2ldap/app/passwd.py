@@ -204,7 +204,7 @@ def passwd_form(
     # depending on the calling code part the necessary
     # input fields must be added to the form
     for field in passwd_fields():
-        if field.name not in form.declaredFieldNames:
+        if field.name not in form.field:
             form.addField(field)
 
     sub_schema = ls.retrieveSubSchema(

@@ -798,7 +798,7 @@ class ContentLengthExceeded(FormException):
         )
 
 
-class UndeclaredFieldName(FormException):
+class InvalidFieldName(FormException):
     """
     Parameter with undeclared name attribute received.
 
@@ -927,10 +927,8 @@ class Form:
         """
         # Dictionary of Field objects
         self.field = {}
-        # Ordered list of input field names
-        self.declaredFieldNames = []
-        # List of parameters names received
-        self.inputFieldNames = []
+        # set of parameters names received with input
+        self.inputFieldNames = set()
         # Save the environment vars
         self.env = env
         # input file object
@@ -984,8 +982,6 @@ class Form:
         """
         field.setCharset(self.accept_charset)
         self.field[field.name] = field
-        if not field.name in self.declaredFieldNames:
-            self.declaredFieldNames.append(field.name)
         return # Form.addField()
 
     def getInputValue(self, name, default=[]):
@@ -996,6 +992,23 @@ class Form:
         if name in self.inputFieldNames:
             return self.field[name].value
         return default
+
+    def allInputFields(self, fields=None, ignoreFieldNames=None):
+        """
+        Return list with all former input parameters.
+
+        ignoreFieldNames
+            Names of parameters to be excluded.
+        """
+        ignoreFieldNames = set(ignoreFieldNames or [])
+        result = list(fields) or []
+        for f in [
+                self.field[p]
+                for p in self.inputFieldNames-ignoreFieldNames
+            ]:
+            for val in f.value:
+                result.append((f.name, val))
+        return result # allInputFields()
 
     def hiddenInputFields(self, outf=sys.stdout, ignoreFieldNames=None):
         """
@@ -1009,8 +1022,7 @@ class Form:
         ignoreFieldNames = ignoreFieldNames or []
         for field in [
                 self.field[p]
-                for p in self.declaredFieldNames
-                if (p in self.inputFieldNames) and not (p in ignoreFieldNames)
+                for p in self.inputFieldNames-ignoreFieldNames
             ]:
             for val in field.value:
                 outf.write(
@@ -1052,8 +1064,8 @@ class Form:
                     raise InvalidFormEncoding(param)
                 name = unquote(name).strip()
 
-                if name not in self.declaredFieldNames:
-                    raise UndeclaredFieldName(name)
+                if name not in self.field:
+                    raise InvalidFieldName(name)
 
                 value = unquote(value)
                 if stripValues:
@@ -1070,9 +1082,8 @@ class Form:
                 if value or (not ignoreEmptyFields):
                     # Input is stored in field instance
                     field.setValue(value)
-                    # Add name of field to list of input keys
-                    if not name in self.inputFieldNames:
-                        self.inputFieldNames.append(name)
+                    # Add name of field to set of input keys
+                    self.inputFieldNames.add(name)
 
         return #_parseFormUrlEncoded()
 
@@ -1090,8 +1101,8 @@ class Form:
 
         for name in parts.keys():
 
-            if name not in self.declaredFieldNames:
-                raise UndeclaredFieldName(name)
+            if name not in self.field:
+                raise InvalidFieldName(name)
 
             for value in parts[name]:
 
@@ -1106,9 +1117,8 @@ class Form:
                 if value or (not ignoreEmptyFields):
                     # Input is stored in field instance
                     field.setValue(value)
-                    # Add name of field to list of input keys
-                    if not name in self.inputFieldNames:
-                        self.inputFieldNames.append(name)
+                    # Add name of field to set of input keys
+                    self.inputFieldNames.add(name)
 
         return # _parseMultipartFormData()
 
