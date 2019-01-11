@@ -33,6 +33,7 @@
 </p>
 
 <p>
+  [<a href="#access_allowed">access_allowed</a>]
   [<a href="#connect_template">connect_template</a>]
   [<a href="#cookie_domain">cookie_domain</a>]
   [<a href="#cookie_length">cookie_length</a>]
@@ -48,10 +49,9 @@
   [<a href="#ldif_maxbytes">ldif_maxbytes</a>]
   [<a href="#ldif_url_schemes">ldif_url_schemes</a>]
   [<a href="#max_searchparams">max_searchparams</a>]
-  [<a href="#monitor_access_allowed">monitor_access_allowed</a>]
   [<a href="#redirect_template">redirect_template</a>]
-  [<a href="#search_attrs">search_attrs</a>]
   [<a href="#search_attrsonly">search_attrsonly</a>]
+  [<a href="#search_attrs">search_attrs</a>]
   [<a href="#session_checkvars">session_checkvars</a>]
   [<a href="#session_limit">session_limit</a>]
   [<a href="#session_paranoid">session_paranoid</a>]
@@ -63,6 +63,25 @@
 General options
 </h1>
 <dl>
+
+  <dt id="access_allowed">access_allowed</dt>
+  <dd>
+    Dictionary which defines for each URL command a list of accepted
+    address/net mask strings of client addresses permitted to access a
+    certain page.
+    <p>Example for accepting only clients from loopback network for all commands:</p>
+    <samp>
+      access_allowed = {'_':[u'127.0.0.1/255.0.0.0', u'::1']}
+    </samp>
+    <p>Example for allowing access to all clients for all commands:</p>
+    <samp>
+      access_allowed = {'_':[u'0.0.0.0/0.0.0.0', u'::0/0']}
+    </samp>
+    <p>Example for allowing access to all clients for all commands except monitor page:</p>
+    <samp>
+      access_allowed = {'_':[u'0.0.0.0/0.0.0.0', u'::0/0'], 'monitor':[u'127.0.0.1/255.255.255.255']}
+    </samp>
+  </dd>
 
   <dt id="connect_template">connect_template</dt>
   <dd>
@@ -249,25 +268,6 @@ Security options
   <dd>
     Set of unsuspicious target URLs accept by redirector even
     without a session.
-  </dd>
-
-  <dt id="access_allowed">access_allowed</dt>
-  <dd>
-    Dictionary which defines for each URL command a list of accepted
-    address/net mask strings of client addresses permitted to access a
-    certain page.
-    <p>Example for accepting only clients from loopback network for all commands:</p>
-    <samp>
-      access_allowed = {'_':[u'127.0.0.1/255.0.0.0']}
-    </samp>
-    <p>Example for allowing access to all clients for all commands:</p>
-    <samp>
-      access_allowed = {'_':[u'0.0.0.0/0.0.0.0']}
-    </samp>
-    <p>Example for allowing access to all clients for all commands except monitor page:</p>
-    <samp>
-      access_allowed = {'_':[u'0.0.0.0/0.0.0.0'],'monitor':[u'127.0.0.1/255.255.255.255']}
-    </samp>
   </dd>
 
 </dl>

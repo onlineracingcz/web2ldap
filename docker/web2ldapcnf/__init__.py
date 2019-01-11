@@ -175,23 +175,23 @@ good_redirect_targets = {
 
 # Dictionary specifying accepted address/net mask strings of
 # accepted client addresses for certain URL commands.
-# Use [u'0.0.0.0/0.0.0.0',u'::0'] to allow access to every client but think twice!
+# Use [u'0.0.0.0/0.0.0.0',u'::0/0'] to allow access to every client but think twice!
 # IPv6 network addresses without brackets!
 access_allowed = {
     # default for all sub URLs
     u'_': [
         # public access
-        u'0.0.0.0/0.0.0.0', u'::0',
+        u'0.0.0.0/0.0.0.0', u'::0/0',
     ],
     # access to <base-URL>/monitor
     u'monitor': [
         # public access
-        u'0.0.0.0/0.0.0.0', u'::0',
+        u'0.0.0.0/0.0.0.0', u'::0/0',
     ],
     # access to <base-URL>/locate
     u'locate': [
         # public access
-        u'0.0.0.0/0.0.0.0', u'::0',
+        u'0.0.0.0/0.0.0.0', u'::0/0',
     ],
 }
 
