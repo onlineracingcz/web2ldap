@@ -16,9 +16,6 @@ from __future__ import absolute_import
 
 from cStringIO import StringIO
 
-import web2ldap.web
-from web2ldap.web.forms import escapeHTML
-
 import ldap0
 import ldap0.ldif
 import ldap0.schema
@@ -30,6 +27,8 @@ from ldap0.schema.models import \
 
 import web2ldapcnf
 
+import web2ldap.web
+from web2ldap.web import escape_html
 import web2ldap.ldapsession
 import web2ldap.app.core
 import web2ldap.app.cnf
@@ -856,7 +855,7 @@ def ObjectClassForm(
 
 def ReadLDIFTemplate(ls, form, template_name):
     addform_entry_templates = web2ldap.app.cnf.GetParam(ls, 'addform_entry_templates', {})
-    template_name_html = escapeHTML(template_name)
+    template_name_html = escape_html(template_name)
     if not addform_entry_templates.has_key(template_name):
         raise web2ldap.app.core.ErrorExit(u'LDIF template key &quot;%s&quot; not known.' % (template_name_html))
     ldif_file_name = addform_entry_templates[template_name]

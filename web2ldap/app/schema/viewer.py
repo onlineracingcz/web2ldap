@@ -28,7 +28,7 @@ from ldap0.schema.models import \
     NameForm, \
     OBJECTCLASS_KIND_STR
 
-from web2ldap.web.forms import escapeHTML
+from web2ldap.web import escape_html
 import web2ldap.app.gui
 
 OBSOLETE_TEMPL = {
@@ -47,16 +47,16 @@ SCHEMA_VIEWER_USAGE = """
 
 
 def link_text(se, charset):
-    names = map(escapeHTML, se.__dict__.get('names', (())))
+    names = map(escape_html, se.__dict__.get('names', (())))
     obsolete = se.__dict__.get('obsolete', 0)
     if len(names) == 1:
         res = names[0]
     elif len(names) > 1:
         res = '%s (alias %s)' % (names[0], ', '.join(names[1:]))
     elif isinstance(se, LDAPSyntax) and se.desc is not None:
-        res = unicode(escapeHTML(se.desc), 'utf-8').encode(charset)
+        res = unicode(escape_html(se.desc), 'utf-8').encode(charset)
     else:
-        res = escapeHTML(se.oid)
+        res = escape_html(se.oid)
     return OBSOLETE_TEMPL[obsolete] % res
 
 

@@ -20,6 +20,7 @@ from ldap0.dn import escape_dn_chars
 from ldap0.controls.readentry import PostReadControl
 
 import web2ldap.web.forms
+from web2ldap.web import escape_html
 import web2ldap.app.cnf
 import web2ldap.app.core
 import web2ldap.app.gui
@@ -52,11 +53,11 @@ def ModlistTable(schema, modlist):
             )
         else:
             tablestr = '<br>'.join([
-                web2ldap.web.forms.escapeHTML(repr(v))
+                escape_html(repr(v))
                 for v in attr_value
             ])
         s.append('<tr><td>%s</td><td>%s</td></tr>' % (
-            web2ldap.web.forms.escapeHTML(attr_type),
+            escape_html(attr_type),
             tablestr,
         ))
     s.append('</table>')

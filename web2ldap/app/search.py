@@ -25,8 +25,7 @@ import ldap0.schema.models
 from ldap0.controls.openldap import SearchNoOpControl
 
 import web2ldap.web.forms
-from web2ldap.web.forms import escapeHTML
-
+from web2ldap.web import escape_html
 import web2ldap.ldaputil.async
 import web2ldap.msbase
 import web2ldap.ldaputil.base
@@ -831,7 +830,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
                   Bookmark
                 </a>
                 """.format(
-                    baseUrl=escapeHTML(form.script_name),
+                    baseUrl=escape_html(form.script_name),
                     ldapUrl=str(search_ldap_url),
                 )
             result_message = '\n<p>Search results %d - %d %s / <a href="#params" title="See search parameters and export options">Params</a> / %s</p>\n' % (

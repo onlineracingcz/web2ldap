@@ -120,7 +120,7 @@ class CRLDisplayer(x509v3.CRL):
                     class_name = repr(type(e))
                 extensions_html_list.append(
                     '<dt>%s (%s)</dt><dd>%s</dd>' % (
-                        web2ldap.web.forms.escapeHTML(class_name),
+                        web2ldap.web.forms.escape_html(class_name),
                         str(e.extnId),
                         x509v3.htmlize(e.extnValue)
                     )

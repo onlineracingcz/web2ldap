@@ -26,7 +26,7 @@ from ldap0.pw import random_string
 import web2ldapcnf
 
 import web2ldap.web.forms
-from web2ldap.web.forms import escapeHTML
+from web2ldap.web import escape_html
 import web2ldap.ldaputil.base
 from web2ldap.ldaputil.oidreg import oid as oid_desc_reg
 import web2ldap.ldapsession
@@ -68,7 +68,7 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
         assert isinstance(value, unicode), \
             TypeError('Argument value must be unicode, was %r' % (value))
         value = value or u''
-        return escapeHTML(
+        return escape_html(
             self.uc_encode(value, 'replace')[0]
         ).replace('\n', lf_entity).replace('\t', tab_identiation).replace('  ', sp_entity)
 

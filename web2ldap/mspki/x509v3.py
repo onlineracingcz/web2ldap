@@ -13,11 +13,11 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
+from web2ldap.web import escape_html
 # Pisces
 from web2ldap.pisces import asn1
 # mspki itself
 from . import x509
-
 
 _ESCAPE_HTML_CHARS=list('\'&<>":={}()`')
 _ESCAPE_HTML_CHARS_TRANS = [
@@ -25,21 +25,12 @@ _ESCAPE_HTML_CHARS_TRANS = [
   for c in _ESCAPE_HTML_CHARS
 ]
 
-def escapeHTML(s):
-  """
-  Escape all characters with a special meaning in HTML
-  to appropriate character tags
-  """
-  for c,e in _ESCAPE_HTML_CHARS_TRANS:
-    s = s.replace(c,e)
-  return s
-
 def htmlize(e):
   """Display certificate extension object e with HTML"""
   if hasattr(e,'html'):
     return e.html()
   else:
-    return escapeHTML(str(e))
+    return escape_html(str(e))
 
 
 class Extension(asn1.Sequence):
@@ -82,7 +73,7 @@ class Extension(asn1.Sequence):
       if hasattr(self.extnValue,'html'):
         extnValue_html = self.extnValue.html()
       else:
-        extnValue_html = escapeHTML(str(self.extnValue))
+        extnValue_html = escape_html(str(self.extnValue))
     else:
       extnValue_html = ''
     return '<dt>%s (%s)</dt><dd>%s</dd>' % (

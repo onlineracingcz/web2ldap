@@ -16,27 +16,8 @@ import re
 import urllib
 import uuid
 
+from . import escape_html
 from . import helper
-
-
-def escapeHTML(val):
-    """
-    Escape all characters with a special meaning in HTML
-    to appropriate character tags
-    """
-    val = val.replace('&', '&#38;')
-    val = val.replace('<', '&#60;')
-    val = val.replace('>', '&#62;')
-    val = val.replace("'", '&#39;')
-    val = val.replace('"', '&#34;')
-    val = val.replace(':', '&#58;')
-    val = val.replace('=', '&#61;')
-    val = val.replace('{', '&#123;')
-    val = val.replace('}', '&#125;')
-    val = val.replace('(', '&#40;')
-    val = val.replace(')', '&#41;')
-    val = val.replace('`', '&#96;')
-    return val
 
 
 class Field(object):
@@ -221,11 +202,11 @@ class Field(object):
 
     def titleHTML(self, title):
         """HTML output of default."""
-        return escapeHTML(title or self.text).encode(self.charset)
+        return escape_html(title or self.text).encode(self.charset)
 
     def _defaultHTML(self, default):
         """HTML output of default."""
-        return escapeHTML(self._defaultValue(default)).encode(self.charset)
+        return escape_html(self._defaultValue(default)).encode(self.charset)
 
     def valueHTML(self):
         """
@@ -618,15 +599,15 @@ class Select(Radio):
                     (self.ignoreCase and optionValue.lower() == default_value.lower())
                 )
             if optionTitle:
-                optionTitle_attr = ' title="%s"' % escapeHTML(optionTitle.encode(self.charset))
+                optionTitle_attr = ' title="%s"' % escape_html(optionTitle.encode(self.charset))
             else:
                 optionTitle_attr = ''
             res.append(
                 '<option value="%s"%s%s>%s</option>' % (
-                    escapeHTML(optionValue.encode(self.charset)),
+                    escape_html(optionValue.encode(self.charset)),
                     optionTitle_attr,
                     ' selected'*(option_selected),
-                    escapeHTML(optionText.encode(self.charset)),
+                    escape_html(optionText.encode(self.charset)),
                 )
             )
         res.append('</select>')
@@ -742,7 +723,7 @@ class FormException(Exception):
             setattr(self, key, value)
 
     def html(self):
-        return escapeHTML(str(self))
+        return escape_html(str(self))
 
 
 class InvalidRequestMethod(FormException):
@@ -1028,7 +1009,7 @@ class Form:
                 outf.write(
                     '<input type="hidden" name="%s" value="%s">\n\r' % (
                         field.name.encode(field.charset),
-                        escapeHTML(val.encode(field.charset)),
+                        escape_html(val.encode(field.charset)),
                     )
                 )
         return # Form.hiddenInputFields()

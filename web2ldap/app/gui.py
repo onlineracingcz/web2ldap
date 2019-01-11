@@ -26,7 +26,7 @@ from ldap0.filter import escape_filter_chars
 import web2ldapcnf
 
 import web2ldap.web.forms
-from web2ldap.web.forms import escapeHTML
+from web2ldap.web import escape_html
 import web2ldap.__about__
 import web2ldap.ldaputil
 import web2ldap.msbase
@@ -556,7 +556,7 @@ def TopSection(
     # Read the template file for TopSection
     top_template_str = web2ldap.app.gui.ReadTemplate(form, ls, 'top_template', u'top section')
 
-    script_name = escapeHTML(form.script_name)
+    script_name = escape_html(form.script_name)
 
     template_dict = {
         'main_div_id': main_div_id,
@@ -565,7 +565,7 @@ def TopSection(
         'sid': sid or '',
         'title_text': title,
         'script_name': script_name,
-        'web2ldap_version': escapeHTML(web2ldap.__about__.__version__),
+        'web2ldap_version': escape_html(web2ldap.__about__.__version__),
         'command': command,
         'ldap_url': '',
         'ldap_uri': '-/-',
@@ -576,7 +576,7 @@ def TopSection(
         'main_menu': CommandTableString(main_menu_list, div_id='MainMenu', separator='\n', semantic_tag=None),
         'context_menu': CommandTableString(context_menu_list, div_id='ContextMenu', separator='\n', semantic_tag=None),
     }
-    template_dict.update([(k, escapeHTML(str(v))) for k, v in form.env.items()])
+    template_dict.update([(k, escape_html(str(v))) for k, v in form.env.items()])
 
     if ls is not None and ls.uri is not None:
 
@@ -587,7 +587,7 @@ def TopSection(
         template_dict.update({
             'ldap_url': str(ls.ldapUrl(dn)),
             'ldap_uri': form.utf2display(ls.uri.decode('ascii')),
-            'description': escapeHTML(web2ldap.app.cnf.GetParam(ls, 'description', u'').encode(form.accept_charset)),
+            'description': escape_html(web2ldap.app.cnf.GetParam(ls, 'description', u'').encode(form.accept_charset)),
             'dit_navi': ',\n'.join(DITNavigationList(sid, outf, form, ls, dn)),
             'dn': form.utf2display(dn),
         })
