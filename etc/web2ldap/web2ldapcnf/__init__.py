@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Module web2ldapcnf
-(c) by Michael Stroeder <michael@stroeder.com>
+web2ldapcnf - Configure the basic behaviour of web2ldap.py
 
-Some variables to configure the basic behaviour of web2ldap.py
+See documentation for details:
+https://www.web2ldap.de/web2ldapcnf.html
+
+(c) 1998-2019 by Michael Stroeder <michael@stroeder.com>
 """
 
 from __future__ import absolute_import
