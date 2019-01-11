@@ -25,6 +25,7 @@ from ldap0.pw import random_string
 
 import web2ldapcnf
 
+from web2ldap.log import logger
 import web2ldap.web.forms
 from web2ldap.web import escape_html
 import web2ldap.ldaputil.base
@@ -41,7 +42,7 @@ from web2ldap.app.session import session_store
 
 
 class Web2LDAPForm(web2ldap.web.forms.Form):
-
+    command = None
     cookie_length = web2ldapcnf.cookie_length or 2 * 42
     cookie_max_age = web2ldapcnf.cookie_max_age
     cookie_domain = web2ldapcnf.cookie_domain
@@ -298,6 +299,7 @@ class SearchAttrs(web2ldap.web.forms.Input):
 
 
 class Web2LDAPForm_searchform(Web2LDAPForm):
+    command = 'searchform'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -363,6 +365,7 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
 
 
 class Web2LDAPForm_search(Web2LDAPForm_searchform):
+    command = 'search'
 
     def _add_fields(self):
         Web2LDAPForm_searchform._add_fields(self)
@@ -385,6 +388,7 @@ class Web2LDAPForm_search(Web2LDAPForm_searchform):
 
 
 class Web2LDAPForm_conninfo(Web2LDAPForm):
+    command = 'conninfo'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -399,6 +403,7 @@ class Web2LDAPForm_conninfo(Web2LDAPForm):
         )
 
 class Web2LDAPForm_ldapparams(Web2LDAPForm):
+    command = 'ldapparams'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -476,6 +481,7 @@ class Web2LDAPForm_input(Web2LDAPForm):
 
 
 class Web2LDAPForm_add(Web2LDAPForm_input):
+    command = 'add'
 
     def _add_fields(self):
         Web2LDAPForm_input._add_fields(self)
@@ -494,6 +500,7 @@ class Web2LDAPForm_add(Web2LDAPForm_input):
 
 
 class Web2LDAPForm_modify(Web2LDAPForm_input):
+    command = 'modify'
 
     def _add_fields(self):
         Web2LDAPForm_input._add_fields(self)
@@ -503,6 +510,7 @@ class Web2LDAPForm_modify(Web2LDAPForm_input):
 
 
 class Web2LDAPForm_dds(Web2LDAPForm):
+    command = 'dds'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -522,6 +530,7 @@ class Web2LDAPForm_dds(Web2LDAPForm):
 
 
 class Web2LDAPForm_bulkmod(Web2LDAPForm):
+    command = 'bulkmod'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -579,6 +588,7 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
 
 
 class Web2LDAPForm_delete(Web2LDAPForm):
+    command = 'delete'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -605,6 +615,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
 
 
 class Web2LDAPForm_rename(Web2LDAPForm):
+    command = 'rename'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -624,6 +635,7 @@ class Web2LDAPForm_rename(Web2LDAPForm):
 
 
 class Web2LDAPForm_passwd(Web2LDAPForm):
+    command = 'passwd'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -632,6 +644,7 @@ class Web2LDAPForm_passwd(Web2LDAPForm):
 
 
 class Web2LDAPForm_read(Web2LDAPForm):
+    command = 'read'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -647,6 +660,7 @@ class Web2LDAPForm_read(Web2LDAPForm):
 
 
 class Web2LDAPForm_groupadm(Web2LDAPForm):
+    command = 'groupadm'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -666,6 +680,7 @@ class Web2LDAPForm_groupadm(Web2LDAPForm):
 
 
 class Web2LDAPForm_login(Web2LDAPForm):
+    command = 'login'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -673,6 +688,7 @@ class Web2LDAPForm_login(Web2LDAPForm):
 
 
 class Web2LDAPForm_locate(Web2LDAPForm):
+    command = 'locate'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -682,6 +698,7 @@ class Web2LDAPForm_locate(Web2LDAPForm):
 
 
 class Web2LDAPForm_oid(Web2LDAPForm):
+    command = 'oid'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
@@ -698,7 +715,7 @@ class Web2LDAPForm_oid(Web2LDAPForm):
 
 
 class Web2LDAPForm_dit(Web2LDAPForm):
-    pass
+    command = 'dit'
 
 
 FORM_CLASS = {
@@ -708,20 +725,13 @@ FORM_CLASS = {
     'disconnect': Web2LDAPForm,
 }
 
-_FORM_CLASS_NAME_PREFIX = 'Web2LDAPForm_'
-_COMMAND_STR_OFFSET = len(_FORM_CLASS_NAME_PREFIX)
-
+logger.debug('Register form classes for commands')
 for _name in dir():
-    if _name.startswith(_FORM_CLASS_NAME_PREFIX):
+    if _name.startswith('Web2LDAPForm_'):
         c = eval(_name)
-        try:
-            command = _name[_COMMAND_STR_OFFSET:]
-        except IndexError:
-            pass
-        else:
-            FORM_CLASS[command] = c
-            del command
-
+        if c.command is not None:
+            logger.debug('Register class %s for command %r', c.__name__, c.command)
+            FORM_CLASS[c.command] = c
 
 
 class DistinguishedNameInput(web2ldap.web.forms.Input):
