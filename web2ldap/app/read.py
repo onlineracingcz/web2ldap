@@ -534,7 +534,7 @@ def w2l_read(
         # Display the DN if no templates were used above
         if not displayed_attrs:
             if not dn:
-                h1_display_name = 'Root DSE'
+                h1_display_name = u'Root DSE'
             else:
                 h1_display_name = entry.get(
                     'displayName',
