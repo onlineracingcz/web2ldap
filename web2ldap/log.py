@@ -29,7 +29,7 @@ LOG_FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'
 
 
-class LogHelper:
+class LogHelper(object):
     """
     mix-in class for logging with a class-specific log prefix
     """
