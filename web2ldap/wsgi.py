@@ -8,6 +8,7 @@ from __future__ import absolute_import
 import sys
 import os
 import SocketServer
+import time
 import wsgiref.util
 import wsgiref.simple_server
 
@@ -94,7 +95,14 @@ def application(environ, start_response):
         wsgiref.util.shift_path_info(environ)
     outf = AppResponse()
     app = web2ldap.app.handler.AppHandler(environ, outf)
+    start_time = time.time()
     app.run()
+    end_time = time.time()
+    logger.debug(
+        'Executing %s.run() took %0.3f secs',
+        app.__class__.__name__,
+        end_time-start_time,
+    )
     outf.headers.append(('Content-Length', str(outf._bytelen)))
     start_response('200 OK', outf.headers)
     return outf._lines
