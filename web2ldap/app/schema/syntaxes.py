@@ -24,7 +24,6 @@ import uuid
 import datetime
 import time
 import json
-import logging
 import inspect
 import xml.etree.ElementTree
 from xml.etree.ElementTree import ParseError as XMLParseError
@@ -114,7 +113,7 @@ class SyntaxRegistry(object):
                 # A better approach for unique attribute type registration which
                 # allows overriding older registration is needed.
                 if a in self.at2syntax and oc_oid in self.at2syntax[a]:
-                    logging.warn(
+                    logger.warn(
                         (
                             'Registering attribute type %r with syntax %r'
                             ' overrides existing registration with syntax %r'
@@ -165,6 +164,21 @@ class SyntaxRegistry(object):
         syntax_class = self.get_syntax(schema, attrType, structural_oc)
         attr_instance = syntax_class(sid, form, ls, dn, schema, attrType, attrValue, entry)
         return attr_instance
+
+    def check(self):
+        """
+        check whether attribute registry dict contains references by OID
+        for which no LDAPSyntax class are registered
+        """
+        logger.debug(
+            'Checking %d LDAPSyntax classes and %d attribute type mappings',
+            len(self.oid2syntax),
+            len(self.at2syntax),
+        )
+        for at in self.at2syntax:
+            for oc in self.at2syntax[at]:
+                if self.at2syntax[at][oc] not in self.oid2syntax:
+                    logger.warn('No LDAPSyntax registered for (%r, %r)', at, oc)
 
 
 ####################################################################

@@ -72,6 +72,7 @@ import web2ldap.app.schema.viewer
 from web2ldap.app.gui import ExceptionMsg
 from web2ldap.app.form import Web2LDAPForm
 from web2ldap.app.session import session_store
+from web2ldap.app.schema.syntaxes import syntax_registry
 
 SocketErrors = (socket.error, socket.gaierror)
 
@@ -113,6 +114,9 @@ SIMPLE_MSG_HTML = """
   </body>
 </html>
 """
+
+
+syntax_registry.check()
 
 
 def check_access(env, command):
