@@ -726,22 +726,6 @@ class FormException(Exception):
         return escape_html(str(self))
 
 
-class InvalidRequestMethod(FormException):
-    """
-    Exception raised when HTTP request method was invalid.
-
-    Attributes:
-    method        string containing method used
-    """
-
-    def __init__(self, method):
-        FormException.__init__(self, ())
-        self.method = method
-
-    def __str__(self):
-        return 'Invalid request method %s.' % (self.method)
-
-
 class InvalidFormEncoding(FormException):
     """
     The form data is malformed.
@@ -898,7 +882,6 @@ class Form:
     """
     Class for declaring and processing a whole <form>
     """
-    valid_request_methods = {'POST', 'GET'}
 
     def __init__(self, inf, env):
         """
@@ -925,7 +908,6 @@ class Form:
         # Set the preferred character set
         self.accept_charset = self.http_accept_charset.preferred()
         # Determine query string and content length dependent on request method
-        self._check_request_method()
         self.query_string = self._get_query_string(env)
         return # Form.__init__()
 
@@ -940,22 +922,13 @@ class Form:
             query_string_u = qstr.decode('iso-8859-1')
         return query_string_u.encode(self.accept_charset)
 
-    def _check_request_method(self):
-        """
-        Checks whether the HTTP request method is accepted
-        """
-        if not self.request_method in self.valid_request_methods:
-            raise InvalidRequestMethod(self.request_method)
-
     def getContentType(self):
         """
         Determine the HTTP content type of HTTP request
         """
         if self.request_method == 'POST':
             return self.env.get('CONTENT_TYPE', 'application/x-www-form-urlencoded').lower() or None
-        elif self.request_method == 'GET':
-            return 'application/x-www-form-urlencoded'
-        raise InvalidRequestMethod(self.request_method)
+        return 'application/x-www-form-urlencoded'
 
     def addField(self, field):
         """

@@ -70,6 +70,12 @@ def application(environ, start_response):
     """
     the main WSGI application function
     """
+    # check whether HTTP request method is valid
+    if environ['REQUEST_METHOD'] not in {'POST', 'GET'}:
+        logger.error('Invalid HTTP request method %r', environ['REQUEST_METHOD'])
+        start_response('400 invalid request', (('Content-type', 'text/plain')))
+        return ['400 - Invalid request.']
+    # check URL path whether to deliver a static file
     if environ['PATH_INFO'].startswith('/css/web2ldap'):
         css_filename = os.path.join(
             web2ldapcnf.etc_dir,
