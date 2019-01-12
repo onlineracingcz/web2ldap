@@ -49,7 +49,8 @@ syntax_registry.reg_at(
 class SambaAcctFlags(IA5String):
     oid = 'SambaAcctFlags-oid'
     desc = 'Samba 3 account flags'
-    reObj = re.compile(r'^\[[NDHTUMWSLXI ]{0,16}\]$')
+    input_pattern = r'^\[[NDHTUMWSLXI ]{0,16}\]$'
+    reObj = re.compile(input_pattern)
     flags_dict = {
         'N': '<b>N</b>o password.',
         'D': '<b>D</b>isabled.',
@@ -85,8 +86,9 @@ syntax_registry.reg_at(
 
 class SambaSID(IA5String):
     oid = 'SambaSID-oid'
-    desc = 'Samba 3 account flags'
-    reObj = re.compile('^S(-[0-9]+)+$', re.IGNORECASE)
+    desc = 'Samba SID (SDDL syntax)'
+    input_pattern = r'^S(-[0-9]+)+$'
+    reObj = re.compile(input_pattern)
 
     def _search_domain_entry(self, domain_name):
         if domain_name:
