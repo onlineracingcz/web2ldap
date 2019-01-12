@@ -55,10 +55,13 @@ def get_entry_input(form, ls, dn, sub_schema):
 
     # Stuff input field lists into raw dictionary
     for i, attr_type in enumerate(in_attrtype_list):
+        attr_value = in_value_list[i]
+        if isinstance(attr_value, unicode):
+            attr_value = attr_value.encode(ls.charset)
         try:
-            entry[attr_type].append(in_value_list[i])
+            entry[attr_type].append(attr_value)
         except KeyError:
-            entry[attr_type] = [in_value_list[i]]
+            entry[attr_type] = [attr_value]
 
     # Convert input field string representation into potential LDAP string representation
     # sanitize 'objectClass' first
