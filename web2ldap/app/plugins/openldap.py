@@ -59,7 +59,7 @@ class CSN(IA5String):
     maxLen = 40
     reObj = re.compile('^[0-9]{14}\\.[0-9]{6}Z#[a-fA-F0-9]{6}#[a-fA-F0-9]{3}#[a-fA-F0-9]{6}$')
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     CSN.oid, [
         '1.3.6.1.4.1.4203.666.1.25', # contextCSN
         '1.3.6.1.4.1.4203.666.1.7',  # entryCSN
@@ -73,7 +73,7 @@ syntax_registry.registerAttrType(
 # back-config
 #---------------------------------------------------------------------------
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     NamingContexts.oid, [
         '1.3.6.1.4.1.4203.1.12.2.3.2.0.10', # olcSuffix
     ]
@@ -85,7 +85,7 @@ class OlcDbIndex(DirectoryString):
     desc = 'OpenLDAP indexing directive'
     reObj = re.compile("^[a-zA-Z]?[a-zA-Z0-9.,;-]* (pres|eq|sub)(,(pres|eq|sub))*$")
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OlcDbIndex.oid, [
         '1.3.6.1.4.1.4203.1.12.2.3.2.0.2', # olcDbIndex
     ]
@@ -101,7 +101,7 @@ class OlcSubordinate(SelectList):
         u'advertise': u'advertise',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OlcSubordinate.oid, [
         '1.3.6.1.4.1.4203.1.12.2.3.2.0.15', # olcSubordinate
     ]
@@ -127,7 +127,7 @@ class OlcRootDN(BindDN):
                     pass
         return form_value
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OlcRootDN.oid, [
         '1.3.6.1.4.1.4203.1.12.2.3.2.0.8', # olcRootDN
     ]
@@ -144,7 +144,7 @@ class OlcMultilineText(MultilineText):
     def displayValue(self, valueindex=0, commandbutton=False):
         return '<code>%s</code>' % MultilineText.displayValue(self, valueindex, commandbutton)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OlcMultilineText.oid, [
         '1.3.6.1.4.1.4203.1.12.2.3.0.1', # olcAccess
         '1.3.6.1.4.1.4203.1.12.2.3.0.6', # olcAuthIDRewrite
@@ -173,7 +173,7 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
             ))
         return OlcMultilineText.displayValue(self, valueindex, commandbutton)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OlcSyncRepl.oid, [
         '1.3.6.1.4.1.4203.1.12.2.3.2.0.11', # olcSyncrepl
     ]
@@ -195,7 +195,7 @@ class OlmSeeAlso(DynamicDNSelectList):
         ')'
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OlmSeeAlso.oid, [
         '2.5.4.34', # seeAlso
     ],
@@ -220,7 +220,7 @@ class OlcPPolicyDefault(DynamicDNSelectList, DistinguishedName):
     def _validate(self, attrValue):
         return DynamicDNSelectList._validate(self, attrValue)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OlcPPolicyDefault.oid, [
         '1.3.6.1.4.1.4203.1.12.2.3.3.12.1', # olcPPolicyDefault
     ]
@@ -237,7 +237,7 @@ class OlcMemberOfDangling(SelectList):
         u'error': u'error',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OlcMemberOfDangling.oid, [
         '1.3.6.1.4.1.4203.1.12.2.3.3.18.1', # olcMemberOfDangling
     ]
@@ -249,7 +249,7 @@ syntax_registry.registerAttrType(
 #---------------------------------------------------------------------------
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     NotBefore.oid, [
         '1.3.6.1.4.1.4203.666.11.5.1.2', 'reqStart',
         '1.3.6.1.4.1.4203.666.11.5.1.3', 'reqEnd',
@@ -294,7 +294,7 @@ class AuditContext(NamingContexts):
             ])
         return web2ldapcnf.command_link_separator.join(r)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AuditContext.oid,
     [
         '1.3.6.1.4.1.4203.666.11.5.1.30', 'auditContext',
@@ -306,7 +306,7 @@ syntax_registry.registerAttrType(
 class ReqResult(LDAPv3ResultCode):
     oid = 'ReqResult-oid'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ReqResult.oid, [
         '1.3.6.1.4.1.4203.666.11.5.1.7', 'reqResult', # reqResult
     ]
@@ -353,7 +353,7 @@ class ReqMod(OctetString, DirectoryString):
             return DirectoryString.displayValue(self, valueindex, commandbutton)
         raise ValueError
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ReqMod.oid, [
         '1.3.6.1.4.1.4203.666.11.5.1.16', 'reqMod',
         '1.3.6.1.4.1.4203.666.11.5.1.17', 'reqOld',
@@ -415,7 +415,7 @@ class ReqControls(IA5String):
                 )
         return '<br>'.join(result_lines)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ReqControls.oid, [
         '1.3.6.1.4.1.4203.666.11.5.1.10', 'reqControls',
         '1.3.6.1.4.1.4203.666.11.5.1.11', 'reqRespControls',
@@ -449,7 +449,7 @@ class ReqEntryUUID(UUID):
             )
         ))
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ReqEntryUUID.oid, [
         '1.3.6.1.4.1.4203.666.11.5.1.31', 'reqEntryUUID', # reqEntryUUID
     ]
@@ -479,7 +479,7 @@ class ReqSession(Integer):
             )
         ))
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ReqSession.oid, [
         '1.3.6.1.4.1.4203.666.11.5.1.5', 'reqSession', # reqSession
     ]
@@ -496,7 +496,7 @@ class Authz(DirectoryString):
     desc = 'OpenLDAP authz'
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AuthzDN.oid, [
         'monitorConnectionAuthzDN',
         '1.3.6.1.4.1.4203.666.1.55.7', # monitorConnectionAuthzDN
@@ -534,7 +534,7 @@ class OpenLDAPSpecialBackendSuffix(NamingContexts):
             title=u'Search for configuration entry below %s' % (config_context),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OpenLDAPSpecialBackendSuffix.oid,
     [
         'monitorContext', '1.3.6.1.4.1.4203.666.1.10',
@@ -543,12 +543,12 @@ syntax_registry.registerAttrType(
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Uri.oid, ['monitorConnectionListener']
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DistinguishedName.oid, [
         'entryDN',
         'reqDN',
@@ -556,5 +556,4 @@ syntax_registry.registerAttrType(
 )
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

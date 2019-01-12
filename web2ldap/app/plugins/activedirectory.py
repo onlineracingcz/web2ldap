@@ -47,7 +47,7 @@ class ObjectCategory(DynamicDNSelectList, DistinguishedName):
         (None, u'Same category', None, None),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ObjectCategory.oid, [
         '1.2.840.113556.1.4.782', # objectCategory
         '1.2.840.113556.1.4.783', # defaultObjectCategory
@@ -77,7 +77,7 @@ class ObjectVersion(Integer, SelectList):
         return SelectList.displayValue(self, valueindex, commandbutton)
 
 # Register certain attribute types for syntax classes
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ObjectVersion.oid, [
         '1.2.840.113556.1.2.76', # objectVersion
     ]
@@ -145,7 +145,7 @@ class ObjectSID(OctetString, IA5String):
             OctetString.displayValue(self, valueindex, commandbutton),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ObjectSID.oid, [
         '1.2.840.113556.1.4.146', # objectSID
         '1.2.840.113556.1.4.609', # sIDHistory
@@ -226,7 +226,7 @@ class OtherSID(ObjectSID):
             OctetString.displayValue(self, valueindex, commandbutton),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OtherSID.oid, [
         '1.2.840.113556.1.4.1301', # tokenGroups
         '1.2.840.113556.1.4.1418', # tokenGroupsGlobalAndUniversal
@@ -243,7 +243,7 @@ class SAMAccountName(DirectoryString):
     maxLen = 20
 
 # Register certain attribute types for syntax classes
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SAMAccountName.oid, [
         '1.2.840.113556.1.4.221', # sAMAccountName
     ]
@@ -270,7 +270,7 @@ class SAMAccountType(SelectList):
     }
 
 # Register certain attribute types for syntax classes
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SAMAccountType.oid, [
         '1.2.840.113556.1.4.302', # sAMAccountType
     ]
@@ -293,7 +293,7 @@ class GroupType(BitArrayInteger):
         (u'Security group', 0x80000000),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     GroupType.oid, [
         '1.2.840.113556.1.4.750', # groupType
     ]
@@ -319,7 +319,7 @@ class DomainRID(SelectList):
         u'520': u'DOMAIN_RID_POLICY_ADMINS',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DomainRID.oid, [
         '1.2.840.113556.1.4.98', # primaryGroupID
     ]
@@ -358,7 +358,7 @@ class UserAccountControl(BitArrayInteger):
         (u'PARTIAL_SECRETS_ACCOUNT', 0x4000000),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     UserAccountControl.oid, [
         '1.2.840.113556.1.4.8', # userAccountControl
     ]
@@ -388,7 +388,7 @@ class SystemFlags(BitArrayInteger):
         (u'IS_NOT_MOVED_TO_THE_DELETED_OBJECTS', 0x02000000),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SystemFlags.oid, [
         '1.2.840.113556.1.4.375', # systemFlags
     ]
@@ -423,7 +423,7 @@ class SearchFlags(BitArrayInteger):
         (u'', 0x0800),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SearchFlags.oid, [
         '1.2.840.113556.1.2.334', # searchFlags
     ]
@@ -517,7 +517,7 @@ class LogonHours(OctetString):
         )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     LogonHours.oid, [
         '1.2.840.113556.1.4.64', # logonHours
     ]
@@ -539,7 +539,7 @@ class CountryCode(PropertiesSelectList):
         SelectList.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     CountryCode.oid, [
         '1.2.840.113556.1.4.25', # countryCode
     ]
@@ -560,7 +560,7 @@ class InstanceType(BitArrayInteger):
         (u'The naming context is in the process of being removed from the local DSA.', 0x00000020),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     InstanceType.oid, [
         '1.2.840.113556.1.2.1', # instanceType
     ]
@@ -641,7 +641,7 @@ class MsAdGUID(OctetString):
             OctetString.displayValue(self, valueindex=0, commandbutton=False),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MsAdGUID.oid, [
         '1.2.840.113556.1.4.2',    # objectGUID
         '1.2.840.113556.1.4.1224', # parentGUID
@@ -686,7 +686,7 @@ class LockoutTime(Interval):
             self._form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     LockoutTime.oid, [
         '1.2.840.113556.1.4.662', # lockoutTime
     ]
@@ -707,7 +707,7 @@ class DomainFunctionality(SelectList):
         u'5': u'Windows 2012',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DomainFunctionality.oid, [
         'domainFunctionality', # no schema information available
         'forestFunctionality', # no schema information available
@@ -729,7 +729,7 @@ class DomainControllerFunctionality(SelectList):
         u'6': u'Windows 2012R2',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DomainFunctionality.oid, [
         'domainControllerFunctionality', # no schema information available
     ]
@@ -737,7 +737,7 @@ syntax_registry.registerAttrType(
 
 
 # Register certain attribute types for Interval
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Interval.oid, [
         '1.2.840.113556.1.4.159',  # accountExpires
         '1.2.840.113556.1.4.49',   # badPasswordTime
@@ -758,7 +758,7 @@ class ServerStatus(SelectList):
         u'2': u'disabled',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ServerStatus.oid, [
         '1.2.840.113556.1.4.154', # serverStatus
     ]
@@ -774,7 +774,7 @@ class ObjectClassCategory(SelectList):
         u'3': u'AUXILIARY',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ObjectClassCategory.oid, [
         '1.2.840.113556.1.2.370', # objectClassCategory
     ]
@@ -789,7 +789,7 @@ class ClassSchemaLDAPName(DynamicValueSelectList, OID):
     def displayValue(self, valueindex=0, commandbutton=False):
         return OID.displayValue(self, valueindex, commandbutton)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ClassSchemaLDAPName.oid, [
         '1.2.840.113556.1.2.351', # auxiliaryClass
         '1.2.840.113556.1.4.198', # systemAuxiliaryClass
@@ -807,7 +807,7 @@ class AttributeSchemaLDAPName(DynamicValueSelectList, OID):
     def displayValue(self, valueindex=0, commandbutton=False):
         return OID.displayValue(self, valueindex, commandbutton)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AttributeSchemaLDAPName.oid, [
         '1.2.840.113556.1.2.25', # mayContain
         '1.2.840.113556.1.4.196', # systemMayContain
@@ -831,7 +831,7 @@ class PwdProperties(BitArrayInteger):
         (u'DOMAIN_REFUSE_PASSWORD_CHANGE', 32)
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PwdProperties.oid, [
         '1.2.840.113556.1.4.93', # pwdProperties
     ]
@@ -848,7 +848,7 @@ class MsDSSupportedEncryptionTypes(BitArrayInteger):
         (u'KERB_ENCTYPE_AES256_CTS_HMAC_SHA1_96', 0x00000010),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MsDSSupportedEncryptionTypes.oid, [
         '1.2.840.113556.1.4.1963', # msDS-SupportedEncryptionTypes
     ]
@@ -860,7 +860,7 @@ class ShowInAddressBook(DynamicDNSelectList):
     desc = 'DN of the addressbook container entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=addressBookContainer)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ShowInAddressBook.oid, [
         '1.2.840.113556.1.4.644', # showInAddressBook
     ]
@@ -874,7 +874,7 @@ class MsDSReplAttributeMetaData(XmlValue):
     def _validate(self, attrValue):
         return attrValue.endswith('\n\x00') and XmlValue._validate(self, attrValue[:-1])
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MsDSReplAttributeMetaData.oid, [
         '1.2.840.113556.1.4.1707',   # msDS-ReplAttributeMetaData
     ]
@@ -886,14 +886,14 @@ class MsSFU30NisDomain(DynamicValueSelectList):
     desc = 'Name of NIS domain controlled by MS SFU'
     ldap_url = 'ldap:///_?cn,cn?sub?(objectClass=msSFU30DomainInfo)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MsSFU30NisDomain.oid, [
         '1.2.840.113556.1.6.18.1.339', # msSFU30NisDomain
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     GroupEntryDN.oid, [
         '2.5.4.49', # distinguishedName
     ],
@@ -911,7 +911,7 @@ syntax_registry.oid2syntax['Integer'] = Integer
 syntax_registry.oid2syntax['DirectoryString'] = DirectoryString
 syntax_registry.oid2syntax['GeneralizedTime'] = GeneralizedTime
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DistinguishedName.oid, [
         'configurationNamingContext',
         'defaultNamingContext',
@@ -924,7 +924,7 @@ syntax_registry.registerAttrType(
 
 # MS AD declares these attributes with OctetString
 # syntax but Binary syntax is more suitable
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Binary.oid, [
         '1.2.840.113556.1.4.645', # userCert
         '1.2.840.113556.1.4.4',   # replUpToDateVector
@@ -936,13 +936,13 @@ syntax_registry.registerAttrType(
 
 # MS AD declares these attributes with DirectoryString
 # syntax but OctetString syntax is more suitable
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OctetString.oid, [
         '1.2.840.113556.1.4.138', # userParameters
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Uri.oid, [
         '1.2.840.113556.1.4.583', # meetingURL
         '1.2.840.113556.1.2.464', # wWWHomePage
@@ -950,7 +950,7 @@ syntax_registry.registerAttrType(
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DNSDomain.oid, [
         '1.2.840.113556.1.4.619',   # dNSHostName
     ]
@@ -958,5 +958,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

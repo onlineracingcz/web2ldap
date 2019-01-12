@@ -217,21 +217,21 @@ class X509AlgorithmIdentifier(GSER):
 
 # Hard-coded registration of some attribute types
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Certificate.oid, [
         '2.5.4.36', # userCertificate
         'userCertificate', 'userCertificate;binary',
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     CACertificate.oid, [
         '2.5.4.37', # cACertificate
         'cACertificate', 'cACertificate;binary',
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     CertificateList.oid, [
         '2.5.4.38', # authorityRevocationList
         '2.5.4.39', # certificateRevocationList
@@ -244,5 +244,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for symbol_name in dir():
-    syntax_registry.registerSyntaxClass(eval(symbol_name))
+syntax_registry.reg_syntaxes(__name__)

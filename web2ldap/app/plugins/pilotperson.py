@@ -21,12 +21,11 @@ class MailPreferenceOption(SelectList):
         u'2': u'professional-list-inclusion',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MailPreferenceOption.oid, [
         '0.9.2342.19200300.100.1.47', # mailPreferenceOption
     ]
 )
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

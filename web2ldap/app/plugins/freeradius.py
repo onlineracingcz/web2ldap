@@ -13,7 +13,7 @@ class RadiusProfileDN(DynamicDNSelectList):
     desc = 'DN of a radius profile entry with real data'
     ldap_url = 'ldap:///_??sub?(&(objectClass=radiusprofile)(!(radiusProfileDn=*)))'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     RadiusProfileDN.oid, [
         '1.3.6.1.4.1.3317.4.3.1.49', # radiusProfileDn
     ]
@@ -21,5 +21,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

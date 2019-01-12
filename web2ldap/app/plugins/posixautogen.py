@@ -28,7 +28,7 @@ class HomeDirectory(IA5String):
             attrValues = [self.homeDirectoryTemplate.format(**e)]
         return attrValues
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     HomeDirectory.oid, [
         '1.3.6.1.1.1.1.3', # homeDirectory
     ]
@@ -95,7 +95,7 @@ class AutogenUIDNumber(UidNumber, AutogenNumber):
             form_value = AutogenNumber.formValue(self)
         return form_value # formValue()
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AutogenUIDNumber.oid, [
         '1.3.6.1.1.1.1.0', # uidNumber
     ]
@@ -113,7 +113,7 @@ class AutogenGIDNumber(GidNumber, AutogenNumber):
             form_value = AutogenNumber.formValue(self)
         return form_value # formValue()
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AutogenGIDNumber.oid, [
         '1.3.6.1.1.1.1.1', # gidNumber
     ]
@@ -121,5 +121,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

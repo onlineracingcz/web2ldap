@@ -159,7 +159,7 @@ class SshPublicKey(DirectoryString):
         return '\n'.join(result)
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SshPublicKey.oid, [
         '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
     ]
@@ -167,5 +167,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

@@ -23,7 +23,7 @@ class EntryTTL(Timespan):
             strftimeiso8601(time.gmtime(expiration_time)),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     EntryTTL.oid, [
         '1.3.6.1.4.1.1466.101.119.3', # entryTTL
     ]
@@ -51,7 +51,7 @@ class DynamicSubtrees(DistinguishedName):
         )
         return r
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DynamicSubtrees.oid, [
         '1.3.6.1.4.1.1466.101.119.4', # dynamicSubtrees
     ]
@@ -59,5 +59,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

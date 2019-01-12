@@ -45,7 +45,7 @@ def input_modlist(sid, form, ls, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av)
         if not mod_type:
             continue
 
-        attr_instance = syntax_registry.attrInstance(
+        attr_instance = syntax_registry.get_at(
             sid, form, ls, u'', sub_schema, mod_type, None, entry=None,
         )
         try:

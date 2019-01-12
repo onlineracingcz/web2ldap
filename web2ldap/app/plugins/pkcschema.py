@@ -21,7 +21,7 @@ from web2ldap.app.schema.syntaxes import \
 # This overrides the eventually configured OctetString syntax
 # and treats these attribute types as not human-readable and
 # not editable binary blobs
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DumpASN1CfgOID.oid, [
         '1.3.6.1.4.1.10126.1.5.3.3', # x509signatureAlgorithm
         '1.3.6.1.4.1.10126.1.5.3.8', # x509subjectPublicKeyInfoAlgorithm
@@ -60,7 +60,7 @@ class PkcX509Issuer(DynamicValueSelectList, DistinguishedName):
         ))
         return ' '.join(r)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PkcX509Issuer.oid, [
         '1.3.6.1.4.1.10126.1.5.3.4', # x509issuer
     ]
@@ -82,7 +82,7 @@ class X509KeyUsage(SelectList):
         u'decipherOnly': u'decipherOnly',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     X509KeyUsage.oid, [
         '1.3.6.1.4.1.10126.1.5.3.15', # x509keyUsage
     ]
@@ -90,5 +90,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

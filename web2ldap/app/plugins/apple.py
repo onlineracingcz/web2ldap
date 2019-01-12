@@ -10,7 +10,7 @@ import web2ldap.app.searchform
 from web2ldap.app.schema.syntaxes import XmlValue, UUID, DynamicValueSelectList, syntax_registry
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     UUID.oid, [
         '1.3.6.1.4.1.63.1000.1.1.1.1.20', # apple-generateduid
     ]
@@ -41,7 +41,7 @@ class UUIDReference(DynamicValueSelectList, UUID):
     def formField(self):
         return DynamicValueSelectList.formField(self)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     UUIDReference.oid, [
         '1.3.6.1.4.1.63.1000.1.1.1.14.7', # apple-group-memberguid
         '1.3.6.1.4.1.63.1000.1.1.1.14.10', # apple-ownerguid
@@ -49,7 +49,7 @@ syntax_registry.registerAttrType(
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     XmlValue.oid, [
         '1.3.6.1.4.1.63.1000.1.1.1.19.6', # apple-serviceinfo
         '1.3.6.1.4.1.63.1000.1.1.1.17.1', # apple-xmlplist
@@ -63,5 +63,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

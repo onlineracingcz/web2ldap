@@ -29,7 +29,7 @@ class AdministrativeRole(SelectList):
         u'2.5.23.6': u'collectiveAttributeInnerArea',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AdministrativeRole.oid, [
         '2.5.18.5', # administrativeRole (defined in RFC 3672)
     ]
@@ -37,5 +37,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

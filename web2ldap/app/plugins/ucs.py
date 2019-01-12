@@ -22,21 +22,21 @@ class UniventionPolicyReference(DynamicDNSelectList):
     desc = 'DN of the univentionPolicy entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=univentionPolicy)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     UniventionPolicyReference.oid, [
         '1.3.6.1.4.1.10176.1000', # univentionPolicyReference
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DateOfBirth.oid, [
         '1.3.6.1.4.1.10176.99', # univentionBirthday
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     RFC822Address.oid, [
         '1.3.6.1.4.1.10176.1010.1.1', # mailPrimaryAddress
     ]
@@ -60,7 +60,7 @@ class UniventionLDAPACLData(Binary, MultilineText):
             '<br>'.join(lines),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     UniventionLDAPACLData.oid, [
         '1.3.6.1.4.1.10176.4202.1.22', # univentionLDAPACLData
     ]
@@ -68,5 +68,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

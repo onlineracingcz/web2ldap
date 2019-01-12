@@ -34,7 +34,7 @@ class AuthorizedService(SelectList):
     }
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AuthorizedService.oid, [
         '1.3.6.1.4.1.5322.17.2.1', # authorizedService
     ]
@@ -42,5 +42,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

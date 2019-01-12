@@ -10,7 +10,7 @@ from web2ldap.app.schema.syntaxes import Binary, syntax_registry
 # This overrides the eventually configured OctetString syntax
 # and treats these attribute types as not human-readable and
 # not editable binary blobs
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Binary.oid, [
         '1.2.840.113533.7.68.22', # entrustRoamFileEncInfo
         '1.2.840.113533.7.79.0',  # entrustRoamingCAPAB
@@ -27,5 +27,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

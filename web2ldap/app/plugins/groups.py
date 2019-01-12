@@ -11,7 +11,7 @@ class Member(DistinguishedName):
     oid = 'Member-oid'
     desc = 'member attribute in a group entry'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Member.oid, [
         '2.5.4.31', # member
     ]
@@ -25,7 +25,7 @@ class MemberOf(DistinguishedName):
         (None, u'Group members', None, u'Search all members of this group'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MemberOf.oid, [
         '1.2.840.113556.1.2.102', # memberOf
     ]
@@ -39,7 +39,7 @@ class GroupEntryDN(DistinguishedName):
         ('memberOf', u'Group members', None, u'Search all members of this group'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     GroupEntryDN.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -52,5 +52,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

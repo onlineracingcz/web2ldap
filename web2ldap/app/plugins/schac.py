@@ -22,14 +22,14 @@ from web2ldap.app.schema.syntaxes import \
 from web2ldap.app.plugins.msperson import Gender
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     CountryString.oid, [
         '1.3.6.1.4.1.25178.1.2.5',  # schacCountryOfCitizenship
         '1.3.6.1.4.1.25178.1.2.11', # schacCountryOfResidence
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DNSDomain.oid, [
         '1.3.6.1.4.1.25178.1.2.9', # schacHomeOrganization
     ]
@@ -40,14 +40,14 @@ class SchacMotherTongue(IA5String):
     desc = 'Language tag of the language a person learns first (see RFC 3066).'
     reObj = re.compile('^[a-zA-Z]{2,8}(-[a-zA-Z0-9]{2,8})*$')
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SchacMotherTongue.oid, [
         '1.3.6.1.4.1.25178.1.2.1', # schacMotherTongue
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Gender.oid, [
         '1.3.6.1.4.1.25178.1.2.2', # schacGender
     ]
@@ -59,7 +59,7 @@ class SchacDateOfBirth(DateOfBirth):
     desc = 'Date of birth: syntax YYYYMMDD'
     storageFormat = '%Y%m%d'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SchacDateOfBirth.oid, [
         '1.3.6.1.4.1.25178.1.2.3', # schacDateOfBirth
     ]
@@ -79,7 +79,7 @@ class SchacYearOfBirth(NumericString):
             return False
         return birth_year <= datetime.date.today().year
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SchacYearOfBirth.oid, [
         '1.3.6.1.4.1.25178.1.0.2.3', # schacYearOfBirth
     ]
@@ -91,7 +91,7 @@ class SchacUrn(DirectoryString):
     desc = 'Generic URN for SCHAC'
     reObj = re.compile('^urn:mace:terena.org:schac:.+$')
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SchacUrn.oid, [
         '1.3.6.1.4.1.25178.1.2.10', # schacHomeOrganizationType
         '1.3.6.1.4.1.25178.1.2.13', # schacPersonalPosition
@@ -103,5 +103,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

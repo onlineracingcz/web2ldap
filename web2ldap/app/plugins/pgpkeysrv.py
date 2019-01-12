@@ -15,7 +15,7 @@ from web2ldap.app.schema.syntaxes import \
     syntax_registry
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     GeneralizedTime.oid, [
         '1.3.6.1.4.1.3401.8.2.17', # pgpKeyCreateTime
         '1.3.6.1.4.1.3401.8.2.22', # pgpKeyExpireTime
@@ -34,7 +34,7 @@ class PgpKey(PreformattedMultilineText):
     mimeType = 'application/pgp-keys'
     cols = 64
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PgpKey.oid, [
         '1.3.6.1.4.1.3401.8.2.11', # pgpKey
     ]
@@ -46,7 +46,7 @@ class PgpCertID(DirectoryString):
     desc = 'PGP Cert ID'
     reObj = re.compile('^[a-fA-F0-9]{16}$')
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PgpCertID.oid, [
         '1.3.6.1.4.1.3401.8.2.12', # pgpCertID
     ]
@@ -60,7 +60,7 @@ class OtherPgpCertID(DynamicValueSelectList, PgpCertID):
     def _validate(self, attrValue):
         return PgpCertID._validate(self, attrValue)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OtherPgpCertID.oid, [
         '1.3.6.1.4.1.3401.8.2.18', # pgpSignerID
     ]
@@ -68,5 +68,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from web2ldap.app.schema.syntaxes import OnOffFlag, syntax_registry
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OnOffFlag.oid, [
         '2.16.840.1.113730.3.1.102', # passwordChange, pwdAllowUserChange
         '2.16.840.1.113730.3.1.103', # passwordCheckSyntax, pwdCheckSyntax
@@ -21,5 +21,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

@@ -28,7 +28,7 @@ from web2ldap.app.schema.syntaxes import \
     syntax_registry
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     JSONValue.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.12', # oathEncKey
         '1.3.6.1.4.1.5427.1.389.4226.4.14', # oathTokenPIN
@@ -44,7 +44,7 @@ class OathOTPLength(SelectList):
         u'8': u'8',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OathOTPLength.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.5', # oathOTPLength
     ]
@@ -59,7 +59,7 @@ class OathHOTPParams(DynamicDNSelectList):
         (None, u'Same params', None, None),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OathHOTPParams.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.5.1', # oathHOTPParams
     ]
@@ -69,7 +69,7 @@ syntax_registry.registerAttrType(
 class OathResultCode(LDAPv3ResultCode):
     oid = 'OathResultCode-oid'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OathResultCode.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.13.1', # oathSuccessResultCode
         '1.3.6.1.4.1.5427.1.389.4226.4.13.2', # oathFailureResultCode
@@ -85,7 +85,7 @@ class OathHOTPToken(DynamicDNSelectList):
         (None, u'Users', None, None),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OathHOTPToken.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.9.1', # oathHOTPToken
     ]
@@ -100,7 +100,7 @@ class OathTOTPParams(DynamicDNSelectList):
         (None, u'Same params', None, None),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OathTOTPParams.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.5.2', # oathTOTPParams
     ]
@@ -115,7 +115,7 @@ class OathTOTPToken(DynamicDNSelectList):
         (None, u'Users', None, None),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OathTOTPToken.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.9.2', # oathTOTPToken
     ]
@@ -131,7 +131,7 @@ class OathTokenIdentifier(DirectoryString):
     maxLen = 12
     reObj = re.compile(r'^[a-zA-Z0-9]{12}$')
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OathTokenIdentifier.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.3', # oathTokenIdentifier
     ]
@@ -151,14 +151,14 @@ class OathInitPwAlphabet(DirectoryString):
         ])
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     HMACAlgorithmOID.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.6',  # oathHMACAlgorithm
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Timespan.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.4.1', # oathTOTPTimeStepPeriod
         '1.3.6.1.4.1.5427.1.389.4226.4.8',   # oathSecretMaxAge
@@ -176,7 +176,7 @@ class OathSecret(OctetString):
             OctetString.displayValue(self, valueindex, commandbutton),
         ))
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OathSecret.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.1',  # oathSecret
     ]
@@ -249,7 +249,7 @@ class OathSecretTime(GeneralizedTime):
         return self.readSep.join((gt_disp_html, expire_msg))
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OathSecretTime.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.7.3', # oathSecretTime
     ]
@@ -257,5 +257,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

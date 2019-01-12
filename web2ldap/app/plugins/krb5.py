@@ -19,14 +19,14 @@ from web2ldap.app.schema.syntaxes import \
 # Schema specific for heimdal
 #-----------------------------------------------------------------
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DirectoryString.oid, [
         '1.3.6.1.4.1.5322.10.1.1',  # krb5PrincipalName
         '1.3.6.1.4.1.5322.10.1.12', # krb5RealmName
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OctetString.oid, [
         '1.3.6.1.4.1.5322.10.1.10', # krb5Key
     ]
@@ -69,14 +69,14 @@ class Krb5KDCFlagsSyntax(BitArrayInteger):
         (u'immutable', 0x4000),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Krb5KDCFlagsSyntax.oid, [
         '1.3.6.1.4.1.5322.10.1.5', # krb5KDCFlags
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Timespan.oid, [
         '1.3.6.1.4.1.5322.10.1.3', # krb5MaxLife
     ]
@@ -106,7 +106,7 @@ class KrbTicketFlags(BitArrayInteger):
         (u'PWCHANGE_SERVICE', 0x00002000),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     KrbTicketFlags.oid, [
         '2.16.840.1.113719.1.301.4.8.1', # krbTicketFlags
     ]
@@ -120,7 +120,7 @@ class KrbSearchScope(SelectList):
         u'2': u'SUB_TREE',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     KrbSearchScope.oid, [
         '2.16.840.1.113719.1.301.4.25.1', # krbSearchScope
     ]
@@ -142,7 +142,7 @@ class KrbPrincipalType(SelectList):
         u'10': u'NT-ENTERPRISE',     # Enterprise name - may be mapped to principal name
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     KrbPrincipalType.oid, [
         '2.16.840.1.113719.1.301.4.3.1', # krbPrincipalType
     ]
@@ -154,7 +154,7 @@ class KrbTicketPolicyReference(DynamicDNSelectList):
     desc = 'DN of a Kerberos V ticket policy entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=krbTicketPolicy)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     KrbTicketPolicyReference.oid, [
         '2.16.840.1.113719.1.301.4.40.1', # krbTicketPolicyReference
     ]
@@ -166,14 +166,14 @@ class KrbPwdPolicyReference(DynamicDNSelectList):
     desc = 'DN of a Kerberos V password policy entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=krbPwdPolicy)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     KrbPwdPolicyReference.oid, [
         '2.16.840.1.113719.1.301.4.36.1', # krbPwdPolicyReference
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Timespan.oid, [
         '1.2.840.113554.1.4.1.6.3',       # krbPwdMaxLife
         '1.2.840.113554.1.4.1.6.4',       # krbPwdMaxRenewableLife
@@ -187,5 +187,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

@@ -65,7 +65,7 @@ def get_entry_input(form, ls, dn, sub_schema):
     attr_type = 'objectClass'
     attr_values = []
     for in_value in entry.get(attr_type, []):
-        attr_instance = syntax_registry.attrInstance(
+        attr_instance = syntax_registry.get_at(
             None, form, ls, dn, sub_schema,
             attr_type, None,
             entry=entry,
@@ -84,7 +84,7 @@ def get_entry_input(form, ls, dn, sub_schema):
             continue
         attr_values = []
         for in_value in in_values:
-            attr_instance = syntax_registry.attrInstance(
+            attr_instance = syntax_registry.get_at(
                 None, form, ls, dn, sub_schema,
                 attr_type, None,
                 entry=entry,
@@ -115,7 +115,7 @@ def get_entry_input(form, ls, dn, sub_schema):
         iteration_count -= 1
         entry_changed = False
         for attr_type, attr_values in entry.items():
-            attr_instance = syntax_registry.attrInstance(
+            attr_instance = syntax_registry.get_at(
                 None, form, ls, dn, sub_schema,
                 attr_type, None,
                 entry=entry,
@@ -138,7 +138,7 @@ def get_entry_input(form, ls, dn, sub_schema):
         if not attr_values:
             del entry[attr_type]
             continue
-        attr_instance = syntax_registry.attrInstance(
+        attr_instance = syntax_registry.get_at(
             None, form, ls, dn, sub_schema,
             attr_type, None,
             entry=entry,
@@ -279,7 +279,7 @@ def w2l_modify(sid, outf, command, form, ls, dn):
     old_entry_structural_oc = old_entry.get_structural_oc()
     # Ignore binary attributes from old entry data in any case
     for attr_type in old_entry.keys():
-        syntax_class = syntax_registry.syntaxClass(sub_schema, attr_type, old_entry_structural_oc)
+        syntax_class = syntax_registry.get_syntax(sub_schema, attr_type, old_entry_structural_oc)
         if not syntax_class.editable:
             ignore_attr_types.add(attr_type)
 
@@ -298,7 +298,7 @@ def w2l_modify(sid, outf, command, form, ls, dn):
     # Binary values are always replaced
     new_entry_structural_oc = new_entry.get_structural_oc()
     for attr_type in new_entry.keys():
-        syntax_class = syntax_registry.syntaxClass(sub_schema, attr_type, new_entry_structural_oc)
+        syntax_class = syntax_registry.get_syntax(sub_schema, attr_type, new_entry_structural_oc)
         if (not syntax_class.editable) and \
            new_entry[attr_type] and \
            (not attr_type in old_entry or new_entry[attr_type] != old_entry[attr_type]):

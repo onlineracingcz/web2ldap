@@ -21,7 +21,7 @@ from web2ldap.app.schema.syntaxes import \
 from web2ldap.app.plugins.activedirectory import LogonHours
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SecondsSinceEpoch.oid, [
         '1.3.6.1.4.1.7165.2.1.3', # pwdLastSet
         '1.3.6.1.4.1.7165.2.1.5', # logonTime
@@ -39,7 +39,7 @@ syntax_registry.registerAttrType(
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     LogonHours.oid, [
         '1.3.6.1.4.1.7165.2.1.55', # sambaLogonHours
     ]
@@ -75,7 +75,7 @@ class SambaAcctFlags(IA5String):
             ''.join(table_rows)
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SambaAcctFlags.oid, [
         '1.3.6.1.4.1.7165.2.1.26', # sambaAcctFlags
         '1.3.6.1.4.1.7165.2.1.4',  # acctFlags
@@ -152,7 +152,7 @@ class SambaSID(IA5String):
                 pass
         return result
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SambaSID.oid, [
         '1.3.6.1.4.1.7165.2.1.20', # sambaSID
     ]
@@ -168,7 +168,7 @@ class SambaForceLogoff(SelectList):
         u'-1': u'off',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SambaForceLogoff.oid, [
         '1.3.6.1.4.1.7165.2.1.66', # sambaForceLogoff
     ]
@@ -183,7 +183,7 @@ class SambaLogonToChgPwd(SelectList):
         u'2': u'on',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SambaLogonToChgPwd.oid, [
         '1.3.6.1.4.1.7165.2.1.60', # sambaLogonToChgPwd
     ]
@@ -199,7 +199,7 @@ class SambaGroupType(SelectList):
         u'5': u'Built-in Group (well-known)',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SambaGroupType.oid, [
         '1.3.6.1.4.1.7165.2.1.19', # sambaGroupType
     ]
@@ -211,7 +211,7 @@ class ReferencedSID(DynamicValueSelectList):
     desc = 'SID which points to another object'
     ldap_url = 'ldap:///_?sambaSID,cn?sub?'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ReferencedSID.oid, [
         '1.3.6.1.4.1.7165.2.1.51', # sambaSIDList
     ]
@@ -223,7 +223,7 @@ class SambaGroupSID(DynamicValueSelectList):
     desc = 'SID which points to Samba group object'
     ldap_url = 'ldap:///_?sambaSID,cn?sub?(objectClass=sambaGroupMapping)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SambaGroupSID.oid, [
         '1.3.6.1.4.1.7165.2.1.23', # sambaPrimaryGroupSID
     ]
@@ -235,14 +235,14 @@ class SambaDomainName(DynamicValueSelectList):
     desc = 'Name of Samba domain'
     ldap_url = 'ldap:///_?sambaDomainName,sambaDomainName?sub?(objectClass=sambaDomain)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SambaDomainName.oid, [
         '1.3.6.1.4.1.7165.2.1.38', # sambaDomainName
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DirectoryString.oid, [
         '1.3.6.1.4.1.7165.2.1.38', # sambaDomainName
     ],
@@ -263,7 +263,7 @@ class SambaHomeDrive(SelectList):
         ]
     ])
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SambaHomeDrive.oid, [
         '1.3.6.1.4.1.7165.2.1.33', # sambaHomeDrive
     ]
@@ -271,5 +271,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

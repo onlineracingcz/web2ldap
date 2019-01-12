@@ -14,5 +14,4 @@ class AccessControlInformation(OctetString):
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

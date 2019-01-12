@@ -20,14 +20,14 @@ class SudoUserGroup(DynamicValueSelectList):
     valuePrefix = '%'
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     NotBefore.oid, [
         '1.3.6.1.4.1.15953.9.1.8', # sudoNotBefore
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     NotAfter.oid, [
         '1.3.6.1.4.1.15953.9.1.9', # sudoNotAfter
     ]
@@ -35,5 +35,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for symbol_name in dir():
-    syntax_registry.registerSyntaxClass(eval(symbol_name))
+syntax_registry.reg_syntaxes(__name__)

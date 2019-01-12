@@ -74,7 +74,7 @@ class GidNumber(DynamicValueSelectList, Integer):
             return DynamicValueSelectList.formField(self)
         return Integer.formField(self)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     GidNumber.oid, [
         '1.3.6.1.1.1.1.1', # gidNumber
     ]
@@ -117,7 +117,7 @@ class MemberUID(IA5String, DynamicValueSelectList):
             ))
         return ' '.join(r)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MemberUID.oid, [
         '1.3.6.1.1.1.1.12', # memberUid
     ]
@@ -136,7 +136,7 @@ class UidNumber(Integer):
     minValue = 0
     maxValue = 4294967295L
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     UidNumber.oid, [
         '1.3.6.1.1.1.1.0', # uidNumber
     ]
@@ -164,7 +164,7 @@ class Shell(SelectList):
         u'/usr/sbin/nologin': u'Login denied /usr/sbin/nologin',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Shell.oid, [
         '1.3.6.1.1.1.1.4', # loginShell
     ]
@@ -180,14 +180,14 @@ class IpServiceProtocol(SelectList):
         u'udp': u'udp',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     IpServiceProtocol.oid, [
         '1.3.6.1.1.1.1.16', # ipServiceProtocol
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     IPHostAddress.oid, [
         '1.3.6.1.1.1.1.19', # ipHostNumber
         '1.3.6.1.1.1.1.20', # ipNetworkNumber
@@ -195,14 +195,14 @@ syntax_registry.registerAttrType(
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DNSDomain.oid, [
         '1.3.6.1.1.1.1.30', # nisDomain
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DaysSinceEpoch.oid, [
         '1.3.6.1.1.1.1.10', # shadowExpire
         '1.3.6.1.1.1.1.5', # shadowLastChange
@@ -210,14 +210,14 @@ syntax_registry.registerAttrType(
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     IPServicePortNumber.oid, [
         '1.3.6.1.1.1.1.15', # ipServicePort
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MacAddress.oid, [
         '1.3.6.1.1.1.1.22', # macAddress
     ]
@@ -225,5 +225,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

@@ -33,14 +33,14 @@ class Gender(PropertiesSelectList):
         web2ldapcnf.etc_dir, 'properties', 'attribute_select_gender.properties'
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Gender.oid, [
         '1.3.6.1.4.1.5427.1.389.4.7', # gender (defined for msPerson)
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DateOfBirth.oid, [
         '1.3.6.1.4.1.5427.1.389.4.2', # dateOfBirth
     ]
@@ -56,7 +56,7 @@ class LabeledBICandIBAN(DirectoryString):
     oid = 'LabeledBICandIBAN-oid'
     desc = 'International bank account number (IBAN) syntax (see ISO 13616:1997)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     LabeledBICandIBAN.oid, [
         '1.3.6.1.4.1.5427.1.389.4.13', # labeledBICandIBAN
     ]
@@ -109,7 +109,7 @@ class EuVATId(IA5String):
     def sanitizeInput(self, attrValue):
         return attrValue.upper().replace(' ', '')
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     EuVATId.oid, [
         '1.3.6.1.4.1.5427.1.389.4.11', # euVATId
     ]
@@ -117,5 +117,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

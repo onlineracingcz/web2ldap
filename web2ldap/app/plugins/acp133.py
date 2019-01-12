@@ -20,7 +20,7 @@ class AddressListDN(DynamicDNSelectList):
     desc = 'DN which points to address list entry '
     ldap_url = 'ldap:///_?cn?sub?(objectClass=addressList)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AddressListDN.oid, [
         '2.16.840.1.101.2.2.1.61', # listPointer (see section 3.58 of draft-dally-acp133-and-ldap-01)
         '2.6.5.2.14',              # mhs-dl-related-lists (see section 3.70 of draft-dally-acp133-and-ldap-01)
@@ -37,7 +37,7 @@ class LMF(SelectList):
         u'C': u'card',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     LMF.oid, [
         '2.16.840.1.101.2.2.1.62', # lmf
     ]
@@ -56,7 +56,7 @@ class TRC(SelectList):
         u'Z': u'New Zealand',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     TRC.oid, [
         '2.16.840.1.101.2.2.1.97', # tRC
     ]
@@ -152,5 +152,4 @@ class Community(SelectList):
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

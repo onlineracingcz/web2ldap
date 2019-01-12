@@ -176,7 +176,7 @@ class AssociatedDomain(DNSDomain):
                         ))
         return web2ldapcnf.command_link_separator.join(r)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AssociatedDomain.oid, [
         '0.9.2342.19200300.100.1.37', # associatedDomain
     ],
@@ -198,7 +198,7 @@ class ResourceRecord(DNSDomain, DynamicValueSelectList):
     def displayValue(self, valueindex=0, commandbutton=False):
         return DynamicValueSelectList.displayValue(self, valueindex, commandbutton)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ResourceRecord.oid, [
         '1.3.6.1.4.1.2428.20.1.12',   # pTRRecord
         '0.9.2342.19200300.100.1.29', # nSRecord
@@ -211,7 +211,7 @@ class CNAMERecord(ResourceRecord):
     desc = 'A resource record used as alias (CNAME)'
     maxValues = 1 # It's illegal to have multiple CNAME RR values
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     CNAMERecord.oid, [
         '0.9.2342.19200300.100.1.31', # cNAMERecord
     ]
@@ -230,7 +230,7 @@ class MXRecord(ResourceRecord):
             return None
         return ResourceRecord._searchReferencedEntry(self, hostname.strip())
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MXRecord.oid, [
         '0.9.2342.19200300.100.1.28', # mXRecord
     ]
@@ -287,7 +287,7 @@ class ARecord(IPv4HostAddress):
                     ))
         return web2ldapcnf.command_link_separator.join(r)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     ARecord.oid, [
         '0.9.2342.19200300.100.1.26', # aRecord
     ]
@@ -320,7 +320,7 @@ class AAAARecord(IPv6HostAddress):
                 ))
         return web2ldapcnf.command_link_separator.join(r)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AAAARecord.oid, [
         '1.3.6.1.4.1.2428.20.1.28', # aAAARecord
     ]
@@ -397,7 +397,7 @@ class SSHFPRecord(IA5String):
             )
         return r
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SSHFPRecord.oid, [
         '1.3.6.1.4.1.2428.20.1.44', # sSHFPRecord
     ]
@@ -405,5 +405,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

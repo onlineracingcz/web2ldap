@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from web2ldap.app.schema.syntaxes import SelectList, RFC822Address, syntax_registry
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     RFC822Address.oid, [
         '1.3.6.1.1.11.1.2.2', # vPIMRfc822Mailbox
     ]
@@ -26,7 +26,7 @@ class VPIMExtendedAbsenceStatus(SelectList):
         u'MsgBlocked': u'MsgBlocked',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     VPIMExtendedAbsenceStatus.oid, [
         '1.3.6.1.1.11.1.2.7', # vPIMExtendedAbsenceStatus
     ]
@@ -44,7 +44,7 @@ class VPIMSupportedUABehaviors(SelectList):
         u'MessageImportance': u'recipient supports importance indication',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     VPIMSupportedUABehaviors.oid, [
         '1.3.6.1.1.11.1.2.8', # vPIMSupportedUABehaviors
     ]
@@ -63,7 +63,7 @@ class VPIMSupportedAudioMediaTypes(SelectList):
         u'audio/x-wav': u'audio/x-wav',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     VPIMSupportedAudioMediaTypes.oid, [
         '1.3.6.1.1.11.1.2.5', # vPIMSupportedAudioMediaTypes
     ]
@@ -71,5 +71,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

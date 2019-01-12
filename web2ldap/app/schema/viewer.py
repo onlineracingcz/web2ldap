@@ -531,7 +531,7 @@ class DisplayAttributeType(DisplaySchemaElement):
             <table>
               <tr><th>Structural<br>object class</th><th>Plugin class</th>""")
         for structural_oc in web2ldap.app.schema.syntaxes.syntax_registry.at2syntax[at_oid].keys() or [None]:
-            syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.syntaxClass(self.s, at_oid, structural_oc)
+            syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.get_syntax(self.s, at_oid, structural_oc)
             if structural_oc:
                 oc_text = display_nameoroid(sid, form, dn, self.s, structural_oc, ObjectClass)
             else:

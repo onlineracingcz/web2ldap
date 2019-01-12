@@ -15,7 +15,7 @@ from web2ldap.app.schema.syntaxes import \
     syntax_registry
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     YesNoIntegerFlag.oid, [
         '2.16.840.1.113678.2.2.2.2.4',  # AvailableForDirSync
         '2.16.840.1.113678.2.2.2.2.18', # EncryptIncomingMail
@@ -38,7 +38,7 @@ class DominoCertificate(MultilineText):
         ]
         return '<code>%s</code>' % '<br>'.join(lines)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DominoCertificate.oid, [
         '2.16.840.1.113678.2.2.2.2.22', # dominoCertificate
         '2.16.840.1.113678.2.2.2.2.45', # Certificate-NoEnc
@@ -56,7 +56,7 @@ class CheckPassword(SelectList):
         u'2': u'ID is locked',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     CheckPassword.oid, [
         '2.16.840.1.113678.2.2.2.2.29' # CheckPassword
     ]
@@ -68,7 +68,7 @@ class MailServer(DynamicDNSelectList):
     desc = 'DN of mail server entry'
     ldap_url = 'ldap:///?displayname?sub?(objectClass=dominoServer)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     MailServer.oid, [
         '2.16.840.1.113678.2.2.2.2.12', # MailServer
     ]
@@ -76,5 +76,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

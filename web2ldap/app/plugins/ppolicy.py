@@ -30,7 +30,7 @@ class PwdCheckQuality(SelectList):
         u'2': u'quality checking always enforced',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PwdCheckQuality.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.5', # pwdCheckQuality
     ]
@@ -50,7 +50,7 @@ class PwdAttribute(SelectList):
             attrValue.lower() in {'2.5.4.35', 'userpassword'}
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PwdAttribute.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.1', # pwdAttribute
     ]
@@ -62,7 +62,7 @@ class PwdPolicySubentry(DynamicDNSelectList):
     desc = 'DN of the pwdPolicy entry to be used for a certain entry'
     ldap_url = 'ldap:///_??sub?(|(objectClass=pwdPolicy)(objectClass=ds-cfg-password-policy))'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PwdPolicySubentry.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.23', # pwdPolicySubentry
     ]
@@ -109,7 +109,7 @@ class PwdMaxAge(Timespan):
         )
         return ' '.join((ts_dv, search_link))
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PwdMaxAge.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.3', # pwdMaxAge
     ]
@@ -135,7 +135,7 @@ class PwdExpireWarning(PwdMaxAge):
             ('search_string', self._search_timestamp(warn_timestamp)),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PwdExpireWarning.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.7', # pwdExpireWarning
     ]
@@ -158,7 +158,7 @@ class PwdAccountLockedTime(GeneralizedTime):
             return '%s (%s)' % (gt_disp_html, self.magic_values[self.attrValue])
         return gt_disp_html
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PwdAccountLockedTime.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.17', # pwdAccountLockedTime
     ]
@@ -226,21 +226,21 @@ class PwdChangedTime(GeneralizedTime):
         return self.readSep.join((gt_disp_html, expire_msg))
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     PwdChangedTime.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.16', # pwdChangedTime
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     UserPassword.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.20', # pwdHistory
     ]
 )
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Timespan.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.2',  # pwdMinAge
         '1.3.6.1.4.1.42.2.27.8.1.12', # pwdFailureCountInterval
@@ -250,5 +250,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

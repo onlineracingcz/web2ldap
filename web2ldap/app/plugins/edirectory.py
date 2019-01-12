@@ -148,7 +148,7 @@ class OctetStringGUID(OctetString):
         ))
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OctetStringGUID.oid, [
         '2.16.840.1.113719.1.1.4.1.501',   # GUID
         '2.16.840.1.113719.1.280.4.931.1', # ASAM-inputGUID
@@ -210,7 +210,7 @@ class IndexDefinition(DollarSeparatedMultipleLines):
               nds_attribute_name.encode(self._form.accept_charset),
           )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     IndexDefinition.oid, [
         '2.16.840.1.113719.1.1.4.1.512', # indexDefinition
     ]
@@ -300,7 +300,7 @@ class EntryFlags(BitArrayInteger):
         (u'DS_ENTRY_DAMAGED', 0x2000),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     EntryFlags.oid, [
         '2.16.840.1.113719.1.27.4.48', # entryFlags
     ]
@@ -325,7 +325,7 @@ class NspmConfigurationOptions(BitArrayInteger):
         (u'Advanced password policy enabled', 0x200),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     NspmConfigurationOptions.oid, [
         '2.16.840.1.113719.1.39.43.4.100', # nspmConfigurationOptions
     ]
@@ -338,7 +338,7 @@ class SnmpTrapDescription(MultilineText):
     lineSep = '\x00'
     cols = 30
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SnmpTrapDescription.oid, [
         '2.16.840.1.113719.1.6.4.4', # snmpTrapDescription
     ]
@@ -350,7 +350,7 @@ class SASVendorSupport(PreformattedMultilineText):
     desc = 'SAS Vendor Support'
     cols = 50
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     SASVendorSupport.oid, [
         '2.16.840.1.113719.1.39.42.1.0.12', # sASVendorSupport
     ]
@@ -362,7 +362,7 @@ class NspmPasswordPolicyDN(DynamicDNSelectList):
     desc = 'DN of the nspmPasswordPolicy entry'
     ldap_url = 'ldap:///cn=Password Policies,cn=Security?cn?sub?(objectClass=nspmPasswordPolicy)'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     NspmPasswordPolicyDN.oid, [
         '2.16.840.1.113719.1.39.43.4.6', # nspmPasswordPolicyDN
     ]
@@ -377,7 +377,7 @@ class DirXMLDriverStartOption(SelectList):
         u'2': u'auto',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DirXMLDriverStartOption.oid, [
         '2.16.840.1.113719.1.14.4.1.13', # DirXML-DriverStartOption
     ]
@@ -394,7 +394,7 @@ class DirXMLState(SelectList):
         u'3': u'stopping',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DirXMLState.oid, [
         '2.16.840.1.113719.1.14.4.1.14', # DirXML-State
     ]
@@ -402,33 +402,33 @@ syntax_registry.registerAttrType(
 
 # Workarounds for eDirectory
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Certificate.oid, [
         '2.16.840.1.113719.1.48.4.1.3', # nDSPKIPublicKeyCertificate
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     CertificateList.oid, [
         # certificateRevocationList in Novell eDirectory
         '2.16.840.1.113719.1.48.4.1.34',
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     OID.oid,
     [
         'supportedGroupingTypes',
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     NullTerminatedDirectoryString.oid, [
         '2.16.840.1.113719.1.27.4.42', # extensionInfo
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     Binary.oid, [
         '2.16.840.1.113719.1.48.4.1.4',  # nDSPKICertificateChain
         '2.16.840.1.113719.1.48.4.1.2',  # nDSPKIPrivateKey
@@ -441,7 +441,7 @@ syntax_registry.registerAttrType(
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     XmlValue.oid, [
         '2.16.840.1.113719.1.1.4.1.295', # emboxConfig
         '2.16.840.1.113719.1.14.4.1.3',  # XmlData
@@ -462,5 +462,4 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)

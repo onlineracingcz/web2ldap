@@ -370,7 +370,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
         search_av_string = search_string[i]
         if not '*' in search_option[i]:
             # If an exact assertion value is needed we can normalize via plugin class
-            attr_instance = syntax_registry.attrInstance(
+            attr_instance = syntax_registry.get_at(
                 None, form, ls, dn, sub_schema, search_attr[i].encode('ascii'), None, entry=None
             )
             search_av_string = attr_instance.sanitizeInput(search_av_string.encode(form.accept_charset))

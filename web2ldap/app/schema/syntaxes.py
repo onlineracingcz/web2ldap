@@ -14,6 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
+import sys
 import os
 import re
 import imghdr
@@ -57,35 +58,54 @@ import web2ldap.utctime
 from web2ldap.utctime import strftimeiso8601
 from web2ldap.ldaputil.base import is_dn
 from web2ldap.ldaputil.oidreg import OID_REG
+from web2ldap.log import logger
 
 
-class SyntaxRegistry:
+class SyntaxRegistry(object):
+    """
+    syntax registry used to register plugin classes
+    """
 
     def __init__(self):
         self.oid2syntax = ldap0.cidict.cidict()
         self.at2syntax = defaultdict(dict)
 
-    def registerSyntaxClass(self, cls):
-        if inspect.isclass(cls) and hasattr(cls, 'oid'):
-            # FIX ME!
-            # A better approach for unique syntax plugin class registration which
-            # allows overriding older registration is needed.
-            if cls.oid in self.oid2syntax and cls != self.oid2syntax[cls.oid]:
-                raise ValueError(
-                    (
-                        'Failed to register syntax class %s.%s with OID %s,'
-                        ' already registered by %s.%s'
-                    ) % (
-                        cls.__module__,
-                        cls.__name__,
-                        repr(cls.oid),
-                        self.oid2syntax[cls.oid].__module__,
-                        self.oid2syntax[cls.oid].__name__,
-                    )
+    def reg_syntax(self, cls):
+        """
+        register a syntax classes for an OID
+        """
+        logger.debug('Register syntax class %r with OID %r', cls.__name__, cls.oid)
+        # FIX ME!
+        # A better approach for unique syntax plugin class registration which
+        # allows overriding older registration is needed.
+        if cls.oid in self.oid2syntax and cls != self.oid2syntax[cls.oid]:
+            raise ValueError(
+                (
+                    'Failed to register syntax class %s.%s with OID %s,'
+                    ' already registered by %s.%s'
+                ) % (
+                    cls.__module__,
+                    cls.__name__,
+                    repr(cls.oid),
+                    self.oid2syntax[cls.oid].__module__,
+                    self.oid2syntax[cls.oid].__name__,
                 )
-            self.oid2syntax[cls.oid] = cls
+            )
+        self.oid2syntax[cls.oid] = cls
 
-    def registerAttrType(self, syntax_oid, attrTypes, structural_oc_oids=None):
+    def reg_syntaxes(self, modulename):
+        """
+        register all syntax classes found in given module
+        """
+        logger.debug('Register syntax classes from module %r', modulename)
+        for _, cls in inspect.getmembers(sys.modules[modulename], inspect.isclass):
+            if hasattr(cls, 'oid'):
+                self.reg_syntax(cls)
+
+    def reg_at(self, syntax_oid, attrTypes, structural_oc_oids=None):
+        """
+        register an attribute type (by OID) to explicitly use a certain LDAPSyntax class
+        """
         structural_oc_oids = filter(None, map(str.strip, structural_oc_oids or [])) or [None]
         for a in attrTypes:
             a = a.strip()
@@ -105,7 +125,10 @@ class SyntaxRegistry:
                     )
                 self.at2syntax[a][oc_oid] = syntax_oid
 
-    def syntaxClass(self, schema, attrtype_nameoroid, structural_oc=None):
+    def get_syntax(self, schema, attrtype_nameoroid, structural_oc=None):
+        """
+        returns LDAPSyntax class for given attribute type
+        """
         attrtype_oid = schema.getoid(ldap0.schema.models.AttributeType, attrtype_nameoroid.strip())
         if structural_oc:
             structural_oc_oid = schema.getoid(ldap0.schema.models.ObjectClass, structural_oc.strip())
@@ -131,12 +154,15 @@ class SyntaxRegistry:
             syntax_class = LDAPSyntax
         return syntax_class
 
-    def attrInstance(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+    def get_at(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+        """
+        returns LDAPSyntax instance fully initialized for given attribute
+        """
         if entry:
             structural_oc = entry.get_structural_oc()
         else:
             structural_oc = None
-        syntax_class = self.syntaxClass(schema, attrType, structural_oc)
+        syntax_class = self.get_syntax(schema, attrType, structural_oc)
         attr_instance = syntax_class(sid, form, ls, dn, schema, attrType, attrValue, entry)
         return attr_instance
 
@@ -2226,6 +2252,6 @@ class LDAPv3ResultCode(SelectList):
 
 # Set up the central syntax registry instance
 syntax_registry = SyntaxRegistry()
+
 # Register all syntax classes in this module
-for symbol_name in dir():
-    syntax_registry.registerSyntaxClass(eval(symbol_name))
+syntax_registry.reg_syntaxes(__name__)

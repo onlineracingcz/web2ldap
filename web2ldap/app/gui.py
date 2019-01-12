@@ -688,7 +688,7 @@ def DataStr(
     """
     Return a pretty HTML-formatted string of the attribute value
     """
-    attr_instance = web2ldap.app.schema.syntaxes.syntax_registry.attrInstance(
+    attr_instance = web2ldap.app.schema.syntaxes.syntax_registry.get_at(
         sid, form, ls, dn, schema, attrtype_name, value, entry,
     )
     try:

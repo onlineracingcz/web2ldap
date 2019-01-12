@@ -73,7 +73,7 @@ AE_LOCATION_OID = AE_OID_PREFIX+'.6.35'
 AE_NWDEVICE_OID = AE_OID_PREFIX+'.6.6.2'
 
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     DNSDomain.oid, [
         AE_OID_PREFIX+'.4.10', # aeFqdn
     ]
@@ -218,7 +218,7 @@ class AEHomeDirectory(HomeDirectory):
         input_field.charset = self._form.accept_charset
         return input_field
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEHomeDirectory.oid, [
         '1.3.6.1.1.1.1.3', # homeDirectory
     ],
@@ -243,7 +243,7 @@ class AEUIDNumber(UidNumber):
         input_field.charset = self._form.accept_charset
         return input_field
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEUIDNumber.oid, [
         '1.3.6.1.1.1.1.0', # uidNumber
     ],
@@ -309,7 +309,7 @@ class AEGIDNumber(GidNumber):
     def formField(self):
         return Integer.formField(self)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEGIDNumber.oid, [
         '1.3.6.1.1.1.1.1', # gidNumber
     ],
@@ -387,7 +387,7 @@ class AEUserUid(AEUid):
     def sanitizeInput(self, attrValue):
         return attrValue.strip().lower()
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEUserUid.oid, [
         '0.9.2342.19200300.100.1.1', # uid
     ],
@@ -400,7 +400,7 @@ syntax_registry.registerAttrType(
 class AEServiceUid(AEUid):
     oid = 'AEServiceUid-oid'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEServiceUid.oid, [
         '0.9.2342.19200300.100.1.1', # uid
     ],
@@ -418,7 +418,7 @@ class AETicketId(IA5String):
         str.strip,
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AETicketId.oid, [
         AE_OID_PREFIX+'.4.3', # aeTicketId
     ]
@@ -434,7 +434,7 @@ class AEZoneDN(DynamicDNSelectList):
         (None, u'Same zone', None, u'Search all groups constrained to same zone'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEZoneDN.oid, [
         AE_OID_PREFIX+'.4.36', # aeMemberZone
     ]
@@ -450,7 +450,7 @@ class AEHost(DynamicDNSelectList):
         (None, u'Same host', None, u'Search all services running on same host'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEHost.oid, [
         AE_OID_PREFIX+'.4.28', # aeHost
     ]
@@ -481,7 +481,7 @@ class AENwDevice(DynamicDNSelectList):
             result_filter = '(&{0}(!(cn={1})))'.format(orig_filter, dev_name)
         return result_filter
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AENwDevice.oid, [
         AE_OID_PREFIX+'.4.34', # aeNwDevice
     ]
@@ -590,7 +590,7 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
             return DistinguishedName._validate(self, attrValue)
         return SelectList._validate(self, attrValue)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEGroupMember.oid, [
         '2.5.4.31', # member
     ],
@@ -609,7 +609,7 @@ class AEMailGroupMember(AEGroupMember):
         '(&(|(objectClass=inetLocalMailRecipient)(objectClass=aeContact))(mail=*)(aeStatus=0))'
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEMailGroupMember.oid, [
         '2.5.4.31', # member
     ],
@@ -655,7 +655,7 @@ class AEMemberUid(MemberUID):
         input_field.setDefault(self.formValue())
         return input_field
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEMemberUid.oid, [
         '1.3.6.1.1.1.1.12', # memberUid
     ],
@@ -688,7 +688,7 @@ class AEGroupDN(DynamicDNSelectList):
             r.extend(self._additional_links())
         return web2ldapcnf.command_link_separator.join(r)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEGroupDN.oid, [
         '1.2.840.113556.1.2.102', # memberOf
     ],
@@ -718,7 +718,7 @@ class AEZoneAdminGroupDN(AEGroupDN):
       ')'
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEZoneAdminGroupDN.oid, [
         AE_OID_PREFIX+'.4.31', # aeZoneAdmins
         AE_OID_PREFIX+'.4.33', # aePasswordAdmins
@@ -747,7 +747,7 @@ class AEZoneAuditorGroupDN(AEGroupDN):
       ')'
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEZoneAuditorGroupDN.oid, [
         AE_OID_PREFIX+'.4.32',  # aeZoneAuditors
     ]
@@ -772,7 +772,7 @@ class AESrvGroupRightsGroupDN(AEGroupDN):
       ')'
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AESrvGroupRightsGroupDN.oid, [
         AE_OID_PREFIX+'.4.4',  # aeLoginGroups
         AE_OID_PREFIX+'.4.6',  # aeSetupGroups
@@ -803,7 +803,7 @@ class AEDisplayNameGroups(AESrvGroupRightsGroupDN):
       ')'
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDisplayNameGroups.oid, [
         AE_OID_PREFIX+'.4.30', # aeDisplayNameGroups
     ]
@@ -824,7 +824,7 @@ class AEVisibleGroups(AEDisplayNameGroups):
             attrValues.update(self._entry.get(attr_type, []))
         return list(attrValues)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEVisibleGroups.oid, [
         AE_OID_PREFIX+'.4.20', # aeVisibleGroups
     ]
@@ -855,7 +855,7 @@ class AESrvGroup(AESameZoneObject):
             parent_dn.encode(self._ls.charset),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AESrvGroup.oid, [
         AE_OID_PREFIX+'.4.27', # aeSrvGroup
     ]
@@ -874,7 +874,7 @@ class AEProxyFor(AESameZoneObject, AEObjectUtil):
             self._dn.encode(self._ls.charset),
         )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEProxyFor.oid, [
         AE_OID_PREFIX+'.4.25', # aeProxyFor
     ]
@@ -886,7 +886,7 @@ class AETag(DynamicValueSelectList):
     desc = 'AE-DIR: cn of referenced aeTag entry'
     ldap_url = 'ldap:///_?cn,cn?sub?(&(objectClass=aeTag)(aeStatus=0))'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AETag.oid, [
         AE_OID_PREFIX+'.4.24', # aeTag
     ]
@@ -908,7 +908,7 @@ class AEEntryDNAEPerson(DistinguishedName):
         ),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAEPerson.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -943,7 +943,7 @@ class AEEntryDNAEUser(DistinguishedName):
             ))
         return r
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAEUser.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -994,7 +994,7 @@ class AEEntryDNAEHost(DistinguishedName):
         ])
         return r
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAEHost.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -1045,7 +1045,7 @@ class AEEntryDNAEZone(DistinguishedName):
             ))
         return r
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAEZone.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -1063,7 +1063,7 @@ class AEEntryDNAEMailGroup(GroupEntryDN):
         ('aeVisibleGroups', u'Visible', None, u'Search all server/service groups (aeSrvGroup)\non which this mail group is visible'),
     ]
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAEMailGroup.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -1121,7 +1121,7 @@ class AEEntryDNAEGroup(GroupEntryDN):
         ))
         return r
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAEGroup.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -1158,7 +1158,7 @@ class AEEntryDNAESrvGroup(DistinguishedName):
         )
         return r
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAESrvGroup.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -1175,7 +1175,7 @@ class AEEntryDNSudoRule(DistinguishedName):
         ('aeVisibleSudoers', u'Used on', None, u'Search all server groups (aeSrvGroup entries) referencing this SUDO rule'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNSudoRule.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -1194,7 +1194,7 @@ class AEEntryDNAELocation(DistinguishedName):
         ('aeLocation', u'Groups', None, 'groupOfEntries', u'Search all location-based zones associated with this location.'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAELocation.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -1211,7 +1211,7 @@ class AELocation(DynamicDNSelectList):
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aeLocation)(aeStatus=0))'
     ref_attrs = AEEntryDNAELocation.ref_attrs
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AELocation.oid, [
         AE_OID_PREFIX+'.4.35', # aeLocation
     ]
@@ -1227,7 +1227,7 @@ class AEEntryDNAEDept(DistinguishedName):
         ('aeDept', u'Groups', None, 'groupOfEntries', u'Search all team-related groups associated with this department.'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAEDept.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -1244,7 +1244,7 @@ class AEDept(DynamicDNSelectList):
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aeDept)(aeStatus=0))'
     ref_attrs = AEEntryDNAEDept.ref_attrs
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDept.oid, [
         AE_OID_PREFIX+'.4.29', # aeDept
     ]
@@ -1259,7 +1259,7 @@ class AEOwner(DynamicDNSelectList):
         ('aeOwner', u'Devices', None, 'aeDevice', u'Search all devices (aeDevice entries) assigned to same owner.'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEOwner.oid, [
         AE_OID_PREFIX+'.4.2', # aeOwner
     ]
@@ -1360,7 +1360,7 @@ class AEPerson2(AEPerson):
             return [ldap_result[0][0]]
         return attrValues
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEPerson.oid, [
         AE_OID_PREFIX+'.4.16', # aePerson
     ]
@@ -1373,7 +1373,7 @@ class AEManager(DynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEManager.oid, [
         '0.9.2342.19200300.100.1.10', # manager
     ],
@@ -1446,7 +1446,7 @@ class AEPersonAttribute(AEDerefAttribute):
 class AEUserNames(AEPersonAttribute, DirectoryString):
     oid = 'AEUserNames-oid'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEUserNames.oid, [
         '2.5.4.4', # sn
         '2.5.4.42', # givenName
@@ -1464,7 +1464,7 @@ class AEMailLocalAddress(RFC822Address):
         str.lower,
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEMailLocalAddress.oid, [
         '2.16.840.1.113730.3.1.13', # mailLocalAddress
     ],
@@ -1522,7 +1522,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
             return SelectList.formField(self)
         return AEPersonAttribute.formField(self)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEUserMailaddress.oid, [
         '0.9.2342.19200300.100.1.3', # mail
     ],
@@ -1558,7 +1558,7 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
           ')'
         ) % self._ls.uc_encode(self._dn)[0]
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEPersonMailaddress.oid, [
         '0.9.2342.19200300.100.1.3', # mail
     ],
@@ -1574,7 +1574,7 @@ class AEDeptAttribute(AEDerefAttribute, DirectoryString):
     deref_object_class = 'aeDept'
     deref_attribute_type = 'aeDept'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDeptAttribute.oid, [
         '2.16.840.1.113730.3.1.2', # departmentNumber
         '2.5.4.11',                # ou, organizationalUnitName
@@ -1622,7 +1622,7 @@ class AEHostname(DNSDomain):
             result.append(attr_value)
         return attrValues
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEHostname.oid, [
         '0.9.2342.19200300.100.1.9', # host
     ],
@@ -1640,7 +1640,7 @@ class AEDisplayNameUser(ComposedAttribute, DirectoryString):
         '{givenName} {sn} ({uid})',
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDisplayNameUser.oid, [
         '2.16.840.1.113730.3.1.241', # displayName
     ],
@@ -1656,7 +1656,7 @@ class AEDisplayNameContact(ComposedAttribute, DirectoryString):
         '{cn}',
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDisplayNameContact.oid, [
         '2.16.840.1.113730.3.1.241', # displayName
     ],
@@ -1673,7 +1673,7 @@ class AEDisplayNameDept(ComposedAttribute, DirectoryString):
         '#{departmentNumber}',
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDisplayNameDept.oid, [
         '2.16.840.1.113730.3.1.241', # displayName
     ],
@@ -1692,7 +1692,7 @@ class AEDisplayNameLocation(ComposedAttribute, DirectoryString):
         '{cn}',
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDisplayNameLocation.oid, [
         '2.16.840.1.113730.3.1.241', # displayName
     ],
@@ -1711,7 +1711,7 @@ class AEDisplayNamePerson(DisplayNameInetOrgPerson):
         '{givenName} {sn}',
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDisplayNamePerson.oid, [
         '2.16.840.1.113730.3.1.241', # displayName
     ],
@@ -1739,7 +1739,7 @@ class AEUniqueIdentifier(DirectoryString):
         input_field.charset = self._form.accept_charset
         return input_field
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEUniqueIdentifier.oid, [
         '0.9.2342.19200300.100.1.44', # uniqueIdentifier
     ],
@@ -1753,7 +1753,7 @@ class AEDepartmentNumber(DirectoryString):
     oid = 'AEDepartmentNumber-oid'
     maxValues = 1
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDepartmentNumber.oid, [
         '2.16.840.1.113730.3.1.2', # departmentNumber
     ],
@@ -1780,7 +1780,7 @@ class AECommonNameAEZone(AECommonName):
         str.lower,
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AECommonNameAEZone.oid, [
         '2.5.4.3', # cn alias commonName
     ],
@@ -1794,7 +1794,7 @@ class AECommonNameAELocation(AECommonName):
     oid = 'AECommonNameAELocation-oid'
     desc = 'AE-DIR: common name of aeLocation'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AECommonNameAELocation.oid, [
         '2.5.4.3', # cn alias commonName
     ],
@@ -1819,7 +1819,7 @@ class AECommonNameAEHost(AECommonName):
             ]))
         return attrValues
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AECommonNameAEHost.oid, [
         '2.5.4.3', # cn alias commonName
     ],
@@ -1863,7 +1863,7 @@ class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
 class AECommonNameAEGroup(AEZonePrefixCommonName):
     oid = 'AECommonNameAEGroup-oid'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AECommonNameAEGroup.oid, [
         '2.5.4.3', # cn alias commonName
     ],
@@ -1877,7 +1877,7 @@ syntax_registry.registerAttrType(
 class AECommonNameAESrvGroup(AEZonePrefixCommonName):
     oid = 'AECommonNameAESrvGroup-oid'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AECommonNameAESrvGroup.oid, [
         '2.5.4.3', # cn alias commonName
     ],
@@ -1909,7 +1909,7 @@ class AECommonNameAETag(AEZonePrefixCommonName):
             search_anchor = ''
         return ''.join((display_value, search_anchor))
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AECommonNameAETag.oid, [
         '2.5.4.3', # cn alias commonName
     ],
@@ -1922,7 +1922,7 @@ syntax_registry.registerAttrType(
 class AECommonNameAESudoRule(AEZonePrefixCommonName):
     oid = 'AECommonNameAESudoRule-oid'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AECommonNameAESudoRule.oid, [
         '2.5.4.3', # cn alias commonName
     ],
@@ -1931,7 +1931,7 @@ syntax_registry.registerAttrType(
     ]
 )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     web2ldap.app.plugins.inetorgperson.CNInetOrgPerson.oid, [
         '2.5.4.3', # commonName
     ],
@@ -1948,7 +1948,7 @@ class AESudoRuleDN(DynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSudoRule)(aeStatus=0))'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AESudoRuleDN.oid, [
         AE_OID_PREFIX+'.4.21', # aeVisibleSudoers
     ]
@@ -1959,7 +1959,7 @@ class AENotBefore(NotBefore):
     oid = 'AENotBefore-oid'
     desc = 'AE-DIR: begin of validity period'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AENotBefore.oid, [
         AE_OID_PREFIX+'.4.22', # aeNotBefore
     ]
@@ -1985,7 +1985,7 @@ class AENotAfter(NotAfter):
                 result = (ae_not_before <= ae_not_after)
         return result
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AENotAfter.oid, [
         AE_OID_PREFIX+'.4.23', # aeNotAfter
     ]
@@ -2056,7 +2056,7 @@ class AEStatus(SelectList, Integer):
             return Integer.displayValue(self, valueindex)
         return SelectList.displayValue(self, valueindex, commandbutton)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEStatus.oid, [
         AE_OID_PREFIX+'.4.5', # aeStatus
     ]
@@ -2072,7 +2072,7 @@ class AEExpiryStatus(SelectList):
         u'2': u'archived',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEStatus.oid, [
         AE_OID_PREFIX+'.4.46', # aeExpiryStatus
     ]
@@ -2099,7 +2099,7 @@ class AESudoUser(web2ldap.app.plugins.sudoers.SudoUserGroup):
         ')'
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AESudoUser.oid, [
         '1.3.6.1.4.1.15953.9.1.1', # sudoUser
     ],
@@ -2114,7 +2114,7 @@ class AEServiceSshPublicKey(SshPublicKey):
     desc = 'AE-DIR: aeService:sshPublicKey'
     reObj = re.compile('(^|.* )(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ssh-ed25519) (?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)? .+$')
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEServiceSshPublicKey.oid, [
         '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
     ],
@@ -2131,7 +2131,7 @@ class AEEntryDNAEAuthcToken(DistinguishedName):
         ('oathToken', u'Users', None, 'aeUser', u'Search all personal user accounts using this OATH token.'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAEAuthcToken.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -2152,7 +2152,7 @@ class AEEntryDNAEPolicy(DistinguishedName):
         ('oathTOTPParams', u'TOTP Tokens', None, 'oathTOTPToken', u'Search all TOTP tokens affected by this TOTP parameters.'),
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEEntryDNAEPolicy.oid, [
         '1.3.6.1.1.20', # entryDN
     ],
@@ -2166,7 +2166,7 @@ class AEUserSshPublicKey(SshPublicKey):
     oid = 'AEUserSshPublicKey-oid'
     desc = 'AE-DIR: aeUser:sshPublicKey'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEUserSshPublicKey.oid, [
         '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
     ],
@@ -2212,7 +2212,7 @@ class AERFC822MailMember(DynamicValueSelectList):
         input_field.setDefault(self.formValue())
         return input_field
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AERFC822MailMember.oid, [
         '1.3.6.1.4.1.42.2.27.2.1.15', # rfc822MailMember
     ],
@@ -2227,7 +2227,7 @@ class AEPwdPolicy(web2ldap.app.plugins.ppolicy.PwdPolicySubentry):
     desc = 'AE-DIR: pwdPolicySubentry'
     ldap_url = 'ldap:///_??sub?(&(objectClass=aePolicy)(objectClass=pwdPolicy)(aeStatus=0))'
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEPwdPolicy.oid, [
         '1.3.6.1.4.1.42.2.27.8.1.23', # pwdPolicySubentry
     ],
@@ -2258,7 +2258,7 @@ class AESudoHost(IA5String):
         input_field.charset = self._form.accept_charset
         return input_field
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AESudoHost.oid, [
         '1.3.6.1.4.1.15953.9.1.2', # sudoHost
     ],
@@ -2277,7 +2277,7 @@ class AELoginShell(Shell):
         u'/bin/false': u'/bin/false',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AELoginShell.oid, [
         '1.3.6.1.1.1.1.4', # loginShell
     ],
@@ -2304,7 +2304,7 @@ class AEOathHOTPToken(OathHOTPToken):
             )
         return OathHOTPToken._determineFilter(self)
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEOathHOTPToken.oid, [
         '1.3.6.1.4.1.5427.1.389.4226.4.9.1', # oathHOTPToken
     ],
@@ -2325,7 +2325,7 @@ class AESSHPermissions(SelectList):
         u'user-rc': u'Execute ~/.ssh/rc',
     }
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AESSHPermissions.oid, [
         AE_OID_PREFIX+'.4.47', # aeSSHPermissions
     ]
@@ -2338,7 +2338,7 @@ class AERemoteHostAEHost(DynamicValueSelectList):
     ldap_url = 'ldap:///.?ipHostNumber,aeFqdn?one?(&(objectClass=aeNwDevice)(aeStatus=0))'
     input_fallback = True # fallback to normal input field
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AERemoteHostAEHost.oid, [
         AE_OID_PREFIX+'.4.8',  # aeRemoteHost
     ],
@@ -2354,7 +2354,7 @@ class AEDescriptionAENwDevice(ComposedAttribute):
         '{cn}: {ipHostNumber})',
     )
 
-syntax_registry.registerAttrType(
+syntax_registry.reg_at(
     AEDescriptionAENwDevice.oid, [
         '2.5.4.13', # description
     ],
@@ -2363,8 +2363,7 @@ syntax_registry.registerAttrType(
 
 
 # Register all syntax classes in this module
-for name in dir():
-    syntax_registry.registerSyntaxClass(eval(name))
+syntax_registry.reg_syntaxes(__name__)
 
 
 class AEDirLDAPSession(LDAPSessionOrig):

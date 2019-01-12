@@ -92,7 +92,7 @@ class DisplayEntry(ldap0.schema.models.Entry):
         except KeyError:
             return ''
         result = []
-        syntax_se = syntax_registry.syntaxClass(self.entry._s, nameoroid, self.soc)
+        syntax_se = syntax_registry.get_syntax(self.entry._s, nameoroid, self.soc)
         for i in range(len(values)):
             attr_instance = syntax_se(
                 self.sid,
@@ -448,7 +448,7 @@ def w2l_read(
         read_attrindex = int(form.getInputValue('read_attrindex', [u'0'])[0])
         # Determine if user wants to view or download the binary attribute value
         read_attrmode = form.getInputValue('read_attrmode', [read_attrmode or 'view'])[0]
-        syntax_se = syntax_registry.syntaxClass(sub_schema, attr_type, entry.get_structural_oc())
+        syntax_se = syntax_registry.get_syntax(sub_schema, attr_type, entry.get_structural_oc())
 
         if (
                 (read_attrmode == 'view') and
