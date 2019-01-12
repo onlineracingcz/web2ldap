@@ -14,6 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 import sys
+import inspect
 import os
 import socket
 import errno
@@ -69,7 +70,7 @@ import web2ldap.app.bulkmod
 import web2ldap.app.srvrr
 import web2ldap.app.schema.viewer
 from web2ldap.app.gui import ExceptionMsg
-from web2ldap.app.form import Web2LDAPForm, FORM_CLASS
+from web2ldap.app.form import Web2LDAPForm
 from web2ldap.app.session import session_store
 
 SocketErrors = (socket.error, socket.gaierror)
@@ -89,6 +90,18 @@ CONNTYPE2URLSCHEME = {
     2: 'ldaps',
     3: 'ldapi',
 }
+
+FORM_CLASS = {
+    '': Web2LDAPForm,
+    'monitor': Web2LDAPForm,
+    'urlredirect': Web2LDAPForm,
+    'disconnect': Web2LDAPForm,
+}
+logger.debug('Registering Form classes')
+for _, cls in inspect.getmembers(sys.modules['web2ldap.app.form'], inspect.isclass):
+    if cls.__name__.startswith('Web2LDAPForm_') and cls.command is not None:
+        logger.debug('Register class %s for command %r', cls.__name__, cls.command)
+        FORM_CLASS[cls.command] = cls
 
 SIMPLE_MSG_HTML = """
 <html>

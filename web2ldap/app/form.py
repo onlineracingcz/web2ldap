@@ -14,8 +14,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import sys
-import inspect
 import urllib
 import codecs
 import re
@@ -27,7 +25,6 @@ from ldap0.pw import random_string
 
 import web2ldapcnf
 
-from web2ldap.log import logger
 import web2ldap.web.forms
 from web2ldap.web import escape_html
 import web2ldap.ldaputil.base
@@ -718,19 +715,6 @@ class Web2LDAPForm_oid(Web2LDAPForm):
 
 class Web2LDAPForm_dit(Web2LDAPForm):
     command = 'dit'
-
-
-logger.debug('Register form classes for commands')
-FORM_CLASS = {
-    '': Web2LDAPForm,
-    'monitor': Web2LDAPForm,
-    'urlredirect': Web2LDAPForm,
-    'disconnect': Web2LDAPForm,
-}
-for _, cls in inspect.getmembers(sys.modules[__name__], inspect.isclass):
-    if cls.__name__.startswith('Web2LDAPForm_') and cls.command is not None:
-        logger.debug('Register class %s for command %r', cls.__name__, cls.command)
-        FORM_CLASS[cls.command] = cls
 
 
 class DistinguishedNameInput(web2ldap.web.forms.Input):
