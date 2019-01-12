@@ -1003,6 +1003,8 @@ class LDAPSession(object):
                 timeout=self.timeout,
                 sizelimit=2
             )
+        except ldap0.SIZELIMIT_EXCEEDED:
+            raise USERNAME_NOT_UNIQUE({'desc':'More than one matching user entries.'})
         except ldap0.NO_SUCH_OBJECT:
             raise USERNAME_NOT_FOUND({'desc':'Smart login did not find a matching user entry.'})
         else:
