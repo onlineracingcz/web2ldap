@@ -15,7 +15,6 @@ from __future__ import absolute_import
 
 import sys
 import inspect
-import os
 import socket
 import errno
 import time
@@ -114,6 +113,9 @@ syntax_registry.check()
 
 
 def check_access(env, command):
+    """
+    simple access control based on REMOTE_ADDR
+    """
     remote_addr = ip_address(env['REMOTE_ADDR'].decode('ascii'))
     access_allowed = web2ldapcnf.access_allowed.get(
         command.decode('ascii'),
@@ -125,7 +127,7 @@ def check_access(env, command):
     return False
 
 
-class AppHandler:
+class AppHandler(object):
 
     def __init__(self, env, outf):
         self.inf = env['wsgi.input']
@@ -739,7 +741,7 @@ class AppHandler:
                 self.sid, self.outf, self.command, self.form, ls, dn,
                 input_ldapurl,
                 self.form.getInputValue('login_search_root', [ls.getSearchRoot(dn)])[0],
-                who='',
+                who=u'',
                 login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self.form, ls.charset),
                 relogin=True,
             )
