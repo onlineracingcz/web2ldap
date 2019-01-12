@@ -513,8 +513,8 @@ class ASN1Parser:
             # high-tag-number
             tag = 0
             while 1:
-                c = ord(io.read(1))
-                tag = (tag << 7) | (value & 0x7F)
+                c = ord(self.io.read(1))
+                tag = (tag << 7) | (tag & 0x7F)
                 if c & 0x80:
                     break
             self.tag = tag
@@ -590,9 +590,6 @@ class ASN1Parser:
         # what the right value is.  Fuck.
         return Contextual(self.tag, self.length, buf)
 
-    def parseSet(self):
-        return Set(parse(self.getBody()))
-
     def parseUnknown(self):
         return self.getBody()
 
@@ -657,8 +654,7 @@ class ASN1Parser:
         return IA5String(self.getBody())
 
     def parseSet(self):
-        contains = parse(self.getBody())
-        return Set(contains)
+        return Set(parse(self.getBody()))
 
     def parseObjectIdentifier(self):
         buf = self.getBody()
