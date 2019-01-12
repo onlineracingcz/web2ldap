@@ -47,12 +47,12 @@ def log_exception(env, ls, debug=__debug__):
     and Python traceback to error log
     """
     # Get exception instance and traceback info
-    exc_type, exc_info, exc_trb = sys.exc_info()
+    exc_type, exc_value, exc_trb = sys.exc_info()
     logentry = [
         '------------------- Unhandled error -------------------',
         'web2ldap version: %s' % web2ldap.__about__.__version__,
         'LDAPSession instance: %r' % (ls),
-        '%s.%s: %s' % (exc_type.__module__, exc_type.__name__, exc_info),
+        '%s.%s: %s' % (exc_type.__module__, exc_type.__name__, exc_value),
     ]
     if debug and ls is not None:
         # Log the LDAPSession object attributes
@@ -62,11 +62,10 @@ def log_exception(env, ls, debug=__debug__):
         logentry.append(pprint.pformat(sorted(env.items())))
     # Write the log entry
     logger.error(os.linesep.join(logentry), exc_info=debug)
-    # Avoid memory leaks
-    exc_obj = exc_value = exc_traceback = None
-    del exc_obj
+    # explicitly remove stuff
+    del exc_type
     del exc_value
-    del exc_traceback
+    del exc_trb
     return # log_exception()
 
 
