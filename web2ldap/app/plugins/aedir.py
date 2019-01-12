@@ -2112,7 +2112,6 @@ syntax_registry.reg_at(
 class AEServiceSshPublicKey(SshPublicKey):
     oid = 'AEServiceSshPublicKey-oid'
     desc = 'AE-DIR: aeService:sshPublicKey'
-    reObj = re.compile('(^|.* )(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ssh-ed25519) (?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)? .+$')
 
 syntax_registry.reg_at(
     AEServiceSshPublicKey.oid, [
