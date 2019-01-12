@@ -204,6 +204,7 @@ class LDAPSyntax(object):
     fileExt = 'bin'
     editable = 1
     reObj = None
+    input_pattern = None
     searchSep = '<br>'
     readSep = '<br>'
     fieldSep = '<br>'
@@ -336,7 +337,11 @@ class LDAPSyntax(object):
         input_field = web2ldap.web.forms.Input(
             self.attrType,
             ': '.join([self.attrType, self.desc]),
-            self.maxLen, self.maxValues, None, default=None, size=min(self.maxLen, self.inputSize)
+            self.maxLen,
+            self.maxValues,
+            self.input_pattern,
+            default=None,
+            size=min(self.maxLen, self.inputSize),
         )
         input_field.charset = self._form.accept_charset
         input_field.setDefault(self.formValue())
@@ -840,7 +845,9 @@ class Integer(IA5String):
         return web2ldap.web.forms.Input(
             self.attrType,
             ': '.join([self.attrType, self.desc]),
-            max_len, self.maxValues, '[0-9]*',
+            max_len,
+            self.maxValues,
+            '^[0-9]*$',
             default=form_value,
             size=min(self.inputSize, max_len),
         )
@@ -1402,6 +1409,7 @@ class DateOfBirth(ISO8601Date):
 class SecondsSinceEpoch(Integer):
     oid = 'SecondsSinceEpoch-oid'
     desc = 'Seconds since epoch (1970-01-01 00:00:00)'
+    minValue = 0
 
     def displayValue(self, valueindex=0, commandbutton=False):
         int_str = Integer.displayValue(self, valueindex, commandbutton)
@@ -1417,6 +1425,7 @@ class SecondsSinceEpoch(Integer):
 class DaysSinceEpoch(Integer):
     oid = 'DaysSinceEpoch-oid'
     desc = 'Days since epoch (1970-01-01)'
+    minValue = 0
 
     def displayValue(self, valueindex=0, commandbutton=False):
         int_str = Integer.displayValue(self, valueindex, commandbutton)
@@ -1433,6 +1442,7 @@ class Timespan(Integer):
     oid = 'Timespan-oid'
     desc = 'Time span in seconds'
     inputSize = LDAPSyntax.inputSize
+    minValue = 0
     time_divisors = (
         (u'weeks', 604800),
         (u'days', 86400),

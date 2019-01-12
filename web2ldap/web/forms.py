@@ -66,7 +66,6 @@ class Field(object):
         self.required = required
         self.accessKey = accessKey
         self.inputHTMLTemplate = r'%s'
-        self.valueHTMLTemplate = r'%s'
         # Charset is the preferred character set of the browser.
         # This is set by Form.add() the something meaningful.
         self.charset = 'iso-8859-1'
@@ -117,6 +116,10 @@ class Field(object):
         """
         if isinstance(pattern, tuple):
             return pattern
+        elif isinstance(pattern, bytes):
+            return pattern, 0
+        elif isinstance(pattern, unicode):
+            return pattern.encode(self.charset), 0
         return pattern, 0
 
     def setRegex(self, pattern):
@@ -166,9 +169,9 @@ class Field(object):
         if len(self.value) >= self.maxValues:
             raise TooManyValues(self.name, self.text, len(self.value), self.maxValues)
 
-    def _encodeValue(self, value):
+    def _decodeValue(self, value):
         """
-        Return Unicode object or string to be stored in self.value
+        Return unicode to be stored in self.value
         """
         try:
             value = value.decode(self.charset)
@@ -184,7 +187,8 @@ class Field(object):
         This method can be used to modify the user's value
         before storing it into self.value.
         """
-        value = self._encodeValue(value)
+        assert isinstance(value, bytes), TypeError('Expected value to be bytes, was %r' % (value))
+        value = self._decodeValue(value)
         # Length valid?
         self._validateLen(value)
         # Format valid?
@@ -207,16 +211,6 @@ class Field(object):
     def _defaultHTML(self, default):
         """HTML output of default."""
         return escape_html(self._defaultValue(default)).encode(self.charset)
-
-    def valueHTML(self):
-        """
-        HTML output of self.value using the HTML template string
-        in self.valueHTMLTemplate.
-        """
-        return [
-            self.valueHTMLTemplate % v
-            for v in self.value
-        ]
 
 
 class Textarea(Field):
@@ -266,16 +260,6 @@ class Textarea(Field):
             )
         )
 
-    def valueHTML(self):
-        """
-        HTML output of self.value using the HTML template string
-        in self.valueHTMLTemplate.
-        """
-        return [
-            self.valueHTMLTemplate % '<pre>%s</pre>' % v
-            for v in self.value
-        ]
-
 
 class Input(Field):
     """
@@ -299,14 +283,19 @@ class Input(Field):
         Field.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accessKey)
 
     def inputHTML(self, default=None, id_value=None, title=None):
+        if self._re is not None:
+            pattern_attr = ' pattern="%s"' % (escape_html(self._re.pattern))
+        else:
+            pattern_attr = ''
         return self.inputHTMLTemplate % (
-            '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d" value="%s">' % (
+            '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d"%s value="%s">' % (
                 self.idAttrStr(id_value),
                 self.titleHTML(title),
                 self.name,
                 self._accessKeyAttr(),
                 self.maxLen,
                 self.size,
+                pattern_attr,
                 self._defaultHTML(default)
             )
         )
@@ -360,9 +349,9 @@ class File(Input):
         """Binary data is assumed to be valid all the time"""
         return
 
-    def _encodeValue(self, value):
+    def _decodeValue(self, value):
         """
-        Return Unicode object or string to be stored in self.value
+        Return bytes to be stored in self.value
         """
         return value
 
@@ -399,13 +388,6 @@ class Password(Input):
                 default or ''
             )
         )
-
-    def valueHTML(self):
-        """For security reasons only stars are printed"""
-        return [
-            self.valueHTMLTemplate % (len(v)*'*')
-            for v in self.value
-        ]
 
 
 class Radio(Field):
@@ -625,7 +607,7 @@ class DataList(Input, Select):
             text,
             maxLen=100,
             maxValues=1,
-            pattern='.*',
+            pattern=None,
             required=0,
             default=None,
             accessKey='',
