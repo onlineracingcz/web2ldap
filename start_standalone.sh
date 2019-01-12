@@ -20,3 +20,4 @@ PYTHONDONTWRITEBYTECODE="1"
 export PYTHONDONTWRITEBYTECODE
 
 python2 "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
+#coverage-2.7 run "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
