@@ -15,7 +15,12 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 import os
+import sys
 import logging
+import pprint
+
+import web2ldap.__about__
+
 
 LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.INFO)
 
@@ -34,6 +39,35 @@ class LogHelper:
 
     def log(self, level, msg, *args, **kwargs):
         logger.log(level, ' '.join((self._log_prefix(), msg)), *args, **kwargs)
+
+
+def log_exception(env, ls, debug=__debug__):
+    """
+    Write an exception with environment vars, LDAP connection data
+    and Python traceback to error log
+    """
+    # Get exception instance and traceback info
+    exc_type, exc_info, exc_trb = sys.exc_info()
+    logentry = [
+        '------------------- Unhandled error -------------------',
+        'web2ldap version: %s' % web2ldap.__about__.__version__,
+        'LDAPSession instance: %r' % (ls),
+        '%s.%s: %s' % (exc_type.__module__, exc_type.__name__, exc_info),
+    ]
+    if debug and ls is not None:
+        # Log the LDAPSession object attributes
+        logentry.append(pprint.pformat(ls.__dict__))
+    if debug:
+        # Log all environment vars
+        logentry.append(pprint.pformat(sorted(env.items())))
+    # Write the log entry
+    logger.error(os.linesep.join(logentry), exc_info=debug)
+    # Avoid memory leaks
+    exc_obj = exc_value = exc_traceback = None
+    del exc_obj
+    del exc_value
+    del exc_traceback
+    return # log_exception()
 
 
 def init_logger():
