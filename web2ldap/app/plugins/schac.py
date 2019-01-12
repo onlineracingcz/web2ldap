@@ -17,7 +17,6 @@ from web2ldap.app.schema.syntaxes import \
     NumericString, \
     CountryString, \
     DNSDomain, \
-    NumstringDate, \
     syntax_registry
 from web2ldap.app.plugins.msperson import Gender
 
