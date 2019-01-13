@@ -393,7 +393,7 @@ def WhoAmITemplate(sid, form, ls, dn, who=None, entry=None):
             return 'anonymous'
     if web2ldap.ldaputil.base.is_dn(who):
         # Fall-back is to display the DN
-        result = DisplayDN(sid, form, ls, who, commandbutton=0)
+        result = DisplayDN(sid, form, ls, who, commandbutton=False)
         # Determine relevant templates dict
         sub_schema = ls.retrieveSubSchema(
             dn,
@@ -423,7 +423,7 @@ def WhoAmITemplate(sid, form, ls, dn, who=None, entry=None):
                 else:
                     entry = {}
         if entry:
-            display_entry = web2ldap.app.read.DisplayEntry(sid, form, ls, dn, sub_schema, entry, 'readSep', 1)
+            display_entry = web2ldap.app.read.DisplayEntry(sid, form, ls, dn, sub_schema, entry, 'readSep', True)
             user_structural_oc = display_entry.entry.get_structural_oc()
             for oc in bound_as_templates.keys():
                 if sub_schema.getoid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:
@@ -682,7 +682,7 @@ def DataStr(
         attrtype_name,
         value,
         valueindex=0,
-        commandbutton=0,
+        commandbutton=False,
         entry=None
     ):
     """

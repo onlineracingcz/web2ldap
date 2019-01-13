@@ -955,7 +955,7 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
                                     tdlist.append(', '.join([
                                         web2ldap.app.gui.DataStr(
                                             sid, form, ls, dn, sub_schema,
-                                            attr_type, value, commandbutton=0,
+                                            attr_type, value, commandbutton=False,
                                         )
                                         for value in entry[attr_type]
                                     ]))

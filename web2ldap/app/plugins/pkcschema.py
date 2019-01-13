@@ -42,7 +42,7 @@ class PkcX509Issuer(DynamicValueSelectList, DistinguishedName):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         r = [
-            DistinguishedName.displayValue(self, valueindex, commandbutton=0),
+            DistinguishedName.displayValue(self, valueindex, commandbutton=False),
         ]
         r.append(self._form.applAnchor(
             'search', '&raquo;', self._sid,

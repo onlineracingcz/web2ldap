@@ -125,7 +125,7 @@ class DisplayEntry(IterableUserDict):
                 )
                 attr_value_html = attr_instance.displayValue(
                     valueindex=i,
-                    commandbutton=1,
+                    commandbutton=True,
                 )
             try:
                 attr_instance.validate(values[i])

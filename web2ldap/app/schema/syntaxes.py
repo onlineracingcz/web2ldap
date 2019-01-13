@@ -569,7 +569,7 @@ class AuthzDN(DistinguishedName):
     def displayValue(self, valueindex=0, commandbutton=False):
         result = DistinguishedName.displayValue(self, valueindex, commandbutton)
         if commandbutton:
-            simple_display_str = DistinguishedName.displayValue(self, valueindex, commandbutton=0)
+            simple_display_str = DistinguishedName.displayValue(self, valueindex, commandbutton=False)
             whoami_display_str = web2ldap.app.gui.WhoAmITemplate(
                 self._sid, self._form, self._ls, self._dn,
                 who=self.attrValue.decode(self._ls.charset)

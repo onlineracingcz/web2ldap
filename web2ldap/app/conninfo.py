@@ -273,7 +273,7 @@ def w2l_ConnInfo(sid, outf, command, form, ls, dn):
 
     if ls.who:
         who_html = '%s<br>( %s )' % (
-            web2ldap.app.gui.DisplayDN(sid, form, ls, ls.who, commandbutton=0),
+            web2ldap.app.gui.DisplayDN(sid, form, ls, ls.who, commandbutton=False),
             web2ldapcnf.command_link_separator.join((
                 form.applAnchor(
                     'read', 'Read', sid,
