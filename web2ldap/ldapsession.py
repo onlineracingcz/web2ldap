@@ -24,10 +24,9 @@ import ldap0.ldif
 import ldap0.sasl
 import ldap0.cidict
 import ldap0.filter
-import ldap0.schema
 from ldap0.ldapobject import ReconnectLDAPObject
 from ldap0.schema.models import DITStructureRule
-from ldap0.schema.subentry import SubschemaError
+from ldap0.schema.subentry import SubschemaError, SubSchema, SCHEMA_ATTRS
 from ldap0.controls.openldap import SearchNoOpControl
 from ldap0.controls.libldap import AssertionControl
 from ldap0.controls.readentry import PreReadControl, PostReadControl
@@ -753,54 +752,74 @@ class LDAPSession(object):
                     pass
         return (hasSubordinates, numSubordinates, numAllSubordinates)
 
+    def searchSubSchemaEntryDN(self, dn):
+        """
+        Determine DN of sub schema sub entry for current part of DIT
+        """
+        if self.schema_dn_cache.has_key(dn):
+            # grab DN of sub schema sub entry from schema DN cache
+            subschemasubentry_dn = self.schema_dn_cache[dn]
+        else:
+            # Search the DN of sub schema sub entry
+            try:
+                subschemasubentry_dn = self.l.search_subschemasubentry_s(self.uc_encode(dn)[0])
+            except ldap0.LDAPError:
+                subschemasubentry_dn = None
+            if subschemasubentry_dn is None:
+                try:
+                    subschemasubentry_dn = self.l.search_subschemasubentry_s('')
+                except ldap0.LDAPError:
+                    subschemasubentry_dn = None
+            # Store DN of sub schema sub entry in schema DN cache
+            self.schema_dn_cache[dn] = subschemasubentry_dn
+        return subschemasubentry_dn
+
     def retrieveSubSchema(self, dn, default, supplement_schema_ldif, strict_check=True):
         """Retrieve parsed sub schema sub entry for current part of DIT"""
+        assert isinstance(default, SubSchema), \
+            TypeError('Expected default to be instance of SubSchema, was %r' % (default))
         if dn is None:
             return default
-        subschemasubentry_dn = self.l.search_subschemasubentry_s(self.uc_encode(dn)[0])
+        subschemasubentry_dn = self.searchSubSchemaEntryDN(dn)
         if subschemasubentry_dn is None:
             # No sub schema sub entry found => return default schema
             return default
         elif subschemasubentry_dn in self.schema_cache:
             # Return parsed schema from cache
             return self.schema_cache[subschemasubentry_dn]
-        # Read the sub schema sub entry
         try:
+            # Read the sub schema sub entry
             subschemasubentry = self.l.read_subschemasubentry_s(
                 self.uc_encode(subschemasubentry_dn)[0],
-                ldap0.schema.SCHEMA_ATTRS
+                SCHEMA_ATTRS,
             )
         except ldap0.LDAPError:
-            sub_schema = None
-        else:
-            if subschemasubentry is None:
-                sub_schema = None
+            return default
+        if subschemasubentry is None:
+            return default
+        # Parse the schema
+        if supplement_schema_ldif:
+            try:
+                with open(supplement_schema_ldif, 'rb') as ldif_fileobj:
+                    _, supplement_schema = list(
+                        ldap0.ldif.LDIFParser(ldif_fileobj).parse_entry_records(max_entries=1)
+                    )[0]
+            except (IndexError, ValueError):
+                pass
             else:
-                # Parse the schema
-                if supplement_schema_ldif:
-                    try:
-                        with open(supplement_schema_ldif, 'rb') as ldif_fileobj:
-                            _, supplement_schema = list(
-                                ldap0.ldif.LDIFParser(ldif_fileobj).parse_entry_records(
-                                    max_entries=1
-                                )
-                            )[0]
-                    except (IndexError, ValueError):
-                        pass
-                    else:
-                        subschemasubentry.update(supplement_schema or {})
-                try:
-                    sub_schema = ldap0.schema.subentry.SubSchema(
-                        subschemasubentry,
-                        self.uc_encode(subschemasubentry_dn)[0],
-                        check_uniqueness=strict_check,
-                    )
-                except SubschemaError:
-                    sub_schema = None
+                subschemasubentry.update(supplement_schema or {})
+        try:
+            sub_schema = ldap0.schema.subentry.SubSchema(
+                subschemasubentry,
+                self.uc_encode(subschemasubentry_dn)[0],
+                check_uniqueness=strict_check,
+            )
+        except SubschemaError:
+            return default
         # Store parsed schema in schema cache
         self.schema_cache[subschemasubentry_dn] = sub_schema
         # Determine what to return
-        return sub_schema or default
+        return sub_schema
 
     def readEntry(
             self,
