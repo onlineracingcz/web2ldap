@@ -722,7 +722,7 @@ class DistinguishedNameInput(web2ldap.web.forms.Input):
 
     def __init__(self, name='dn', text='DN', maxValues=1, required=False, default=u''):
         web2ldap.web.forms.Input.__init__(
-            self, name, text, 1024, maxValues, '',
+            self, name, text, 1024, maxValues, None,
             size=70, required=required, default=default
         )
 
