@@ -969,13 +969,7 @@ class Form:
                 )
         return # Form.hiddenInputFields()
 
-    def _parseFormUrlEncoded(
-            self,
-            maxContentLength,
-            ignoreEmptyFields,
-            stripValues,
-            unquote
-        ):
+    def _parseFormUrlEncoded(self, maxContentLength, stripValues, unquote):
 
         if self.request_method == 'POST':
             query_string = self.inf.read(int(self.env['CONTENT_LENGTH']))
@@ -1012,22 +1006,14 @@ class Form:
                 if contentLength > maxContentLength:
                     raise ContentLengthExceeded(contentLength, maxContentLength)
 
-                field = self.field[name]
-
-                # input is empty string?
-                if value or (not ignoreEmptyFields):
-                    # Input is stored in field instance
-                    field.setValue(value)
-                    # Add name of field to set of input keys
-                    self.inputFieldNames.add(name)
+                # Input is stored in field instance
+                self.field[name].setValue(value)
+                # Add name of field to set of input keys
+                self.inputFieldNames.add(name)
 
         return #_parseFormUrlEncoded()
 
-    def _parseMultipartFormData(
-            self,
-            maxContentLength,
-            ignoreEmptyFields,
-        ):
+    def _parseMultipartFormData(self, maxContentLength):
 
         import cgi
         _, pdict = cgi.parse_header(self.env['CONTENT_TYPE'])
@@ -1047,21 +1033,16 @@ class Form:
                 if contentLength > maxContentLength:
                     raise ContentLengthExceeded(contentLength, maxContentLength)
 
-                field = self.field[name]
-
-                # input is empty string?
-                if value or (not ignoreEmptyFields):
-                    # Input is stored in field instance
-                    field.setValue(value)
-                    # Add name of field to set of input keys
-                    self.inputFieldNames.add(name)
+                # Input is stored in field instance
+                self.field[name].setValue(value)
+                # Add name of field to set of input keys
+                self.inputFieldNames.add(name)
 
         return # _parseMultipartFormData()
 
 
     def getInputFields(
             self,
-            ignoreEmptyFields=0,
             stripValues=True,
             unquotePlus=False,
         ):
@@ -1072,7 +1053,6 @@ class Form:
         When a processing error occurs FormException (or derivatives)
         are raised.
 
-        ignoreEmptyFields=0         Ignore fields with empty input.
         stripValues=1               If true leading and trailing whitespaces
                                     are stripped from all input values.
         unquotePlus=0
@@ -1091,14 +1071,12 @@ class Form:
             # Parse user's input
             self._parseFormUrlEncoded(
                 maxContentLength,
-                ignoreEmptyFields,
                 stripValues,
                 unquote,
             )
         elif content_type.startswith('multipart/form-data'):
             self._parseMultipartFormData(
                 maxContentLength,
-                ignoreEmptyFields,
             )
         else:
             raise FormException('Invalid content received: %r' % (content_type))
