@@ -354,8 +354,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         return required_attrs_dict, allowed_attrs_dict
 
     def fieldset_table(self, outf, attr_types_dict, fieldset_title):
-        outf_lines = []
-        outf_lines.append(
+        outf.write(
             """<fieldset title="%s">
             <legend>%s</legend>
             <table summary="%s">
@@ -380,14 +379,13 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         for attr_type in attr_types:
             attr_type_name = web2ldap.app.gui.SchemaElementName(self.sid, self.form, self.dn, self.entry._s, attr_type, AttributeType)
             attr_value_field_html = self[attr_type]
-            outf_lines.append(
+            outf.write(
                 '<tr>\n<td class="InputAttrType">\n%s\n</td>\n<td>\n%s\n</td>\n</tr>\n' % (
                     attr_type_name,
                     attr_value_field_html,
                 )
             )
-        outf_lines.append('</table></fieldset>')
-        outf.write('\n'.join(outf_lines))
+        outf.write('</table>\n</fieldset>\n')
         return # fieldset_table()
 
     def table_input(self, outf, attrs_dict_list):
@@ -403,7 +401,6 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
             self, outf, cnf_key, display_duplicate_attrs=display_duplicate_attrs
         )
         # Output hidden fields for attributes not displayed in template-based input form
-        outf_lines = []
         for attr_type, attr_values in self.entry.items():
             at_oid = self.entry._at2key(attr_type)[0]
             syntax_class = syntax_registry.get_syntax(self.entry._s, attr_type, self.soc)
@@ -414,18 +411,17 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                     attr_inst = syntax_class(
                         self.sid, self.form, self.ls, self.dn, self.entry._s, attr_type, attr_value, self.entry
                     )
-                    outf_lines.append(self.form.hiddenFieldHTML('in_at', attr_type.decode('ascii'), u''))
-                    outf_lines.append(web2ldap.app.gui.HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''))
+                    outf.write(self.form.hiddenFieldHTML('in_at', attr_type.decode('ascii'), u''))
+                    outf.write(web2ldap.app.gui.HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''))
                     try:
                         attr_value_html = self.form.utf2display(attr_inst.formValue(), sp_entity='  ')
                     except UnicodeDecodeError:
                         # Simply display an empty string if anything goes wrong with Unicode decoding (e.g. with binary attributes)
                         attr_value_html = ''
-                    outf_lines.append(web2ldap.app.gui.HIDDEN_FIELD % (
+                    outf.write(web2ldap.app.gui.HIDDEN_FIELD % (
                         'in_av', attr_value_html, ''
                     ))
                     self.attr_counter += 1
-        outf.write(''.join(outf_lines))
         return displayed_attrs # template_output()
 
     def ldif_input(self, outf):
