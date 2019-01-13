@@ -14,6 +14,8 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
+from UserDict import IterableUserDict
+
 import ldap0.schema
 from ldap0.cidict import cidict
 from ldap0.schema.models import SchemaElementOIDSet
@@ -72,7 +74,7 @@ def generate_vcard(template_str, vcard_entry):
     return '\r\n'.join(template_lines_new) % vcard_entry
 
 
-class DisplayEntry(ldap0.schema.models.Entry):
+class DisplayEntry(IterableUserDict):
 
     def __init__(self, sid, form, ls, dn, schema, entry, sep_attr, commandbutton):
         assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
