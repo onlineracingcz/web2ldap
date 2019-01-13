@@ -21,6 +21,7 @@ import urllib
 import xlwt
 
 import ldap0
+import ldap0.cidict
 import ldap0.schema.models
 from ldap0.controls.openldap import SearchNoOpControl
 
@@ -470,15 +471,9 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
         search_tdtemplate = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(ls, 'search_tdtemplate', {}))
         search_tdtemplate_keys = search_tdtemplate.keys()
-        search_tdtemplate_keys_lower = search_tdtemplate.data.keys()
-        search_tablistattrs = web2ldap.app.cnf.GetParam(ls, 'search_tablistattrs', [])
-
-        search_tdtemplate_attrs_lower = {}
-        for oc in search_tdtemplate_keys_lower:
-            search_tdtemplate_attrs_lower[oc] = [
-                k.lower()
-                for k in GrabKeys(search_tdtemplate[oc]).keys
-            ]
+        search_tdtemplate_attrs_lower = ldap0.cidict.cidict()
+        for oc in search_tdtemplate_keys:
+            search_tdtemplate_attrs_lower[oc] = GrabKeys(search_tdtemplate[oc]).keys
 
         # Start with operational attributes used to determine subordinate
         # entries existence/count
@@ -493,7 +488,6 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
         # Extend with list of attributes to read for displaying results with templates
         if search_output == 'table':
-            read_attr_set.update(search_tablistattrs)
             for oc in search_tdtemplate_keys:
                 read_attr_set.update(GrabKeys(search_tdtemplate[oc]).keys)
         read_attr_set.discard('entryDN')
@@ -916,7 +910,8 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
                 elif r[0] in is_search_result:
 
                     # Display a search result with entry's data
-                    dn, entry = r[1][0].decode(ls.charset), ldap0.cidict.cidict(r[1][1])
+                    dn = r[1][0].decode(ls.charset)
+                    entry = ldap0.schema.models.Entry(sub_schema, r[1][0], r[1][1])
 
                     if search_output == 'raw':
 
@@ -925,41 +920,36 @@ def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
                     else:
 
-                        objectclasses_lower_set = set([o.lower() for o in entry.get('objectClass', [])])
-                        tdtemplate_oc = objectclasses_lower_set.intersection(search_tdtemplate_keys_lower)
+                        oc_set = ldap0.schema.models.SchemaElementOIDSet(
+                            sub_schema,
+                            ldap0.schema.models.ObjectClass,
+                            entry.get('objectClass', []),
+                        )
+                        tdtemplate_oc = oc_set.intersection(search_tdtemplate_keys).names()
+                        tableentry_attrs = None
 
                         if tdtemplate_oc:
-
-                            template_attrs = set([])
+                            template_attrs = ldap0.schema.models.SchemaElementOIDSet(
+                                sub_schema,
+                                ldap0.schema.models.AttributeType,
+                                [],
+                            )
                             for oc in tdtemplate_oc:
                                 template_attrs.update(search_tdtemplate_attrs_lower[oc])
-                            tableentry_attrs = template_attrs.intersection(entry.data.keys())
-                            if tableentry_attrs:
-                                # Output entry with the help of pre-defined templates
-                                tableentry = web2ldap.app.read.DisplayEntry(sid, form, ls, dn, sub_schema, entry, 'searchSep', 0)
-                                tdlist = []
-                                for oc in tdtemplate_oc:
-                                    tdlist.append(search_tdtemplate[oc] % tableentry)
-                                result_dd_str = '<br>\n'.join(tdlist)
-                            else:
-                                # Output DN
-                                result_dd_str = utf2display(dn)
+                            tableentry_attrs = template_attrs.intersection(entry.keys())
 
-                        elif entry.has_key('displayName'):
-                            result_dd_str = utf2display(ls.uc_decode(entry['displayName'][0])[0])
-
-                        elif search_tablistattrs and entry.has_key(search_tablistattrs[0]):
+                        if tableentry_attrs:
+                            # Output entry with the help of pre-defined templates
+                            tableentry = web2ldap.app.read.DisplayEntry(
+                                sid, form, ls, dn, sub_schema, entry, 'searchSep', False
+                            )
                             tdlist = []
-                            for attr_type in search_tablistattrs:
-                                if entry.has_key(attr_type):
-                                    tdlist.append(', '.join([
-                                        web2ldap.app.gui.DataStr(
-                                            sid, form, ls, dn, sub_schema,
-                                            attr_type, value, commandbutton=False,
-                                        )
-                                        for value in entry[attr_type]
-                                    ]))
-                            result_dd_str = '<br>\n'.join(filter(None, tdlist))
+                            for oc in tdtemplate_oc:
+                                tdlist.append(search_tdtemplate[oc] % tableentry)
+                            result_dd_str = '<br>\n'.join(tdlist)
+
+                        elif 'displayName' in entry:
+                            result_dd_str = utf2display(ls.uc_decode(entry['displayName'][0])[0])
 
                         else:
                             # Output DN
