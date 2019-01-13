@@ -874,8 +874,6 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     # If you experience these problems (no matching entry) set this to False.
     search_attrsonly=True,
 
-    search_tablistattrs=['cn', 'mail', 'homephone', 'telephonenumber', 'mobile'],
-
     # HTML template strings used to display entries in the table
     # of search results
     search_tdtemplate={
