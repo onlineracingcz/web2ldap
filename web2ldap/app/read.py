@@ -85,6 +85,7 @@ class DisplayEntry(IterableUserDict):
         self.form = form
         self.ls = ls
         self.dn = dn
+        self.schema = schema
         if isinstance(entry, dict):
             self.entry = ldap0.schema.models.Entry(schema, dn.encode(ls.charset), entry)
         elif isinstance(entry, ldap0.schema.models.Entry):
@@ -132,7 +133,7 @@ class DisplayEntry(IterableUserDict):
                     self.form,
                     self.ls,
                     self.dn,
-                    self._s,
+                    self.schema,
                     nameoroid,
                     values[i],
                     self.entry,
