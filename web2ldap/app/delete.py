@@ -395,7 +395,7 @@ def w2l_delete(sid, outf, command, form, ls, dn, connLDAPUrl):
             )[0][1]
         except IndexError:
             ldap_entry = {}
-        entry = ldap0.schema.models.Entry(sub_schema, dn, ldap_entry)
+        entry = ldap0.schema.models.Entry(sub_schema, dn.encode(ls.charset), ldap_entry)
         if delete_attr:
             inner_form = del_attr_form(sid, form, ls, dn, entry, delete_attr)
         elif delete_filter:

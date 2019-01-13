@@ -100,7 +100,7 @@ def w2l_add(sid, outf, command, form, ls, dn):
         add_basedn = add_basedn or dn
     elif add_template:
         add_dn, entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(ls, form, add_template)
-        entry = ldap0.schema.models.Entry(sub_schema, None, entry)
+        entry = ldap0.schema.models.Entry(sub_schema, dn.encode(ls.charset), entry)
         add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_dn.decode(ls.charset))
         add_basedn = add_basedn or dn
     else:
