@@ -40,7 +40,8 @@ import ipaddress
 
 import ldap0
 import ldap0.ldapurl
-import ldap0.schema
+import ldap0.schema.models
+from ldap0.schema.subentry import SubSchema
 
 import web2ldapcnf
 
@@ -228,7 +229,13 @@ class LDAPSyntax(object):
         self._ls = ls
         self._schema = schema
         self._dn = dn
-        self._entry = entry or ldap0.schema.models.Entry(self._schema, None, {})
+        if entry is None:
+            entry = ldap0.schema.models.Entry(
+                self._schema,
+                self._dn.encode(self._ls.charset),
+                {},
+            )
+        self._entry = entry
 
     def setAttrValue(self, attrValue):
         self.validate(attrValue)

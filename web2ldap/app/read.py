@@ -19,6 +19,7 @@ from UserDict import IterableUserDict
 import ldap0.schema
 from ldap0.cidict import cidict
 from ldap0.schema.models import SchemaElementOIDSet
+from ldap0.schema.subentry import SubSchema
 
 import web2ldap.web.forms
 import web2ldap.app.core
@@ -78,11 +79,24 @@ class DisplayEntry(IterableUserDict):
 
     def __init__(self, sid, form, ls, dn, schema, entry, sep_attr, commandbutton):
         assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+        assert isinstance(schema, SubSchema), \
+            TypeError('Expected schema to be instance of SubSchema, was %r' % (schema))
         self.sid = sid
         self.form = form
         self.ls = ls
         self.dn = dn
-        self.entry = ldap0.schema.models.Entry(schema, dn.encode(ls.charset), entry)
+        if isinstance(entry, dict):
+            self.entry = ldap0.schema.models.Entry(schema, dn.encode(ls.charset), entry)
+        elif isinstance(entry, ldap0.schema.models.Entry):
+            self.entry = entry
+        else:
+            raise TypeError(
+                'Invalid type of argument entry, was %s.%s %r' % (
+                    entry.__class__.__module__,
+                    entry.__class__.__name__,
+                    entry,
+                )
+            )
         self.soc = self.entry.get_structural_oc()
         self.invalid_attrs = set()
         self.sep_attr = sep_attr
@@ -395,7 +409,7 @@ def w2l_read(
         raise web2ldap.app.core.ErrorExit(u'Empty search result.')
 
     dn = search_result[0][0].decode(ls.charset)
-    entry = ldap0.schema.models.Entry(sub_schema, dn, search_result[0][1])
+    entry = ldap0.schema.models.Entry(sub_schema, dn.encode(ls.charset), search_result[0][1])
 
     requested_attrs = [
         at

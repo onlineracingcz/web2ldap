@@ -178,7 +178,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
         entry_rdn_dict = ldap0.schema.models.Entry(
             self.entry._s,
-            None,
+            dn.encode(self.ls.charset),
             web2ldap.ldaputil.base.rdn_dict(dn)
         )
         for attr_type, attr_values in entry_rdn_dict.items():
