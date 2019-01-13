@@ -161,9 +161,9 @@ class AppHandler(object):
         if self.command == 'searchform':
             web2ldap.app.searchform.w2l_searchform(self.sid, self.outf, self.command, self.form, self.ls, dn)
         elif self.command == 'search':
-            web2ldap.app.search.w2l_Search(self.sid, self.outf, self.command, self.form, self.ls, dn, connLDAPUrl)
+            web2ldap.app.search.w2l_search(self.sid, self.outf, self.command, self.form, self.ls, dn, connLDAPUrl)
         elif self.command == 'add':
-            web2ldap.app.add.w2l_Add(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.add.w2l_add(self.sid, self.outf, self.command, self.form, self.ls, dn)
         elif self.command == 'modify':
             web2ldap.app.modify.w2l_modify(self.sid, self.outf, self.command, self.form, self.ls, dn)
         elif self.command == 'dds':
@@ -184,7 +184,7 @@ class AppHandler(object):
                 wanted_attrs={False:connLDAPUrl.attrs, True:[]}[connLDAPUrl.attrs is None],
             )
         elif self.command == 'conninfo':
-            web2ldap.app.conninfo.w2l_ConnInfo(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.conninfo.w2l_conninfo(self.sid, self.outf, self.command, self.form, self.ls, dn)
         elif self.command == 'ldapparams':
             web2ldap.app.ldapparams.w2l_ldapparams(self.sid, self.outf, self.command, self.form, self.ls, dn)
         elif self.command == 'login':

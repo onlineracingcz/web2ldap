@@ -113,7 +113,7 @@ CONNINFO_HTTP_TEMPLATE = """
 """
 
 
-def w2l_ConnInfo(sid, outf, command, form, ls, dn):
+def w2l_conninfo(sid, outf, command, form, ls, dn):
 
     protocol_version = ls.l.get_option(ldap0.OPT_PROTOCOL_VERSION)
 

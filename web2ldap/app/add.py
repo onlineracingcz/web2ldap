@@ -64,7 +64,7 @@ def ModlistTable(schema, modlist):
     return '\n'.join(s) # ModlistTable()
 
 
-def w2l_Add(sid, outf, command, form, ls, dn):
+def w2l_add(sid, outf, command, form, ls, dn):
 
     sub_schema = ls.retrieveSubSchema(
         dn,

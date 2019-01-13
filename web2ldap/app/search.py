@@ -277,7 +277,7 @@ class ExcelWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
             self._row_counter += 1
 
 
-def w2l_Search(sid, outf, command, form, ls, dn, connLDAPUrl):
+def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
     """
     Search for entries and output results as table, pretty-printable output
     or LDIF formatted
