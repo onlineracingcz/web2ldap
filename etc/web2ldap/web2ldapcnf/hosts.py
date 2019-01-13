@@ -867,13 +867,6 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     # Attributes which should be present in attribute select list of advanced search form
     search_attrs=[],
 
-    # There are some situations where this client just wants to get the
-    # attributes of an entry and not the data itself for saving bandwidth.
-    # However some LDAP hosts (e.g. Notes Domino 4.61) have problems with
-    # such an attribute-only request, they won't return any matches for a search.
-    # If you experience these problems (no matching entry) set this to False.
-    search_attrsonly=True,
-
     # HTML template strings used to display entries in the table
     # of search results
     search_tdtemplate={

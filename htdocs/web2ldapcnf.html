@@ -50,7 +50,6 @@
   [<a href="#ldif_url_schemes">ldif_url_schemes</a>]
   [<a href="#max_searchparams">max_searchparams</a>]
   [<a href="#redirect_template">redirect_template</a>]
-  [<a href="#search_attrsonly">search_attrsonly</a>]
   [<a href="#search_attrs">search_attrs</a>]
   [<a href="#session_checkvars">session_checkvars</a>]
   [<a href="#session_limit">session_limit</a>]
@@ -132,21 +131,6 @@
     <p>Example:</p>
     <samp>
       max_searchparams=9
-    </samp>
-  </dd>
-
-  <dt id="search_attrsonly">search_attrsonly</dt>
-  <dd>
-    There are some situations where web2ldap just wants to determine the
-    existing attribute types of an entry and not the data itself for
-    saving bandwidth.<br>
-    However some LDAP hosts (e.g. Notes Domino 4.61 and prior versions)
-    have problems with such an search requesting only attribute types,
-    they won't return any matches for a search. If you experience this
-    problems (no matching entry) set this to 0.
-    <p>Example:</p>
-    <samp>
-      search_attrsonly=1
     </samp>
   </dd>
 
