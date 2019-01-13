@@ -62,7 +62,6 @@ setup(
     entry_points={
         'console_scripts': [
             'web2ldap=web2ldap.wsgi:start_server',
-            'web2ldap-checkinst=web2ldap.checkinst:check_inst',
         ],
         'web2ldap_data': [
             'templates=web2ldapcnf.templates:get_templates_path',
