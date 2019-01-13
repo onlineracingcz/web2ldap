@@ -81,24 +81,26 @@ class Certificate(Binary):
         return attrValue
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        links_html = '%d bytes | %s' % (
-            len(self.attrValue),
-            self._form.applAnchor(
-                'read', 'View/Load', self._sid,
-                [
-                    ('dn', self._dn),
-                    ('read_attr', self.attrType),
-                    ('read_attrindex', str(valueindex)),
-                    ('read_attrmode', 'view'),
-                ],
+        html = [
+            '%d bytes | %s' % (
+                len(self.attrValue),
+                self._form.applAnchor(
+                    'read', 'View/Load', self._sid,
+                    [
+                        ('dn', self._dn),
+                        ('read_attr', self.attrType),
+                        ('read_attrindex', str(valueindex)),
+                        ('read_attrmode', 'view'),
+                    ],
+                )
             )
-        )
+        ]
         try:
             x509 = asn1crypto.x509.Certificate.load(self.attrValue)
         except ValueError:
-            cert_html = ''
-        else:
-            cert_html = self.cert_display_template.format(
+            return ''.join(html)
+        html.append(
+            self.cert_display_template.format(
                 cert_issuer_dn=self._form.utf2display(x509name2ldapdn(x509.issuer, self._schema)),
                 cert_subject_dn=self._form.utf2display(x509name2ldapdn(x509.subject, self._schema)),
                 cert_serial_number_dec=str(x509.serial_number),
@@ -106,7 +108,24 @@ class Certificate(Binary):
                 cert_not_before=x509['tbs_certificate']['validity']['not_before'].native,
                 cert_not_after=x509['tbs_certificate']['validity']['not_after'].native,
             )
-        return ''.join((cert_html, links_html))
+        )
+        html.append('<p>Extensions</p>')
+        html.append('<dl>')
+        for ext in x509['tbs_certificate']['extensions']:
+            ext_oid = unicode(ext['extn_id'])
+            html.append(
+                """
+                <dt>{ext_crit} {ext_name} {ext_id} </dt>
+                <dd>{extn_value}</dd>
+                """.format(
+                    ext_id=self._form.utf2display(ext_oid),
+                    ext_name=asn1crypto.x509.ExtensionId._map.get(ext_oid, ext_oid),
+                    ext_crit={False:u'', True:u'critical: '}[ext['critical'].native],
+                    extn_value=self._form.utf2display(unicode(ext['extn_value'].parsed)),
+                )
+            )
+        html.append('</dl>')
+        return ''.join(html)
 
 
 class CACertificate(Certificate):
