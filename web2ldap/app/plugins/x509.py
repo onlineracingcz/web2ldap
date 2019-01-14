@@ -84,8 +84,8 @@ class Certificate(Binary):
         html = [
             '%d bytes | %s' % (
                 len(self.attrValue),
-                self._form.applAnchor(
-                    'read', 'View/Load', self._sid,
+                self._app.anchor(
+                    'read', 'View/Load',
                     [
                         ('dn', self._dn),
                         ('read_attr', self.attrType),
@@ -101,8 +101,8 @@ class Certificate(Binary):
             return ''.join(html)
         html.append(
             self.cert_display_template.format(
-                cert_issuer_dn=self._form.utf2display(x509name2ldapdn(x509.issuer, self._schema)),
-                cert_subject_dn=self._form.utf2display(x509name2ldapdn(x509.subject, self._schema)),
+                cert_issuer_dn=self._app.form.utf2display(x509name2ldapdn(x509.issuer, self._schema)),
+                cert_subject_dn=self._app.form.utf2display(x509name2ldapdn(x509.subject, self._schema)),
                 cert_serial_number_dec=str(x509.serial_number),
                 cert_serial_number_hex=hex(x509.serial_number),
                 cert_not_before=x509['tbs_certificate']['validity']['not_before'].native,
@@ -118,10 +118,10 @@ class Certificate(Binary):
                 <dt>{ext_crit} {ext_name} {ext_id} </dt>
                 <dd>{extn_value}</dd>
                 """.format(
-                    ext_id=self._form.utf2display(ext_oid),
+                    ext_id=self._app.form.utf2display(ext_oid),
                     ext_name=asn1crypto.x509.ExtensionId._map.get(ext_oid, ext_oid),
                     ext_crit={False:u'', True:u'critical: '}[ext['critical'].native],
-                    extn_value=self._form.utf2display(unicode(ext['extn_value'].parsed)),
+                    extn_value=self._app.form.utf2display(unicode(ext['extn_value'].parsed)),
                 )
             )
         html.append('</dl>')
@@ -164,8 +164,8 @@ class CertificateList(Binary):
     def displayValue(self, valueindex=0, commandbutton=False):
         links_html = '%d bytes | %s' % (
             len(self.attrValue),
-            self._form.applAnchor(
-                'read', 'View/Load', self._sid,
+            self._app.anchor(
+                'read', 'View/Load',
                 [
                     ('dn', self._dn),
                     ('read_attr', self.attrType),
@@ -180,7 +180,7 @@ class CertificateList(Binary):
             crl_html = ''
         else:
             crl_html = self.crl_display_template.format(
-                crl_issuer_dn=self._form.utf2display(x509name2ldapdn(x509.issuer, self._schema)),
+                crl_issuer_dn=self._app.form.utf2display(x509name2ldapdn(x509.issuer, self._schema)),
                 crl_this_update=x509['tbs_cert_list']['this_update'].native,
                 crl_next_update=x509['tbs_cert_list']['next_update'].native,
             )

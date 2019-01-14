@@ -120,12 +120,9 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
     """
     _entryResultTypes = is_search_result
 
-    def __init__(self, sid, outf, form, ls, dn, sub_schema, print_template_str_dict):
-        web2ldap.ldaputil.async.List.__init__(self, ls.l)
-        self._sid = sid
-        self._outf = outf
-        self._form = form
-        self._ls = ls
+    def __init__(self, app, dn, sub_schema, print_template_str_dict):
+        web2ldap.ldaputil.async.List.__init__(self, app.ls.l)
+        self._app = app
         self._dn = dn
         self._s = sub_schema
         self._p = print_template_str_dict
@@ -135,8 +132,8 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
         web2ldap.ldaputil.async.List.processResults(self, timeout=timeout)
         self.allResults.sort()
         # This should speed up things
-        utf2display = self._form.utf2display
-        print_cols = web2ldap.app.cnf.GetParam(self._ls, 'print_cols', '4')
+        utf2display = self._app.form.utf2display
+        print_cols = web2ldap.app.cnf.GetParam(self._app.ls, 'print_cols', '4')
         table = []
         for r in self.allResults:
             if r[0] in is_search_result:
@@ -154,16 +151,16 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
                     attr_list = entry.keys()
                     for attr in attr_list:
                         tableentry[attr] = ', '.join([
-                            utf2display(attr_value.decode(self._ls.charset))
+                            utf2display(attr_value.decode(self._app.ls.charset))
                             for attr_value in entry[attr]
                         ])
                     table.append(self._p[template_oc[0]] % (tableentry))
         # Output search results as pretty-printable table without buttons
         web2ldap.app.gui.TopSection(
-            self._sid, self._outf, 'search', self._form, self._ls, self._dn,
+            self._app, 'search', self._dn,
             'Printable Search Results', [],
         )
-        self._outf.write(
+        self._app.outf.write(
             """
             <table
               class="PrintSearchResults"
@@ -177,9 +174,9 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
                 '<td>%s</td>' % (tc)
                 for tc in table[i:i+print_cols]
             ]
-            self._outf.write('<tr>\n%s</tr>\n' % ('\n'.join(td_list)))
-        self._outf.write('</table>\n')
-        web2ldap.app.gui.Footer(self._outf, self._form)
+            self._app.outf.write('<tr>\n%s</tr>\n' % ('\n'.join(td_list)))
+        self._app.outf.write('</table>\n')
+        web2ldap.app.gui.Footer(self._app)
         return # processResults()
 
 
@@ -277,14 +274,15 @@ class ExcelWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
             self._row_counter += 1
 
 
-def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
+def w2l_search(app, connLDAPUrl):
     """
     Search for entries and output results as table, pretty-printable output
     or LDIF formatted
     """
 
     def page_appl_anchor(
-            sid, form, dn, link_text,
+            app,
+            link_text,
             search_root, filterstr, search_output,
             search_resminindex, search_resnumber,
             search_lastmod,
@@ -298,12 +296,11 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
             link_title = u'Display all search results'
         else:
             link_title = u'Display search results %d to %d' % (display_start_num, display_end_num)
-        return form.applAnchor(
+        return app.anchor(
             'search',
             link_text.format(display_start_num, display_end_num),
-            sid,
             [
-                ('dn', dn),
+                ('dn', app.dn),
                 ('search_root', search_root),
                 ('filterstr', filterstr),
                 ('search_output', search_output),
@@ -318,14 +315,14 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
         # end of page_appl_anchor()
 
     scope = connLDAPUrl.scope
-    filterstr = web2ldap.app.core.str2unicode(connLDAPUrl.filterstr, form.accept_charset)
+    filterstr = web2ldap.app.core.str2unicode(connLDAPUrl.filterstr, app.form.accept_charset)
 
-    search_submit = form.getInputValue('search_submit', [u'Search'])[0]
-    searchform_mode = form.getInputValue('searchform_mode', [u'exp'])[0]
+    search_submit = app.form.getInputValue('search_submit', [u'Search'])[0]
+    searchform_mode = app.form.getInputValue('searchform_mode', [u'exp'])[0]
 
     if search_submit != u'Search' and searchform_mode == 'adv':
         web2ldap.app.searchform.w2l_searchform(
-            sid, outf, command, form, ls, dn,
+            app,
             Msg='',
             filterstr=u'',
             scope=scope
@@ -333,32 +330,32 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
         return
 
     # This should speed up things
-    utf2display = form.utf2display
+    utf2display = app.form.utf2display
 
-    search_output = form.getInputValue('search_output', ['table'])[0]
-    search_opattrs = form.getInputValue('search_opattrs', ['no'])[0] == 'yes'
-    search_root = form.getInputValue('search_root', [dn])[0]
+    search_output = app.form.getInputValue('search_output', ['table'])[0]
+    search_opattrs = app.form.getInputValue('search_opattrs', ['no'])[0] == 'yes'
+    search_root = app.form.getInputValue('search_root', [app.dn])[0]
 
     # Hmm, this retrieves sub schema sub entry for the search root.
     # Theoretically it could be different for all search results.
     # But what the hey...
-    sub_schema = ls.retrieveSubSchema(
-        dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    sub_schema = app.ls.retrieveSubSchema(
+        app.dn,
+        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
     )
 
     if scope is None:
         scope = ldap0.SCOPE_SUBTREE
 
-    search_filter = form.getInputValue('filterstr', [filterstr])
+    search_filter = app.form.getInputValue('filterstr', [filterstr])
 
-    search_mode = form.getInputValue('search_mode', [ur'(&%s)'])[0]
-    search_option = form.getInputValue('search_option', [])
-    search_attr = form.getInputValue('search_attr', [])
-    search_mr = form.getInputValue('search_mr', [None]*len(search_attr))
-    search_string = form.getInputValue('search_string', [])
+    search_mode = app.form.getInputValue('search_mode', [ur'(&%s)'])[0]
+    search_option = app.form.getInputValue('search_option', [])
+    search_attr = app.form.getInputValue('search_attr', [])
+    search_mr = app.form.getInputValue('search_mr', [None]*len(search_attr))
+    search_string = app.form.getInputValue('search_string', [])
 
     if not len(search_option) == len(search_attr) == len(search_mr) == len(search_string):
         raise web2ldap.app.core.ErrorExit(u'Invalid search form data.')
@@ -372,9 +369,9 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
         if not '*' in search_option[i]:
             # If an exact assertion value is needed we can normalize via plugin class
             attr_instance = syntax_registry.get_at(
-                None, form, ls, dn, sub_schema, search_attr[i].encode('ascii'), None, entry=None
+                app, app.dn, sub_schema, search_attr[i].encode('ascii'), None, entry=None
             )
-            search_av_string = attr_instance.sanitizeInput(search_av_string.encode(form.accept_charset))
+            search_av_string = attr_instance.sanitizeInput(search_av_string.encode(app.form.accept_charset))
         if search_mr[i]:
             search_mr_string = ':%s:' % (search_mr[i])
         else:
@@ -383,7 +380,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
            search_option[i] in {SEARCH_OPT_ATTR_EXISTS, SEARCH_OPT_ATTR_NOT_EXISTS}:
             search_filter.append(search_option[i].format(
                 at=''.join((search_attr[i], search_mr_string)),
-                av=escape_ldap_filter_chars(search_av_string, ls.charset)
+                av=escape_ldap_filter_chars(search_av_string, app.ls.charset)
             ))
 
     # Wipe out all nullable search_filter list items
@@ -391,7 +388,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
     if not search_filter:
         web2ldap.app.searchform.w2l_searchform(
-            sid, outf, command, form, ls, dn,
+            app,
             Msg='Empty search values.',
             filterstr=u'',
             scope=scope
@@ -402,15 +399,15 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
     elif len(search_filter) > 1:
         filterstr = search_mode % (u''.join(search_filter))
 
-    search_resminindex = int(form.getInputValue('search_resminindex', ['0'])[0])
+    search_resminindex = int(app.form.getInputValue('search_resminindex', ['0'])[0])
     search_resnumber = int(
-        form.getInputValue(
+        app.form.getInputValue(
             'search_resnumber',
-            [unicode(web2ldap.app.cnf.GetParam(ls, 'search_resultsperpage', 10))]
+            [unicode(web2ldap.app.cnf.GetParam(app.ls, 'search_resultsperpage', 10))]
         )[0]
     )
 
-    search_lastmod = int(form.getInputValue('search_lastmod', [-1])[0])
+    search_lastmod = int(app.form.getInputValue('search_lastmod', [-1])[0])
     if search_lastmod > 0:
         timestamp_str = unicode(time.strftime('%Y%m%d%H%M%S', time.gmtime(time.time()-search_lastmod)), 'ascii')
         if sub_schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.2.2') and \
@@ -427,11 +424,11 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
     else:
         filterstr2 = filterstr
 
-    requested_attrs = web2ldap.app.cnf.GetParam(ls, 'requested_attrs', [])
+    requested_attrs = web2ldap.app.cnf.GetParam(app.ls, 'requested_attrs', [])
 
     search_attrs = [
         a.strip().encode('ascii')
-        for a in form.getInputValue(
+        for a in app.form.getInputValue(
             'search_attrs',
             [u','.join(connLDAPUrl.attrs or [])]
         )[0].split(u',')
@@ -441,19 +438,19 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
     search_attr_set = ldap0.schema.models.SchemaElementOIDSet(sub_schema, ldap0.schema.models.AttributeType, search_attrs)
     search_attrs = search_attr_set.names()
 
-    search_ldap_url = ls.ldapUrl(dn=search_root)
-    search_ldap_url.filterstr = filterstr2.encode(ls.charset)
+    search_ldap_url = app.ls.ldapUrl(dn=search_root)
+    search_ldap_url.filterstr = filterstr2.encode(app.ls.charset)
     search_ldap_url.scope = scope
     search_ldap_url.attrs = search_attrs
 
-    ldap_search_command = search_ldap_url.ldapsearch_cmd().decode(ls.charset)
+    ldap_search_command = search_ldap_url.ldapsearch_cmd().decode(app.ls.charset)
 
     read_attr_set = ldap0.schema.models.SchemaElementOIDSet(sub_schema, ldap0.schema.models.AttributeType, search_attrs)
     if search_output in {'table', 'print'}:
         read_attr_set.add('objectClass')
 
     if search_output == 'print':
-        print_template_filenames_dict = web2ldap.app.cnf.GetParam(ls, 'print_template', None)
+        print_template_filenames_dict = web2ldap.app.cnf.GetParam(app.ls, 'print_template', None)
         if print_template_filenames_dict is None:
             raise web2ldap.app.core.ErrorExit(u'No templates for printing defined.')
         print_template_str_dict = CaseinsensitiveStringKeyDict()
@@ -465,11 +462,11 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
             else:
                 read_attr_set.update(GrabKeys(print_template_str_dict[oc]).keys)
         read_attrs = read_attr_set.names()
-        result_handler = PrintableHTMLWriter(sid, outf, form, ls, dn, sub_schema, print_template_str_dict)
+        result_handler = PrintableHTMLWriter(app, search_root, sub_schema, print_template_str_dict)
 
     elif search_output in {'table', 'raw'}:
 
-        search_tdtemplate = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(ls, 'search_tdtemplate', {}))
+        search_tdtemplate = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(app.ls, 'search_tdtemplate', {}))
         search_tdtemplate_keys = search_tdtemplate.keys()
         search_tdtemplate_attrs_lower = ldap0.cidict.cidict()
         for oc in search_tdtemplate_keys:
@@ -494,12 +491,12 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
         read_attrs = read_attr_set.names()
 
         # Create async search handler instance
-        result_handler = web2ldap.ldaputil.async.List(ls.l)
+        result_handler = web2ldap.ldaputil.async.List(app.ls.l)
 
     elif search_output in {'ldif', 'ldif1'}:
         # read all attributes
-        read_attrs = search_attrs or ({False:['*'], True:['*', '+']}[ls.supportsAllOpAttr and search_opattrs]+requested_attrs) or None
-        result_handler = LDIFWriter(ls.l, outf)
+        read_attrs = search_attrs or ({False:['*'], True:['*', '+']}[app.ls.supportsAllOpAttr and search_opattrs]+requested_attrs) or None
+        result_handler = LDIFWriter(app.ls.l, app.outf)
         if search_output == 'ldif1':
             result_handler.header = LDIF1_HEADER % (
                 web2ldap.__about__.__version__,
@@ -507,7 +504,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                     '%A, %Y-%m-%d %H:%M:%S GMT',
                     time.gmtime(time.time())
                 ),
-                repr(ls.who),
+                repr(app.ls.who),
                 str(search_ldap_url),
             )
 
@@ -518,7 +515,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
             if searchform_mode == u'base':
                 searchform_mode = u'adv'
             web2ldap.app.searchform.w2l_searchform(
-                sid, outf, command, form, ls, dn,
+                app,
                 Msg='Attributes to be read have to be explicitly defined for table-structured data export!',
                 filterstr=filterstr,
                 scope=scope,
@@ -529,7 +526,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
         result_handler = {
             'csv':CSVWriter,
             'excel':ExcelWriter
-        }[search_output](ls.l, outf, sub_schema, read_attrs)
+        }[search_output](app.ls.l, app.outf, sub_schema, read_attrs)
 
     if search_resnumber:
         search_size_limit = search_resminindex+search_resnumber
@@ -539,10 +536,10 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
     try:
         # Start the search
         result_handler.startSearch(
-            search_root.encode(ls.charset),
+            search_root.encode(app.ls.charset),
             scope,
-            filterstr2.encode(ls.charset),
-            attrList=[a.encode(ls.charset) for a in read_attrs or []] or None,
+            filterstr2.encode(app.ls.charset),
+            attrList=[a.encode(app.ls.charset) for a in read_attrs or []] or None,
             attrsOnly=0,
             sizelimit=search_size_limit
         )
@@ -552,17 +549,17 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
         ) as e:
         # Give the user a chance to edit his bad search filter
         web2ldap.app.searchform.w2l_searchform(
-            sid, outf, command, form, ls, dn,
+            app,
             Msg=' '.join((
-                web2ldap.app.gui.LDAPError2ErrMsg(e, form, charset=ls.charset),
-                form.utf2display(filterstr2),
+                web2ldap.app.gui.LDAPError2ErrMsg(e, app),
+                utf2display(filterstr2),
             )),
             filterstr=filterstr,
             scope=scope
         )
         return
     except ldap0.NO_SUCH_OBJECT as e:
-        if dn:
+        if app.dn:
             raise e
 
     if search_output in {'table', 'raw'}:
@@ -575,21 +572,21 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
         try:
             result_handler.processResults(
-                search_resminindex, search_resnumber+int(search_resnumber > 0), timeout=ls.timeout
+                search_resminindex, search_resnumber+int(search_resnumber > 0), timeout=app.ls.timeout
             )
         except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED) as e:
             if search_size_limit < 0 or result_handler.endResultBreak < search_size_limit:
-                SearchWarningMsg = web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset, template=SizeLimitMsg)
+                SearchWarningMsg = web2ldap.app.gui.LDAPError2ErrMsg(e, app, template=SizeLimitMsg)
             partial_results = 1
             resind = result_handler.endResultBreak
             # Retrieve the overall number of search results by resending the
             # search request without size limit but with the SearchNoOpControl attached
-            if SearchNoOpControl.controlType in ls.supportedControl:
+            if SearchNoOpControl.controlType in app.ls.supportedControl:
                 try:
-                    num_all_search_results, num_all_search_continuations = ls.l.noop_search(
-                        search_root.encode(ls.charset),
+                    num_all_search_results, num_all_search_continuations = app.ls.l.noop_search(
+                        search_root.encode(app.ls.charset),
                         scope,
-                        filterstr=filterstr2.encode(ls.charset),
+                        filterstr=filterstr2.encode(app.ls.charset),
                         timeout=SEARCH_NOOP_TIMEOUT,
                     )
                     if num_all_search_results is not None and num_all_search_continuations is not None:
@@ -600,19 +597,19 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
         except (ldap0.FILTER_ERROR, ldap0.INAPPROPRIATE_MATCHING) as e:
             # Give the user a chance to edit his bad search filter
             web2ldap.app.searchform.w2l_searchform(
-                sid, outf, command, form, ls, dn,
-                Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, form, charset=ls.charset),
+                app,
+                Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app),
                 filterstr=filterstr,
                 scope=scope
             )
             return
         except (ldap0.NO_SUCH_OBJECT, ldap0.UNWILLING_TO_PERFORM) as e:
             resind = result_handler.endResultBreak
-            if dn or scope != ldap0.SCOPE_ONELEVEL:
+            if search_root or scope != ldap0.SCOPE_ONELEVEL:
                 # Give the user a chance to edit his bad search filter
                 web2ldap.app.searchform.w2l_searchform(
-                    sid, outf, command, form, ls, dn,
-                    Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, form, charset=ls.charset),
+                    app,
+                    Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app),
                     filterstr=filterstr,
                     scope=scope
                 )
@@ -626,9 +623,9 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
         # HACK! Searching the root level the namingContexts is
         # appended if not already received in search result
-        if not dn and scope == ldap0.SCOPE_ONELEVEL:
+        if not search_root and scope == ldap0.SCOPE_ONELEVEL:
             d = ldap0.cidict.cidict()
-            for result_dn in ls.namingContexts:
+            for result_dn in app.ls.namingContexts:
                 if result_dn:
                     d[result_dn] = result_dn
             for r in result_dnlist:
@@ -636,7 +633,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                 if result_dn is not None and d.has_key(result_dn):
                     del d[result_dn]
             result_dnlist.extend([
-                (ldap0.RES_SEARCH_ENTRY, (result_dn.encode(ls.charset), {}))
+                (ldap0.RES_SEARCH_ENTRY, (result_dn.encode(app.ls.charset), {}))
                 for result_dn in d.values()
             ])
             resind = len(result_dnlist)
@@ -644,10 +641,10 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
         result_dnlist.sort()
 
         ContextMenuList = [
-            form.applAnchor(
-                'searchform', 'Edit Filter', sid,
+            app.anchor(
+                'searchform', 'Edit Filter',
                 [
-                    ('dn', dn),
+                    ('dn', app.dn),
                     ('searchform_mode', 'exp'),
                     ('search_root', search_root),
                     ('filterstr', filterstr),
@@ -656,10 +653,10 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                     ('scope', str(scope)),
                 ],
             ),
-            form.applAnchor(
-                'search', 'Negate search', sid,
+            app.anchor(
+                'search', 'Negate search',
                 [
-                    ('dn', dn),
+                    ('dn', app.dn),
                     ('search_root', search_root),
                     ('search_output', {False:'raw', True:'table'}[search_output == 'table']),
                     ('scope', str(scope)),
@@ -675,11 +672,11 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
         if searchform_mode in {'base', 'adv'}:
             ContextMenuList.append(
-                form.applAnchor(
-                    'searchform', 'Modify Search', sid,
-                    form.allInputFields(
+                app.anchor(
+                    'searchform', 'Modify Search',
+                    app.form.allInputFields(
                         fields=[
-                            ('dn', dn),
+                            ('dn', app.dn),
                             ('searchform_mode', 'adv')
                         ],
                         ignoreFieldNames=('dn', 'searchform_mode'),
@@ -714,10 +711,10 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
             # Empty search results
             #--------------------------------------------------
             web2ldap.app.gui.SimpleMessage(
-                sid, outf, command, form, ls, dn,
+                app,
                 'No Search Results',
                 '<p class="WarningMessage">No entries found.</p>%s' % (search_param_html),
-                main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+                main_menu_list=web2ldap.app.gui.MainMenu(app),
                 context_menu_list=ContextMenuList
             )
 
@@ -729,12 +726,11 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
             page_command_list = None
 
             ContextMenuList.extend([
-                form.applAnchor(
+                app.anchor(
                     'search',
                     {False:'Raw', True:'Table'}[search_output == 'raw'],
-                    sid,
                     [
-                        ('dn', dn),
+                        ('dn', app.dn),
                         ('search_root', search_root),
                         ('search_output', {False:'raw', True:'table'}[search_output == 'raw']),
                         ('scope', str(scope)),
@@ -748,16 +744,16 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                         {False:u'distinguished names', True:u'attributes'}[search_output == 'raw']
                     ),
                 ),
-                form.applAnchor(
-                    'delete', 'Delete', sid,
+                app.anchor(
+                    'delete', 'Delete',
                     [
                         ('dn', search_root),
                         ('filterstr', filterstr2),
                         ('scope', str(scope)),
                     ],
                 ),
-                form.applAnchor(
-                    'bulkmod', 'Bulk modify', sid,
+                app.anchor(
+                    'bulkmod', 'Bulk modify',
                     [
                         ('dn', search_root),
                         ('filterstr', filterstr2),
@@ -773,7 +769,8 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
                 if search_resminindex > search_resnumber:
                     page_command_list[0] = page_appl_anchor(
-                        sid, form, dn, '|&larr;{0}…{1}',
+                        app,
+                        '|&larr;{0}…{1}',
                         search_root, filterstr, search_output,
                         0, search_resnumber,
                         search_lastmod, num_result_all,
@@ -781,14 +778,16 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
                 if search_resminindex > 0:
                     page_command_list[1] = page_appl_anchor(
-                        sid, form, dn, '&larr;{0}…{1}',
+                        app,
+                        '&larr;{0}…{1}',
                         search_root, filterstr, search_output,
                         max(0, prev_resminindex), search_resnumber,
                         search_lastmod, num_result_all,
                     )
 
                 page_command_list[2] = page_appl_anchor(
-                    sid, form, dn, 'all',
+                    app,
+                    'all',
                     search_root, filterstr, search_output,
                     0, 0,
                     search_lastmod, num_result_all,
@@ -797,7 +796,8 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                 if partial_results:
 
                     page_next_link = page_appl_anchor(
-                        sid, form, dn, '{0}…{1}&rarr;',
+                        app,
+                        '{0}…{1}&rarr;',
                         search_root, filterstr, search_output,
                         search_resminindex+search_resnumber, search_resnumber,
                         search_lastmod, num_result_all,
@@ -806,7 +806,8 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                     if num_result_all is not None and resind < num_result_all:
                         page_command_list[3] = page_next_link
                         page_command_list[4] = page_appl_anchor(
-                            sid, form, dn, '{0}…{1}&rarr;|',
+                            app,
+                            '{0}…{1}&rarr;|',
                             search_root, filterstr, search_output,
                             num_result_all-search_resnumber, search_resnumber,
                             search_lastmod, num_result_all,
@@ -824,7 +825,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                   Bookmark
                 </a>
                 """.format(
-                    baseUrl=escape_html(form.script_name),
+                    baseUrl=escape_html(app.form.script_name),
                     ldapUrl=str(search_ldap_url),
                 )
             result_message = '\n<p>Search results %d - %d %s / <a href="#params" title="See search parameters and export options">Params</a> / %s</p>\n' % (
@@ -835,16 +836,16 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
             )
 
             web2ldap.app.gui.TopSection(
-                sid, outf, command, form, ls, dn,
+                app,
                 'Search Results',
-                web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+                web2ldap.app.gui.MainMenu(app),
                 context_menu_list=ContextMenuList
             )
 
             export_field = web2ldap.app.form.ExportFormatSelect('search_output')
-            export_field.charset = form.accept_charset
+            export_field.charset = app.form.accept_charset
 
-            outf.write('\n'.join((SearchWarningMsg, result_message)))
+            app.outf.write('\n'.join((SearchWarningMsg, result_message)))
 
             if search_resminindex == 0 and not partial_results:
                 mailtolist = set()
@@ -853,7 +854,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                         mailtolist.update(r[1][1].get('mail', r[1][1].get('rfc822Mailbox', [])))
                 if mailtolist:
                     mailtolist = [urllib.quote(m) for m in mailtolist]
-                    outf.write('Mail to all <a href="mailto:%s?cc=%s">Cc:-ed</a> - <a href="mailto:?bcc=%s">Bcc:-ed</a>' % (
+                    app.outf.write('Mail to all <a href="mailto:%s?cc=%s">Cc:-ed</a> - <a href="mailto:?bcc=%s">Bcc:-ed</a>' % (
                         mailtolist[0],
                         ','.join(mailtolist[1:]),
                         ','.join(mailtolist)
@@ -861,9 +862,9 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
 
             if page_command_list:
                 # output the paging links
-                outf.write(PAGE_COMMAND_TMPL.format(*page_command_list))
+                app.outf.write(PAGE_COMMAND_TMPL.format(*page_command_list))
 
-            outf.write('<table id="SrchResList">\n')
+            app.outf.write('<table id="SrchResList">\n')
 
             for r in result_dnlist[0:resind]:
 
@@ -875,16 +876,15 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                         refUrl = ExtendedLDAPUrl(r[1][1][0])
                     except ValueError:
                         command_table = []
-                        result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (form.utf2display(unicode(r[1][1][0])))
+                        result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (utf2display(unicode(r[1][1][0])))
                     else:
                         result_dd_str = 'Search reference =&gt; %s' % (refUrl.htmlHREF(hrefTarget=None))
                         if scope == ldap0.SCOPE_SUBTREE:
                             refUrl.scope = refUrl.scope or scope
-                            refUrl.filterstr = ((refUrl.filterstr or '').decode(ls.charset) or filterstr).encode(form.accept_charset)
+                            refUrl.filterstr = ((refUrl.filterstr or '').decode(app.ls.charset) or filterstr).encode(app.form.accept_charset)
                             command_table = [
-                                form.applAnchor(
+                                app.anchor(
                                     'search', 'Continue search',
-                                    {False:sid, True:None}[refUrl.initializeUrl() != ls.uri],
                                     [('ldapurl', refUrl.unparse())],
                                     title=u'Follow this search continuation',
                                 )
@@ -893,16 +893,14 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                             command_table = []
                             refUrl.filterstr = filterstr
                             refUrl.scope = ldap0.SCOPE_BASE
-                            command_table.append(form.applAnchor(
+                            command_table.append(app.anchor(
                                 'read', 'Read',
-                                {False:sid, True:None}[refUrl.initializeUrl() != ls.uri],
                                 [('ldapurl', refUrl.unparse())],
                                 title=u'Display single entry following search continuation',
                             ))
                             refUrl.scope = ldap0.SCOPE_ONELEVEL
-                            command_table.append(form.applAnchor(
+                            command_table.append(app.anchor(
                                 'search', 'Down',
-                                {False:sid, True:None}[refUrl.initializeUrl() != ls.uri],
                                 [('ldapurl', refUrl.unparse())],
                                 title=u'Descend into tree following search continuation',
                             ))
@@ -910,7 +908,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                 elif r[0] in is_search_result:
 
                     # Display a search result with entry's data
-                    dn = r[1][0].decode(ls.charset)
+                    dn = r[1][0].decode(app.ls.charset)
                     entry = ldap0.schema.models.Entry(sub_schema, r[1][0], r[1][1])
 
                     if search_output == 'raw':
@@ -941,7 +939,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                         if tableentry_attrs:
                             # Output entry with the help of pre-defined templates
                             tableentry = web2ldap.app.read.DisplayEntry(
-                                sid, form, ls, dn, sub_schema, entry, 'searchSep', False
+                                app, dn, sub_schema, entry, 'searchSep', False
                             )
                             tdlist = []
                             for oc in tdtemplate_oc:
@@ -949,7 +947,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                             result_dd_str = '<br>\n'.join(tdlist)
 
                         elif 'displayName' in entry:
-                            result_dd_str = utf2display(ls.uc_decode(entry['displayName'][0])[0])
+                            result_dd_str = utf2display(app.ls.uc_decode(entry['displayName'][0])[0])
 
                         else:
                             # Output DN
@@ -959,17 +957,17 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                     command_table = []
 
                     # A [Read] link is added in any case
-                    read_title_list = [dn]
+                    read_title_list = [app.dn]
                     for attr_type in (u'description', u'structuralObjectClass'):
                         try:
-                            first_attr_value = entry[attr_type][0].decode(ls.charset)
+                            first_attr_value = entry[attr_type][0].decode(app.ls.charset)
                         except KeyError:
                             pass
                         else:
                             read_title_list.append(u'%s: %s' % (attr_type, first_attr_value))
                     command_table.append(
-                        form.applAnchor(
-                            'read', 'Read', sid,
+                        app.anchor(
+                            'read', 'Read',
                             [('dn', dn)],
                             title=u'\n'.join(read_title_list)
                         )
@@ -1015,8 +1013,8 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                             numAllSubOrdinates = int(numAllSubOrdinates)
                             down_title_list.append(u'total: %d' % (numAllSubOrdinates))
 
-                        command_table.append(form.applAnchor(
-                            'search', 'Down', sid,
+                        command_table.append(app.anchor(
+                            'search', 'Down',
                             (
                                 ('dn', dn),
                                 ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
@@ -1032,7 +1030,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                     raise ValueError('LDAP result of invalid type: %r' % (r[0]))
 
                 # write the search result table row
-                outf.write(
+                app.outf.write(
                     """
                     <tr>
                       <td class="CommandTable">\n%s\n</td>
@@ -1044,7 +1042,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                     )
                 )
 
-            outf.write(
+            app.outf.write(
                 """
                 </table>
                 <a id="params"></a>
@@ -1055,14 +1053,14 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                 </form>
                 """ % (
                     '\n'.join((
-                        form.beginFormHTML('search', sid, 'GET', target='web2ldapexport'),
-                        form.hiddenFieldHTML('dn', dn, u''),
-                        form.hiddenFieldHTML('search_root', search_root, u''),
-                        form.hiddenFieldHTML('scope', unicode(scope), u''),
-                        form.hiddenFieldHTML('filterstr', filterstr, u''),
-                        form.hiddenFieldHTML('search_lastmod', unicode(search_lastmod), u''),
-                        form.hiddenFieldHTML('search_resnumber', u'0', u''),
-                        form.hiddenFieldHTML('search_attrs', u','.join(search_attrs), u''),
+                        app.form.beginFormHTML('search', app.sid, 'GET', target='web2ldapexport'),
+                        app.form.hiddenFieldHTML('dn', app.dn, u''),
+                        app.form.hiddenFieldHTML('search_root', search_root, u''),
+                        app.form.hiddenFieldHTML('scope', unicode(scope), u''),
+                        app.form.hiddenFieldHTML('filterstr', filterstr, u''),
+                        app.form.hiddenFieldHTML('search_lastmod', unicode(search_lastmod), u''),
+                        app.form.hiddenFieldHTML('search_resnumber', u'0', u''),
+                        app.form.hiddenFieldHTML('search_attrs', u','.join(search_attrs), u''),
                     )),
                     export_field.inputHTML(),
                     web2ldap.app.form.InclOpAttrsCheckbox(
@@ -1074,7 +1072,7 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                 )
             )
 
-            outf.write(
+            app.outf.write(
                 """
                 <h4>Search parameters used</h4>
                 %s
@@ -1088,12 +1086,15 @@ def w2l_search(sid, outf, command, form, ls, dn, connLDAPUrl):
                 )
             )
 
-            web2ldap.app.gui.Footer(outf, form)
+            web2ldap.app.gui.Footer(app)
 
 
     else:
 
         try:
-            result_handler.processResults(timeout=ls.timeout)
-        except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
+            result_handler.processResults(timeout=app.ls.timeout)
+        except (
+                ldap0.SIZELIMIT_EXCEEDED,
+                ldap0.ADMINLIMIT_EXCEEDED,
+            ):
             result_handler.postProcessing()

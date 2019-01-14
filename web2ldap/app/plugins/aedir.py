@@ -104,10 +104,10 @@ class AEObjectUtil:
     def _zone_entry(self, attrlist=None):
         zone_dn = 'cn={0},{1}'.format(
             self._get_zone_name(),
-            self._ls.currentSearchRoot.encode(self._ls.charset),
+            self._app.ls.currentSearchRoot.encode(self._app.ls.charset),
         )
         try:
-            ldap_result = self._ls.readEntry(
+            ldap_result = self._app.ls.readEntry(
                 zone_dn,
                 attrtype_list=attrlist,
                 search_filter='(objectClass=aeZone)',
@@ -123,23 +123,23 @@ class AEObjectUtil:
 
     def _get_zone_dn(self):
         dn_list = ldap0.dn.explode_dn(
-            self._dn[:-len(self._ls.currentSearchRoot)-1].encode(self._ls.charset)
+            self._dn[:-len(self._app.ls.currentSearchRoot)-1].encode(self._app.ls.charset)
         )
         result = ','.join((
             dn_list[-1],
-            self._ls.currentSearchRoot.encode(self._ls.charset),
+            self._app.ls.currentSearchRoot.encode(self._app.ls.charset),
         ))
         return result # _get_zone_dn()
 
     def _get_zone_name(self):
         dn_list = ldap0.dn.str2dn(
-            self._dn[:-len(self._ls.currentSearchRoot)-1].encode(self._ls.charset)
+            self._dn[:-len(self._app.ls.currentSearchRoot)-1].encode(self._app.ls.charset)
         )
         try:
             zone_cn = dict([
                 (at, av)
                 for at, av, _ in dn_list[-1]
-            ])['cn'].decode(self._ls.charset)
+            ])['cn'].decode(self._app.ls.charset)
         except (KeyError, IndexError):
             result = None
         else:
@@ -168,8 +168,8 @@ class AEObjectUtil:
                 )
         if not person_filter_parts:
             return []
-        ldap_result = self._ls.l.search_s(
-            self._ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
+        ldap_result = self._app.ls.l.search_s(
+            self._app.ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
             ldap0.SCOPE_SUBTREE,
             '(&{0})'.format(''.join(person_filter_parts)),
             attrlist=person_attrs or ['1.1'],
@@ -215,7 +215,7 @@ class AEHomeDirectory(HomeDirectory):
             None,
             default=self.formValue()
         )
-        input_field.charset = self._form.accept_charset
+        input_field.charset = self._app.form.accept_charset
         return input_field
 
 syntax_registry.reg_at(
@@ -240,7 +240,7 @@ class AEUIDNumber(UidNumber):
             self.maxLen, self.maxValues, None,
             default=self.formValue()
         )
-        input_field.charset = self._form.accept_charset
+        input_field.charset = self._app.form.accept_charset
         return input_field
 
 syntax_registry.reg_at(
@@ -265,7 +265,7 @@ class AEGIDNumber(GidNumber):
         """
         determine which ID pool entry to use
         """
-        return self.id_pool_dn or self._ls.currentSearchRoot.encode(self._ls.charset)
+        return self.id_pool_dn or self._app.ls.currentSearchRoot.encode(self._app.ls.charset)
 
     def _get_next_gid(self):
         """
@@ -273,7 +273,7 @@ class AEGIDNumber(GidNumber):
         pre-read entry control
         """
         prc = PreReadControl(criticality=True, attrList=[self.attrType])
-        _, _, _, resp_ctrls = self._ls.l.modify_s(
+        _, _, _, resp_ctrls = self._app.ls.l.modify_s(
             self._get_id_pool_dn(),
             [(ldap0.MOD_INCREMENT, self.attrType, '1')],
             serverctrls=[prc],
@@ -286,7 +286,7 @@ class AEGIDNumber(GidNumber):
             return attrValues
         # first try to re-read gidNumber from existing entry
         try:
-            ldap_result = self._ls.readEntry(
+            ldap_result = self._app.ls.readEntry(
                 self._dn,
                 attrtype_list=[self.attrType],
                 search_filter='({0}=*)'.format(self.attrType),
@@ -347,8 +347,8 @@ class AEUserUid(AEUid):
         str.lower,
     )
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
-        IA5String.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=entry)
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+        IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry=entry)
 
     def _genUid(self):
         gen_collisions = 0
@@ -356,8 +356,8 @@ class AEUserUid(AEUid):
             # generate new random UID candidate
             uid_candidate = random_string(alphabet=self.UID_LETTERS, length=self.genLen)
             # check whether UID candidate already exists
-            uid_result = self._ls.l.search_s(
-                self._ls.currentSearchRoot.encode(self._ls.charset),
+            uid_result = self._app.ls.l.search_s(
+                self._app.ls.currentSearchRoot.encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
                 '(uid=%s)' % (escape_filter_chars(uid_candidate)),
                 attrlist=['1.1'],
@@ -533,8 +533,8 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
         # Use the existing LDAP connection as current user
         attr_value_dict = SelectList._get_attr_value_dict(self)
         try:
-            ldap_result = self._ls.l.search_s(
-                self._ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
+            ldap_result = self._app.ls.l.search_s(
+                self._app.ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
                 self.lu_obj.scope or ldap0.SCOPE_SUBTREE,
                 filterstr=self._determineFilter(),
                 attrlist=self.lu_obj.attrs+['description'],
@@ -560,9 +560,9 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
                        deref_entry[attr_type][0] not in attr_values:
                         valid = False
                 if valid:
-                    option_value = self._ls.uc_decode(dn)[0]
+                    option_value = self._app.ls.uc_decode(dn)[0]
                     try:
-                        option_text = self._ls.uc_decode(entry['displayName'][0])[0]
+                        option_text = self._app.ls.uc_decode(entry['displayName'][0])[0]
                     except KeyError:
                         option_text = option_value
                     try:
@@ -570,7 +570,7 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
                     except KeyError:
                         option_title = option_value
                     else:
-                        option_title = self._ls.uc_decode(entry_desc)[0]
+                        option_title = self._app.ls.uc_decode(entry_desc)[0]
                     attr_value_dict[option_value] = (option_text, option_title)
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -651,7 +651,7 @@ class AEMemberUid(MemberUID):
             ': '.join([self.attrType, self.desc]),
             self.maxLen, self.maxValues, None,
         )
-        input_field.charset = self._form.accept_charset
+        input_field.charset = self._app.form.accept_charset
         input_field.setDefault(self.formValue())
         return input_field
 
@@ -676,12 +676,12 @@ class AEGroupDN(DynamicDNSelectList):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         dn_comp_list = ldap0.dn.str2dn(self.attrValue)
-        group_cn = dn_comp_list[0][0][1].decode(self._ls.charset)
-        parent_dn = ldap0.dn.dn2str(dn_comp_list[1:]).decode(self._ls.charset)
+        group_cn = dn_comp_list[0][0][1].decode(self._app.ls.charset)
+        parent_dn = ldap0.dn.dn2str(dn_comp_list[1:]).decode(self._app.ls.charset)
         r = [
             'cn=<strong>{0}</strong>,{1}'.format(
-                self._form.utf2display(group_cn),
-                self._form.utf2display(parent_dn),
+                self._app.form.utf2display(group_cn),
+                self._app.form.utf2display(parent_dn),
             ).encode()
         ]
         if commandbutton:
@@ -848,11 +848,11 @@ class AESrvGroup(AESameZoneObject):
 
     def _determineFilter(self):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
-        dn_u = self._dn.decode(self._ls.charset)
+        dn_u = self._dn.decode(self._app.ls.charset)
         parent_dn = web2ldap.ldaputil.base.parent_dn(dn_u)
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
-            parent_dn.encode(self._ls.charset),
+            parent_dn.encode(self._app.ls.charset),
         )
 
 syntax_registry.reg_at(
@@ -871,7 +871,7 @@ class AEProxyFor(AESameZoneObject, AEObjectUtil):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
-            self._dn.encode(self._ls.charset),
+            self._dn.encode(self._app.ls.charset),
         )
 
 syntax_registry.reg_at(
@@ -923,12 +923,12 @@ class AEEntryDNAEUser(DistinguishedName):
     desc = 'AE-DIR: entryDN of aeUser entry'
 
     def _additional_links(self):
-        attr_value_u = self.attrValue.decode(self._ls.charset)
+        attr_value_u = self.attrValue.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
-        audit_context = self._ls.getAuditContext(self._ls.currentSearchRoot)
+        audit_context = self._app.ls.getAuditContext(self._app.ls.currentSearchRoot)
         if audit_context:
-            r.append(self._form.applAnchor(
-                'search', 'Activity', self._sid,
+            r.append(self._app.anchor(
+                'search', 'Activity',
                 (
                     ('dn', audit_context),
                     ('searchform_mode', u'adv'),
@@ -961,19 +961,19 @@ class AEEntryDNAEHost(DistinguishedName):
     )
 
     def _additional_links(self):
-        attr_value_u = self.attrValue.decode(self._ls.charset)
+        attr_value_u = self.attrValue.decode(self._app.ls.charset)
         parent_dn = web2ldap.ldaputil.base.parent_dn(attr_value_u)
         aesrvgroup_filter = u''.join([
-            u'(aeSrvGroup=%s)' % av.decode(self._ls.charset)
+            u'(aeSrvGroup=%s)' % av.decode(self._app.ls.charset)
             for av in self._entry.get('aeSrvGroup', [])
         ])
         r = DistinguishedName._additional_links(self)
         r.extend([
-            self._form.applAnchor(
-                'search', 'Siblings', self._sid,
+            self._app.anchor(
+                'search', 'Siblings',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._ls.currentSearchRoot),
+                    ('search_root', self._app.ls.currentSearchRoot),
                     ('searchform_mode', u'exp'),
                     (
                         'filterstr',
@@ -1009,12 +1009,12 @@ class AEEntryDNAEZone(DistinguishedName):
     desc = 'AE-DIR: entryDN of aeZone entry'
 
     def _additional_links(self):
-        attr_value_u = self.attrValue.decode(self._ls.charset)
+        attr_value_u = self.attrValue.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
-        audit_context = self._ls.getAuditContext(self._ls.currentSearchRoot)
+        audit_context = self._app.ls.getAuditContext(self._app.ls.currentSearchRoot)
         if audit_context:
-            r.append(self._form.applAnchor(
-                'search', 'Audit all', self._sid,
+            r.append(self._app.anchor(
+                'search', 'Audit all',
                 (
                     ('dn', audit_context),
                     ('searchform_mode', u'adv'),
@@ -1027,8 +1027,8 @@ class AEEntryDNAEZone(DistinguishedName):
                 ),
                 title=u'Search all audit log entries for sub-tree %s' % (attr_value_u),
             ))
-            r.append(self._form.applAnchor(
-                'search', 'Audit writes', self._sid,
+            r.append(self._app.anchor(
+                'search', 'Audit writes',
                 (
                     ('dn', audit_context),
                     ('searchform_mode', u'adv'),
@@ -1107,15 +1107,15 @@ class AEEntryDNAEGroup(GroupEntryDN):
             )
         self.ref_attrs = tuple(ref_attrs)
         r = DistinguishedName._additional_links(self)
-        r.append(self._form.applAnchor(
-            'search', 'SUDO rules', self._sid,
+        r.append(self._app.anchor(
+            'search', 'SUDO rules',
             (
                 ('dn', self._dn),
-                ('search_root', self._ls.currentSearchRoot),
+                ('search_root', self._app.ls.currentSearchRoot),
                 ('searchform_mode', u'adv'),
                 ('search_attr', u'sudoUser'),
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                ('search_string', u'%'+self._entry['cn'][0].decode(self._ls.charset)),
+                ('search_string', u'%'+self._entry['cn'][0].decode(self._app.ls.charset)),
             ),
             title=u'Search for SUDO rules\napplicable with this user group',
         ))
@@ -1139,14 +1139,14 @@ class AEEntryDNAESrvGroup(DistinguishedName):
     )
 
     def _additional_links(self):
-        attr_value_u = self.attrValue.decode(self._ls.charset)
+        attr_value_u = self.attrValue.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
         r.append(
-            self._form.applAnchor(
-                'search', 'All members', self._sid,
+            self._app.anchor(
+                'search', 'All members',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._ls.currentSearchRoot),
+                    ('search_root', self._app.ls.currentSearchRoot),
                     ('searchform_mode', u'exp'),
                     (
                         'filterstr',
@@ -1329,7 +1329,7 @@ class AEPerson2(AEPerson):
                 form_value = person_entry.get(
                     'displayName',
                     [form_value],
-                )[0].decode(self._form.accept_charset)
+                )[0].decode(self._app.form.accept_charset)
         return form_value
 
     def formField(self):
@@ -1343,8 +1343,8 @@ class AEPerson2(AEPerson):
             self.sanitize_filter_tmpl.format(av=escape_filter_chars(attrValues[0])),
         )
         try:
-            ldap_result = self._ls.l.search_s(
-                self._ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
+            ldap_result = self._app.ls.l.search_s(
+                self._app.ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
                 ldap0.SCOPE_SUBTREE,
                 sanitize_filter,
                 attrlist=self.lu_obj.attrs,
@@ -1393,8 +1393,8 @@ class AEDerefAttribute(DirectoryString):
 
     def _readPersonAttribute(self):
         try:
-            ldap_result = self._ls.readEntry(
-                self._entry[self.deref_attribute_type][0].decode(self._ls.charset),
+            ldap_result = self._app.ls.readEntry(
+                self._entry[self.deref_attribute_type][0].decode(self._app.ls.charset),
                 attrtype_list=[self.attrType],
                 search_filter=self.deref_filter_tmpl.format(
                     deref_object_class=self.deref_object_class,
@@ -1406,7 +1406,7 @@ class AEDerefAttribute(DirectoryString):
         else:
             if ldap_result:
                 _, person_entry = ldap_result[0]
-                result = person_entry[self.attrType][0].decode(self._ls.charset)
+                result = person_entry[self.attrType][0].decode(self._app.ls.charset)
             else:
                 result = None
         return result
@@ -1415,7 +1415,7 @@ class AEDerefAttribute(DirectoryString):
         if self.deref_attribute_type in self._entry:
             ae_person_attribute = self._readPersonAttribute()
             if ae_person_attribute is not None:
-                result = [ae_person_attribute.encode(self._ls.charset)]
+                result = [ae_person_attribute.encode(self._app.ls.charset)]
             else:
                 raise KeyError
         else:
@@ -1431,7 +1431,7 @@ class AEDerefAttribute(DirectoryString):
             ': '.join([self.attrType, self.desc]),
             self.maxLen, self.maxValues, None,
         )
-        input_field.charset = self._form.accept_charset
+        input_field.charset = self._app.form.accept_charset
         input_field.setDefault(self.formValue())
         return input_field
 
@@ -1487,7 +1487,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
             u'': u'-/-',
         }
         attr_value_dict.update([
-            (addr.decode(self._ls.charset), addr.decode(self._ls.charset))
+            (addr.decode(self._app.ls.charset), addr.decode(self._app.ls.charset))
             for addr in self._entry.get('mailLocalAddress', [])
         ])
         return attr_value_dict
@@ -1556,7 +1556,7 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
             '(aePerson=%s)'
             '(mailLocalAddress=*)'
           ')'
-        ) % self._ls.uc_encode(self._dn)[0]
+        ) % self._app.ls.uc_encode(self._dn)[0]
 
 syntax_registry.reg_at(
     AEPersonMailaddress.oid, [
@@ -1736,7 +1736,7 @@ class AEUniqueIdentifier(DirectoryString):
             self.maxLen, self.maxValues, None,
             default=self.formValue(),
         )
-        input_field.charset = self._form.accept_charset
+        input_field.charset = self._app.form.accept_charset
         return input_field
 
 syntax_registry.reg_at(
@@ -1856,7 +1856,7 @@ class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
             if not self.attrValue:
                 result = zone_cn+u'-'
             elif self.attrValue in self.special_names:
-                result = '-'.join((zone_cn, self.attrValue.decode(self._ls.charset)))
+                result = '-'.join((zone_cn, self.attrValue.decode(self._app.ls.charset)))
         return result # formValue()
 
 
@@ -1893,15 +1893,15 @@ class AECommonNameAETag(AEZonePrefixCommonName):
     def displayValue(self, valueindex=0, commandbutton=False):
         display_value = AEZonePrefixCommonName.displayValue(self, valueindex, commandbutton)
         if commandbutton:
-            search_anchor = self._form.applAnchor(
-                'searchform', '&raquo;', self._sid,
+            search_anchor = self._app.anchor(
+                'searchform', '&raquo;',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._ls.currentSearchRoot),
+                    ('search_root', self._app.ls.currentSearchRoot),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'aeTag'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', self._ls.uc_decode(self.attrValue)[0]),
+                    ('search_string', self._app.ls.uc_decode(self.attrValue)[0]),
                 ),
                 title=u'Search all entries tagged with this tag',
             )
@@ -2189,8 +2189,8 @@ class AERFC822MailMember(DynamicValueSelectList):
             '|',
             map_filter_parts('entryDN', self._entry['member']),
         )
-        ldap_result = self._ls.l.search_s(
-            self._ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
+        ldap_result = self._app.ls.l.search_s(
+            self._app.ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
             ldap0.SCOPE_SUBTREE,
             entrydn_filter,
             attrlist=['mail'],
@@ -2207,7 +2207,7 @@ class AERFC822MailMember(DynamicValueSelectList):
             ': '.join([self.attrType, self.desc]),
             self.maxLen, self.maxValues, None,
         )
-        input_field.charset = self._form.accept_charset
+        input_field.charset = self._app.form.accept_charset
         input_field.setDefault(self.formValue())
         return input_field
 
@@ -2254,7 +2254,7 @@ class AESudoHost(IA5String):
             self.maxLen, self.maxValues, None,
             default=self.formValue()
         )
-        input_field.charset = self._form.accept_charset
+        input_field.charset = self._app.form.accept_charset
         return input_field
 
 syntax_registry.reg_at(

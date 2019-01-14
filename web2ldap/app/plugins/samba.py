@@ -72,7 +72,7 @@ class SambaAcctFlags(IA5String):
             for f, d in self.flags_dict.items()
         ]
         return '<pre>%s</pre><table>\n%s\n</table>\n' % (
-            self._form.utf2display(self._ls.uc_decode(self.attrValue)[0]),
+            self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0]),
             ''.join(table_rows)
         )
 
@@ -98,8 +98,8 @@ class SambaSID(IA5String):
         else:
             domain_filter = '(objectClass=sambaDomain)'
         try:
-            ldap_result = self._ls.l.search_s(
-                self._ls.getSearchRoot(self._dn).encode(self._ls.charset),
+            ldap_result = self._app.ls.l.search_s(
+                self._app.ls.getSearchRoot(self._dn).encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
                 domain_filter,
                 attrlist=['sambaSID', 'sambaDomainName'],

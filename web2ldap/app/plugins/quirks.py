@@ -168,17 +168,17 @@ class NamingContexts(DistinguishedName):
     ldap_url = 'ldap:///cn=cn=config?olcSuffix?one?(objectClass=olcDatabaseConfig)'
 
     def _config_link(self):
-        attr_value_u = self._ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
         config_context = None
         config_scope_str = None
         config_filter = None
         # Check for OpenLDAP's config context attribute
         try:
-            config_context = self._ls.uc_decode(self._ls.rootDSE['configContext'][0])[0]
+            config_context = self._app.ls.uc_decode(self._app.ls.rootDSE['configContext'][0])[0]
         except KeyError:
             # Check for OpenDJ's config context attribute
             try:
-                _ = self._ls.rootDSE['ds-private-naming-contexts']
+                _ = self._app.ls.rootDSE['ds-private-naming-contexts']
             except KeyError:
                 pass
             else:
@@ -189,8 +189,8 @@ class NamingContexts(DistinguishedName):
             config_filter = u'(&(objectClass=olcDatabaseConfig)(olcSuffix=%s))' % (attr_value_u)
             config_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         if config_context and config_scope_str and config_filter:
-            return self._form.applAnchor(
-                'search', 'Config', self._sid,
+            return self._app.anchor(
+                'search', 'Config',
                 (
                     ('dn', config_context),
                     ('scope', config_scope_str),
@@ -201,17 +201,17 @@ class NamingContexts(DistinguishedName):
         return None
 
     def _monitor_link(self):
-        attr_value_u = self._ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
         monitor_context = None
         monitor_scope_str = None
         monitor_filter = None
         # Check for OpenLDAP's config context attribute
         try:
-            _ = self._ls.rootDSE['monitorContext']
+            _ = self._app.ls.rootDSE['monitorContext']
         except KeyError:
             # Check for OpenDJ's config context attribute
             try:
-                _ = self._ls.rootDSE['ds-private-naming-contexts']
+                _ = self._app.ls.rootDSE['ds-private-naming-contexts']
             except KeyError:
                 pass
             else:
@@ -223,8 +223,8 @@ class NamingContexts(DistinguishedName):
             monitor_filter = u'(&(objectClass=monitoredObject)(namingContexts=%s))' % (attr_value_u)
             monitor_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         if monitor_context and monitor_scope_str and monitor_filter:
-            return self._form.applAnchor(
-                'search', 'Monitor', self._sid,
+            return self._app.anchor(
+                'search', 'Monitor',
                 (
                     ('dn', monitor_context),
                     ('scope', monitor_scope_str),
@@ -235,18 +235,18 @@ class NamingContexts(DistinguishedName):
         return None
 
     def _additional_links(self):
-        attr_value_u = self._ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
         r = DistinguishedName._additional_links(self)
-        r.append(self._form.applAnchor(
-            'search', 'Down', self._sid,
+        r.append(self._app.anchor(
+            'search', 'Down',
             (
                 ('dn', attr_value_u),
                 ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
                 ('filterstr', u'(objectClass=*)'),
             )
         ))
-        r.append(self._form.applAnchor(
-            'dit', 'Tree', self._sid,
+        r.append(self._app.anchor(
+            'dit', 'Tree',
             (
                 ('dn', attr_value_u),
             )
@@ -273,7 +273,7 @@ class AltServer(LDAPUrl):
 
     def _command_ldap_url(self, ldap_url):
         ldap_url_obj = ldap0.ldapurl.LDAPUrl(ldapUrl=ldap_url)
-        ldap_url_obj.who = self._ls.who
+        ldap_url_obj.who = self._app.ls.who
         ldap_url_obj.scope = ldap0.ldapurl.LDAP_SCOPE_BASE
         ldap_url_obj.cred = None
         return ldap_url_obj

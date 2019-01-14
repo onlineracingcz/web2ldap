@@ -87,12 +87,12 @@ def GetVariantFilename(pathname, variantlist):
     return variant_filename
 
 
-def ReadTemplate(form, ls, config_key, form_desc=u'', tmpl_filename=None):
+def ReadTemplate(app, config_key, form_desc=u'', tmpl_filename=None):
     if not tmpl_filename:
-        tmpl_filename = web2ldap.app.cnf.GetParam(ls or '_', config_key, None)
+        tmpl_filename = web2ldap.app.cnf.GetParam(app.ls or '_', config_key, None)
     if not tmpl_filename:
         raise web2ldap.app.core.ErrorExit(u'No template specified for %s.' % (form_desc))
-    tmpl_filename = web2ldap.app.gui.GetVariantFilename(tmpl_filename, form.accept_language)
+    tmpl_filename = web2ldap.app.gui.GetVariantFilename(tmpl_filename, app.form.accept_language)
     try:
         # Read template from file
         tmpl_str = open(tmpl_filename, 'r').read()
@@ -101,16 +101,14 @@ def ReadTemplate(form, ls, config_key, form_desc=u'', tmpl_filename=None):
     return tmpl_str # ReadTemplate()
 
 
-def LDAPError2ErrMsg(e, form, charset='utf-8', template='{error_msg}<br>{matched_dn}'):
+def LDAPError2ErrMsg(e, app, template='{error_msg}<br>{matched_dn}'):
     """
     Converts a LDAPError exception into HTML error message
 
     e
       LDAPError instance
-    form
-      Web2LDAPForm instance
-    charset
-      Character set for decoding the LDAP error messages (diagnosticMessage)
+    app
+      AppHandler instance
     template
       Raw binary string to be used as template
       (must contain only a single placeholder)
@@ -125,42 +123,42 @@ def LDAPError2ErrMsg(e, form, charset='utf-8', template='{error_msg}<br>{matched
         ad_error_code_pos = e.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
         ad_error_code = int(e.args[0]['info'][ad_error_code_pos:ad_error_code_pos+3], 16)
         ErrMsg = u'%s:\n%s (%s)' % (
-            e.args[0]['desc'].decode(charset),
-            e.args[0].get('info', '').decode(charset),
+            e.args[0]['desc'].decode(app.ls.charset),
+            e.args[0].get('info', '').decode(app.ls.charset),
             AD_LDAP49_ERROR_CODES.get(ad_error_code, u'unknown'),
         )
 
     else:
         try:
             ErrMsg = u':\n'.join((
-                e.args[0]['desc'].decode(charset),
-                e.args[0].get('info', '').decode(charset),
+                e.args[0]['desc'].decode(app.ls.charset),
+                e.args[0].get('info', '').decode(app.ls.charset),
             ))
         except UnicodeDecodeError:
             ErrMsg = u':\n'.join((
-                e.args[0]['desc'].decode(charset),
-                repr(e.args[0].get('info', '')).decode(charset),
+                e.args[0]['desc'].decode(app.ls.charset),
+                repr(e.args[0].get('info', '')).decode(app.ls.charset),
             ))
         except TypeError:
             try:
                 ErrMsg = u':\n'.join((
-                    e[0].decode(charset),
-                    e[1].decode(charset),
+                    e[0].decode(app.ls.charset),
+                    e[1].decode(app.ls.charset),
                 ))
             except (TypeError, IndexError):
-                ErrMsg = str(e).decode(charset)
+                ErrMsg = str(e).decode(app.ls.charset)
         else:
             try:
-                matched_dn = e.args[0].get('matched', '').decode(charset)
+                matched_dn = e.args[0].get('matched', '').decode(app.ls.charset)
             except KeyError:
                 matched_dn = None
 
     ErrMsg = ErrMsg.replace(u'\r', '').replace(u'\t', '')
-    ErrMsg_html = form.utf2display(ErrMsg, lf_entity='<br>')
+    ErrMsg_html = app.form.utf2display(ErrMsg, lf_entity='<br>')
 
     # Add matchedDN to error message HTML if needed
     if matched_dn:
-        matched_dn_html = '<br>Matched DN: %s' % (form.utf2display(matched_dn))
+        matched_dn_html = '<br>Matched DN: %s' % (app.form.utf2display(matched_dn))
     else:
         matched_dn_html = ''
 
@@ -202,14 +200,14 @@ def repr2ts(time_divisors, ts_sep, value):
     return result
 
 
-def DisplayDN(sid, form, ls, dn, commandbutton=False):
+def DisplayDN(app, dn, commandbutton=False):
     """Display a DN as LDAP URL with or without button"""
     assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
-    dn_str = form.utf2display(dn or u'- World -')
+    dn_str = app.form.utf2display(dn or u'- World -')
     if commandbutton:
         command_buttons = [
             dn_str,
-            form.applAnchor('read', 'Read', sid, [('dn', dn)])
+            app.anchor('read', 'Read', [('dn', dn)])
         ]
         return web2ldapcnf.command_link_separator.join(command_buttons)
     return dn_str
@@ -238,125 +236,125 @@ def CommandTableString(
 
 
 def CommandTable(
-        outf,
+        app,
         commandlist,
         div_id='CommandDiv',
         separator=' ',
         semantic_tag='nav',
     ):
     if commandlist:
-        outf.write(
+        app.outf.write(
             CommandTableString(commandlist, div_id, separator, semantic_tag)
         )
     return # CommandTable()
 
 
-def EntryMainMenu(form, env):
-    main_menu = [form.applAnchor('', 'Connect', None, [])]
-    if web2ldap.app.handler.check_access(env, 'monitor'):
-        main_menu.append(form.applAnchor('monitor', 'Monitor', None, []))
-    if web2ldap.app.handler.check_access(env, 'locate'):
-        main_menu.append(form.applAnchor('locate', 'DNS lookup', None, []))
+def EntryMainMenu(app):
+    main_menu = [app.anchor('', 'Connect', [])]
+    if web2ldap.app.handler.check_access(app.env, 'monitor'):
+        main_menu.append(app.anchor('monitor', 'Monitor', []))
+    if web2ldap.app.handler.check_access(app.env, 'locate'):
+        main_menu.append(app.anchor('locate', 'DNS lookup', []))
     return main_menu
 
 
-def ContextMenuSingleEntry(sid, form, ls, dn, vcard_link=0, dds_link=0, entry_uuid=None):
+def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     """
     Output the context menu for a single entry
     """
-    dn_disp = dn or u'Root DSE'
+    dn_disp = app.dn or u'Root DSE'
     result = [
-        form.applAnchor(
-            'read', 'Raw', sid,
+        app.anchor(
+            'read', 'Raw',
             [
-                ('dn', dn),
+                ('dn', app.dn),
                 ('read_output', 'table'),
                 ('read_expandattr', '*')
             ],
             title=u'Display entry\r\n%s\r\nas raw attribute type/value list' % (dn_disp)
         ),
     ]
-    if dn:
-        parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
-        ldap_url_obj = ls.ldapUrl('', add_login=False)
+    if app.dn:
+        parent_dn = web2ldap.ldaputil.base.parent_dn(app.dn)
+        ldap_url_obj = app.ls.ldapUrl('', add_login=False)
         result.extend([
-            form.applAnchor(
-                'login', 'Bind as', None,
+            app.anchor(
+                'login', 'Bind as',
                 [
                     ('ldapurl', str(ldap_url_obj).decode('ascii')),
-                    ('dn', dn),
-                    ('login_who', dn),
+                    ('dn', app.dn),
+                    ('login_who', app.dn),
                 ],
-                title=u'Connect and bind new session as\r\n%s' % (dn)
+                title=u'Connect and bind new session as\r\n%s' % (app.dn)
             ),
-            form.applAnchor('modify', 'Modify', sid, [('dn', dn)], title=u'Modify entry\r\n%s' % (dn)),
-            form.applAnchor('rename', 'Rename', sid, [('dn', dn)], title=u'Rename/move entry\r\n%s' % (dn)),
-            form.applAnchor('delete', 'Delete', sid, [('dn', dn)], title=u'Delete entry and/or subtree\r\n%s' % (dn)),
-            form.applAnchor('passwd', 'Password', sid, [('dn', dn), ('passwd_who', dn)], title=u'Set password for entry\r\n%s' % (dn)),
-            form.applAnchor('groupadm', 'Groups', sid, [('dn', dn)], title=u'Change group membership of entry\r\n%s' % (dn)),
-            form.applAnchor(
-                'add', 'Clone', sid,
+            app.anchor('modify', 'Modify', [('dn', app.dn)], title=u'Modify entry\r\n%s' % (app.dn)),
+            app.anchor('rename', 'Rename', [('dn', app.dn)], title=u'Rename/move entry\r\n%s' % (app.dn)),
+            app.anchor('delete', 'Delete', [('dn', app.dn)], title=u'Delete entry and/or subtree\r\n%s' % (app.dn)),
+            app.anchor('passwd', 'Password', [('dn', app.dn), ('passwd_who', app.dn)], title=u'Set password for entry\r\n%s' % (app.dn)),
+            app.anchor('groupadm', 'Groups', [('dn', app.dn)], title=u'Change group membership of entry\r\n%s' % (app.dn)),
+            app.anchor(
+                'add', 'Clone',
                 [
                     ('dn', parent_dn),
-                    ('add_clonedn', dn),
+                    ('add_clonedn', app.dn),
                     ('in_ft', u'Template'),
                 ],
-                title=u'Clone entry\r\n%s\r\nbeneath %s' % (dn, parent_dn)
+                title=u'Clone entry\r\n%s\r\nbeneath %s' % (app.dn, parent_dn)
             ),
         ])
 
     if vcard_link:
         result.append(
-            form.applAnchor(
-                'read', 'vCard', sid,
-                [('dn', dn), ('read_output', 'vcard')],
+            app.anchor(
+                'read', 'vCard',
+                [('dn', app.dn), ('read_output', 'vcard')],
                 title=u'Export entry\r\n%s\r\nas vCard' % (dn_disp)
             )
         )
 
     if dds_link:
         result.append(
-            form.applAnchor(
-                'dds', 'Refresh', sid,
-                [('dn', dn)],
+            app.anchor(
+                'dds', 'Refresh',
+                [('dn', app.dn)],
                 title=u'Refresh dynamic entry %s' % (dn_disp)
             )
         )
 
-    current_audit_context = ls.getAuditContext(ls.currentSearchRoot)
+    current_audit_context = app.ls.getAuditContext(app.ls.currentSearchRoot)
     if not current_audit_context is None:
-        accesslog_any_filterstr = logdb_filter(u'auditObject', dn, entry_uuid)
-        accesslog_write_filterstr = logdb_filter(u'auditWriteObject', dn, entry_uuid)
+        accesslog_any_filterstr = logdb_filter(u'auditObject', app.dn, entry_uuid)
+        accesslog_write_filterstr = logdb_filter(u'auditWriteObject', app.dn, entry_uuid)
         result.extend([
-            form.applAnchor(
-                'search', 'Audit access', sid,
+            app.anchor(
+                'search', 'Audit access',
                 [
                     ('dn', current_audit_context),
                     ('filterstr', accesslog_any_filterstr),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
-                title=u'Complete audit trail for entry\r\n%s' % (dn),
+                title=u'Complete audit trail for entry\r\n%s' % (app.dn),
             ),
-            form.applAnchor(
-                'search', 'Audit writes', sid,
+            app.anchor(
+                'search', 'Audit writes',
                 [
                     ('dn', current_audit_context),
                     ('filterstr', accesslog_write_filterstr),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
-                title=u'Audit trail of write access to entry\r\n%s' % (dn),
+                title=u'Audit trail of write access to entry\r\n%s' % (app.dn),
             ),
         ])
 
     try:
-        changelog_dn = ls.rootDSE['changelog'][0].decode(ls.charset)
+        changelog_dn = app.ls.rootDSE['changelog'][0].decode(app.ls.charset)
     except KeyError:
         pass
     else:
-        changelog_filterstr = logdb_filter(u'changeLogEntry', dn, entry_uuid)
+        changelog_filterstr = logdb_filter(u'changeLogEntry', app.dn, entry_uuid)
         result.append(
-            form.applAnchor(
-                'search', 'Change log', sid,
+            app.anchor(
+                'search', 'Change log',
                 [
                     ('dn', changelog_dn),
                     ('filterstr', changelog_filterstr),
@@ -367,15 +365,20 @@ def ContextMenuSingleEntry(sid, form, ls, dn, vcard_link=0, dds_link=0, entry_uu
         )
 
     try:
-        monitor_context_dn = ls.rootDSE['monitorContext'][0]
+        monitor_context_dn = app.ls.rootDSE['monitorContext'][0]
     except KeyError:
         pass
     else:
-        result.append(form.applAnchor(
-            'search', 'User conns', sid,
+        result.append(app.anchor(
+            'search', 'User conns',
             [
                 ('dn', monitor_context_dn),
-                ('filterstr', '(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (escape_filter_chars(dn))),
+                (
+                    'filterstr',
+                    '(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (
+                        escape_filter_chars(app.dn),
+                    ),
+                ),
                 ('scope', str(ldap0.SCOPE_SUBTREE)),
             ],
             title=u'Find connections of this user in monitor database',
@@ -384,26 +387,26 @@ def ContextMenuSingleEntry(sid, form, ls, dn, vcard_link=0, dds_link=0, entry_uu
     return result # ContextMenuSingleEntry()
 
 
-def WhoAmITemplate(sid, form, ls, dn, who=None, entry=None):
+def WhoAmITemplate(app, who=None, entry=None):
     if who is None:
-        if hasattr(ls, 'who') and ls.who:
-            who = ls.who
-            entry = ls.userEntry
+        if hasattr(app.ls, 'who') and app.ls.who:
+            who = app.ls.who
+            entry = app.ls.userEntry
         else:
             return 'anonymous'
     if web2ldap.ldaputil.base.is_dn(who):
         # Fall-back is to display the DN
-        result = DisplayDN(sid, form, ls, who, commandbutton=False)
+        result = DisplayDN(app, who, commandbutton=False)
         # Determine relevant templates dict
-        sub_schema = ls.retrieveSubSchema(
-            dn,
-            web2ldap.app.cnf.GetParam(ls, '_schema', None),
-            web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-            web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+        sub_schema = app.ls.retrieveSubSchema(
+            app.dn,
+            web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+            web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+            web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
         )
         bound_as_templates = ldap0.cidict.cidict(
             web2ldap.app.cnf.GetParam(
-                ls.ldapUrl(ls.getSearchRoot(who)),
+                app.ls.ldapUrl(app.ls.getSearchRoot(who)),
                 'boundas_template',
                 {}
             )
@@ -414,7 +417,7 @@ def WhoAmITemplate(sid, form, ls, dn, who=None, entry=None):
             for oc in bound_as_templates.keys():
                 read_attrs.update(GrabKeys(bound_as_templates[oc]).keys)
             try:
-                ldap_result = ls.readEntry(who, attrtype_list=list(read_attrs))
+                ldap_result = app.ls.readEntry(who, attrtype_list=list(read_attrs))
             except ldap0.LDAPError:
                 entry = {}
             else:
@@ -423,7 +426,7 @@ def WhoAmITemplate(sid, form, ls, dn, who=None, entry=None):
                 else:
                     entry = {}
         if entry:
-            display_entry = web2ldap.app.read.DisplayEntry(sid, form, ls, dn, sub_schema, entry, 'readSep', True)
+            display_entry = web2ldap.app.read.DisplayEntry(app, app.dn, sub_schema, entry, 'readSep', True)
             user_structural_oc = display_entry.entry.get_structural_oc()
             for oc in bound_as_templates.keys():
                 if sub_schema.getoid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:
@@ -432,24 +435,24 @@ def WhoAmITemplate(sid, form, ls, dn, who=None, entry=None):
                     except KeyError:
                         pass
     else:
-        result = form.utf2display(who)
+        result = app.form.utf2display(who)
     return result # WhoAmITemplate()
 
 
 
-def MainMenu(sid, form, ls, dn):
+def MainMenu(app):
     """
     Returns list of main menu items
     """
     cl = []
 
-    if ls is not None and ls.uri is not None:
+    if app.ls is not None and app.ls.uri is not None:
 
-        if dn:
-            parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
+        if app.dn:
+            parent_dn = web2ldap.ldaputil.base.parent_dn(app.dn)
             cl.append(
-                form.applAnchor(
-                    'search', 'Up', sid,
+                app.anchor(
+                    'search', 'Up',
                     (
                         ('dn', parent_dn),
                         ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
@@ -463,78 +466,77 @@ def MainMenu(sid, form, ls, dn):
             )
 
         cl.extend((
-            form.applAnchor(
-                'search', 'Down', sid,
+            app.anchor(
+                'search', 'Down',
                 (
-                    ('dn', dn),
+                    ('dn', app.dn),
                     ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'objectClass'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
                     ('search_string', ''),
                 ),
-                title=u'List direct subordinates of %s' % (dn or u'Root DSE'),
+                title=u'List direct subordinates of %s' % (app.dn or u'Root DSE'),
             ),
-            form.applAnchor(
-                'searchform', 'Search', sid,
-                (('dn', dn),),
+            app.anchor(
+                'searchform', 'Search',
+                (('dn', app.dn),),
                 title=u'Enter search criteria in input form',
             ),
         ))
 
         cl.append(
-            form.applAnchor(
-                'dit', 'Tree', sid,
-                [('dn', dn)],
-                title=u'Display tree around %s' % (dn or u'Root DSE'),
-                anchor_id=dn_anchor_hash(dn)
+            app.anchor(
+                'dit', 'Tree',
+                [('dn', app.dn)],
+                title=u'Display tree around %s' % (app.dn or u'Root DSE'),
+                anchor_id=dn_anchor_hash(app.dn)
             ),
         )
 
         cl.append(
-            form.applAnchor(
-                'read', 'Read', sid,
-                [('dn', dn), ('read_nocache', u'1')],
-                title=u'Display entry %s' % (dn or u'Root DSE'),
+            app.anchor(
+                'read', 'Read',
+                [('dn', app.dn), ('read_nocache', u'1')],
+                title=u'Display entry %s' % (app.dn or u'Root DSE'),
             ),
         )
 
         cl.extend((
-            form.applAnchor(
-                'add', 'New entry', sid,
-                [('dn', dn)],
-                title=u'Add a new entry below of %s' % (dn or u'Root DSE')
+            app.anchor(
+                'add', 'New entry',
+                [('dn', app.dn)],
+                title=u'Add a new entry below of %s' % (app.dn or u'Root DSE')
             ),
-            form.applAnchor('conninfo', 'ConnInfo', sid, [('dn', dn)], title=u'Show information about HTTP and LDAP connections'),
-            form.applAnchor('ldapparams', 'Params', sid, [('dn', dn)], title=u'Tweak parameters used for LDAP operations (controls etc.)'),
-            form.applAnchor('login', 'Bind', sid, [('dn', dn)], title=u'Login to directory'),
-            form.applAnchor('oid', 'Schema', sid, [('dn', dn)], title=u'Browse/view subschema'),
+            app.anchor('conninfo', 'ConnInfo', [('dn', app.dn)], title=u'Show information about HTTP and LDAP connections'),
+            app.anchor('ldapparams', 'Params', [('dn', app.dn)], title=u'Tweak parameters used for LDAP operations (controls etc.)'),
+            app.anchor('login', 'Bind', [('dn', app.dn)], title=u'Login to directory'),
+            app.anchor('oid', 'Schema', [('dn', app.dn)], title=u'Browse/view subschema'),
         ))
 
-        cl.append(form.applAnchor('disconnect', 'Disconnect', sid, [], title=u'Disconnect from LDAP server'))
+        cl.append(app.anchor('disconnect', 'Disconnect', [], title=u'Disconnect from LDAP server'))
 
     else:
 
-        cl.append(form.applAnchor('', 'Connect', None, [], title=u'New connection to LDAP server'))
+        cl.append(app.anchor('', 'Connect', None, [], title=u'New connection to LDAP server'))
 
     return cl # MainMenu()
 
 
-def DITNavigationList(sid, outf, form, ls, dn):
-    dn_list = explode_dn(dn)
+def DITNavigationList(app):
+    dn_list = explode_dn(app.dn)
     result = [
-        form.applAnchor(
+        app.anchor(
             'read',
-            form.utf2display(dn_list[i] or '[Root DSE]'),
-            sid,
+            app.form.utf2display(dn_list[i] or '[Root DSE]'),
             [('dn', ','.join(dn_list[i:]))],
             title=u'Jump to %s' % (u','.join(dn_list[i:])),
         )
         for i in range(len(dn_list))
     ]
     result.append(
-        form.applAnchor(
-            'read', '[Root DSE]', sid,
+        app.anchor(
+            'read', '[Root DSE]',
             [('dn', '')],
             title=u'Jump to root DSE',
         )
@@ -543,7 +545,7 @@ def DITNavigationList(sid, outf, form, ls, dn):
 
 
 def TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         title,
         main_menu_list,
         context_menu_list=[],
@@ -551,22 +553,22 @@ def TopSection(
     ):
 
     # First send the HTTP header
-    Header(outf, form, 'text/html', form.accept_charset)
+    Header(app, 'text/html', app.form.accept_charset)
 
     # Read the template file for TopSection
-    top_template_str = web2ldap.app.gui.ReadTemplate(form, ls, 'top_template', u'top section')
+    top_template_str = web2ldap.app.gui.ReadTemplate(app, 'top_template', u'top section')
 
-    script_name = escape_html(form.script_name)
+    script_name = escape_html(app.form.script_name)
 
     template_dict = {
         'main_div_id': main_div_id,
-        'accept_charset': form.accept_charset,
+        'accept_charset': app.form.accept_charset,
         'refresh_time': str(web2ldapcnf.session_remove+10),
-        'sid': sid or '',
+        'sid': app.sid or '',
         'title_text': title,
         'script_name': script_name,
         'web2ldap_version': escape_html(web2ldap.__about__.__version__),
-        'command': command,
+        'command': app.command,
         'ldap_url': '',
         'ldap_uri': '-/-',
         'description': '',
@@ -576,30 +578,30 @@ def TopSection(
         'main_menu': CommandTableString(main_menu_list, div_id='MainMenu', separator='\n', semantic_tag=None),
         'context_menu': CommandTableString(context_menu_list, div_id='ContextMenu', separator='\n', semantic_tag=None),
     }
-    template_dict.update([(k, escape_html(str(v))) for k, v in form.env.items()])
+    template_dict.update([(k, escape_html(str(v))) for k, v in app.env.items()])
 
-    if ls is not None and ls.uri is not None:
+    if app.ls is not None and app.ls.uri is not None:
 
-        if not dn or not web2ldap.ldaputil.base.is_dn(dn):
+        if not app.dn or not web2ldap.ldaputil.base.is_dn(app.dn):
             dn = u''
 
         # Only output something meaningful if valid connection
         template_dict.update({
-            'ldap_url': str(ls.ldapUrl(dn)),
-            'ldap_uri': form.utf2display(ls.uri.decode('ascii')),
-            'description': escape_html(web2ldap.app.cnf.GetParam(ls, 'description', u'').encode(form.accept_charset)),
-            'dit_navi': ',\n'.join(DITNavigationList(sid, outf, form, ls, dn)),
-            'dn': form.utf2display(dn),
+            'ldap_url': str(app.ls.ldapUrl(app.dn)),
+            'ldap_uri': app.form.utf2display(app.ls.uri.decode('ascii')),
+            'description': escape_html(web2ldap.app.cnf.GetParam(app.ls, 'description', u'').encode(app.form.accept_charset)),
+            'dit_navi': ',\n'.join(DITNavigationList(app)),
+            'dn': app.form.utf2display(app.dn),
         })
-        template_dict['who'] = WhoAmITemplate(sid, form, ls, dn)
+        template_dict['who'] = WhoAmITemplate(app)
 
-    outf.write(top_template_str.format(**template_dict))
+    app.outf.write(top_template_str.format(**template_dict))
 
     return # TopSection()
 
 
 def SimpleMessage(
-        sid, outf, command, form, ls, dn,
+        app,
         title=u'',
         message=u'',
         main_div_id='Message',
@@ -607,21 +609,19 @@ def SimpleMessage(
         context_menu_list=[],
     ):
     TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         title,
         main_menu_list,
         context_menu_list=context_menu_list,
         main_div_id=main_div_id,
     )
-    outf.write(message)
-    web2ldap.app.gui.Footer(outf, form)
+    app.outf.write(message)
+    web2ldap.app.gui.Footer(app)
     return # SimpleMessage()
 
 
 def SchemaElementName(
-        sid,
-        form,
-        dn,
+        app,
         schema,
         se_nameoroid,
         se_class,
@@ -636,10 +636,10 @@ def SchemaElementName(
         se = schema.get_obj(se_class, se_nameoroid, None)
         if not se is None:
             result.append(
-                form.applAnchor(
-                    'oid', '&raquo;', sid,
+                app.anchor(
+                    'oid', '&raquo;',
                     [
-                        ('dn', dn),
+                        ('dn', app.dn),
                         ('oid', se.oid),
                         ('oid_class', ldap0.schema.SCHEMA_ATTR_MAPPING[se_class]),
                     ]
@@ -648,7 +648,7 @@ def SchemaElementName(
     return '\n'.join(result)
 
 
-def LDAPURLButton(sid, form, ls, data):
+def LDAPURLButton(app, data):
     if isinstance(data, LDAPUrl):
         l = data
     else:
@@ -656,27 +656,25 @@ def LDAPURLButton(sid, form, ls, data):
     command_func = {True:'read', False:'search'}[l.scope == ldap0.SCOPE_BASE]
     if l.hostport:
         command_text = 'Connect'
-        return form.applAnchor(
+        return app.anchor(
             command_func,
             'Connect and %s' % (command_func),
             None,
             (('ldapurl', str(l).decode('ascii')),)
         )
     command_text = {True:'Read', False:'Search'}[l.scope == ldap0.SCOPE_BASE]
-    return form.applAnchor(
-        command_func, command_text, sid,
+    return app.anchor(
+        command_func, command_text,
         [
-            ('dn', l.dn.decode(form.accept_charset)),
-            ('filterstr', (l.filterstr or '(objectClass=*)').decode(form.accept_charset)),
+            ('dn', l.dn.decode(app.form.accept_charset)),
+            ('filterstr', (l.filterstr or '(objectClass=*)').decode(app.form.accept_charset)),
             ('scope', unicode(l.scope or ldap0.SCOPE_SUBTREE)),
         ],
     )
 
 
 def DataStr(
-        sid,
-        form,
-        ls,
+        app,
         dn,
         schema,
         attrtype_name,
@@ -689,21 +687,20 @@ def DataStr(
     Return a pretty HTML-formatted string of the attribute value
     """
     attr_instance = web2ldap.app.schema.syntaxes.syntax_registry.get_at(
-        sid, form, ls, dn, schema, attrtype_name, value, entry,
+        app, dn, schema, attrtype_name, value, entry,
     )
     try:
         result = attr_instance.displayValue(valueindex, commandbutton)
     except UnicodeError:
         attr_instance = web2ldap.app.schema.syntaxes.OctetString(
-            sid, form, ls, dn, schema, attrtype_name, value, entry,
+            app, dn, schema, attrtype_name, value, entry,
         )
         result = attr_instance.displayValue(valueindex, commandbutton)
     return result
 
 
 def AttributeTypeSelectField(
-        form,
-        ls,
+        app,
         sub_schema,
         field_name,
         field_desc,
@@ -718,12 +715,12 @@ def AttributeTypeSelectField(
         attr_type_se = sub_schema.get_obj(ldap0.schema.models.AttributeType, attr_type)
         if attr_type_se:
             if attr_type_se.names:
-                attr_type_name = attr_type_se.names[0].decode(ls.charset)
+                attr_type_name = attr_type_se.names[0].decode(app.ls.charset)
             else:
                 attr_type_name = attr_type.decode('ascii')
             if attr_type_se.desc:
                 try:
-                    attr_type_desc = attr_type_se.desc.decode(ls.charset)
+                    attr_type_desc = attr_type_se.desc.decode(app.ls.charset)
                 except UnicodeDecodeError:
                     attr_type_desc = repr(attr_type_se.desc).decode('ascii')
             else:
@@ -741,7 +738,7 @@ def AttributeTypeSelectField(
         field_name, field_desc, 1,
         options=sorted_attr_options,
     )
-    attr_select.setCharset(form.accept_charset)
+    attr_select.setCharset(app.form.accept_charset)
     return attr_select
 
 
@@ -763,30 +760,28 @@ def gen_headers(content_type, charset, more_headers=None):
     return headers # Header()
 
 
-def Header(outf, form, content_type, charset, more_headers=None):
+def Header(app, content_type, charset, more_headers=None):
     headers = gen_headers(
         content_type=content_type,
         charset=charset,
         more_headers=more_headers,
     )
-    if form.next_cookie:
-        for _, cookie in form.next_cookie.items():
+    if app.form.next_cookie:
+        for _, cookie in app.form.next_cookie.items():
             headers.append(('Set-Cookie', str(cookie)[12:]))
-    if form.env.get('HTTPS', 'off') == 'on' and \
+    if app.form.env.get('HTTPS', 'off') == 'on' and \
        'Strict-Transport-Security' not in web2ldapcnf.http_headers:
         headers.append(('Strict-Transport-Security', 'max-age=15768000 ; includeSubDomains'))
-    outf.set_headers(headers)
+    app.outf.set_headers(headers)
     return headers # Header()
 
 
-def Footer(f, _):
-    f.write(HTML_FOOTER)
+def Footer(app):
+    app.outf.write(HTML_FOOTER)
 
 
 def SearchRootField(
-        form,
-        ls,
-        dn,
+        app,
         name='dn',
         text=u'Search Root',
         default=None,
@@ -806,21 +801,24 @@ def SearchRootField(
             return ','.join(dn_list)
         return ''
 
-    if dn:
-        dn_select_list = [dn] + web2ldap.ldaputil.base.parent_dn_list(dn, ls.getSearchRoot(dn, naming_contexts=naming_contexts))
+    if app.dn:
+        dn_select_list = [app.dn] + web2ldap.ldaputil.base.parent_dn_list(
+            app.dn,
+            app.ls.getSearchRoot(app.dn, naming_contexts=naming_contexts),
+        )
     else:
         dn_select_list = []
-    dn_select_list = web2ldap.msbase.union(ls.namingContexts, dn_select_list)
+    dn_select_list = web2ldap.msbase.union(app.ls.namingContexts, dn_select_list)
     if search_root_searchurl:
-        slu = ldap0.ldapurl.LDAPUrl(search_root_searchurl.encode(ls.charset))
+        slu = ldap0.ldapurl.LDAPUrl(search_root_searchurl.encode(app.ls.charset))
         try:
-            ldap_result = ls.l.search_s(slu.dn, slu.scope, slu.filterstr, attrlist=['1.1'])
+            ldap_result = app.ls.l.search_s(slu.dn, slu.scope, slu.filterstr, attrlist=['1.1'])
         except ldap0.LDAPError:
             pass
         else:
             dn_select_list = web2ldap.msbase.union(
                 [
-                    ls.uc_decode(ldap_dn)[0]
+                    app.ls.uc_decode(ldap_dn)[0]
                     for ldap_dn, _ in ldap_result
                     if ldap_dn is not None
                 ],
@@ -832,15 +830,15 @@ def SearchRootField(
     srf = web2ldap.web.forms.Select(
         name, text, 1,
         #size=60,
-        default=default or ls.getSearchRoot(dn),
+        default=default or app.ls.getSearchRoot(app.dn),
         options=dn_select_list,
         ignoreCase=1
     )
-    srf.setCharset(form.accept_charset)
+    srf.setCharset(app.form.accept_charset)
     return srf # SearchRootField()
 
 
-def ExceptionMsg(sid, outf, command, form, ls, dn, Heading, Msg):
+def ExceptionMsg(app, Heading, Msg):
     """
     Heading
       Unicode string with text for the <h1> heading
@@ -848,29 +846,19 @@ def ExceptionMsg(sid, outf, command, form, ls, dn, Heading, Msg):
       Raw string with HTML with text describing the exception
       (Security note: Must already be quoted/escaped!)
     """
-    TopSection(
-        sid,
-        outf,
-        command,
-        form,
-        ls,
-        dn,
-        'Error',
-        MainMenu(sid, form, ls, dn),
-        context_menu_list=[],
-    )
+    TopSection(app, 'Error', MainMenu(app), context_menu_list=[])
     if isinstance(Msg, unicode):
-        Msg = Msg.encode(form.accept_charset)
-    outf.write(
+        Msg = Msg.encode(app.form.accept_charset)
+    app.outf.write(
         """
         <h1>{heading}</h1>
         <p class="ErrorMessage">
           {error_msg}
         </p>
         """.format(
-            heading=form.utf2display(Heading),
+            heading=app.form.utf2display(Heading),
             error_msg=Msg,
         )
     )
-    Footer(outf, form)
+    Footer(app)
     return # ExceptionMsg()

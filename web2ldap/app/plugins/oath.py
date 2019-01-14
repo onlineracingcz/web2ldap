@@ -144,9 +144,9 @@ class OathInitPwAlphabet(DirectoryString):
 
     def sanitizeInput(self, attrValue):
         return ''.join([
-            self._ls.uc_encode(c)[0]
+            self._app.ls.uc_encode(c)[0]
             for c in sorted(set(
-                self._ls.uc_decode(attrValue or '')[0].replace(u' ', '')
+                self._app.ls.uc_decode(attrValue or '')[0].replace(u' ', '')
             ))
         ])
 
@@ -172,7 +172,7 @@ class OathSecret(OctetString):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         return '<br>'.join((
-            self._form.utf2display(base64.b32encode(self.attrValue).decode('ascii')),
+            self._app.form.utf2display(base64.b32encode(self.attrValue).decode('ascii')),
             OctetString.displayValue(self, valueindex, commandbutton),
         ))
 
@@ -202,11 +202,11 @@ class OathSecretTime(GeneralizedTime):
         except ValueError:
             return gt_disp_html
         try:
-            oath_params_dn = self._entry[oath_params_dn_attr][0].decode(self._ls.charset)
+            oath_params_dn = self._entry[oath_params_dn_attr][0].decode(self._app.ls.charset)
         except KeyError:
             return gt_disp_html
         try:
-            _, oath_params_entry = self._ls.readEntry(
+            _, oath_params_entry = self._app.ls.readEntry(
                 oath_params_dn, attrtype_list=['oathSecretMaxAge']
             )[0]
         except (LDAPError, TypeError, IndexError):
@@ -231,7 +231,7 @@ class OathSecretTime(GeneralizedTime):
                         1: 'will expire',
                     }[expire_cmp],
                     expire_dt.strftime('%c'),
-                    self._form.utf2display(
+                    self._app.form.utf2display(
                         web2ldap.app.gui.ts2repr(
                             self.time_divisors,
                             u' ',

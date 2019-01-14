@@ -49,16 +49,16 @@ class AssociatedDomain(DNSDomain):
         """
         result = None
         if self._dn:
-            dn_u = self._ls.uc_decode(self._dn)[0]
-            ldap_result = self._ls.l.search_s(
-                self._ls.getSearchRoot(dn_u).encode(self._ls.charset),
+            dn_u = self._app.ls.uc_decode(self._dn)[0]
+            ldap_result = self._app.ls.l.search_s(
+                self._app.ls.getSearchRoot(dn_u).encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
                 '(&(objectClass=dNSDomain)(|(sOARecord=*)(nSRecord=*))(associatedDomain=*))',
                 attrlist=['associatedDomain'],
             )
             if ldap_result:
                 d = dict([
-                    (self._ls.uc_decode(dn)[0], self._ls.uc_decode(entry['associatedDomain'][0])[0])
+                    (self._app.ls.uc_decode(dn)[0], self._app.ls.uc_decode(entry['associatedDomain'][0])[0])
                     for dn, entry in ldap_result
                     if dn
                 ])
@@ -72,7 +72,7 @@ class AssociatedDomain(DNSDomain):
     def sanitizeInput(self, attrValue):
         attrValue = DNSDomain.sanitizeInput(self, attrValue)
         if not attrValue:
-            parent_domain = (self._parent_domain() or u'').encode(self._ls.charset)
+            parent_domain = (self._parent_domain() or u'').encode(self._app.ls.charset)
             try:
                 dc_value = self._entry['dc'][0]
             except (KeyError, IndexError):
@@ -86,7 +86,7 @@ class AssociatedDomain(DNSDomain):
         parent_domain = self._parent_domain() or u''
         if not form_value:
             try:
-                dc_value = self._entry['dc'][0].decode(self._ls.charset)
+                dc_value = self._entry['dc'][0].decode(self._app.ls.charset)
             except (KeyError, IndexError):
                 pass
             else:
@@ -96,11 +96,11 @@ class AssociatedDomain(DNSDomain):
     def displayValue(self, valueindex=0, commandbutton=False):
         r = [DNSDomain.displayValue(self, valueindex, commandbutton)]
         if commandbutton:
-            av = self._ls.uc_decode(self.attrValue)[0].lower()
-            r.append(self._form.applAnchor(
-                'search', 'Ref. RRs', self._sid,
+            av = self._app.ls.uc_decode(self.attrValue)[0].lower()
+            r.append(self._app.anchor(
+                'search', 'Ref. RRs',
                 (
-                    ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                    ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                     ('searchform_mode', u'adv'),
                     ('search_mode', u'(|%s)'),
                     ('search_attr', u'cNAMERecord'),
@@ -117,10 +117,10 @@ class AssociatedDomain(DNSDomain):
             ))
             parent_domain = u'.'.join(av.strip().split(u'.')[1:])
             if parent_domain and 'sOARecord' not in self._entry:
-                r.append(self._form.applAnchor(
-                    'search', 'SOA RR', self._sid,
+                r.append(self._app.anchor(
+                    'search', 'SOA RR',
                     (
-                        ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                        ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'sOARecord'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
@@ -139,10 +139,10 @@ class AssociatedDomain(DNSDomain):
                 except ValueError:
                     pass
                 else:
-                    r.append(self._form.applAnchor(
-                        'search', 'A RRs', self._sid,
+                    r.append(self._app.anchor(
+                        'search', 'A RRs',
                         (
-                            ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                            ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                             ('searchform_mode', u'adv'),
                             ('search_attr', u'aRecord'),
                             ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -151,10 +151,10 @@ class AssociatedDomain(DNSDomain):
                         title=u'Search referencing DNS A RR entries',
                     ))
                     if self._schema.sed[ldap0.schema.models.AttributeType].has_key('1.3.6.1.1.1.1.19'):
-                        r.append(self._form.applAnchor(
-                            'search', 'IP host(s)', self._sid,
+                        r.append(self._app.anchor(
+                            'search', 'IP host(s)',
                             (
-                                ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                                ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                                 ('searchform_mode', u'adv'),
                                 ('search_attr', u'ipHostNumber'),
                                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -163,10 +163,10 @@ class AssociatedDomain(DNSDomain):
                             title=u'Search IP host(s) for this A address',
                         ))
                     if self._schema.sed[ldap0.schema.models.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
-                        r.append(self._form.applAnchor(
-                            'search', 'DHCP host(s)', self._sid,
+                        r.append(self._app.anchor(
+                            'search', 'DHCP host(s)',
                             (
-                                ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                                ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                                 ('searchform_mode', u'adv'),
                                 ('search_attr', u'dhcpStatements'),
                                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -192,8 +192,8 @@ class ResourceRecord(DNSDomain, DynamicValueSelectList):
     desc = 'A resource record pointing to another DNS RR'
     ldap_url = 'ldap:///_?associatedDomain,associatedDomain?sub?(objectClass=domainRelatedObject)'
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
-        DynamicValueSelectList.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+        DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
     def displayValue(self, valueindex=0, commandbutton=False):
         return DynamicValueSelectList.displayValue(self, valueindex, commandbutton)
@@ -250,38 +250,38 @@ class ARecord(IPv4HostAddress):
             except AttributeError:
                 pass
             else:
-                r.append(self._form.applAnchor(
-                    'search', 'PTR RR', self._sid,
+                r.append(self._app.anchor(
+                    'search', 'PTR RR',
                     (
-                        ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                        ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', self._ls.uc_decode(ip_addr.reverse_dns)[0][:-1]),
+                        ('search_string', self._app.ls.uc_decode(ip_addr.reverse_dns)[0][:-1]),
                     ),
                     title=u'Search PTR RR for this A address',
                 ))
                 if self._schema.sed[ldap0.schema.models.AttributeType].has_key('1.3.6.1.1.1.1.19'):
-                    r.append(self._form.applAnchor(
-                        'search', 'IP host(s)', self._sid,
+                    r.append(self._app.anchor(
+                        'search', 'IP host(s)',
                         (
-                            ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                            ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                             ('searchform_mode', u'adv'),
                             ('search_attr', u'ipHostNumber'),
                             ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                            ('search_string', self._ls.uc_decode(str(ip_addr))[0]),
+                            ('search_string', self._app.ls.uc_decode(str(ip_addr))[0]),
                         ),
                         title=u'Search IP host(s) for this A address',
                     ))
                 if self._schema.sed[ldap0.schema.models.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
-                    r.append(self._form.applAnchor(
-                        'search', 'DHCP host(s)', self._sid,
+                    r.append(self._app.anchor(
+                        'search', 'DHCP host(s)',
                         (
-                            ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                            ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                             ('searchform_mode', u'adv'),
                             ('search_attr', u'dhcpStatements'),
                             ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                            ('search_string', u'fixed-address %s' % self._ls.uc_decode(str(ip_addr))[0]),
+                            ('search_string', u'fixed-address %s' % self._app.ls.uc_decode(str(ip_addr))[0]),
                         ),
                         title=u'Search DHCP host(s) for this A address',
                     ))
@@ -307,14 +307,14 @@ class AAAARecord(IPv6HostAddress):
             except AttributeError:
                 pass
             else:
-                r.append(self._form.applAnchor(
-                    'search', 'PTR RR', self._sid,
+                r.append(self._app.anchor(
+                    'search', 'PTR RR',
                     (
-                        ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                        ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', self._ls.uc_decode(ip_addr.reverse_dns)[0][:-1]),
+                        ('search_string', self._app.ls.uc_decode(ip_addr.reverse_dns)[0][:-1]),
                     ),
                     title=u'Search PTR RR for this AAAA address',
                 ))

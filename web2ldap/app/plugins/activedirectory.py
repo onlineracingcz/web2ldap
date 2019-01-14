@@ -141,7 +141,7 @@ class ObjectSID(OctetString, IA5String):
     def displayValue(self, valueindex=0, commandbutton=False):
         sddl_str = unicode(self._sid2sddl(self.attrValue), 'ascii')
         return '%s<br>%s' % (
-            self._form.utf2display(sddl_str),
+            self._app.form.utf2display(sddl_str),
             OctetString.displayValue(self, valueindex, commandbutton),
         )
 
@@ -209,8 +209,8 @@ class OtherSID(ObjectSID):
         sddl_str = unicode(self._sid2sddl(self.attrValue), 'ascii')
         search_anchor = self.well_known_sids.get(sddl_str, '')
         if commandbutton and sddl_str not in self.well_known_sids:
-            search_anchor = self._form.applAnchor(
-                'searchform', '&raquo;', self._sid,
+            search_anchor = self._app.anchor(
+                'searchform', '&raquo;',
                 [
                     ('dn', self._dn),
                     ('searchform_mode', u'adv'),
@@ -221,7 +221,7 @@ class OtherSID(ObjectSID):
                 title=u'Search by SID',
             )
         return '%s %s<br>%s' % (
-            self._form.utf2display(sddl_str),
+            self._app.form.utf2display(sddl_str),
             search_anchor,
             OctetString.displayValue(self, valueindex, commandbutton),
         )
@@ -534,9 +534,9 @@ class CountryCode(PropertiesSelectList):
         str.strip,
     )
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         self.attr_value_dict[u'0'] = u'-/-'
-        SelectList.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
+        SelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
 
 syntax_registry.reg_at(
@@ -586,21 +586,21 @@ class DNWithOctetString(DistinguishedName):
             octet_string.decode(self.stringCharset)
         except UnicodeError:
             return False
-        dn_u = self._ls.uc_decode(dn)[0]
+        dn_u = self._app.ls.uc_decode(dn)[0]
         return len(octet_string) == count and octet_tag.upper() == self.octetTag and is_dn(dn_u)
 
     def displayValue(self, valueindex=0, commandbutton=False):
         try:
             octet_tag, count, octet_string, dn = self.attrValue.split(':', 3)
         except ValueError:
-            return self._form.utf2display(self._ls.uc_decode(self.attrValue)[0])
+            return self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0])
         return ':'.join([
             octet_tag,
             count,
-            self._form.utf2display(self._ls.uc_decode(octet_string)[0]),
+            self._app.form.utf2display(self._app.ls.uc_decode(octet_string)[0]),
             DisplayDN(
-                self._sid, self._form, self._ls,
-                self._ls.uc_decode(dn)[0],
+                self._app,
+                self._app.ls.uc_decode(dn)[0],
                 commandbutton=commandbutton,
             )
         ])
@@ -666,7 +666,7 @@ class Interval(MicrosoftLargeInteger):
         if delta >= 0:
             return '%s (%s)' % (
                 MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton),
-                self._form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
+                self._app.form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
             )
         return self.attrValue
 
@@ -683,7 +683,7 @@ class LockoutTime(Interval):
             return MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton)
         return '%s (locked since %s)' % (
             MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton),
-            self._form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
+            self._app.form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
         )
 
 syntax_registry.reg_at(

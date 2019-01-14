@@ -96,8 +96,8 @@ class PwdMaxAge(Timespan):
             ts_search_params = self._timespan_search_params()
         except (ValueError, KeyError):
             return ts_dv
-        search_link = self._form.applAnchor(
-            'searchform', self.link_text, self._sid,
+        search_link = self._app.anchor(
+            'searchform', self.link_text,
             (
                 ('dn', self._dn),
                 ('searchform_mode', u'adv'),
@@ -181,7 +181,7 @@ class PwdChangedTime(GeneralizedTime):
         except KeyError:
             return gt_disp_html
         try:
-            pwd_policy_entry = self._ls.l.read_s(
+            pwd_policy_entry = self._app.ls.l.read_s(
                 pwd_policy_subentry_dn,
                 filterstr='(objectClass=pwdPolicy)',
                 attrlist=['pwdMaxAge', 'pwdExpireWarning'],
@@ -208,7 +208,7 @@ class PwdChangedTime(GeneralizedTime):
                         1: 'will expire',
                     }[expire_cmp],
                     expire_dt.strftime('%c'),
-                    self._form.utf2display(
+                    self._app.form.utf2display(
                         web2ldap.app.gui.ts2repr(
                             self.time_divisors,
                             u' ',

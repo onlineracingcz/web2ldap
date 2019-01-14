@@ -44,15 +44,15 @@ class PkcX509Issuer(DynamicValueSelectList, DistinguishedName):
         r = [
             DistinguishedName.displayValue(self, valueindex, commandbutton=False),
         ]
-        r.append(self._form.applAnchor(
-            'search', '&raquo;', self._sid,
+        r.append(self._app.anchor(
+            'search', '&raquo;',
             [
                 ('dn', self._determineSearchDN(self._dn, self.lu_obj.dn)),
                 (
                     'filterstr',
                     u'(&%s(x509subject=%s))' % (
                         self._determineFilter().decode('utf-8'),
-                        escape_filter_chars(self._ls.uc_decode(self.attrValue)[0]),
+                        escape_filter_chars(self._app.ls.uc_decode(self.attrValue)[0]),
                     )
                 ),
             ],

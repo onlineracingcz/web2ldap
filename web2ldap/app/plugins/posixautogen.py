@@ -45,8 +45,8 @@ class AutogenNumber(object):
         if self.object_class.lower() not in set([oc.lower() for oc in self._entry['objectClass']]):
             return u''
         try:
-            ldap_result = self._ls.l.search_s(
-                self._ls.getSearchRoot(self._dn).encode(self._ls.charset),
+            ldap_result = self._app.ls.l.search_s(
+                self._app.ls.getSearchRoot(self._dn).encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
                 '(&(objectClass={0})({1}>={2})({1}<={3}))'.format(
                     self.object_class,
@@ -66,9 +66,9 @@ class AutogenNumber(object):
         idnumber_set = set()
         for ldap_dn, ldap_entry in ldap_result:
             if ldap_dn is not None:
-                ldap_dn = ldap_dn.decode(self._ls.charset)
+                ldap_dn = ldap_dn.decode(self._app.ls.charset)
                 if ldap_dn == self._dn:
-                    return ldap_entry[self.attrType][0].decode(self._ls.charset)
+                    return ldap_entry[self.attrType][0].decode(self._app.ls.charset)
                 else:
                     idnumber_set.add(int(ldap_entry[self.attrType][0]))
         for idnumber in xrange(self.__class__.minNewValue, self.maxNewValue+1):

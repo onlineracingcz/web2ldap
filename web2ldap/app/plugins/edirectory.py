@@ -136,8 +136,8 @@ class OctetStringGUID(OctetString):
         # with a link for searching the entry
         return web2ldapcnf.command_link_separator.join((
             self._guid2assoc_c1(self.attrValue),
-            self._form.applAnchor(
-                'searchform', '&raquo;', self._sid,
+            self._app.anchor(
+                'searchform', '&raquo;',
                 [
                     ('dn', self._dn),
                     ('filterstr', ldap0.filter.escape_filter_chars(self.attrValue, 2)),
@@ -183,12 +183,12 @@ class IndexDefinition(DollarSeparatedMultipleLines):
                 nds_attribute_name,
             ) = self.attrValue.split('$')
             version = int(version)
-            index_name = self._ls.uc_decode(index_name)[0]
+            index_name = self._app.ls.uc_decode(index_name)[0]
             state = int(state)
             matching_rule = int(matching_rule)
             index_type = int(index_type)
             value_state = int(value_state)
-            nds_attribute_name = self._ls.uc_decode(nds_attribute_name)[0]
+            nds_attribute_name = self._app.ls.uc_decode(nds_attribute_name)[0]
         except (ValueError, UnicodeDecodeError):
             return DollarSeparatedMultipleLines.displayValue(self, valueindex, commandbutton)
         return """
@@ -202,12 +202,12 @@ class IndexDefinition(DollarSeparatedMultipleLines):
             <tr><td>NDS Attribute Name</td><td>%s</td></tr>
           </table>""" % (
               version,
-              index_name.encode(self._form.accept_charset),
+              index_name.encode(self._app.form.accept_charset),
               {0:'suspend', 1:'bringing', 2:'online', 3:'pending'}.get(state, str(state)),
               {0:'value', 1:'presence', 2:'substring'}.get(matching_rule, str(matching_rule)),
               {0:'user defined'}.get(index_type, str(index_type)),
               {1:'added from server'}.get(value_state, str(value_state)),
-              nds_attribute_name.encode(self._form.accept_charset),
+              nds_attribute_name.encode(self._app.form.accept_charset),
           )
 
 syntax_registry.reg_at(
@@ -227,7 +227,7 @@ class TaggedNameAndString(DirectoryString):
             ind1 = self.attrValue.rindex('#', 0, ind2-1)
         except ValueError:
             return DirectoryString.displayValue(self, valueindex, commandbutton)
-        dn = self._ls.uc_decode(self.attrValue[0:ind1])[0]
+        dn = self._app.ls.uc_decode(self.attrValue[0:ind1])[0]
         number = self.attrValue[ind1+1:ind2]
         dstring = self.attrValue[ind2+1:]
         try:
@@ -242,7 +242,7 @@ class TaggedNameAndString(DirectoryString):
         else:
             dstring_disp = DirectoryString.displayValue(self, valueindex, commandbutton)
         return '<dl><dt>name:</dt><dd>%s</dd><dt>number:</dt><dd>%s</dd><dt>dstring:</dt><dd>%s</dd></dl>' % (
-            DisplayDN(self._sid, self._form, self._ls, dn, commandbutton=commandbutton),
+            DisplayDN(self._app, dn, commandbutton=commandbutton),
             number,
             '<code>%s</code>' % dstring_disp,
         )

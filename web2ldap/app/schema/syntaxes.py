@@ -154,7 +154,7 @@ class SyntaxRegistry(object):
             syntax_class = LDAPSyntax
         return syntax_class
 
-    def get_at(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+    def get_at(self, app, dn, schema, attrType, attrValue, entry=None):
         """
         returns LDAPSyntax instance fully initialized for given attribute
         """
@@ -163,7 +163,7 @@ class SyntaxRegistry(object):
         else:
             structural_oc = None
         syntax_class = self.get_syntax(schema, attrType, structural_oc)
-        attr_instance = syntax_class(sid, form, ls, dn, schema, attrType, attrValue, entry)
+        attr_instance = syntax_class(app, dn, schema, attrType, attrValue, entry)
         return attr_instance
 
     def check(self):
@@ -213,7 +213,7 @@ class LDAPSyntax(object):
     simpleSanitizers = tuple()
     showValueButton = True
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         assert isinstance(dn, unicode), \
             TypeError("Argument 'dn' must be unicode, was %r" % (dn))
         assert isinstance(attrType, bytes) or attrType is None, \
@@ -224,15 +224,13 @@ class LDAPSyntax(object):
             TypeError('entry must be ldaputil.schema.Entry, was %r' % (entry))
         self.attrType = attrType
         self.attrValue = attrValue
-        self._sid = sid
-        self._form = form
-        self._ls = ls
+        self._app = app
         self._schema = schema
         self._dn = dn
         if entry is None:
             entry = ldap0.schema.models.Entry(
                 self._schema,
-                self._dn.encode(self._ls.charset),
+                self._dn.encode(self._app.ls.charset),
                 {},
             )
         self._entry = entry
@@ -318,8 +316,8 @@ class LDAPSyntax(object):
         if se and se.single_value:
             return ''
         return '<button formaction="%s#in_a_%s" type="submit" name="in_mr" value="%s%d">%s</button>' % (
-            self._form.actionUrlHTML(command, self._sid),
-            self._form.utf2display(self._ls.uc_decode(self.attrType)[0]),
+            self._app.form.actionUrlHTML(command, self._app.sid),
+            self._app.form.utf2display(self._app.ls.uc_decode(self.attrType)[0]),
             mode, row, link_text
         )
 
@@ -332,7 +330,7 @@ class LDAPSyntax(object):
         This is the inverse of LDAPSyntax.sanitizeInput().
         """
         try:
-            result = self._ls.uc_decode(self.attrValue or '')[0]
+            result = self._app.ls.uc_decode(self.attrValue or '')[0]
         except UnicodeDecodeError:
             result = u'!!!snipped because of UnicodeDecodeError!!!'
         return result
@@ -350,7 +348,7 @@ class LDAPSyntax(object):
             default=None,
             size=min(self.maxLen, self.inputSize),
         )
-        input_field.charset = self._form.accept_charset
+        input_field.charset = self._app.form.accept_charset
         input_field.setDefault(self.formValue())
         return input_field
 
@@ -393,8 +391,8 @@ class Binary(LDAPSyntax):
     def displayValue(self, valueindex=0, commandbutton=False):
         return '%d bytes | %s' % (
             len(self.attrValue),
-            self._form.applAnchor(
-                'read', 'View/Load', self._sid,
+            self._app.anchor(
+                'read', 'View/Load',
                 [
                     ('dn', self._dn),
                     ('read_attr', self.attrType),
@@ -426,8 +424,8 @@ class Audio(Binary):
             %d bytes of audio data (%s)
             """ % (
                 mimetype,
-                self._form.script_name, self._sid,
-                urllib.quote(self._dn.encode(self._form.accept_charset)),
+                self._app.form.script_name, self._app.sid,
+                urllib.quote(self._dn.encode(self._app.form.accept_charset)),
                 urllib.quote(self.attrType),
                 valueindex,
                 len(self.attrValue),
@@ -442,7 +440,7 @@ class DirectoryString(LDAPSyntax):
 
     def _validate(self, attrValue):
         try:
-            _ = self._ls.uc_encode(self._ls.uc_decode(attrValue)[0])[0]
+            _ = self._app.ls.uc_encode(self._app.ls.uc_decode(attrValue)[0])[0]
         except UnicodeError:
             return False
         return True
@@ -450,12 +448,12 @@ class DirectoryString(LDAPSyntax):
     def sanitizeInput(self, attrValue):
         return LDAPSyntax.sanitizeInput(
             self,
-            self._ls.uc_encode(self._form.uc_decode(attrValue)[0])[0],
+            self._app.ls.uc_encode(self._app.form.uc_decode(attrValue)[0])[0],
         )
 
     def displayValue(self, valueindex=0, commandbutton=False):
         return self.html_tmpl.format(
-            av=self._form.utf2display(self._ls.uc_decode(self.attrValue)[0])
+            av=self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0])
         )
 
 
@@ -473,24 +471,24 @@ class DistinguishedName(DirectoryString):
     ref_attrs = None
 
     def _validate(self, attrValue):
-        return is_dn(self._ls.uc_decode(attrValue)[0])
+        return is_dn(self._app.ls.uc_decode(attrValue)[0])
 
     def _has_subordinates(self):
         return self.hasSubordinates and not self.attrType.lower() in self.noSubordinateAttrs
 
     def _additional_links(self):
-        attr_value_u = self._ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
         r = []
         if self.attrType.lower() != 'entrydn':
             r.append(
-                self._form.applAnchor(
-                    'read', 'Read', self._sid,
+                self._app.anchor(
+                    'read', 'Read',
                     [('dn', attr_value_u)],
                 )
             )
         if self._has_subordinates():
-            r.append(self._form.applAnchor(
-                'search', 'Down', self._sid,
+            r.append(self._app.anchor(
+                'search', 'Down',
                 (
                     ('dn', attr_value_u),
                     ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
@@ -498,12 +496,11 @@ class DistinguishedName(DirectoryString):
                 )
             ))
         if self.isBindDN:
-            ldap_url_obj = self._ls.ldapUrl('', add_login=False)
+            ldap_url_obj = self._app.ls.ldapUrl('', add_login=False)
             r.append(
-                self._form.applAnchor(
+                self._app.anchor(
                     'login',
                     'Bind as',
-                    None,
                     [
                         ('ldapurl', str(ldap_url_obj).decode('ascii')),
                         ('dn', self._dn),
@@ -524,11 +521,11 @@ class DistinguishedName(DirectoryString):
             ref_title = ref_title or u'Search %s entries referencing entry %s in attribute %s' % (
                 ref_oc, attr_value_u, ref_attr,
             )
-            r.append(self._form.applAnchor(
-                'search', self._form.utf2display(ref_text), self._sid,
+            r.append(self._app.anchor(
+                'search', self._app.form.utf2display(ref_text),
                 (
                     ('dn', ref_dn),
-                    ('search_root', self._ls.currentSearchRoot),
+                    ('search_root', self._app.ls.currentSearchRoot),
                     ('searchform_mode', 'adv'),
                     ('search_attr', 'objectClass'),
                     (
@@ -548,12 +545,10 @@ class DistinguishedName(DirectoryString):
         return r
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        attr_value_u = self._ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
         r = [
             web2ldap.app.gui.DisplayDN(
-                self._sid,
-                self._form,
-                self._ls,
+                self._app,
                 attr_value_u,
                 commandbutton=False,
             )
@@ -578,8 +573,8 @@ class AuthzDN(DistinguishedName):
         if commandbutton:
             simple_display_str = DistinguishedName.displayValue(self, valueindex, commandbutton=False)
             whoami_display_str = web2ldap.app.gui.WhoAmITemplate(
-                self._sid, self._form, self._ls, self._dn,
-                who=self.attrValue.decode(self._ls.charset)
+                self._app,
+                who=self.attrValue.decode(self._app.ls.charset)
             )
             if whoami_display_str != simple_display_str:
                 result = '<br>'.join((whoami_display_str, result))
@@ -602,22 +597,20 @@ class NameAndOptionalUID(DistinguishedName):
         return dn, uid
 
     def _validate(self, attrValue):
-        dn, _ = self._splitDNandUID(self._ls.uc_decode(attrValue)[0])
+        dn, _ = self._splitDNandUID(self._app.ls.uc_decode(attrValue)[0])
         return is_dn(dn)
 
     def displayValue(self, valueindex=0, commandbutton=False):
         value = self.attrValue.split('#')
         dn_str = web2ldap.app.gui.DisplayDN(
-            self._sid,
-            self._form,
-            self._ls,
-            self._ls.uc_decode(self.attrValue)[0],
+            self._app,
+            self._app.ls.uc_decode(self.attrValue)[0],
             commandbutton=commandbutton,
         )
         if len(value) == 1 or not value[1]:
             return dn_str
         return web2ldapcnf.command_link_separator.join([
-            self._form.utf2display(self._ls.uc_decode(value[1])),
+            self._app.form.utf2display(self._app.ls.uc_decode(value[1])),
             dn_str,
         ])
 
@@ -755,8 +748,8 @@ class GeneralizedTime(IA5String):
         time_span = (current_time-dt_utc).total_seconds()
         return '{dt_utc} ({av})<br>{timespan_disp} {timespan_comment}'.format(
             dt_utc=dt_utc_str,
-            av=self._form.utf2display(self._ls.uc_decode(self.attrValue)[0]),
-            timespan_disp=self._form.utf2display(
+            av=self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0]),
+            timespan_disp=self._app.form.utf2display(
                 web2ldap.app.gui.ts2repr(Timespan.time_divisors, u' ', abs(time_span))
             ),
             timespan_comment={
@@ -795,10 +788,10 @@ class NullTerminatedDirectoryString(DirectoryString):
         return attrValue.endswith(chr(0))
 
     def formValue(self):
-        return self._ls.uc_decode((self.attrValue or chr(0))[:-1])[0]
+        return self._app.ls.uc_decode((self.attrValue or chr(0))[:-1])[0]
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        return self._form.utf2display(self._ls.uc_decode((self.attrValue or chr(0))[:-1])[0])
+        return self._app.form.utf2display(self._app.ls.uc_decode((self.attrValue or chr(0))[:-1])[0])
 
 
 class OtherMailbox(DirectoryString):
@@ -814,8 +807,8 @@ class Integer(IA5String):
     minValue = None
     maxValue = None
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
-        IA5String.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+        IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
         if self.maxValue is not None:
             self.maxLen = len(str(self.maxValue))
 
@@ -826,7 +819,7 @@ class Integer(IA5String):
         if self.maxValue is not None:
             max_value_len = len(str(self.maxValue))
         if form_value is not None:
-            form_value_len = len(form_value.encode(self._ls.charset))
+            form_value_len = len(form_value.encode(self._app.ls.charset))
         return max(self.inputSize, form_value_len, min_value_len, max_value_len)
 
     def _validate(self, attrValue):
@@ -946,7 +939,7 @@ class Uri(DirectoryString):
     )
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        attr_value = self._ls.uc_decode(self.attrValue)[0]
+        attr_value = self._app.ls.uc_decode(self.attrValue)[0]
         try:
             url, label = attr_value.split(u' ', 1)
         except ValueError:
@@ -956,21 +949,21 @@ class Uri(DirectoryString):
             display_url = u' (%s)' % (url)
         if ldap0.ldapurl.isLDAPUrl(url):
             return '<a href="%s?%s">%s%s</a>' % (
-                self._form.script_name,
-                self._form.utf2display(url),
-                self._form.utf2display(label),
-                self._form.utf2display(display_url),
+                self._app.form.script_name,
+                self._app.form.utf2display(url),
+                self._app.form.utf2display(label),
+                self._app.form.utf2display(display_url),
             )
         elif url.lower().find('javascript:') >= 0:
             return '<code>%s</code>' % (
                 DirectoryString.displayValue(self, valueindex=False, commandbutton=False)
             )
         return '<a href="%s/urlredirect/%s?%s">%s%s</a>' % (
-            self._form.script_name,
-            self._sid,
-            self._form.utf2display(url),
-            self._form.utf2display(label),
-            self._form.utf2display(display_url),
+            self._app.form.script_name,
+            self._app.sid,
+            self._app.form.utf2display(url),
+            self._app.form.utf2display(label),
+            self._app.form.utf2display(display_url),
         )
 
 
@@ -1021,8 +1014,8 @@ class Image(Binary):
                     size_attr_html = 'width="%d" height="%d"' % (width, height)
         attr_value_len = len(self.attrValue)
         img_link = "%s/read/%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d&amp;read_attrmode=load&amp" % (
-            self._form.script_name, self._sid,
-            urllib.quote(self._dn.encode(self._form.accept_charset)),
+            self._app.form.script_name, self._app.sid,
+            urllib.quote(self._dn.encode(self._app.form.accept_charset)),
             urllib.quote(self.attrType),
             valueindex,
         )
@@ -1089,7 +1082,7 @@ class OID(IA5String):
                 except KeyError:
                     return IA5String.displayValue(self, valueindex, commandbutton)
                 return web2ldap.app.gui.SchemaElementName(
-                    self._sid, self._form, self._dn, self._schema, self.attrValue,
+                    self._app, self._schema, self.attrValue,
                     ldap0.schema.models.AttributeType,
                     name_template=r'%s',
                 )
@@ -1100,15 +1093,15 @@ class OID(IA5String):
             }[se.kind]
             # objectClass attribute is displayed with different function
             return web2ldap.app.gui.SchemaElementName(
-                self._sid, self._form, self._dn, self._schema, self.attrValue,
+                self._app, self._schema, self.attrValue,
                 ldap0.schema.models.ObjectClass,
                 name_template=name_template
             )
         return '<strong>%s</strong> (%s):<br>%s (see %s)' % (
-            self._form.utf2display(name),
+            self._app.form.utf2display(name),
             IA5String.displayValue(self, valueindex, commandbutton),
-            self._form.utf2display(description),
-            self._form.utf2display(reference)
+            self._app.form.utf2display(description),
+            self._app.form.utf2display(reference)
         )
 
 
@@ -1123,19 +1116,17 @@ class LDAPUrl(Uri):
         try:
             if commandbutton:
                 commandbuttonstr = web2ldap.app.gui.LDAPURLButton(
-                    self._sid,
-                    self._form,
-                    self._ls,
+                    self._app,
                     self._command_ldap_url(self.attrValue),
                 )
             else:
                 commandbuttonstr = ''
         except ValueError:
-            return '<strong>Not a valid LDAP URL:</strong> %s' % self._form.utf2display(repr(self.attrValue))
+            return '<strong>Not a valid LDAP URL:</strong> %s' % self._app.form.utf2display(repr(self.attrValue))
         return '<table><tr><td>%s</td><td><a href="%s">%s</a></td></tr></table>' % (
             commandbuttonstr,
-            self._form.utf2display(self._ls.uc_decode(self.attrValue)[0]),
-            self._form.utf2display(self._ls.uc_decode(self.attrValue)[0])
+            self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0]),
+            self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0])
         )
 
 
@@ -1160,7 +1151,7 @@ class OctetString(Binary):
             '<tr><td><code>%0.6X</code></td><td><code>%s</code></td><td><code>%s</code></td></tr>'% (
                 i*self.bytes_split,
                 ':'.join(x.encode('hex').upper() for x in c),
-                self._form.utf2display(unicode(web2ldap.msbase.ascii_dump(c), 'ascii')),
+                self._app.form.utf2display(unicode(web2ldap.msbase.ascii_dump(c), 'ascii')),
             )
             for i, c in enumerate(web2ldap.msbase.chunks(self.attrValue, self.bytes_split))
         ]
@@ -1203,17 +1194,17 @@ class MultilineText(DirectoryString):
         return [v]
 
     def sanitizeInput(self, attrValue):
-        return attrValue.replace(u'\r', u'').replace(u'\n', self.lineSep).encode(self._ls.charset)
+        return attrValue.replace(u'\r', u'').replace(u'\n', self.lineSep).encode(self._app.ls.charset)
 
     def displayValue(self, valueindex=0, commandbutton=False):
         lines = [
-            self._form.utf2display(l)
-            for l in self._split_lines(self._ls.uc_decode(self.attrValue)[0])
+            self._app.form.utf2display(l)
+            for l in self._split_lines(self._app.ls.uc_decode(self.attrValue)[0])
         ]
         return '<br>'.join(lines)
 
     def formValue(self):
-        splitted_lines = self._split_lines(self._ls.uc_decode(self.attrValue or '')[0])
+        splitted_lines = self._split_lines(self._app.ls.uc_decode(self.attrValue or '')[0])
         return u'\r\n'.join(splitted_lines)
 
     def formField(self):
@@ -1240,13 +1231,13 @@ class PreformattedMultilineText(MultilineText):
             return attrValue
         return self.lineSep.join([
             self.whitespace_cleaning(l)
-            for l in self._split_lines(attrValue.decode(self._form.accept_charset))
-        ]).encode(self._ls.charset)
+            for l in self._split_lines(attrValue.decode(self._app.form.accept_charset))
+        ]).encode(self._app.ls.charset)
 
     def displayValue(self, valueindex=0, commandbutton=False):
         lines = [
-            self._form.utf2display(l, self.tab_identiation)
-            for l in self._split_lines(self._ls.uc_decode(self.attrValue)[0])
+            self._app.form.utf2display(l, self.tab_identiation)
+            for l in self._split_lines(self._app.ls.uc_decode(self.attrValue)[0])
         ]
         return '<code>%s</code>' % '<br>'.join(lines)
 
@@ -1324,7 +1315,7 @@ class ObjectGUID(LDAPSyntax):
             for c in self.attrValue
         ])
         return ldap0.ldapurl.LDAPUrl(
-            ldapUrl=self._ls.uri,
+            ldapUrl=self._app.ls.uri,
             dn='GUID=%s' % (objectguid_str),
             who=None, cred=None
         ).htmlHREF(
@@ -1481,7 +1472,7 @@ class Timespan(Integer):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         try:
-            result = self._form.utf2display('%s (%s)' % (
+            result = self._app.form.utf2display('%s (%s)' % (
                 web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, int(self.attrValue)),
                 Integer.displayValue(self, valueindex, commandbutton)
             ))
@@ -1512,7 +1503,7 @@ class SelectList(DirectoryString):
         d = self._get_attr_value_dict()
         # Remove other existing values from the options dict
         for v in self._entry.get(self.attrType, []):
-            v = self._ls.uc_decode(v)[0]
+            v = self._app.ls.uc_decode(v)[0]
             if v != attr_value_u:
                 try:
                     del d[v]
@@ -1535,7 +1526,7 @@ class SelectList(DirectoryString):
 
     def _validate(self, attrValue):
         attr_value_dict = self._get_attr_value_dict()
-        return self._ls.uc_decode(attrValue)[0] in attr_value_dict
+        return self._app.ls.uc_decode(attrValue)[0] in attr_value_dict
 
     def displayValue(self, valueindex=0, commandbutton=False):
         attr_value_str = DirectoryString.displayValue(self, valueindex, commandbutton)
@@ -1556,8 +1547,8 @@ class SelectList(DirectoryString):
             tag_tmpl = '{attr_text}: {attr_value}'
         return tag_tmpl.format(
             attr_value=attr_value_str,
-            attr_text=self._form.utf2display(attr_text),
-            attr_title=self._form.utf2display(attr_title or u'')
+            attr_text=self._app.form.utf2display(attr_text),
+            attr_title=self._app.form.utf2display(attr_title or u'')
         )
 
     def formField(self):
@@ -1573,7 +1564,7 @@ class SelectList(DirectoryString):
             default=self.formValue(),
             required=0
         )
-        field.charset = self._form.accept_charset
+        field.charset = self._app.form.accept_charset
         return field
 
 
@@ -1587,7 +1578,7 @@ class PropertiesSelectList(SelectList):
         attr_value_dict = SelectList._get_attr_value_dict(self)
         real_path_name = web2ldap.app.gui.GetVariantFilename(
             self.properties_pathname,
-            self._form.accept_language
+            self._app.form.accept_language
         )
         with open(real_path_name, 'rb') as f:
             for line in f.readlines():
@@ -1604,10 +1595,10 @@ class DynamicValueSelectList(SelectList, DirectoryString):
     valuePrefix = ''
     valueSuffix = ''
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         self.lu_obj = ldap0.ldapurl.LDAPUrl(self.ldap_url)
         self.minLen = len(self.valuePrefix)+len(self.valueSuffix)
-        SelectList.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
+        SelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
     def _determineFilter(self):
         return self.lu_obj.filterstr or '(objectClass=*)'
@@ -1621,8 +1612,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             attr_value,
         )
         try:
-            ldap_result = self._ls.l.search_s(
-                self._ls.uc_encode(search_dn)[0],
+            ldap_result = self._app.ls.l.search_s(
+                self._app.ls.uc_encode(search_dn)[0],
                 self.lu_obj.scope,
                 search_filter,
                 attrlist=self.lu_obj.attrs,
@@ -1663,18 +1654,18 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             if ref_result:
                 ref_dn, ref_entry = ref_result
                 try:
-                    attr_value_desc = self._ls.uc_decode(ref_entry[self.lu_obj.attrs[1]][0])[0]
+                    attr_value_desc = self._app.ls.uc_decode(ref_entry[self.lu_obj.attrs[1]][0])[0]
                 except (KeyError, IndexError):
                     display_text, link_html = '', ''
                 else:
                     if self.lu_obj.attrs[0].lower() == self.lu_obj.attrs[1].lower():
                         display_text = ''
                     else:
-                        display_text = self._form.utf2display(attr_value_desc+u':')
+                        display_text = self._app.form.utf2display(attr_value_desc+u':')
                     if commandbutton:
-                        link_html = self._form.applAnchor(
-                            'read', '&raquo;', self._sid,
-                            [('dn', self._ls.uc_decode(ref_dn)[0])],
+                        link_html = self._app.anchor(
+                            'read', '&raquo;',
+                            [('dn', self._app.ls.uc_decode(ref_dn)[0])],
                         )
                     else:
                         link_html = ''
@@ -1689,15 +1680,15 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         ))
 
     def _determineSearchDN(self, current_dn, ldap_url_dn):
-        ldap_url_dn = self._ls.uc_decode(ldap_url_dn)[0]
+        ldap_url_dn = self._app.ls.uc_decode(ldap_url_dn)[0]
         if ldap_url_dn == '_':
-            result_dn = self._ls.getSearchRoot(current_dn or self._dn or self._ls._dn)
+            result_dn = self._app.ls.getSearchRoot(current_dn or self._dn or self._app.ls._dn)
         elif ldap_url_dn == '.':
             result_dn = current_dn
         elif ldap_url_dn == '..':
             result_dn = web2ldap.ldaputil.base.parent_dn(current_dn)
         elif ldap_url_dn.endswith(',_'):
-            result_dn = ','.join((ldap_url_dn[:-2], self._ls.getSearchRoot(self._dn)))
+            result_dn = ','.join((ldap_url_dn[:-2], self._app.ls.getSearchRoot(self._dn)))
         elif ldap_url_dn.endswith(',.'):
             result_dn = ','.join((ldap_url_dn[:-2], current_dn))
         elif ldap_url_dn.endswith(',..'):
@@ -1721,8 +1712,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         search_attrs = (self.lu_obj.attrs or []) + ['description', 'info']
         # Use the existing LDAP connection as current user
         try:
-            ldap_result = self._ls.l.search_s(
-                self._ls.uc_encode(search_dn)[0],
+            ldap_result = self._app.ls.l.search_s(
+                self._app.ls.uc_encode(search_dn)[0],
                 search_scope,
                 filterstr=self._determineFilter(),
                 attrlist=search_attrs,
@@ -1746,7 +1737,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             attr_values_u = [
                 ''.join((
                     self.valuePrefix,
-                    self._ls.uc_decode(attr_value)[0],
+                    self._app.ls.uc_decode(attr_value)[0],
                     self.valueSuffix,
                 ))
                 for attr_value in entry_r[list_attr]
@@ -1766,19 +1757,19 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                     try:
                         option_value = ''.join((
                             self.valuePrefix,
-                            self._ls.uc_decode(entry_r[option_value_map][0])[0],
+                            self._app.ls.uc_decode(entry_r[option_value_map][0])[0],
                             self.valueSuffix,
                         ))
                     except KeyError:
                         pass
                     else:
                         try:
-                            option_text = self._ls.uc_decode(entry_r[option_text_map][0])[0]
+                            option_text = self._app.ls.uc_decode(entry_r[option_text_map][0])[0]
                         except KeyError:
                             option_text = option_value
                         option_title = entry_r.get('description', entry_r.get('info', ['']))[0]
                         if option_title:
-                            option_title = self._ls.uc_decode(option_title)[0]
+                            option_title = self._app.ls.uc_decode(option_title)[0]
                             attr_value_dict[option_value] = (option_text, option_title)
                         else:
                             attr_value_dict[option_value] = option_text
@@ -1790,8 +1781,8 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
 
     def _readReferencedEntry(self, dn):
         try:
-            ldap_result = self._ls.readEntry(
-                dn.decode(self._ls.charset),
+            ldap_result = self._app.ls.readEntry(
+                dn.decode(self._app.ls.charset),
                 attrtype_list=self.lu_obj.attrs,
                 search_filter=self._determineFilter(),
             )
@@ -1814,11 +1805,11 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
         if commandbutton and self.lu_obj.attrs:
             ref_entry = self._readReferencedEntry(self.attrValue) or {}
             try:
-                attr_value_desc = self._ls.uc_decode(ref_entry[self.lu_obj.attrs[0]][0])[0]
+                attr_value_desc = self._app.ls.uc_decode(ref_entry[self.lu_obj.attrs[0]][0])[0]
             except (KeyError, IndexError):
                 display_text = ''
             else:
-                display_text = self._form.utf2display(attr_value_desc+u': ')
+                display_text = self._app.form.utf2display(attr_value_desc+u': ')
         else:
             display_text = ''
         return ''.join((
@@ -1879,8 +1870,8 @@ class BitArrayInteger(MultilineText, Integer):
     }
     minValue = 0
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
-        Integer.__init__(self, sid, form, ls, dn, schema, attrType, attrValue)
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+        Integer.__init__(self, app, dn, schema, attrType, attrValue, entry)
         self.flag_desc2int = dict(self.flag_desc_table)
         self.flag_int2desc = dict([(j, i) for i, j in self.flag_desc_table])
         self.maxValue = sum([j for i, j in self.flag_desc_table])
@@ -1940,7 +1931,7 @@ class BitArrayInteger(MultilineText, Integer):
             Integer.displayValue(self, valueindex, commandbutton),
             '\n'.join([
                 '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
-                    self._form.utf2display(desc),
+                    self._app.form.utf2display(desc),
                     hex(flag_value),
                     {False:'-', True:'on'}[int((attrValue_int & flag_value) > 0)]
                 )
@@ -1980,7 +1971,7 @@ class DNSDomain(IA5String):
         attrValue = IA5String.sanitizeInput(self, attrValue)
         return '.'.join([
             dc.encode('idna')
-            for dc in attrValue.decode(self._form.accept_charset).split(u'.')
+            for dc in attrValue.decode(self._app.form.accept_charset).split(u'.')
         ])
 
     def formValue(self):
@@ -1997,7 +1988,7 @@ class DNSDomain(IA5String):
         if self.attrValue.decode('ascii') != self.attrValue.decode('idna'):
             return '%s (%s)' % (
                 IA5String.displayValue(self, valueindex, commandbutton),
-                self._form.utf2display(self.formValue())
+                self._app.form.utf2display(self.formValue())
             )
         else:
             return IA5String.displayValue(self, valueindex, commandbutton)
@@ -2009,8 +2000,8 @@ class RFC822Address(DNSDomain, IA5String):
     reObj = re.compile(r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$')
     html_tmpl = '<a href="mailto:{av}">{av}</a>'
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
-        IA5String.__init__(self, sid, form, ls, dn, schema, attrType, attrValue)
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+        IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
     def formValue(self):
         if not self.attrValue:
@@ -2020,10 +2011,10 @@ class RFC822Address(DNSDomain, IA5String):
         except ValueError:
             return IA5String.formValue(self)
         dns_domain = DNSDomain(
-            self._sid, self._form, self._ls, self._dn, self._schema, None, domainpart,
+            self._app, self._dn, self._schema, None, domainpart,
         )
         return '@'.join((
-            localpart.decode(self._ls.charset),
+            localpart.decode(self._app.ls.charset),
             dns_domain.formValue()
         ))
 
@@ -2084,7 +2075,7 @@ class JSONValue(PreformattedMultilineText):
             return PreformattedMultilineText._split_lines(self, val)
         return PreformattedMultilineText._split_lines(
             self,
-            self._ls.uc_decode(
+            self._app.ls.uc_decode(
                 json.dumps(
                     obj,
                     indent=4,
@@ -2116,7 +2107,7 @@ class ASN1Object(Binary):
         asn1obj = asn1.parse(self.attrValue)
         return ''.join((
             '<code>',
-            self._form.utf2display(
+            self._app.form.utf2display(
                 str(asn1obj).decode('utf-8').replace('{', '\n{').replace('}', '}\n')
             ).replace('  ', '&nbsp;&nbsp;').replace('\n', '<br>'),
             '</code>'
@@ -2137,7 +2128,7 @@ class DumpASN1CfgOID(OID):
                 includeoid=1
             )
         except ValueError:
-            return self._form.utf2display(self.attrValue)
+            return self._app.form.utf2display(self.attrValue)
         return desc
 
 
@@ -2228,7 +2219,7 @@ class ComposedAttribute(LDAPSyntax):
             None,
             default=self.formValue(),
         )
-        input_field.charset = self._form.accept_charset
+        input_field.charset = self._app.form.accept_charset
         return input_field
 
 

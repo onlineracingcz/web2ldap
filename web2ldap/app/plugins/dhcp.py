@@ -41,14 +41,14 @@ class DHCPConfigStatement(MultilineText):
                 dhcp_type, dhcp_value = self.attrValue.split(' ', 1)
             except ValueError:
                 dhcp_type, dhcp_value = self.attrValue, ''
-            dhcp_type = self._ls.uc_decode(dhcp_type.lower().strip())[0]
-            dhcp_value = self._ls.uc_decode(dhcp_value.replace('"', '').strip())[0]
+            dhcp_type = self._app.ls.uc_decode(dhcp_type.lower().strip())[0]
+            dhcp_value = self._app.ls.uc_decode(dhcp_value.replace('"', '').strip())[0]
             if dhcp_type == 'host-name':
                 host_name = dhcp_value.lower()
-                r.append(self._form.applAnchor(
-                    'search', 'DNS RR', self._sid,
+                r.append(self._app.anchor(
+                    'search', 'DNS RR',
                     (
-                        ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                        ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                         ('searchform_mode', u'adv'),
                         ('search_mode', u'(|%s)'),
                         ('search_attr', u'dc'),
@@ -65,7 +65,7 @@ class DHCPConfigStatement(MultilineText):
                 ))
             elif dhcp_type == 'fixed-address':
                 search_params = [
-                    ('dn', self._ls.getSearchRoot(self._ls.uc_decode(self._dn)[0])),
+                    ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
                     ('searchform_mode', u'adv'),
                     ('search_mode', u'(|%s)'),
                     ('search_attr', u'aRecord'),
@@ -83,11 +83,11 @@ class DHCPConfigStatement(MultilineText):
                     search_params.extend((
                         ('search_attr', u'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', self._ls.uc_decode(reverse_dns)[0][:-1]),
+                        ('search_string', self._app.ls.uc_decode(reverse_dns)[0][:-1]),
                     ))
                 r.append(
-                    self._form.applAnchor(
-                        'search', 'DNS RRs', self._sid,
+                    self._app.anchor(
+                        'search', 'DNS RRs',
                         search_params,
                         title=u'Search related DNS RR entries',
                     )
@@ -304,8 +304,8 @@ class DHCPRange(IA5String):
         except (IndexError, ValueError):
             return False
         try:
-            l_a = ipaddress.ip_address(l.decode(self._ls.charset))
-            h_a = ipaddress.ip_address(h.decode(self._ls.charset))
+            l_a = ipaddress.ip_address(l.decode(self._app.ls.charset))
+            h_a = ipaddress.ip_address(h.decode(self._app.ls.charset))
         except Exception:
             return False
         if l_a > h_a:

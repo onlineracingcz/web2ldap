@@ -55,14 +55,14 @@ class GidNumber(DynamicValueSelectList, Integer):
                 ('search_string', u'posixAccount'),
                 ('search_attr', u'gidNumber'),
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                ('search_string', self._ls.uc_decode(self.attrValue)[0]),
+                ('search_string', self._app.ls.uc_decode(self.attrValue)[0]),
             ]
         else:
             title = None
             searchform_params = None
         if title and searchform_params:
-            r.append(self._form.applAnchor(
-                'searchform', '&raquo;', self._sid,
+            r.append(self._app.anchor(
+                'searchform', '&raquo;',
                 searchform_params,
                 title=title,
             ))
@@ -87,12 +87,10 @@ class MemberUID(IA5String, DynamicValueSelectList):
     ldap_url = None
     #ldap_url = 'ldap:///_?uid,cn?sub?(objectClass=posixAccount)'
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
-        IA5String.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+        IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
         if self.ldap_url:
-            DynamicValueSelectList.__init__(
-                self, sid, form, ls, dn, schema, attrType, attrValue, entry,
-            )
+            DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
     def _validate(self, attrValue):
         if self.ldap_url:
@@ -102,13 +100,13 @@ class MemberUID(IA5String, DynamicValueSelectList):
     def displayValue(self, valueindex=0, commandbutton=False):
         r = [IA5String.displayValue(self, valueindex, commandbutton=False)]
         if commandbutton:
-            r.append(self._form.applAnchor(
-                'searchform', '&raquo;', self._sid,
+            r.append(self._app.anchor(
+                'searchform', '&raquo;',
                 [
                     ('dn', self._dn),
                     (
                         'filterstr', '(&(objectClass=posixAccount)(uid=%s))' % (
-                            self._form.utf2display(self._ls.uc_decode(self.attrValue)[0])
+                            self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0])
                         )
                     ),
                     ('searchform_mode', u'exp'),

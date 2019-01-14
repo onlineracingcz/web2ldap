@@ -157,8 +157,8 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
     desc = 'OpenLDAP syncrepl directive'
     minInputRows = 5
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
-        OlcMultilineText.__init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+        OlcMultilineText.__init__(self, app, dn, schema, attrType, attrValue, entry)
         self._sync_repl_desc = ldap0.openldap.SyncReplDesc(attrValue)
         return # __init__()
 
@@ -167,7 +167,7 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
             return ' '.join((
                 OlcMultilineText.displayValue(self, valueindex, commandbutton),
                 web2ldap.app.gui.LDAPURLButton(
-                    self._sid, self._form, self._ls,
+                    self._app,
                     self._sync_repl_desc.ldap_url(),
                 ),
             ))
@@ -208,14 +208,8 @@ class OlcPPolicyDefault(DynamicDNSelectList, DistinguishedName):
     desc = 'DN of a pwdPolicy object for uncustomized objects'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=pwdPolicy)'
 
-    def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, entry=None):
-        DynamicDNSelectList.__init__(
-            self, sid, form, ls, dn,
-            schema,
-            attrType,
-            attrValue,
-            entry=entry,
-        )
+    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+        DynamicDNSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
     def _validate(self, attrValue):
         return DynamicDNSelectList._validate(self, attrValue)
@@ -265,16 +259,16 @@ class AuditContext(NamingContexts):
         r = [DistinguishedName.displayValue(self, valueindex, commandbutton)]
         if commandbutton:
             r.extend([
-                self._form.applAnchor(
-                    'searchform', 'Search', self._sid,
+                self._app.anchor(
+                    'searchform', 'Search',
                     [
                         ('dn', self.attrValue),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
                     title=u'Go to search form for audit log',
                 ),
-                self._form.applAnchor(
-                    'search', 'List all', self._sid,
+                self._app.anchor(
+                    'search', 'List all',
                     [
                         ('dn', self.attrValue),
                         ('filterstr', u'(objectClass=auditObject)'),
@@ -282,8 +276,8 @@ class AuditContext(NamingContexts):
                     ],
                     title=u'List audit log entries of all operations',
                 ),
-                self._form.applAnchor(
-                    'search', 'List writes', self._sid,
+                self._app.anchor(
+                    'search', 'List writes',
                     [
                         ('dn', self.attrValue),
                         ('filterstr', u'(objectClass=auditWriteObject)'),
@@ -336,14 +330,14 @@ class ReqMod(OctetString, DirectoryString):
                 return OctetString.displayValue(self, valueindex, commandbutton)
         else:
             mod_attr_value = ''
-        mod_attr_type_u = mod_attr_type.decode(self._ls.charset)
-        mod_type_u = mod_type.decode(self._ls.charset)
+        mod_attr_type_u = mod_attr_type.decode(self._app.ls.charset)
+        mod_type_u = mod_type.decode(self._app.ls.charset)
         try:
-            mod_attr_value.decode(self._ls.charset)
+            mod_attr_value.decode(self._app.ls.charset)
         except UnicodeDecodeError:
             return '%s:%s<br>\n<code>\n%s\n</code>\n' % (
-                self._form.utf2display(mod_attr_type_u),
-                self._form.utf2display(mod_type_u),
+                self._app.form.utf2display(mod_attr_type_u),
+                self._app.form.utf2display(mod_type_u),
                 HexString(
                     mod_attr_value,
                     delimiter=':', wrap=64, linesep='<br>\n'
@@ -386,7 +380,7 @@ class ReqControls(IA5String):
                 except KeyError:
                     ctrl_name = None
             if ctrl_name:
-                result_lines.append(self._form.utf2display(ctrl_name.decode('utf-8')))
+                result_lines.append(self._app.form.utf2display(ctrl_name.decode('utf-8')))
             # Extract criticality
             try:
                 ctrl_criticality = {
@@ -408,7 +402,7 @@ class ReqControls(IA5String):
                     decoded_control_value = ctrl_value
                 result_lines.append(
                     'controlValue %s' % (
-                        self._form.utf2display(
+                        self._app.form.utf2display(
                             repr(decoded_control_value).decode('ascii')
                         ).replace('\n', '<br>')
                     )
@@ -432,8 +426,8 @@ class ReqEntryUUID(UUID):
             return display_value
         return web2ldapcnf.command_link_separator.join((
             display_value,
-            self._form.applAnchor(
-                'search', 'Search target', self._sid,
+            self._app.anchor(
+                'search', 'Search target',
                 (
                     ('dn', self._dn),
                     (
@@ -442,7 +436,7 @@ class ReqEntryUUID(UUID):
                     ),
                     (
                         'search_root',
-                        self._ls.getSearchRoot(self._ls.uc_decode(self._entry['reqDN'][0])[0]),
+                        self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._entry['reqDN'][0])[0]),
                     ),
                 ),
                 title=u'Search entry by UUID',
@@ -465,15 +459,15 @@ class ReqSession(Integer):
             return display_value
         return web2ldapcnf.command_link_separator.join((
             display_value,
-            self._form.applAnchor(
-                'search', '&raquo;', self._sid,
+            self._app.anchor(
+                'search', '&raquo;',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._ls.currentSearchRoot),
+                    ('search_root', self._app.ls.currentSearchRoot),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'reqSession'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', self._ls.uc_decode(self.attrValue)[0]),
+                    ('search_string', self._app.ls.uc_decode(self.attrValue)[0]),
                 ),
                 title=u'Search all audit entries with same session number',
             )
@@ -516,13 +510,13 @@ class OpenLDAPSpecialBackendSuffix(NamingContexts):
     desc = 'OpenLDAP special backend suffix'
 
     def _config_link(self):
-        attr_type_u = self._ls.uc_decode(self.attrType)[0][:-7]
+        attr_type_u = self._app.ls.uc_decode(self.attrType)[0][:-7]
         try:
-            config_context = self._ls.uc_decode(self._ls.rootDSE['configContext'][0])[0]
+            config_context = self._app.ls.uc_decode(self._app.ls.rootDSE['configContext'][0])[0]
         except KeyError:
             return None
-        return self._form.applAnchor(
-            'search', 'Config', self._sid,
+        return self._app.anchor(
+            'search', 'Config',
             (
                 ('dn', config_context),
                 ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),

@@ -398,8 +398,8 @@ class OpenDSSyncHist(OctetString, DirectoryString):
             mod_attr_type, mod_number, mod_type, mod_value = self.attrValue.split(':', 3)
         except ValueError:
             return OctetString.displayValue(self, valueindex, commandbutton)
-        first_str = self._form.utf2display(
-            ':'.join((mod_attr_type, mod_number, mod_type)).decode(self._ls.charset)
+        first_str = self._app.form.utf2display(
+            ':'.join((mod_attr_type, mod_number, mod_type)).decode(self._app.ls.charset)
         )
         if no_humanreadable_attr(self._schema, mod_attr_type):
             mod_value_html = HexString(
@@ -407,7 +407,7 @@ class OpenDSSyncHist(OctetString, DirectoryString):
                 delimiter=':', wrap=64, linesep='<br>\n'
             )[:-1]
         else:
-            mod_value_html = self._form.utf2display(mod_value.decode(self._ls.charset))
+            mod_value_html = self._app.form.utf2display(mod_value.decode(self._app.ls.charset))
         return ':<br>'.join((first_str, mod_value_html))
 
 syntax_registry.reg_at(
@@ -425,7 +425,7 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
         if not self.attrValue:
             return u''
         entry = ldap0.cidict.cidict(self._entry)
-        attr_value = self.attrValue.decode(self._ls.charset)
+        attr_value = self.attrValue.decode(self._app.ls.charset)
         try:
             dn_comp_list = explode_dn(attr_value)
         except ldap0.DECODING_ERROR:

@@ -49,9 +49,9 @@ class UniventionLDAPACLData(Binary, MultilineText):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         attr_value = bz2.decompress(self.attrValue)
-        attr_value_u = self._ls.uc_decode(attr_value)[0]
+        attr_value_u = self._app.ls.uc_decode(attr_value)[0]
         lines = [
-            self._form.utf2display(l, tab_identiation='    ')
+            self._app.form.utf2display(l, tab_identiation='    ')
             for l in self._split_lines(attr_value_u)
         ]
         return '<p>%d bytes <em>BZ2</em> data contains %d chars:</p><pre>%s</pre>' % (

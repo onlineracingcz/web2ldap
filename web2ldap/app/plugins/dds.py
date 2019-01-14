@@ -36,10 +36,10 @@ class DynamicSubtrees(DistinguishedName):
 
     def _additional_links(self):
         r = DistinguishedName._additional_links(self)
-        attr_value_u = self._ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
         r.append(
-            self._form.applAnchor(
-                'search', 'Search', self._sid,
+            self._app.anchor(
+                'search', 'Search',
                 [
                     ('dn', attr_value_u),
                     ('search_root', attr_value_u),
