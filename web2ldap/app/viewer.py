@@ -45,7 +45,7 @@ def DisplayBinaryAttribute(
     web2ldap.app.gui.Header(
         app,
         mimetype,
-        app.app.form.accept_charset,
+        app.form.accept_charset,
         more_headers=[
             ('Content-Disposition', 'inline; filename=%s' % attachment_filename),
         ]
