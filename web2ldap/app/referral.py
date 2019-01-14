@@ -27,15 +27,15 @@ ERR_MSG_DIV = """
 </p>
 """
 
-def w2l_chasereferral(sid, outf, command, form, ls, dn, ref_exc):
+def w2l_chasereferral(app, ref_exc):
     """
     Present an input form to change to a server referenced by referral
     """
 
     web2ldap.app.gui.TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         'Referral received',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+        web2ldap.app.gui.MainMenu(app),
         context_menu_list=[]
     )
 
@@ -46,64 +46,64 @@ def w2l_chasereferral(sid, outf, command, form, ls, dn, ref_exc):
             for s in ref_exc.args[0].get('info', '').split('\n')
         ]
     except ValueError:
-        outf.write(
+        app.outf.write(
             ERR_MSG_DIV % (
                 'Error extracting referral LDAP URL from %s.' % (
-                    form.utf2display(unicode(repr(ref_exc), 'ascii'))
+                    app.form.utf2display(unicode(repr(ref_exc), 'ascii'))
                 )
             )
         )
-        web2ldap.app.gui.Footer(outf, form)
+        web2ldap.app.gui.Footer(app)
         return
 
     try:
         ldap_url_info = ldap_url_info[1]
     except IndexError:
-        outf.write(
+        app.outf.write(
             ERR_MSG_DIV % (
                 'Error extracting referral LDAP URL from %s.' % (
-                    form.utf2display(repr(ldap_url_info).decode('ascii'))
+                    app.form.utf2display(repr(ldap_url_info).decode('ascii'))
                 )
             )
         )
-        web2ldap.app.gui.Footer(outf, form)
+        web2ldap.app.gui.Footer(app)
         return
 
     # Parse the referral LDAP URL
     try:
         ref_url = LDAPUrl(ldap_url_info[ldap_url_info.find('ldap:'):])
     except ValueError as value_error:
-        outf.write(
+        app.outf.write(
             ERR_MSG_DIV % (
                 'Error parsing referral URL %s: %s' % (
-                    form.utf2display(repr(ldap_url_info).decode('ascii')),
-                    form.utf2display(str(value_error).decode('ascii'))
+                    app.form.utf2display(repr(ldap_url_info).decode('ascii')),
+                    app.form.utf2display(str(value_error).decode('ascii'))
                 )
             )
         )
-        web2ldap.app.gui.Footer(outf, form)
+        web2ldap.app.gui.Footer(app)
         return
 
     login_template_str = web2ldap.app.gui.ReadTemplate(
-        form, ls, 'login_template', u'referral login form'
+        app, 'login_template', u'referral login form'
     )
 
     login_search_root_field = web2ldap.app.gui.SearchRootField(
-        form, ls, dn,
+        app,
         name='login_search_root',
     )
     login_fields = login_template_str.format(
-        field_login_mech=form.field['login_mech'].inputHTML(),
-        value_ldap_who=form.utf2display(ls.who),
-        value_ldap_filter=form.utf2display(
-            web2ldap.app.cnf.GetParam(ls, 'binddnsearch', ur'(uid=%s)'),
+        field_login_mech=app.form.field['login_mech'].inputHTML(),
+        value_ldap_who=app.form.utf2display(app.ls.who),
+        value_ldap_filter=app.form.utf2display(
+            web2ldap.app.cnf.GetParam(app.ls, 'binddnsearch', ur'(uid=%s)'),
         ),
         field_login_search_root=login_search_root_field.inputHTML(),
-        field_login_authzid_prefix=form.field['login_authzid_prefix'].inputHTML(),
+        field_login_authzid_prefix=app.form.field['login_authzid_prefix'].inputHTML(),
         value_submit='Chase Referral',
     )
 
-    outf.write(
+    app.outf.write(
         """
         <h1>Referral received</h1>
         <p>
@@ -111,14 +111,14 @@ def w2l_chasereferral(sid, outf, command, form, ls, dn, ref_exc):
         </p>
         %s\n%s\n%s\n%s
         """  % (
-            form.utf2display(unicode(ref_url.unparse(), ls.charset)),
-            form.beginFormHTML(command, sid, 'POST'),
-            form.hiddenFieldHTML('host', ref_url.hostport.decode(ls.charset), u''),
-            form.hiddenFieldHTML('dn', ref_url.dn.decode(ls.charset), u''),
+            app.form.utf2display(unicode(ref_url.unparse(), app.ls.charset)),
+            app.form.beginFormHTML(app.command, app.sid, 'POST'),
+            app.form.hiddenFieldHTML('host', ref_url.hostport.decode(app.ls.charset), u''),
+            app.form.hiddenFieldHTML('dn', ref_url.dn.decode(app.ls.charset), u''),
             login_fields,
         )
     )
-    form.hiddenInputFields(outf, ['sid', 'host', 'dn', 'who', 'cred', 'login_search_root'])
-    outf.write('</form>\n')
+    app.form.hiddenInputFields(app.outf, {'sid', 'host', 'dn', 'who', 'cred', 'login_search_root'})
+    app.outf.write('</form>\n')
 
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)

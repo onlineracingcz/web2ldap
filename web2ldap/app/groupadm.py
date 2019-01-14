@@ -30,9 +30,7 @@ REQUESTED_GROUP_ATTRS = ['objectClass', 'cn', 'description']
 
 
 def group_select_field(
-        ls,
-        member_dn,
-        form,
+        app,
         groups_dict,
         field_name,
         field_title,
@@ -57,7 +55,7 @@ def group_select_field(
         optgroup_list = []
         try:
             colgroup_memberdn = u','.join(
-                explode_dn(member_dn)[optgroup_min_level:optgroup_max_level]
+                explode_dn(app.dn)[optgroup_min_level:optgroup_max_level]
             )
         except (IndexError, ValueError):
             colgroup_memberdn = None
@@ -65,10 +63,10 @@ def group_select_field(
             if colgroup_memberdn in optgroup_dict:
                 optgroup_list.append(colgroup_memberdn)
         colgroup_authzdn = None
-        if ls.who is not None:
+        if app.ls.who is not None:
             try:
                 colgroup_authzdn = u','.join(
-                    explode_dn(ls.who)[optgroup_min_level:optgroup_max_level]
+                    explode_dn(app.ls.who)[optgroup_min_level:optgroup_max_level]
                 )
             except (IndexError, ValueError, ldap0.DECODING_ERROR):
                 pass
@@ -92,25 +90,25 @@ def group_select_field(
     option_list = []
     for optgroup_dn in optgroup_list:
         if optgroup_dn:
-            option_list.append('<optgroup label="%s">' % (form.utf2display(optgroup_dn)))
+            option_list.append('<optgroup label="%s">' % (app.form.utf2display(optgroup_dn)))
         for dn in sorted(optgroup_dict[optgroup_dn], key=unicode.lower):
-            option_text = form.utf2display(unicode(
+            option_text = app.form.utf2display(unicode(
                 groups_dict[dn].get(
                     'cn',
-                    [dn[:-len(group_search_root) or len(dn)].encode(ls.charset)]
+                    [dn[:-len(group_search_root) or len(dn)].encode(app.ls.charset)]
                 )[0],
-                ls.charset
+                app.ls.charset
             ))
-            option_title = form.utf2display(unicode(
+            option_title = app.form.utf2display(unicode(
                 groups_dict[dn].get(
                     'description',
-                    [dn[:-len(group_search_root)].encode(ls.charset)]
+                    [dn[:-len(group_search_root)].encode(app.ls.charset)]
                 )[0],
-                ls.charset
+                app.ls.charset
             ))
             option_list.append((
                 '<option value="%s" title="%s">%s</option>' % (
-                    form.utf2display(dn),
+                    app.form.utf2display(dn),
                     option_title,
                     option_text
                 )
@@ -125,9 +123,9 @@ def group_select_field(
     )
 
 
-def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
+def w2l_groupadm(app, info_msg='', error_msg=''):
 
-    groupadm_defs = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(ls, 'groupadm_defs', {}))
+    groupadm_defs = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(app.ls, 'groupadm_defs', {}))
     if not groupadm_defs:
         raise web2ldap.app.core.ErrorExit(u'Group admin options empty or not set.')
     groupadm_defs_keys = groupadm_defs.keys()
@@ -138,23 +136,27 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
         if not gad[1] is None
     ]
 
-    sub_schema = ls.retrieveSubSchema(
-        dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    sub_schema = app.ls.retrieveSubSchema(
+        app.dn,
+        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
     )
 
-    result_dnlist = ls.readEntry(dn, all_membership_attrs)
+    result_dnlist = app.ls.readEntry(app.dn, all_membership_attrs)
     if not result_dnlist:
         raise web2ldap.app.core.ErrorExit(u'No search result when reading entry.')
 
-    user_entry = ldap0.schema.models.Entry(sub_schema, dn, result_dnlist[0][1])
+    user_entry = ldap0.schema.models.Entry(
+        sub_schema,
+        app.dn.encode(app.ls.charset),
+        result_dnlist[0][1],
+    )
 
     # Extract form parameters
-    group_search_root = form.getInputValue('groupadm_searchroot', [ls.getSearchRoot(dn)])[0]
-    groupadm_view = int(form.getInputValue('groupadm_view', ['1'])[0])
-    groupadm_name = form.getInputValue('groupadm_name', [None])[0]
+    group_search_root = app.form.getInputValue('groupadm_searchroot', [app.ls.getSearchRoot(app.dn)])[0]
+    groupadm_view = int(app.form.getInputValue('groupadm_view', ['1'])[0])
+    groupadm_name = app.form.getInputValue('groupadm_name', [None])[0]
 
     filter_components = []
     for oc in groupadm_defs.keys():
@@ -162,7 +164,7 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
             continue
         group_member_attrtype, user_entry_attrtype = groupadm_defs[oc][:2]
         if user_entry_attrtype is None:
-            user_entry_attrvalue = dn.encode(ls.charset)
+            user_entry_attrvalue = app.dn.encode(app.ls.charset)
         else:
             try:
                 user_entry_attrvalue = user_entry[user_entry_attrtype][0]
@@ -179,7 +181,7 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
     #################################################################
 
     groupadm_filterstr_template = web2ldap.app.cnf.GetParam(
-        ls, 'groupadm_filterstr_template', r'(|%s)'
+        app.ls, 'groupadm_filterstr_template', r'(|%s)'
     )
 
     all_group_filterstr = groupadm_filterstr_template % (
@@ -192,24 +194,24 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
     )
     if groupadm_name:
         all_group_filterstr = '(&(cn=*%s*)%s)' % (
-            ldap0.filter.escape_filter_chars(groupadm_name.encode(ls.charset)),
+            ldap0.filter.escape_filter_chars(groupadm_name.encode(app.ls.charset)),
             all_group_filterstr
         )
 
     all_groups_dict = {}
 
     try:
-        msg_id = ls.l.search(
-            group_search_root.encode(ls.charset),
+        msg_id = app.ls.l.search(
+            group_search_root.encode(app.ls.charset),
             ldap0.SCOPE_SUBTREE,
             all_group_filterstr,
             attrlist=REQUESTED_GROUP_ATTRS,
-            timeout=ls.timeout,
+            timeout=app.ls.timeout,
         )
-        for res in ls.l.results(msg_id):
+        for res in app.ls.l.results(msg_id):
             for group_dn, group_entry in res.data:
                 if group_dn is not None:
-                    all_groups_dict[group_dn.decode(ls.charset)] = ldap0.cidict.cidict(group_entry)
+                    all_groups_dict[group_dn.decode(app.ls.charset)] = ldap0.cidict.cidict(group_entry)
     except ldap0.NO_SUCH_OBJECT:
         error_msg = 'No such object! Did you choose a valid search base?'
     except (ldap0.SIZELIMIT_EXCEEDED, ldap0.TIMELIMIT_EXCEEDED):
@@ -222,15 +224,15 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
     # Apply changes to group membership
     #################################################################
 
-    if 'groupadm_add' in form.inputFieldNames or \
-       'groupadm_remove' in form.inputFieldNames:
+    if 'groupadm_add' in app.form.inputFieldNames or \
+       'groupadm_remove' in app.form.inputFieldNames:
 
         ldaperror_entries = []
         successful_group_mods = []
 
         for action in ACTION2MODTYPE.keys():
 
-            for action_group_dn in form.getInputValue('groupadm_%s' % action, []):
+            for action_group_dn in app.form.getInputValue('groupadm_%s' % action, []):
                 group_dn = action_group_dn
                 if not all_groups_dict.has_key(group_dn):
                     # The group entry could have been removed in the mean time
@@ -244,7 +246,7 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
                         ]:
                         group_member_attrtype, user_entry_attrtype = groupadm_defs[oc][0:2]
                         if user_entry_attrtype is None:
-                            member_value = dn.encode(ls.charset)
+                            member_value = app.dn.encode(app.ls.charset)
                         else:
                             if not user_entry.has_key(user_entry_attrtype):
                                 raise web2ldap.app.core.ErrorExit(
@@ -262,12 +264,12 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
                 # Finally try to apply group membership modification(s) to single group entry
                 if modlist:
                     try:
-                        ls.modifyEntry(group_dn, modlist)
+                        app.ls.modifyEntry(group_dn, modlist)
                     except ldap0.LDAPError as e:
                         ldaperror_entries.append((
                             group_dn,
                             modlist,
-                            web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset),
+                            web2ldap.app.gui.LDAPError2ErrMsg(e, app),
                         ))
                     else:
                         successful_group_mods.append((group_dn, modlist))
@@ -288,7 +290,7 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
                 info_msg_list.append('<p>Added to:</p>')
                 info_msg_list.append('<ul>')
                 info_msg_list.extend([
-                    '<li>%s</li>' % (form.utf2display(group_dn))
+                    '<li>%s</li>' % (app.form.utf2display(group_dn))
                     for group_dn, modlist in group_add_list
                 ])
                 info_msg_list.append('</ul>')
@@ -296,7 +298,7 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
                 info_msg_list.append('<p>Removed from:</p>')
                 info_msg_list.append('<ul>')
                 info_msg_list.extend([
-                    '<li>%s</li>' % (form.utf2display(group_dn))
+                    '<li>%s</li>' % (app.form.utf2display(group_dn))
                     for group_dn, modlist in group_remove_list
                 ])
                 info_msg_list.append('</ul>')
@@ -306,7 +308,7 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
             error_msg_list = [error_msg]
             error_msg_list.extend([
                 'Error while modifying {group_dn}:<br>{error_msg}'.format(
-                    group_dn=form.utf2display(group_dn),
+                    group_dn=app.form.utf2display(group_dn),
                     error_msg=error_msg
                 )
                 for group_dn, modlist, error_msg in ldaperror_entries
@@ -329,17 +331,17 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
     remove_groups_dict = {}
 
     try:
-        msg_id = ls.l.search(
-            group_search_root.encode(ls.charset),
+        msg_id = app.ls.l.search(
+            group_search_root.encode(app.ls.charset),
             ldap0.SCOPE_SUBTREE,
             remove_group_filterstr,
             attrlist=REQUESTED_GROUP_ATTRS,
-            timeout=ls.timeout,
+            timeout=app.ls.timeout,
         )
-        for res in ls.l.results(msg_id):
+        for res in app.ls.l.results(msg_id):
             for group_dn, group_entry in res.data:
                 if group_dn is not None:
-                    remove_groups_dict[group_dn.decode(ls.charset)] = ldap0.cidict.cidict(group_entry)
+                    remove_groups_dict[group_dn.decode(app.ls.charset)] = ldap0.cidict.cidict(group_entry)
     except ldap0.NO_SUCH_OBJECT:
         error_msg = 'No such object! Did you choose a valid search base?'
     except (ldap0.SIZELIMIT_EXCEEDED, ldap0.TIMELIMIT_EXCEEDED):
@@ -373,31 +375,29 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
     #########################################################
 
     web2ldap.app.gui.TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         'Group membership',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+        web2ldap.app.gui.MainMenu(app),
         context_menu_list=[]
     )
 
     group_search_root_field = web2ldap.app.gui.SearchRootField(
-        form,
-        ls,
-        dn,
+        app,
         name='groupadm_searchroot'
     )
-    group_search_root_field.charset = form.accept_charset
+    group_search_root_field.charset = app.form.accept_charset
     group_search_root_field.setDefault(group_search_root)
 
     if error_msg:
-        outf.write('<p class="ErrorMessage">%s</p>' % (error_msg))
+        app.outf.write('<p class="ErrorMessage">%s</p>' % (error_msg))
     if info_msg:
-        outf.write('<p class="InfoMessage">%s</p>' % (info_msg))
+        app.outf.write('<p class="InfoMessage">%s</p>' % (info_msg))
 
     if all_groups_dict:
 
-        optgroup_bounds = web2ldap.app.cnf.GetParam(ls, 'groupadm_optgroup_bounds', (1, None))
+        optgroup_bounds = web2ldap.app.cnf.GetParam(app.ls, 'groupadm_optgroup_bounds', (1, None))
 
-        outf.write(
+        app.outf.write(
             """
             %s\n%s\n%s\n
               <input type="submit" value="Change Group Membership">
@@ -414,11 +414,11 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
             </form>
             """ % (
                 # form for changing group membership
-                form.beginFormHTML('groupadm', sid, 'POST', target='_top'),
-                form.hiddenFieldHTML('dn', dn, u''),
-                form.hiddenFieldHTML('groupadm_searchroot', group_search_root, u''),
+                app.form.beginFormHTML('groupadm', app.sid, 'POST', target='_top'),
+                app.form.hiddenFieldHTML('dn', app.dn, u''),
+                app.form.hiddenFieldHTML('groupadm_searchroot', group_search_root, u''),
                 group_select_field(
-                    ls, dn, form,
+                    app,
                     all_groups_dict,
                     'groupadm_add',
                     'Groups to add to',
@@ -427,7 +427,7 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
                     optgroup_bounds,
                 ),
                 group_select_field(
-                    ls, dn, form,
+                    app,
                     remove_groups_dict,
                     'groupadm_remove',
                     'Groups to remove from',
@@ -438,7 +438,7 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
             )
         )
 
-    outf.write(
+    app.outf.write(
         """%s\n%s\n
           <p><input type="submit" value="List"> group entries below: %s.</p>
           <p>where group name contains: %s</p>
@@ -446,11 +446,11 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
         </form>
         """ % (
             # form for searching group entries
-            form.beginFormHTML('groupadm', sid, 'GET'),
-            form.hiddenFieldHTML('dn', dn, u''),
+            app.form.beginFormHTML('groupadm', app.sid, 'GET'),
+            app.form.hiddenFieldHTML('dn', app.dn, u''),
             group_search_root_field.inputHTML(title='Search root for searching group entries'),
-            form.field['groupadm_name'].inputHTML(),
-            form.field['groupadm_view'].inputHTML(
+            app.form.field['groupadm_name'].inputHTML(),
+            app.form.field['groupadm_view'].inputHTML(
                 title='Group entries list',
                 default=str(groupadm_view),
             ),
@@ -458,21 +458,21 @@ def w2l_groupadm(sid, outf, command, form, ls, dn, info_msg='', error_msg=''):
     )
 
     if groupadm_view:
-        outf.write('<dl>\n')
+        app.outf.write('<dl>\n')
         # Output a legend of all group entries
         for group_dn in {1: remove_groups, 2:all_group_entries}[groupadm_view]:
             group_entry = all_groups_dict[group_dn]
-            outf.write('<dt>%s | %s</dt>\n<dd>%s<br>\n(%s)<br>\n%s</dd>\n' % (
+            app.outf.write('<dt>%s | %s</dt>\n<dd>%s<br>\n(%s)<br>\n%s</dd>\n' % (
                 ', '.join(group_entry.get('cn', [])),
-                form.applAnchor(
-                    'read', 'Read', sid,
+                app.anchor(
+                    'read', 'Read',
                     [('dn', group_dn)],
                     title=u'Display group entry',
                 ),
-                form.utf2display(group_dn),
+                app.form.utf2display(group_dn),
                 ', '.join(group_entry.get('objectClass', [])),
                 '<br>'.join(group_entry.get('description', []))
             ))
-        outf.write('</dl>\n')
+        app.outf.write('</dl>\n')
 
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)

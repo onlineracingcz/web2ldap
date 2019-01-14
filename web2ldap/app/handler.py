@@ -138,9 +138,34 @@ class AppHandler(object):
         self.command, self.sid = self.path_info(env)
         self.form = None
         self.ls = None
-        self.dn = None
+        self.dn = u''
         self.current_access_time = time.time()
         return
+
+    @property
+    def dn(self):
+        return self._dn
+
+    @dn.setter
+    def dn(self, dn):
+        assert web2ldap.ldaputil.base.is_dn(dn), ValueError(
+            'Expected LDAP DN as dn, was %r' % (dn)
+        )
+        self._dn = dn
+        self._parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
+        if self.ls:
+            ldap_charset = self.ls.charset
+        else:
+            ldap_charset = 'utf-8'
+        self._ldap_dn = dn.encode(ldap_charset)
+
+    @property
+    def parent_dn(self):
+        return self._parent_dn
+
+    @property
+    def ldap_dn(self):
+        return self._ldap_dn
 
     def anchor(
             self,
@@ -814,7 +839,7 @@ class AppHandler(object):
             self.ls.setDN(dn or e.who)
             # Output the change password form
             web2ldap.app.passwd.passwd_form(
-                self.sid, self.outf, self.form, self.ls, dn,
+                self,
                 None, None, e.who.decode(self.ls.charset), None,
                 'Password change needed',
                 self.form.utf2display(
@@ -833,7 +858,7 @@ class AppHandler(object):
             self.ls.setDN(dn or e.who)
             # Output the change password form
             web2ldap.app.passwd.passwd_form(
-                self.sid, self.outf, self.form, self.ls, dn,
+                self,
                 None, None,
                 e.who.decode(self.ls.charset), None,
                 'Password change needed',
@@ -849,7 +874,7 @@ class AppHandler(object):
                 login_msg=web2ldapcnf.command_link_separator.join([
                     web2ldap.app.gui.LDAPError2ErrMsg(e, self),
                     self.anchor(
-                        'search', 'Show', self.sid,
+                        'search', 'Show',
                         [
                             ('dn', login_search_root),
                             ('scope', str(ldap0.SCOPE_SUBTREE)),

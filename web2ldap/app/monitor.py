@@ -138,7 +138,7 @@ MONITOR_SESSIONS_JUST_CREATED_TMPL = """
 """
 
 
-def w2l_monitor(outf, command, form, env):
+def w2l_monitor(app):
     """
     List several general gateway stats
     """
@@ -154,18 +154,19 @@ def w2l_monitor(outf, command, form, env):
         posix_username = '-/-'
 
     web2ldap.app.gui.TopSection(
-        None, outf, command, form, None, None, 'Monitor',
-        web2ldap.app.gui.EntryMainMenu(form, env),
+        app,
+        'Monitor',
+        web2ldap.app.gui.EntryMainMenu(app),
         [],
     )
 
-    outf.write(
+    app.outf.write(
         MONITOR_TEMPLATE.format(
             text_version=web2ldap.__about__.__version__,
             text_sysfqdn=socket.getfqdn(),
             int_pid=os.getpid(),
             int_ppid=os.getppid(),
-            text_username=form.utf2display(unicode(posix_username)),
+            text_username=app.form.utf2display(unicode(posix_username)),
             int_uid=posix_uid,
             text_currenttime=strftimeiso8601(time.gmtime(time.time())),
             text_startuptime=strftimeiso8601(time.gmtime(STARTUP_TIME)),
@@ -175,7 +176,7 @@ def w2l_monitor(outf, command, form, env):
                 [
                     '<li>%s</li>' % ''.join(
                         [
-                            form.utf2display(unicode(repr(t))),
+                            app.form.utf2display(unicode(repr(t))),
                             ', alive'*t.isAlive(),
                             ', daemon'*t.isDaemon(),
                         ]
@@ -194,7 +195,7 @@ def w2l_monitor(outf, command, form, env):
             text_remoteiphitlist='\n'.join(
                 [
                     '<tr><td>%s</td><td>%d</td><td>%0.4f</td></tr>' % (
-                        form.utf2display(ip.decode('ascii')),
+                        app.form.utf2display(ip.decode('ascii')),
                         count,
                         float(count/uptime),
                     )
@@ -216,15 +217,15 @@ def w2l_monitor(outf, command, form, env):
                     fresh_ldap_sessions.append((k, i))
 
         if real_ldap_sessions:
-            outf.write(
+            app.outf.write(
                 MONITOR_CONNECTIONS_TMPL % (
                     len(real_ldap_sessions),
                     '\n'.join([
                         '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(
-                            form.utf2display(i[1].onBehalf.decode('ascii') or u'unknown'),
+                            app.form.utf2display(i[1].onBehalf.decode('ascii') or u'unknown'),
                             strftimeiso8601(time.gmtime(i[0])),
-                            form.utf2display(i[1].uri.decode('ascii') or u'no connection'),
-                            form.utf2display(i[1].who or u'anonymous'),
+                            app.form.utf2display(i[1].uri.decode('ascii') or u'no connection'),
+                            app.form.utf2display(i[1].who or u'anonymous'),
                         )
                         for k, i in real_ldap_sessions
                     ]),
@@ -232,7 +233,7 @@ def w2l_monitor(outf, command, form, env):
             )
 
         if fresh_ldap_sessions:
-            outf.write(
+            app.outf.write(
                 MONITOR_SESSIONS_JUST_CREATED_TMPL % (
                     len(fresh_ldap_sessions),
                     '\n'.join([
@@ -243,6 +244,6 @@ def w2l_monitor(outf, command, form, env):
             )
 
     else:
-        outf.write('No active sessions.\n')
+        app.outf.write('No active sessions.\n')
 
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)

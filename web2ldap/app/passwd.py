@@ -68,34 +68,34 @@ def get_all_attributes(schema, oc_list):
     return result # get_all_attributes()
 
 
-def password_change_url(form, ls, passwd_who, passwd_input):
+def password_change_url(app, passwd_who, passwd_input):
     """
     returns a web2ldap URL for directly accessing
     the password change form for the given entry
     """
-    passwd_who_ldapurl_obj = ls.ldapUrl(passwd_who)
+    passwd_who_ldapurl_obj = app.ls.ldapUrl(passwd_who)
     passwd_who_ldapurl_obj.scope = ldap0.SCOPE_BASE
-    passwd_who_ldapurl_obj.who = passwd_who.encode(ls.charset)
-    passwd_who_ldapurl_obj.cred = passwd_input.encode(ls.charset)
-    passwd_who_ldapurl_obj.cred = passwd_input.encode(ls.charset)
+    passwd_who_ldapurl_obj.who = passwd_who.encode(app.ls.charset)
+    passwd_who_ldapurl_obj.cred = passwd_input.encode(app.ls.charset)
+    passwd_who_ldapurl_obj.cred = passwd_input.encode(app.ls.charset)
     passwd_who_ldapurl_obj.saslMech = None
     return '?'.join((
-        form.actionUrlHTML('passwd', None),
+        app.form.actionUrlHTML('passwd', None),
         str(passwd_who_ldapurl_obj),
     ))
 
 
-def passwd_context_menu(sid, form, dn, sub_schema):
+def passwd_context_menu(app, sub_schema):
     """
     returns the context menu list for passwd dialogue
     """
     result = [
-        form.applAnchor(
-            'passwd', short_desc, sid,
+        app.anchor(
+            'passwd', short_desc,
             [
-                ('dn', dn),
+                ('dn', app.dn),
                 ('passwd_action', pa),
-                ('passwd_who', dn),
+                ('passwd_who', app.dn),
             ],
             title=long_desc
         )
@@ -103,7 +103,7 @@ def passwd_context_menu(sid, form, dn, sub_schema):
     ]
     # Menu entry for unlocking entry
     delete_param_list = [
-        ('dn', dn),
+        ('dn', app.dn),
         ('delete_ctrl', web2ldap.ldapsession.CONTROL_RELAXRULES),
     ]
     delete_param_list.extend([
@@ -119,14 +119,14 @@ def passwd_context_menu(sid, form, dn, sub_schema):
         if sub_schema.get_obj(AttributeType, attr_type.encode('ascii'), None) is not None
     ])
     result.append(
-        form.applAnchor(
-            'delete', 'Unlock', sid,
+        app.anchor(
+            'delete', 'Unlock',
             delete_param_list,
             title=u'Unlock locked out entry',
         )
     )
     # Menu entry for deleting all password-related attrs
-    delete_param_list = [('dn', dn)]
+    delete_param_list = [('dn', app.dn)]
     delete_param_list.extend([
         ('delete_attr', attr_type)
         for attr_type in (
@@ -148,8 +148,8 @@ def passwd_context_menu(sid, form, dn, sub_schema):
         if sub_schema.get_obj(AttributeType, attr_type, None) is not None
     ])
     result.append(
-        form.applAnchor(
-            'delete', 'Unset', sid,
+        app.anchor(
+            'delete', 'Unset',
             delete_param_list,
             title=u'Delete password related attributes',
         )
@@ -193,7 +193,7 @@ def passwd_fields():
 
 
 def passwd_form(
-        sid, outf, form, ls, dn, sub_schema,
+        app, sub_schema,
         passwd_action, passwd_who, user_objectclasses,
         heading, error_msg
     ):
@@ -204,14 +204,14 @@ def passwd_form(
     # depending on the calling code part the necessary
     # input fields must be added to the form
     for field in passwd_fields():
-        if field.name not in form.field:
-            form.addField(field)
+        if field.name not in app.form.field:
+            app.form.addField(field)
 
-    sub_schema = ls.retrieveSubSchema(
-        dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    sub_schema = app.ls.retrieveSubSchema(
+        app.dn,
+        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
     )
 
     if error_msg:
@@ -221,13 +221,13 @@ def passwd_form(
     unicode_pwd_avail = sub_schema.sed[AttributeType].has_key('1.2.840.113556.1.4.90')
 
     # Determine whether user changes own password
-    own_pwd_change = password_self_change(ls, passwd_who)
+    own_pwd_change = password_self_change(app.ls, passwd_who)
 
     all_attrs = get_all_attributes(sub_schema, user_objectclasses)
 
     if not unicode_pwd_avail:
 
-        config_hashtypes = web2ldap.app.cnf.GetParam(ls, 'passwd_hashtypes', [])
+        config_hashtypes = web2ldap.app.cnf.GetParam(app.ls, 'passwd_hashtypes', [])
         if config_hashtypes:
             # The set of hash types are restricted by local configuration
             default_hashtypes = [
@@ -235,33 +235,34 @@ def passwd_form(
                 for hash_type in web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items()
                 if hash_type[0] in config_hashtypes
             ]
-            form.field['passwd_scheme'].options = default_hashtypes
+            app.form.field['passwd_scheme'].options = default_hashtypes
 
     nthash_available = '1.3.6.1.4.1.7165.2.1.25' in all_attrs
     show_clientside_pw_fields = passwd_action == 'setuserpassword' and not unicode_pwd_avail
 
     passwd_template_str = web2ldap.app.gui.ReadTemplate(
-        form, ls,
+        app,
         'passwd_template',
         u'password form',
     )
 
     web2ldap.app.gui.TopSection(
-        sid, outf, 'passwd', form, ls, dn, 'Change password',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-        context_menu_list=passwd_context_menu(sid, form, dn, sub_schema),
+        app,
+        'Change password',
+        web2ldap.app.gui.MainMenu(app),
+        context_menu_list=passwd_context_menu(app, sub_schema),
         main_div_id='Input',
     )
 
-    outf.write(passwd_template_str.format(
+    app.outf.write(passwd_template_str.format(
         text_heading=heading,
-        text_msg=error_msg or form.utf2display(PASSWD_ACTIONS_DICT[passwd_action][1]),
-        form_begin=form.beginFormHTML('passwd', sid, 'POST'),
-        value_dn=form.hiddenFieldHTML('dn', dn, u''),
-        value_passwd_action=form.hiddenFieldHTML('passwd_action', passwd_action, u''),
-        value_passwd_who=form.hiddenFieldHTML('passwd_who', passwd_who, u''),
+        text_msg=error_msg or app.form.utf2display(PASSWD_ACTIONS_DICT[passwd_action][1]),
+        form_begin=app.form.beginFormHTML('passwd', app.sid, 'POST'),
+        value_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
+        value_passwd_action=app.form.hiddenFieldHTML('passwd_action', passwd_action, u''),
+        value_passwd_who=app.form.hiddenFieldHTML('passwd_who', passwd_who, u''),
         text_desc={False:'Change password for', True:'Change own password of'}[own_pwd_change],
-        text_whoami=web2ldap.app.gui.WhoAmITemplate(sid, form, ls, dn, passwd_who),
+        text_whoami=web2ldap.app.gui.WhoAmITemplate(app, passwd_who),
         disable_oldpw_start={False:'', True:'<!--'}[not own_pwd_change],
         disable_oldpw_end={False:'', True:'-->'}[not own_pwd_change],
         disable_ownuser_start={False:'', True:'<!--'}[own_pwd_change],
@@ -272,52 +273,52 @@ def passwd_form(
         disable_syncnthash_end={False:'', True:'-->'}[not (show_clientside_pw_fields and nthash_available)],
         disable_settimesync_start={False:'', True:'<!--'}[own_pwd_change or not show_clientside_pw_fields],
         disable_settimesync_end={False:'', True:'-->'}[own_pwd_change or not show_clientside_pw_fields],
-        form_field_passwd_scheme=form.field['passwd_scheme'].inputHTML(),
-        form_field_passwd_ntpasswordsync=form.field['passwd_ntpasswordsync'].inputHTML(),
-        form_field_passwd_settimesync=form.field['passwd_settimesync'].inputHTML(checked=(not own_pwd_change)),
+        form_field_passwd_scheme=app.form.field['passwd_scheme'].inputHTML(),
+        form_field_passwd_ntpasswordsync=app.form.field['passwd_ntpasswordsync'].inputHTML(),
+        form_field_passwd_settimesync=app.form.field['passwd_settimesync'].inputHTML(checked=(not own_pwd_change)),
     ))
 
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)
     return # passwd_form()
 
 
-def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
+def w2l_passwd(app, ldap_url):
     """
     Set new password in LDAP entries
     """
 
-    sub_schema = ls.retrieveSubSchema(
-        dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    sub_schema = app.ls.retrieveSubSchema(
+        app.dn,
+        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
     )
 
     # Determine the default value for passwd_action based on
     # server's visible configuration
-    if PassmodRequest.requestName in ls.supportedExtension:
+    if PassmodRequest.requestName in app.ls.supportedExtension:
         # Password Modify extended operation seems to be announced in rootDSE
         passwd_action_default = u'passwdextop'
     else:
         passwd_action_default = u'setuserpassword'
 
-    passwd_action = form.getInputValue('passwd_action', [None])[0] or passwd_action_default
-    passwd_who = form.getInputValue('passwd_who', [dn])[0]
+    passwd_action = app.form.getInputValue('passwd_action', [None])[0] or passwd_action_default
+    passwd_who = app.form.getInputValue('passwd_who', [app.dn])[0]
 
-    user_entry = ls.l.read_s(passwd_who.encode(ls.charset), attrlist=['objectClass'])
+    user_entry = app.ls.l.read_s(passwd_who.encode(app.ls.charset), attrlist=['objectClass'])
     user_objectclasses = SchemaElementOIDSet(
         sub_schema,
         ObjectClass,
         user_entry.get('objectClass', []),
     )
 
-    if 'passwd_newpasswd' not in form.inputFieldNames:
+    if 'passwd_newpasswd' not in app.form.inputFieldNames:
 
         # New password not yet provided => ask for it
         #---------------------------------------------
 
         passwd_form(
-            sid, outf, form, ls, dn, sub_schema,
+            app, sub_schema,
             passwd_action, passwd_who,
             user_objectclasses,
             'Set password', ''
@@ -327,35 +328,35 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
     # New password provided => (re)set it in entry
     #----------------------------------------------
 
-    if len(form.field['passwd_newpasswd'].value) != 2:
+    if len(app.form.field['passwd_newpasswd'].value) != 2:
         raise web2ldap.app.core.ErrorExit(u'Repeat password!')
 
-    if form.field['passwd_newpasswd'].value[0] != form.field['passwd_newpasswd'].value[1]:
+    if app.form.field['passwd_newpasswd'].value[0] != app.form.field['passwd_newpasswd'].value[1]:
         passwd_form(
-            sid, outf, form, ls, dn, sub_schema,
+            app, sub_schema,
             passwd_action, passwd_who, user_objectclasses,
             heading='Password Error',
             error_msg='New passwords do not match!',
         )
         return
 
-    old_password = form.getInputValue('passwd_oldpasswd', [None])[0]
+    old_password = app.form.getInputValue('passwd_oldpasswd', [None])[0]
 
-    passwd_input = form.field['passwd_newpasswd'].value[0]
+    passwd_input = app.form.field['passwd_newpasswd'].value[0]
 
     no_passwd_input = not passwd_input
     if no_passwd_input:
         passwd_input = random_string(
-            alphabet=web2ldap.app.cnf.GetParam(ls, 'passwd_genchars', PWD_ALPHABET),
-            length=web2ldap.app.cnf.GetParam(ls, 'passwd_genlength', PASSWD_GEN_DEFAULT_LENGTH),
+            alphabet=web2ldap.app.cnf.GetParam(app.ls, 'passwd_genchars', PWD_ALPHABET),
+            length=web2ldap.app.cnf.GetParam(app.ls, 'passwd_genlength', PASSWD_GEN_DEFAULT_LENGTH),
         )
 
-    passwd_forcechange = form.getInputValue('passwd_forcechange', ['no'])[0] == 'yes'
-    passwd_inform = form.getInputValue('passwd_inform', [''])[0]
+    passwd_forcechange = app.form.getInputValue('passwd_forcechange', ['no'])[0] == 'yes'
+    passwd_inform = app.form.getInputValue('passwd_inform', [''])[0]
 
     password_attr_types_msg = ''
 
-    passwd_modlist = web2ldap.app.cnf.GetParam(ls, 'passwd_modlist', [])
+    passwd_modlist = web2ldap.app.cnf.GetParam(app.ls, 'passwd_modlist', [])
 
     # Extend with appropriate user-must-change-password-after-reset attribute
     if passwd_forcechange:
@@ -375,28 +376,28 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
         #--------------------------------------------------------
 
         try:
-            ls.l.passwd_s(
-                passwd_who.encode(ls.charset),
-                (old_password or u'').encode(ls.charset) or None,
-                passwd_input.encode(ls.charset)
+            app.ls.l.passwd_s(
+                passwd_who.encode(app.ls.charset),
+                (old_password or u'').encode(app.ls.charset) or None,
+                passwd_input.encode(app.ls.charset)
             )
         except (
                 ldap0.CONSTRAINT_VIOLATION,
                 ldap0.UNWILLING_TO_PERFORM,
             ) as e:
             passwd_form(
-                sid, outf, form, ls, dn, sub_schema,
+                app, sub_schema,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
-                error_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset)
+                error_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app)
             )
             return
         else:
             if passwd_modlist:
-                ls.modifyEntry(passwd_who, passwd_modlist)
+                app.ls.modifyEntry(passwd_who, passwd_modlist)
             if no_passwd_input:
                 password_attr_types_msg = 'Generated password set by the server: %s' % (
-                    form.utf2display(passwd_input)
+                    app.form.utf2display(passwd_input)
                 )
             else:
                 password_attr_types_msg = 'Password set by the server.'
@@ -428,7 +429,7 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
                 except KeyError:
                     pass
 
-        passwd_scheme = form.getInputValue('passwd_scheme', [''])[0]
+        passwd_scheme = app.form.getInputValue('passwd_scheme', [''])[0]
 
         # Set "standard" password of LDAP entry
         if '1.2.840.113556.1.4.90' in all_attrs:
@@ -442,13 +443,13 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
             # Assume standard password attribute userPassword
             passwd_attr_type = 'userPassword'
             new_passwd_value = user_password_hash(
-                passwd_input.encode(ls.charset),
+                passwd_input.encode(app.ls.charset),
                 passwd_scheme.encode('ascii'),
             )
             if old_password:
-                old_passwd_value = user_password_hash(old_password.encode(ls.charset), '')
+                old_passwd_value = user_password_hash(old_password.encode(app.ls.charset), '')
 
-        if password_self_change(ls, passwd_who) and old_password:
+        if password_self_change(app.ls, passwd_who) and old_password:
             passwd_modlist.extend((
                 (
                     ldap0.MOD_DELETE,
@@ -470,7 +471,7 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
                 ),
             )
 
-        passwd_settimesync = form.getInputValue('passwd_settimesync', ['no'])[0] == 'yes'
+        passwd_settimesync = app.form.getInputValue('passwd_settimesync', ['no'])[0] == 'yes'
 
         pwd_change_timestamp = time.time()
 
@@ -483,7 +484,7 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
                 )
             )
 
-        passwd_ntpasswordsync = form.getInputValue('passwd_ntpasswordsync', ['no'])[0] == 'yes'
+        passwd_ntpasswordsync = app.form.getInputValue('passwd_ntpasswordsync', ['no'])[0] == 'yes'
 
         # Samba password synchronization if requested
         if passwd_ntpasswordsync and '1.3.6.1.4.1.7165.2.1.25' in all_attrs:
@@ -505,53 +506,53 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
 
         password_attr_types_msg = 'Password-related attributes set: %s' % (', '.join(
             [
-                form.utf2display(unicode(attr_type))
+                app.form.utf2display(unicode(attr_type))
                 for _, attr_type, _ in passwd_modlist
             ]
         ))
         if no_passwd_input:
             password_attr_types_msg += '<br>Generated password is: %s' % (
-                form.utf2display(passwd_input)
+                app.form.utf2display(passwd_input)
             )
 
         # Modify password
         try:
-            ls.modifyEntry(passwd_who, passwd_modlist)
+            app.ls.modifyEntry(passwd_who, passwd_modlist)
         except (
                 ldap0.CONSTRAINT_VIOLATION,
                 ldap0.UNWILLING_TO_PERFORM,
             ) as e:
             passwd_form(
-                sid, outf, form, ls, dn, sub_schema,
+                app, sub_schema,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
-                error_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset)
+                error_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app)
             )
             return
         except ldap0.NO_SUCH_ATTRIBUTE as e:
             passwd_form(
-                sid, outf, form, ls, dn, sub_schema,
+                app, sub_schema,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
                 error_msg=web2ldap.app.gui.LDAPError2ErrMsg(
-                    e, form, ls.charset, template=r"%s (Hint: Try without old password.)"
+                    e, app, template=r"%s (Hint: Try without old password.)"
                 )
             )
             return
 
     # Check if relogin is necessary
-    if password_self_change(ls, passwd_who):
+    if password_self_change(app.ls, passwd_who):
         try:
-            ls.l.reconnect(ls.uri, reset_last_bind=True)
+            app.ls.l.reconnect(app.ls.uri, reset_last_bind=True)
         except ldap0.INAPPROPRIATE_AUTH:
             pass
-        ls.who = None
+        app.ls.who = None
         # Display login form
         web2ldap.app.login.w2l_login(
-            sid, outf, 'searchform', form, ls, dn,
+            app,
             ldap_url,
             None,
-            ls.getSearchRoot(passwd_who),
+            app.ls.getSearchRoot(passwd_who),
             login_msg='New login is required!<br>'+password_attr_types_msg,
             who=passwd_who,
             relogin=False,
@@ -560,21 +561,21 @@ def w2l_passwd(sid, outf, command, form, ls, dn, ldap_url):
     else:
         if passwd_inform == 'display_url':
             passwd_link = '<a href="%s">Password change URL</a>' % (
-                password_change_url(form, ls, passwd_who, passwd_input)
+                password_change_url(app, passwd_who, passwd_input)
             )
         else:
             passwd_link = ''
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             message="""
             <p class="SuccessMessage">Changed password of entry %s</p>
             <p>%s</p>
             <p>%s</p>
             """ % (
-                web2ldap.app.gui.DisplayDN(sid, form, ls, passwd_who),
+                web2ldap.app.gui.DisplayDN(app, passwd_who),
                 password_attr_types_msg,
                 passwd_link,
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )

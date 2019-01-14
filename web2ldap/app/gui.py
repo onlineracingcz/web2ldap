@@ -582,12 +582,9 @@ def TopSection(
 
     if app.ls is not None and app.ls.uri is not None:
 
-        if not app.dn or not web2ldap.ldaputil.base.is_dn(app.dn):
-            dn = u''
-
         # Only output something meaningful if valid connection
         template_dict.update({
-            'ldap_url': str(app.ls.ldapUrl(app.dn)),
+            'ldap_url': app.ls.ldapUrl(app.dn),
             'ldap_uri': app.form.utf2display(app.ls.uri.decode('ascii')),
             'description': escape_html(web2ldap.app.cnf.GetParam(app.ls, 'description', u'').encode(app.form.accept_charset)),
             'dit_navi': ',\n'.join(DITNavigationList(app)),
@@ -659,7 +656,6 @@ def LDAPURLButton(app, data):
         return app.anchor(
             command_func,
             'Connect and %s' % (command_func),
-            None,
             (('ldapurl', str(l).decode('ascii')),)
         )
     command_text = {True:'Read', False:'Search'}[l.scope == ldap0.SCOPE_BASE]
@@ -830,7 +826,7 @@ def SearchRootField(
     srf = web2ldap.web.forms.Select(
         name, text, 1,
         #size=60,
-        default=default or app.ls.getSearchRoot(app.dn),
+        default=default or app.ls.getSearchRoot(app.dn or u''),
         options=dn_select_list,
         ignoreCase=1
     )

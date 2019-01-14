@@ -20,82 +20,92 @@ from ldap0.extop.dds import RefreshRequest, RefreshResponse
 import web2ldap.app.gui
 
 
-def DDSForm(sid, outf, form, ls, dn, Msg):
+DDS_FORM_TMPL = """
+<h1>Refresh Dynamic Entry</h1>
+{text_info_message}
+{form_begin}
+{field_dn}
+<table>
+  <tr><td>DN of entry:</td><td>{text_dn}</td></tr>
+  <tr>
+    <td>Refresh TTL:</td><td>{field_dds_renewttlnum} {field_dds_renewttlfac}</td>
+  </tr>
+</table>
+  <input type="submit" value="Refresh">
+  </form>
+"""
 
-    if Msg:
-        Msg = '<p class="ErrorMessage">%s</p>' % (Msg)
+
+def dds_form(app, msg):
+    """
+    Output input form for entering TTL for dynamic entry refresh
+    """
+    if msg:
+        msg = '<p class="ErrorMessage">%s</p>' % (msg)
     else:
-        Msg = '<p class="Message">Enter time-to-live for refresh request or leave empty for server-side default.</p>'
-
+        msg = (
+            '<p class="Message">'
+            'Enter time-to-live for refresh request or leave empty for server-side default.'
+            '</p>'
+        )
     web2ldap.app.gui.TopSection(
-        sid, outf, 'dds', form, ls, dn, 'Refresh dynamic entry',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+        app, 'Refresh dynamic entry',
+        web2ldap.app.gui.MainMenu(app),
+        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app),
     )
-
-    outf.write(
-        """
-        <h1>Refresh Dynamic Entry</h1>
-        {text_info_message}
-        {form_begin}
-        {field_dn}
-        <table>
-          <tr><td>DN of entry:</td><td>{text_dn}</td></tr>
-          <tr><td>Refresh TTL:</td><td>{field_dds_renewttlnum} {field_dds_renewttlfac}</td></tr>
-        </table>
-          <input type="submit" value="Refresh">
-          </form>
-        """.format(
-            text_info_message=Msg,
-            form_begin=form.beginFormHTML('dds', sid, 'POST'),
-            field_dn=form.hiddenFieldHTML('dn', dn, u''),
-            text_dn=web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
-            field_dds_renewttlnum=form.field['dds_renewttlnum'].inputHTML(),
-            field_dds_renewttlfac=form.field['dds_renewttlfac'].inputHTML(),
+    app.outf.write(
+        DDS_FORM_TMPL.format(
+            text_info_message=msg,
+            form_begin=app.form.beginFormHTML('dds', app.sid, 'POST'),
+            field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
+            text_dn=web2ldap.app.gui.DisplayDN(app, app.dn),
+            field_dds_renewttlnum=app.form.field['dds_renewttlnum'].inputHTML(),
+            field_dds_renewttlfac=app.form.field['dds_renewttlfac'].inputHTML(),
         )
     )
+    web2ldap.app.gui.Footer(app)
+    return # dds_form()
 
-    web2ldap.app.gui.Footer(outf, form)
-    return # DDSForm()
 
+def w2l_dds(app):
+    """
+    Dynamic entry refresh operation
+    """
 
-def w2l_dds(sid, outf, command, form, ls, dn):
+    if  'dds_renewttlnum' not in app.form.inputFieldNames or \
+        'dds_renewttlfac' not in app.form.inputFieldNames:
 
-    if 'dds_renewttlnum' in form.inputFieldNames and \
-         'dds_renewttlfac' in form.inputFieldNames:
+        dds_form(app, None)
+        return
 
-        try:
-            request_ttl = \
-                int(form.getInputValue('dds_renewttlnum', [None])[0]) * \
-                int(form.getInputValue('dds_renewttlfac', [None])[0])
-        except ValueError:
-            request_ttl = None
+    try:
+        request_ttl = \
+            int(app.form.getInputValue('dds_renewttlnum', [None])[0]) * \
+            int(app.form.getInputValue('dds_renewttlfac', [None])[0])
+    except ValueError:
+        request_ttl = None
 
-        extreq = RefreshRequest(entryName=dn, requestTtl=request_ttl)
-        try:
-            extop_resp_obj = ls.l.extop_s(extreq, extop_resp_class=RefreshResponse)
-        except ldap0.SIZELIMIT_EXCEEDED as e:
-            DDSForm(
-                sid, outf, form, ls, dn,
-                web2ldap.app.gui.LDAPError2ErrMsg(e, form, charset=form.accept_charset)
+    extreq = RefreshRequest(entryName=app.dn, requestTtl=request_ttl)
+    try:
+        extop_resp_obj = app.ls.l.extop_s(extreq, extop_resp_class=RefreshResponse)
+    except ldap0.SIZELIMIT_EXCEEDED as ldap_err:
+        dds_form(app, web2ldap.app.gui.LDAPError2ErrMsg(ldap_err, app))
+    else:
+        if request_ttl and extop_resp_obj.responseTtl != request_ttl:
+            msg = '<p class="WarningMessage">Refreshed entry %s with TTL %d instead of %d.</p>' % (
+                web2ldap.app.gui.DisplayDN(app, app.dn),
+                extop_resp_obj.responseTtl, request_ttl
             )
         else:
-            if request_ttl and extop_resp_obj.responseTtl != request_ttl:
-                Msg = '<p class="WarningMessage">Refreshed entry %s with TTL %d instead of %d.</p>' % (
-                    web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
-                    extop_resp_obj.responseTtl, request_ttl
-                )
-            else:
-                Msg = '<p class="SuccessMessage">Refreshed entry %s with TTL %d.</p>' % (
-                    web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
-                    extop_resp_obj.responseTtl
-                )
-            web2ldap.app.gui.SimpleMessage(
-                sid, outf, command, form, ls, dn,
-                message=Msg,
-                main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-                context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn, dds_link=1)
+            msg = '<p class="SuccessMessage">Refreshed entry %s with TTL %d.</p>' % (
+                web2ldap.app.gui.DisplayDN(app, app.dn),
+                extop_resp_obj.responseTtl
             )
+        web2ldap.app.gui.SimpleMessage(
+            app,
+            message=msg,
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app, dds_link=1)
+        )
 
-    else:
-        DDSForm(sid, outf, form, ls, dn, None)
+    return # end of w2l_dds()

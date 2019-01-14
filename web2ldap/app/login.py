@@ -19,10 +19,11 @@ import time
 import web2ldap.app.core
 import web2ldap.app.gui
 import web2ldap.app.cnf
+from web2ldap.log import logger
 
 
 def w2l_login(
-        sid, outf, command, form, ls, dn,
+        app,
         ldap_url,
         login_search_root,
         title_msg=u'Bind',
@@ -36,90 +37,89 @@ def w2l_login(
     Provide a input form for doing a (re-)login
     """
 
-    if 'login_who' in form.inputFieldNames:
-        who = form.field['login_who'].value[0]
+    if 'login_who' in app.form.inputFieldNames:
+        who = app.form.field['login_who'].value[0]
 
-    if not ls._dn and dn:
-        ls.setDN(dn)
+    login_search_root = login_search_root or app.dn
 
     login_search_root_field = web2ldap.app.gui.SearchRootField(
-        form, ls, dn,
+        app,
         name='login_search_root',
     )
-    login_search_root_field.setDefault(login_search_root or u'')
+    login_search_root_field.setDefault(login_search_root)
 
-    login_template_str = web2ldap.app.gui.ReadTemplate(form, ls, 'login_template', u'login form')
+    login_template_str = web2ldap.app.gui.ReadTemplate(app, 'login_template', u'login form')
 
     if nomenu:
         main_menu_list = []
     else:
-        main_menu_list = web2ldap.app.gui.MainMenu(sid, form, ls, dn)
+        main_menu_list = web2ldap.app.gui.MainMenu(app)
 
     web2ldap.app.gui.TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         login_msg,
         main_menu_list,
         context_menu_list=[],
-        main_div_id='Input'
+        main_div_id='Input',
     )
 
-    if ls.rootDSE:
-        form.field['login_mech'].setOptions(ls.rootDSE.get('supportedSASLMechanisms', None))
+    if app.ls.rootDSE:
+        app.form.field['login_mech'].setOptions(app.ls.rootDSE.get('supportedSASLMechanisms', None))
 
     # Determine the bind mech to be used from the
     # form data or the key-word argument login_default_mech
-    login_mech = form.getInputValue('login_mech', [login_default_mech] or u'')[0]
+    login_mech = app.form.getInputValue('login_mech', [login_default_mech] or u'')[0]
 
     login_fields = login_template_str.format(
-        field_login_mech=form.field['login_mech'].inputHTML(default=login_mech),
-        value_ldap_who=form.utf2display(who),
-        value_ldap_filter=form.utf2display(
-            web2ldap.app.cnf.GetParam(ls, 'binddnsearch', ur'(uid=%s)')
+        field_login_mech=app.form.field['login_mech'].inputHTML(default=login_mech),
+        value_ldap_who=app.form.utf2display(who),
+        value_ldap_filter=app.form.utf2display(
+            web2ldap.app.cnf.GetParam(app.ls, 'binddnsearch', ur'(uid=%s)')
         ),
         field_login_search_root=login_search_root_field.inputHTML(),
-        field_login_authzid_prefix=form.field['login_authzid_prefix'].inputHTML(),
+        field_login_authzid_prefix=app.form.field['login_authzid_prefix'].inputHTML(),
         value_submit={False:'Login', True:'Retry w/login'}[relogin],
         value_currenttime=time.strftime(r'%Y%m%d%H%M%SZ', time.gmtime()),
     )
 
-    scope_str = form.getInputValue('scope', [None])[0]
+    scope_str = app.form.getInputValue('scope', [None])[0]
     if not scope_str and ldap_url.scope is not None:
         scope_str = unicode(ldap_url.scope)
     if scope_str:
-        scope_hidden_field = form.hiddenFieldHTML('scope', scope_str, u'')
+        scope_hidden_field = app.form.hiddenFieldHTML('scope', scope_str, u'')
     else:
         scope_hidden_field = ''
 
-    filterstr = form.getInputValue(
+    filterstr = app.form.getInputValue(
         'filterstr',
-        [(ldap_url.filterstr or '').decode(ls.charset)],
+        [(ldap_url.filterstr or '').decode(app.ls.charset)],
     )[0]
     if filterstr:
-        filterstr_hidden_field = form.hiddenFieldHTML('filterstr', filterstr, u'')
+        filterstr_hidden_field = app.form.hiddenFieldHTML('filterstr', filterstr, u'')
     else:
         filterstr_hidden_field = ''
 
     search_attrs_hidden_field = ''
-    if command in {'search', 'searchform'}:
-        search_attrs = form.getInputValue('search_attrs', [u','.join(ldap_url.attrs or [])])[0]
+    if app.command in {'search', 'searchform'}:
+        search_attrs = app.form.getInputValue('search_attrs', [u','.join(ldap_url.attrs or [])])[0]
         if search_attrs:
-            search_attrs_hidden_field = form.hiddenFieldHTML('search_attrs', search_attrs, u'')
+            search_attrs_hidden_field = app.form.hiddenFieldHTML('search_attrs', search_attrs, u'')
 
     if login_msg:
         login_msg_html = '<p class="ErrorMessage">%s</p>' % (login_msg)
     else:
         login_msg_html = ''
 
-    outf.write(
+    app.outf.write(
         '<h1>%s</h1>\n%s' % (
-            form.utf2display(title_msg),
+            app.form.utf2display(title_msg),
             '\n'.join((
                 login_msg_html,
-                form.beginFormHTML(command, None, 'POST', None),
-                form.hiddenFieldHTML('ldapurl', str(ls.ldapUrl('')).decode('ascii'), u''),
-                form.hiddenFieldHTML('dn', dn, u''),
-                form.hiddenFieldHTML('delsid', sid.decode('ascii'), u''),
-                form.hiddenFieldHTML('conntype', unicode(int(ls.startTLSOption > 0)), u''),
+                app.form.beginFormHTML(app.command, None, 'POST', None),
+                app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldapUrl('')).decode('ascii'), u''),
+                app.form.hiddenFieldHTML('dn', app.dn, u''),
+                app.form.hiddenFieldHTML('delsid', app.sid.decode('ascii'), u''),
+                app.form.hiddenFieldHTML('conntype', unicode(int(app.ls.startTLSOption > 0)), u''),
                 scope_hidden_field,
                 filterstr_hidden_field,
                 login_fields,
@@ -128,14 +128,16 @@ def w2l_login(
         )
     )
     if relogin:
-        outf.write(form.hiddenInputHTML(
-            ignoreFieldNames=set([
-                'sid', 'delsid',
-                'ldapurl', 'conntype', 'host', 'who', 'cred',
-                'dn', 'scope', 'filterstr', 'search_attrs',
-                'login_mech', 'login_authzid', 'login_authzid_prefix', 'login_realm',
-                'login_search_root', 'login_filterstr'
-            ])
-        ))
-    outf.write('</form>\n')
-    web2ldap.app.gui.Footer(outf, form)
+        app.outf.write(
+            app.form.hiddenInputHTML(
+                ignoreFieldNames=set([
+                    'sid', 'delsid',
+                    'ldapurl', 'conntype', 'host', 'who', 'cred',
+                    'dn', 'scope', 'filterstr', 'search_attrs',
+                    'login_mech', 'login_authzid', 'login_authzid_prefix', 'login_realm',
+                    'login_search_root', 'login_filterstr'
+                ])
+            )
+        )
+    app.outf.write('</form>\n')
+    web2ldap.app.gui.Footer(app)

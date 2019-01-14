@@ -707,7 +707,7 @@ def ObjectClassForm(
                 ])
                 if missing_parent_attrs:
                     continue
-            restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app.ls, sub_schema, tmpl_parent_dn)
+            restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, sub_schema, tmpl_parent_dn)
             if sub_schema.sed[DITStructureRule]:
                 parent_gov_structure_rule = app.ls.getGoverningStructureRule(tmpl_parent_dn, sub_schema)
                 if parent_gov_structure_rule is None:

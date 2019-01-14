@@ -48,7 +48,7 @@ SRVRR_TMPL = """
 """
 
 
-def w2l_chasesrvrecord(sid, outf, command, form, ls, dn, host_list):
+def w2l_chasesrvrecord(app, host_list):
     """
     Present an input form to change to a server located via DNS SRV RR
     """
@@ -58,23 +58,24 @@ def w2l_chasesrvrecord(sid, outf, command, form, ls, dn, host_list):
         options=host_list, default=host_list[0], ignoreCase=1
     )
     web2ldap.app.gui.TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         'LDAP server located via DNS',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+        web2ldap.app.gui.MainMenu(app),
         context_menu_list=[],
         main_div_id='Input'
     )
-    outf.write(
+    app.outf.write(
         SRVRR_TMPL % (
-            form.beginFormHTML(command, sid, 'POST'),
-            form.hiddenFieldHTML('dn', dn, u''),
-            form.utf2display(dn),
+            app.form.beginFormHTML(app.command, app.sid, 'POST'),
+            app.form.hiddenFieldHTML('dn', app.dn, u''),
+            app.form.utf2display(app.dn),
             host_select_field.inputHTML(),
             '', '', '', ''
             '',
             'Change host',
         )
     )
-    form.hiddenInputFields(outf, ['ldapurl', 'host', 'dn', 'who', 'cred'])
-    outf.write('</form>\n')
-    web2ldap.app.gui.Footer(outf, form)
+    app.form.hiddenInputFields(app.outf, {'ldapurl', 'host', 'dn', 'who', 'cred'})
+    app.outf.write('</form>\n')
+
+    web2ldap.app.gui.Footer(app)

@@ -199,7 +199,7 @@ class DeleteLeafs(web2ldap.ldaputil.async.AsyncSearchHandler):
 
 
 def delete_entries(
-        ls,
+        app,
         dn,
         scope,
         tree_delete_control,
@@ -214,20 +214,20 @@ def delete_entries(
     end_time = start_time + delete_timelimit
     delete_filter = (
         delete_filter or u'(objectClass=*)'
-    ).encode(ls.charset)
+    ).encode(app.ls.charset)
     if scope == ldap0.SCOPE_SUBTREE and tree_delete_control:
         # Try to directly delete the whole subtree with the tree delete control
-        ls.l.delete_s(dn, serverctrls=delete_server_ctrls)
+        app.ls.l.delete_s(dn, serverctrls=delete_server_ctrls)
         return True
     else:
-        leafs_deleter = DeleteLeafs(ls.l, tree_delete_control, delete_server_ctrls)
+        leafs_deleter = DeleteLeafs(app.ls.l, tree_delete_control, delete_server_ctrls)
         deleted_entries_count = 0
         non_leaf_entries = set()
         non_deletable_entries = set()
         while time.time() <= end_time:
             try:
                 leafs_deleter.startSearch(dn, scope, filterStr=delete_filter)
-                leafs_deleter.processResults(timeout=ls.timeout)
+                leafs_deleter.processResults(timeout=app.ls.timeout)
             except ldap0.NO_SUCH_OBJECT:
                 break
             except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
@@ -247,7 +247,7 @@ def delete_entries(
                 continue
             try:
                 leafs_deleter.startSearch(dn, ldap0.SCOPE_SUBTREE, filterStr=delete_filter)
-                leafs_deleter.processResults(timeout=ls.timeout)
+                leafs_deleter.processResults(timeout=app.ls.timeout)
             except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
                 deleted_entries_count += leafs_deleter.deletedEntries
                 non_leaf_entries.add(dn)
@@ -267,13 +267,13 @@ def delete_entries(
     # end of delete_entries()
 
 
-def del_singleentry_form(sid, form, ls, dn):
+def del_singleentry_form(app):
     return '<p class="WarningMessage">Delete whole entry %s?</p>' % (
-        web2ldap.app.gui.DisplayDN(sid, form, ls, dn)
+        web2ldap.app.gui.DisplayDN(app, app.dn)
     )
 
 
-def del_subtree_form(sid, form, ls, dn, scope):
+def del_subtree_form(app, scope):
     delete_scope_field = web2ldap.web.forms.Select(
         'scope', u'Scope of delete operation', 1,
         options=(
@@ -283,9 +283,9 @@ def del_subtree_form(sid, form, ls, dn, scope):
         ),
         default=unicode(scope),
     )
-    hasSubordinates, numSubordinates, numAllSubordinates = ls.subOrdinates(dn)
+    hasSubordinates, numSubordinates, numAllSubordinates = app.ls.subOrdinates(app.dn)
     if not hasSubordinates:
-        return del_singleentry_form(sid, form, ls, dn)
+        return del_singleentry_form(app)
     if numSubordinates:
         numSubordinates_html = '<p>Number of direct subordinates: %d</p>' % (numSubordinates)
     else:
@@ -295,39 +295,39 @@ def del_subtree_form(sid, form, ls, dn, scope):
     else:
         numAllSubordinates_html = ''
     return DELETE_SUBTREE_FORM_TMPL.format(
-        text_dn=web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
+        text_dn=web2ldap.app.gui.DisplayDN(app, app.dn),
         text_num_sub_ordinates=numSubordinates_html,
         text_num_all_sub_ordinates=numAllSubordinates_html,
         field_delete_scope=delete_scope_field.inputHTML(),
         value_delete_ctrl_oid=web2ldap.ldapsession.CONTROL_TREEDELETE,
         value_delete_ctrl_checked=' checked'*int(
-            web2ldap.ldapsession.CONTROL_TREEDELETE in ls.supportedControl and \
-            not 'OpenLDAProotDSE' in ls.rootDSE.get('objectClass', [])
+            web2ldap.ldapsession.CONTROL_TREEDELETE in app.ls.supportedControl and \
+            'OpenLDAProotDSE' not in app.ls.rootDSE.get('objectClass', [])
         ),
     )
 
 
-def del_attr_form(sid, form, ls, dn, entry, delete_attr):
+def del_attr_form(app, entry, delete_attr):
     return """
     <p class="WarningMessage">Delete following attribute(s) of entry %s?</p>
     <p>%s</p>
     """ % (
-        web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
+        web2ldap.app.gui.DisplayDN(app, app.dn),
         '\n'.join([
             '<input type="checkbox" name="delete_attr" value="%s"%s>%s<br>' % (
-                form.utf2display(attr_type, sp_entity='  '),
+                app.form.utf2display(attr_type, sp_entity='  '),
                 ' checked'*(attr_type in entry),
-                form.utf2display(attr_type),
+                app.form.utf2display(attr_type),
             )
             for attr_type in delete_attr
         ]),
     )
 
 
-def del_search_form(sid, form, ls, dn, scope, delete_filter):
+def del_search_form(app, scope, delete_filter):
     try:
-        num_entries, num_referrals = ls.count(
-            dn,
+        num_entries, num_referrals = app.ls.count(
+            app.dn,
             scope,
             delete_filter,
             sizelimit=1000,
@@ -344,96 +344,96 @@ def del_search_form(sid, form, ls, dn, scope, delete_filter):
         else:
             num_referrals = str(num_referrals)
     return DELETE_SEARCH_FORM_TMPL.format(
-        text_dn=web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
+        text_dn=web2ldap.app.gui.DisplayDN(app, app.dn),
         text_scope=web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
         num_entries=num_entries,
         num_referrals=num_referrals,
-        value_delete_filter=form.utf2display(delete_filter),
-        value_delete_scope=form.utf2display(unicode(scope)),
+        value_delete_filter=app.form.utf2display(delete_filter),
+        value_delete_scope=app.form.utf2display(unicode(scope)),
     )
 
 
-def w2l_delete(sid, outf, command, form, ls, dn, connLDAPUrl):
+def w2l_delete(app, connLDAPUrl):
 
-    sub_schema = ls.retrieveSubSchema(
-        dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    sub_schema = app.ls.retrieveSubSchema(
+        app.dn,
+        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
     )
 
-    delete_confirm = form.getInputValue('delete_confirm', [None])[0]
-    delete_attr = form.getInputValue(
+    delete_confirm = app.form.getInputValue('delete_confirm', [None])[0]
+    delete_attr = app.form.getInputValue(
         'delete_attr',
         [
             a.decode('ascii')
             for a in connLDAPUrl.attrs or []
         ]
     )
-    delete_filter = form.getInputValue('filterstr', [connLDAPUrl.filterstr])[0]
+    delete_filter = app.form.getInputValue('filterstr', [connLDAPUrl.filterstr])[0]
     delete_attr.sort()
     if delete_attr:
         scope = ldap0.SCOPE_BASE
     else:
-        scope = int(form.getInputValue('scope', [str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
+        scope = int(app.form.getInputValue('scope', [str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
 
     # Generate a list of requested LDAPv3 extended controls to be sent along
     # with a modify or delete request
-    delete_ctrl_oids = form.getInputValue('delete_ctrl', [])
+    delete_ctrl_oids = app.form.getInputValue('delete_ctrl', [])
     delete_ctrl_tree_delete = web2ldap.ldapsession.CONTROL_TREEDELETE in delete_ctrl_oids
 
     if delete_confirm is None:
         # First show delete confirmation and delete mode select form
         # Read the editable attribute values of entry
         try:
-            ldap_entry = ls.readEntry(
-                dn,
-                [a.encode(ls.charset) for a in delete_attr],
+            ldap_entry = app.ls.readEntry(
+                app.dn,
+                [a.encode(app.ls.charset) for a in delete_attr],
                 search_filter='(objectClass=*)',
                 no_cache=1,
                 server_ctrls=None,
             )[0][1]
         except IndexError:
             ldap_entry = {}
-        entry = ldap0.schema.models.Entry(sub_schema, dn.encode(ls.charset), ldap_entry)
+        entry = ldap0.schema.models.Entry(sub_schema, app.dn.encode(app.ls.charset), ldap_entry)
         if delete_attr:
-            inner_form = del_attr_form(sid, form, ls, dn, entry, delete_attr)
+            inner_form = del_attr_form(app, entry, delete_attr)
         elif delete_filter:
-            inner_form = del_search_form(sid, form, ls, dn, scope, delete_filter)
+            inner_form = del_search_form(app, scope, delete_filter)
         else:
-            inner_form = del_subtree_form(sid, form, ls, dn, scope)
+            inner_form = del_subtree_form(app, scope)
         # Output confirmation form
         web2ldap.app.gui.TopSection(
-            sid, outf, command, form, ls, dn,
+            app,
             'Delete entry?',
-            web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+            web2ldap.app.gui.MainMenu(app),
+            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
-        outf.write(
+        app.outf.write(
             DELETE_FORM_TEMPLATE.format(
-                form_begin=form.beginFormHTML('delete', sid, 'POST'),
+                form_begin=app.form.beginFormHTML('delete', app.sid, 'POST'),
                 inner_form=inner_form,
-                field_delete_ctrl=form.field['delete_ctrl'].inputHTML(default=delete_ctrl_oids),
-                field_hidden_dn=form.hiddenFieldHTML('dn', dn, u''),
+                field_delete_ctrl=app.form.field['delete_ctrl'].inputHTML(default=delete_ctrl_oids),
+                field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
             )
         )
-        web2ldap.app.gui.Footer(outf, form)
+        web2ldap.app.gui.Footer(app)
         return
 
     if delete_confirm != 'yes':
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             'Canceled delete',
             '<p class="SuccessMessage">Canceled delete.</p>',
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
         return
 
     # determine extended controls to be sent with delete operation
     conn_server_ctrls = set([
         server_ctrl.controlType
-        for server_ctrl in ls.l._serverctrls['**all**']+ls.l._serverctrls['**write**']+ls.l._serverctrls['delete']
+        for server_ctrl in app.ls.l._serverctrls['**all**']+app.ls.l._serverctrls['**write**']+app.ls.l._serverctrls['delete']
     ])
     delete_server_ctrls = [
         ldap0.controls.LDAPControl(ctrl_oid, True, None)
@@ -450,8 +450,8 @@ def w2l_delete(sid, outf, command, form, ls, dn, connLDAPUrl):
 
         begin_time_stamp = time.time()
         deleted_entries_count, non_deletable_entries = delete_entries(
-            ls,
-            dn.encode(ls.charset),
+            app.ls,
+            app.dn.encode(app.ls.charset),
             scope,
             delete_ctrl_tree_delete,
             delete_server_ctrls,
@@ -459,22 +459,22 @@ def w2l_delete(sid, outf, command, form, ls, dn, connLDAPUrl):
         )
         end_time_stamp = time.time()
 
-        old_dn = dn
+        old_dn = app.dn
         if scope == ldap0.SCOPE_SUBTREE and delete_filter is None:
-            dn = web2ldap.ldaputil.base.parent_dn(dn)
-            ls.setDN(dn)
+            dn = web2ldap.ldaputil.base.parent_dn(app.dn)
+            app.ls.setDN(app.dn)
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             'Deleted entries',
             DELETE_ENTRIES_SUCCESS_TMPL % (
                 deleted_entries_count,
-                web2ldap.app.gui.DisplayDN(sid, form, ls, old_dn),
+                web2ldap.app.gui.DisplayDN(app, old_dn),
                 web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
                 len(non_deletable_entries),
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
 
     elif scope == ldap0.SCOPE_BASE and delete_attr:
@@ -487,9 +487,9 @@ def w2l_delete(sid, outf, command, form, ls, dn, connLDAPUrl):
             (ldap0.MOD_DELETE, attr_type, None)
             for attr_type in delete_attr
         ]
-        ls.modifyEntry(dn, mod_list, serverctrls=delete_server_ctrls)
+        app.ls.modifyEntry(dn, mod_list, serverctrls=delete_server_ctrls)
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             'Deleted Attribute(s)',
             """
             <p class="SuccessMessage">Deleted attribute(s) from entry %s</p>
@@ -499,14 +499,14 @@ def w2l_delete(sid, outf, command, form, ls, dn, connLDAPUrl):
               </li>
             </ul>
             """ % (
-                web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
+                web2ldap.app.gui.DisplayDN(app, dn),
                 '</li>\n<li>'.join([
-                    form.hiddenFieldHTML('delete_attr', attr_type, attr_type)
+                    app.form.hiddenFieldHTML('delete_attr', attr_type, attr_type)
                     for attr_type in delete_attr
                 ]),
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
 
     elif scope == ldap0.SCOPE_BASE:
@@ -514,16 +514,16 @@ def w2l_delete(sid, outf, command, form, ls, dn, connLDAPUrl):
         # Delete a single whole entry
         #-----------------------------
 
-        ls.deleteEntry(dn)
-        old_dn = dn
-        dn = web2ldap.ldaputil.base.parent_dn(dn)
-        ls.setDN(dn)
+        app.ls.deleteEntry(app.dn)
+        old_dn = app.dn
+        app.dn = web2ldap.ldaputil.base.parent_dn(app.dn)
+        app.ls.setDN(app.dn)
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             'Deleted Entry',
             '<p class="SuccessMessage">Deleted entry: %s</p>' % (
-                web2ldap.app.gui.DisplayDN(sid, form, ls, old_dn)
+                web2ldap.app.gui.DisplayDN(app, old_dn)
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )

@@ -30,7 +30,7 @@ from web2ldap.app.schema.syntaxes import syntax_registry, LDAPSyntaxValueError
 from web2ldap.app.modify import modlist_ldif
 
 
-def input_modlist(sid, form, ls, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av):
+def input_modlist(app, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av):
 
     mod_dict = {}
     input_errors = set()
@@ -41,12 +41,12 @@ def input_modlist(sid, form, ls, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av)
         if not mod_op_str:
             continue
         mod_op = int(mod_op_str)
-        mod_type = bulkmod_at[i].encode(ls.charset)
+        mod_type = bulkmod_at[i].encode(app.ls.charset)
         if not mod_type:
             continue
 
         attr_instance = syntax_registry.get_at(
-            sid, form, ls, u'', sub_schema, mod_type, None, entry=None,
+            app, u'', sub_schema, mod_type, None, entry=None,
         )
         try:
             mod_val = attr_instance.sanitizeInput(bulkmod_av[i] or '')
@@ -83,7 +83,7 @@ def input_modlist(sid, form, ls, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av)
 
 
 def bulkmod_input_form(
-        sid, outf, command, form, ls, sub_schema,
+        app, sub_schema,
         bulkmod_submit,
         dn, scope, bulkmod_filter, bulkmod_newsuperior,
         bulkmod_at, bulkmod_op, bulkmod_av, bulkmod_cp,
@@ -96,7 +96,7 @@ def bulkmod_input_form(
     error_attrs = sorted(set([bulkmod_at[i] for i in input_errors]))
     if error_attrs:
         Msg = '<p class="ErrorMessage">Invalid input: %s</p>' % (
-            ', '.join(map(form.utf2display, error_attrs))
+            ', '.join(map(app.form.utf2display, error_attrs))
         )
     else:
         Msg = '<p class="WarningMessage">Input bulk modify parameters here.</p>'
@@ -114,16 +114,17 @@ def bulkmod_input_form(
             bulkmod_av.insert(insert_row_num+1, u'')
     # Generate a select field for the attribute type
     bulkmod_attr_select = web2ldap.app.gui.AttributeTypeSelectField(
-        form, ls, sub_schema,
+        app,
+        sub_schema,
         'bulkmod_at',
         u'Attribute type',
         [], default_attr_options=None
     )
     # Output confirmation form
     web2ldap.app.gui.TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         'Bulk modification input',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+        web2ldap.app.gui.MainMenu(app),
     )
     input_fields = '\n'.join([
         """
@@ -135,14 +136,14 @@ def bulkmod_input_form(
         """ % (
             i, i,
             bulkmod_attr_select.inputHTML(default=bulkmod_at[i]),
-            form.field['bulkmod_op'].inputHTML(default=bulkmod_op[i]),
-            form.field['bulkmod_av'].inputHTML(default=bulkmod_av[i].decode(ls.charset)),
+            app.form.field['bulkmod_op'].inputHTML(default=bulkmod_op[i]),
+            app.form.field['bulkmod_av'].inputHTML(default=bulkmod_av[i].decode(app.ls.charset)),
             (i in input_errors)*'&larr; Input error!'
         )
         for i in range(len(bulkmod_at))
     ])
 
-    outf.write(
+    app.outf.write(
         """
         {form_begin}
         {text_msg}
@@ -183,36 +184,36 @@ def bulkmod_input_form(
         </form>
         """.format(
             text_msg=Msg,
-            form_begin=form.beginFormHTML('bulkmod', sid, 'POST'),
-            field_bulkmod_ctrl=form.field['bulkmod_ctrl'].inputHTML(default=form.field['bulkmod_ctrl'].value),
+            form_begin=app.form.beginFormHTML('bulkmod', app.sid, 'POST'),
+            field_bulkmod_ctrl=app.form.field['bulkmod_ctrl'].inputHTML(default=app.form.field['bulkmod_ctrl'].value),
             input_fields=input_fields,
-            field_hidden_dn=form.hiddenFieldHTML('dn', dn, dn),
-            field_hidden_filterstr=form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
-            field_hidden_scope=form.hiddenFieldHTML(
+            field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, app.dn),
+            field_hidden_filterstr=app.form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
+            field_hidden_scope=app.form.hiddenFieldHTML(
                 'scope',
                 unicode(scope),
                 unicode(web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope]),
             ),
-            field_bulkmod_newsuperior=form.field['bulkmod_newsuperior'].inputHTML(
+            field_bulkmod_newsuperior=app.form.field['bulkmod_newsuperior'].inputHTML(
                 default=bulkmod_newsuperior,
                 title=u'New superior DN where all entries are moved beneath',
             ),
-            field_bulkmod_cp=form.field['bulkmod_cp'].inputHTML(checked=bulkmod_cp),
+            field_bulkmod_cp=app.form.field['bulkmod_cp'].inputHTML(checked=bulkmod_cp),
         )
     )
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)
     return # bulkmod_input_form()
 
 
 def bulkmod_confirmation_form(
-        sid, outf, command, form, ls, sub_schema,
+        app, sub_schema,
         dn, scope,
         bulkmod_filter, bulkmod_newsuperior, bulk_mod_list, bulkmod_cp,
     ):
 
     # first try to determine the number of affected entries
     try:
-        num_entries, num_referrals = ls.count(dn, scope, bulkmod_filter, sizelimit=1000)
+        num_entries, num_referrals = app.ls.count(app.dn, scope, bulkmod_filter, sizelimit=1000)
     except web2ldap.ldapsession.LDAPLimitErrors:
         num_entries, num_referrals = ('unknown', 'unknown')
     else:
@@ -229,7 +230,7 @@ def bulkmod_confirmation_form(
     if bulk_mod_list:
         bulk_mod_list_ldif = modlist_ldif(
             'cn=bulkmod-dummy',
-            form,
+            app.form,
             bulk_mod_list,
         )
     else:
@@ -237,12 +238,12 @@ def bulkmod_confirmation_form(
 
     # Output confirmation form
     web2ldap.app.gui.TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         'Modify entries?',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+        web2ldap.app.gui.MainMenu(app),
         main_div_id='Input',
     )
-    outf.write(
+    app.outf.write(
         """
         {form_begin}
         <p class="WarningMessage">
@@ -287,18 +288,18 @@ def bulkmod_confirmation_form(
         <input type="submit" name="bulkmod_submit" value="Cancel">
         '</form>
         """.format(
-            form_begin=form.beginFormHTML('bulkmod', sid, 'POST'),
+            form_begin=app.form.beginFormHTML('bulkmod', app.sid, 'POST'),
             field_bulkmod_ctrl='\n'.join([
                 '<li>%s (%s)</li>' % (
-                    form.utf2display(OID_REG.get(ctrl_oid, (ctrl_oid,))[0]),
-                    form.utf2display(ctrl_oid),
+                    app.form.utf2display(OID_REG.get(ctrl_oid, (ctrl_oid,))[0]),
+                    app.form.utf2display(ctrl_oid),
                 )
-                for ctrl_oid in form.field['bulkmod_ctrl'].value or []
+                for ctrl_oid in app.form.field['bulkmod_ctrl'].value or []
             ]) or '- none -',
-            field_hidden_dn=form.hiddenFieldHTML('dn', dn, dn),
-            field_hidden_filterstr=form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
-            field_hidden_scope=form.hiddenFieldHTML('scope', unicode(scope), unicode(web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope])),
-            field_bulkmod_newsuperior=form.hiddenFieldHTML(
+            field_hidden_dn=app.form.hiddenFieldHTML('dn', dn, dn),
+            field_hidden_filterstr=app.form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
+            field_hidden_scope=app.form.hiddenFieldHTML('scope', unicode(scope), unicode(web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope])),
+            field_bulkmod_newsuperior=app.form.hiddenFieldHTML(
                 'bulkmod_newsuperior',
                 bulkmod_newsuperior,
                 bulkmod_newsuperior
@@ -307,62 +308,62 @@ def bulkmod_confirmation_form(
             num_entries=num_entries,
             num_referrals=num_referrals,
             text_ldifchangerecord=bulk_mod_list_ldif,
-            hidden_fields=form.hiddenInputHTML(ignoreFieldNames=[
+            hidden_fields=app.form.hiddenInputHTML(ignoreFieldNames=[
                 'dn', 'scope', 'filterstr', 'bulkmod_submit', 'bulkmod_newsuperior',
             ]),
         )
     )
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)
     return # bulkmod_confirmation_form()
 
 
-def w2l_bulkmod(sid, outf, command, form, ls, dn, connLDAPUrl):
+def w2l_bulkmod(app, connLDAPUrl):
     """
     Applies bulk modifications to multiple LDAP entries
     """
 
-    sub_schema = ls.retrieveSubSchema(
-        dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    sub_schema = app.ls.retrieveSubSchema(
+        app.dn,
+        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
     )
 
-    bulkmod_submit = form.getInputValue('bulkmod_submit', [None])[0]
+    bulkmod_submit = app.form.getInputValue('bulkmod_submit', [None])[0]
 
-    bulkmod_at = form.getInputValue('bulkmod_at', [])
-    bulkmod_op = form.getInputValue('bulkmod_op', [])
-    bulkmod_av = form.getInputValue('bulkmod_av', [])
+    bulkmod_at = app.form.getInputValue('bulkmod_at', [])
+    bulkmod_op = app.form.getInputValue('bulkmod_op', [])
+    bulkmod_av = app.form.getInputValue('bulkmod_av', [])
 
-    bulkmod_cp = form.getInputValue('bulkmod_cp', [u''])[0] == u'yes'
+    bulkmod_cp = app.form.getInputValue('bulkmod_cp', [u''])[0] == u'yes'
 
-    scope = int(form.getInputValue('scope', [str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
+    scope = int(app.form.getInputValue('scope', [str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
 
-    bulkmod_filter = form.getInputValue(
+    bulkmod_filter = app.form.getInputValue(
         'filterstr',
-        [(connLDAPUrl.filterstr or '').decode(ls.charset)]
+        [(connLDAPUrl.filterstr or '').decode(app.ls.charset)]
     )[0] or u'(objectClass=*)'
-    bulkmod_newsuperior = form.getInputValue('bulkmod_newsuperior', [u''])[0]
+    bulkmod_newsuperior = app.form.getInputValue('bulkmod_newsuperior', [u''])[0]
 
     # Generate a list of requested LDAPv3 extended controls to be sent along
     # with the modify requests
-    bulkmod_ctrl_oids = form.getInputValue('bulkmod_ctrl', [])
+    bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
 
     if not len(bulkmod_at) == len(bulkmod_op) == len(bulkmod_av):
         raise web2ldap.app.core.ErrorExit(u'Invalid bulk modification input.')
 
     bulk_mod_list, input_errors = input_modlist(
-        sid, form, ls, sub_schema,
+        app, sub_schema,
         bulkmod_at, bulkmod_op, bulkmod_av,
     )
 
     if bulkmod_submit == u'Cancel':
 
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             'Canceled bulk modification.',
             '<p class="SuccessMessage">Canceled bulk modification.</p>',
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
         )
 
     elif not (bulk_mod_list or bulkmod_newsuperior) or \
@@ -373,9 +374,9 @@ def w2l_bulkmod(sid, outf, command, form, ls, dn, connLDAPUrl):
          bulkmod_submit.startswith(u'-'):
 
         bulkmod_input_form(
-            sid, outf, command, form, ls, sub_schema,
+            app, sub_schema,
             bulkmod_submit,
-            dn, scope, bulkmod_filter,
+            app.dn, scope, bulkmod_filter,
             bulkmod_newsuperior,
             bulkmod_at, bulkmod_op, bulkmod_av, bulkmod_cp,
             input_errors
@@ -384,18 +385,18 @@ def w2l_bulkmod(sid, outf, command, form, ls, dn, connLDAPUrl):
     elif bulkmod_submit == u'Next>>':
 
         bulkmod_confirmation_form(
-            sid, outf, command, form, ls, sub_schema,
-            dn, scope, bulkmod_filter,
+            app, sub_schema,
+            app.dn, scope, bulkmod_filter,
             bulkmod_newsuperior, bulk_mod_list, bulkmod_cp,
         )
 
     elif bulkmod_submit == u'Apply':
 
         # now gather list of extended controls to be used with search request
-        bulkmod_ctrl_oids = form.getInputValue('bulkmod_ctrl', [])
+        bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
         conn_server_ctrls = set([
             server_ctrl.controlType
-            for server_ctrl in ls.l._serverctrls['**all**']+ls.l._serverctrls['**write**']+ls.l._serverctrls['modify']
+            for server_ctrl in app.ls.l._serverctrls['**all**']+app.ls.l._serverctrls['**write**']+app.ls.l._serverctrls['modify']
         ])
         bulkmod_server_ctrls = list(set([
             ldap0.controls.LDAPControl(ctrl_oid, True, None)
@@ -408,17 +409,17 @@ def w2l_bulkmod(sid, outf, command, form, ls, dn, connLDAPUrl):
         begin_time_stamp = time.time()
 
         # search the entries to be modified
-        ldap_msgid = ls.l.search(
-            dn.encode(ls.charset),
+        ldap_msgid = app.ls.l.search(
+            app.dn.encode(app.ls.charset),
             scope,
-            bulkmod_filter.encode(ls.charset),
+            bulkmod_filter.encode(app.ls.charset),
             attrlist=['1.1'],
         )
 
         result_ldif_html = []
 
         # not collect the DNs of the entries to be modified from search results
-        for res in ls.l.results(ldap_msgid):
+        for res in app.ls.l.results(ldap_msgid):
 
             for ldap_dn, _ in res.data:
 
@@ -427,22 +428,22 @@ def w2l_bulkmod(sid, outf, command, form, ls, dn, connLDAPUrl):
                     # this is likely a search continuation (referral)
                     continue
 
-                ldap_dn = ldap_dn.decode(ls.charset)
+                ldap_dn = ldap_dn.decode(app.ls.charset)
 
                 # Apply the modify request
                 if bulk_mod_list:
                     try:
-                        ls.modifyEntry(ldap_dn, bulk_mod_list, serverctrls=bulkmod_server_ctrls)
+                        app.ls.modifyEntry(ldap_dn, bulk_mod_list, serverctrls=bulkmod_server_ctrls)
                     except ldap0.LDAPError as e:
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
-                                form.utf2display(ldap_dn),
-                                form.utf2display(str(e).decode(ls.charset)),
+                                app.form.utf2display(ldap_dn),
+                                app.form.utf2display(str(e).decode(app.ls.charset)),
                             )
                         )
                     else:
                         result_ldif_html.append(modlist_ldif(
-                            ldap_dn, form, bulk_mod_list
+                            ldap_dn, app.form, bulk_mod_list
                         ))
 
                 # Apply the modrdn request
@@ -450,27 +451,27 @@ def w2l_bulkmod(sid, outf, command, form, ls, dn, connLDAPUrl):
                     old_rdn, _ = web2ldap.ldaputil.base.split_rdn(ldap_dn)
                     try:
                         if bulkmod_cp:
-                            ls.copyEntry(ldap_dn, old_rdn, new_superior=bulkmod_newsuperior)
+                            app.ls.copyEntry(ldap_dn, old_rdn, new_superior=bulkmod_newsuperior)
                         else:
-                            ls.renameEntry(
+                            app.ls.renameEntry(
                                 ldap_dn,
                                 old_rdn,
                                 new_superior=bulkmod_newsuperior,
-                                delold=web2ldap.app.cnf.GetParam(ls, 'bulkmod_delold', 0),
+                                delold=web2ldap.app.cnf.GetParam(app.ls, 'bulkmod_delold', 0),
                             )
                     except ldap0.LDAPError as e:
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
-                                form.utf2display(ldap_dn),
-                                form.utf2display(str(e).decode(ls.charset)),
+                                app.form.utf2display(ldap_dn),
+                                app.form.utf2display(str(e).decode(app.ls.charset)),
                             )
                         )
                     else:
                         result_ldif_html.append(
                             '<p>%s %s beneath %s</p>' % (
                                 {False:'Moved', True:'Copied'}[bulkmod_cp],
-                                form.utf2display(ldap_dn),
-                                form.utf2display(bulkmod_newsuperior),
+                                app.form.utf2display(ldap_dn),
+                                app.form.utf2display(bulkmod_newsuperior),
                             )
                         )
 
@@ -491,7 +492,7 @@ def w2l_bulkmod(sid, outf, command, form, ls, dn, connLDAPUrl):
         num_errors = len(ldap_error_html)
         num_sum = num_mods+num_errors
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             'Modified entries',
             """
             <p class="SuccessMessage">Modified entries.</p>
@@ -525,15 +526,15 @@ def w2l_bulkmod(sid, outf, command, form, ls, dn, connLDAPUrl):
                 num_sum, num_mods, num_sum, num_mods,
                 num_errors,
                 num_sum, num_errors, num_errors,
-                web2ldap.app.gui.DisplayDN(sid, form, ls, dn),
+                web2ldap.app.gui.DisplayDN(app, app.dn),
                 web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
-                form.beginFormHTML('bulkmod', sid, 'POST'),
-                form.hiddenInputHTML(ignoreFieldNames=['bulkmod_submit']),
+                app.form.beginFormHTML('bulkmod', app.sid, 'POST'),
+                app.form.hiddenInputHTML(ignoreFieldNames=['bulkmod_submit']),
                 error_messages,
                 change_records,
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
         )
 
     else:

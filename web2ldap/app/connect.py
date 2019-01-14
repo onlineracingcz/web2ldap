@@ -29,13 +29,13 @@ import web2ldap.app.gui
 # Connect form
 ##############################################################################
 
-def w2l_connect(outf, form, env, Msg='Connect', ErrorMsg=''):
+def w2l_connect(app, Msg='Connect', ErrorMsg=''):
     """
     Display the landing page with a connect form
     """
 
     connect_template_str = web2ldap.app.gui.ReadTemplate(
-        form, None, None, u'connect form',
+        app, None, u'connect form',
         tmpl_filename=web2ldapcnf.connect_template
     )
 
@@ -57,16 +57,17 @@ def w2l_connect(outf, form, env, Msg='Connect', ErrorMsg=''):
         ErrorMsg = '<p class="ErrorMessage">%s</p>' % (ErrorMsg)
 
     web2ldap.app.gui.TopSection(
-        None, outf, '', form, None, None, 'Connect',
-        web2ldap.app.gui.EntryMainMenu(form, env), [],
+        app,
+        'Connect',
+        web2ldap.app.gui.EntryMainMenu(app), [],
     )
 
-    outf.write(
+    app.outf.write(
         connect_template_str.format(
-            text_scriptname=form.env.get('SCRIPT_NAME', '').decode('utf-8'),
+            text_scriptname=app.env.get('SCRIPT_NAME', '').decode('utf-8'),
             text_heading=Msg,
             text_error=ErrorMsg,
-            form_begin=form.beginFormHTML('searchform', None, 'GET', None),
+            form_begin=app.form.beginFormHTML('searchform', None, 'GET', None),
             field_uri_select=uri_select_field_html,
             disable_start={False:'', True:'<!--'}[web2ldapcnf.hosts.restricted_ldap_uri_list],
             disable_end={False:'', True:'-->'}[web2ldapcnf.hosts.restricted_ldap_uri_list],
@@ -74,4 +75,4 @@ def w2l_connect(outf, form, env, Msg='Connect', ErrorMsg=''):
         )
     )
 
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)

@@ -103,46 +103,44 @@ AVAILABLE_BOOLEAN_CONTROLS = {
 # LDAP connection parameters
 ##############################################################################
 
-def w2l_ldapparams(sid, outf, command, form, ls, dn):
+def w2l_ldapparams(app):
 
     # Set the LDAP connection option for deferencing aliases
-    ldap_deref = form.getInputValue('ldap_deref', [])
+    ldap_deref = app.form.getInputValue('ldap_deref', [])
     if ldap_deref:
-        ls.l.deref = int(ldap_deref[0])
-
-    context_menu_list = []
+        app.ls.l.deref = int(ldap_deref[0])
 
     web2ldap.app.gui.TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         'LDAP Connection Parameters',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-        context_menu_list=context_menu_list
+        web2ldap.app.gui.MainMenu(app),
+        context_menu_list=[]
     )
 
-    ldapparam_all_controls = form.getInputValue('ldapparam_all_controls', [u'0'])[0] == u'1'
+    ldapparam_all_controls = app.form.getInputValue('ldapparam_all_controls', [u'0'])[0] == u'1'
 
-    ldapparam_enable_control = form.getInputValue('ldapparam_enable_control', [None])[0]
+    ldapparam_enable_control = app.form.getInputValue('ldapparam_enable_control', [None])[0]
     if ldapparam_enable_control and ldapparam_enable_control in AVAILABLE_BOOLEAN_CONTROLS:
         methods, control_class, control_value = AVAILABLE_BOOLEAN_CONTROLS[ldapparam_enable_control]
         for method in methods:
             if control_value is not None:
-                ls.l.add_server_control(
+                app.ls.l.add_server_control(
                     method,
                     control_class(ldapparam_enable_control, 1, control_value)
                 )
             else:
-                ls.l.add_server_control(
+                app.ls.l.add_server_control(
                     method,
                     control_class(ldapparam_enable_control, 1)
                 )
 
-    ldapparam_disable_control = form.getInputValue('ldapparam_disable_control', [None])[0]
+    ldapparam_disable_control = app.form.getInputValue('ldapparam_disable_control', [None])[0]
     if ldapparam_disable_control and \
        ldapparam_disable_control in AVAILABLE_BOOLEAN_CONTROLS:
         methods, control_class, control_value = \
             AVAILABLE_BOOLEAN_CONTROLS[ldapparam_disable_control]
         for method in methods:
-            ls.l.del_server_control(method, ldapparam_disable_control)
+            app.ls.l.del_server_control(method, ldapparam_disable_control)
 
     # Determine which controls are enabled
     enabled_controls = set()
@@ -150,7 +148,7 @@ def w2l_ldapparams(sid, outf, command, form, ls, dn):
         methods, control_class, control_value = control_spec
         control_enabled = True
         for method in methods:
-            control_enabled = control_enabled and (control_oid in ls.l._get_server_ctrls(method))
+            control_enabled = control_enabled and (control_oid in app.ls.l._get_server_ctrls(method))
         if control_enabled:
             enabled_controls.add(control_oid)
 
@@ -158,7 +156,7 @@ def w2l_ldapparams(sid, outf, command, form, ls, dn):
     control_table_rows = []
     for control_oid in AVAILABLE_BOOLEAN_CONTROLS.keys():
         control_enabled = (control_oid in enabled_controls)
-        if not (control_enabled or ldapparam_all_controls or control_oid in ls.supportedControl):
+        if not (control_enabled or ldapparam_all_controls or control_oid in app.ls.supportedControl):
             continue
         name, description, _ = OID_REG[control_oid]
         control_oid_u = unicode(control_oid, 'ascii')
@@ -171,12 +169,11 @@ def w2l_ldapparams(sid, outf, command, form, ls, dn):
               <td>%s</td>
             </tr>
             """ % (
-                form.applAnchor(
+                app.anchor(
                     'ldapparams',
                     {False:'Enable', True:'Disable'}[control_enabled],
-                    sid,
                     [
-                        ('dn', dn),
+                        ('dn', app.dn),
                         (
                             'ldapparam_%s_control' % {
                                 False:'enable',
@@ -190,15 +187,15 @@ def w2l_ldapparams(sid, outf, command, form, ls, dn):
                         name,
                     ),
                 ),
-                {False:'<strike>', True:''}[control_oid in ls.supportedControl],
-                form.utf2display(name),
-                {False:'</strike>', True:''}[control_oid in ls.supportedControl],
-                form.utf2display(control_oid_u),
-                form.utf2display(description),
+                {False:'<strike>', True:''}[control_oid in app.ls.supportedControl],
+                app.form.utf2display(name),
+                {False:'</strike>', True:''}[control_oid in app.ls.supportedControl],
+                app.form.utf2display(control_oid_u),
+                app.form.utf2display(description),
             )
         )
 
-    outf.write(
+    app.outf.write(
         """
         <h1>LDAP Options</h1>
         <p>Jump to another entry by entering its DN:</p>
@@ -218,20 +215,19 @@ def w2l_ldapparams(sid, outf, command, form, ls, dn):
             </table>
           </fieldset>
         """ % (
-            form.formHTML(
-                'read', 'Go to', sid, 'GET', [],
-                extrastr=form.field['dn'].inputHTML(),
+            app.form.formHTML(
+                'read', 'Go to', app.sid, 'GET', [],
+                extrastr=app.form.field['dn'].inputHTML(),
             ),
-            form.formHTML(
-                'ldapparams', 'Set alias deref', sid, 'GET', [],
-                extrastr=form.field['ldap_deref'].inputHTML(default=str(ls.l.deref)),
+            app.form.formHTML(
+                'ldapparams', 'Set alias deref', app.sid, 'GET', [],
+                extrastr=app.form.field['ldap_deref'].inputHTML(default=str(app.ls.l.deref)),
             ),
-            form.applAnchor(
+            app.anchor(
                 'ldapparams',
                 {False:'all', True:'only known'}[ldapparam_all_controls],
-                sid,
                 [
-                    ('dn', dn),
+                    ('dn', app.dn),
                     ('ldapparam_all_controls', unicode(int(not ldapparam_all_controls))),
                 ],
                 title=u'Show %s controls' % (
@@ -242,4 +238,4 @@ def w2l_ldapparams(sid, outf, command, form, ls, dn):
         )
     )
 
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)

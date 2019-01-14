@@ -78,12 +78,12 @@ LOCATE_HOST_RESULT_TMPL = """
 """
 
 
-def w2l_locate(outf, command, form, env):
+def w2l_locate(app):
     """
     Try to locate a LDAP server in DNS by several heuristics
     """
 
-    locate_name = form.getInputValue('locate_name', [''])[0].strip()
+    locate_name = app.form.getInputValue('locate_name', [''])[0].strip()
 
     msg_html = ''
     outf_lines = []
@@ -136,8 +136,8 @@ def w2l_locate(outf, command, form, env):
                     lu_extensions = None
 
                 outf_lines.append('<h1><em>%s</em></h1><p>Encoded domain name: <strong>%s</strong></p>\n' % (
-                    form.utf2display(dns_name_u),
-                    form.utf2display(dns_name.decode('ascii')),
+                    app.form.utf2display(dns_name_u),
+                    app.form.utf2display(dns_name.decode('ascii')),
                 ))
 
                 ldap_srv_results = []
@@ -157,7 +157,7 @@ def w2l_locate(outf, command, form, env):
                         outf_lines.append(
                             'DNS or socket error when querying %s: %s' % (
                                 srv_prefix,
-                                form.utf2display(unicode(e)),
+                                app.form.utf2display(unicode(e)),
                             )
                         )
                     else:
@@ -182,7 +182,7 @@ def w2l_locate(outf, command, form, env):
                             except socket.error as e:
                                 outf_lines.append(
                                     '<p class="ErrorMessage">Did not find IP address for hostname <em>%s</em>.</p>' % (
-                                        form.utf2display(hostname.decode('ascii'))
+                                        app.form.utf2display(hostname.decode('ascii'))
                                     )
                                 )
                             else:
@@ -204,7 +204,7 @@ def w2l_locate(outf, command, form, env):
                                     """ % (
                                         hostname,
                                         host_address,
-                                        web2ldap.app.gui.LDAPURLButton(None, form, None, str(ldap_url)),
+                                        web2ldap.app.gui.LDAPURLButton(app, str(ldap_url)),
                                         ldap_url.unparse(),
                                         ldap_url.unparse(),
                                     )
@@ -225,7 +225,7 @@ def w2l_locate(outf, command, form, env):
                                     <td><a href="%s">Search %s</a></td>
                                     </tr>
                                     """ % (
-                                        web2ldap.app.gui.LDAPURLButton(None, form, None, ldap_url),
+                                        web2ldap.app.gui.LDAPURLButton(app, ldap_url),
                                         ldap_url.unparse(),
                                         ldap_url.unparse(),
                                     )
@@ -256,26 +256,26 @@ def w2l_locate(outf, command, form, env):
                             LOCATE_HOST_RESULT_TMPL % (
                                 alias_name,
                                 host_address,
-                                web2ldap.app.gui.LDAPURLButton(None, form, None, ldap_url),
+                                web2ldap.app.gui.LDAPURLButton(app, ldap_url),
                                 ldap_url.unparse(),
                                 ldap_url.unparse(),
                             )
                         )
 
     web2ldap.app.gui.TopSection(
-        None, outf, command, form, None, None,
+        app,
         'DNS lookup',
-        web2ldap.app.gui.EntryMainMenu(form, env),
+        web2ldap.app.gui.EntryMainMenu(app),
         [],
     )
 
-    outf.write(
+    app.outf.write(
         LOCATE_INPUT_FORM_TMPL % (
             msg_html,
             '\n'.join(outf_lines),
-            form.script_name,
-            form.accept_charset,
+            app.form.script_name,
+            app.form.accept_charset,
         )
     )
 
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)
