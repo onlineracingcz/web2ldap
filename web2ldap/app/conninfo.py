@@ -113,13 +113,13 @@ CONNINFO_HTTP_TEMPLATE = """
 """
 
 
-def w2l_conninfo(sid, outf, command, form, ls, dn):
+def w2l_conninfo(app):
 
-    protocol_version = ls.l.get_option(ldap0.OPT_PROTOCOL_VERSION)
+    protocol_version = app.ls.l.get_option(ldap0.OPT_PROTOCOL_VERSION)
 
-    conninfo_flushcaches = int(form.getInputValue('conninfo_flushcaches', ['0'])[0])
+    conninfo_flushcaches = int(app.form.getInputValue('conninfo_flushcaches', ['0'])[0])
     if conninfo_flushcaches:
-        ls.flushCache()
+        app.ls.flushCache()
 
     context_menu_list = []
 
@@ -127,34 +127,34 @@ def w2l_conninfo(sid, outf, command, form, ls, dn):
     config_dn_list = []
 
     monitored_info = None
-    if ls.rootDSE.has_key('monitorContext'):
+    if app.ls.rootDSE.has_key('monitorContext'):
         context_menu_list.append(
-            form.applAnchor(
-                'read', 'Monitor', sid,
-                [('dn', ls.rootDSE['monitorContext'][0])],
+            app.anchor(
+                'read', 'Monitor',
+                [('dn', app.ls.rootDSE['monitorContext'][0])],
             )
         )
         try:
-            monitor_context_dn = ls.rootDSE['monitorContext'][0]
+            monitor_context_dn = app.ls.rootDSE['monitorContext'][0]
         except KeyError:
             pass
         else:
             try:
-                monitored_info = ls.readEntry(
+                monitored_info = app.ls.readEntry(
                     monitor_context_dn,
                     ['monitoredInfo']
                 )[0][1]['monitoredInfo']
             except (ldap0.LDAPError, KeyError):
                 pass
             else:
-                context_menu_list.append(form.applAnchor(
-                    'search', 'My connections', sid,
+                context_menu_list.append(app.anchor(
+                    'search', 'My connections',
                     [
                         ('dn', monitor_context_dn),
                         (
                             'filterstr',
                             '(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (
-                                escape_filter_chars(ls.who or '')
+                                escape_filter_chars(app.ls.who or '')
                             )
                         ),
                         ('scope', str(ldap0.SCOPE_SUBTREE)),
@@ -164,37 +164,37 @@ def w2l_conninfo(sid, outf, command, form, ls, dn):
     else:
         config_dn_list.append(('CN=MONITOR', 'Monitor'))
 
-    if ls.rootDSE.has_key('changelog'):
+    if app.ls.rootDSE.has_key('changelog'):
         context_menu_list.append(
-            form.applAnchor(
-                'read', 'Change log', sid,
-                [('dn', ls.rootDSE['changelog'][0])],
+            app.anchor(
+                'read', 'Change log',
+                [('dn', app.ls.rootDSE['changelog'][0])],
             )
         )
     else:
         config_dn_list.append(('cn=changelog', 'Change log'))
 
-    if 'configContext' in ls.rootDSE:
+    if 'configContext' in app.ls.rootDSE:
         context_menu_list.append(
-            form.applAnchor(
-                'read', 'Config', sid,
-                [('dn', ls.rootDSE['configContext'][0])],
+            app.anchor(
+                'read', 'Config',
+                [('dn', app.ls.rootDSE['configContext'][0])],
             )
         )
-    elif 'configurationNamingContext' in ls.rootDSE:
+    elif 'configurationNamingContext' in app.ls.rootDSE:
         # MS AD
         context_menu_list.append(
-            form.applAnchor(
-                'read', 'AD Configuration', sid,
-                [('dn', ls.rootDSE['configurationNamingContext'][0])]
+            app.anchor(
+                'read', 'AD Configuration',
+                [('dn', app.ls.rootDSE['configurationNamingContext'][0])]
             )
         )
-    elif 'ibm-configurationnamingcontext' in ls.rootDSE:
+    elif 'ibm-configurationnamingcontext' in app.ls.rootDSE:
         # IBM Directory Server
         context_menu_list.append(
-            form.applAnchor(
-                'read', 'IBM DS Configuration', sid,
-                [('dn', ls.rootDSE['ibm-configurationnamingcontext'][0])]
+            app.anchor(
+                'read', 'IBM DS Configuration',
+                [('dn', app.ls.rootDSE['ibm-configurationnamingcontext'][0])]
             )
         )
     else:
@@ -205,36 +205,36 @@ def w2l_conninfo(sid, outf, command, form, ls, dn):
             ('ou=system', 'System'),
         ])
 
-    current_audit_context = ls.getAuditContext(ls.currentSearchRoot)
+    current_audit_context = app.ls.getAuditContext(app.ls.currentSearchRoot)
     if not current_audit_context is None:
         context_menu_list.extend([
-            form.applAnchor(
-                'read', 'Audit DB', sid,
+            app.anchor(
+                'read', 'Audit DB',
                 [('dn', current_audit_context)],
             ),
-            form.applAnchor(
-                'search', 'Audit my access', sid,
+            app.anchor(
+                'search', 'Audit my access',
                 [
                     ('dn', current_audit_context),
-                    ('filterstr', '(&(objectClass=auditObject)(reqAuthzID=%s))' % (escape_filter_chars(ls.who or ''))),
+                    ('filterstr', '(&(objectClass=auditObject)(reqAuthzID=%s))' % (escape_filter_chars(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
                 title=u'Complete audit trail for currently bound identity',
             ),
-            form.applAnchor(
-                'search', 'Audit my writes', sid,
+            app.anchor(
+                'search', 'Audit my writes',
                 [
                     ('dn', current_audit_context),
-                    ('filterstr', '(&(objectClass=auditWriteObject)(reqAuthzID=%s))' % (escape_filter_chars(ls.who or ''))),
+                    ('filterstr', '(&(objectClass=auditWriteObject)(reqAuthzID=%s))' % (escape_filter_chars(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
                 title=u'Audit trail of write access by currently bound identity',
             ),
-            form.applAnchor(
-                'search', 'Last logins', sid,
+            app.anchor(
+                'search', 'Last logins',
                 [
                     ('dn', current_audit_context),
-                    ('filterstr', '(&(objectClass=auditBind)(reqDN=%s))' % (escape_filter_chars(ls.who or ''))),
+                    ('filterstr', '(&(objectClass=auditBind)(reqDN=%s))' % (escape_filter_chars(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
                 title=u'Audit trail of last logins (binds) by currently bound identity',
@@ -243,47 +243,47 @@ def w2l_conninfo(sid, outf, command, form, ls, dn):
 
     for config_dn, txt in config_dn_list:
         try:
-            entry_exists = ls.existingEntry(config_dn, suppress_referrals=1)
+            entry_exists = app.ls.existingEntry(config_dn, suppress_referrals=1)
         except ldap0.LDAPError:
             pass
         else:
             if entry_exists:
                 context_menu_list.append(
-                    form.applAnchor(
-                        'read', txt, sid,
+                    app.anchor(
+                        'read', txt,
                         [('dn', config_dn)],
                     )
                 )
 
-    if ls.rootDSE.has_key('schemaNamingContext'):
+    if app.ls.rootDSE.has_key('schemaNamingContext'):
         # MS AD schema configuration
         context_menu_list.append(
-            form.applAnchor(
-                'read', 'AD Schema Configuration', sid,
-                [('dn', ls.rootDSE['schemaNamingContext'][0])],
+            app.anchor(
+                'read', 'AD Schema Configuration',
+                [('dn', app.ls.rootDSE['schemaNamingContext'][0])],
             )
         )
 
     web2ldap.app.gui.TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         'Connection Info',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+        web2ldap.app.gui.MainMenu(app),
         context_menu_list=context_menu_list
     )
 
-    if ls.who:
+    if app.ls.who:
         who_html = '%s<br>( %s )' % (
-            web2ldap.app.gui.DisplayDN(sid, form, ls, ls.who, commandbutton=False),
+            web2ldap.app.gui.DisplayDN(app, app.ls.who, commandbutton=False),
             web2ldapcnf.command_link_separator.join((
-                form.applAnchor(
-                    'read', 'Read', sid,
-                    [('dn', ls.who)],
-                    title=u'Read bound entry\r\n%s' % (ls.who),
+                app.anchor(
+                    'read', 'Read',
+                    [('dn', app.ls.who)],
+                    title=u'Read bound entry\r\n%s' % (app.ls.who),
                 ),
-                form.applAnchor(
-                    'passwd', 'Password', sid,
-                    [('dn', ls.who), ('passwd_who', ls.who)],
-                    title=u'Set password of entry\r\n%s' % (ls.who),
+                app.anchor(
+                    'passwd', 'Password',
+                    [('dn', app.ls.who), ('passwd_who', app.ls.who)],
+                    title=u'Set password of entry\r\n%s' % (app.ls.who),
                 ),
             ))
         )
@@ -291,18 +291,18 @@ def w2l_conninfo(sid, outf, command, form, ls, dn):
         who_html = 'anonymous'
 
     try:
-        whoami_result = '&quot;%s&quot;' % (form.utf2display(ls.whoami()))
+        whoami_result = '&quot;%s&quot;' % (app.form.utf2display(app.ls.whoami()))
     except ldap0.LDAPError as e:
-        whoami_result = '<strong>Failed:</strong> %s' % (web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset))
+        whoami_result = '<strong>Failed:</strong> %s' % (web2ldap.app.gui.LDAPError2ErrMsg(e, app))
 
-    if ls.saslAuth:
-        sasl_mech = u'SASL/%s' % (ls.saslAuth.mech)
+    if app.ls.saslAuth:
+        sasl_mech = u'SASL/%s' % (app.ls.saslAuth.mech)
         sasl_auth_info = '<table>%s</table>' % '\n'.join([
             '<tr><td>%s</td><td>%s</td></tr>' % (
-                form.utf2display(web2ldap.ldaputil.base.LDAP_OPT_NAMES_DICT.get(k, str(k)).decode('ascii')),
-                form.utf2display(repr(v).decode(ls.charset))
+                app.form.utf2display(web2ldap.ldaputil.base.LDAP_OPT_NAMES_DICT.get(k, str(k)).decode('ascii')),
+                app.form.utf2display(repr(v).decode(app.ls.charset))
             )
-            for k, v in ls.saslAuth.cb_value_dict.items()
+            for k, v in app.ls.saslAuth.cb_value_dict.items()
             if v
         ])
     else:
@@ -310,71 +310,71 @@ def w2l_conninfo(sid, outf, command, form, ls, dn):
         sasl_auth_info = 'SASL not used'
 
     try:
-        sasl_ssf = unicode(ls.l.get_option(ldap0.OPT_X_SASL_SSF))
+        sasl_ssf = unicode(app.ls.l.get_option(ldap0.OPT_X_SASL_SSF))
     except ldap0.LDAPError as e:
-        sasl_ssf = u'error reading option: %s' % (web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset))
+        sasl_ssf = u'error reading option: %s' % (web2ldap.app.gui.LDAPError2ErrMsg(e, app))
     except ValueError:
         sasl_ssf = u'option not available'
 
     vendor_name = (
-        ls.rootDSE.get('vendorName', '') or
+        app.ls.rootDSE.get('vendorName', '') or
         monitored_info or
-        [{True:'OpenLDAP', False:''}['OpenLDAProotDSE' in ls.rootDSE.get('objectClass', [])]] or ['unknown']
-    )[0].decode(ls.charset)
+        [{True:'OpenLDAP', False:''}['OpenLDAProotDSE' in app.ls.rootDSE.get('objectClass', [])]] or ['unknown']
+    )[0].decode(app.ls.charset)
 
-    outf.write(
+    app.outf.write(
         CONNINFO_LDAP_TEMPLATE % (
-            ls.uri.encode('ascii'),
+            app.ls.uri.encode('ascii'),
             protocol_version,
-            ls.charset.upper(),
-            {False:'not secured', True:'secured'}[ls.secureConn],
-            web2ldap.utctime.strftimeiso8601(time.gmtime(ls.connStartTime)),
-            time.time()-ls.connStartTime,
-            ls.l._reconnects_done,
-            form.utf2display(vendor_name),
-            form.utf2display(ls.rootDSE.get('vendorVersion', [''])[0].decode(ls.charset)),
+            app.ls.charset.upper(),
+            {False:'not secured', True:'secured'}[app.ls.secureConn],
+            web2ldap.utctime.strftimeiso8601(time.gmtime(app.ls.connStartTime)),
+            time.time()-app.ls.connStartTime,
+            app.ls.l._reconnects_done,
+            app.form.utf2display(vendor_name),
+            app.form.utf2display(app.ls.rootDSE.get('vendorVersion', [''])[0].decode(app.ls.charset)),
             who_html,
             whoami_result,
-            form.utf2display(sasl_mech),
+            app.form.utf2display(sasl_mech),
             sasl_auth_info,
-            form.utf2display(sasl_ssf),
+            app.form.utf2display(sasl_ssf),
         )
     )
 
-    outf.write(
+    app.outf.write(
         CONNINFO_LDAP_CACHE_TEMPLATE % (
-            form.applAnchor(
-                'conninfo', 'Flush all caches', sid,
-                [('dn', dn), ('conninfo_flushcaches', '1')],
+            app.anchor(
+                'conninfo', 'Flush all caches',
+                [('dn', app.dn), ('conninfo_flushcaches', '1')],
                 title=u'Flush all cached information for this LDAP connection'
             ),
-            len(ls.l._cache),
-            len(ls.schema_dn_cache),
-            len(ls.schema_cache),
-            ls.l.cache_hit_ratio(),
+            len(app.ls.l._cache),
+            len(app.ls.schema_dn_cache),
+            len(app.ls.schema_cache),
+            app.ls.l.cache_hit_ratio(),
         )
     )
 
-    cross_check_vars = session_store.sessiondict['__session_checkvars__'+sid].items()
+    cross_check_vars = session_store.sessiondict['__session_checkvars__'+app.sid].items()
     cross_check_vars.sort()
     cross_check_vars_html = '\n'.join([
         '<tr><td>%s</td><td>%s</td></tr>' % (
-            form.utf2display(unicode(k, form.accept_charset)),
-            form.utf2display(unicode(v, form.accept_charset)),
+            app.form.utf2display(unicode(k, app.form.accept_charset)),
+            app.form.utf2display(unicode(v, app.form.accept_charset)),
         )
         for k, v in cross_check_vars
     ])
 
-    outf.write(
+    app.outf.write(
         CONNINFO_HTTP_TEMPLATE % (
-            ls.onBehalf,
-            form.utf2display(unicode(form.env.get('REMOTE_ADDR', ''))),
-            form.utf2display(unicode(form.env.get('REMOTE_PORT', ''))),
-            form.env.get('SERVER_SIGNATURE', ''),
-            form.utf2display(unicode(', '.join(form.accept_language))),
-            form.utf2display(unicode(form.accept_charset.upper())),
+            app.ls.onBehalf,
+            app.form.utf2display(unicode(app.env.get('REMOTE_ADDR', ''))),
+            app.form.utf2display(unicode(app.env.get('REMOTE_PORT', ''))),
+            app.env.get('SERVER_SIGNATURE', ''),
+            app.form.utf2display(unicode(', '.join(app.form.accept_language))),
+            app.form.utf2display(app.form.accept_charset.upper().decode()),
             cross_check_vars_html,
-            form.utf2display(unicode(form.env.get('HTTP_USER_AGENT', ''), form.accept_charset)),
+            app.form.utf2display(unicode(app.env.get('HTTP_USER_AGENT', ''), app.form.accept_charset)),
         )
     )
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)
