@@ -19,6 +19,7 @@ import socket
 import errno
 import time
 import urlparse
+import urllib
 
 from ipaddress import ip_address, ip_network
 
@@ -137,8 +138,48 @@ class AppHandler(object):
         self.command, self.sid = self.path_info(env)
         self.form = None
         self.ls = None
+        self.dn = None
         self.current_access_time = time.time()
         return
+
+    def anchor(
+            self,
+            command,
+            anchor_text,
+            form_parameters,
+            target=None,
+            title=None,
+            anchor_id=None,
+        ):
+        """
+        Build the HTML text of a anchor with form parameters
+        """
+        assert isinstance(command, bytes), TypeError('command must be string, but was %r', command)
+        assert isinstance(anchor_text, bytes), TypeError('anchor_text must be string, but was %r', anchor_text)
+        assert anchor_id is None or isinstance(anchor_id, unicode), TypeError('anchor_id must be None or unicode, but was %r', anchor_id)
+        assert target is None or isinstance(target, str), TypeError('target must be None or string, but was %r', target)
+        assert title is None or isinstance(title, unicode), TypeError('title must be None or unicode, but was %r', title)
+        target_attr = ''
+        if target:
+            target_attr = ' target="%s"' % (target)
+        title_attr = ''
+        if title:
+            title_attr = ' title="%s"' % (self.form.utf2display(title).replace(' ', '&nbsp;'))
+        if anchor_id:
+            anchor_id = '#%s' % (self.form.utf2display(anchor_id))
+        res = '<a class="CommandLink"%s%s href="%s?%s%s">%s</a>' % (
+            target_attr,
+            title_attr,
+            self.form.actionUrlHTML(command, self.sid),
+            '&amp;'.join([
+                '%s=%s' % (param_name, urllib.quote(self.form.uc_encode(param_value)[0]))
+                for param_name, param_value in form_parameters
+            ]),
+            anchor_id or '',
+            anchor_text,
+        )
+        assert isinstance(res, bytes), TypeError('res must be bytes, was %r', res)
+        return res
 
     def guess_client_addr(self):
         """
@@ -155,48 +196,49 @@ class AppHandler(object):
                         'REMOTE_HOST',
                         self.env.get('REMOTE_ADDR', None)))))
 
-    def dispatch(self, connLDAPUrl, dn):
+    def dispatch(self, dn, connLDAPUrl):
         """Execute function for self.command"""
         assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+        self.dn = dn
         if self.command == 'searchform':
-            web2ldap.app.searchform.w2l_searchform(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.searchform.w2l_searchform(self)
         elif self.command == 'search':
-            web2ldap.app.search.w2l_search(self.sid, self.outf, self.command, self.form, self.ls, dn, connLDAPUrl)
+            web2ldap.app.search.w2l_search(self, connLDAPUrl)
         elif self.command == 'add':
-            web2ldap.app.add.w2l_add(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.add.w2l_add(self)
         elif self.command == 'modify':
-            web2ldap.app.modify.w2l_modify(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.modify.w2l_modify(self)
         elif self.command == 'dds':
-            web2ldap.app.dds.w2l_dds(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.dds.w2l_dds(self)
         elif self.command == 'bulkmod':
-            web2ldap.app.bulkmod.w2l_bulkmod(self.sid, self.outf, self.command, self.form, self.ls, dn, connLDAPUrl)
+            web2ldap.app.bulkmod.w2l_bulkmod(self, connLDAPUrl)
         elif self.command == 'delete':
-            web2ldap.app.delete.w2l_delete(self.sid, self.outf, self.command, self.form, self.ls, dn, connLDAPUrl)
+            web2ldap.app.delete.w2l_delete(self, connLDAPUrl)
         elif self.command == 'dit':
-            web2ldap.app.dit.w2l_dit(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.dit.w2l_dit(self)
         elif self.command == 'rename':
-            web2ldap.app.rename.w2l_rename(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.rename.w2l_rename(self)
         elif self.command == 'passwd':
-            web2ldap.app.passwd.w2l_passwd(self.sid, self.outf, self.command, self.form, self.ls, dn, connLDAPUrl)
+            web2ldap.app.passwd.w2l_passwd(self, connLDAPUrl)
         elif self.command == 'read':
             web2ldap.app.read.w2l_read(
-                self.sid, self.outf, self.command, self.form, self.ls, dn,
+                self,
                 wanted_attrs={False:connLDAPUrl.attrs, True:[]}[connLDAPUrl.attrs is None],
             )
         elif self.command == 'conninfo':
-            web2ldap.app.conninfo.w2l_conninfo(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.conninfo.w2l_conninfo(self)
         elif self.command == 'ldapparams':
-            web2ldap.app.ldapparams.w2l_ldapparams(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.ldapparams.w2l_ldapparams(self)
         elif self.command == 'login':
             web2ldap.app.login.w2l_login(
-                self.sid, self.outf, 'searchform', self.form, self.ls, dn, connLDAPUrl,
+                self, connLDAPUrl,
                 self.form.getInputValue('login_search_root', [self.ls.getSearchRoot(dn)])[0],
                 login_default_mech=connLDAPUrl.saslMech,
             )
         elif self.command == 'groupadm':
-            web2ldap.app.groupadm.w2l_groupadm(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.groupadm.w2l_groupadm(self)
         elif self.command == 'oid':
-            web2ldap.app.schema.viewer.w2l_schema_viewer(self.sid, self.outf, self.command, self.form, self.ls, dn)
+            web2ldap.app.schema.viewer.w2l_schema_viewer(self)
         return # dispatch()
 
     @staticmethod
@@ -238,14 +280,14 @@ class AppHandler(object):
             self.form = Web2LDAPForm(None, self.env)
         target_url = target_url or self.script_name
         url_redirect_template_str = web2ldap.app.gui.ReadTemplate(
-            self.form, None, None, u'redirect',
+            self, None, u'redirect',
             tmpl_filename=web2ldapcnf.redirect_template,
         )
         if refresh_time:
             message_class = 'ErrorMessage'
         else:
             message_class = 'SuccessMessage'
-        web2ldap.app.gui.Header(self.outf, self.form, 'text/html', self.form.accept_charset)
+        web2ldap.app.gui.Header(self, 'text/html', self.form.accept_charset)
         # Write out stub body with just a short redirect HTML snippet
         self.outf.write(
             url_redirect_template_str.format(
@@ -376,7 +418,7 @@ class AppHandler(object):
 
         else:
             # Extract the connection parameters from form fields
-            self.form.getInputFields(ignoreEmptyFields=0)
+            self.form.getInputFields()
             self._handle_del_sid()
             if 'ldapurl' in self.form.inputFieldNames:
                 # One form parameter with LDAP URL
@@ -481,18 +523,18 @@ class AppHandler(object):
                     return
             elif self.command == 'monitor':
                 # Output simple monitor page. Does not require session handling.
-                web2ldap.app.monitor.w2l_monitor(self.outf, self.command, self.form, self.env)
+                web2ldap.app.monitor.w2l_monitor(self)
                 return
             elif self.command == 'locate':
-                self.form.getInputFields(ignoreEmptyFields=0)
-                web2ldap.app.locate.w2l_locate(self.outf, self.command, self.form, self.env)
+                self.form.getInputFields()
+                web2ldap.app.locate.w2l_locate(self)
                 return
             elif self.command == '':
                 # New connect => remove old session if necessary
                 session_store.deleteSession(self.sid)
                 # Just output a connect form if there was not query string
                 if not self.form.query_string:
-                    web2ldap.app.connect.w2l_connect(self.outf, self.form, self.env)
+                    web2ldap.app.connect.w2l_connect(self)
                     return
 
             self.ls = self._get_session()
@@ -534,7 +576,7 @@ class AppHandler(object):
                     # No host specified in user's input
                     session_store.deleteSession(self.sid)
                     web2ldap.app.connect.w2l_connect(
-                        self.outf, self.form, self.env,
+                        self,
                         Msg='Connect failed',
                         ErrorMsg='No host specified.'
                     )
@@ -543,7 +585,7 @@ class AppHandler(object):
                     initializeUrl = initializeUrl_list[0]
                 else:
                     web2ldap.app.srvrr.w2l_chasesrvrecord(
-                        self.sid, self.outf, self.command, self.form, self.ls, dn,
+                        self,
                         initializeUrl_list
                     )
                     return
@@ -589,7 +631,7 @@ class AppHandler(object):
             if self.ls.uri is None:
                 session_store.deleteSession(self.sid)
                 web2ldap.app.connect.w2l_connect(
-                    self.outf, self.form, self.env,
+                    self,
                     Msg='Connect failed',
                     ErrorMsg='No valid LDAP connection.'
                 )
@@ -608,7 +650,8 @@ class AppHandler(object):
                 # first ask for password in a login form
                 self.ls.setDN(dn)
                 web2ldap.app.login.w2l_login(
-                    self.sid, self.outf, self.command, self.form, self.ls, dn, input_ldapurl,
+                    self,
+                    input_ldapurl,
                     self.form.getInputValue('login_search_root', [self.ls.getSearchRoot(dn)])[0],
                     login_msg='',
                     who=who, relogin=0, nomenu=1,
@@ -638,9 +681,9 @@ class AppHandler(object):
                 except ldap0.NO_SUCH_OBJECT as e:
                     self.ls.setDN(dn)
                     web2ldap.app.login.w2l_login(
-                        self.sid, self.outf, self.command, self.form, self.ls, dn,
+                        self,
                         input_ldapurl, login_search_root,
-                        login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self.form, self.ls.charset),
+                        login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self),
                         who=who, relogin=True
                     )
                     return
@@ -662,11 +705,11 @@ class AppHandler(object):
 
             # Execute the command module
             try:
-                self.dispatch(input_ldapurl, dn)
+                self.dispatch(dn, input_ldapurl)
             except ldap0.SERVER_DOWN:
                 # Try to reconnect to LDAP server and retry action
                 self.ls.l.reconnect(self.ls.uri)
-                self.dispatch(input_ldapurl, dn)
+                self.dispatch(dn, input_ldapurl)
             else:
                 # Store current session
                 session_store.storeSession(self.sid, self.ls)
@@ -681,7 +724,7 @@ class AppHandler(object):
             except UnicodeDecodeError:
                 e_msg = unicode(repr(str(e)))
             ExceptionMsg(
-                self.sid, self.outf, self.command, self.form, self.ls, dn,
+                self,
                 u'Error parsing form',
                 u'Error parsing form: %s' % (self.form.utf2display(e_msg)),
             )
@@ -691,11 +734,11 @@ class AppHandler(object):
             session_store.deleteSession(self.sid)
             # Redirect to entry page
             web2ldap.app.connect.w2l_connect(
-                self.outf, self.form, self.env,
+                self,
                 Msg='Connect failed',
                 ErrorMsg='Connecting to %s impossible!<br>%s' % (
                     self.form.utf2display((initializeUrl or '-').decode('utf-8')),
-                    web2ldap.app.gui.LDAPError2ErrMsg(e, self.form, self.ls.charset)
+                    web2ldap.app.gui.LDAPError2ErrMsg(e, self)
                 )
             )
 
@@ -714,21 +757,21 @@ class AppHandler(object):
                 except IndexError:
                     new_dn = dn
                 ExceptionMsg(
-                    self.sid, self.outf, self.command, self.form, self.ls, new_dn,
+                    self,
                     u'No such object',
                     web2ldap.app.gui.LDAPError2ErrMsg(
-                        e, self.form, self.ls.charset,
+                        e, self,
                         template='{error_msg}<br>%s<br>{matched_dn}' % (
-                            web2ldap.app.gui.DisplayDN(self.sid, self.form, self.ls, dn)
+                            web2ldap.app.gui.DisplayDN(self, dn)
                         )
                     )
                 )
             else:
                 # Found LDAP server for this naming context via DNS SRV RR
-                web2ldap.app.srvrr.w2l_chasesrvrecord(self.sid, self.outf, self.command, self.form, self.ls, dn, host_list)
+                web2ldap.app.srvrr.w2l_chasesrvrecord(self, host_list)
 
         except (ldap0.PARTIAL_RESULTS, ldap0.REFERRAL) as e:
-            web2ldap.app.referral.w2l_chasereferral(self.sid, self.outf, self.command, self.form, self.ls, dn, e)
+            web2ldap.app.referral.w2l_chasereferral(self, e)
 
         except (
                 ldap0.INSUFFICIENT_ACCESS,
@@ -737,11 +780,11 @@ class AppHandler(object):
                 web2ldap.ldapsession.USERNAME_NOT_FOUND,
             ) as e:
             web2ldap.app.login.w2l_login(
-                self.sid, self.outf, self.command, self.form, self.ls, dn,
+                self,
                 input_ldapurl,
                 self.form.getInputValue('login_search_root', [self.ls.getSearchRoot(dn)])[0],
                 who=u'',
-                login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self.form, self.ls.charset),
+                login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self),
                 relogin=True,
             )
 
@@ -749,17 +792,17 @@ class AppHandler(object):
                 ldap0.INVALID_CREDENTIALS,
             ) as e:
             web2ldap.app.login.w2l_login(
-                self.sid, self.outf, self.command, self.form, self.ls, dn,
+                self,
                 input_ldapurl,
                 self.form.getInputValue('login_search_root', [self.ls.getSearchRoot(dn)])[0],
                 who=who,
-                login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self.form, self.ls.charset),
+                login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self),
                 relogin=True,
             )
 
         except web2ldap.ldapsession.INVALID_SIMPLE_BIND_DN as e:
             web2ldap.app.login.w2l_login(
-                self.sid, self.outf, self.command, self.form, self.ls, dn,
+                self,
                 input_ldapurl,
                 self.form.getInputValue('login_search_root', [self.ls.getSearchRoot(dn)])[0],
                 login_msg=self.form.utf2display(unicode(e)),
@@ -800,12 +843,12 @@ class AppHandler(object):
         except web2ldap.ldapsession.USERNAME_NOT_UNIQUE as e:
             login_search_root = self.form.getInputValue('login_search_root', [self.ls.getSearchRoot(dn)])[0]
             web2ldap.app.login.w2l_login(
-                self.sid, self.outf, self.command, self.form, self.ls, dn,
+                self,
                 input_ldapurl,
                 login_search_root,
                 login_msg=web2ldapcnf.command_link_separator.join([
-                    web2ldap.app.gui.LDAPError2ErrMsg(e, self.form, self.ls.charset),
-                    self.form.applAnchor(
+                    web2ldap.app.gui.LDAPError2ErrMsg(e, self),
+                    self.anchor(
                         'search', 'Show', self.sid,
                         [
                             ('dn', login_search_root),
@@ -821,7 +864,7 @@ class AppHandler(object):
         except (IOError, UnicodeError) as err:
             log_exception(self.env, self.ls)
             ExceptionMsg(
-                self.sid, self.outf, self.command, self.form, self.ls, dn,
+                self,
                 u'Unhandled %s' % err.__class__.__name__.decode('ascii'),
                 self.form.utf2display(str(err).decode('ascii')),
             )
@@ -829,9 +872,9 @@ class AppHandler(object):
         except ldap0.LDAPError as ldap_err:
             log_exception(self.env, self.ls)
             ExceptionMsg(
-                self.sid, self.outf, self.command, self.form, self.ls, dn,
+                self,
                 u'Unhandled %s' % ldap_err.__class__.__name__.decode('ascii'),
-                web2ldap.app.gui.LDAPError2ErrMsg(ldap_err, self.form, self.ls.charset),
+                web2ldap.app.gui.LDAPError2ErrMsg(ldap_err, self),
             )
 
         except (
@@ -845,7 +888,7 @@ class AppHandler(object):
             if socket_errno not in (errno.EPIPE, errno.ECONNRESET):
                 log_exception(self.env, self.ls)
                 ExceptionMsg(
-                    self.sid, self.outf, self.command, self.form, None, None,
+                    self,
                     u'Socket Error',
                     self.form.utf2display(str(socket_err).decode('ascii')),
                 )
@@ -854,7 +897,7 @@ class AppHandler(object):
         except web2ldap.app.core.ErrorExit as error_exit:
             logger.warn(str(error_exit))
             ExceptionMsg(
-                self.sid, self.outf, self.command, self.form, self.ls, dn,
+                self,
                 u'Error',
                 error_exit.Msg,
             )
