@@ -29,8 +29,9 @@ viewer_func = {}
 
 
 def DisplayBinaryAttribute(
-        sid, outf, form, dn,
-        attrtype, entry,
+        app,
+        attrtype,
+        entry,
         index=None,
         mimetype='application/octet-stream',
         attachment_filename='web2ldap-export.bin'
@@ -42,16 +43,15 @@ def DisplayBinaryAttribute(
         value = entry[attrtype][index]
     # Send HTTP header with appropriate MIME type
     web2ldap.app.gui.Header(
-        outf,
-        form,
+        app,
         mimetype,
-        form.accept_charset,
+        app.app.form.accept_charset,
         more_headers=[
             ('Content-Disposition', 'inline; filename=%s' % attachment_filename),
         ]
     )
     # send attribute value
-    outf.write(value)
+    app.outf.write(value)
 
 
 def x509_prep(value):
@@ -80,26 +80,26 @@ class CRLDisplayer(x509v3.CRL):
     Class for display HTML representation of X509 CRL
     """
 
-    def html(self, sid, outf, form, dn, ldap_attrtype, ldap_attrindex):
+    def html(self, app, ldap_attrtype, ldap_attrindex):
         """Display a CRL in HTML with all details"""
-        asn1types.url_prefix = '%s/urlredirect/%s?' % (form.script_name, sid)
+        asn1types.url_prefix = '%s/urlredirect/%s?' % (app.form.script_name, app.sid)
         asn1types.url_target = 'web2ldap_certurl'
         web2ldap.app.gui.CommandTable(
-            outf,
+            app,
             [
-                form.applAnchor(
-                    'read', 'Install', sid,
+                app.anchor(
+                    'read', 'Install',
                     [
-                        ('dn', dn),
+                        ('dn', app.dn),
                         ('read_attr', ldap_attrtype),
                         ('read_attrmode', 'load'),
                         ('read_attrindex', str(ldap_attrindex)),
                     ],
                 ),
-                form.applAnchor(
-                    'read', 'Save to disk', sid,
+                app.anchor(
+                    'read', 'Save to disk',
                     [
-                        ('dn', dn),
+                        ('dn', app.dn),
                         ('read_attr', ldap_attrtype),
                         ('read_attrmode', 'load'),
                         ('read_attrmimetype', 'application/octet-stream'),
@@ -151,7 +151,7 @@ class CRLDisplayer(x509v3.CRL):
             """ % ('\n'.join(revokedCertificates_tr_items))
         else:
             revokedCertificates_str = '<p>No revoked certificates.</p>'
-        outf.write(
+        app.outf.write(
             """
             <h2>X.509 CRL attributes</h2>
             <dl>
@@ -168,7 +168,7 @@ class CRLDisplayer(x509v3.CRL):
             <h2>%d revoked certificates</h2>
             %s
             """ % (
-                self.issuer().html(asn1helper.oids, form.accept_charset),
+                self.issuer().html(asn1helper.oids, app.form.accept_charset),
                 self.version(),
                 self.thisUpdate(),
                 self.nextUpdate(),
@@ -185,26 +185,26 @@ class CertificateDisplayer(x509v3.Certificate):
     Class for display HTML representation of X509 certificate
     """
 
-    def html(self, sid, outf, form, dn, ldap_attrtype, ldap_attrindex):
+    def html(self, app, ldap_attrtype, ldap_attrindex):
         """Display a X.509 certificate in HTML with all details"""
-        asn1types.url_prefix = '%s/urlredirect/%s?' % (form.script_name, sid)
+        asn1types.url_prefix = '%s/urlredirect/%s?' % (app.form.script_name, app.sid)
         asn1types.url_target = 'web2ldap_certurl'
         web2ldap.app.gui.CommandTable(
-            outf,
+            app,
             [
-                form.applAnchor(
-                    'read', 'Install', sid,
+                app.anchor(
+                    'read', 'Install',
                     [
-                        ('dn', dn),
+                        ('dn', app.dn),
                         ('read_attr', ldap_attrtype),
                         ('read_attrmode', 'load'),
                         ('read_attrindex', str(ldap_attrindex)),
                     ],
                 ),
-                form.applAnchor(
-                    'read', 'Save to disk', sid,
+                app.anchor(
+                    'read', 'Save to disk',
                     [
-                        ('dn', dn),
+                        ('dn', app.dn),
                         ('read_attr', ldap_attrtype),
                         ('read_attrmode', 'load'),
                         ('read_attrmimetype', 'application/octet-stream'),
@@ -228,7 +228,7 @@ class CertificateDisplayer(x509v3.Certificate):
             for e in self.extensions()
         ] or ['No extensions.']
 
-        outf.write(
+        app.outf.write(
             """
             <h2>X.509 certificate attributes:</h2>
             <dl>
@@ -263,8 +263,8 @@ class CertificateDisplayer(x509v3.Certificate):
               %s
             </dl>
             """ % (
-                self.subject().html(asn1helper.oids, form.accept_charset),
-                self.issuer().html(asn1helper.oids, form.accept_charset),
+                self.subject().html(asn1helper.oids, app.form.accept_charset),
+                self.issuer().html(asn1helper.oids, app.form.accept_charset),
                 self.version(),
                 self.serialNumber(),
                 notBefore,
@@ -278,35 +278,35 @@ class CertificateDisplayer(x509v3.Certificate):
         )
 
 
-def display_x509_cert(sid, outf, command, form, dn, attr, entry, index=None):
+def display_x509_cert(app, attr, entry, index=None):
     """Display a base64-encoded X.509 certificate attribute"""
-    outf.write('<h1>%s</h1>' % (attr))
+    app.outf.write('<h1>%s</h1>' % (attr))
     attr_value_count = len(entry[attr])
     for i in range(attr_value_count):
         if attr_value_count > 1:
-            outf.write('<h2>%d. / %d</h2>' % (i+1, attr_value_count))
+            app.outf.write('<h2>%d. / %d</h2>' % (i+1, attr_value_count))
         try:
             CertificateDisplayer(x509_prep(entry[attr][i])).html(
-                sid, outf, form, dn, attr, index,
+                app, attr, index,
             )
         except CertificateParserError:
-            outf.write('<p class="ErrorMessage">Error parsing certificate.</p>')
+            app.outf.write('<p class="ErrorMessage">Error parsing certificate.</p>')
     return # display_x509_cert()
 
 
-def display_x509_crl(sid, outf, command, form, dn, attr, entry, index=None):
+def display_x509_crl(app, attr, entry, index=None):
     """Display a base64-encoded CRL attribute"""
-    outf.write('<h1>%s</h1>' % (attr))
+    app.outf.write('<h1>%s</h1>' % (attr))
     attr_value_count = len(entry[attr])
     for i in range(attr_value_count):
         if attr_value_count > 1:
-            outf.write('<h2>%d. / %d</h2>' % (i+1, attr_value_count))
+            app.outf.write('<h2>%d. / %d</h2>' % (i+1, attr_value_count))
         try:
             CRLDisplayer(x509_prep(entry[attr][index])).html(
-                sid, outf, form, dn, attr, i,
+                app, attr, i,
             )
         except CertificateParserError:
-            outf.write('<p class="ErrorMessage">Error parsing CRL.</p>')
+            app.outf.write('<p class="ErrorMessage">Error parsing CRL.</p>')
     return # display_x509_crl()
 
 
