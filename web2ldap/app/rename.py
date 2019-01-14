@@ -29,50 +29,50 @@ import web2ldap.app.schema.syntaxes
 from web2ldap.app.schema.viewer import display_nameoroid_list
 
 
-def new_superior_field(sid, form, ls, dn, sub_schema, sup_search_url, old_superior_dn):
+def new_superior_field(app, sub_schema, sup_search_url, old_superior_dn):
 
     class NewSuperiorSelectList(web2ldap.app.schema.syntaxes.DynamicDNSelectList):
         attr_value_dict = {
             u'': u'- Root Naming Context -',
         }
 
-        def __init__(self, sid, form, ls, dn, schema, attrType, attrValue, ldap_url):
+        def __init__(self, app, dn, schema, attrType, attrValue, ldap_url):
             self.ldap_url = ldap_url
             web2ldap.app.schema.syntaxes.DynamicDNSelectList.__init__(
-                self, sid, form, ls, dn, schema, attrType, attrValue,
+                self, app, dn, schema, attrType, attrValue, entry=None,
             )
 
     if not sup_search_url is None:
         attr_inst = NewSuperiorSelectList(
-            sid, form, ls, dn,
-            sub_schema, 'rdn', old_superior_dn.encode(ls.charset), str(sup_search_url),
+            app, app.dn,
+            sub_schema, 'rdn', old_superior_dn.encode(app.ls.charset), str(sup_search_url),
         )
         nssf = attr_inst.formField()
         nssf.name = 'rename_newsuperior'
         nssf.text = 'New Superior DN'
     else:
         nssf = web2ldap.app.form.DistinguishedNameInput('rename_newsuperior', 'New Superior DN')
-    nssf.setCharset(form.accept_charset)
+    nssf.setCharset(app.form.accept_charset)
     nssf.setDefault(old_superior_dn)
     return nssf # new_superior_field()
 
 
-def w2l_rename(sid, outf, command, form, ls, dn):
+def w2l_rename(app):
 
-    sub_schema = ls.retrieveSubSchema(
-        dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    sub_schema = app.ls.retrieveSubSchema(
+        app.dn,
+        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
     )
-    rename_supsearchurl_cfg = web2ldap.app.cnf.GetParam(ls, 'rename_supsearchurl', {})
+    rename_supsearchurl_cfg = web2ldap.app.cnf.GetParam(app.ls, 'rename_supsearchurl', {})
 
-    if not dn:
+    if not app.dn:
         raise web2ldap.app.core.ErrorExit(u'Rename operation not possible at - World - or RootDSE.')
 
-    rename_newrdn = form.getInputValue('rename_newrdn', [None])[0]
-    rename_newsuperior = form.getInputValue('rename_newsuperior', [None])[0]
-    rename_delold = form.getInputValue('rename_delold', ['no'])[0] == 'yes'
+    rename_newrdn = app.form.getInputValue('rename_newrdn', [None])[0]
+    rename_newsuperior = app.form.getInputValue('rename_newsuperior', [None])[0]
+    rename_delold = app.form.getInputValue('rename_delold', ['no'])[0] == 'yes'
 
     if rename_newrdn:
 
@@ -81,26 +81,26 @@ def w2l_rename(sid, outf, command, form, ls, dn):
         # ---------------------------------------
 
         # Modify the RDN
-        old_dn = dn
-        dn, entry_uuid = ls.renameEntry(
-            dn,
+        old_dn = app.dn
+        app.dn, entry_uuid = app.ls.renameEntry(
+            app.dn,
             rename_newrdn,
             rename_newsuperior,
             delold=rename_delold
         )
-        ls.setDN(dn)
+        app.ls.setDN(app.dn)
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             'Renamed/moved entry',
             """<p class="SuccessMessage">Renamed/moved entry.</p>
             <dl><dt>Old name:</dt><dd>%s</dd>
             <dt>New name:</dt><dd>%s</dd></dl>""" % (
-                web2ldap.app.gui.DisplayDN(sid, form, ls, old_dn),
-                web2ldap.app.gui.DisplayDN(sid, form, ls, dn)
+                web2ldap.app.gui.DisplayDN(app, old_dn),
+                web2ldap.app.gui.DisplayDN(app, app.dn)
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(
-                sid, form, ls, dn, entry_uuid=entry_uuid
+                app, entry_uuid=entry_uuid
             ),
         )
         return
@@ -108,25 +108,25 @@ def w2l_rename(sid, outf, command, form, ls, dn):
     # No input yet => output an input form
     #--------------------------------------
 
-    old_rdn, old_superior = web2ldap.ldaputil.base.split_rdn(dn)
+    old_rdn, old_superior = web2ldap.ldaputil.base.split_rdn(app.dn)
 
-    form.field['rename_newrdn'].setDefault(old_rdn)
+    app.form.field['rename_newrdn'].setDefault(old_rdn)
 
-    rename_template_str = web2ldap.app.gui.ReadTemplate(form, ls, 'rename_template', u'rename form')
+    rename_template_str = web2ldap.app.gui.ReadTemplate(app, 'rename_template', u'rename form')
 
-    rename_supsearchurl = form.getInputValue('rename_supsearchurl', [None])[0]
+    rename_supsearchurl = app.form.getInputValue('rename_supsearchurl', [None])[0]
     try:
         sup_search_url = ldap0.ldapurl.LDAPUrl(rename_supsearchurl_cfg[rename_supsearchurl])
     except KeyError:
-        rename_newsupfilter = form.getInputValue('rename_newsupfilter', [None])[0]
+        rename_newsupfilter = app.form.getInputValue('rename_newsupfilter', [None])[0]
         sup_search_url = ldap0.ldapurl.LDAPUrl()
         if rename_newsupfilter is not None:
             sup_search_url.urlscheme = 'ldap'
             sup_search_url.filterstr = (
-                rename_newsupfilter or form.field['rename_newsupfilter'].default
-            ).encode(ls.charset)
-            sup_search_url.dn = form.getInputValue('rename_searchroot', [''])[0].encode(ls.charset)
-            sup_search_url.scope = int(form.getInputValue('scope', [str(ldap0.SCOPE_SUBTREE)])[0])
+                rename_newsupfilter or app.form.field['rename_newsupfilter'].default
+            ).encode(app.ls.charset)
+            sup_search_url.dn = app.form.getInputValue('rename_searchroot', [''])[0].encode(app.ls.charset)
+            sup_search_url.scope = int(app.form.getInputValue('scope', [str(ldap0.SCOPE_SUBTREE)])[0])
         else:
             sup_search_url = None
 
@@ -134,28 +134,28 @@ def w2l_rename(sid, outf, command, form, ls, dn):
         if sup_search_url.dn in {'_', '..', '.'}:
             rename_searchroot_default = None
         else:
-            rename_searchroot_default = sup_search_url.dn.decode(ls.charset)
-        rename_newsupfilter_default = sup_search_url.filterstr.decode(ls.charset)
+            rename_searchroot_default = sup_search_url.dn.decode(app.ls.charset)
+        rename_newsupfilter_default = sup_search_url.filterstr.decode(app.ls.charset)
         scope_default = unicode(sup_search_url.scope)
     else:
         rename_searchroot_default = None
-        rename_newsupfilter_default = form.field['rename_newsupfilter'].default
+        rename_newsupfilter_default = app.form.field['rename_newsupfilter'].default
         scope_default = unicode(ldap0.SCOPE_SUBTREE)
 
-    rename_search_root_field = web2ldap.app.gui.SearchRootField(form, ls, dn, name='rename_searchroot')
-    rename_new_superior_field = new_superior_field(sid, form, ls, dn, sub_schema, sup_search_url, old_superior)
+    rename_search_root_field = web2ldap.app.gui.SearchRootField(app, name='rename_searchroot')
+    rename_new_superior_field = new_superior_field(app, sub_schema, sup_search_url, old_superior)
 
     name_forms_text = ''
     dit_structure_rule_html = ''
 
     if sub_schema.sed[ldap0.schema.models.NameForm]:
         # Determine if there are name forms defined for structural object class
-        search_result = ls.readEntry(dn, ['objectClass', 'structuralObjectClass', 'governingStructureRule'])
+        search_result = app.ls.readEntry(app.dn, ['objectClass', 'structuralObjectClass', 'governingStructureRule'])
         if not search_result:
             # This should normally not happen, only if entry got deleted in between
             raise web2ldap.app.core.ErrorExit(u'Empty search result when reading entry to be renamed.')
 
-        entry = ldap0.schema.models.Entry(sub_schema, dn, search_result[0][1])
+        entry = ldap0.schema.models.Entry(sub_schema, app.dn, search_result[0][1])
 
         # Determine possible name forms for new RDN
         rdn_options = entry.get_rdn_templates()
@@ -165,7 +165,7 @@ def w2l_rename(sid, outf, command, form, ls, dn):
             )
         # Determine LDAP search filter for building a select list for new superior DN
         # based on governing structure rule
-        dit_structure_ruleids = entry.get_possible_dit_structure_rules(dn.encode(ls.charset))
+        dit_structure_ruleids = entry.get_possible_dit_structure_rules(app.dn.encode(app.ls.charset))
         for dit_structure_ruleid in dit_structure_ruleids:
             sup_structural_ruleids, sup_structural_oc = sub_schema.get_superior_structural_oc_names(dit_structure_ruleid)
             if sup_structural_oc:
@@ -174,11 +174,11 @@ def w2l_rename(sid, outf, command, form, ls, dn):
                         '(objectClass=%s)' % (oc)
                         for oc in sup_structural_oc
                     ])
-                ).decode(ls.charset)
+                ).decode(app.ls.charset)
                 dit_structure_rule_html = 'DIT structure rules:<br>%s' % (
                     '<br>'.join(
                         display_nameoroid_list(
-                            sid, form, dn, sub_schema,
+                            app, sub_schema,
                             sup_structural_ruleids,
                             ldap0.schema.models.DITStructureRule,
                         )
@@ -196,25 +196,25 @@ def w2l_rename(sid, outf, command, form, ls, dn):
 
     # Output empty input form for new RDN
     web2ldap.app.gui.TopSection(
-        sid, outf, command, form, ls, dn,
+        app,
         'Rename Entry',
-        web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+        web2ldap.app.gui.MainMenu(app),
+        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
     )
 
-    outf.write(
+    app.outf.write(
         rename_template_str.format(
-            form_begin=form.beginFormHTML('rename', sid, 'POST'),
-            field_hidden_dn=form.hiddenFieldHTML('dn', dn, u''),
-            field_rename_newrdn=form.field['rename_newrdn'].inputHTML(),
+            form_begin=app.form.beginFormHTML('rename', app.sid, 'POST'),
+            field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
+            field_rename_newrdn=app.form.field['rename_newrdn'].inputHTML(),
             field_rename_new_superior=rename_new_superior_field.inputHTML(),
             text_name_forms=name_forms_text,
             field_rename_supsearchurl=rename_supsearchurl_field.inputHTML(),
-            value_rename_newsupfilter=form.utf2display(rename_newsupfilter_default),
+            value_rename_newsupfilter=app.form.utf2display(rename_newsupfilter_default),
             field_rename_search_root=rename_search_root_field.inputHTML(default=rename_searchroot_default),
-            field_scope=form.field['scope'].inputHTML(default=scope_default),
+            field_scope=app.form.field['scope'].inputHTML(default=scope_default),
             text_dit_structure_rule=dit_structure_rule_html,
         )
     )
 
-    web2ldap.app.gui.Footer(outf, form)
+    web2ldap.app.gui.Footer(app)
