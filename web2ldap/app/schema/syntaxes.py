@@ -214,6 +214,8 @@ class LDAPSyntax(object):
     showValueButton = True
 
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+        if not entry:
+            entry = ldap0.schema.models.Entry(schema, dn.encode(app.ls.charset), {})
         assert isinstance(dn, unicode), \
             TypeError("Argument 'dn' must be unicode, was %r" % (dn))
         assert isinstance(attrType, bytes) or attrType is None, \
@@ -227,12 +229,6 @@ class LDAPSyntax(object):
         self._app = app
         self._schema = schema
         self._dn = dn
-        if entry is None:
-            entry = ldap0.schema.models.Entry(
-                self._schema,
-                self._dn.encode(self._app.ls.charset),
-                {},
-            )
         self._entry = entry
 
     def setAttrValue(self, attrValue):
