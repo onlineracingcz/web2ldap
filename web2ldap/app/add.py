@@ -64,53 +64,53 @@ def ModlistTable(schema, modlist):
     return '\n'.join(s) # ModlistTable()
 
 
-def w2l_add(sid, outf, command, form, ls, dn):
+def w2l_add(app):
 
-    sub_schema = ls.retrieveSubSchema(
-        dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    sub_schema = app.ls.retrieveSubSchema(
+        app.dn,
+        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
     )
 
-    input_modrow = form.getInputValue('in_mr', ['.'])[0]
+    input_modrow = app.form.getInputValue('in_mr', ['.'])[0]
 
     if input_modrow[0] == '-':
         del_row_num = int(input_modrow[1:])
-        del form.field['in_at'].value[del_row_num]
-        del form.field['in_av'].value[del_row_num]
+        del app.form.field['in_at'].value[del_row_num]
+        del app.form.field['in_av'].value[del_row_num]
         # FIX ME! This is definitely not sufficient!
-        del form.field['in_avi'].value[del_row_num]
+        del app.form.field['in_avi'].value[del_row_num]
     elif input_modrow[0] == '+':
         insert_row_num = int(input_modrow[1:])
-        form.field['in_at'].value.insert(insert_row_num+1, form.field['in_at'].value[insert_row_num])
-        form.field['in_av'].value.insert(insert_row_num+1, '')
+        app.form.field['in_at'].value.insert(insert_row_num+1, app.form.field['in_at'].value[insert_row_num])
+        app.form.field['in_av'].value.insert(insert_row_num+1, '')
         # FIX ME! This is definitely not sufficient!
-        form.field['in_avi'].value.insert(insert_row_num+1, form.field['in_avi'].value[insert_row_num])
+        app.form.field['in_avi'].value.insert(insert_row_num+1, app.form.field['in_avi'].value[insert_row_num])
 
-    add_clonedn = form.getInputValue('add_clonedn', [None])[0]
-    add_template = form.getInputValue('add_template', [None])[0]
+    add_clonedn = app.form.getInputValue('add_clonedn', [None])[0]
+    add_template = app.form.getInputValue('add_template', [None])[0]
     invalid_attrs = None
 
     if add_clonedn:
-        entry, _ = web2ldap.app.addmodifyform.ReadOldEntry(ls, add_clonedn, sub_schema, None, {'*':'*'})
+        entry, _ = web2ldap.app.addmodifyform.ReadOldEntry(app.ls, add_clonedn, sub_schema, None, {'*':'*'})
         add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_clonedn)
-        add_rdn_dnlist = ldap0.dn.str2dn(add_rdn.encode(ls.charset))
-        add_rdn = u'+'.join(['%s=' % (at) for at, _, _ in add_rdn_dnlist[0]]).decode(ls.charset)
-        add_basedn = add_basedn or dn
+        add_rdn_dnlist = ldap0.dn.str2dn(add_rdn.encode(app.ls.charset))
+        add_rdn = u'+'.join(['%s=' % (at) for at, _, _ in add_rdn_dnlist[0]]).decode(app.ls.charset)
+        add_basedn = add_basedn or app.dn
     elif add_template:
-        add_dn, entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(ls, form, add_template)
-        entry = ldap0.schema.models.Entry(sub_schema, dn.encode(ls.charset), entry)
-        add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_dn.decode(ls.charset))
-        add_basedn = add_basedn or dn
+        add_dn, entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(app, add_template)
+        entry = ldap0.schema.models.Entry(sub_schema, app.dn.encode(app.ls.charset), entry)
+        add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_dn.decode(app.ls.charset))
+        add_basedn = add_basedn or app.dn
     else:
-        entry, invalid_attrs = web2ldap.app.modify.get_entry_input(form, ls, dn, sub_schema)
-        add_rdn = form.getInputValue('add_rdn', [''])[0]
-        add_basedn = form.getInputValue('add_basedn', [dn])[0]
+        entry, invalid_attrs = web2ldap.app.modify.get_entry_input(app, sub_schema)
+        add_rdn = app.form.getInputValue('add_rdn', [''])[0]
+        add_basedn = app.form.getInputValue('add_basedn', [app.dn])[0]
 
     if invalid_attrs:
         invalid_attr_types_ui = [
-            form.utf2display(at)
+            app.form.utf2display(at)
             for at in sorted(invalid_attrs.keys())
         ]
         error_msg = 'Wrong syntax in following attributes: %s' % (
@@ -126,12 +126,12 @@ def w2l_add(sid, outf, command, form, ls, dn):
             add_clonedn or add_template or
             not entry or
             invalid_attrs or
-            'in_mr' in form.inputFieldNames or
-            'in_oc' in form.inputFieldNames or
-            'in_ft' in form.inputFieldNames
+            'in_mr' in app.form.inputFieldNames or
+            'in_oc' in app.form.inputFieldNames or
+            'in_ft' in app.form.inputFieldNames
         ):
         web2ldap.app.addmodifyform.w2l_addform(
-            sid, outf, 'add', form, ls, dn,
+            app,
             add_rdn, add_basedn, entry,
             Msg=error_msg,
             invalid_attrs=invalid_attrs,
@@ -147,11 +147,11 @@ def w2l_add(sid, outf, command, form, ls, dn):
     try:
         rdn_list = [
             tuple(rdn_comp.split('=', 1))
-            for rdn_comp in ldap0.dn.explode_rdn(add_rdn.encode(ls.charset))
+            for rdn_comp in ldap0.dn.explode_rdn(add_rdn.encode(app.ls.charset))
         ]
     except ldap0.DECODING_ERROR:
         web2ldap.app.addmodifyform.w2l_addform(
-            sid, outf, 'add', form, ls, dn,
+            app,
             add_rdn, add_basedn, entry,
             Msg='Wrong format of RDN string.',
         )
@@ -170,11 +170,11 @@ def w2l_add(sid, outf, command, form, ls, dn):
             rdn_list[i] = rdn_attr_type, entry[rdn_attr_type][0]
         else:
             web2ldap.app.addmodifyform.w2l_addform(
-                sid, outf, 'add', form, ls, dn,
-                add_rdn.decode(ls.charset),
+                app,
+                add_rdn.decode(app.ls.charset),
                 add_basedn, entry,
                 Msg='Attribute <var>%s</var> required for RDN not in entry data.' % (
-                    form.utf2display(rdn_attr_type.decode('ascii'))
+                    app.form.utf2display(rdn_attr_type.decode('ascii'))
                 ),
             )
             return
@@ -194,20 +194,20 @@ def w2l_add(sid, outf, command, form, ls, dn):
     if not modlist:
         raise web2ldap.app.core.ErrorExit(u'Cannot add entry without attribute values.')
 
-    if dn:
-        new_dn = ','.join([rdn, add_basedn.encode(ls.charset)])
+    if app.dn:
+        new_dn = ','.join([rdn, add_basedn.encode(app.ls.charset)])
     else:
         # Makes it possible to add entries for a namingContext
         new_dn = rdn
 
-    if PostReadControl.controlType in ls.supportedControl:
+    if PostReadControl.controlType in app.ls.supportedControl:
         add_serverctrls = [PostReadControl(criticality=False, attrList=['entryUUID'])]
     else:
         add_serverctrls = None
 
     # Try to add the new entry
     try:
-        add_result = ls.l.add_s(new_dn, modlist, serverctrls=add_serverctrls)
+        add_result = app.ls.l.add_s(new_dn, modlist, serverctrls=add_serverctrls)
     except ldap0.NO_SUCH_OBJECT as e:
         raise web2ldap.app.core.ErrorExit(
             u"""
@@ -215,8 +215,8 @@ def w2l_add(sid, outf, command, form, ls, dn):
             Probably this superiour entry does not exist:<br>%s<br>
             Maybe wrong base DN in LDIF template?<br>
             """ % (
-                web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset),
-                web2ldap.app.gui.DisplayDN(sid, form, ls, add_basedn.decode(ls.charset), commandbutton=0),
+                web2ldap.app.gui.LDAPError2ErrMsg(e, app),
+                web2ldap.app.gui.DisplayDN(app, add_basedn.decode(app.ls.charset), commandbutton=0),
             )
         )
     except (
@@ -233,9 +233,9 @@ def w2l_add(sid, outf, command, form, ls, dn):
         ) as e:
         # Some error in user's input => present input form to edit input values
         web2ldap.app.addmodifyform.w2l_addform(
-            sid, outf, 'add', form, ls, dn,
-            add_rdn.decode(ls.charset), add_basedn.decode(ls.charset), entry,
-            Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset),
+            app,
+            add_rdn.decode(app.ls.charset), add_basedn.decode(app.ls.charset), entry,
+            Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app),
         )
     else:
         # Try to extract Post Read Entry response control
@@ -246,9 +246,9 @@ def w2l_add(sid, outf, command, form, ls, dn):
         ]
         if prec_ctrls:
             new_dn = prec_ctrls[0].dn
-        new_dn_u = new_dn.decode(ls.charset)
+        new_dn_u = new_dn.decode(app.ls.charset)
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             'Added Entry',
             """
             <p class="SuccessMessage">Successfully added new entry.</p>
@@ -260,14 +260,14 @@ def w2l_add(sid, outf, command, form, ls, dn):
               <dd>%s</dd>
             </dl>
             """ % (
-                form.applAnchor(
-                    'read', 'Read added entry', sid,
+                app.anchor(
+                    'read', 'Read added entry',
                     [('dn', new_dn_u)],
                     title=u'Display added entry %s' % new_dn_u,
                 ),
-                web2ldap.app.gui.DisplayDN(sid, form, ls, new_dn_u, commandbutton=0),
+                web2ldap.app.gui.DisplayDN(app, new_dn_u, commandbutton=0),
                 ModlistTable(sub_schema, modlist)
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
             context_menu_list=[]
         )

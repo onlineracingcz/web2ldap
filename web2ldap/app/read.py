@@ -82,8 +82,8 @@ class DisplayEntry(IterableUserDict):
         assert isinstance(schema, SubSchema), \
             TypeError('Expected schema to be instance of SubSchema, was %r' % (schema))
         self._app = app
-        self.dn = dn
         self.schema = schema
+        self._set_dn(dn)
         if isinstance(entry, dict):
             self.entry = ldap0.schema.models.Entry(schema, dn.encode(app.ls.charset), entry)
         elif isinstance(entry, ldap0.schema.models.Entry):
@@ -146,6 +146,29 @@ class DisplayEntry(IterableUserDict):
             value_sep = getattr(attr_instance, self.sep_attr)
             return value_sep.join(result)
         return result
+
+    def _get_rdn_dict(self, dn):
+        assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+        entry_rdn_dict = ldap0.schema.models.Entry(
+            self.schema,
+            dn.encode(self._app.ls.charset),
+            web2ldap.ldaputil.base.rdn_dict(dn)
+        )
+        for attr_type, attr_values in entry_rdn_dict.items():
+            del entry_rdn_dict[attr_type]
+            d = ldap0.cidict.cidict()
+            for attr_value in attr_values:
+                attr_value = attr_value.encode(self._app.ls.charset)
+                assert isinstance(attr_value, bytes), \
+                    TypeError("Var 'attr_value' must be bytes, was %r" % (attr_value))
+                d[attr_value] = None
+            entry_rdn_dict[attr_type] = d
+        return entry_rdn_dict
+
+    def _set_dn(self, dn):
+        self.dn = dn
+        self.rdn_dict = self._get_rdn_dict(dn)
+        return # _set_dn()
 
     def get_html_templates(self, cnf_key):
         read_template_dict = cidict(web2ldap.app.cnf.GetParam(self._app.ls, cnf_key, {}))

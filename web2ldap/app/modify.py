@@ -32,32 +32,32 @@ import web2ldap.app.schema
 from web2ldap.app.schema.syntaxes import syntax_registry, LDAPSyntaxValueError
 
 
-def get_entry_input(form, ls, dn, sub_schema):
+def get_entry_input(app, sub_schema):
 
     # Get all the attribute types
     in_attrtype_list = [
         a.encode('ascii')
-        for a in form.getInputValue('in_at', [])
+        for a in app.form.getInputValue('in_at', [])
     ]
     # Grab the raw input strings
     in_value_indexes = [
-        a for a in form.getInputValue('in_avi', [])
+        a for a in app.form.getInputValue('in_avi', [])
     ]
     # Grab the raw input strings
     in_value_list = [
-        a for a in form.getInputValue('in_av', [])
+        a for a in app.form.getInputValue('in_av', [])
     ]
 
     if not len(in_attrtype_list) == len(in_value_list) == len(in_value_indexes):
         raise web2ldap.app.core.ErrorExit(u'Different count of attribute types and values input.')
 
-    entry = ldap0.schema.models.Entry(sub_schema, dn.encode(ls.charset), {})
+    entry = ldap0.schema.models.Entry(sub_schema, app.dn.encode(app.ls.charset), {})
 
     # Stuff input field lists into raw dictionary
     for i, attr_type in enumerate(in_attrtype_list):
         attr_value = in_value_list[i]
         if isinstance(attr_value, unicode):
-            attr_value = attr_value.encode(ls.charset)
+            attr_value = attr_value.encode(app.ls.charset)
         try:
             entry[attr_type].append(attr_value)
         except KeyError:
@@ -69,7 +69,7 @@ def get_entry_input(form, ls, dn, sub_schema):
     attr_values = []
     for in_value in entry.get(attr_type, []):
         attr_instance = syntax_registry.get_at(
-            None, form, ls, dn, sub_schema,
+            app, app.dn, sub_schema,
             attr_type, None,
             entry=entry,
         )
@@ -88,7 +88,7 @@ def get_entry_input(form, ls, dn, sub_schema):
         attr_values = []
         for in_value in in_values:
             attr_instance = syntax_registry.get_at(
-                None, form, ls, dn, sub_schema,
+                app, app.dn, sub_schema,
                 attr_type, None,
                 entry=entry,
             )
@@ -101,10 +101,10 @@ def get_entry_input(form, ls, dn, sub_schema):
 
     # extend entry with LDIF input
     try:
-        in_ldif = form.field['in_ldif'].getLDIFRecords()
+        in_ldif = app.form.field['in_ldif'].getLDIFRecords()
     except ValueError as e:
         raise web2ldap.app.core.ErrorExit(
-            u'LDIF parsing error: %s' % (form.utf2display(unicode(e)))
+            u'LDIF parsing error: %s' % (app.form.utf2display(unicode(e)))
         )
     else:
         if in_ldif:
@@ -119,7 +119,7 @@ def get_entry_input(form, ls, dn, sub_schema):
         entry_changed = False
         for attr_type, attr_values in entry.items():
             attr_instance = syntax_registry.get_at(
-                None, form, ls, dn, sub_schema,
+                app, app.dn, sub_schema,
                 attr_type, None,
                 entry=entry,
             )
@@ -142,7 +142,7 @@ def get_entry_input(form, ls, dn, sub_schema):
             del entry[attr_type]
             continue
         attr_instance = syntax_registry.get_at(
-            None, form, ls, dn, sub_schema,
+            app, app.dn, sub_schema,
             attr_type, None,
             entry=entry,
         )
@@ -170,51 +170,51 @@ def modlist_ldif(dn, form, modlist):
     ldif_writer.unparse(dn.encode('utf-8'), modlist)
     s.append(form.utf2display(f.getvalue().decode('utf-8')).replace('\n', '<br>'))
     s.append('</pre>')
-    return ''.join(s) # ModlistTable()
+    return ''.join(s) # modlist_ldif()
 
 
 ##############################################################################
 # Modify existing entry
 ##############################################################################
 
-def w2l_modify(sid, outf, command, form, ls, dn):
+def w2l_modify(app):
 
-    sub_schema = ls.retrieveSubSchema(
-        dn,
-        web2ldap.app.cnf.GetParam(ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(ls, 'schema_strictcheck', True),
+    sub_schema = app.ls.retrieveSubSchema(
+        app.dn,
+        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
+        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
     )
 
-    in_assertion = form.getInputValue('in_assertion', [u'(objectClass=*)'])[0]
+    in_assertion = app.form.getInputValue('in_assertion', [u'(objectClass=*)'])[0]
 
-    input_modrow = form.getInputValue('in_mr', ['.'])[0]
+    input_modrow = app.form.getInputValue('in_mr', ['.'])[0]
 
     if input_modrow[0] == '-':
         del_row_num = int(input_modrow[1:])
-        in_at_len = len(form.field['in_at'].value)
+        in_at_len = len(app.form.field['in_at'].value)
         if in_at_len >= del_row_num+2 and \
-           form.field['in_at'].value[del_row_num] == form.field['in_at'].value[del_row_num+1] or \
+           app.form.field['in_at'].value[del_row_num] == app.form.field['in_at'].value[del_row_num+1] or \
            in_at_len >= 1 and \
-           form.field['in_at'].value[del_row_num] == form.field['in_at'].value[del_row_num-1]:
+           app.form.field['in_at'].value[del_row_num] == app.form.field['in_at'].value[del_row_num-1]:
             # more input fields for same attribute type => pop()
-            form.field['in_at'].value.pop(del_row_num)
-            form.field['in_av'].value.pop(del_row_num)
+            app.form.field['in_at'].value.pop(del_row_num)
+            app.form.field['in_av'].value.pop(del_row_num)
         else:
             # only delete attribute value
-            form.field['in_av'].value[del_row_num] = ''
-        form.field['in_avi'].value = map(str, range(0, len(form.field['in_av'].value)))
+            app.form.field['in_av'].value[del_row_num] = ''
+        app.form.field['in_avi'].value = map(str, range(0, len(app.form.field['in_av'].value)))
     elif input_modrow[0] == '+':
         insert_row_num = int(input_modrow[1:])
-        form.field['in_at'].value.insert(insert_row_num+1, form.field['in_at'].value[insert_row_num])
-        form.field['in_av'].value.insert(insert_row_num+1, '')
-        form.field['in_avi'].value = map(str, range(0, len(form.field['in_av'].value)))
+        app.form.field['in_at'].value.insert(insert_row_num+1, app.form.field['in_at'].value[insert_row_num])
+        app.form.field['in_av'].value.insert(insert_row_num+1, '')
+        app.form.field['in_avi'].value = map(str, range(0, len(app.form.field['in_av'].value)))
 
-    new_entry, invalid_attrs = web2ldap.app.modify.get_entry_input(form, ls, dn, sub_schema)
+    new_entry, invalid_attrs = get_entry_input(app, sub_schema)
 
     if invalid_attrs:
         invalid_attr_types_ui = [
-            form.utf2display(at)
+            app.form.utf2display(at)
             for at in sorted(invalid_attrs.keys())
         ]
         error_msg = 'Wrong syntax in following attributes: %s' % (
@@ -227,13 +227,13 @@ def w2l_modify(sid, outf, command, form, ls, dn):
         error_msg = ''
 
     # Check if the user just switched/modified input form
-    if 'in_ft' in form.inputFieldNames or \
-       'in_oc' in form.inputFieldNames or \
-       'in_mr' in form.inputFieldNames or \
+    if 'in_ft' in app.form.inputFieldNames or \
+       'in_oc' in app.form.inputFieldNames or \
+       'in_mr' in app.form.inputFieldNames or \
        not new_entry or \
        invalid_attrs:
         web2ldap.app.addmodifyform.w2l_modifyform(
-            sid, outf, 'modify', form, ls, dn,
+            app,
             new_entry,
             Msg=error_msg,
             invalid_attrs=invalid_attrs,
@@ -241,12 +241,12 @@ def w2l_modify(sid, outf, command, form, ls, dn):
         return
 
     in_oldattrtypes = {}
-    for a in form.getInputValue('in_oldattrtypes', []):
+    for a in app.form.getInputValue('in_oldattrtypes', []):
         attr_type = a.encode('ascii')
         in_oldattrtypes[attr_type] = None
 
     try:
-        old_entry, dummy = web2ldap.app.addmodifyform.ReadOldEntry(ls, dn, sub_schema, in_assertion)
+        old_entry, dummy = web2ldap.app.addmodifyform.ReadOldEntry(app.ls, app.dn, sub_schema, in_assertion)
     except ldap0.NO_SUCH_OBJECT:
         raise web2ldap.app.core.ErrorExit(u'Old entry was removed or modified in between! You have to edit it again.')
 
@@ -262,13 +262,13 @@ def w2l_modify(sid, outf, command, form, ls, dn):
     )
 
     # Determine whether Relax Rules control is in effect
-    relax_rules_enabled = ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
+    relax_rules_enabled = app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
 
     if not relax_rules_enabled:
         # Add all attributes which have NO-USER-MODIFICATION set
         ignore_attr_types.update(sub_schema.no_user_mod_attr_oids)
         # Ignore attributes which are assumed to be constant (some operational attributes)
-        ignore_attr_types.update(web2ldap.app.addmodifyform.ConfiguredConstantAttributes(ls).values())
+        ignore_attr_types.update(web2ldap.app.addmodifyform.ConfiguredConstantAttributes(app.ls).values())
 
     # All attributes currently read which were not visible before
     # must be ignored to avoid problems with different access rights
@@ -310,26 +310,30 @@ def w2l_modify(sid, outf, command, form, ls, dn):
     if not modlist:
         # nothing to be changed
         web2ldap.app.gui.SimpleMessage(
-            sid, outf, command, form, ls, dn,
+            app,
             'Modify result',
             '<p class="SuccessMessage">No attributes modified of entry %s</p>' % (
-                web2ldap.app.gui.DisplayDN(sid, form, ls, dn, commandbutton=True),
+                web2ldap.app.gui.DisplayDN(app, app.dn, commandbutton=True),
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
         return
 
 
     # Send modify-list to host
     try:
-        ls.modifyEntry(
-            dn,
+        app.ls.modifyEntry(
+            app.dn,
             modlist,
             assertion_filter=in_assertion,
         )
     except ldap0.ASSERTION_FAILED:
-        raise web2ldap.app.core.ErrorExit(u'Assertion failed => Entry was removed or modified in between! You have to edit it again.')
+        raise web2ldap.app.core.ErrorExit(
+            u'Assertion failed'
+            u'=> Entry was removed or modified in between!'
+            u'You have to edit it again.'
+        )
     except (
             ldap0.CONSTRAINT_VIOLATION,
             ldap0.INVALID_DN_SYNTAX,
@@ -343,20 +347,20 @@ def w2l_modify(sid, outf, command, form, ls, dn):
         ) as e:
         # go back to input form so the user can correct something
         web2ldap.app.addmodifyform.w2l_modifyform(
-            sid, outf, 'modify', form, ls, dn,
+            app,
             new_entry,
-            Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, form, ls.charset),
+            Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app),
         )
         return
 
     # Display success message
     web2ldap.app.gui.SimpleMessage(
-        sid, outf, command, form, ls, dn,
+        app,
         'Modify result',
         '<p class="SuccessMessage">Modified entry %s</p><dt>LDIF change record:</dt>\n<dd>%s</dd>' % (
-            web2ldap.app.gui.DisplayDN(sid, form, ls, dn, commandbutton=True),
-            modlist_ldif(dn, form, modlist),
+            web2ldap.app.gui.DisplayDN(app, app.dn, commandbutton=True),
+            modlist_ldif(app.dn, app.form, modlist),
         ),
-        main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
-        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(sid, form, ls, dn)
+        main_menu_list=web2ldap.app.gui.MainMenu(app),
+        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
     )
