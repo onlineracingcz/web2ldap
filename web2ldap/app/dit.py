@@ -50,7 +50,7 @@ def decode_dict(d, charset):
     return r
 
 
-def dit_html(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
+def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
     """
     Outputs HTML representation of a directory information tree (DIT)
     """
@@ -86,8 +86,8 @@ def dit_html(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
         except KeyError:
             # Try to read the missing entry
             try:
-                ldap_result = ls.readEntry(dn, DIT_ATTR_LIST)
-                node_entry = decode_dict(ldap_result[0][1], ls.charset)
+                ldap_result = app.ls.readEntry(dn, DIT_ATTR_LIST)
+                node_entry = decode_dict(ldap_result[0][1], app.ls.charset)
             except Exception:
                 node_entry = {}
 
@@ -111,9 +111,9 @@ def dit_html(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
         has_subordinates = hasSubordinates and subordinateCountFlag
 
         try:
-            display_name_list = [form.utf2display(node_entry['displayName'][0]), partial_str]
+            display_name_list = [app.form.utf2display(node_entry['displayName'][0]), partial_str]
         except KeyError:
-            display_name_list = [form.utf2display(rdn), partial_str]
+            display_name_list = [app.form.utf2display(rdn), partial_str]
         display_name = ''.join(display_name_list)
 
         title_msg = u'\r\n'.join(
@@ -123,7 +123,7 @@ def dit_html(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
 
         dn_anchor_id = dn_anchor_hash(dn)
 
-        r.append('<dt id="%s">' % (form.utf2display(dn_anchor_id)))
+        r.append('<dt id="%s">' % (app.form.utf2display(dn_anchor_id)))
         if has_subordinates:
             if dn == anchor_dn:
                 link_text = '&lsaquo;&lsaquo;'
@@ -133,8 +133,8 @@ def dit_html(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
                 next_dn = dn
             # Only display link if there are subordinate entries expected or unknown
             r.append(
-                form.applAnchor(
-                    'dit', link_text, sid,
+                app.anchor(
+                    'dit', link_text,
                     [('dn', next_dn)],
                     title=u'Browse from %s' % (next_dn),
                     anchor_id=dn_anchor_id,
@@ -144,14 +144,12 @@ def dit_html(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
             # FIX ME! Better solution in pure CSS?
             r.append('&nbsp;&nbsp;&nbsp;&nbsp;')
         r.append('<span title="%s">%s</span>' % (
-            form.utf2display(title_msg),
+            app.form.utf2display(title_msg),
             display_name
         ))
         r.append(
-            form.applAnchor(
-                'read',
-                '<span class="plus">&rsaquo;</span>',
-                sid,
+            app.anchor(
+                'read', '&rsaquo;',
                 [('dn', dn)],
                 title=u'Read entry',
             )
@@ -161,7 +159,7 @@ def dit_html(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
         # Subordinate nodes' HTML
         r.append('<dd>')
         if max_levels and d:
-            r.extend(dit_html(sid, outf, form, ls, anchor_dn, d, entry_dict, max_levels-1))
+            r.extend(dit_html(app, anchor_dn, d, entry_dict, max_levels-1))
         r.append('</dd>')
 
     # Finish node's HTML
@@ -170,9 +168,9 @@ def dit_html(sid, outf, form, ls, anchor_dn, dit_dict, entry_dict, max_levels):
     return r # dit_html()
 
 
-def w2l_dit(sid, outf, command, form, ls, dn):
+def w2l_dit(app):
 
-    dn_components = explode_dn(dn)
+    dn_components = explode_dn(app.dn)
 
     dit_dict = {}
     entry_dict = {}
@@ -180,28 +178,28 @@ def w2l_dit(sid, outf, command, form, ls, dn):
     root_dit_dict = dit_dict
 
     dn_levels = len(dn_components)
-    dit_max_levels = int(form.getInputValue('dit_max_levels', ['10'])[0])
+    dit_max_levels = int(app.form.getInputValue('dit_max_levels', ['10'])[0])
     cut_off_levels = max(0, dn_levels-dit_max_levels)
 
     for i in range(1, dn_levels-cut_off_levels+1):
         search_base = u','.join(dn_components[dn_levels-cut_off_levels-i:])
         dit_dict[search_base] = {}
         try:
-            msg_id = ls.l.search(
-                search_base.encode(ls.charset),
+            msg_id = app.ls.l.search(
+                search_base.encode(app.ls.charset),
                 ldap0.SCOPE_ONELEVEL,
                 '(objectClass=*)',
                 attrlist=DIT_ATTR_LIST,
-                timeout=int(form.getInputValue('dit_search_timelimit', ['10'])[0]),
-                sizelimit=int(form.getInputValue('dit_search_sizelimit', ['50'])[0]),
+                timeout=int(app.form.getInputValue('dit_search_timelimit', ['10'])[0]),
+                sizelimit=int(app.form.getInputValue('dit_search_sizelimit', ['50'])[0]),
             )
-            for res in ls.l.results(msg_id):
+            for res in app.ls.l.results(msg_id):
                 # FIX ME! Search continuations are ignored for now
                 if res.rtype == ldap0.RES_SEARCH_REFERENCE:
                     continue
                 for res_dn, res_entry in res.data:
-                    res_dn = res_dn.decode(ls.charset)
-                    entry_dict[res_dn] = decode_dict(res_entry, ls.charset)
+                    res_dn = res_dn.decode(app.ls.charset)
+                    entry_dict[res_dn] = decode_dict(res_entry, app.ls.charset)
                     dit_dict[search_base][res_dn] = {}
         except (
                 ldap0.TIMEOUT,
@@ -220,35 +218,36 @@ def w2l_dit(sid, outf, command, form, ls, dn):
 
     if root_dit_dict:
         outf_lines = dit_html(
-            sid, outf, form, ls, dn,
+            app,
+            app.dn,
             root_dit_dict, entry_dict,
             dit_max_levels,
         )
     else:
-        if dn:
+        if app.dn:
             outf_lines = ['No results.']
         else:
             outf_lines = ['<p>No results for root search.</p>']
-            for naming_context in ls.namingContexts:
+            for naming_context in app.ls.namingContexts:
                 outf_lines.append(
                     '<p>%s %s</p>' % (
-                        form.applAnchor(
-                            'dit', '&rsaquo;&rsaquo;', sid,
+                        app.anchor(
+                            'dit', '&rsaquo;&rsaquo;',
                             (('dn', naming_context),),
                             title=u'Display tree beneath %s' % (naming_context),
                         ),
-                        form.utf2display(naming_context),
+                        app.form.utf2display(naming_context),
                     )
                 )
 
     web2ldap.app.gui.SimpleMessage(
-        sid, outf, command, form, ls, dn,
+        app,
         'Tree view',
         """
         <h1>Directory Information Tree</h1>
         <div id="DIT">%s</div>
         """ % ('\n'.join(outf_lines)),
-        main_menu_list=web2ldap.app.gui.MainMenu(sid, form, ls, dn),
+        main_menu_list=web2ldap.app.gui.MainMenu(app),
         context_menu_list=[]
     )
 
