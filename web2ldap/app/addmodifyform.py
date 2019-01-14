@@ -781,7 +781,7 @@ def ObjectClassForm(
     if app.command == 'add':
         parent_dn = app.dn
     elif app.command == 'modify':
-        parent_dn = web2ldap.ldaputil.base.parent_dn(app.dn)
+        parent_dn = app.parent_dn
 
     # Build an select field based on config param 'addform_entry_templates'
     if app.command == 'add' and in_ocf == u'tmpl':
@@ -1178,7 +1178,7 @@ def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
     required_attrs_dict, allowed_attrs_dict = input_form_entry.attribute_types()
     nomatching_attrs_dict = nomatching_attrs(sub_schema, input_form_entry, allowed_attrs_dict, required_attrs_dict)
 
-    supentry_display_string = SupentryDisplayString(app, web2ldap.ldaputil.base.parent_dn(app.dn), sub_schema)
+    supentry_display_string = SupentryDisplayString(app, app.parent_dn, sub_schema)
 
     if writeable_attr_oids is None:
         in_wrtattroids_values = app.form.hiddenFieldHTML('in_wrtattroids', u'nonePseudoValue;x-web2ldap-None', u'')

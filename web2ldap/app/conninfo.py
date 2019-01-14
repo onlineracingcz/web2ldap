@@ -66,6 +66,18 @@ CONNINFO_LDAP_TEMPLATE = """
     <td>SASL SSF info:</td>
     <td>%s</td>
   </tr>
+  <tr>
+    <td>Current DN:</td>
+    <td>%s</td>
+  </tr>
+  <tr>
+    <td>Parent DN:</td>
+    <td>%s</td>
+  </tr>
+  <tr>
+    <td>Naming Context:</td>
+    <td>%s</td>
+  </tr>
 </table>
 """
 
@@ -338,6 +350,9 @@ def w2l_conninfo(app):
             app.form.utf2display(sasl_mech),
             sasl_auth_info,
             app.form.utf2display(sasl_ssf),
+            app.form.utf2display(app.dn),
+            app.form.utf2display(app.parent_dn),
+            app.form.utf2display(app.naming_context),
         )
     )
 

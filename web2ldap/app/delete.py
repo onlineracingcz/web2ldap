@@ -395,7 +395,7 @@ def w2l_delete(app, connLDAPUrl):
             )[0][1]
         except IndexError:
             ldap_entry = {}
-        entry = ldap0.schema.models.Entry(sub_schema, app.dn.encode(app.ls.charset), ldap_entry)
+        entry = ldap0.schema.models.Entry(sub_schema, app.ldap_dn, ldap_entry)
         if delete_attr:
             inner_form = del_attr_form(app, entry, delete_attr)
         elif delete_filter:
@@ -450,8 +450,8 @@ def w2l_delete(app, connLDAPUrl):
 
         begin_time_stamp = time.time()
         deleted_entries_count, non_deletable_entries = delete_entries(
-            app.ls,
-            app.dn.encode(app.ls.charset),
+            app,
+            app.ldap_dn,
             scope,
             delete_ctrl_tree_delete,
             delete_server_ctrls,
@@ -461,8 +461,7 @@ def w2l_delete(app, connLDAPUrl):
 
         old_dn = app.dn
         if scope == ldap0.SCOPE_SUBTREE and delete_filter is None:
-            dn = web2ldap.ldaputil.base.parent_dn(app.dn)
-            app.ls.setDN(app.dn)
+            app.dn = app.parent_dn
         web2ldap.app.gui.SimpleMessage(
             app,
             'Deleted entries',
@@ -487,7 +486,7 @@ def w2l_delete(app, connLDAPUrl):
             (ldap0.MOD_DELETE, attr_type, None)
             for attr_type in delete_attr
         ]
-        app.ls.modifyEntry(dn, mod_list, serverctrls=delete_server_ctrls)
+        app.ls.modifyEntry(app.dn, mod_list, serverctrls=delete_server_ctrls)
         web2ldap.app.gui.SimpleMessage(
             app,
             'Deleted Attribute(s)',
@@ -499,7 +498,7 @@ def w2l_delete(app, connLDAPUrl):
               </li>
             </ul>
             """ % (
-                web2ldap.app.gui.DisplayDN(app, dn),
+                web2ldap.app.gui.DisplayDN(app, app.dn),
                 '</li>\n<li>'.join([
                     app.form.hiddenFieldHTML('delete_attr', attr_type, attr_type)
                     for attr_type in delete_attr
@@ -516,8 +515,7 @@ def w2l_delete(app, connLDAPUrl):
 
         app.ls.deleteEntry(app.dn)
         old_dn = app.dn
-        app.dn = web2ldap.ldaputil.base.parent_dn(app.dn)
-        app.ls.setDN(app.dn)
+        app.dn = app.parent_dn
         web2ldap.app.gui.SimpleMessage(
             app,
             'Deleted Entry',

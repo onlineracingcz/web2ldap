@@ -149,7 +149,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
     user_entry = ldap0.schema.models.Entry(
         sub_schema,
-        app.dn.encode(app.ls.charset),
+        app.ldap_dn,
         result_dnlist[0][1],
     )
 
@@ -164,7 +164,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             continue
         group_member_attrtype, user_entry_attrtype = groupadm_defs[oc][:2]
         if user_entry_attrtype is None:
-            user_entry_attrvalue = app.dn.encode(app.ls.charset)
+            user_entry_attrvalue = app.ldap_dn
         else:
             try:
                 user_entry_attrvalue = user_entry[user_entry_attrtype][0]
@@ -246,7 +246,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                         ]:
                         group_member_attrtype, user_entry_attrtype = groupadm_defs[oc][0:2]
                         if user_entry_attrtype is None:
-                            member_value = app.dn.encode(app.ls.charset)
+                            member_value = app.ldap_dn
                         else:
                             if not user_entry.has_key(user_entry_attrtype):
                                 raise web2ldap.app.core.ErrorExit(

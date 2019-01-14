@@ -151,12 +151,18 @@ class AppHandler(object):
         assert web2ldap.ldaputil.base.is_dn(dn), ValueError(
             'Expected LDAP DN as dn, was %r' % (dn)
         )
-        self._dn = dn
-        self._parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
+        self._dn = web2ldap.ldaputil.base.normalize_dn(dn)
+        self._parent_dn = web2ldap.ldaputil.base.parent_dn(self._dn)
         if self.ls:
             ldap_charset = self.ls.charset
+            self.naming_context = self.ls.getSearchRoot(self._dn)
+            self.ls.setDN(self._dn)
         else:
             ldap_charset = 'utf-8'
+            self.naming_context = u''
+        assert isinstance(self.naming_context, unicode), TypeError(
+            'Expected class attribute naming_context to be unicode , was %r' % (self.naming_context)
+        )
         self._ldap_dn = dn.encode(ldap_charset)
 
     @property
@@ -673,7 +679,7 @@ class AppHandler(object):
 
             if who is not None and cred is None and login_mech not in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
                 # first ask for password in a login form
-                self.ls.setDN(dn)
+                self.dn = dn
                 web2ldap.app.login.w2l_login(
                     self,
                     input_ldapurl,
@@ -704,7 +710,7 @@ class AppHandler(object):
                         loginSearchRoot=login_search_root,
                     )
                 except ldap0.NO_SUCH_OBJECT as e:
-                    self.ls.setDN(dn)
+                    self.dn = dn
                     web2ldap.app.login.w2l_login(
                         self,
                         input_ldapurl, login_search_root,
@@ -716,7 +722,7 @@ class AppHandler(object):
                 # anonymous access
                 self.ls.init_rootdse()
 
-            self.ls.setDN(dn)
+            self.dn = dn
 
             # Check for valid LDAPSession and connection to provide reasonable
             # error message instead of logging exception in case user is playing
@@ -836,7 +842,7 @@ class AppHandler(object):
 
         except web2ldap.ldapsession.PWD_EXPIRATION_WARNING as e:
             # Setup what's required for executing command 'passwd'
-            self.ls.setDN(dn or e.who)
+            self.dn = dn or e.who
             # Output the change password form
             web2ldap.app.passwd.passwd_form(
                 self,
@@ -855,7 +861,7 @@ class AppHandler(object):
 
         except web2ldap.ldapsession.PasswordPolicyException as e:
             # Setup what's required for executing command 'passwd'
-            self.ls.setDN(dn or e.who)
+            self.dn = dn or e.who
             # Output the change password form
             web2ldap.app.passwd.passwd_form(
                 self,

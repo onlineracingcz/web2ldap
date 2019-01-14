@@ -51,7 +51,7 @@ def get_entry_input(app, sub_schema):
     if not len(in_attrtype_list) == len(in_value_list) == len(in_value_indexes):
         raise web2ldap.app.core.ErrorExit(u'Different count of attribute types and values input.')
 
-    entry = ldap0.schema.models.Entry(sub_schema, app.dn.encode(app.ls.charset), {})
+    entry = ldap0.schema.models.Entry(sub_schema, app.ldap_dn, {})
 
     # Stuff input field lists into raw dictionary
     for i, attr_type in enumerate(in_attrtype_list):

@@ -88,7 +88,6 @@ def w2l_rename(app):
             rename_newsuperior,
             delold=rename_delold
         )
-        app.ls.setDN(app.dn)
         web2ldap.app.gui.SimpleMessage(
             app,
             'Renamed/moved entry',
@@ -165,7 +164,7 @@ def w2l_rename(app):
             )
         # Determine LDAP search filter for building a select list for new superior DN
         # based on governing structure rule
-        dit_structure_ruleids = entry.get_possible_dit_structure_rules(app.dn.encode(app.ls.charset))
+        dit_structure_ruleids = entry.get_possible_dit_structure_rules(app.ldap_dn)
         for dit_structure_ruleid in dit_structure_ruleids:
             sup_structural_ruleids, sup_structural_oc = sub_schema.get_superior_structural_oc_names(dit_structure_ruleid)
             if sup_structural_oc:

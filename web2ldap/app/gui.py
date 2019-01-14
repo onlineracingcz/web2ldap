@@ -275,7 +275,6 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
         ),
     ]
     if app.dn:
-        parent_dn = web2ldap.ldaputil.base.parent_dn(app.dn)
         ldap_url_obj = app.ls.ldapUrl('', add_login=False)
         result.extend([
             app.anchor(
@@ -295,11 +294,11 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
             app.anchor(
                 'add', 'Clone',
                 [
-                    ('dn', parent_dn),
+                    ('dn', app.parent_dn),
                     ('add_clonedn', app.dn),
                     ('in_ft', u'Template'),
                 ],
-                title=u'Clone entry\r\n%s\r\nbeneath %s' % (app.dn, parent_dn)
+                title=u'Clone entry\r\n%s\r\nbeneath %s' % (app.dn, app.parent_dn)
             ),
         ])
 
@@ -449,19 +448,18 @@ def MainMenu(app):
     if app.ls is not None and app.ls.uri is not None:
 
         if app.dn:
-            parent_dn = web2ldap.ldaputil.base.parent_dn(app.dn)
             cl.append(
                 app.anchor(
                     'search', 'Up',
                     (
-                        ('dn', parent_dn),
+                        ('dn', app.parent_dn),
                         ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'objectClass'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
                         ('search_string', ''),
                     ),
-                    title=u'List direct subordinates of %s' % (parent_dn or u'Root DSE'),
+                    title=u'List direct subordinates of %s' % (app.parent_dn or u'Root DSE'),
                 )
             )
 

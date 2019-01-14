@@ -129,7 +129,7 @@ def schema_context_menu(app):
     context_menu_list = []
     subschemaSubentryDN = None
     try:
-        subschemaSubentryDN = app.ls.l.search_subschemasubentry_s(app.dn.encode(app.ls.charset))
+        subschemaSubentryDN = app.ls.l.search_subschemasubentry_s(app.ldap_dn)
         subschemaSubentry = app.ls.retrieveSubSchema(
             app.dn,
             web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
