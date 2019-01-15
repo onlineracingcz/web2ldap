@@ -47,7 +47,7 @@ from web2ldap.ldaputil.base import \
 # Constants
 #---------------------------------------------------------------------------
 
-host_pattern = '[a-zA-Z0-9_.:\[\]-]+'
+host_pattern = r'[a-zA-Z0-9_.:\[\]-]+'
 
 HIDDEN_FIELD = '<input type="hidden" name="%s" value="%s">%s\n'
 
@@ -101,11 +101,11 @@ def ReadTemplate(app, config_key, form_desc=u'', tmpl_filename=None):
     return tmpl_str # ReadTemplate()
 
 
-def LDAPError2ErrMsg(e, app, template='{error_msg}<br>{matched_dn}'):
+def LDAPError2ErrMsg(ldap_err, app, template='{error_msg}<br>{matched_dn}'):
     """
     Converts a LDAPError exception into HTML error message
 
-    e
+    ldap_err
       LDAPError instance
     app
       AppHandler instance
@@ -116,45 +116,40 @@ def LDAPError2ErrMsg(e, app, template='{error_msg}<br>{matched_dn}'):
 
     matched_dn = None
 
-    if isinstance(e, ldap0.TIMEOUT) or not e.args:
-        ErrMsg = u''
+    if isinstance(ldap_err, ldap0.TIMEOUT) or not ldap_err.args:
+        error_msg = u''
 
-    elif isinstance(e, ldap0.INVALID_CREDENTIALS) and AD_LDAP49_ERROR_PREFIX in e.args[0].get('info', ''):
-        ad_error_code_pos = e.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
-        ad_error_code = int(e.args[0]['info'][ad_error_code_pos:ad_error_code_pos+3], 16)
-        ErrMsg = u'%s:\n%s (%s)' % (
-            e.args[0]['desc'].decode(app.ls.charset),
-            e.args[0].get('info', '').decode(app.ls.charset),
+    elif isinstance(ldap_err, ldap0.INVALID_CREDENTIALS) and \
+        AD_LDAP49_ERROR_PREFIX in ldap_err.args[0].get('info', ''):
+        ad_error_code_pos = ldap_err.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
+        ad_error_code = int(ldap_err.args[0]['info'][ad_error_code_pos:ad_error_code_pos+3], 16)
+        error_msg = u'%s:\n%s (%s)' % (
+            ldap_err.args[0]['desc'].decode(app.ls.charset),
+            ldap_err.args[0].get('info', '').decode(app.ls.charset),
             AD_LDAP49_ERROR_CODES.get(ad_error_code, u'unknown'),
         )
 
     else:
         try:
-            ErrMsg = u':\n'.join((
-                e.args[0]['desc'].decode(app.ls.charset),
-                e.args[0].get('info', '').decode(app.ls.charset),
+            error_msg = u':\n'.join((
+                ldap_err.args[0]['desc'].decode(app.ls.charset),
+                ldap_err.args[0].get('info', '').decode(app.ls.charset),
             ))
         except UnicodeDecodeError:
-            ErrMsg = u':\n'.join((
-                e.args[0]['desc'].decode(app.ls.charset),
-                repr(e.args[0].get('info', '')).decode(app.ls.charset),
+            error_msg = u':\n'.join((
+                ldap_err.args[0]['desc'].decode(app.ls.charset),
+                repr(ldap_err.args[0].get('info', '')).decode(app.ls.charset),
             ))
-        except TypeError:
-            try:
-                ErrMsg = u':\n'.join((
-                    e[0].decode(app.ls.charset),
-                    e[1].decode(app.ls.charset),
-                ))
-            except (TypeError, IndexError):
-                ErrMsg = str(e).decode(app.ls.charset)
+        except (TypeError, IndexError):
+            error_msg = str(ldap_err).decode(app.ls.charset)
         else:
             try:
-                matched_dn = e.args[0].get('matched', '').decode(app.ls.charset)
+                matched_dn = ldap_err.args[0].get('matched', '').decode(app.ls.charset)
             except KeyError:
                 matched_dn = None
 
-    ErrMsg = ErrMsg.replace(u'\r', '').replace(u'\t', '')
-    ErrMsg_html = app.form.utf2display(ErrMsg, lf_entity='<br>')
+    error_msg = error_msg.replace(u'\r', '').replace(u'\t', '')
+    error_msg_html = app.form.utf2display(error_msg, lf_entity='<br>')
 
     # Add matchedDN to error message HTML if needed
     if matched_dn:
@@ -163,7 +158,7 @@ def LDAPError2ErrMsg(e, app, template='{error_msg}<br>{matched_dn}'):
         matched_dn_html = ''
 
     return template.format(
-        error_msg=ErrMsg_html,
+        error_msg=error_msg_html,
         matched_dn=matched_dn_html
     )
 

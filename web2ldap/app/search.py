@@ -59,7 +59,7 @@ PAGE_COMMAND_TMPL = """
 </table></nav>
 """
 
-LDAPERROR_SIZELIMIT_MSG = u"""
+LDAPERROR_SIZELIMIT_MSG = """
 <p class="ErrorMessage">
   <strong>
     Only partial results received. Try to refine search.

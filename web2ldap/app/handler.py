@@ -148,6 +148,8 @@ class AppHandler(object):
 
     @dn.setter
     def dn(self, dn):
+        if isinstance(dn, bytes) and self.ls is not None:
+            dn = dn.decode(self.ls.charset)
         assert web2ldap.ldaputil.base.is_dn(dn), ValueError(
             'Expected LDAP DN as dn, was %r' % (dn)
         )
@@ -524,8 +526,6 @@ class AppHandler(object):
         Really process the request
         """
 
-        dn = None
-
         # check for valid command
         if self.command not in FORM_CLASS:
 
@@ -598,7 +598,7 @@ class AppHandler(object):
                self.ls.uri is None:
                 # Force a SRV RR lookup for dc-style DNs,
                 # create list of URLs to connect to
-                dns_srv_rrs = web2ldap.ldaputil.dns.dcDNSLookup(dn)
+                dns_srv_rrs = web2ldap.ldaputil.dns.dcDNSLookup(self.dn)
                 initializeUrl_list = [
                     ExtendedLDAPUrl(urlscheme='ldap', hostport=host, dn=dn).initializeUrl()
                     for host in dns_srv_rrs
@@ -679,7 +679,6 @@ class AppHandler(object):
 
             if who is not None and cred is None and login_mech not in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
                 # first ask for password in a login form
-                self.dn = dn
                 web2ldap.app.login.w2l_login(
                     self,
                     input_ldapurl,
@@ -710,7 +709,6 @@ class AppHandler(object):
                         loginSearchRoot=login_search_root,
                     )
                 except ldap0.NO_SUCH_OBJECT as e:
-                    self.dn = dn
                     web2ldap.app.login.w2l_login(
                         self,
                         input_ldapurl, login_search_root,
@@ -721,8 +719,6 @@ class AppHandler(object):
             else:
                 # anonymous access
                 self.ls.init_rootdse()
-
-            self.dn = dn
 
             # Check for valid LDAPSession and connection to provide reasonable
             # error message instead of logging exception in case user is playing
@@ -745,19 +741,14 @@ class AppHandler(object):
                 # Store current session
                 session_store.storeSession(self.sid, self.ls)
 
-        except web2ldap.web.forms.FormException as e:
-            if self.ls is None:
-                dn = None
-            else:
-                dn = self.ls.__dict__.get('_dn', None)
-            try:
-                e_msg = unicode(str(e))
-            except UnicodeDecodeError:
-                e_msg = unicode(repr(str(e)))
+        except web2ldap.web.forms.FormException as form_error:
+            log_exception(self.env, self.ls)
             ExceptionMsg(
                 self,
                 u'Error parsing form',
-                u'Error parsing form: %s' % (self.form.utf2display(e_msg)),
+                u'Error parsing form: %s' % (
+                    self.form.utf2display(str(form_error).decode(self.form.accept_charset)),
+                ),
             )
 
         except ldap0.SERVER_DOWN as e:
@@ -775,31 +766,29 @@ class AppHandler(object):
 
         except ldap0.NO_SUCH_OBJECT as e:
 
-            log_exception(self.env, self.ls)
-
-            host_list = web2ldap.ldaputil.dns.dcDNSLookup(dn)
-            if (not host_list) or (ExtendedLDAPUrl(self.ls.uri).hostport in host_list):
-                # Did not find another LDAP server for this naming context
-                try:
-                    if isinstance(e.args[0], dict) and e.args[0].has_key('matched'):
-                        new_dn = unicode(e.args[0]['matched'], self.ls.charset)
-                    else:
-                        new_dn = dn
-                except IndexError:
-                    new_dn = dn
-                ExceptionMsg(
-                    self,
-                    u'No such object',
-                    web2ldap.app.gui.LDAPError2ErrMsg(
-                        e, self,
-                        template='{error_msg}<br>%s<br>{matched_dn}' % (
-                            web2ldap.app.gui.DisplayDN(self, dn)
-                        )
-                    )
-                )
-            else:
+            # first try to lookup dc-style DN via DNS
+            host_list = web2ldap.ldaputil.dns.dcDNSLookup(self.dn)
+            logger.debug('host_list = %r', host_list)
+            if host_list and ExtendedLDAPUrl(self.ls.uri).hostport not in host_list:
                 # Found LDAP server for this naming context via DNS SRV RR
                 web2ldap.app.srvrr.w2l_chasesrvrecord(self, host_list)
+                return
+
+            # Normal error handling
+            log_exception(self.env, self.ls)
+            failed_dn = self.dn
+            if e.args[0].has_key('matched'):
+                self.dn = e.args[0]['matched']
+            ExceptionMsg(
+                self,
+                u'No such object',
+                web2ldap.app.gui.LDAPError2ErrMsg(
+                    e, self,
+                    template='{{error_msg}}<br>{0}{{matched_dn}}'.format(
+                        web2ldap.app.gui.DisplayDN(self, failed_dn)
+                    )
+                )
+            )
 
         except (ldap0.PARTIAL_RESULTS, ldap0.REFERRAL) as e:
             web2ldap.app.referral.w2l_chasereferral(self, e)
