@@ -29,7 +29,7 @@ import web2ldap.app.gui
 # Connect form
 ##############################################################################
 
-def w2l_connect(app, Msg='Connect', ErrorMsg=''):
+def w2l_connect(app, h1_msg='Connect', error_msg=''):
     """
     Display the landing page with a connect form
     """
@@ -53,26 +53,22 @@ def w2l_connect(app, Msg='Connect', ErrorMsg=''):
     else:
         uri_select_field_html = ''
 
-    if ErrorMsg:
-        ErrorMsg = '<p class="ErrorMessage">%s</p>' % (ErrorMsg)
+    if error_msg:
+        error_msg = '<p class="ErrorMessage">%s</p>' % (error_msg)
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.SimpleMessage(
         app,
         'Connect',
-        web2ldap.app.gui.EntryMainMenu(app), [],
-    )
-
-    app.outf.write(
         connect_template_str.format(
             text_scriptname=app.env.get('SCRIPT_NAME', '').decode('utf-8'),
-            text_heading=Msg,
-            text_error=ErrorMsg,
+            text_heading=h1_msg,
+            text_error=error_msg,
             form_begin=app.form.beginFormHTML('searchform', None, 'GET', None),
             field_uri_select=uri_select_field_html,
             disable_start={False:'', True:'<!--'}[web2ldapcnf.hosts.restricted_ldap_uri_list],
             disable_end={False:'', True:'-->'}[web2ldapcnf.hosts.restricted_ldap_uri_list],
             value_currenttime=time.strftime(r'%Y%m%d%H%M%SZ', time.gmtime()),
-        )
+        ),
+        main_menu_list=web2ldap.app.gui.EntryMainMenu(app),
+        context_menu_list=[],
     )
-
-    web2ldap.app.gui.Footer(app)

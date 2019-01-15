@@ -563,7 +563,7 @@ class AppHandler(object):
             elif self.command == '':
                 # New connect => remove old session if necessary
                 session_store.deleteSession(self.sid)
-                # Just output a connect form if there was not query string
+                # Just output a connect form if there was no query string
                 if not self.form.query_string:
                     web2ldap.app.connect.w2l_connect(self)
                     return
@@ -608,8 +608,8 @@ class AppHandler(object):
                     session_store.deleteSession(self.sid)
                     web2ldap.app.connect.w2l_connect(
                         self,
-                        Msg='Connect failed',
-                        ErrorMsg='No host specified.'
+                        h1_msg='Connect failed',
+                        error_msg='No host specified.'
                     )
                     return
                 elif len(initializeUrl_list) == 1:
@@ -663,8 +663,8 @@ class AppHandler(object):
                 session_store.deleteSession(self.sid)
                 web2ldap.app.connect.w2l_connect(
                     self,
-                    Msg='Connect failed',
-                    ErrorMsg='No valid LDAP connection.'
+                    h1_msg='Connect failed',
+                    error_msg='No valid LDAP connection.'
                 )
                 return
 
@@ -766,8 +766,8 @@ class AppHandler(object):
             # Redirect to entry page
             web2ldap.app.connect.w2l_connect(
                 self,
-                Msg='Connect failed',
-                ErrorMsg='Connecting to %s impossible!<br>%s' % (
+                h1_msg='Connect failed',
+                error_msg='Connecting to %s impossible!<br>%s' % (
                     self.form.utf2display((initializeUrl or '-').decode('utf-8')),
                     web2ldap.app.gui.LDAPError2ErrMsg(e, self)
                 )
