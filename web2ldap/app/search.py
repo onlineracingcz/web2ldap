@@ -59,7 +59,7 @@ PAGE_COMMAND_TMPL = """
 </table></nav>
 """
 
-SizeLimitMsg = """
+LDAPERROR_SIZELIMIT_MSG = u"""
 <p class="ErrorMessage">
   <strong>
     Only partial results received. Try to refine search.
@@ -576,7 +576,7 @@ def w2l_search(app, connLDAPUrl):
             )
         except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED) as e:
             if search_size_limit < 0 or result_handler.endResultBreak < search_size_limit:
-                SearchWarningMsg = web2ldap.app.gui.LDAPError2ErrMsg(e, app, template=SizeLimitMsg)
+                SearchWarningMsg = web2ldap.app.gui.LDAPError2ErrMsg(e, app, template=LDAPERROR_SIZELIMIT_MSG)
             partial_results = 1
             resind = result_handler.endResultBreak
             # Retrieve the overall number of search results by resending the
