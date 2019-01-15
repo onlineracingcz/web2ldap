@@ -551,7 +551,7 @@ def w2l_search(app, connLDAPUrl):
         web2ldap.app.searchform.w2l_searchform(
             app,
             Msg=' '.join((
-                web2ldap.app.gui.LDAPError2ErrMsg(e, app),
+                app.ldap_error_msg(e),
                 utf2display(filterstr2),
             )),
             filterstr=filterstr,
@@ -576,7 +576,7 @@ def w2l_search(app, connLDAPUrl):
             )
         except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED) as e:
             if search_size_limit < 0 or result_handler.endResultBreak < search_size_limit:
-                SearchWarningMsg = web2ldap.app.gui.LDAPError2ErrMsg(e, app, template=LDAPERROR_SIZELIMIT_MSG)
+                SearchWarningMsg = app.ldap_error_msg(e, template=LDAPERROR_SIZELIMIT_MSG)
             partial_results = 1
             resind = result_handler.endResultBreak
             # Retrieve the overall number of search results by resending the
@@ -598,7 +598,7 @@ def w2l_search(app, connLDAPUrl):
             # Give the user a chance to edit his bad search filter
             web2ldap.app.searchform.w2l_searchform(
                 app,
-                Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app),
+                Msg=app.ldap_error_msg(e),
                 filterstr=filterstr,
                 scope=scope
             )
@@ -609,7 +609,7 @@ def w2l_search(app, connLDAPUrl):
                 # Give the user a chance to edit his bad search filter
                 web2ldap.app.searchform.w2l_searchform(
                     app,
-                    Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app),
+                    Msg=app.ldap_error_msg(e),
                     filterstr=filterstr,
                     scope=scope
                 )

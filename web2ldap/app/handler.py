@@ -69,6 +69,7 @@ from web2ldap.app.gui import ExceptionMsg
 from web2ldap.app.form import Web2LDAPForm
 from web2ldap.app.session import session_store
 from web2ldap.app.schema.syntaxes import syntax_registry
+from web2ldap.ldaputil.base import AD_LDAP49_ERROR_CODES, AD_LDAP49_ERROR_PREFIX
 
 
 SCOPE2COMMAND = {
@@ -521,6 +522,54 @@ class AppHandler(object):
 
         return input_ldapurl, dn, who, cred # end of _get_ldapconn_params()
 
+    def ldap_error_msg(self, ldap_err, template='{error_msg}<br>{matched_dn}'):
+        """
+        Converts a LDAPError exception into HTML error message
+
+        ldap_err
+          LDAPError instance
+        template
+          Raw binary string to be used as template
+          (must contain only a single placeholder)
+        """
+        matched_dn = None
+        if isinstance(ldap_err, ldap0.TIMEOUT) or not ldap_err.args:
+            error_msg = u''
+        elif isinstance(ldap_err, ldap0.INVALID_CREDENTIALS) and \
+            AD_LDAP49_ERROR_PREFIX in ldap_err.args[0].get('info', ''):
+            ad_error_code_pos = ldap_err.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
+            ad_error_code = int(ldap_err.args[0]['info'][ad_error_code_pos:ad_error_code_pos+3], 16)
+            error_msg = u'%s:\n%s (%s)' % (
+                ldap_err.args[0]['desc'].decode(self.ls.charset),
+                ldap_err.args[0].get('info', '').decode(self.ls.charset),
+                AD_LDAP49_ERROR_CODES.get(ad_error_code, u'unknown'),
+            )
+        else:
+            try:
+                error_msg = u':\n'.join((
+                    ldap_err.args[0]['desc'].decode(self.ls.charset),
+                    ldap_err.args[0].get('info', '').decode(self.ls.charset),
+                ))
+            except UnicodeDecodeError:
+                error_msg = u':\n'.join((
+                    ldap_err.args[0]['desc'].decode(self.ls.charset),
+                    repr(ldap_err.args[0].get('info', '')).decode(self.ls.charset),
+                ))
+            except (TypeError, IndexError):
+                error_msg = str(ldap_err).decode(self.ls.charset)
+            matched_dn = ldap_err.args[0].get('matched', '').decode(self.ls.charset)
+        error_msg = error_msg.replace(u'\r', '').replace(u'\t', '')
+        error_msg_html = self.form.utf2display(error_msg, lf_entity='<br>')
+        # Add matchedDN to error message HTML if needed
+        if matched_dn:
+            matched_dn_html = '<br>Matched DN: %s' % (self.form.utf2display(matched_dn))
+        else:
+            matched_dn_html = ''
+        return template.format(
+            error_msg=error_msg_html,
+            matched_dn=matched_dn_html
+        )
+
     def run(self):
         """
         Really process the request
@@ -712,7 +761,7 @@ class AppHandler(object):
                     web2ldap.app.login.w2l_login(
                         self,
                         input_ldapurl, login_search_root,
-                        login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self),
+                        login_msg=self.ldap_error_msg(e),
                         who=who, relogin=True
                     )
                     return
@@ -760,11 +809,11 @@ class AppHandler(object):
                 h1_msg='Connect failed',
                 error_msg='Connecting to %s impossible!<br>%s' % (
                     self.form.utf2display((initializeUrl or '-').decode('utf-8')),
-                    web2ldap.app.gui.LDAPError2ErrMsg(e, self)
+                    self.ldap_error_msg(e)
                 )
             )
 
-        except ldap0.NO_SUCH_OBJECT as e:
+        except ldap0.NO_SUCH_OBJECT as ldap_err:
 
             # first try to lookup dc-style DN via DNS
             host_list = web2ldap.ldaputil.dns.dcDNSLookup(self.dn)
@@ -777,13 +826,13 @@ class AppHandler(object):
             # Normal error handling
             log_exception(self.env, self.ls)
             failed_dn = self.dn
-            if e.args[0].has_key('matched'):
-                self.dn = e.args[0]['matched']
+            if 'matched' in ldap_err.args[0]:
+                self.dn = ldap_err.args[0]['matched']
             ExceptionMsg(
                 self,
                 u'No such object',
-                web2ldap.app.gui.LDAPError2ErrMsg(
-                    e, self,
+                self.ldap_error_msg(
+                    ldap_err,
                     template='{{error_msg}}<br>{0}{{matched_dn}}'.format(
                         web2ldap.app.gui.DisplayDN(self, failed_dn)
                     )
@@ -804,7 +853,7 @@ class AppHandler(object):
                 input_ldapurl,
                 self.form.getInputValue('login_search_root', [self.ls.getSearchRoot(dn)])[0],
                 who=u'',
-                login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self),
+                login_msg=self.ldap_error_msg(e),
                 relogin=True,
             )
 
@@ -816,7 +865,7 @@ class AppHandler(object):
                 input_ldapurl,
                 self.form.getInputValue('login_search_root', [self.ls.getSearchRoot(dn)])[0],
                 who=who,
-                login_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, self),
+                login_msg=self.ldap_error_msg(e),
                 relogin=True,
             )
 
@@ -867,7 +916,7 @@ class AppHandler(object):
                 input_ldapurl,
                 login_search_root,
                 login_msg=web2ldapcnf.command_link_separator.join([
-                    web2ldap.app.gui.LDAPError2ErrMsg(e, self),
+                    self.ldap_error_msg(e),
                     self.anchor(
                         'search', 'Show',
                         [
@@ -894,7 +943,7 @@ class AppHandler(object):
             ExceptionMsg(
                 self,
                 u'Unhandled %s' % ldap_err.__class__.__name__.decode('ascii'),
-                web2ldap.app.gui.LDAPError2ErrMsg(ldap_err, self),
+                self.ldap_error_msg(ldap_err),
             )
 
         except (

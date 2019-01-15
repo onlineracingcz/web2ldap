@@ -269,7 +269,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                         ldaperror_entries.append((
                             group_dn,
                             modlist,
-                            web2ldap.app.gui.LDAPError2ErrMsg(e, app),
+                            app.ldap_error_msg(e),
                         ))
                     else:
                         successful_group_mods.append((group_dn, modlist))

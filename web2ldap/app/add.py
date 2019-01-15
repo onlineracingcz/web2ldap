@@ -215,7 +215,7 @@ def w2l_add(app):
             Probably this superiour entry does not exist:<br>%s<br>
             Maybe wrong base DN in LDIF template?<br>
             """ % (
-                web2ldap.app.gui.LDAPError2ErrMsg(e, app),
+                app.ldap_error_msg(e),
                 web2ldap.app.gui.DisplayDN(app, add_basedn.decode(app.ls.charset), commandbutton=0),
             )
         )
@@ -235,7 +235,7 @@ def w2l_add(app):
         web2ldap.app.addmodifyform.w2l_addform(
             app,
             add_rdn.decode(app.ls.charset), add_basedn.decode(app.ls.charset), entry,
-            Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app),
+            Msg=app.ldap_error_msg(e),
         )
     else:
         # Try to extract Post Read Entry response control

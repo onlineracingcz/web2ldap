@@ -89,7 +89,7 @@ def w2l_dds(app):
     try:
         extop_resp_obj = app.ls.l.extop_s(extreq, extop_resp_class=RefreshResponse)
     except ldap0.SIZELIMIT_EXCEEDED as ldap_err:
-        dds_form(app, web2ldap.app.gui.LDAPError2ErrMsg(ldap_err, app))
+        dds_form(app, app.ldap_error_msg(ldap_err))
     else:
         if request_ttl and extop_resp_obj.responseTtl != request_ttl:
             msg = '<p class="WarningMessage">Refreshed entry %s with TTL %d instead of %d.</p>' % (

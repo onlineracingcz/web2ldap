@@ -19,9 +19,10 @@ import time
 import ldap0
 from ldap0.filter import escape_filter_chars
 
+import web2ldapcnf
+
 import web2ldap.utctime
 import web2ldap.ldaputil.base
-import web2ldapcnf
 import web2ldap.app.core
 import web2ldap.app.gui
 from web2ldap.app.session import session_store
@@ -305,7 +306,7 @@ def w2l_conninfo(app):
     try:
         whoami_result = '&quot;%s&quot;' % (app.form.utf2display(app.ls.whoami()))
     except ldap0.LDAPError as e:
-        whoami_result = '<strong>Failed:</strong> %s' % (web2ldap.app.gui.LDAPError2ErrMsg(e, app))
+        whoami_result = '<strong>Failed:</strong> %s' % (app.ldap_error_msg(e))
 
     if app.ls.saslAuth:
         sasl_mech = u'SASL/%s' % (app.ls.saslAuth.mech)
@@ -324,7 +325,7 @@ def w2l_conninfo(app):
     try:
         sasl_ssf = unicode(app.ls.l.get_option(ldap0.OPT_X_SASL_SSF))
     except ldap0.LDAPError as e:
-        sasl_ssf = u'error reading option: %s' % (web2ldap.app.gui.LDAPError2ErrMsg(e, app))
+        sasl_ssf = u'error reading option: %s' % (app.ldap_error_msg(e))
     except ValueError:
         sasl_ssf = u'option not available'
 

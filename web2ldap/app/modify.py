@@ -349,7 +349,7 @@ def w2l_modify(app):
         web2ldap.app.addmodifyform.w2l_modifyform(
             app,
             new_entry,
-            Msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app),
+            Msg=app.ldap_error_msg(e),
         )
         return
 

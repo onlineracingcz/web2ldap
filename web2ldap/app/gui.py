@@ -39,8 +39,7 @@ import web2ldap.app.monitor
 from web2ldap.msbase import GrabKeys
 import web2ldap.ldaputil.base
 from web2ldap.ldaputil.base import \
-    explode_dn, logdb_filter, \
-    AD_LDAP49_ERROR_CODES, AD_LDAP49_ERROR_PREFIX
+    explode_dn, logdb_filter
 
 
 #---------------------------------------------------------------------------
@@ -99,68 +98,6 @@ def ReadTemplate(app, config_key, form_desc=u'', tmpl_filename=None):
     except IOError:
         raise web2ldap.app.core.ErrorExit(u'I/O error during reading %s template file.' % (form_desc))
     return tmpl_str # ReadTemplate()
-
-
-def LDAPError2ErrMsg(ldap_err, app, template='{error_msg}<br>{matched_dn}'):
-    """
-    Converts a LDAPError exception into HTML error message
-
-    ldap_err
-      LDAPError instance
-    app
-      AppHandler instance
-    template
-      Raw binary string to be used as template
-      (must contain only a single placeholder)
-    """
-
-    matched_dn = None
-
-    if isinstance(ldap_err, ldap0.TIMEOUT) or not ldap_err.args:
-        error_msg = u''
-
-    elif isinstance(ldap_err, ldap0.INVALID_CREDENTIALS) and \
-        AD_LDAP49_ERROR_PREFIX in ldap_err.args[0].get('info', ''):
-        ad_error_code_pos = ldap_err.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
-        ad_error_code = int(ldap_err.args[0]['info'][ad_error_code_pos:ad_error_code_pos+3], 16)
-        error_msg = u'%s:\n%s (%s)' % (
-            ldap_err.args[0]['desc'].decode(app.ls.charset),
-            ldap_err.args[0].get('info', '').decode(app.ls.charset),
-            AD_LDAP49_ERROR_CODES.get(ad_error_code, u'unknown'),
-        )
-
-    else:
-        try:
-            error_msg = u':\n'.join((
-                ldap_err.args[0]['desc'].decode(app.ls.charset),
-                ldap_err.args[0].get('info', '').decode(app.ls.charset),
-            ))
-        except UnicodeDecodeError:
-            error_msg = u':\n'.join((
-                ldap_err.args[0]['desc'].decode(app.ls.charset),
-                repr(ldap_err.args[0].get('info', '')).decode(app.ls.charset),
-            ))
-        except (TypeError, IndexError):
-            error_msg = str(ldap_err).decode(app.ls.charset)
-        else:
-            try:
-                matched_dn = ldap_err.args[0].get('matched', '').decode(app.ls.charset)
-            except KeyError:
-                matched_dn = None
-
-    error_msg = error_msg.replace(u'\r', '').replace(u'\t', '')
-    error_msg_html = app.form.utf2display(error_msg, lf_entity='<br>')
-
-    # Add matchedDN to error message HTML if needed
-    if matched_dn:
-        matched_dn_html = '<br>Matched DN: %s' % (app.form.utf2display(matched_dn))
-    else:
-        matched_dn_html = ''
-
-    return template.format(
-        error_msg=error_msg_html,
-        matched_dn=matched_dn_html
-    )
 
 
 def dn_anchor_hash(dn):

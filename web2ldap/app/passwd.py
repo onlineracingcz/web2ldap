@@ -389,7 +389,7 @@ def w2l_passwd(app, ldap_url):
                 app, sub_schema,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
-                error_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app)
+                error_msg=app.ldap_error_msg(e)
             )
             return
         else:
@@ -526,7 +526,7 @@ def w2l_passwd(app, ldap_url):
                 app, sub_schema,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
-                error_msg=web2ldap.app.gui.LDAPError2ErrMsg(e, app)
+                error_msg=app.ldap_error_msg(e)
             )
             return
         except ldap0.NO_SUCH_ATTRIBUTE as e:
@@ -534,8 +534,8 @@ def w2l_passwd(app, ldap_url):
                 app, sub_schema,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
-                error_msg=web2ldap.app.gui.LDAPError2ErrMsg(
-                    e, app, template=r"%s (Hint: Try without old password.)"
+                error_msg=app.ldap_error_msg(
+                    e, template=r"%s (Hint: Try without old password.)"
                 )
             )
             return
