@@ -11,9 +11,5 @@ web2ldap 1.4
 
   - Shall *sp_entity* also be used to escape single spaces?
 
-  - Replace "outf_lines" pattern with discrete calls to *outf.write()*.
-
-  - instead of passing discrete variables env, form, ls, sid, schema etc.
-    around only one variable *app*, an instance var of
-    *web2ldap.app.handler.AppHandler*, should be used everywhere with the
-    above variables as instance attributes.
+  - Maintain limited list of DNs last searched by MyLDAPObject.search()
+    and use these as <datalist> in DN input field of *ldapparams*.
