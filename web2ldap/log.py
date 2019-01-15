@@ -28,6 +28,16 @@ LOG_FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 
 LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'
 
+HTTP_ENV_VARS = {
+    'CONTENT_LENGTH',
+    'CONTENT_TYPE',
+    'PATH_INFO',
+    'QUERY_STRING',
+    'REQUEST_METHOD',
+    'SCRIPT_NAME',
+    'SERVER_NAME',
+    'SERVER_PORT',
+}
 
 class LogHelper(object):
     """
@@ -59,7 +69,17 @@ def log_exception(env, ls, debug=__debug__):
         logentry.append(pprint.pformat(ls.__dict__))
     if debug:
         # Log all environment vars
-        logentry.append(pprint.pformat(sorted(env.items())))
+        logentry.append(pprint.pformat(sorted([
+            (name, val)
+            for name, val in env.items()
+            if (
+                name in HTTP_ENV_VARS or
+                name.startswith('HTTP') or
+                name.startswith('REMOTE') or
+                name.startswith('X-_') or
+                name.startswith('SSL_')
+            )
+        ])))
     # Write the log entry
     logger.error(os.linesep.join(logentry), exc_info=debug)
     # explicitly remove stuff
