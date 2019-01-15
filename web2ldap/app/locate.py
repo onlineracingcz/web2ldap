@@ -262,20 +262,15 @@ def w2l_locate(app):
                             )
                         )
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.SimpleMessage(
         app,
         'DNS lookup',
-        web2ldap.app.gui.EntryMainMenu(app),
-        [],
-    )
-
-    app.outf.write(
         LOCATE_INPUT_FORM_TMPL % (
             msg_html,
             '\n'.join(outf_lines),
             app.form.script_name,
             app.form.accept_charset,
-        )
+        ),
+        main_menu_list=web2ldap.app.gui.EntryMainMenu(app),
+        context_menu_list=[],
     )
-
-    web2ldap.app.gui.Footer(app)
