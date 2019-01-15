@@ -31,7 +31,7 @@ setup(
     name=PYPI_NAME,
     license=__about__.__license__,
     version=__about__.__version__,
-    description='web2ldap',
+    description='Full-featured web-based LDAPv3 client',
     author=__about__.__author__,
     author_email=__about__.__mail__,
     maintainer=__about__.__author__,
