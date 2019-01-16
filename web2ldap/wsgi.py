@@ -38,9 +38,8 @@ class AppResponse(object):
     """
 
     def __init__(self):
-        self._seek = 0
-        self._bytelen = 0
-        self._lines = []
+        self.bytelen = 0
+        self.lines = []
         self.headers = []
 
     def set_headers(self, headers):
@@ -54,16 +53,14 @@ class AppResponse(object):
         file-like method
         """
         assert isinstance(buf, str), TypeError('expected string for buf, but got %r', buf)
-        self._lines.append(buf)
-        self._seek += 1
-        self._bytelen += len(buf)
+        self.lines.append(buf)
+        self.bytelen += len(buf)
 
     def close(self):
         """
         file-like method
         """
-        del self._seek
-        del self._lines
+        del self.lines
 
 
 def application(environ, start_response):
@@ -101,16 +98,15 @@ def application(environ, start_response):
         wsgiref.util.shift_path_info(environ)
     outf = AppResponse()
     app = web2ldap.app.handler.AppHandler(environ, outf)
-    start_time = time.time()
     app.run()
     logger.debug(
         'Executing %s.run() took %0.3f secs',
         app.__class__.__name__,
         time.time()-app.current_access_time,
     )
-    outf.headers.append(('Content-Length', str(outf._bytelen)))
+    outf.headers.append(('Content-Length', str(outf.bytelen)))
     start_response('200 OK', outf.headers)
-    return outf._lines
+    return outf.lines
 
 
 def run_standalone():
