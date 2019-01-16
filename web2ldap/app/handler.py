@@ -132,6 +132,7 @@ def check_access(env, command):
 class AppHandler(object):
 
     def __init__(self, env, outf):
+        self.current_access_time = time.time()
         self.inf = env['wsgi.input']
         self.outf = outf
         self.env = env
@@ -139,8 +140,7 @@ class AppHandler(object):
         self.command, self.sid = self.path_info(env)
         self.form = None
         self.ls = None
-        self.dn = u''
-        self.current_access_time = time.time()
+        self.naming_context = self._ldap_dn = self._dn = self._parent_dn = None
         return
 
     @property
