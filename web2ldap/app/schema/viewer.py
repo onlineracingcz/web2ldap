@@ -95,7 +95,7 @@ def display_nameoroid_list(app, schema, se_names, se_class):
             link_texts.append((ltxt, anchor))
         else:
             link_texts.append((se_nameoroid, se_nameoroid))
-    link_texts.sort(key=lambda x:x[0].lower())
+    link_texts.sort(key=lambda x: x[0].lower())
     return [i[1] for i in link_texts]
 
 
