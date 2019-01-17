@@ -585,7 +585,7 @@ class LDAPSession(object):
         self._reset_rootdse_attrs()
         self.rootDSE = ldap0.cidict.cidict()
         try:
-            ldap_result = self.readEntry('', ROOTDSE_ATTRS)
+            self.rootDSE = self.l.read_rootdse_s(attrlist=ROOTDSE_ATTRS)
         except (
                 ldap0.CONFIDENTIALITY_REQUIRED,
                 ldap0.CONSTRAINT_VIOLATION,
@@ -602,11 +602,7 @@ class LDAPSession(object):
                 ldap0.PROTOCOL_ERROR,
                 ldap0.UNAVAILABLE_CRITICAL_EXTENSION,
             ):
-            pass
-        else:
-            # Copy special rootDSE attributes to object attributes
-            for attr_type, attr_values in (ldap_result or [('', {})])[0][1].items():
-                self.rootDSE[attr_type] = attr_values
+            self.rootDSE = {}
         self._update_rootdse_attrs()
         return # init_rootdse()
 
@@ -830,7 +826,10 @@ class LDAPSession(object):
             no_cache=False,
             server_ctrls=None,
         ):
-        """Read a single entry"""
+        """
+        Read a single entry
+        """
+        assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
         if attrtype_list == ['*']:
             attrtype_list = None
         # Read single entry from LDAP server
@@ -845,22 +844,6 @@ class LDAPSession(object):
             serverctrls=server_ctrls,
         )
         return search_result
-
-    def existingEntry(self, dn, suppress_referrals=0):
-        """Returns 1 if entry exists, 0 if NO_SUCH_OBJECT was raised."""
-        try:
-            self.readEntry(dn, [])
-        except ldap0.INSUFFICIENT_ACCESS:
-            return True
-        except ldap0.NO_SUCH_OBJECT:
-            return False
-        except ldap0.PARTIAL_RESULTS:
-            if suppress_referrals:
-                return False
-            else:
-                raise
-        else:
-            return True
 
     def flushCache(self):
         """Flushes all LDAP cache data"""
