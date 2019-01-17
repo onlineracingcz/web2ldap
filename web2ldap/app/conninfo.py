@@ -153,10 +153,10 @@ def w2l_conninfo(app):
             pass
         else:
             try:
-                monitored_info = app.ls.readEntry(
+                monitored_info = app.ls.l.read_s(
                     monitor_context_dn,
-                    ['monitoredInfo']
-                )[0][1]['monitoredInfo']
+                    attrlist=['monitoredInfo']
+                )['monitoredInfo']
             except (ldap0.LDAPError, KeyError):
                 pass
             else:
@@ -256,17 +256,16 @@ def w2l_conninfo(app):
 
     for config_dn, txt in config_dn_list:
         try:
-            entry_exists = app.ls.existingEntry(config_dn, suppress_referrals=1)
+            app.ls.l.read_s(config_dn, attrlist=['1.1'])
         except ldap0.LDAPError:
             pass
         else:
-            if entry_exists:
-                context_menu_list.append(
-                    app.anchor(
-                        'read', txt,
-                        [('dn', config_dn)],
-                    )
+            context_menu_list.append(
+                app.anchor(
+                    'read', txt,
+                    [('dn', config_dn)],
                 )
+            )
 
     if app.ls.rootDSE.has_key('schemaNamingContext'):
         # MS AD schema configuration
