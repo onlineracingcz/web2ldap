@@ -478,7 +478,6 @@ class LDAPSession(object):
         self.onBehalf = onBehalf
         self.sessionStartTime = time.time()
         self.connStartTime = None
-        self.setDN(u'')
         self._cache_ttl = cache_ttl
         return # __init__()
 
@@ -1006,17 +1005,6 @@ class LDAPSession(object):
             new_dn = u','.join([new_rdn, new_superior or old_superior_str])
             entry_uuid = None
         return new_dn, entry_uuid # renameEntry()
-
-    def setDN(self, dn):
-        """
-        Set currently used DN.
-        """
-        if isinstance(dn, bytes):
-            dn = dn.decode(self.charset)
-        dn = web2ldap.ldaputil.base.normalize_dn(dn)
-        self._dn = dn
-        self.currentSearchRoot = self.getSearchRoot(dn)
-        return # setDN()
 
     def getAuditContext(self, search_root_dn):
         try:
