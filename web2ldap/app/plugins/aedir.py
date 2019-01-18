@@ -107,18 +107,13 @@ class AEObjectUtil:
             self._app.ls.currentSearchRoot.encode(self._app.ls.charset),
         )
         try:
-            ldap_result = self._app.ls.readEntry(
+            zone_entry = self._app.ls.l.read_s(
                 zone_dn,
-                attrtype_list=attrlist,
-                search_filter='(objectClass=aeZone)',
-            )
+                attrlist=attrlist,
+                filterstr='(objectClass=aeZone)',
+            ) or {}
         except ldap0.LDAPError:
             zone_entry = {}
-        else:
-            if ldap_result:
-                _, zone_entry = ldap_result[0]
-            else:
-                zone_entry = {}
         return zone_entry
 
     def _get_zone_dn(self):
