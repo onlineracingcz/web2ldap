@@ -539,13 +539,7 @@ class DistinguishedName(DirectoryString):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
-        r = [
-            web2ldap.app.gui.DisplayDN(
-                self._app,
-                attr_value_u,
-                commandbutton=False,
-            )
-        ]
+        r = [self._app.form.utf2display(attr_value_u or u'- World -')]
         if commandbutton:
             r.extend(self._additional_links())
         return web2ldapcnf.command_link_separator.join(r)
