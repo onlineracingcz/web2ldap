@@ -163,6 +163,7 @@ class AppHandler(object):
         self.naming_context = self._ldap_dn = self._dn = self._parent_dn = None
         self.query_string = env.get('QUERY_STRING', '')
         self.ldap_url = None
+        self.schema = None
         # initialize some more if query string is an LDAP URL
         if isLDAPUrl(self.query_string):
             self.ldap_url = ExtendedLDAPUrl(self.query_string)
@@ -285,6 +286,12 @@ class AppHandler(object):
             self.command,
             COMMAND_FUNCTION[self.command].__module__,
             COMMAND_FUNCTION[self.command].__name__,
+        )
+        self.schema = self.ls.retrieveSubSchema(
+            self.dn,
+            web2ldap.app.cnf.GetParam(self.ls, '_schema', None),
+            web2ldap.app.cnf.GetParam(self.ls, 'supplement_schema', None),
+            web2ldap.app.cnf.GetParam(self.ls, 'schema_strictcheck', True),
         )
         COMMAND_FUNCTION[self.command](self)
         return # dispatch()
@@ -850,7 +857,7 @@ class AppHandler(object):
             # Output the change password form
             web2ldap.app.passwd.passwd_form(
                 self,
-                None, None, e.who.decode(self.ls.charset), None,
+                None, e.who.decode(self.ls.charset), None,
                 'Password change needed',
                 self.form.utf2display(
                     u'Password will expire in %s!' % (
@@ -869,7 +876,7 @@ class AppHandler(object):
             # Output the change password form
             web2ldap.app.passwd.passwd_form(
                 self,
-                None, None,
+                None,
                 e.who.decode(self.ls.charset), None,
                 'Password change needed',
                 self.form.utf2display(unicode(e.desc))

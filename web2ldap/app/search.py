@@ -336,16 +336,6 @@ def w2l_search(app):
     search_opattrs = app.form.getInputValue('search_opattrs', ['no'])[0] == 'yes'
     search_root = app.form.getInputValue('search_root', [app.dn])[0]
 
-    # Hmm, this retrieves sub schema sub entry for the search root.
-    # Theoretically it could be different for all search results.
-    # But what the hey...
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     if scope is None:
         scope = ldap0.SCOPE_SUBTREE
 
@@ -369,7 +359,7 @@ def w2l_search(app):
         if not '*' in search_option[i]:
             # If an exact assertion value is needed we can normalize via plugin class
             attr_instance = syntax_registry.get_at(
-                app, app.dn, sub_schema, search_attr[i].encode('ascii'), None, entry=None
+                app, app.dn, app.schema, search_attr[i].encode('ascii'), None, entry=None
             )
             search_av_string = attr_instance.sanitizeInput(search_av_string.encode(app.form.accept_charset))
         if search_mr[i]:
@@ -410,8 +400,8 @@ def w2l_search(app):
     search_lastmod = int(app.form.getInputValue('search_lastmod', [-1])[0])
     if search_lastmod > 0:
         timestamp_str = unicode(time.strftime('%Y%m%d%H%M%S', time.gmtime(time.time()-search_lastmod)), 'ascii')
-        if sub_schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.2.2') and \
-           sub_schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.2.3'):
+        if app.schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.2.2') and \
+           app.schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.2.3'):
             # Assume we're searching MS Active Directory
             filterstr2 = u'(&(|(whenCreated>=%s.0Z)(whenChanged>=%s.0Z))%s)' % (
                 timestamp_str, timestamp_str, filterstr,
@@ -435,7 +425,7 @@ def w2l_search(app):
         if a.strip()
     ]
 
-    search_attr_set = ldap0.schema.models.SchemaElementOIDSet(sub_schema, ldap0.schema.models.AttributeType, search_attrs)
+    search_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, ldap0.schema.models.AttributeType, search_attrs)
     search_attrs = search_attr_set.names()
 
     search_ldap_url = app.ls.ldapUrl(dn=search_root or app.naming_context)
@@ -445,7 +435,7 @@ def w2l_search(app):
 
     ldap_search_command = search_ldap_url.ldapsearch_cmd().decode(app.ls.charset)
 
-    read_attr_set = ldap0.schema.models.SchemaElementOIDSet(sub_schema, ldap0.schema.models.AttributeType, search_attrs)
+    read_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, ldap0.schema.models.AttributeType, search_attrs)
     if search_output in {'table', 'print'}:
         read_attr_set.add('objectClass')
 
@@ -462,7 +452,7 @@ def w2l_search(app):
             else:
                 read_attr_set.update(GrabKeys(print_template_str_dict[oc]).keys)
         read_attrs = read_attr_set.names()
-        result_handler = PrintableHTMLWriter(app, search_root, sub_schema, print_template_str_dict)
+        result_handler = PrintableHTMLWriter(app, search_root, app.schema, print_template_str_dict)
 
     elif search_output in {'table', 'raw'}:
 
@@ -526,7 +516,7 @@ def w2l_search(app):
         result_handler = {
             'csv':CSVWriter,
             'excel':ExcelWriter
-        }[search_output](app.ls.l, app.outf, sub_schema, read_attrs)
+        }[search_output](app.ls.l, app.outf, app.schema, read_attrs)
 
     if search_resnumber:
         search_size_limit = search_resminindex+search_resnumber
@@ -908,7 +898,7 @@ def w2l_search(app):
 
                     # Display a search result with entry's data
                     dn = r[1][0].decode(app.ls.charset)
-                    entry = ldap0.schema.models.Entry(sub_schema, r[1][0], r[1][1])
+                    entry = ldap0.schema.models.Entry(app.schema, r[1][0], r[1][1])
 
                     if search_output == 'raw':
 
@@ -918,7 +908,7 @@ def w2l_search(app):
                     else:
 
                         oc_set = ldap0.schema.models.SchemaElementOIDSet(
-                            sub_schema,
+                            app.schema,
                             ldap0.schema.models.ObjectClass,
                             entry.get('objectClass', []),
                         )
@@ -927,7 +917,7 @@ def w2l_search(app):
 
                         if tdtemplate_oc:
                             template_attrs = ldap0.schema.models.SchemaElementOIDSet(
-                                sub_schema,
+                                app.schema,
                                 ldap0.schema.models.AttributeType,
                                 [],
                             )
@@ -938,7 +928,7 @@ def w2l_search(app):
                         if tableentry_attrs:
                             # Output entry with the help of pre-defined templates
                             tableentry = web2ldap.app.read.DisplayEntry(
-                                app, dn, sub_schema, entry, 'searchSep', False
+                                app, dn, app.schema, entry, 'searchSep', False
                             )
                             tdlist = []
                             for oc in tdtemplate_oc:

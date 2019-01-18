@@ -136,19 +136,12 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         if not gad[1] is None
     ]
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     result_dnlist = app.ls.readEntry(app.dn, all_membership_attrs)
     if not result_dnlist:
         raise web2ldap.app.core.ErrorExit(u'No search result when reading entry.')
 
     user_entry = ldap0.schema.models.Entry(
-        sub_schema,
+        app.schema,
         app.ldap_dn,
         result_dnlist[0][1],
     )

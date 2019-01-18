@@ -29,7 +29,7 @@ import web2ldap.app.schema.syntaxes
 from web2ldap.app.schema.viewer import display_nameoroid_list
 
 
-def new_superior_field(app, sub_schema, sup_search_url, old_superior_dn):
+def new_superior_field(app, sup_search_url, old_superior_dn):
 
     class NewSuperiorSelectList(web2ldap.app.schema.syntaxes.DynamicDNSelectList):
         attr_value_dict = {
@@ -45,7 +45,7 @@ def new_superior_field(app, sub_schema, sup_search_url, old_superior_dn):
     if not sup_search_url is None:
         attr_inst = NewSuperiorSelectList(
             app, app.dn,
-            sub_schema, 'rdn', old_superior_dn.encode(app.ls.charset), str(sup_search_url),
+            app.schema, 'rdn', old_superior_dn.encode(app.ls.charset), str(sup_search_url),
         )
         nssf = attr_inst.formField()
         nssf.name = 'rename_newsuperior'
@@ -59,12 +59,6 @@ def new_superior_field(app, sub_schema, sup_search_url, old_superior_dn):
 
 def w2l_rename(app):
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
     rename_supsearchurl_cfg = web2ldap.app.cnf.GetParam(app.ls, 'rename_supsearchurl', {})
 
     if not app.dn:
@@ -142,19 +136,19 @@ def w2l_rename(app):
         scope_default = unicode(ldap0.SCOPE_SUBTREE)
 
     rename_search_root_field = web2ldap.app.gui.SearchRootField(app, name='rename_searchroot')
-    rename_new_superior_field = new_superior_field(app, sub_schema, sup_search_url, old_superior)
+    rename_new_superior_field = new_superior_field(app, sup_search_url, old_superior)
 
     name_forms_text = ''
     dit_structure_rule_html = ''
 
-    if sub_schema.sed[ldap0.schema.models.NameForm]:
+    if app.schema.sed[ldap0.schema.models.NameForm]:
         # Determine if there are name forms defined for structural object class
         search_result = app.ls.readEntry(app.dn, ['objectClass', 'structuralObjectClass', 'governingStructureRule'])
         if not search_result:
             # This should normally not happen, only if entry got deleted in between
             raise web2ldap.app.core.ErrorExit(u'Empty search result when reading entry to be renamed.')
 
-        entry = ldap0.schema.models.Entry(sub_schema, app.dn, search_result[0][1])
+        entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result[0][1])
 
         # Determine possible name forms for new RDN
         rdn_options = entry.get_rdn_templates()
@@ -166,7 +160,7 @@ def w2l_rename(app):
         # based on governing structure rule
         dit_structure_ruleids = entry.get_possible_dit_structure_rules(app.ldap_dn)
         for dit_structure_ruleid in dit_structure_ruleids:
-            sup_structural_ruleids, sup_structural_oc = sub_schema.get_superior_structural_oc_names(dit_structure_ruleid)
+            sup_structural_ruleids, sup_structural_oc = app.schema.get_superior_structural_oc_names(dit_structure_ruleid)
             if sup_structural_oc:
                 rename_newsupfilter_default = '(|%s)' % (
                     ''.join([
@@ -177,7 +171,7 @@ def w2l_rename(app):
                 dit_structure_rule_html = 'DIT structure rules:<br>%s' % (
                     '<br>'.join(
                         display_nameoroid_list(
-                            app, sub_schema,
+                            app,
                             sup_structural_ruleids,
                             ldap0.schema.models.DITStructureRule,
                         )

@@ -327,12 +327,6 @@ def WhoAmITemplate(app, who=None, entry=None):
         # Fall-back is to display the DN
         result = DisplayDN(app, who, commandbutton=False)
         # Determine relevant templates dict
-        sub_schema = app.ls.retrieveSubSchema(
-            app.dn,
-            web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-            web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-            web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-        )
         bound_as_templates = ldap0.cidict.cidict(
             web2ldap.app.cnf.GetParam(
                 app.ls.ldapUrl(app.ls.getSearchRoot(who)),
@@ -355,10 +349,10 @@ def WhoAmITemplate(app, who=None, entry=None):
                 else:
                     entry = {}
         if entry:
-            display_entry = web2ldap.app.read.DisplayEntry(app, app.dn, sub_schema, entry, 'readSep', True)
+            display_entry = web2ldap.app.read.DisplayEntry(app, app.dn, app.schema, entry, 'readSep', True)
             user_structural_oc = display_entry.entry.get_structural_oc()
             for oc in bound_as_templates.keys():
-                if sub_schema.getoid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:
+                if app.schema.getoid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:
                     try:
                         result = bound_as_templates[oc] % display_entry
                     except KeyError:
@@ -625,7 +619,6 @@ def DataStr(
 
 def AttributeTypeSelectField(
         app,
-        sub_schema,
         field_name,
         field_desc,
         attr_list,
@@ -635,8 +628,8 @@ def AttributeTypeSelectField(
     Return web2ldap.web.forms.Select instance for choosing attribute type names
     """
     attr_options_dict = {}
-    for attr_type in (map(unicode, default_attr_options or []) or sub_schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
-        attr_type_se = sub_schema.get_obj(ldap0.schema.models.AttributeType, attr_type)
+    for attr_type in (map(unicode, default_attr_options or []) or app.schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
+        attr_type_se = app.schema.get_obj(ldap0.schema.models.AttributeType, attr_type)
         if attr_type_se:
             if attr_type_se.names:
                 attr_type_name = attr_type_se.names[0].decode(app.ls.charset)

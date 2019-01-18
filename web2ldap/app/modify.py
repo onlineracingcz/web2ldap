@@ -52,13 +52,6 @@ def modlist_ldif(dn, form, modlist):
 
 def w2l_modify(app):
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     in_assertion = app.form.getInputValue('in_assertion', [u'(objectClass=*)'])[0]
 
     input_modrow = app.form.getInputValue('in_mr', ['.'])[0]
@@ -83,7 +76,7 @@ def w2l_modify(app):
         app.form.field['in_av'].value.insert(insert_row_num+1, '')
         app.form.field['in_avi'].value = map(str, range(0, len(app.form.field['in_av'].value)))
 
-    new_entry, invalid_attrs = web2ldap.app.addmodifyform.get_entry_input(app, sub_schema)
+    new_entry, invalid_attrs = web2ldap.app.addmodifyform.get_entry_input(app)
 
     if invalid_attrs:
         invalid_attr_types_ui = [
@@ -119,7 +112,7 @@ def w2l_modify(app):
         in_oldattrtypes[attr_type] = None
 
     try:
-        old_entry, dummy = web2ldap.app.addmodifyform.ReadOldEntry(app.ls, app.dn, sub_schema, in_assertion)
+        old_entry, dummy = web2ldap.app.addmodifyform.ReadOldEntry(app.ls, app.dn, app.schema, in_assertion)
     except ldap0.NO_SUCH_OBJECT:
         raise web2ldap.app.core.ErrorExit(u'Old entry was removed or modified in between! You have to edit it again.')
 
@@ -129,7 +122,7 @@ def w2l_modify(app):
 
     # Set up a dictionary of all attribute types to be ignored
     ignore_attr_types = ldap0.schema.models.SchemaElementOIDSet(
-        sub_schema,
+        app.schema,
         AttributeType,
         web2ldap.app.add.ADD_IGNORE_ATTR_TYPES,
     )
@@ -139,7 +132,7 @@ def w2l_modify(app):
 
     if not relax_rules_enabled:
         # Add all attributes which have NO-USER-MODIFICATION set
-        ignore_attr_types.update(sub_schema.no_user_mod_attr_oids)
+        ignore_attr_types.update(app.schema.no_user_mod_attr_oids)
         # Ignore attributes which are assumed to be constant (some operational attributes)
         ignore_attr_types.update(web2ldap.app.addmodifyform.ConfiguredConstantAttributes(app.ls).values())
 
@@ -155,7 +148,7 @@ def w2l_modify(app):
     old_entry_structural_oc = old_entry.get_structural_oc()
     # Ignore binary attributes from old entry data in any case
     for attr_type in old_entry.keys():
-        syntax_class = syntax_registry.get_syntax(sub_schema, attr_type, old_entry_structural_oc)
+        syntax_class = syntax_registry.get_syntax(app.schema, attr_type, old_entry_structural_oc)
         if not syntax_class.editable:
             ignore_attr_types.add(attr_type)
 
@@ -166,7 +159,7 @@ def w2l_modify(app):
 
     # Create modlist containing deltas
     modlist = modify_modlist2(
-        sub_schema,
+        app.schema,
         old_entry, new_entry,
         ignore_attr_types=ignore_attr_types,
         ignore_oldexistent=False,
@@ -174,7 +167,7 @@ def w2l_modify(app):
     # Binary values are always replaced
     new_entry_structural_oc = new_entry.get_structural_oc()
     for attr_type in new_entry.keys():
-        syntax_class = syntax_registry.get_syntax(sub_schema, attr_type, new_entry_structural_oc)
+        syntax_class = syntax_registry.get_syntax(app.schema, attr_type, new_entry_structural_oc)
         if (not syntax_class.editable) and \
            new_entry[attr_type] and \
            (not attr_type in old_entry or new_entry[attr_type] != old_entry[attr_type]):

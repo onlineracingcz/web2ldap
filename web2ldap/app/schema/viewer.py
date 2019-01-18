@@ -60,8 +60,8 @@ def link_text(se, charset):
     return OBSOLETE_TEMPL[obsolete] % res
 
 
-def display_nameoroid(app, schema, se_nameoroid, se_class):
-    se = schema.get_obj(se_class, se_nameoroid, default=None)
+def display_nameoroid(app, se_nameoroid, se_class):
+    se = app.schema.get_obj(se_class, se_nameoroid, default=None)
     if se is None:
         return se_nameoroid
     return app.anchor(
@@ -74,10 +74,10 @@ def display_nameoroid(app, schema, se_nameoroid, se_class):
     )
 
 
-def display_nameoroid_list(app, schema, se_names, se_class):
+def display_nameoroid_list(app, se_names, se_class):
     link_texts = []
     for se_nameoroid in se_names:
-        se = schema.get_obj(se_class, se_nameoroid, default=None)
+        se = app.schema.get_obj(se_class, se_nameoroid, default=None)
         if se:
             ltxt = link_text(se, app.form.accept_charset)
             try:
@@ -107,7 +107,7 @@ def schema_tree_html(app, schema, se_class, se_tree, se_oid, level):
         display_id = (se_obj.names or (se_oid,))[0]
         app.outf.write(
             '<dt><strong>%s</strong></dt>' % (
-                display_nameoroid(app, schema, display_id, se_class),
+                display_nameoroid(app, display_id, se_class),
             )
         )
     if se_tree[se_oid]:
@@ -127,21 +127,16 @@ def schema_tree_html(app, schema, se_class, se_tree, se_oid, level):
 def schema_context_menu(app):
     """Build context menu with schema-related items"""
     context_menu_list = []
-    subschemaSubentryDN = None
+    sub_schema_dn = None
     try:
-        subschemaSubentryDN = app.ls.l.search_subschemasubentry_s(app.ldap_dn)
-        subschemaSubentry = app.ls.retrieveSubSchema(
-            app.dn,
-            web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-            web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-            web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-        )
+        sub_schema_dn = app.ls.l.search_subschemasubentry_s(app.ldap_dn)
+        subschemaSubentry = app.schema
     except ldap0.LDAPError:
         pass
     else:
-        if subschemaSubentryDN is not None:
+        if sub_schema_dn is not None:
             form_param_list = [
-                ('dn', subschemaSubentryDN.decode(app.ls.charset)),
+                ('dn', sub_schema_dn.decode(app.ls.charset)),
                 ('filterstr', u'(objectClass=subschema)'),
             ]
             for schema_attr in SCHEMA_ATTRS+['objectClass', 'cn']:
@@ -152,11 +147,11 @@ def schema_context_menu(app):
                     form_param_list,
                     title=u'Directly read the subschema subentry'),
                 )
-        if subschemaSubentry:
+        if app.schema:
             se_class_attrs = [
                 SCHEMA_ATTR_MAPPING[se_class]
-                for se_class in subschemaSubentry.sed.keys()
-                if subschemaSubentry.sed[se_class]
+                for se_class in app.schema.sed.keys()
+                if app.schema.sed[se_class]
             ]
             se_class_attrs.sort(key=str.lower)
             for se_class_attr in se_class_attrs:
@@ -174,15 +169,15 @@ class DisplaySchemaElement:
     type_desc = 'Abstract Schema Element'
     detail_attrs = ()
 
-    def __init__(self, app, sub_schema, se):
+    def __init__(self, app, se):
         self._app = app
-        self.s = sub_schema
+        self.s = app.schema
         self.se = se
         try:
             schema_id = self.se.oid
         except AttributeError:
             schema_id = self.se.ruleid
-        self.sei = sub_schema.get_inheritedobj(self.se.__class__, schema_id, [])
+        self.sei = app.schema.get_inheritedobj(self.se.__class__, schema_id, [])
 
     def disp_details(self):
         for text, class_attr, se_class in self.detail_attrs:
@@ -202,9 +197,7 @@ class DisplaySchemaElement:
                     ])
                 else:
                     value_output = ', '.join(
-                        display_nameoroid_list(
-                            self._app, self.s, class_attr_value_list, se_class,
-                        )
+                        display_nameoroid_list(self._app, class_attr_value_list, se_class)
                     )
                 self._app.outf.write('<dt>%s</dt>\n<dd>\n%s\n</dd>\n' % (text, value_output))
         return # disp_details()
@@ -287,9 +280,9 @@ class DisplayObjectClass(DisplaySchemaElement):
         ('Derived from', 'sup', ObjectClass),
     )
 
-    def __init__(self, app, sub_schema, se):
-        DisplaySchemaElement.__init__(self, app, sub_schema, se)
-        self.sei = sub_schema.get_inheritedobj(self.se.__class__, self.se.oid, ['kind'])
+    def __init__(self, app, se):
+        DisplaySchemaElement.__init__(self, app, se)
+        self.sei = app.schema.get_inheritedobj(self.se.__class__, self.se.oid, ['kind'])
 
     def disp_details(self):
         DisplaySchemaElement.disp_details(self)
@@ -300,20 +293,20 @@ class DisplayObjectClass(DisplaySchemaElement):
         ))
         # Display all required and allowed attributes
         self._app.outf.write('<dt>All required attributes:</dt><dd>\n%s&nbsp;</dd>\n' % (
-            ', '.join(display_nameoroid_list(self._app, self.s, must.keys(), AttributeType))
+            ', '.join(display_nameoroid_list(self._app, must.keys(), AttributeType))
         ))
         self._app.outf.write('<dt>All allowed attributes:</dt><dd>\n%s&nbsp;</dd>\n' % (
-            ', '.join(display_nameoroid_list(self._app, self.s, may.keys(), AttributeType))
+            ', '.join(display_nameoroid_list(self._app, may.keys(), AttributeType))
         ))
         # Display relationship to DIT content rule(s)
         # normally only in case of a STRUCTURAL object class)
         content_rule = self.s.get_obj(DITContentRule, self.se.oid)
         if content_rule:
             self._app.outf.write('<dt>Governed by DIT content rule:</dt><dd>\n%s&nbsp;</dd>\n' % (
-                display_nameoroid(self._app, self.s, content_rule.oid, DITContentRule)
+                display_nameoroid(self._app, content_rule.oid, DITContentRule)
             ))
             self._app.outf.write('<dt>Applicable auxiliary object classes:</dt><dd>\n%s&nbsp;</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, content_rule.aux, ObjectClass))
+                ', '.join(display_nameoroid_list(self._app, content_rule.aux, ObjectClass))
             ))
         # normally only in case of a AUXILIARY object class
         dcr_list = []
@@ -326,11 +319,11 @@ class DisplayObjectClass(DisplaySchemaElement):
                     structural_oc_list.append(content_rule.oid)
         if dcr_list:
             self._app.outf.write('<dt>Referring DIT content rules:</dt><dd>\n%s&nbsp;</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, dcr_list, DITContentRule))
+                ', '.join(display_nameoroid_list(self._app, dcr_list, DITContentRule))
             ))
         if structural_oc_list:
             self._app.outf.write('<dt>Allowed with structural object classes:</dt><dd>\n%s&nbsp;</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, structural_oc_list, ObjectClass))
+                ', '.join(display_nameoroid_list(self._app, structural_oc_list, ObjectClass))
             ))
         # Display name forms which regulates naming for this object class
         oc_ref_list = []
@@ -341,7 +334,7 @@ class DisplayObjectClass(DisplaySchemaElement):
                 oc_ref_list.append(nf_oid)
         if oc_ref_list:
             self._app.outf.write('<dt>Applicable name forms:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, oc_ref_list, NameForm))
+                ', '.join(display_nameoroid_list(self._app, oc_ref_list, NameForm))
             ))
         # Display tree of derived object classes
         self._app.outf.write('<dt>Object class tree:</dt>\n')
@@ -385,16 +378,16 @@ class DisplayAttributeType(DisplaySchemaElement):
         ('Ordering matching rule', 'ordering', MatchingRule),
     )
 
-    def __init__(self, app, sub_schema, se):
-        DisplaySchemaElement.__init__(self, app, sub_schema, se)
+    def __init__(self, app, se):
+        DisplaySchemaElement.__init__(self, app, se)
         try:
-            self.sei = sub_schema.get_inheritedobj(
+            self.sei = app.schema.get_inheritedobj(
                 self.se.__class__, self.se.oid,
                 ('syntax', 'equality', 'substr', 'ordering'),
             )
         except KeyError:
             # If the schema element referenced by SUP is not present
-            self.sei = sub_schema.get_obj(self.se.__class__, self.se.oid)
+            self.sei = app.schema.get_obj(self.se.__class__, self.se.oid)
 
     def disp_details(self):
 
@@ -432,7 +425,7 @@ class DisplayAttributeType(DisplaySchemaElement):
             if mr_applicable_for:
                 self._app.outf.write('<dt>Applicable matching rules:</dt>\n<dd>\n%s\n</dd>\n' % (
                     ', '.join(
-                        display_nameoroid_list(self._app, self.s, mr_applicable_for, MatchingRule)
+                        display_nameoroid_list(self._app, mr_applicable_for, MatchingRule)
                     )
                 ))
 
@@ -446,7 +439,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                     attr_type_ref_list.append(oc_oid)
         if attr_type_ref_list:
             self._app.outf.write('<dt>Directly referencing object classes:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, attr_type_ref_list, ObjectClass))
+                ', '.join(display_nameoroid_list(self._app, attr_type_ref_list, ObjectClass))
             ))
 
         # Display object classes which may contain attributes of this type
@@ -459,7 +452,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                 attr_type_ref_list.append(oc_oid)
         if attr_type_ref_list:
             self._app.outf.write('<dt>Usable in these object classes:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, attr_type_ref_list, ObjectClass))
+                ', '.join(display_nameoroid_list(self._app, attr_type_ref_list, ObjectClass))
             ))
 
         # Display DIT content rules which reference attributes of this type
@@ -472,7 +465,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                     attr_type_ref_list.append(dcr_oid)
         if attr_type_ref_list:
             self._app.outf.write('<dt>Referencing DIT content rules:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, attr_type_ref_list, DITContentRule))
+                ', '.join(display_nameoroid_list(self._app, attr_type_ref_list, DITContentRule))
             ))
 
         # Display name forms which uses this attribute type for naming an entry
@@ -485,7 +478,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                     attr_type_ref_list.append(nf_oid)
         if attr_type_ref_list:
             self._app.outf.write('<dt>Referencing name forms:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, attr_type_ref_list, NameForm))
+                ', '.join(display_nameoroid_list(self._app, attr_type_ref_list, NameForm))
             ))
 
         #########################################
@@ -529,7 +522,7 @@ class DisplayAttributeType(DisplaySchemaElement):
         for structural_oc in web2ldap.app.schema.syntaxes.syntax_registry.at2syntax[at_oid].keys() or [None]:
             syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.get_syntax(self.s, at_oid, structural_oc)
             if structural_oc:
-                oc_text = display_nameoroid(self._app, self.s, structural_oc, ObjectClass)
+                oc_text = display_nameoroid(self._app, structural_oc, ObjectClass)
             else:
                 oc_text = '-any-'
             self._app.outf.write('<tr><td>%s</td><td>%s.%s</td></th>\n' % (
@@ -557,7 +550,7 @@ class DisplayLDAPSyntax(DisplaySchemaElement):
         ]
         if syntax_using_at_list:
             self._app.outf.write('<dt>Referencing attribute types:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, syntax_using_at_list, AttributeType))
+                ', '.join(display_nameoroid_list(self._app, syntax_using_at_list, AttributeType))
             ))
         syntax_ref_mr_list = [
             mr_oid
@@ -565,7 +558,7 @@ class DisplayLDAPSyntax(DisplaySchemaElement):
         ]
         if syntax_ref_mr_list:
             self._app.outf.write('<dt>Referencing matching rules:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, syntax_ref_mr_list, MatchingRule))
+                ', '.join(display_nameoroid_list(self._app, syntax_ref_mr_list, MatchingRule))
             ))
         try:
             x_subst = self.se.x_subst
@@ -574,7 +567,7 @@ class DisplayLDAPSyntax(DisplaySchemaElement):
         else:
             if x_subst:
                 self._app.outf.write('<dt>Substituted by:</dt>\n<dd>\n%s\n</dd>\n' % (
-                    display_nameoroid(self._app, self.s, x_subst, LDAPSyntax)
+                    display_nameoroid(self._app, x_subst, LDAPSyntax)
                 ))
         #########################################
         # Output registered plugin class name
@@ -611,7 +604,7 @@ class DisplayMatchingRule(DisplaySchemaElement):
             ]
             if mr_applicable_for:
                 self._app.outf.write('<dt>Applicable for attribute types per matching rule use:</dt>\n<dd>\n%s\n</dd>\n' % (
-                    ', '.join(display_nameoroid_list(self._app, self.s, mr_applicable_for, AttributeType))
+                    ', '.join(display_nameoroid_list(self._app, mr_applicable_for, AttributeType))
                 ))
         mr_used_by = []
         for at_oid in self.s.sed[AttributeType].keys():
@@ -627,7 +620,7 @@ class DisplayMatchingRule(DisplaySchemaElement):
                     mr_used_by.append(at_se.oid)
         if mr_used_by:
             self._app.outf.write('<dt>Referencing attribute types:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, mr_used_by, AttributeType))
+                ', '.join(display_nameoroid_list(self._app, mr_used_by, AttributeType))
             ))
         return # disp_details()
 
@@ -707,7 +700,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
                 ditsr_rules_ref_list.append(ditsr_id)
         if ditsr_rules_ref_list:
             self._app.outf.write('<dt>Subordinate DIT structure rules:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, ditsr_rules_ref_list, DITStructureRule))
+                ', '.join(display_nameoroid_list(self._app, ditsr_rules_ref_list, DITStructureRule))
             ))
         return # disp_details()
 
@@ -732,7 +725,7 @@ class DisplayNameForm(DisplaySchemaElement):
                 ditsr_rules_ref_list.append(ditsr_id)
         if ditsr_rules_ref_list:
             self._app.outf.write('<dt>Referencing DIT structure rule:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(display_nameoroid_list(self._app, self.s, ditsr_rules_ref_list, DITStructureRule))
+                ', '.join(display_nameoroid_list(self._app, ditsr_rules_ref_list, DITStructureRule))
             ))
         return # disp_details()
 
@@ -763,7 +756,7 @@ def oid_input_form(app, oid=None):
     )
 
 
-def display_schema_elements(app, schema, se_classes, se_list):
+def display_schema_elements(app, se_classes, se_list):
     se_list = se_list or []
     se_classes = filter(None, se_classes or []) or SCHEMA_CLASS_MAPPING.values()
 
@@ -774,7 +767,7 @@ def display_schema_elements(app, schema, se_classes, se_list):
         context_menu_list=schema_context_menu(app)
     )
 
-    if schema is None:
+    if app.schema is None:
         raise web2ldap.app.core.ErrorExit(u'No sub schema available!')
 
     oid_dict = {}
@@ -792,7 +785,7 @@ def display_schema_elements(app, schema, se_classes, se_list):
                 oid_dict[se.__class__] = [se_id]
     else:
         for schema_class in se_classes:
-            oid_dict[schema_class] = schema.sed[schema_class].keys()
+            oid_dict[schema_class] = app.schema.sed[schema_class].keys()
     app.outf.write(oid_input_form(app, ''))
 
     if oid_dict:
@@ -803,7 +796,7 @@ def display_schema_elements(app, schema, se_classes, se_list):
             app.outf.write('<h2>%s</h2>\n<p>found %d</p>\n%s\n' % (
                 SCHEMA_VIEWER_CLASS[schema_class].type_desc,
                 len(schema_elements),
-                ',\n '.join(display_nameoroid_list(app, schema, schema_elements, schema_class)),
+                ',\n '.join(display_nameoroid_list(app, schema_elements, schema_class)),
             ))
     else:
         app.outf.write(SCHEMA_VIEWER_USAGE)
@@ -822,13 +815,6 @@ def w2l_schema_viewer(app):
     def endswith_oid(x, oid):
         return x.endswith(oid)
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     # Get input parameter from form input
     oid = app.form.getInputValue('oid', [None])[0]
     se_classes = [
@@ -839,7 +825,7 @@ def w2l_schema_viewer(app):
 
     if not oid:
         # Display entry page of schema browser
-        display_schema_elements(app, sub_schema, se_classes, None)
+        display_schema_elements(app, se_classes, None)
         return
 
     # Sanitize oid
@@ -863,7 +849,7 @@ def w2l_schema_viewer(app):
     if len(se_classes) == 1 and cmp_method is None:
         # Display a single schema element referenced by OID and class
         se_list = []
-        se_obj = sub_schema.get_obj(se_classes[0], oid, None)
+        se_obj = app.schema.get_obj(se_classes[0], oid, None)
         if se_obj is not None:
             se_list.append(se_obj)
     else:
@@ -872,13 +858,13 @@ def w2l_schema_viewer(app):
         if cmp_method is None:
             # No wildcard search => just try to look up directly via name or OID
             for schema_element_type in se_classes or SCHEMA_VIEWER_CLASS.keys():
-                se = sub_schema.get_obj(schema_element_type, oid, None)
+                se = app.schema.get_obj(schema_element_type, oid, None)
                 if not se is None:
                     se_list.append(se)
         else:
             # Do a wildcard search
             for schema_element_type in se_classes or SCHEMA_VIEWER_CLASS.keys():
-                for se in sub_schema.sed[schema_element_type].values():
+                for se in app.schema.sed[schema_element_type].values():
                     try:
                         se_id = se.oid
                     except AttributeError:
@@ -912,12 +898,12 @@ def w2l_schema_viewer(app):
         return
     elif len(se_list) > 1:
         # Display a list of schema elements to choose from
-        display_schema_elements(app, sub_schema, None, se_list)
+        display_schema_elements(app, None, se_list)
         return
 
     # Directly display a single schema element
     se_obj = se_list[0]
     if se_obj.__class__ not in SCHEMA_VIEWER_CLASS:
         raise web2ldap.app.core.ErrorExit(u'No viewer for this type of schema element!')
-    schema_viewer = SCHEMA_VIEWER_CLASS[se_obj.__class__](app, sub_schema, se_obj)
+    schema_viewer = SCHEMA_VIEWER_CLASS[se_obj.__class__](app, se_obj)
     schema_viewer.display()

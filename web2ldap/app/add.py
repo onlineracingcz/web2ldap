@@ -65,13 +65,6 @@ def ModlistTable(schema, modlist):
 
 def w2l_add(app):
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     input_modrow = app.form.getInputValue('in_mr', ['.'])[0]
 
     if input_modrow[0] == '-':
@@ -92,18 +85,18 @@ def w2l_add(app):
     invalid_attrs = None
 
     if add_clonedn:
-        entry, _ = web2ldap.app.addmodifyform.ReadOldEntry(app.ls, add_clonedn, sub_schema, None, {'*':'*'})
+        entry, _ = web2ldap.app.addmodifyform.ReadOldEntry(app.ls, add_clonedn, app.schema, None, {'*':'*'})
         add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_clonedn)
         add_rdn_dnlist = ldap0.dn.str2dn(add_rdn.encode(app.ls.charset))
         add_rdn = u'+'.join(['%s=' % (at) for at, _, _ in add_rdn_dnlist[0]]).decode(app.ls.charset)
         add_basedn = add_basedn or app.dn
     elif add_template:
         add_dn, entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(app, add_template)
-        entry = ldap0.schema.models.Entry(sub_schema, app.ldap_dn, entry)
+        entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, entry)
         add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_dn.decode(app.ls.charset))
         add_basedn = add_basedn or app.dn
     else:
-        entry, invalid_attrs = web2ldap.app.addmodifyform.get_entry_input(app, sub_schema)
+        entry, invalid_attrs = web2ldap.app.addmodifyform.get_entry_input(app)
         add_rdn = app.form.getInputValue('add_rdn', [''])[0]
         add_basedn = app.form.getInputValue('add_basedn', [app.dn])[0]
 
@@ -265,7 +258,7 @@ def w2l_add(app):
                     title=u'Display added entry %s' % new_dn_u,
                 ),
                 web2ldap.app.gui.DisplayDN(app, new_dn_u, commandbutton=0),
-                ModlistTable(sub_schema, modlist)
+                ModlistTable(app.schema, modlist)
             ),
             main_menu_list=web2ldap.app.gui.MainMenu(app),
             context_menu_list=[]

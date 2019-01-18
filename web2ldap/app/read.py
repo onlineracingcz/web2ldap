@@ -260,7 +260,7 @@ def get_opattr_template(ls, accept_language):
     return tmpl
 
 
-def display_attribute_table(app, sub_schema, entry, attrs, comment):
+def display_attribute_table(app, entry, attrs, comment):
     """
     Send a table of attributes to outf
     """
@@ -296,7 +296,7 @@ def display_attribute_table(app, sub_schema, entry, attrs, comment):
     for attr_type_name in show_attrs:
         attr_type_anchor_id = 'readattr_%s' % app.form.utf2display(attr_type_name.decode('ascii'))
         attr_type_str = web2ldap.app.gui.SchemaElementName(
-            app, sub_schema, attr_type_name,
+            app, app.schema, attr_type_name,
             ldap0.schema.models.AttributeType,
             name_template=r'<var>%s</var>'
         )
@@ -328,8 +328,8 @@ def display_attribute_table(app, sub_schema, entry, attrs, comment):
                 ))
             else:
                 dt_list.append('(%d values)' % (attr_value_count))
-        if web2ldap.app.schema.no_humanreadable_attr(sub_schema, attr_type_name):
-            if not web2ldap.app.schema.no_userapp_attr(sub_schema, attr_type_name):
+        if web2ldap.app.schema.no_humanreadable_attr(app.schema, attr_type_name):
+            if not web2ldap.app.schema.no_userapp_attr(app.schema, attr_type_name):
                 dt_list.append(app.anchor(
                     'delete', 'Delete',
                     [('dn', app.dn), ('delete_attr', attr_type_name)]
@@ -372,13 +372,6 @@ def display_attribute_table(app, sub_schema, entry, attrs, comment):
 
 def w2l_read(app):
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     read_output = app.form.getInputValue('read_output', [u'template'])[0]
     filterstr = app.form.getInputValue('filterstr', [u'(objectClass=*)'])[0]
 
@@ -390,7 +383,7 @@ def w2l_read(app):
         for a in app.form.getInputValue('read_attr', app.ldap_url.attrs or [])
     ]
     wanted_attr_set = SchemaElementOIDSet(
-        sub_schema,
+        app.schema,
         ldap0.schema.models.AttributeType,
         wanted_attrs,
     )
@@ -419,7 +412,7 @@ def w2l_read(app):
         raise web2ldap.app.core.ErrorExit(u'Empty search result.')
 
     dn = search_result[0][0].decode(app.ls.charset)
-    entry = ldap0.schema.models.Entry(sub_schema, dn.encode(app.ls.charset), search_result[0][1])
+    entry = ldap0.schema.models.Entry(app.schema, dn.encode(app.ls.charset), search_result[0][1])
 
     requested_attrs = [
         at
@@ -427,7 +420,7 @@ def w2l_read(app):
             GrabKeys(operational_attrs_template)(),
             web2ldap.app.cnf.GetParam(app.ls, 'requested_attrs', []),
         )
-        if not at in entry and sub_schema.get_obj(ldap0.schema.models.AttributeType, at) is not None
+        if not at in entry and app.schema.get_obj(ldap0.schema.models.AttributeType, at) is not None
     ]
     if not wanted_attrs and requested_attrs:
         try:
@@ -447,7 +440,7 @@ def w2l_read(app):
             if search_result:
                 entry.update(search_result[0][1])
 
-    display_entry = DisplayEntry(app, dn, sub_schema, entry, 'readSep', 1)
+    display_entry = DisplayEntry(app, dn, app.schema, entry, 'readSep', 1)
 
     # Save session into database mainly for storing LDAPSession cache
     session_store.storeSession(app.sid, app.ls)
@@ -474,7 +467,7 @@ def w2l_read(app):
         read_attrindex = int(app.form.getInputValue('read_attrindex', [u'0'])[0])
         # Determine if user wants to view or download the binary attribute value
         read_attrmode = app.form.getInputValue('read_attrmode', ['view'])[0]
-        syntax_se = syntax_registry.get_syntax(sub_schema, attr_type, entry.get_structural_oc())
+        syntax_se = syntax_registry.get_syntax(app.schema, attr_type, entry.get_structural_oc())
 
         if (
                 (read_attrmode == 'view') and
@@ -500,7 +493,7 @@ def w2l_read(app):
         else:
 
             # We have to create an LDAPSyntax instance to be able to call its methods
-            attr_instance = syntax_se(app, dn, sub_schema, attr_type, None, entry)
+            attr_instance = syntax_se(app, dn, app.schema, attr_type, None, entry)
             # Determine (hopefully) appropriate MIME-type
             read_attrmimetype = app.form.getInputValue(
                 'read_attrmimetype',
@@ -591,7 +584,7 @@ def w2l_read(app):
         collective_attrs = []
         nomatching_attrs = []
         for a in entry.keys():
-            at_se = sub_schema.get_obj(ldap0.schema.models.AttributeType, a, None)
+            at_se = app.schema.get_obj(ldap0.schema.models.AttributeType, a, None)
             if at_se is None:
                 nomatching_attrs.append(a)
                 continue
@@ -609,10 +602,10 @@ def w2l_read(app):
                     nomatching_attrs.append(a)
 
         display_entry.sep_attr = None
-        display_attribute_table(app, sub_schema, display_entry, required_attrs, 'Required Attributes')
-        display_attribute_table(app, sub_schema, display_entry, allowed_attrs, 'Allowed Attributes')
-        display_attribute_table(app, sub_schema, display_entry, collective_attrs, 'Collective Attributes')
-        display_attribute_table(app, sub_schema, display_entry, nomatching_attrs, 'Various Attributes')
+        display_attribute_table(app, display_entry, required_attrs, 'Required Attributes')
+        display_attribute_table(app, display_entry, allowed_attrs, 'Allowed Attributes')
+        display_attribute_table(app, display_entry, collective_attrs, 'Collective Attributes')
+        display_attribute_table(app, display_entry, nomatching_attrs, 'Various Attributes')
         display_entry.sep_attr = 'readSep'
 
         # Display operational attributes with template as footer
@@ -664,7 +657,7 @@ def w2l_read(app):
                 pass
             else:
                 break
-        display_entry = VCardEntry(sub_schema, entry)
+        display_entry = VCardEntry(app.schema, entry)
         display_entry['dn'] = [dn.encode(app.ls.charset)]
         web2ldap.app.gui.Header(
             app,

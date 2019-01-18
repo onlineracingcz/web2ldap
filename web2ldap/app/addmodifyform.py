@@ -122,7 +122,7 @@ INPUT_FORM_LDIF_TMPL = """
 """
 
 
-def get_entry_input(app, sub_schema):
+def get_entry_input(app):
 
     # Get all the attribute types
     in_attrtype_list = [
@@ -141,7 +141,7 @@ def get_entry_input(app, sub_schema):
     if not len(in_attrtype_list) == len(in_value_list) == len(in_value_indexes):
         raise web2ldap.app.core.ErrorExit(u'Different count of attribute types and values input.')
 
-    entry = ldap0.schema.models.Entry(sub_schema, app.ldap_dn, {})
+    entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, {})
 
     # Stuff input field lists into raw dictionary
     for i, attr_type in enumerate(in_attrtype_list):
@@ -159,7 +159,7 @@ def get_entry_input(app, sub_schema):
     attr_values = []
     for in_value in entry.get(attr_type, []):
         attr_instance = syntax_registry.get_at(
-            app, app.dn, sub_schema,
+            app, app.dn, app.schema,
             attr_type, None,
             entry=entry,
         )
@@ -178,7 +178,7 @@ def get_entry_input(app, sub_schema):
         attr_values = []
         for in_value in in_values:
             attr_instance = syntax_registry.get_at(
-                app, app.dn, sub_schema,
+                app, app.dn, app.schema,
                 attr_type, None,
                 entry=entry,
             )
@@ -209,7 +209,7 @@ def get_entry_input(app, sub_schema):
         entry_changed = False
         for attr_type, attr_values in entry.items():
             attr_instance = syntax_registry.get_at(
-                app, app.dn, sub_schema,
+                app, app.dn, app.schema,
                 attr_type, None,
                 entry=entry,
             )
@@ -232,7 +232,7 @@ def get_entry_input(app, sub_schema):
             del entry[attr_type]
             continue
         attr_instance = syntax_registry.get_at(
-            app, app.dn, sub_schema,
+            app, app.dn, app.schema,
             attr_type, None,
             entry=entry,
         )
@@ -553,7 +553,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         return # ldif_input()
 
 
-def SupentryDisplayString(app, parent_dn, schema, supentry_display_tmpl=None):
+def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
     supentry_display_tmpl = supentry_display_tmpl or \
         r"""
         <p title="Superior entry information">
@@ -584,7 +584,7 @@ def SupentryDisplayString(app, parent_dn, schema, supentry_display_tmpl=None):
         else:
             if parent_search_result:
                 parent_entry = web2ldap.app.read.DisplayEntry(
-                    app, parent_dn, schema,
+                    app, parent_dn, app.schema,
                     parent_search_result[0][1], 'readSep', 0
                 )
                 for oc in parent_search_result[0][1].get('objectClass', []):
@@ -601,13 +601,12 @@ def SupentryDisplayString(app, parent_dn, schema, supentry_display_tmpl=None):
 
 def ObjectClassForm(
         app,
-        sub_schema,
         existing_object_classes,
         structural_object_class
     ):
     """Form for choosing object class(es)"""
 
-    def get_possible_soc(app, sub_schema, parent_dn):
+    def get_possible_soc(app, parent_dn):
         """
         This function tries to determine the possible structural object classes
         and returns it as a list of object class NAMEs
@@ -616,16 +615,15 @@ def ObjectClassForm(
         dit_structure_rule_html = ''
         # Determine possible structural object classes based on DIT structure rules
         # and name forms if DIT structure rules are defined in subschema
-        if sub_schema.sed[DITStructureRule]:
-            dit_structure_ruleid = app.ls.getGoverningStructureRule(parent_dn, sub_schema)
+        if app.schema.sed[DITStructureRule]:
+            dit_structure_ruleid = app.ls.getGoverningStructureRule(parent_dn, app.schema)
             if dit_structure_ruleid is not None:
-                subord_structural_ruleids, subord_structural_oc = sub_schema.get_subord_structural_oc_names(dit_structure_ruleid)
+                subord_structural_ruleids, subord_structural_oc = app.schema.get_subord_structural_oc_names(dit_structure_ruleid)
                 if subord_structural_oc:
                     all_structural_oc = subord_structural_oc
                     dit_structure_rule_html = 'DIT structure rules:<br>%s' % ('<br>'.join(
                         display_nameoroid_list(
                             app,
-                            sub_schema,
                             subord_structural_ruleids,
                             DITStructureRule
                         )
@@ -633,7 +631,7 @@ def ObjectClassForm(
         # Determine possible structural object classes based on operational
         # attribute 'allowedChildClasses' (MS AD or OpenLDAP with slapo-allowed)
         elif (
-                '1.2.840.113556.1.4.912' in sub_schema.sed[AttributeType] and
+                '1.2.840.113556.1.4.912' in app.schema.sed[AttributeType] and
                 'OpenLDAProotDSE' not in app.ls.rootDSE.get('objectClass', [])
             ):
             try:
@@ -657,7 +655,7 @@ def ObjectClassForm(
                     else:
                         allowed_child_classes_kind_dict = {0:[], 1:[], 2:[]}
                         for av in allowed_child_classes:
-                            at_se = sub_schema.get_obj(ObjectClass, av)
+                            at_se = app.schema.get_obj(ObjectClass, av)
                             if not at_se is None:
                                 allowed_child_classes_kind_dict[at_se.kind].append(av)
                         all_structural_oc = allowed_child_classes_kind_dict[0]
@@ -667,12 +665,12 @@ def ObjectClassForm(
         return all_structural_oc, dit_structure_rule_html # get_possible_soc()
 
 
-    def ExpertOCFields(app, sub_schema, parent_dn):
+    def ExpertOCFields(app, parent_dn):
 
-        all_structural_oc, all_abstract_oc, all_auxiliary_oc = web2ldap.app.schema.object_class_categories(sub_schema, all_oc)
+        all_structural_oc, all_abstract_oc, all_auxiliary_oc = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
         dit_structure_rule_html = ''
 
-        restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, sub_schema, parent_dn)
+        restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, parent_dn)
         all_structural_oc = restricted_structural_oc or all_structural_oc
 
         existing_misc_oc = set(existing_object_classes)
@@ -684,8 +682,8 @@ def ObjectClassForm(
         # Try to look up a DIT content rule
         if existing_object_classes and structural_object_class:
             # Determine OID of structural object class
-            soc_oid = sub_schema.name2oid[ObjectClass].get(structural_object_class, structural_object_class)
-            dit_content_rule = sub_schema.get_obj(DITContentRule, soc_oid, None)
+            soc_oid = app.schema.name2oid[ObjectClass].get(structural_object_class, structural_object_class)
+            dit_content_rule = app.schema.get_obj(DITContentRule, soc_oid, None)
             if dit_content_rule is not None:
                 if dit_content_rule.obsolete:
                     dit_content_rule_status_text = 'Ignored obsolete'
@@ -694,17 +692,17 @@ def ObjectClassForm(
                 else:
                     dit_content_rule_status_text = 'Governed by'
                     all_auxiliary_oc_oids = set([
-                        sub_schema.getoid(ObjectClass, nameoroid)
+                        app.schema.getoid(ObjectClass, nameoroid)
                         for nameoroid in dit_content_rule.aux
                     ])
                     all_auxiliary_oc = [
                         oc
                         for oc in all_auxiliary_oc
-                        if sub_schema.getoid(ObjectClass, oc) in all_auxiliary_oc_oids
+                        if app.schema.getoid(ObjectClass, oc) in all_auxiliary_oc_oids
                     ]
                 dit_content_rule_html = '%s<br>DIT content rule:<br>%s' % (
                     dit_content_rule_status_text,
-                    web2ldap.app.gui.SchemaElementName(app, sub_schema, dit_content_rule.names[0], DITContentRule)
+                    web2ldap.app.gui.SchemaElementName(app, app.schema, dit_content_rule.names[0], DITContentRule)
                 )
 
         abstract_select_field = web2ldap.app.form.ObjectClassSelect(
@@ -810,7 +808,7 @@ def ObjectClassForm(
 
 
     def LDIFTemplateField(app, parent_dn):
-        all_structural_oc, all_abstract_oc, all_auxiliary_oc = web2ldap.app.schema.object_class_categories(sub_schema, all_oc)
+        all_structural_oc, all_abstract_oc, all_auxiliary_oc = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
         addform_entry_templates_keys = web2ldap.app.cnf.GetParam(app.ls, 'addform_entry_templates', {}).keys()
         addform_parent_attrs = web2ldap.app.cnf.GetParam(app.ls, 'addform_parent_attrs', [])
         addform_entry_templates_keys.sort()
@@ -826,7 +824,7 @@ def ObjectClassForm(
                     continue
                 if not parent_result:
                     continue
-                parent_entry = ldap0.schema.models.Entry(sub_schema, parent_result[0][0], parent_result[0][1])
+                parent_entry = ldap0.schema.models.Entry(app.schema, parent_result[0][0], parent_result[0][1])
                 missing_parent_attrs = set([
                     attr_type
                     for attr_type in addform_parent_attrs
@@ -834,9 +832,9 @@ def ObjectClassForm(
                 ])
                 if missing_parent_attrs:
                     continue
-            restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, sub_schema, tmpl_parent_dn)
-            if sub_schema.sed[DITStructureRule]:
-                parent_gov_structure_rule = app.ls.getGoverningStructureRule(tmpl_parent_dn, sub_schema)
+            restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, tmpl_parent_dn)
+            if app.schema.sed[DITStructureRule]:
+                parent_gov_structure_rule = app.ls.getGoverningStructureRule(tmpl_parent_dn, app.schema)
                 if parent_gov_structure_rule is None:
                     restricted_structural_oc = restricted_structural_oc or all_structural_oc
                 else:
@@ -844,11 +842,11 @@ def ObjectClassForm(
             else:
                 restricted_structural_oc = all_structural_oc
             restricted_structural_oc_set = ldap0.schema.models.SchemaElementOIDSet(
-                sub_schema,
+                app.schema,
                 ObjectClass,
                 restricted_structural_oc
             )
-            entry = ldap0.schema.models.Entry(sub_schema, ldif_dn, ldif_entry)
+            entry = ldap0.schema.models.Entry(app.schema, ldif_dn, ldif_entry)
             soc = entry.get_structural_oc()
             if soc and soc in restricted_structural_oc_set:
                 try:
@@ -869,7 +867,7 @@ def ObjectClassForm(
         add_template_html_list = ['<dl>']
         for pdn in sorted(add_tmpl_dict.keys()):
             add_template_html_list.append('<dt>%s<dt>' % (
-                SupentryDisplayString(app, pdn, sub_schema, supentry_display_tmpl=r'%s'),
+                SupentryDisplayString(app, pdn, supentry_display_tmpl=r'%s'),
             ))
             add_template_html_list.append('<dd><ul>')
             for tmpl_name in add_tmpl_dict[pdn]:
@@ -899,10 +897,10 @@ def ObjectClassForm(
 
     command_hidden_fields = [('dn', app.dn)]
 
-    existing_structural_oc, existing_abstract_oc, existing_auxiliary_oc = web2ldap.app.schema.object_class_categories(sub_schema, existing_object_classes)
+    existing_structural_oc, existing_abstract_oc, existing_auxiliary_oc = web2ldap.app.schema.object_class_categories(app.schema, existing_object_classes)
     all_oc = [
-        (sub_schema.get_obj(ObjectClass, oid).names or (oid,))[0]
-        for oid in sub_schema.listall(ObjectClass)
+        (app.schema.get_obj(ObjectClass, oid).names or (oid,))[0]
+        for oid in app.schema.listall(ObjectClass)
     ]
 
     if app.command == 'add':
@@ -914,7 +912,7 @@ def ObjectClassForm(
     if app.command == 'add' and in_ocf == u'tmpl':
         Msg, add_template_field_html = LDIFTemplateField(app, parent_dn)
     else:
-        Msg, add_template_field_html = ExpertOCFields(app, sub_schema, parent_dn)
+        Msg, add_template_field_html = ExpertOCFields(app, parent_dn)
 
     if app.command == 'add':
         context_menu_list = [
@@ -1137,13 +1135,6 @@ def w2l_addform(
     if Msg:
         Msg = '<p class="ErrorMessage">%s</p>' % (Msg)
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     input_formtype = app.form.getInputValue(
         'in_ft',
         app.form.getInputValue('in_oft', ['OC'])
@@ -1155,16 +1146,16 @@ def w2l_addform(
 
     if input_formtype == 'OC' or not entry:
         # Output the web page with object class input form
-        ObjectClassForm(app, sub_schema, entry.get('objectClass', []), None)
+        ObjectClassForm(app, entry.get('objectClass', []), None)
         return
 
-    input_form_entry = InputFormEntry(app, app.dn, sub_schema, entry, None, invalid_attrs=invalid_attrs)
+    input_form_entry = InputFormEntry(app, app.dn, app.schema, entry, None, invalid_attrs=invalid_attrs)
     required_attrs_dict, allowed_attrs_dict = input_form_entry.attribute_types()
-    nomatching_attrs_dict = nomatching_attrs(sub_schema, input_form_entry, allowed_attrs_dict, required_attrs_dict)
+    nomatching_attrs_dict = nomatching_attrs(app.schema, input_form_entry, allowed_attrs_dict, required_attrs_dict)
 
     rdn_options = input_form_entry.entry.get_rdn_templates()
 
-    supentry_display_string = SupentryDisplayString(app, add_basedn, sub_schema)
+    supentry_display_string = SupentryDisplayString(app, add_basedn)
 
     if rdn_options and len(rdn_options) > 0:
         # <select> field
@@ -1178,7 +1169,7 @@ def w2l_addform(
         rdn_candidate_attr_nameoroids = [
             (required_attrs_dict[at_oid].names or (at_oid,))[0]
             for at_oid in required_attrs_dict.keys()
-            if at_oid != '2.5.4.0' and not web2ldap.app.schema.no_humanreadable_attr(sub_schema, at_oid)
+            if at_oid != '2.5.4.0' and not web2ldap.app.schema.no_humanreadable_attr(app.schema, at_oid)
         ]
         if len(rdn_candidate_attr_nameoroids) == 1:
             rdn_input_field.setDefault(rdn_candidate_attr_nameoroids[0]+'=')
@@ -1259,13 +1250,6 @@ def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
     if Msg:
         Msg = '<p class="ErrorMessage">%s</p>' % (Msg)
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     input_formtype = app.form.getInputValue(
         'in_ft',
         app.form.getInputValue('in_oft', ['Template'])
@@ -1275,7 +1259,7 @@ def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
         # Read objectclass(es) from input form
         entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].value]
 
-    old_entry, read_writeable_attr_oids = ReadOldEntry(app.ls, app.dn, sub_schema, None)
+    old_entry, read_writeable_attr_oids = ReadOldEntry(app.ls, app.dn, app.schema, None)
     if not entry:
         entry = old_entry
 
@@ -1289,23 +1273,19 @@ def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
 
     if input_formtype == 'OC':
         # Output the web page with object class input form
-        ObjectClassForm(
-            app, sub_schema,
-            entry['objectClass'],
-            entry.get_structural_oc(),
-        )
+        ObjectClassForm(app, entry['objectClass'], entry.get_structural_oc())
         return
 
     existing_object_classes = entry['objectClass'][:]
 
     input_form_entry = InputFormEntry(
-        app, app.dn, sub_schema,
+        app, app.dn, app.schema,
         entry, writeable_attr_oids, existing_object_classes, invalid_attrs=invalid_attrs
     )
     required_attrs_dict, allowed_attrs_dict = input_form_entry.attribute_types()
-    nomatching_attrs_dict = nomatching_attrs(sub_schema, input_form_entry, allowed_attrs_dict, required_attrs_dict)
+    nomatching_attrs_dict = nomatching_attrs(app.schema, input_form_entry, allowed_attrs_dict, required_attrs_dict)
 
-    supentry_display_string = SupentryDisplayString(app, app.parent_dn, sub_schema)
+    supentry_display_string = SupentryDisplayString(app, app.parent_dn)
 
     if writeable_attr_oids is None:
         in_wrtattroids_values = app.form.hiddenFieldHTML('in_wrtattroids', u'nonePseudoValue;x-web2ldap-None', u'')

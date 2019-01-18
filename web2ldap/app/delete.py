@@ -354,13 +354,6 @@ def del_search_form(app, scope, delete_filter):
 
 def w2l_delete(app):
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     delete_confirm = app.form.getInputValue('delete_confirm', [None])[0]
     delete_attr = app.form.getInputValue(
         'delete_attr',
@@ -394,7 +387,7 @@ def w2l_delete(app):
             )[0][1]
         except IndexError:
             ldap_entry = {}
-        entry = ldap0.schema.models.Entry(sub_schema, app.ldap_dn, ldap_entry)
+        entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, ldap_entry)
         if delete_attr:
             inner_form = del_attr_form(app, entry, delete_attr)
         elif delete_filter:

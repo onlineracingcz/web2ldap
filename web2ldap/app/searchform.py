@@ -84,7 +84,7 @@ FILTERSTR_FIELDSET_TMPL = """
 """
 
 
-def SearchForm_exp(app, sub_schema, filterstr=''):
+def SearchForm_exp(app, filterstr=''):
     """
     Output expert search form
     """
@@ -97,7 +97,7 @@ def SearchForm_exp(app, sub_schema, filterstr=''):
     return result # SearchForm_exp()
 
 
-def SearchForm_base(app, sub_schema, searchform_template_name):
+def SearchForm_base(app, searchform_template_name):
     """
     Output basic search form based on a HTML template configured
     with host-specific configuration parameter searchform_template
@@ -112,7 +112,7 @@ def SearchForm_base(app, sub_schema, searchform_template_name):
     return template_str # SearchForm_base()
 
 
-def SearchForm_adv(app, sub_schema):
+def SearchForm_adv(app):
     """advanced search form with select lists"""
 
     search_submit = app.form.getInputValue('search_submit', [u''])[0]
@@ -155,7 +155,6 @@ def SearchForm_adv(app, sub_schema):
 
     search_attr_select = web2ldap.app.gui.AttributeTypeSelectField(
         app,
-        sub_schema,
         'search_attr',
         u'Search attribute type',
         search_attr_list,
@@ -166,7 +165,7 @@ def SearchForm_adv(app, sub_schema):
     mr_list.extend(
         sorted([
             mr.decode('ascii')
-            for mr in sub_schema.name2oid[ldap0.schema.models.MatchingRule].keys()
+            for mr in app.schema.name2oid[ldap0.schema.models.MatchingRule].keys()
         ])
     )
     # Create a select field instance for matching rule name
@@ -223,13 +222,6 @@ def w2l_searchform(
     else:
         msg_html = ''
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     searchform_mode = searchform_mode or app.form.getInputValue('searchform_mode', [u'base'])[0]
     searchform_template_name = app.form.getInputValue('searchform_template', [u'_'])[0]
 
@@ -281,20 +273,20 @@ def w2l_searchform(
     if searchform_mode == u'base':
         # base search form with fixed input fields
         try:
-            inner_searchform_html = SearchForm_base(app, sub_schema, searchform_template_name)
+            inner_searchform_html = SearchForm_base(app, searchform_template_name)
         except IOError:
             msg_html = '\n'.join((
                 msg_html,
                 '<p class="ErrorMessage">I/O error while loading search form template!</p>'
             ))
-            inner_searchform_html = SearchForm_adv(app, sub_schema)
+            inner_searchform_html = SearchForm_adv(app)
             searchform_mode = u'adv'
     elif searchform_mode == u'exp':
         # expert search form with single filter input field
-        inner_searchform_html = SearchForm_exp(app, sub_schema, filterstr)
+        inner_searchform_html = SearchForm_exp(app, filterstr)
     elif searchform_mode == u'adv':
         # base search form with fixed input fields
-        inner_searchform_html = SearchForm_adv(app, sub_schema)
+        inner_searchform_html = SearchForm_adv(app)
 
     searchoptions_template_filename = web2ldap.app.gui.GetVariantFilename(
         web2ldap.app.cnf.GetParam(app.ls, 'searchoptions_template', None),

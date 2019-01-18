@@ -30,7 +30,7 @@ from web2ldap.app.schema.syntaxes import syntax_registry, LDAPSyntaxValueError
 from web2ldap.app.modify import modlist_ldif
 
 
-def input_modlist(app, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av):
+def input_modlist(app, bulkmod_at, bulkmod_op, bulkmod_av):
 
     mod_dict = {}
     input_errors = set()
@@ -46,7 +46,7 @@ def input_modlist(app, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av):
             continue
 
         attr_instance = syntax_registry.get_at(
-            app, u'', sub_schema, mod_type, None, entry=None,
+            app, u'', app.schema, mod_type, None, entry=None,
         )
         try:
             mod_val = attr_instance.sanitizeInput(bulkmod_av[i] or '')
@@ -83,7 +83,7 @@ def input_modlist(app, sub_schema, bulkmod_at, bulkmod_op, bulkmod_av):
 
 
 def bulkmod_input_form(
-        app, sub_schema,
+        app,
         bulkmod_submit,
         dn, scope, bulkmod_filter, bulkmod_newsuperior,
         bulkmod_at, bulkmod_op, bulkmod_av, bulkmod_cp,
@@ -115,7 +115,6 @@ def bulkmod_input_form(
     # Generate a select field for the attribute type
     bulkmod_attr_select = web2ldap.app.gui.AttributeTypeSelectField(
         app,
-        sub_schema,
         'bulkmod_at',
         u'Attribute type',
         [], default_attr_options=None
@@ -206,7 +205,7 @@ def bulkmod_input_form(
 
 
 def bulkmod_confirmation_form(
-        app, sub_schema,
+        app,
         dn, scope,
         bulkmod_filter, bulkmod_newsuperior, bulk_mod_list, bulkmod_cp,
     ):
@@ -322,13 +321,6 @@ def w2l_bulkmod(app):
     Applies bulk modifications to multiple LDAP entries
     """
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     bulkmod_submit = app.form.getInputValue('bulkmod_submit', [None])[0]
 
     bulkmod_at = app.form.getInputValue('bulkmod_at', [])
@@ -353,7 +345,7 @@ def w2l_bulkmod(app):
         raise web2ldap.app.core.ErrorExit(u'Invalid bulk modification input.')
 
     bulk_mod_list, input_errors = input_modlist(
-        app, sub_schema,
+        app,
         bulkmod_at, bulkmod_op, bulkmod_av,
     )
 
@@ -374,7 +366,7 @@ def w2l_bulkmod(app):
          bulkmod_submit.startswith(u'-'):
 
         bulkmod_input_form(
-            app, sub_schema,
+            app,
             bulkmod_submit,
             app.dn, scope, bulkmod_filter,
             bulkmod_newsuperior,
@@ -385,7 +377,7 @@ def w2l_bulkmod(app):
     elif bulkmod_submit == u'Next>>':
 
         bulkmod_confirmation_form(
-            app, sub_schema,
+            app,
             app.dn, scope, bulkmod_filter,
             bulkmod_newsuperior, bulk_mod_list, bulkmod_cp,
         )

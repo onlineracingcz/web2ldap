@@ -73,7 +73,7 @@ def password_change_url(app, passwd_who, passwd_input):
     ))
 
 
-def passwd_context_menu(app, sub_schema):
+def passwd_context_menu(app):
     """
     returns the context menu list for passwd dialogue
     """
@@ -104,7 +104,7 @@ def passwd_context_menu(app, sub_schema):
             # SunONE/Netscape/Fedora/389 Directory Server
             u'passwordRetryCount', u'accountUnlockTime',
         )
-        if sub_schema.get_obj(AttributeType, attr_type.encode('ascii'), None) is not None
+        if app.schema.get_obj(AttributeType, attr_type.encode('ascii'), None) is not None
     ])
     result.append(
         app.anchor(
@@ -133,7 +133,7 @@ def passwd_context_menu(app, sub_schema):
             'passwordExpirationTime', 'passwordExpWarned',
             'passwordRetryCount', 'accountUnlockTime', 'retryCountResetTime',
         )
-        if sub_schema.get_obj(AttributeType, attr_type, None) is not None
+        if app.schema.get_obj(AttributeType, attr_type, None) is not None
     ])
     result.append(
         app.anchor(
@@ -153,7 +153,7 @@ def password_self_change(ls, dn):
 
 
 def passwd_form(
-        app, sub_schema,
+        app,
         passwd_action, passwd_who, user_objectclasses,
         heading, error_msg
     ):
@@ -167,23 +167,16 @@ def passwd_form(
         if field.name not in app.form.field:
             app.form.addField(field)
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     if error_msg:
         error_msg = '<p class="ErrorMessage">%s</p>' % (error_msg)
 
     # Determine whether password attribute is unicodePwd on MS AD
-    unicode_pwd_avail = sub_schema.sed[AttributeType].has_key('1.2.840.113556.1.4.90')
+    unicode_pwd_avail = app.schema.sed[AttributeType].has_key('1.2.840.113556.1.4.90')
 
     # Determine whether user changes own password
     own_pwd_change = password_self_change(app.ls, passwd_who)
 
-    all_attrs = get_all_attributes(sub_schema, user_objectclasses)
+    all_attrs = get_all_attributes(app.schema, user_objectclasses)
 
     if not unicode_pwd_avail:
 
@@ -210,7 +203,7 @@ def passwd_form(
         app,
         'Change password',
         web2ldap.app.gui.MainMenu(app),
-        context_menu_list=passwd_context_menu(app, sub_schema),
+        context_menu_list=passwd_context_menu(app),
         main_div_id='Input',
     )
 
@@ -247,13 +240,6 @@ def w2l_passwd(app):
     Set new password in LDAP entries
     """
 
-    sub_schema = app.ls.retrieveSubSchema(
-        app.dn,
-        web2ldap.app.cnf.GetParam(app.ls, '_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'supplement_schema', None),
-        web2ldap.app.cnf.GetParam(app.ls, 'schema_strictcheck', True),
-    )
-
     # Determine the default value for passwd_action based on
     # server's visible configuration
     if PassmodRequest.requestName in app.ls.supportedExtension:
@@ -267,7 +253,7 @@ def w2l_passwd(app):
 
     user_entry = app.ls.l.read_s(passwd_who.encode(app.ls.charset), attrlist=['objectClass'])
     user_objectclasses = SchemaElementOIDSet(
-        sub_schema,
+        app.schema,
         ObjectClass,
         user_entry.get('objectClass', []),
     )
@@ -278,7 +264,7 @@ def w2l_passwd(app):
         #---------------------------------------------
 
         passwd_form(
-            app, sub_schema,
+            app,
             passwd_action, passwd_who,
             user_objectclasses,
             'Set password', ''
@@ -293,7 +279,7 @@ def w2l_passwd(app):
 
     if app.form.field['passwd_newpasswd'].value[0] != app.form.field['passwd_newpasswd'].value[1]:
         passwd_form(
-            app, sub_schema,
+            app,
             passwd_action, passwd_who, user_objectclasses,
             heading='Password Error',
             error_msg='New passwords do not match!',
@@ -321,10 +307,10 @@ def w2l_passwd(app):
     # Extend with appropriate user-must-change-password-after-reset attribute
     if passwd_forcechange:
         # draft-behera-password-policy
-        if sub_schema.sed[AttributeType].has_key('1.3.6.1.4.1.42.2.27.8.1.22'):
+        if app.schema.sed[AttributeType].has_key('1.3.6.1.4.1.42.2.27.8.1.22'):
             passwd_modlist.append((ldap0.MOD_REPLACE, 'pwdReset', 'TRUE'))
         # MS AD
-        elif sub_schema.sed[AttributeType].has_key('1.2.840.113556.1.4.96'):
+        elif app.schema.sed[AttributeType].has_key('1.2.840.113556.1.4.96'):
             passwd_modlist.append((ldap0.MOD_REPLACE, 'pwdLastSet', '0'))
 
     if not passwd_action:
@@ -346,7 +332,7 @@ def w2l_passwd(app):
                 ldap0.UNWILLING_TO_PERFORM,
             ) as e:
             passwd_form(
-                app, sub_schema,
+                app,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
                 error_msg=app.ldap_error_msg(e)
@@ -367,7 +353,7 @@ def w2l_passwd(app):
         # Modify password via Modify Request
         #------------------------------------
 
-        all_attrs = get_all_attributes(sub_schema, user_objectclasses)
+        all_attrs = get_all_attributes(app.schema, user_objectclasses)
 
         if '2.5.4.35' not in all_attrs:
             # Current set of object classes do not allow userPassword attribute
@@ -379,7 +365,7 @@ def w2l_passwd(app):
                     if not user_objectclasses:
                         continue
                     # Ensure supplemental class is really AUXILIARY
-                    if sub_schema.get_inheritedattr(ObjectClass, aux_class, 'kind') != 2:
+                    if app.schema.get_inheritedattr(ObjectClass, aux_class, 'kind') != 2:
                         continue
                     # Ensure supplemental class is not already in set of object classes
                     if aux_class in user_objectclasses:
@@ -483,7 +469,7 @@ def w2l_passwd(app):
                 ldap0.UNWILLING_TO_PERFORM,
             ) as e:
             passwd_form(
-                app, sub_schema,
+                app,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
                 error_msg=app.ldap_error_msg(e)
@@ -491,7 +477,7 @@ def w2l_passwd(app):
             return
         except ldap0.NO_SUCH_ATTRIBUTE as e:
             passwd_form(
-                app, sub_schema,
+                app,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
                 error_msg=app.ldap_error_msg(
