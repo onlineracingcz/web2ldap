@@ -125,7 +125,7 @@ def group_select_field(
 
 def w2l_groupadm(app, info_msg='', error_msg=''):
 
-    groupadm_defs = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(app.ls, 'groupadm_defs', {}))
+    groupadm_defs = ldap0.cidict.cidict(app.cfg_param('groupadm_defs', {}))
     if not groupadm_defs:
         raise web2ldap.app.core.ErrorExit(u'Group admin options empty or not set.')
     groupadm_defs_keys = groupadm_defs.keys()
@@ -147,7 +147,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     )
 
     # Extract form parameters
-    group_search_root = app.form.getInputValue('groupadm_searchroot', [app.ls.getSearchRoot(app.dn)])[0]
+    group_search_root = app.form.getInputValue('groupadm_searchroot', [app.naming_context])[0]
     groupadm_view = int(app.form.getInputValue('groupadm_view', ['1'])[0])
     groupadm_name = app.form.getInputValue('groupadm_name', [None])[0]
 
@@ -173,9 +173,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     # Search all the group entries
     #################################################################
 
-    groupadm_filterstr_template = web2ldap.app.cnf.GetParam(
-        app.ls, 'groupadm_filterstr_template', r'(|%s)'
-    )
+    groupadm_filterstr_template = app.cfg_param('groupadm_filterstr_template', r'(|%s)')
 
     all_group_filterstr = groupadm_filterstr_template % (
         ''.join(
@@ -386,7 +384,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
     if all_groups_dict:
 
-        optgroup_bounds = web2ldap.app.cnf.GetParam(app.ls, 'groupadm_optgroup_bounds', (1, None))
+        optgroup_bounds = app.cfg_param('groupadm_optgroup_bounds', (1, None))
 
         app.outf.write(
             """

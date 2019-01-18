@@ -78,7 +78,7 @@ def w2l_login(
         field_login_mech=app.form.field['login_mech'].inputHTML(default=login_mech),
         value_ldap_who=app.form.utf2display(who),
         value_ldap_filter=app.form.utf2display(
-            web2ldap.app.cnf.GetParam(app.ls, 'binddnsearch', ur'(uid=%s)')
+            app.cfg_param('binddnsearch', ur'(uid=%s)')
         ),
         field_login_search_root=login_search_root_field.inputHTML(),
         field_login_authzid_prefix=app.form.field['login_authzid_prefix'].inputHTML(),

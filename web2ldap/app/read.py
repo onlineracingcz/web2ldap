@@ -50,7 +50,7 @@ class VCardEntry(ldap0.schema.models.Entry):
 
 
 def get_vcard_template(app, object_classes):
-    template_dict = cidict(web2ldap.app.cnf.GetParam(app.ls, 'vcard_template', {}))
+    template_dict = cidict(app.cfg_param('vcard_template', {}))
     current_oc_set = set([
         s.lower()
         for s in object_classes
@@ -171,7 +171,7 @@ class DisplayEntry(IterableUserDict):
         return # _set_dn()
 
     def get_html_templates(self, cnf_key):
-        read_template_dict = cidict(web2ldap.app.cnf.GetParam(self._app.ls, cnf_key, {}))
+        read_template_dict = cidict(self._app.cfg_param(cnf_key, {}))
         # This gets all object classes no matter what
         all_object_class_oid_set = self.entry.object_class_oid_set()
         # Initialize the set with only the STRUCTURAL object class of the entry
@@ -247,13 +247,13 @@ class DisplayEntry(IterableUserDict):
         return displayed_attrs # template_output()
 
 
-def get_opattr_template(ls, accept_language):
-    template_pathname = web2ldap.app.cnf.GetParam(ls, 'read_operationalattrstemplate', None)
+def get_opattr_template(app):
+    template_pathname = app.cfg_param('read_operationalattrstemplate', None)
     if not template_pathname:
         return ''
     template_filename = web2ldap.app.gui.GetVariantFilename(
         template_pathname,
-        accept_language,
+        app.form.accept_language,
     )
     with open(template_filename, 'rb') as fileobj:
         tmpl = fileobj.read()
@@ -283,7 +283,7 @@ def display_attribute_table(app, entry, attrs, comment):
         read_tablemaxcount_dict = {}
     else:
         read_tablemaxcount_dict = ldap0.cidict.cidict(
-            web2ldap.app.cnf.GetParam(app.ls, 'read_tablemaxcount', {})
+            app.cfg_param('read_tablemaxcount', {})
         )
         for at in read_expandattr_set:
             try:
@@ -398,7 +398,7 @@ def w2l_read(app):
 
     # Determine how to get all attributes including the operational attributes
 
-    operational_attrs_template = get_opattr_template(app.ls, app.form.accept_language)
+    operational_attrs_template = get_opattr_template(app)
 
     # Read the entry's data
     search_result = app.ls.readEntry(
@@ -418,7 +418,7 @@ def w2l_read(app):
         at
         for at in union(
             GrabKeys(operational_attrs_template)(),
-            web2ldap.app.cnf.GetParam(app.ls, 'requested_attrs', []),
+            app.cfg_param('requested_attrs', []),
         )
         if not at in entry and app.schema.get_obj(ldap0.schema.models.AttributeType, at) is not None
     ]

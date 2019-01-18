@@ -59,7 +59,7 @@ def new_superior_field(app, sup_search_url, old_superior_dn):
 
 def w2l_rename(app):
 
-    rename_supsearchurl_cfg = web2ldap.app.cnf.GetParam(app.ls, 'rename_supsearchurl', {})
+    rename_supsearchurl_cfg = app.cfg_param('rename_supsearchurl', {})
 
     if not app.dn:
         raise web2ldap.app.core.ErrorExit(u'Rename operation not possible at - World - or RootDSE.')

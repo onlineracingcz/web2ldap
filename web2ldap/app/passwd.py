@@ -180,7 +180,7 @@ def passwd_form(
 
     if not unicode_pwd_avail:
 
-        config_hashtypes = web2ldap.app.cnf.GetParam(app.ls, 'passwd_hashtypes', [])
+        config_hashtypes = app.cfg_param('passwd_hashtypes', [])
         if config_hashtypes:
             # The set of hash types are restricted by local configuration
             default_hashtypes = [
@@ -293,8 +293,8 @@ def w2l_passwd(app):
     no_passwd_input = not passwd_input
     if no_passwd_input:
         passwd_input = random_string(
-            alphabet=web2ldap.app.cnf.GetParam(app.ls, 'passwd_genchars', PWD_ALPHABET),
-            length=web2ldap.app.cnf.GetParam(app.ls, 'passwd_genlength', PASSWD_GEN_DEFAULT_LENGTH),
+            alphabet=app.cfg_param('passwd_genchars', PWD_ALPHABET),
+            length=app.cfg_param('passwd_genlength', PASSWD_GEN_DEFAULT_LENGTH),
         )
 
     passwd_forcechange = app.form.getInputValue('passwd_forcechange', ['no'])[0] == 'yes'
@@ -302,7 +302,7 @@ def w2l_passwd(app):
 
     password_attr_types_msg = ''
 
-    passwd_modlist = web2ldap.app.cnf.GetParam(app.ls, 'passwd_modlist', [])
+    passwd_modlist = app.cfg_param('passwd_modlist', [])
 
     # Extend with appropriate user-must-change-password-after-reset attribute
     if passwd_forcechange:

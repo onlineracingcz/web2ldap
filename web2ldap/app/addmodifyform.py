@@ -565,7 +565,7 @@ def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
     if parent_dn is None:
         return ''
     supentry_display_strings = []
-    inputform_supentrytemplate = web2ldap.app.cnf.GetParam(app.ls, 'inputform_supentrytemplate', {})
+    inputform_supentrytemplate = app.cfg_param('inputform_supentrytemplate', {})
     if inputform_supentrytemplate:
         inputform_supentrytemplate_attrtypes = set(['objectClass'])
         for oc in inputform_supentrytemplate.keys():
@@ -809,8 +809,8 @@ def ObjectClassForm(
 
     def LDIFTemplateField(app, parent_dn):
         all_structural_oc, all_abstract_oc, all_auxiliary_oc = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
-        addform_entry_templates_keys = web2ldap.app.cnf.GetParam(app.ls, 'addform_entry_templates', {}).keys()
-        addform_parent_attrs = web2ldap.app.cnf.GetParam(app.ls, 'addform_parent_attrs', [])
+        addform_entry_templates_keys = app.cfg_param('addform_entry_templates', {}).keys()
+        addform_parent_attrs = app.cfg_param('addform_parent_attrs', [])
         addform_entry_templates_keys.sort()
         add_tmpl_dict = {}
         for template_name in addform_entry_templates_keys:
@@ -950,7 +950,7 @@ def ObjectClassForm(
 
 
 def ReadLDIFTemplate(app, template_name):
-    addform_entry_templates = web2ldap.app.cnf.GetParam(app.ls, 'addform_entry_templates', {})
+    addform_entry_templates = app.cfg_param('addform_entry_templates', {})
     template_name_html = escape_html(template_name)
     if not addform_entry_templates.has_key(template_name):
         raise web2ldap.app.core.ErrorExit(u'LDIF template key &quot;%s&quot; not known.' % (template_name_html))
@@ -972,30 +972,30 @@ def ReadLDIFTemplate(app, template_name):
     return dn, entry # ReadLDIFTemplate()
 
 
-def AttributeTypeDict(ls, param_name, param_default):
+def AttributeTypeDict(app, param_name, param_default):
     """
     Build a list of attributes assumed in configuration to be constant while editing entry
     """
     attrs = ldap0.cidict.cidict()
-    for attr_type in web2ldap.app.cnf.GetParam(ls, param_name, param_default):
+    for attr_type in app.cfg_param(param_name, param_default):
         attrs[attr_type] = attr_type
     return attrs # AttributeTypeDict()
 
 
-def ConfiguredConstantAttributes(ls):
+def ConfiguredConstantAttributes(app):
     """
     Build a list of attributes assumed in configuration to be constant while editing entry
     """
     return AttributeTypeDict(
-        ls,
+        app,
         'modify_constant_attrs',
         ['createTimestamp', 'modifyTimestamp', 'creatorsName', 'modifiersName'],
     )
 
 
-def AssertionFilter(ls, entry):
+def AssertionFilter(app, entry):
     assertion_filter_list = []
-    for attr_type in ConfiguredConstantAttributes(ls).values():
+    for attr_type in ConfiguredConstantAttributes(app).values():
         try:
             attr_values = entry[attr_type]
         except KeyError:
@@ -1039,7 +1039,7 @@ def nomatching_attrs(sub_schema, entry, allowed_attrs_dict, required_attrs_dict)
     return nomatching_attrs_dict # nomatching_attrs()
 
 
-def ReadOldEntry(ls, dn, sub_schema, assertion_filter, read_attrs=None):
+def ReadOldEntry(app, dn, sub_schema, assertion_filter, read_attrs=None):
     """
     Retrieve all editable attribute types an entry
     """
@@ -1053,8 +1053,8 @@ def ReadOldEntry(ls, dn, sub_schema, assertion_filter, read_attrs=None):
     # Build a list of attributes to be requested
     if not read_attrs:
         read_attrs = ldap0.cidict.cidict({'*': '*'})
-        read_attrs.update(ConfiguredConstantAttributes(ls))
-        read_attrs.update(AttributeTypeDict(ls, 'requested_attrs', []))
+        read_attrs.update(ConfiguredConstantAttributes(app))
+        read_attrs.update(AttributeTypeDict(app, 'requested_attrs', []))
 
     # Try to request information about which attributes are writeable by the bound identity
 
@@ -1071,22 +1071,22 @@ def ReadOldEntry(ls, dn, sub_schema, assertion_filter, read_attrs=None):
         ValueError('Invalid value for write_attrs_method')
 
     # Explicitly request attribute 'ref' if in manage DSA IT mode
-    if ls.l._get_server_ctrls('**all**').has_key(web2ldap.ldapsession.CONTROL_MANAGEDSAIT):
+    if app.ls.l._get_server_ctrls('**all**').has_key(web2ldap.ldapsession.CONTROL_MANAGEDSAIT):
         read_attrs['ref'] = 'ref'
 
     # Read the editable attribute values of entry
     try:
-        ldap_entry = ls.readEntry(
+        ldap_entry = app.ls.readEntry(
             dn,
             read_attrs.values(),
-            search_filter=(assertion_filter or u'(objectClass=*)').encode(ls.charset),
+            search_filter=(assertion_filter or u'(objectClass=*)').encode(app.ls.charset),
             no_cache=1,
             server_ctrls=server_ctrls or None,
         )[0][1]
     except IndexError:
         raise ldap0.NO_SUCH_OBJECT
 
-    entry = ldap0.schema.models.Entry(sub_schema, dn.encode(ls.charset), ldap_entry)
+    entry = ldap0.schema.models.Entry(sub_schema, dn.encode(app.ls.charset), ldap_entry)
 
     if write_attrs_method == WRITEABLE_ATTRS_NONE:
         # No method to determine writeable attributes was used
@@ -1259,7 +1259,7 @@ def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
         # Read objectclass(es) from input form
         entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].value]
 
-    old_entry, read_writeable_attr_oids = ReadOldEntry(app.ls, app.dn, app.schema, None)
+    old_entry, read_writeable_attr_oids = ReadOldEntry(app, app.dn, app.schema, None)
     if not entry:
         entry = old_entry
 
@@ -1342,7 +1342,7 @@ def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
     )
 
     app.outf.write('\n'.join((
-        app.form.hiddenFieldHTML('in_assertion', AssertionFilter(app.ls, entry), u''),
+        app.form.hiddenFieldHTML('in_assertion', AssertionFilter(app, entry), u''),
         '\n'.join([
             app.form.hiddenFieldHTML('in_oldattrtypes', at_name.decode('ascii'), u'')
             for at_name in app.form.getInputValue('in_oldattrtypes', entry.keys())

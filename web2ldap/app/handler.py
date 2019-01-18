@@ -23,7 +23,7 @@ import urllib
 from ipaddress import ip_address, ip_network
 
 import ldap0
-from ldap0.ldapurl import isLDAPUrl
+from ldap0.ldapurl import isLDAPUrl, LDAPUrl
 
 import web2ldapcnf
 import web2ldapcnf.hosts
@@ -162,6 +162,7 @@ class AppHandler(object):
         self.query_string = env.get('QUERY_STRING', '')
         self.ldap_url = None
         self.schema = None
+        self.cfg_key = None
         # initialize some more if query string is an LDAP URL
         if isLDAPUrl(self.query_string):
             self.ldap_url = ExtendedLDAPUrl(self.query_string)
@@ -185,7 +186,6 @@ class AppHandler(object):
         if self.ls:
             ldap_charset = self.ls.charset
             self.naming_context = self.ls.getSearchRoot(self._dn)
-            self.ls.setDN(self._dn)
         else:
             ldap_charset = 'utf-8'
             self.naming_context = u''
@@ -193,6 +193,14 @@ class AppHandler(object):
             'Expected class attribute naming_context to be unicode , was %r' % (self.naming_context)
         )
         self._ldap_dn = dn.encode(ldap_charset)
+
+    def cfg_param(self, param_key, default):
+        if self.ls and self.ls.uri:
+            cfg_url = LDAPUrl(self.ls.uri)
+        else:
+            cfg_url = LDAPUrl('ldap://')
+        cfg_url.dn = (self.naming_context or u'').encode('utf-8')
+        return web2ldap.app.cnf.ldap_def.get_param(cfg_url, param_key, default)
 
     @property
     def parent_dn(self):
@@ -279,6 +287,7 @@ class AppHandler(object):
                     self.ldap_url,
                 )
             )
+        logger.debug('%s.ldap_url is %s', self.__class__.__name__, self.ldap_url)
         logger.debug(
             'Dispatch command %r to function %s.%s()',
             self.command,
@@ -287,9 +296,9 @@ class AppHandler(object):
         )
         self.schema = self.ls.retrieveSubSchema(
             self.dn,
-            web2ldap.app.cnf.GetParam(self.ls, '_schema', None),
-            web2ldap.app.cnf.GetParam(self.ls, 'supplement_schema', None),
-            web2ldap.app.cnf.GetParam(self.ls, 'schema_strictcheck', True),
+            self.cfg_param('_schema', None),
+            self.cfg_param('supplement_schema', None),
+            self.cfg_param('schema_strictcheck', True),
         )
         COMMAND_FUNCTION[self.command](self)
         return # dispatch()
@@ -667,23 +676,19 @@ class AppHandler(object):
                    initializeUrl not in web2ldap.app.cnf.LDAP_URI_LIST_CHECK_DICT:
                     raise ErrorExit(u'Only pre-configured LDAP servers allowed.')
                 startTLSextop = self.ldap_url.get_starttls_extop(
-                    web2ldap.app.cnf.GetParam(
-                        self.ldap_url,
-                        'starttls',
-                        web2ldap.ldapsession.START_TLS_NO,
-                    )
+                    self.cfg_param('starttls', web2ldap.ldapsession.START_TLS_NO)
                 )
                 # Connect to new specified host
                 self.ls.open(
                     initializeUrl,
-                    web2ldap.app.cnf.GetParam(self.ldap_url, 'timeout', -1),
+                    self.cfg_param('timeout', -1),
                     startTLSextop,
                     self.env,
-                    web2ldap.app.cnf.GetParam(self.ldap_url, 'session_track_control', 0),
-                    tls_options=web2ldap.app.cnf.GetParam(self.ldap_url, 'tls_options', {}),
+                    self.cfg_param('session_track_control', 0),
+                    tls_options=self.cfg_param('tls_options', {}),
                 )
                 # Set host-/backend-specific timeout
-                self.ls.l.timeout = web2ldap.app.cnf.GetParam(self.ls, 'timeout', 60)
+                self.ls.l.timeout = self.cfg_param('timeout', 60)
                 # Store session data in case anything goes wrong after here
                 # to give the exception handler a good chance
                 session_store.storeSession(self.sid, self.ls)
@@ -706,7 +711,11 @@ class AppHandler(object):
                 [self.ldap_url.saslMech or '']
             )[0].upper() or None
 
-            if who is not None and cred is None and login_mech not in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
+            if (
+                    who is not None and
+                    cred is None and
+                    login_mech not in ldap0.sasl.SASL_NONINTERACTIVE_MECHS
+                ):
                 # first ask for password in a login form
                 web2ldap.app.login.w2l_login(
                     self,
@@ -716,7 +725,10 @@ class AppHandler(object):
                 )
                 return
 
-            elif (who is not None and cred is not None) or login_mech in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
+            elif (
+                    (who is not None and cred is not None) or
+                    login_mech in ldap0.sasl.SASL_NONINTERACTIVE_MECHS
+                ):
                 # real bind operation
                 login_search_root = self.form.getInputValue('login_search_root', [None])[0]
                 if who is not None and not web2ldap.ldaputil.base.is_dn(who) and login_search_root is None:
@@ -732,7 +744,7 @@ class AppHandler(object):
                         )) or None,
                         self.form.getInputValue('login_realm', [self.ldap_url.saslRealm])[0],
                         binddn_filtertemplate=self.form.getInputValue('login_filterstr', [ur'(uid=%s)'])[0],
-                        whoami_filtertemplate=web2ldap.app.cnf.GetParam(self.ls, 'binddnsearch', ur'(uid=%s)'),
+                        whoami_filtertemplate=self.cfg_param('binddnsearch', ur'(uid=%s)'),
                         loginSearchRoot=login_search_root,
                     )
                 except ldap0.NO_SUCH_OBJECT as e:
@@ -893,9 +905,7 @@ class AppHandler(object):
                             ('scope', str(ldap0.SCOPE_SUBTREE)),
                             (
                                 'filterstr',
-                                web2ldap.app.cnf.GetParam(
-                                    self.ls, 'binddnsearch', r'(uid=%s)'
-                                ).replace('%s', who),
+                                self.cfg_param('binddnsearch', r'(uid=%s)').replace('%s', who),
                             )
                         ]
                     ),

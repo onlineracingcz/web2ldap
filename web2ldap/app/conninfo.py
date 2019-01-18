@@ -218,7 +218,7 @@ def w2l_conninfo(app):
             ('ou=system', 'System'),
         ])
 
-    current_audit_context = app.ls.getAuditContext(app.ls.currentSearchRoot)
+    current_audit_context = app.ls.getAuditContext(app.naming_context)
     if not current_audit_context is None:
         context_menu_list.extend([
             app.anchor(

@@ -133,7 +133,7 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
         self.allResults.sort()
         # This should speed up things
         utf2display = self._app.form.utf2display
-        print_cols = web2ldap.app.cnf.GetParam(self._app.ls, 'print_cols', '4')
+        print_cols = self._app.cfg_param('print_cols', '4')
         table = []
         for r in self.allResults:
             if r[0] in is_search_result:
@@ -393,7 +393,7 @@ def w2l_search(app):
     search_resnumber = int(
         app.form.getInputValue(
             'search_resnumber',
-            [unicode(web2ldap.app.cnf.GetParam(app.ls, 'search_resultsperpage', 10))]
+            [unicode(app.cfg_param('search_resultsperpage', 10))]
         )[0]
     )
 
@@ -414,7 +414,7 @@ def w2l_search(app):
     else:
         filterstr2 = filterstr
 
-    requested_attrs = web2ldap.app.cnf.GetParam(app.ls, 'requested_attrs', [])
+    requested_attrs = app.cfg_param('requested_attrs', [])
 
     search_attrs = [
         a.strip().encode('ascii')
@@ -440,7 +440,7 @@ def w2l_search(app):
         read_attr_set.add('objectClass')
 
     if search_output == 'print':
-        print_template_filenames_dict = web2ldap.app.cnf.GetParam(app.ls, 'print_template', None)
+        print_template_filenames_dict = app.cfg_param('print_template', None)
         if print_template_filenames_dict is None:
             raise web2ldap.app.core.ErrorExit(u'No templates for printing defined.')
         print_template_str_dict = CaseinsensitiveStringKeyDict()
@@ -456,7 +456,7 @@ def w2l_search(app):
 
     elif search_output in {'table', 'raw'}:
 
-        search_tdtemplate = ldap0.cidict.cidict(web2ldap.app.cnf.GetParam(app.ls, 'search_tdtemplate', {}))
+        search_tdtemplate = ldap0.cidict.cidict(app.cfg_param('search_tdtemplate', {}))
         search_tdtemplate_keys = search_tdtemplate.keys()
         search_tdtemplate_attrs_lower = ldap0.cidict.cidict()
         for oc in search_tdtemplate_keys:

@@ -102,7 +102,7 @@ def SearchForm_base(app, searchform_template_name):
     Output basic search form based on a HTML template configured
     with host-specific configuration parameter searchform_template
     """
-    searchform_template_cfg = web2ldap.app.cnf.GetParam(app.ls, 'searchform_template', '')
+    searchform_template_cfg = app.cfg_param('searchform_template', '')
     assert isinstance(searchform_template_cfg, dict), \
         TypeError("Host-specific parameter 'searchform_template' has invalid type")
     searchform_template = searchform_template_cfg.get(searchform_template_name, None)
@@ -158,7 +158,7 @@ def SearchForm_adv(app):
         'search_attr',
         u'Search attribute type',
         search_attr_list,
-        default_attr_options=web2ldap.app.cnf.GetParam(app.ls, 'search_attrs', [])
+        default_attr_options=app.cfg_param('search_attrs', [])
     )
 
     mr_list = [u'']
@@ -225,7 +225,7 @@ def w2l_searchform(
     searchform_mode = searchform_mode or app.form.getInputValue('searchform_mode', [u'base'])[0]
     searchform_template_name = app.form.getInputValue('searchform_template', [u'_'])[0]
 
-    naming_contexts = web2ldap.app.cnf.GetParam(app.ls, 'naming_contexts', None)
+    naming_contexts = app.cfg_param('naming_contexts', None)
 
     search_root = app.form.getInputValue(
         'search_root',
@@ -234,7 +234,7 @@ def w2l_searchform(
     search_root_field = web2ldap.app.gui.SearchRootField(
         app,
         name='search_root',
-        search_root_searchurl=web2ldap.app.cnf.GetParam(app.ls, 'searchform_search_root_url', None),
+        search_root_searchurl=app.cfg_param('searchform_search_root_url', None),
         naming_contexts=naming_contexts,
     )
     search_root_field.setDefault(search_root)
@@ -254,7 +254,7 @@ def w2l_searchform(
         if mode != searchform_mode
     ]
 
-    searchform_template_cfg = web2ldap.app.cnf.GetParam(app.ls, 'searchform_template', '')
+    searchform_template_cfg = app.cfg_param('searchform_template', '')
     if isinstance(searchform_template_cfg, dict):
         for sftn in searchform_template_cfg.keys():
             if sftn != '_':
@@ -289,7 +289,7 @@ def w2l_searchform(
         inner_searchform_html = SearchForm_adv(app)
 
     searchoptions_template_filename = web2ldap.app.gui.GetVariantFilename(
-        web2ldap.app.cnf.GetParam(app.ls, 'searchoptions_template', None),
+        app.cfg_param('searchoptions_template', None),
         app.form.accept_language
     )
     searchoptions_template_str = open(searchoptions_template_filename, 'r').read()
@@ -331,7 +331,7 @@ def w2l_searchform(
                     default=app.form.getInputValue('scope', [unicode(scope)])[0]
                 ),
                 field_search_resnumber=app.form.field['search_resnumber'].inputHTML(
-                    default=unicode(web2ldap.app.cnf.GetParam(app.ls, 'search_resultsperpage', 10))
+                    default=unicode(app.cfg_param('search_resultsperpage', 10))
                 ),
                 field_search_lastmod=app.form.field['search_lastmod'].inputHTML(
                     default=app.form.getInputValue('search_lastmod', [unicode(-1)])[0]

@@ -452,7 +452,7 @@ def w2l_bulkmod(app):
                                 ldap_dn,
                                 old_rdn,
                                 new_superior=bulkmod_newsuperior,
-                                delold=web2ldap.app.cnf.GetParam(app.ls, 'bulkmod_delold', 0),
+                                delold=app.cfg_param('bulkmod_delold', 0),
                             )
                     except ldap0.LDAPError as e:
                         ldap_error_html.append(

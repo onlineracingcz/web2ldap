@@ -86,7 +86,7 @@ def GetVariantFilename(pathname, variantlist):
 
 def ReadTemplate(app, config_key, form_desc=u'', tmpl_filename=None):
     if not tmpl_filename:
-        tmpl_filename = web2ldap.app.cnf.GetParam(app.ls or '_', config_key, None)
+        tmpl_filename = app.cfg_param(config_key, None)
     if not tmpl_filename:
         raise web2ldap.app.core.ErrorExit(u'No template specified for %s.' % (form_desc))
     tmpl_filename = web2ldap.app.gui.GetVariantFilename(tmpl_filename, app.form.accept_language)
@@ -250,7 +250,7 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
             )
         )
 
-    current_audit_context = app.ls.getAuditContext(app.ls.currentSearchRoot)
+    current_audit_context = app.ls.getAuditContext(app.naming_context)
     if not current_audit_context is None:
         accesslog_any_filterstr = logdb_filter(u'auditObject', app.dn, entry_uuid)
         accesslog_write_filterstr = logdb_filter(u'auditWriteObject', app.dn, entry_uuid)
@@ -327,13 +327,7 @@ def WhoAmITemplate(app, who=None, entry=None):
         # Fall-back is to display the DN
         result = DisplayDN(app, who, commandbutton=False)
         # Determine relevant templates dict
-        bound_as_templates = ldap0.cidict.cidict(
-            web2ldap.app.cnf.GetParam(
-                app.ls.ldapUrl(app.ls.getSearchRoot(who)),
-                'boundas_template',
-                {}
-            )
-        )
+        bound_as_templates = ldap0.cidict.cidict(app.cfg_param('boundas_template', {}))
         # Read entry if necessary
         if entry is None:
             read_attrs = set(['objectClass'])
@@ -508,7 +502,7 @@ def TopSection(
         template_dict.update({
             'ldap_url': app.ls.ldapUrl(app.dn),
             'ldap_uri': app.form.utf2display(app.ls.uri.decode('ascii')),
-            'description': escape_html(web2ldap.app.cnf.GetParam(app.ls, 'description', u'').encode(app.form.accept_charset)),
+            'description': escape_html(app.cfg_param('description', u'').encode(app.form.accept_charset)),
             'dit_navi': ',\n'.join(DITNavigationList(app)),
             'dn': app.form.utf2display(app.dn),
         })
@@ -746,8 +740,8 @@ def SearchRootField(
     dn_select_list.sort(key=sortkey_func)
     srf = web2ldap.web.forms.Select(
         name, text, 1,
-        #size=60,
-        default=default or app.ls.getSearchRoot(app.dn or u''),
+        size=1,
+        default=default or app.naming_context,
         options=dn_select_list,
         ignoreCase=1
     )

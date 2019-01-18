@@ -40,15 +40,17 @@ import web2ldap.app.schema
 class Web2LDAPConfigDict(cidict):
 
     @staticmethod
-    def _normalize_key(key):
+    def normalize_key(key):
         """Returns a normalized string for an LDAP URL"""
-        if isinstance(key, LDAPSession):
-            if key.uri is None:
+        if isinstance(key, str):
+            if key == '_':
                 return '_'
-            else:
-                base_dn = key.currentSearchRoot.encode(key.charset)
-                key = LDAPUrl(ldapUrl=key.uri)
-                key.dn = base_dn
+            key = key.strip()
+            key = LDAPUrl(key)
+            key.attrs = None
+            key.filterstr = None
+            key.scope = None
+            key.extensions = None
         elif isinstance(key, LDAPUrl):
             key = LDAPUrl(
                 urlscheme=key.urlscheme.lower(),
@@ -61,15 +63,6 @@ class Web2LDAPConfigDict(cidict):
                 who=None,
                 cred=None
             )
-        elif isinstance(key, str):
-            if key == '_':
-                return '_'
-            key = key.strip()
-            key = LDAPUrl(key)
-            key.attrs = None
-            key.filterstr = None
-            key.scope = None
-            key.extensions = None
         else:
             raise TypeError("Invalid type of argument 'key': %s" % (type(key)))
         try:
@@ -84,19 +77,19 @@ class Web2LDAPConfigDict(cidict):
         return result
 
     def __getitem__(self, key):
-        return cidict.__getitem__(self, self._normalize_key(key))
+        return cidict.__getitem__(self, self.normalize_key(key))
 
     def __delitem__(self, key):
-        return cidict.__delitem__(self, self._normalize_key(key))
+        return cidict.__delitem__(self, self.normalize_key(key))
 
     def __setitem__(self, key, value):
-        return cidict.__setitem__(self, self._normalize_key(key), value)
+        return cidict.__setitem__(self, self.normalize_key(key), value)
 
     def has_key(self, key):
-        return cidict.has_key(self, self._normalize_key(key))
+        return cidict.has_key(self, self.normalize_key(key))
 
     def get_param(self, backend_key, param_key, default):
-        lu_key = self._normalize_key(backend_key or '_')
+        lu_key = self.normalize_key(backend_key or '_')
         try:
             return self[lu_key].__dict__[param_key]
         except KeyError:
@@ -130,11 +123,3 @@ def set_target_check_dict(ldap_uri_list):
 
 # Set up configuration for restricting access to the preconfigured LDAP URI list
 LDAP_URI_LIST_CHECK_DICT = set_target_check_dict(web2ldapcnf.hosts.ldap_uri_list)
-
-
-def GetParam(ls, k, default):
-    """
-    Get a parameter determined by string-key k
-    depending on current ls
-    """
-    return ldap_def.get_param(ls, k, default)

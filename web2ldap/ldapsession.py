@@ -454,6 +454,7 @@ class LDAPSession(object):
 
     def __init__(self, onBehalf, traceLevel, cache_ttl):
         """Initialize a LDAPSession object"""
+        self.l = None
         # Set to not connected
         self.uri = None
         self.namingContexts = None
@@ -689,7 +690,7 @@ class LDAPSession(object):
 
         naming_contexts is used if not None and LDAPSession.namingContexts is empty
         """
-        if self.namingContexts is None and hasattr(self, 'l'):
+        if self.namingContexts is None and self.l is not None:
             self.init_rootdse()
         return web2ldap.ldaputil.base.match_dnlist(
             dn,
