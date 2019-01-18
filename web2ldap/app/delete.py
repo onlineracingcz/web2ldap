@@ -143,7 +143,6 @@ class DeleteLeafs(web2ldap.ldaputil.async.AsyncSearchHandler):
                 'numAllSubordinates',
                 'msDS-Approx-Immed-Subordinates',
             ],
-            attrsOnly=0,
         )
 
     def _processSingleResult(self, resultType, resultItem):
@@ -227,7 +226,7 @@ def delete_entries(
         while time.time() <= end_time:
             try:
                 leafs_deleter.startSearch(dn, scope, filterStr=delete_filter)
-                leafs_deleter.processResults(timeout=app.ls.timeout)
+                leafs_deleter.processResults()
             except ldap0.NO_SUCH_OBJECT:
                 break
             except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
@@ -247,7 +246,7 @@ def delete_entries(
                 continue
             try:
                 leafs_deleter.startSearch(dn, ldap0.SCOPE_SUBTREE, filterStr=delete_filter)
-                leafs_deleter.processResults(timeout=app.ls.timeout)
+                leafs_deleter.processResults()
             except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
                 deleted_entries_count += leafs_deleter.deletedEntries
                 non_leaf_entries.add(dn)

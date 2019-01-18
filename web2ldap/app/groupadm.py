@@ -206,7 +206,6 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             ldap0.SCOPE_SUBTREE,
             all_group_filterstr,
             attrlist=REQUESTED_GROUP_ATTRS,
-            timeout=app.ls.timeout,
         )
         for res in app.ls.l.results(msg_id):
             for group_dn, group_entry in res.data:
@@ -336,7 +335,6 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             ldap0.SCOPE_SUBTREE,
             remove_group_filterstr,
             attrlist=REQUESTED_GROUP_ATTRS,
-            timeout=app.ls.timeout,
         )
         for res in app.ls.l.results(msg_id):
             for group_dn, group_entry in res.data:

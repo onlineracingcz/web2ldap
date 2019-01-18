@@ -128,8 +128,8 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
         self._p = print_template_str_dict
         return # __init__()
 
-    def processResults(self, ignoreResultsNumber=0, processResultsCount=0, timeout=-1):
-        web2ldap.ldaputil.async.List.processResults(self, timeout=timeout)
+    def processResults(self, ignoreResultsNumber=0, processResultsCount=0):
+        web2ldap.ldaputil.async.List.processResults(self)
         self.allResults.sort()
         # This should speed up things
         utf2display = self._app.form.utf2display
@@ -540,7 +540,6 @@ def w2l_search(app):
             scope,
             filterstr2.encode(app.ls.charset),
             attrList=[a.encode(app.ls.charset) for a in read_attrs or []] or None,
-            attrsOnly=0,
             sizelimit=search_size_limit
         )
     except (
@@ -572,7 +571,7 @@ def w2l_search(app):
 
         try:
             result_handler.processResults(
-                search_resminindex, search_resnumber+int(search_resnumber > 0), timeout=app.ls.timeout
+                search_resminindex, search_resnumber+int(search_resnumber > 0)
             )
         except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED) as e:
             if search_size_limit < 0 or result_handler.endResultBreak < search_size_limit:
@@ -1092,7 +1091,7 @@ def w2l_search(app):
     else:
 
         try:
-            result_handler.processResults(timeout=app.ls.timeout)
+            result_handler.processResults()
         except (
                 ldap0.SIZELIMIT_EXCEEDED,
                 ldap0.ADMINLIMIT_EXCEEDED,

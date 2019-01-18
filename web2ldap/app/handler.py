@@ -39,7 +39,6 @@ from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 from web2ldap.ldapsession import LDAPSession
 from web2ldap.log import logger, log_exception
 # Import the application modules
-import web2ldap.app.core
 import web2ldap.app.gui
 import web2ldap.app.cnf
 import web2ldap.app.passwd
@@ -129,6 +128,9 @@ COMMAND_FUNCTION = {
     'oid': web2ldap.app.schema.viewer.w2l_schema_viewer,
 }
 
+# Set up configuration for restricting access to the preconfigured LDAP URI list
+LDAP_URI_LIST_CHECK_DICT = web2ldap.app.cnf.set_target_check_dict(web2ldapcnf.hosts.ldap_uri_list)
+
 syntax_registry.check()
 
 
@@ -207,11 +209,16 @@ class AppHandler(object):
         """
         Build the HTML text of a anchor with form parameters
         """
-        assert isinstance(command, bytes), TypeError('command must be string, but was %r', command)
-        assert isinstance(anchor_text, bytes), TypeError('anchor_text must be string, but was %r', anchor_text)
-        assert anchor_id is None or isinstance(anchor_id, unicode), TypeError('anchor_id must be None or unicode, but was %r', anchor_id)
-        assert target is None or isinstance(target, str), TypeError('target must be None or string, but was %r', target)
-        assert title is None or isinstance(title, unicode), TypeError('title must be None or unicode, but was %r', title)
+        assert isinstance(command, bytes), \
+            TypeError('command must be string, but was %r', command)
+        assert isinstance(anchor_text, bytes), \
+            TypeError('anchor_text must be string, but was %r', anchor_text)
+        assert anchor_id is None or isinstance(anchor_id, unicode), \
+            TypeError('anchor_id must be None or unicode, but was %r', anchor_id)
+        assert target is None or isinstance(target, str), \
+            TypeError('target must be None or string, but was %r', target)
+        assert title is None or isinstance(title, unicode), \
+            TypeError('title must be None or unicode, but was %r', title)
         target_attr = ''
         if target:
             target_attr = ' target="%s"' % (target)
@@ -434,7 +441,9 @@ class AppHandler(object):
                 conntype = int(self.form.getInputValue('conntype', [0])[0])
                 input_ldapurl.urlscheme = CONNTYPE2URLSCHEME[conntype]
                 input_ldapurl.hostport = self.form.getInputValue('host', [None])[0]
-                input_ldapurl.x_startTLS = str(web2ldap.ldapsession.START_TLS_REQUIRED * (conntype == 1))
+                input_ldapurl.x_startTLS = str(
+                    web2ldap.ldapsession.START_TLS_REQUIRED * (conntype == 1)
+                )
 
         # Separate parameters for dn, who, cred and scope
         # have predecence over parameters specified in LDAP URL
@@ -504,7 +513,9 @@ class AppHandler(object):
             error_msg = u''
         elif isinstance(ldap_err, ldap0.INVALID_CREDENTIALS) and \
             AD_LDAP49_ERROR_PREFIX in ldap_err.args[0].get('info', ''):
-            ad_error_code_pos = ldap_err.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
+            ad_error_code_pos = (
+                ldap_err.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
+            )
             ad_error_code = int(ldap_err.args[0]['info'][ad_error_code_pos:ad_error_code_pos+3], 16)
             error_msg = u'%s:\n%s (%s)' % (
                 ldap_err.args[0]['desc'].decode(self.ls.charset),
@@ -644,10 +655,14 @@ class AppHandler(object):
                 session_store.storeSession(self.sid, self.ls)
                 # Check whether access to target LDAP server is allowed
                 if web2ldapcnf.hosts.restricted_ldap_uri_list and \
-                   initializeUrl not in web2ldap.app.core.ldap_uri_list_check_dict:
+                   initializeUrl not in LDAP_URI_LIST_CHECK_DICT:
                     raise ErrorExit(u'Only pre-configured LDAP servers allowed.')
                 startTLSextop = self.ldap_url.get_starttls_extop(
-                    web2ldap.app.cnf.GetParam(self.ldap_url, 'starttls', web2ldap.ldapsession.START_TLS_NO)
+                    web2ldap.app.cnf.GetParam(
+                        self.ldap_url,
+                        'starttls',
+                        web2ldap.ldapsession.START_TLS_NO,
+                    )
                 )
                 # Connect to new specified host
                 self.ls.open(
@@ -659,7 +674,7 @@ class AppHandler(object):
                     tls_options=web2ldap.app.cnf.GetParam(self.ldap_url, 'tls_options', {}),
                 )
                 # Set host-/backend-specific timeout
-                self.ls.timeout = self.ls.l.timeout = web2ldap.app.cnf.GetParam(self.ls, 'timeout', 60)
+                self.ls.l.timeout = web2ldap.app.cnf.GetParam(self.ls, 'timeout', 60)
                 # Store session data in case anything goes wrong after here
                 # to give the exception handler a good chance
                 session_store.storeSession(self.sid, self.ls)

@@ -63,8 +63,6 @@ class AsyncSearchHandler:
             searchScope,
             filterStr,
             attrList=None,
-            attrsOnly=0,
-            timeout=-1,
             sizelimit=0,
             serverctrls=None,
         ):
@@ -77,10 +75,6 @@ class AsyncSearchHandler:
             See parameter filter of method LDAPObject.search()
         attrList=None
             See parameter attrlist of method LDAPObject.search()
-        attrsOnly
-            See parameter attrsonly of method LDAPObject.search()
-        timeout
-            Maximum time the server shall use for search operation
         sizelimit
             Maximum number of entries a server should return
             (request client-side limit)
@@ -88,8 +82,12 @@ class AsyncSearchHandler:
             list of server-side LDAP controls
         """
         self._msg_id = self._l.search(
-            searchRoot, searchScope, filterStr,
-            attrList, attrsOnly, serverctrls, timeout, sizelimit
+            searchRoot,
+            scope=searchScope,
+            filterstr=filterStr,
+            attrlist=attrList,
+            serverctrls=serverctrls,
+            sizelimit=sizelimit,
         )
         self._afterFirstResult = 1
         return # startSearch()
@@ -115,7 +113,6 @@ class AsyncSearchHandler:
             self,
             ignoreResultsNumber=0,
             processResultsCount=0,
-            timeout=-1,
         ):
         """
         ignoreResultsNumber
@@ -123,8 +120,6 @@ class AsyncSearchHandler:
         processResultsCount
             If non-zero this parameters indicates the number of results
             processed is limited to processResultsCount.
-        timeout
-            See parameter timeout of ldap0.LDAPObject.result()
         """
         self.preProcessing()
         result_counter = 0
@@ -137,11 +132,7 @@ class AsyncSearchHandler:
             result = LDAPResult(None, None, None, None)
             while go_ahead:
                 while result.rtype is None and not result.data:
-                    result = self._l.result(
-                        self._msg_id,
-                        0,
-                        timeout
-                    )
+                    result = self._l.result(self._msg_id, 0)
                     if self._afterFirstResult:
                         self.afterFirstResult()
                         self._afterFirstResult = 0

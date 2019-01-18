@@ -123,6 +123,8 @@ LDAPLimitErrors = (
     ldap0.ADMINLIMIT_EXCEEDED,
 )
 
+LDAP_DEFAULT_TIMEOUT = 60
+
 COUNT_TIMEOUT = 5.0
 
 PYLDAP_RETRY_MAX = 8
@@ -392,8 +394,6 @@ class LDAPSession(object):
         self.startTLSOption = 0
         self.schema_dn_cache = {}
         self.schema_cache = {}
-        # Default timeout 60 seconds
-        self.timeout = 60
         # Supports feature described in draft-zeilenga-ldap-opattrs
         self.supportsAllOpAttr = 0
         # IP adress, host name or other free form information
@@ -455,7 +455,9 @@ class LDAPSession(object):
                 )
                 self.uri = uri
                 self.setTLSOptions(tls_options)
-                self.l.set_option(ldap0.OPT_NETWORK_TIMEOUT, self.timeout)
+                # Default timeout 60 seconds
+                self.l.set_option(ldap0.OPT_TIMEOUT, LDAP_DEFAULT_TIMEOUT)
+                self.l.set_option(ldap0.OPT_NETWORK_TIMEOUT, LDAP_DEFAULT_TIMEOUT)
                 self.who = None
             except ldap0.SERVER_DOWN:
                 # Remove current host from list
@@ -496,7 +498,6 @@ class LDAPSession(object):
             uri_list = uri
         else:
             raise TypeError("Parameter uri must be either list of strings or single string.")
-        self.timeout = timeout
         self._initialize(uri_list, tls_options)
         if enableSessionTracking:
             session_tracking_ctrl = SessionTrackingControl(
@@ -673,7 +674,6 @@ class LDAPSession(object):
             self.uc_encode(dn)[0],
             '(objectClass=*)',
             subordinate_attrs,
-            timeout=self.timeout
         )
         hasSubordinates = numSubordinates = numAllSubordinates = numSubordinates_attr = None
         if entry:
@@ -717,13 +717,12 @@ class LDAPSession(object):
                 ldap0.SCOPE_ONELEVEL,
                 '(objectClass=*)',
                 ['1.1'],
-                timeout=self.timeout,
                 sizelimit=1
             )
 
             ldap_result = (None, None)
             while ldap_result == (None, None):
-                ldap_result = self.l.result(ldap_msgid, 0, self.timeout)
+                ldap_result = self.l.result(ldap_msgid, 0)
             self.l.abandon(ldap_msgid)
             hasSubordinates = len(ldap_result) > 0
         if SearchNoOpControl.controlType in self.rootDSE.get('supportedControl', []):
@@ -838,7 +837,6 @@ class LDAPSession(object):
             self.uc_encode(search_filter)[0],
             attrlist=attrtype_list,
             attrsonly=only_attrtypes,
-            timeout=self.timeout,
             cache_ttl={True:0, False:None}[no_cache],
             serverctrls=server_ctrls,
         )
@@ -1001,7 +999,6 @@ class LDAPSession(object):
                 ldap0.SCOPE_SUBTREE,
                 self.uc_encode(searchfilter)[0],
                 attrlist=['1.1'],
-                timeout=self.timeout,
                 sizelimit=2
             )
         except ldap0.SIZELIMIT_EXCEEDED:
