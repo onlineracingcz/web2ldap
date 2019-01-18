@@ -363,7 +363,7 @@ class AEUserUid(AEUid):
         raise web2ldap.app.core.ErrorExit(
             u'Gave up generating new unique <em>uid</em> after %d attempts.' % (gen_collisions)
         )
-        return  # _genUid()
+        # end of _genUid()
 
     def formValue(self):
         form_value = IA5String.formValue(self)
@@ -2364,20 +2364,20 @@ class AEDirLDAPSession(LDAPSessionOrig):
     binddn_tmpl = u'uid={username},{searchroot}'
 
     def getBindDN(self, username, searchroot, filtertemplate):
-      """
-      if username is not a bind-DN this returns a composed
-      bind-DN based in fixed AE-DIR search root
-      """
-      # if present prefer to get searchroot from rootDSE attribute aeRoot
-      searchroot = self.rootDSE.get(
-          'aeRoot',
-          [searchroot.encode(self.charset)]
-      )[0].decode(self.charset)
-      if not username:
-          return u''
-      elif web2ldap.ldaputil.base.is_dn(username):
-          return username
-      return self.binddn_tmpl.format(
-          username=username,
-          searchroot=searchroot,
-      )
+        """
+        if username is not a bind-DN this returns a composed
+        bind-DN based in fixed AE-DIR search root
+        """
+        # if present prefer to get searchroot from rootDSE attribute aeRoot
+        searchroot = self.rootDSE.get(
+            'aeRoot',
+            [searchroot.encode(self.charset)]
+        )[0].decode(self.charset)
+        if not username:
+            return u''
+        elif web2ldap.ldaputil.base.is_dn(username):
+            return username
+        return self.binddn_tmpl.format(
+            username=username,
+            searchroot=searchroot,
+        )
