@@ -161,7 +161,13 @@ class AppHandler(object):
         self.form = None
         self.ls = None
         self.naming_context = self._ldap_dn = self._dn = self._parent_dn = None
+        self.query_string = env.get('QUERY_STRING', '')
         self.ldap_url = None
+        # initialize some more if query string is an LDAP URL
+        if isLDAPUrl(self.query_string):
+            self.ldap_url = ExtendedLDAPUrl(self.query_string)
+            if not self.command:
+                self.command = SCOPE2COMMAND[self.ldap_url.scope]
         return
 
     @property
@@ -577,10 +583,8 @@ class AppHandler(object):
             if not check_access(self.env, self.command):
                 raise ErrorExit(u'Access denied.')
 
-            # handle the early-exit commands
-            if isLDAPUrl(self.form.query_string):
-                self.command = ''
-            elif self.command in {'', 'urlredirect', 'monitor', 'locate'}:
+            # Handle simple early-exit commands
+            if self.command in {'', 'urlredirect', 'monitor', 'locate'}:
                 COMMAND_FUNCTION[self.command](self)
                 return
 
