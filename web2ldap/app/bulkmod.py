@@ -30,6 +30,52 @@ from web2ldap.app.schema.syntaxes import syntax_registry, LDAPSyntaxValueError
 from web2ldap.app.modify import modlist_ldif
 
 
+BULKMOD_CONFIRMATION_FORM_TMPL = """
+{form_begin}
+<p class="WarningMessage">
+  Apply changes to entries found with search?
+</p>
+<table>
+  <tr>
+    <td>Search base:</td><td>{field_hidden_dn}</td>
+  </tr>
+  <tr>
+    <td>Search scope:</td><td>{field_hidden_scope}</td>
+  </tr>
+  <tr>
+    <td>Search filter:</td>
+    <td>
+      {field_hidden_filterstr}
+    </td>
+  </tr>
+  <tr>
+    <td># affected entries / referrals:</td>
+    <td>
+      {num_entries} / {num_referrals}
+    </td>
+  </tr>
+</table>
+<dl>
+  <dt>LDIF change record:</dt>
+  <dd>
+    {text_ldifchangerecord}
+  </dd>
+  <dt>
+    <strong>{text_bulkmod_cp}</strong> all entries beneath this new superior DN:
+  </dt>
+  <dd><strong>{field_bulkmod_newsuperior}</strong></dd>
+  <dt>Additional extended controls to be used:</dt>
+  <dd><ul>{field_bulkmod_ctrl}<ul></dd>
+</dl>
+{hidden_fields}
+<p class="WarningMessage">Are you sure?</p>
+<input type="submit" name="bulkmod_submit" value="&lt;&lt;Back">
+<input type="submit" name="bulkmod_submit" value="Apply">
+<input type="submit" name="bulkmod_submit" value="Cancel">
+'</form>
+"""
+
+
 def input_modlist(app, bulkmod_at, bulkmod_op, bulkmod_av):
 
     mod_dict = {}
@@ -243,50 +289,7 @@ def bulkmod_confirmation_form(
         main_div_id='Input',
     )
     app.outf.write(
-        """
-        {form_begin}
-        <p class="WarningMessage">
-          Apply changes to entries found with search?
-        </p>
-        <table>
-          <tr>
-            <td>Search base:</td><td>{field_hidden_dn}</td>
-          </tr>
-          <tr>
-            <td>Search scope:</td><td>{field_hidden_scope}</td>
-          </tr>
-          <tr>
-            <td>Search filter:</td>
-            <td>
-              {field_hidden_filterstr}
-            </td>
-          </tr>
-          <tr>
-            <td># affected entries / referrals:</td>
-            <td>
-              {num_entries} / {num_referrals}
-            </td>
-          </tr>
-        </table>
-        <dl>
-          <dt>LDIF change record:</dt>
-          <dd>
-            {text_ldifchangerecord}
-          </dd>
-          <dt>
-            <strong>{text_bulkmod_cp}</strong> all entries beneath this new superior DN:
-          </dt>
-          <dd><strong>{field_bulkmod_newsuperior}</strong></dd>
-          <dt>Additional extended controls to be used:</dt>
-          <dd><ul>{field_bulkmod_ctrl}<ul></dd>
-        </dl>
-        {hidden_fields}
-        <p class="WarningMessage">Are you sure?</p>
-        <input type="submit" name="bulkmod_submit" value="&lt;&lt;Back">
-        <input type="submit" name="bulkmod_submit" value="Apply">
-        <input type="submit" name="bulkmod_submit" value="Cancel">
-        '</form>
-        """.format(
+        BULKMOD_CONFIRMATION_FORM_TMPL.format(
             form_begin=app.form.beginFormHTML('bulkmod', app.sid, 'POST'),
             field_bulkmod_ctrl='\n'.join([
                 '<li>%s (%s)</li>' % (
