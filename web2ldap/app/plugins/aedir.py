@@ -345,7 +345,7 @@ class AEUserUid(AEUid):
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry=entry)
 
-    def _genUid(self):
+    def _gen_uid(self):
         gen_collisions = 0
         while gen_collisions < self.maxCollisionChecks:
             # generate new random UID candidate
@@ -363,12 +363,12 @@ class AEUserUid(AEUid):
         raise web2ldap.app.core.ErrorExit(
             u'Gave up generating new unique <em>uid</em> after %d attempts.' % (gen_collisions)
         )
-        # end of _genUid()
+        # end of _gen_uid()
 
     def formValue(self):
         form_value = IA5String.formValue(self)
         if not self.attrValue:
-            form_value = self._genUid().decode()
+            form_value = self._gen_uid().decode()
         return form_value
 
     def formField(self):
@@ -1386,7 +1386,7 @@ class AEDerefAttribute(DirectoryString):
     deref_attribute_type = None
     deref_filter_tmpl = '(&(objectClass={deref_object_class})(aeStatus=0)({attribute_type}=*))'
 
-    def _readPersonAttribute(self):
+    def _read_person_attr(self):
         try:
             ldap_result = self._app.ls.readEntry(
                 self._entry[self.deref_attribute_type][0].decode(self._app.ls.charset),
@@ -1408,7 +1408,7 @@ class AEDerefAttribute(DirectoryString):
 
     def transmute(self, attrValues):
         if self.deref_attribute_type in self._entry:
-            ae_person_attribute = self._readPersonAttribute()
+            ae_person_attribute = self._read_person_attr()
             if ae_person_attribute is not None:
                 result = [ae_person_attribute.encode(self._app.ls.charset)]
             else:
