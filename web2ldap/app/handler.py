@@ -18,7 +18,6 @@ import inspect
 import socket
 import errno
 import time
-import urlparse
 import urllib
 
 from ipaddress import ip_address, ip_network
@@ -62,6 +61,7 @@ import web2ldap.app.referral
 import web2ldap.app.monitor
 import web2ldap.app.groupadm
 import web2ldap.app.rename
+import web2ldap.app.urlredirect
 import web2ldap.app.bulkmod
 import web2ldap.app.srvrr
 import web2ldap.app.schema.viewer
@@ -87,12 +87,7 @@ CONNTYPE2URLSCHEME = {
     3: 'ldapi',
 }
 
-FORM_CLASS = {
-    '': Web2LDAPForm,
-    'monitor': Web2LDAPForm,
-    'urlredirect': Web2LDAPForm,
-    'disconnect': Web2LDAPForm,
-}
+FORM_CLASS = {}
 logger.debug('Registering Form classes')
 for _, cls in inspect.getmembers(sys.modules['web2ldap.app.form'], inspect.isclass):
     if cls.__name__.startswith('Web2LDAPForm_') and cls.command is not None:
@@ -110,6 +105,29 @@ SIMPLE_MSG_HTML = """
 </html>
 """
 
+COMMAND_FUNCTION = {
+    '': web2ldap.app.connect.w2l_connect,
+    'disconnect': None,
+    'locate': web2ldap.app.locate.w2l_locate,
+    'monitor': web2ldap.app.monitor.w2l_monitor,
+    'urlredirect': web2ldap.app.urlredirect.w2l_urlredirect,
+    'searchform': web2ldap.app.searchform.w2l_searchform,
+    'search': web2ldap.app.search.w2l_search,
+    'add': web2ldap.app.add.w2l_add,
+    'modify': web2ldap.app.modify.w2l_modify,
+    'dds': web2ldap.app.dds.w2l_dds,
+    'bulkmod': web2ldap.app.bulkmod.w2l_bulkmod,
+    'delete': web2ldap.app.delete.w2l_delete,
+    'dit': web2ldap.app.dit.w2l_dit,
+    'rename': web2ldap.app.rename.w2l_rename,
+    'passwd': web2ldap.app.passwd.w2l_passwd,
+    'read': web2ldap.app.read.w2l_read,
+    'conninfo': web2ldap.app.conninfo.w2l_conninfo,
+    'ldapparams': web2ldap.app.ldapparams.w2l_ldapparams,
+    'login': web2ldap.app.login.w2l_login,
+    'groupadm': web2ldap.app.groupadm.w2l_groupadm,
+    'oid': web2ldap.app.schema.viewer.w2l_schema_viewer,
+}
 
 syntax_registry.check()
 
@@ -249,38 +267,13 @@ class AppHandler(object):
                     self.ldap_url,
                 )
             )
-        if self.command == 'searchform':
-            web2ldap.app.searchform.w2l_searchform(self)
-        elif self.command == 'search':
-            web2ldap.app.search.w2l_search(self)
-        elif self.command == 'add':
-            web2ldap.app.add.w2l_add(self)
-        elif self.command == 'modify':
-            web2ldap.app.modify.w2l_modify(self)
-        elif self.command == 'dds':
-            web2ldap.app.dds.w2l_dds(self)
-        elif self.command == 'bulkmod':
-            web2ldap.app.bulkmod.w2l_bulkmod(self)
-        elif self.command == 'delete':
-            web2ldap.app.delete.w2l_delete(self)
-        elif self.command == 'dit':
-            web2ldap.app.dit.w2l_dit(self)
-        elif self.command == 'rename':
-            web2ldap.app.rename.w2l_rename(self)
-        elif self.command == 'passwd':
-            web2ldap.app.passwd.w2l_passwd(self)
-        elif self.command == 'read':
-            web2ldap.app.read.w2l_read(self)
-        elif self.command == 'conninfo':
-            web2ldap.app.conninfo.w2l_conninfo(self)
-        elif self.command == 'ldapparams':
-            web2ldap.app.ldapparams.w2l_ldapparams(self)
-        elif self.command == 'login':
-            web2ldap.app.login.w2l_login(self)
-        elif self.command == 'groupadm':
-            web2ldap.app.groupadm.w2l_groupadm(self)
-        elif self.command == 'oid':
-            web2ldap.app.schema.viewer.w2l_schema_viewer(self)
+        logger.debug(
+            'Dispatch command %r to function %s.%s()',
+            self.command,
+            COMMAND_FUNCTION[self.command].__module__,
+            COMMAND_FUNCTION[self.command].__name__,
+        )
+        COMMAND_FUNCTION[self.command](self)
         return # dispatch()
 
     @staticmethod
@@ -341,40 +334,6 @@ class AppHandler(object):
             )
         )
         return # url_redirect()
-
-    def _handle_urlredirect(self):
-        # accept configured trusted redirect targets no matter what
-        redirect_ok = self.form.query_string in web2ldapcnf.good_redirect_targets
-        if not redirect_ok:
-            # Check for valid target URL syntax
-            try:
-                tu = urlparse.urlparse(self.form.query_string)
-            except:
-                redirect_ok = False
-                error_msg = u'Rejected non-parseable redirect URL!'
-            else:
-                redirect_ok = True
-                # further checks
-                if not tu or not tu.scheme or not tu.netloc:
-                    redirect_ok = False
-                    error_msg = u'Rejected malformed/suspicious redirect URL!'
-                # Check for valid session
-                if self.sid not in session_store.sessiondict:
-                    redirect_ok = False
-                    error_msg = u'Rejected redirect without session-ID!'
-        # finally send return redirect to browser
-        if redirect_ok:
-            # URL redirecting has absolutely nothing to do with rest
-            self.url_redirect(
-                u'Redirecting to %s...' % (
-                    self.form.query_string.decode(self.form.accept_charset)
-                ),
-                refresh_time=0,
-                target_url=self.form.query_string,
-            )
-        else:
-            self.url_redirect(error_msg)
-        return # end of handle_urlredirect()
 
     def _new_session(self):
         """
@@ -460,7 +419,6 @@ class AppHandler(object):
 
         else:
             # Extract the connection parameters from form fields
-            self.form.getInputFields()
             self._handle_del_sid()
             if 'ldapurl' in self.form.inputFieldNames:
                 # One form parameter with LDAP URL
@@ -585,13 +543,18 @@ class AppHandler(object):
         """
 
         # check for valid command
-        if self.command not in FORM_CLASS:
+        if self.command not in COMMAND_FUNCTION:
 
             logger.warn('Received invalid command %r', self.command)
             self.url_redirect(u'Invalid web2ldap command')
             return
 
-        self.form = FORM_CLASS[self.command](self.inf, self.env)
+        # initialize Form instance
+        self.form = FORM_CLASS.get(self.command, Web2LDAPForm)(self.inf, self.env)
+
+        if self.command in FORM_CLASS and not isLDAPUrl(self.form.query_string):
+            # get the input fields
+            self.form.getInputFields()
 
         #---------------------------------------------------------------
         # try-except block for gracefully exception handling in the UI
@@ -604,27 +567,11 @@ class AppHandler(object):
                 raise web2ldap.app.core.ErrorExit(u'Access denied.')
 
             # handle the early-exit commands
-            if self.command == 'urlredirect':
-                if isLDAPUrl(self.form.query_string):
-                    self.command = ''
-                else:
-                    self._handle_urlredirect()
-                    return
-            elif self.command == 'monitor':
-                # Output simple monitor page. Does not require session handling.
-                web2ldap.app.monitor.w2l_monitor(self)
+            if isLDAPUrl(self.form.query_string):
+                self.command = ''
+            elif self.command in {'', 'urlredirect', 'monitor', 'locate'}:
+                COMMAND_FUNCTION[self.command](self)
                 return
-            elif self.command == 'locate':
-                self.form.getInputFields()
-                web2ldap.app.locate.w2l_locate(self)
-                return
-            elif self.command == '':
-                # New connect => remove old session if necessary
-                session_store.deleteSession(self.sid)
-                # Just output a connect form if there was no query string
-                if not self.form.query_string:
-                    web2ldap.app.connect.w2l_connect(self)
-                    return
 
             self.ls = self._get_session()
 
