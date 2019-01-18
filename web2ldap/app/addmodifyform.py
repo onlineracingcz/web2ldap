@@ -35,11 +35,11 @@ import web2ldap.app.cnf
 import web2ldap.app.form
 import web2ldap.app.gui
 import web2ldap.app.read
-import web2ldap.app.modify
 import web2ldap.app.schema
 from web2ldap.app.schema.viewer import display_nameoroid_list
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.msbase import GrabKeys
+from web2ldap.app.schema.syntaxes import LDAPSyntaxValueError
 
 
 H1_MSG = {
@@ -120,6 +120,133 @@ INPUT_FORM_LDIF_TMPL = """
   </ul>
 </fieldset>
 """
+
+
+def get_entry_input(app, sub_schema):
+
+    # Get all the attribute types
+    in_attrtype_list = [
+        a.encode('ascii')
+        for a in app.form.getInputValue('in_at', [])
+    ]
+    # Grab the raw input strings
+    in_value_indexes = [
+        a for a in app.form.getInputValue('in_avi', [])
+    ]
+    # Grab the raw input strings
+    in_value_list = [
+        a for a in app.form.getInputValue('in_av', [])
+    ]
+
+    if not len(in_attrtype_list) == len(in_value_list) == len(in_value_indexes):
+        raise web2ldap.app.core.ErrorExit(u'Different count of attribute types and values input.')
+
+    entry = ldap0.schema.models.Entry(sub_schema, app.ldap_dn, {})
+
+    # Stuff input field lists into raw dictionary
+    for i, attr_type in enumerate(in_attrtype_list):
+        attr_value = in_value_list[i]
+        if isinstance(attr_value, unicode):
+            attr_value = attr_value.encode(app.ls.charset)
+        try:
+            entry[attr_type].append(attr_value)
+        except KeyError:
+            entry[attr_type] = [attr_value]
+
+    # Convert input field string representation into potential LDAP string representation
+    # sanitize 'objectClass' first
+    attr_type = 'objectClass'
+    attr_values = []
+    for in_value in entry.get(attr_type, []):
+        attr_instance = syntax_registry.get_at(
+            app, app.dn, sub_schema,
+            attr_type, None,
+            entry=entry,
+        )
+        try:
+            attr_value = attr_instance.sanitizeInput(in_value)
+        except LDAPSyntaxValueError:
+            attr_value = in_value
+        attr_values.append(attr_value)
+    entry[attr_type] = attr_values
+
+    # sanitize rest of dict
+    for attr_type, in_values in entry.items():
+        if attr_type == '2.5.4.0':
+            # ignore object class attribute herein
+            continue
+        attr_values = []
+        for in_value in in_values:
+            attr_instance = syntax_registry.get_at(
+                app, app.dn, sub_schema,
+                attr_type, None,
+                entry=entry,
+            )
+            try:
+                attr_value = attr_instance.sanitizeInput(in_value)
+            except LDAPSyntaxValueError:
+                attr_value = in_value
+            attr_values.append(attr_value)
+        entry[attr_type] = attr_values
+
+    # extend entry with LDIF input
+    try:
+        in_ldif = app.form.field['in_ldif'].getLDIFRecords()
+    except ValueError as e:
+        raise web2ldap.app.core.ErrorExit(
+            u'LDIF parsing error: %s' % (app.form.utf2display(unicode(e)))
+        )
+    else:
+        if in_ldif:
+            entry.update(in_ldif[0][1])
+
+    # Transmuting whole attribute value lists into final LDAP string
+    # representation which may be an interative result
+    iteration_count = 7
+    entry_changed = True
+    while entry_changed and iteration_count:
+        iteration_count -= 1
+        entry_changed = False
+        for attr_type, attr_values in entry.items():
+            attr_instance = syntax_registry.get_at(
+                app, app.dn, sub_schema,
+                attr_type, None,
+                entry=entry,
+            )
+            try:
+                new_values = attr_instance.transmute(attr_values)
+            except (KeyError, IndexError):
+                entry_changed = True
+                entry[attr_type] = ['']
+            else:
+                entry_changed = entry_changed or (new_values != attr_values)
+                entry[attr_type] = new_values
+
+    invalid_attrs = {}
+
+    # Checking for invalid input done after sanitizing all values so
+    # plugin classes can use all entry's attributes for cross-checking input
+    for attr_type, attr_values in entry.items():
+        attr_values = entry[attr_type]
+        if not attr_values:
+            del entry[attr_type]
+            continue
+        attr_instance = syntax_registry.get_at(
+            app, app.dn, sub_schema,
+            attr_type, None,
+            entry=entry,
+        )
+        for attr_index, attr_value in enumerate(attr_values):
+            if attr_value:
+                try:
+                    attr_instance.validate(attr_value)
+                except LDAPSyntaxValueError:
+                    try:
+                        invalid_attrs[unicode(attr_type)].append(attr_index)
+                    except KeyError:
+                        invalid_attrs[unicode(attr_type)] = [attr_index]
+
+    return entry, invalid_attrs # get_entry_input()
 
 
 class InputFormEntry(web2ldap.app.read.DisplayEntry):

@@ -26,7 +26,6 @@ import web2ldap.app.core
 import web2ldap.app.gui
 import web2ldap.app.schema
 import web2ldap.app.addmodifyform
-import web2ldap.app.modify
 
 # Attribute types always ignored for add requests
 ADD_IGNORE_ATTR_TYPES = {
@@ -104,7 +103,7 @@ def w2l_add(app):
         add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_dn.decode(app.ls.charset))
         add_basedn = add_basedn or app.dn
     else:
-        entry, invalid_attrs = web2ldap.app.modify.get_entry_input(app, sub_schema)
+        entry, invalid_attrs = web2ldap.app.addmodifyform.get_entry_input(app, sub_schema)
         add_rdn = app.form.getInputValue('add_rdn', [''])[0]
         add_basedn = app.form.getInputValue('add_basedn', [app.dn])[0]
 
