@@ -50,7 +50,6 @@ import web2ldap.web.forms
 import web2ldap.msbase
 import web2ldap.mspki.asn1helper
 import web2ldap.ldaputil.base
-import web2ldap.app.form
 import web2ldap.app.gui
 import web2ldap.utctime
 from web2ldap.utctime import strftimeiso8601
