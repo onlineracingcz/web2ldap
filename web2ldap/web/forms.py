@@ -889,20 +889,9 @@ class Form:
         self.http_accept_encoding = helper.AcceptHeaderDict('HTTP_ACCEPT_ENCODING', env)
         # Set the preferred character set
         self.accept_charset = self.http_accept_charset.preferred()
-        # Determine query string and content length dependent on request method
-        self.query_string = self._get_query_string(env)
+        # Determine query string
+        self.query_string = env.get('QUERY_STRING', '')
         return # Form.__init__()
-
-    def _get_query_string(self, env):
-        """
-        Returns re-coded QUERY_STRING env var
-        """
-        qstr = env.get('QUERY_STRING', '')
-        try:
-            query_string_u = qstr.decode(self.accept_charset)
-        except UnicodeError:
-            query_string_u = qstr.decode('iso-8859-1')
-        return query_string_u.encode(self.accept_charset)
 
     def getContentType(self):
         """
