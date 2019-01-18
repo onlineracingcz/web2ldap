@@ -39,7 +39,8 @@ import web2ldap.app.schema
 
 class Web2LDAPConfigDict(cidict):
 
-    def _normalizeKey(self, key):
+    @staticmethod
+    def _normalize_key(key):
         """Returns a normalized string for an LDAP URL"""
         if isinstance(key, LDAPSession):
             if key.uri is None:
@@ -83,19 +84,19 @@ class Web2LDAPConfigDict(cidict):
         return result
 
     def __getitem__(self, key):
-        return cidict.__getitem__(self, self._normalizeKey(key))
+        return cidict.__getitem__(self, self._normalize_key(key))
 
     def __delitem__(self, key):
-        return cidict.__delitem__(self, self._normalizeKey(key))
+        return cidict.__delitem__(self, self._normalize_key(key))
 
     def __setitem__(self, key, value):
-        return cidict.__setitem__(self, self._normalizeKey(key), value)
+        return cidict.__setitem__(self, self._normalize_key(key), value)
 
     def has_key(self, key):
-        return cidict.has_key(self, self._normalizeKey(key))
+        return cidict.has_key(self, self._normalize_key(key))
 
-    def GetParam(self, backend_key, param_key, default):
-        lu_key = self._normalizeKey(backend_key or '_')
+    def get_param(self, backend_key, param_key, default):
+        lu_key = self._normalize_key(backend_key or '_')
         try:
             return self[lu_key].__dict__[param_key]
         except KeyError:
@@ -123,9 +124,12 @@ def set_target_check_dict(ldap_uri_list):
             ldap_uri, desc = ldap_uri
         except ValueError:
             pass
-        lu = LDAPUrl(ldap_uri)
-        ldap_uri_list_check_dict[lu.initializeUrl()] = None
-    return ldap_uri_list_check_dict # PopulateCheckDict()
+        lu_obj = LDAPUrl(ldap_uri)
+        ldap_uri_list_check_dict[lu_obj.initializeUrl()] = None
+    return ldap_uri_list_check_dict
+
+# Set up configuration for restricting access to the preconfigured LDAP URI list
+LDAP_URI_LIST_CHECK_DICT = set_target_check_dict(web2ldapcnf.hosts.ldap_uri_list)
 
 
 def GetParam(ls, k, default):
@@ -133,4 +137,4 @@ def GetParam(ls, k, default):
     Get a parameter determined by string-key k
     depending on current ls
     """
-    return ldap_def.GetParam(ls, k, default)
+    return ldap_def.get_param(ls, k, default)

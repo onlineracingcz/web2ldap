@@ -128,8 +128,6 @@ COMMAND_FUNCTION = {
     'oid': web2ldap.app.schema.viewer.w2l_schema_viewer,
 }
 
-# Set up configuration for restricting access to the preconfigured LDAP URI list
-LDAP_URI_LIST_CHECK_DICT = web2ldap.app.cnf.set_target_check_dict(web2ldapcnf.hosts.ldap_uri_list)
 
 syntax_registry.check()
 
@@ -666,7 +664,7 @@ class AppHandler(object):
                 session_store.storeSession(self.sid, self.ls)
                 # Check whether access to target LDAP server is allowed
                 if web2ldapcnf.hosts.restricted_ldap_uri_list and \
-                   initializeUrl not in LDAP_URI_LIST_CHECK_DICT:
+                   initializeUrl not in web2ldap.app.cnf.LDAP_URI_LIST_CHECK_DICT:
                     raise ErrorExit(u'Only pre-configured LDAP servers allowed.')
                 startTLSextop = self.ldap_url.get_starttls_extop(
                     web2ldap.app.cnf.GetParam(
