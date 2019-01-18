@@ -35,7 +35,6 @@ import web2ldap.app.cnf
 import web2ldap.app.schema.syntaxes
 import web2ldap.app.locate
 import web2ldap.app.searchform
-import web2ldap.app.monitor
 from web2ldap.msbase import GrabKeys
 import web2ldap.ldaputil.base
 from web2ldap.ldaputil.base import \
