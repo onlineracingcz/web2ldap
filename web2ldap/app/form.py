@@ -37,6 +37,7 @@ import web2ldap.app.searchform
 import web2ldap.app.ldapparams
 import web2ldap.app.session
 from web2ldap.app.session import session_store
+from web2ldap.ldapsession import AVAILABLE_BOOLEAN_CONTROLS
 
 
 class Web2LDAPForm(web2ldap.web.forms.Form):
@@ -494,7 +495,7 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
         self.addField(web2ldap.web.forms.Input('bulkmod_submit', u'Search form submit button', 6, 1, u'(Next>>|<<Back|Apply|Cancel|[+-][0-9]+)'))
         bulkmod_ctrl_options = [
             (control_oid, OID_REG.get(control_oid, (control_oid,))[0])
-            for control_oid, control_spec in web2ldap.app.ldapparams.AVAILABLE_BOOLEAN_CONTROLS.items()
+            for control_oid, control_spec in AVAILABLE_BOOLEAN_CONTROLS.items()
             if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'modify' in control_spec[0]
         ]
         self.addField(
@@ -552,7 +553,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
         self.addField(web2ldap.web.forms.Select('delete_confirm', u'Confirmation', 1, options=['yes', 'no'], default=u'no'))
         delete_ctrl_options = [
             (control_oid, OID_REG.get(control_oid, (control_oid,))[0])
-            for control_oid, control_spec in web2ldap.app.ldapparams.AVAILABLE_BOOLEAN_CONTROLS.items()
+            for control_oid, control_spec in AVAILABLE_BOOLEAN_CONTROLS.items()
             if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'delete' in control_spec[0]
         ]
         delete_ctrl_options.append((web2ldap.ldapsession.CONTROL_TREEDELETE, u'Tree Deletion'))

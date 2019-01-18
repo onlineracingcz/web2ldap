@@ -14,89 +14,12 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-from ldap0.controls.simple import ValueLessRequestControl, BooleanControl
-
 import web2ldap.ldapsession
 import web2ldap.app.cnf
 import web2ldap.app.core
 import web2ldap.app.gui
 from web2ldap.ldaputil.oidreg import OID_REG
-
-AVAILABLE_BOOLEAN_CONTROLS = {
-    web2ldap.ldapsession.CONTROL_SUBENTRIES: (
-        ('search',), BooleanControl, True
-    ),
-    web2ldap.ldapsession.CONTROL_LDUP_SUBENTRIES: (
-        ('search',), ValueLessRequestControl, None
-    ),
-    web2ldap.ldapsession.CONTROL_MANAGEDSAIT: (
-        ('**all**',), ValueLessRequestControl, None
-    ),
-    web2ldap.ldapsession.CONTROL_RELAXRULES: (
-        ('**write**',), ValueLessRequestControl, None
-    ),
-    web2ldap.ldapsession.CONTROL_DONOTREPLICATE: (
-        ('**write**',), ValueLessRequestControl, None
-    ),
-    web2ldap.ldapsession.CONTROL_DONTUSECOPY: (
-        ('**read**',), ValueLessRequestControl, None
-    ),
-    web2ldap.ldapsession.CONTROL_DONTUSECOPY_OPENLDAP: (
-        ('**read**',), ValueLessRequestControl, None
-    ),
-    # IBM DS
-    web2ldap.ldapsession.CONTROL_SERVERADMINISTRATION: (
-        ('**write**',), ValueLessRequestControl, None
-    ),
-    # "real attributes only" control
-    '2.16.840.1.113730.3.4.17': (
-        ('**read**',), ValueLessRequestControl, None
-    ),
-    # "virtual attributes only" control
-    '2.16.840.1.113730.3.4.19': (
-        ('**read**',), ValueLessRequestControl, None
-    ),
-    # OpenLDAP's privateDB control for slapo-pcache
-    '1.3.6.1.4.1.4203.666.11.9.5.1': (
-        ('**all**',), ValueLessRequestControl, None
-    ),
-    # Omit group referential integrity control
-    '1.3.18.0.2.10.26': (
-        ('delete', 'rename'), ValueLessRequestControl, None
-    ),
-    # MS AD LDAP_SERVER_EXTENDED_DN_OID
-    '1.2.840.113556.1.4.529': (
-        ('**read**',), ValueLessRequestControl, None
-    ),
-    # MS AD LDAP_SERVER_SHOW_DELETED_OID
-    '1.2.840.113556.1.4.417': (
-        ('**all**',), ValueLessRequestControl, None
-    ),
-    # MS AD LDAP_SERVER_SHOW_RECYCLED_OID
-    '1.2.840.113556.1.4.2064': (
-        ('search',), ValueLessRequestControl, None
-    ),
-    # MS AD LDAP_SERVER_DOMAIN_SCOPE_OID
-    '1.2.840.113556.1.4.1339': (
-        ('search',), ValueLessRequestControl, None
-    ),
-    # MS AD LDAP_SERVER_SHOW_DEACTIVATED_LINK_OID
-    '1.2.840.113556.1.4.2065': (
-        ('search',), ValueLessRequestControl, None
-    ),
-    # Effective Rights control
-    '1.3.6.1.4.1.42.2.27.9.5.2': (
-        ('search',), ValueLessRequestControl, None
-    ),
-    # Replication Repair Control
-    '1.3.6.1.4.1.26027.1.5.2': (
-        ('**write**',), ValueLessRequestControl, None
-    ),
-    # MS AD LDAP_SERVER_LAZY_COMMIT_OID
-    '1.2.840.113556.1.4.619': (
-        ('**write**',), ValueLessRequestControl, None
-    ),
-}
+from web2ldap.ldapsession import AVAILABLE_BOOLEAN_CONTROLS
 
 
 ##############################################################################

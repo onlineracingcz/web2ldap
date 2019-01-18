@@ -27,6 +27,7 @@ import ldap0.filter
 from ldap0.ldapobject import ReconnectLDAPObject
 from ldap0.schema.models import DITStructureRule
 from ldap0.schema.subentry import SubschemaError, SubSchema, SCHEMA_ATTRS
+from ldap0.controls.simple import ValueLessRequestControl, BooleanControl
 from ldap0.controls.openldap import SearchNoOpControl
 from ldap0.controls.libldap import AssertionControl
 from ldap0.controls.readentry import PreReadControl, PostReadControl
@@ -50,6 +51,82 @@ CONTROL_MANAGEDSAIT = '2.16.840.1.113730.3.4.2' # RFC 3296
 CONTROL_RELAXRULES = '1.3.6.1.4.1.4203.666.5.12' # draft-zeilenga-ldap-relax
 CONTROL_SERVERADMINISTRATION = '1.3.18.0.2.10.15' # IBM Directory Server
 CONTROL_TREEDELETE = '1.2.840.113556.1.4.805' # draft-armijo-ldap-treedelete
+
+AVAILABLE_BOOLEAN_CONTROLS = {
+    CONTROL_SUBENTRIES: (
+        ('search',), BooleanControl, True
+    ),
+    CONTROL_LDUP_SUBENTRIES: (
+        ('search',), ValueLessRequestControl, None
+    ),
+    CONTROL_MANAGEDSAIT: (
+        ('**all**',), ValueLessRequestControl, None
+    ),
+    CONTROL_RELAXRULES: (
+        ('**write**',), ValueLessRequestControl, None
+    ),
+    CONTROL_DONOTREPLICATE: (
+        ('**write**',), ValueLessRequestControl, None
+    ),
+    CONTROL_DONTUSECOPY: (
+        ('**read**',), ValueLessRequestControl, None
+    ),
+    CONTROL_DONTUSECOPY_OPENLDAP: (
+        ('**read**',), ValueLessRequestControl, None
+    ),
+    # IBM DS
+    CONTROL_SERVERADMINISTRATION: (
+        ('**write**',), ValueLessRequestControl, None
+    ),
+    # "real attributes only" control
+    '2.16.840.1.113730.3.4.17': (
+        ('**read**',), ValueLessRequestControl, None
+    ),
+    # "virtual attributes only" control
+    '2.16.840.1.113730.3.4.19': (
+        ('**read**',), ValueLessRequestControl, None
+    ),
+    # OpenLDAP's privateDB control for slapo-pcache
+    '1.3.6.1.4.1.4203.666.11.9.5.1': (
+        ('**all**',), ValueLessRequestControl, None
+    ),
+    # Omit group referential integrity control
+    '1.3.18.0.2.10.26': (
+        ('delete', 'rename'), ValueLessRequestControl, None
+    ),
+    # MS AD LDAP_SERVER_EXTENDED_DN_OID
+    '1.2.840.113556.1.4.529': (
+        ('**read**',), ValueLessRequestControl, None
+    ),
+    # MS AD LDAP_SERVER_SHOW_DELETED_OID
+    '1.2.840.113556.1.4.417': (
+        ('**all**',), ValueLessRequestControl, None
+    ),
+    # MS AD LDAP_SERVER_SHOW_RECYCLED_OID
+    '1.2.840.113556.1.4.2064': (
+        ('search',), ValueLessRequestControl, None
+    ),
+    # MS AD LDAP_SERVER_DOMAIN_SCOPE_OID
+    '1.2.840.113556.1.4.1339': (
+        ('search',), ValueLessRequestControl, None
+    ),
+    # MS AD LDAP_SERVER_SHOW_DEACTIVATED_LINK_OID
+    '1.2.840.113556.1.4.2065': (
+        ('search',), ValueLessRequestControl, None
+    ),
+    # Effective Rights control
+    '1.3.6.1.4.1.42.2.27.9.5.2': (
+        ('search',), ValueLessRequestControl, None
+    ),
+    # Replication Repair Control
+    '1.3.6.1.4.1.26027.1.5.2': (
+        ('**write**',), ValueLessRequestControl, None
+    ),
+    # MS AD LDAP_SERVER_LAZY_COMMIT_OID
+    '1.2.840.113556.1.4.619': (
+        ('**write**',), ValueLessRequestControl, None
+    ),
+}
 
 # Used attributes from RootDSE
 ROOTDSE_ATTRS = (
