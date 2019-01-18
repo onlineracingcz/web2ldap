@@ -462,7 +462,7 @@ class ReqSession(Integer):
                 'search', '&raquo;',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._app.ls.currentSearchRoot),
+                    ('search_root', self._app.naming_context),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'reqSession'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),

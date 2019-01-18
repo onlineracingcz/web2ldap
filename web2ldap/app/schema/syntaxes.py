@@ -518,7 +518,7 @@ class DistinguishedName(DirectoryString):
                 'search', self._app.form.utf2display(ref_text),
                 (
                     ('dn', ref_dn),
-                    ('search_root', self._app.ls.currentSearchRoot),
+                    ('search_root', self._app.naming_context),
                     ('searchform_mode', 'adv'),
                     ('search_attr', 'objectClass'),
                     (

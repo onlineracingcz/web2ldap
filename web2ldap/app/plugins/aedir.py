@@ -104,7 +104,7 @@ class AEObjectUtil:
     def _zone_entry(self, attrlist=None):
         zone_dn = 'cn={0},{1}'.format(
             self._get_zone_name(),
-            self._app.ls.currentSearchRoot.encode(self._app.ls.charset),
+            self._app.naming_context.encode(self._app.ls.charset),
         )
         try:
             zone_entry = self._app.ls.l.read_s(
@@ -118,17 +118,17 @@ class AEObjectUtil:
 
     def _get_zone_dn(self):
         dn_list = ldap0.dn.explode_dn(
-            self._dn[:-len(self._app.ls.currentSearchRoot)-1].encode(self._app.ls.charset)
+            self._dn[:-len(self._app.naming_context)-1].encode(self._app.ls.charset)
         )
         result = ','.join((
             dn_list[-1],
-            self._app.ls.currentSearchRoot.encode(self._app.ls.charset),
+            self._app.naming_context.encode(self._app.ls.charset),
         ))
         return result # _get_zone_dn()
 
     def _get_zone_name(self):
         dn_list = ldap0.dn.str2dn(
-            self._dn[:-len(self._app.ls.currentSearchRoot)-1].encode(self._app.ls.charset)
+            self._dn[:-len(self._app.naming_context)-1].encode(self._app.ls.charset)
         )
         try:
             zone_cn = dict([
@@ -260,7 +260,7 @@ class AEGIDNumber(GidNumber):
         """
         determine which ID pool entry to use
         """
-        return self.id_pool_dn or self._app.ls.currentSearchRoot.encode(self._app.ls.charset)
+        return self.id_pool_dn or self._app.naming_context.encode(self._app.ls.charset)
 
     def _get_next_gid(self):
         """
@@ -352,7 +352,7 @@ class AEUserUid(AEUid):
             uid_candidate = random_string(alphabet=self.UID_LETTERS, length=self.genLen)
             # check whether UID candidate already exists
             uid_result = self._app.ls.l.search_s(
-                self._app.ls.currentSearchRoot.encode(self._app.ls.charset),
+                self._app.naming_context.encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
                 '(uid=%s)' % (escape_filter_chars(uid_candidate)),
                 attrlist=['1.1'],
@@ -920,7 +920,7 @@ class AEEntryDNAEUser(DistinguishedName):
     def _additional_links(self):
         attr_value_u = self.attrValue.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
-        audit_context = self._app.ls.getAuditContext(self._app.ls.currentSearchRoot)
+        audit_context = self._app.ls.getAuditContext(self._app.naming_context)
         if audit_context:
             r.append(self._app.anchor(
                 'search', 'Activity',
@@ -968,7 +968,7 @@ class AEEntryDNAEHost(DistinguishedName):
                 'search', 'Siblings',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._app.ls.currentSearchRoot),
+                    ('search_root', self._app.naming_context),
                     ('searchform_mode', u'exp'),
                     (
                         'filterstr',
@@ -1006,7 +1006,7 @@ class AEEntryDNAEZone(DistinguishedName):
     def _additional_links(self):
         attr_value_u = self.attrValue.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
-        audit_context = self._app.ls.getAuditContext(self._app.ls.currentSearchRoot)
+        audit_context = self._app.ls.getAuditContext(self._app.naming_context)
         if audit_context:
             r.append(self._app.anchor(
                 'search', 'Audit all',
@@ -1106,7 +1106,7 @@ class AEEntryDNAEGroup(GroupEntryDN):
             'search', 'SUDO rules',
             (
                 ('dn', self._dn),
-                ('search_root', self._app.ls.currentSearchRoot),
+                ('search_root', self._app.naming_context),
                 ('searchform_mode', u'adv'),
                 ('search_attr', u'sudoUser'),
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -1141,7 +1141,7 @@ class AEEntryDNAESrvGroup(DistinguishedName):
                 'search', 'All members',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._app.ls.currentSearchRoot),
+                    ('search_root', self._app.naming_context),
                     ('searchform_mode', u'exp'),
                     (
                         'filterstr',
@@ -1892,7 +1892,7 @@ class AECommonNameAETag(AEZonePrefixCommonName):
                 'searchform', '&raquo;',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._app.ls.currentSearchRoot),
+                    ('search_root', self._app.naming_context),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'aeTag'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
