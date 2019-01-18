@@ -70,7 +70,7 @@ from web2ldap.app.form import Web2LDAPForm
 from web2ldap.app.session import session_store
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.ldaputil.base import AD_LDAP49_ERROR_CODES, AD_LDAP49_ERROR_PREFIX
-
+from web2ldap.app.core import ErrorExit
 
 SCOPE2COMMAND = {
     None:'search',
@@ -407,7 +407,7 @@ class AppHandler(object):
             try:
                 input_ldapurl = ExtendedLDAPUrl(self.form.query_string)
             except ValueError as e:
-                raise web2ldap.app.core.ErrorExit(u'Error parsing LDAP URL: %s.' % (
+                raise ErrorExit(u'Error parsing LDAP URL: %s.' % (
                     self.form.utf2display(unicode(str(e)))
                 ))
             else:
@@ -426,7 +426,7 @@ class AppHandler(object):
                 try:
                     input_ldapurl = ExtendedLDAPUrl(ldap_url_input.encode('ascii'))
                 except ValueError as e:
-                    raise web2ldap.app.core.ErrorExit(
+                    raise ErrorExit(
                         u'Error parsing LDAP URL: %s.' % (unicode(e, self.form.accept_charset))
                     )
             else:
@@ -473,7 +473,7 @@ class AppHandler(object):
         )
 
         if not web2ldap.ldaputil.base.is_dn(dn):
-            raise web2ldap.app.core.ErrorExit(u'Invalid DN.')
+            raise ErrorExit(u'Invalid DN.')
 
         scope_str = self.form.getInputValue(
             'scope',
@@ -564,7 +564,7 @@ class AppHandler(object):
 
             # Check access here
             if not check_access(self.env, self.command):
-                raise web2ldap.app.core.ErrorExit(u'Access denied.')
+                raise ErrorExit(u'Access denied.')
 
             # handle the early-exit commands
             if isLDAPUrl(self.form.query_string):
@@ -645,7 +645,7 @@ class AppHandler(object):
                 # Check whether access to target LDAP server is allowed
                 if web2ldapcnf.hosts.restricted_ldap_uri_list and \
                    initializeUrl not in web2ldap.app.core.ldap_uri_list_check_dict:
-                    raise web2ldap.app.core.ErrorExit(u'Only pre-configured LDAP servers allowed.')
+                    raise ErrorExit(u'Only pre-configured LDAP servers allowed.')
                 startTLSextop = self.ldap_url.get_starttls_extop(
                     web2ldap.app.cnf.GetParam(self.ldap_url, 'starttls', web2ldap.ldapsession.START_TLS_NO)
                 )
@@ -912,7 +912,7 @@ class AppHandler(object):
                     self.form.utf2display(str(socket_err).decode('ascii')),
                 )
 
-        except web2ldap.app.core.ErrorExit as error_exit:
+        except ErrorExit as error_exit:
             logger.warn(str(error_exit))
             ExceptionMsg(
                 self,
