@@ -2163,7 +2163,7 @@ class ComposedAttribute(LDAPSyntax):
     Obviously this only works for single value attributes.
     """
     oid = 'ComposedDirectoryString-oid'
-    compose_templates = None
+    compose_templates = ()
 
     class single_value_dict(dict):
 
