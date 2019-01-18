@@ -353,7 +353,7 @@ def del_search_form(app, scope, delete_filter):
     )
 
 
-def w2l_delete(app, connLDAPUrl):
+def w2l_delete(app):
 
     sub_schema = app.ls.retrieveSubSchema(
         app.dn,
@@ -367,15 +367,15 @@ def w2l_delete(app, connLDAPUrl):
         'delete_attr',
         [
             a.decode('ascii')
-            for a in connLDAPUrl.attrs or []
+            for a in app.ldap_url.attrs or []
         ]
     )
-    delete_filter = app.form.getInputValue('filterstr', [connLDAPUrl.filterstr])[0]
+    delete_filter = app.form.getInputValue('filterstr', [app.ldap_url.filterstr])[0]
     delete_attr.sort()
     if delete_attr:
         scope = ldap0.SCOPE_BASE
     else:
-        scope = int(app.form.getInputValue('scope', [str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
+        scope = int(app.form.getInputValue('scope', [str(app.ldap_url.scope or ldap0.SCOPE_BASE)])[0])
 
     # Generate a list of requested LDAPv3 extended controls to be sent along
     # with a modify or delete request

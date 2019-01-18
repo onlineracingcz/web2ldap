@@ -370,7 +370,7 @@ def display_attribute_table(app, sub_schema, entry, attrs, comment):
     return # display_attribute_table()
 
 
-def w2l_read(app, wanted_attrs, read_attrmode=None, read_attrmimetype=None):
+def w2l_read(app):
 
     sub_schema = app.ls.retrieveSubSchema(
         app.dn,
@@ -387,7 +387,7 @@ def w2l_read(app, wanted_attrs, read_attrmode=None, read_attrmimetype=None):
     # Specific attributes requested with form parameter read_attr?
     wanted_attrs = [
         a.strip().encode('ascii')
-        for a in app.form.getInputValue('read_attr', wanted_attrs)
+        for a in app.form.getInputValue('read_attr', app.ldap_url.attrs or [])
     ]
     wanted_attr_set = SchemaElementOIDSet(
         sub_schema,
@@ -473,7 +473,7 @@ def w2l_read(app, wanted_attrs, read_attrmode=None, read_attrmimetype=None):
         # Send a single binary attribute with appropriate MIME-type
         read_attrindex = int(app.form.getInputValue('read_attrindex', [u'0'])[0])
         # Determine if user wants to view or download the binary attribute value
-        read_attrmode = app.form.getInputValue('read_attrmode', [read_attrmode or 'view'])[0]
+        read_attrmode = app.form.getInputValue('read_attrmode', ['view'])[0]
         syntax_se = syntax_registry.get_syntax(sub_schema, attr_type, entry.get_structural_oc())
 
         if (

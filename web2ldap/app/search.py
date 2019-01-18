@@ -274,7 +274,7 @@ class ExcelWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
             self._row_counter += 1
 
 
-def w2l_search(app, connLDAPUrl):
+def w2l_search(app):
     """
     Search for entries and output results as table, pretty-printable output
     or LDIF formatted
@@ -314,8 +314,8 @@ def w2l_search(app, connLDAPUrl):
         )
         # end of page_appl_anchor()
 
-    scope = connLDAPUrl.scope
-    filterstr = web2ldap.app.core.str2unicode(connLDAPUrl.filterstr, app.form.accept_charset)
+    scope = app.ldap_url.scope
+    filterstr = web2ldap.app.core.str2unicode(app.ldap_url.filterstr, app.form.accept_charset)
 
     search_submit = app.form.getInputValue('search_submit', [u'Search'])[0]
     searchform_mode = app.form.getInputValue('searchform_mode', [u'exp'])[0]
@@ -430,7 +430,7 @@ def w2l_search(app, connLDAPUrl):
         a.strip().encode('ascii')
         for a in app.form.getInputValue(
             'search_attrs',
-            [u','.join(connLDAPUrl.attrs or [])]
+            [u','.join(app.ldap_url.attrs or [])]
         )[0].split(u',')
         if a.strip()
     ]
@@ -438,7 +438,7 @@ def w2l_search(app, connLDAPUrl):
     search_attr_set = ldap0.schema.models.SchemaElementOIDSet(sub_schema, ldap0.schema.models.AttributeType, search_attrs)
     search_attrs = search_attr_set.names()
 
-    search_ldap_url = app.ls.ldapUrl(dn=search_root)
+    search_ldap_url = app.ls.ldapUrl(dn=search_root or app.naming_context)
     search_ldap_url.filterstr = filterstr2.encode(app.ls.charset)
     search_ldap_url.scope = scope
     search_ldap_url.attrs = search_attrs

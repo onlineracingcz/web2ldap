@@ -282,7 +282,7 @@ def passwd_form(
     return # passwd_form()
 
 
-def w2l_passwd(app, ldap_url):
+def w2l_passwd(app):
     """
     Set new password in LDAP entries
     """
@@ -550,9 +550,6 @@ def w2l_passwd(app, ldap_url):
         # Display login form
         web2ldap.app.login.w2l_login(
             app,
-            ldap_url,
-            None,
-            app.ls.getSearchRoot(passwd_who),
             login_msg='New login is required!<br>'+password_attr_types_msg,
             who=passwd_who,
             relogin=False,

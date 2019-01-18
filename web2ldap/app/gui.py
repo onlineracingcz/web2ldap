@@ -404,7 +404,7 @@ def MainMenu(app):
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'objectClass'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
-                    ('search_string', ''),
+                    ('search_string', u''),
                 ),
                 title=u'List direct subordinates of %s' % (app.dn or u'Root DSE'),
             ),
@@ -669,8 +669,8 @@ def AttributeTypeSelectField(
 
 
 def gen_headers(content_type, charset, more_headers=None):
-    assert isinstance(content_type, bytes), TypeError("Type of argument 'content_type' must be str but was %r" % (content_type))
-    assert isinstance(charset, bytes), TypeError("Type of argument 'charset' must be str but was %r" % (charset))
+    assert isinstance(content_type, bytes), TypeError("Type of argument 'content_type' must be bytes but was %r" % (content_type))
+    assert isinstance(charset, bytes), TypeError("Type of argument 'charset' must be bytes but was %r" % (charset))
     # Get current time as GMT (seconds since epoch)
     current_datetime = time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime(time.time()))
     headers = []

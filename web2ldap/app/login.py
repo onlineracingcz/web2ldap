@@ -24,8 +24,6 @@ from web2ldap.log import logger
 
 def w2l_login(
         app,
-        ldap_url,
-        login_search_root,
         title_msg=u'Bind',
         login_msg='',
         who=u'',
@@ -36,6 +34,12 @@ def w2l_login(
     """
     Provide a input form for doing a (re-)login
     """
+
+    login_search_root = (
+        app.form.getInputValue('login_search_root', [u''])[0] or
+        app.naming_context or
+        app.dn
+    )
 
     if 'login_who' in app.form.inputFieldNames:
         who = app.form.field['login_who'].value[0]
@@ -83,8 +87,8 @@ def w2l_login(
     )
 
     scope_str = app.form.getInputValue('scope', [None])[0]
-    if not scope_str and ldap_url.scope is not None:
-        scope_str = unicode(ldap_url.scope)
+    if not scope_str and app.ldap_url.scope is not None:
+        scope_str = unicode(app.ldap_url.scope)
     if scope_str:
         scope_hidden_field = app.form.hiddenFieldHTML('scope', scope_str, u'')
     else:
@@ -92,7 +96,7 @@ def w2l_login(
 
     filterstr = app.form.getInputValue(
         'filterstr',
-        [(ldap_url.filterstr or '').decode(app.ls.charset)],
+        [(app.ldap_url.filterstr or '').decode(app.ls.charset)],
     )[0]
     if filterstr:
         filterstr_hidden_field = app.form.hiddenFieldHTML('filterstr', filterstr, u'')
@@ -101,7 +105,7 @@ def w2l_login(
 
     search_attrs_hidden_field = ''
     if app.command in {'search', 'searchform'}:
-        search_attrs = app.form.getInputValue('search_attrs', [u','.join(ldap_url.attrs or [])])[0]
+        search_attrs = app.form.getInputValue('search_attrs', [u','.join(app.ldap_url.attrs or [])])[0]
         if search_attrs:
             search_attrs_hidden_field = app.form.hiddenFieldHTML('search_attrs', search_attrs, u'')
 

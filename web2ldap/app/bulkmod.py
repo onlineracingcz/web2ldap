@@ -317,7 +317,7 @@ def bulkmod_confirmation_form(
     return # bulkmod_confirmation_form()
 
 
-def w2l_bulkmod(app, connLDAPUrl):
+def w2l_bulkmod(app):
     """
     Applies bulk modifications to multiple LDAP entries
     """
@@ -337,11 +337,11 @@ def w2l_bulkmod(app, connLDAPUrl):
 
     bulkmod_cp = app.form.getInputValue('bulkmod_cp', [u''])[0] == u'yes'
 
-    scope = int(app.form.getInputValue('scope', [str(connLDAPUrl.scope or ldap0.SCOPE_BASE)])[0])
+    scope = int(app.form.getInputValue('scope', [str(app.ldap_url.scope or ldap0.SCOPE_BASE)])[0])
 
     bulkmod_filter = app.form.getInputValue(
         'filterstr',
-        [(connLDAPUrl.filterstr or '').decode(app.ls.charset)]
+        [(app.ldap_url.filterstr or '').decode(app.ls.charset)]
     )[0] or u'(objectClass=*)'
     bulkmod_newsuperior = app.form.getInputValue('bulkmod_newsuperior', [u''])[0]
 
