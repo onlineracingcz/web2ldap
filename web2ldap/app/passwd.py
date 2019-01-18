@@ -25,27 +25,15 @@ import web2ldap.web.forms
 import web2ldap.ldapsession
 import web2ldap.app.cnf
 import web2ldap.app.core
-import web2ldap.app.form
 import web2ldap.app.gui
 import web2ldap.app.login
 from web2ldap.ldaputil.passwd import user_password_hash
+from web2ldap.app.form import Web2LDAPForm_passwd
 
 
-PASSWD_ACTIONS = (
-    (
-        'passwdextop',
-        'Server-side',
-        u'Password modify extended operation',
-    ),
-    (
-        'setuserpassword',
-        'Modify password attribute',
-        u'Set the password attribute with modify operation'
-    ),
-)
 PASSWD_ACTIONS_DICT = dict([
     (action, (short_desc, long_desc))
-    for action, short_desc, long_desc in PASSWD_ACTIONS
+    for action, short_desc, long_desc in Web2LDAPForm_passwd.passwd_actions
 ])
 
 PASSWD_GEN_DEFAULT_LENGTH = 20
@@ -99,7 +87,7 @@ def passwd_context_menu(app, sub_schema):
             ],
             title=long_desc
         )
-        for pa, short_desc, long_desc in PASSWD_ACTIONS
+        for pa, short_desc, long_desc in Web2LDAPForm_passwd.passwd_actions
     ]
     # Menu entry for unlocking entry
     delete_param_list = [
@@ -164,34 +152,6 @@ def password_self_change(ls, dn):
     return (ls.who is None) or (ls.who == dn)
 
 
-def passwd_fields():
-    """
-    return list of Field instances needed for a password change input form
-    """
-    return [
-        web2ldap.web.forms.Select(
-            'passwd_action', u'Password action', 1,
-            options=[
-                (action, short_desc)
-                for action, short_desc, _ in web2ldap.app.passwd.PASSWD_ACTIONS
-            ],
-            default=u'setuserpassword'
-        ),
-        web2ldap.app.form.DistinguishedNameInput('passwd_who', u'Password DN'),
-        web2ldap.web.forms.Field('passwd_oldpasswd', u'Old password', 100, 1, '.*'),
-        web2ldap.web.forms.Field('passwd_newpasswd', u'New password', 100, 2, '.*'),
-        web2ldap.web.forms.Select(
-            'passwd_scheme', u'Password hash scheme', 1,
-            options=web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items(),
-            default=None,
-        ),
-        web2ldap.web.forms.Checkbox('passwd_ntpasswordsync', u'Sync ntPassword for Samba', 1, default=u'yes', checked=1),
-        web2ldap.web.forms.Checkbox('passwd_settimesync', u'Sync password setting times', 1, default=u'yes', checked=1),
-        web2ldap.web.forms.Checkbox('passwd_forcechange', u'Force password change', 1, default=u'yes', checked=0),
-        web2ldap.web.forms.Checkbox('passwd_inform', u'Password change inform action', 1, default="display_url", checked=0),
-    ]
-
-
 def passwd_form(
         app, sub_schema,
         passwd_action, passwd_who, user_objectclasses,
@@ -203,7 +163,7 @@ def passwd_form(
 
     # depending on the calling code part the necessary
     # input fields must be added to the form
-    for field in passwd_fields():
+    for field in Web2LDAPForm_passwd.fields():
         if field.name not in app.form.field:
             app.form.addField(field)
 

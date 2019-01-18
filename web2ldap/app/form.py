@@ -33,7 +33,6 @@ import web2ldap.ldapsession
 import web2ldap.ldaputil.passwd
 import web2ldap.app.core
 import web2ldap.app.gui
-import web2ldap.app.passwd
 import web2ldap.app.searchform
 import web2ldap.app.ldapparams
 import web2ldap.app.session
@@ -594,10 +593,50 @@ class Web2LDAPForm_rename(Web2LDAPForm):
 
 class Web2LDAPForm_passwd(Web2LDAPForm):
     command = 'passwd'
+    passwd_actions = (
+        (
+            'passwdextop',
+            'Server-side',
+            u'Password modify extended operation',
+        ),
+        (
+            'setuserpassword',
+            'Modify password attribute',
+            u'Set the password attribute with modify operation'
+        ),
+    )
+
+    @staticmethod
+    def fields():
+        """
+        return list of Field instances needed for a password change input form
+        """
+        return [
+            web2ldap.web.forms.Select(
+                'passwd_action', u'Password action', 1,
+                options=[
+                    (action, short_desc)
+                    for action, short_desc, _ in Web2LDAPForm_passwd.passwd_actions
+                ],
+                default=u'setuserpassword'
+            ),
+            web2ldap.app.form.DistinguishedNameInput('passwd_who', u'Password DN'),
+            web2ldap.web.forms.Field('passwd_oldpasswd', u'Old password', 100, 1, '.*'),
+            web2ldap.web.forms.Field('passwd_newpasswd', u'New password', 100, 2, '.*'),
+            web2ldap.web.forms.Select(
+                'passwd_scheme', u'Password hash scheme', 1,
+                options=web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items(),
+                default=None,
+            ),
+            web2ldap.web.forms.Checkbox('passwd_ntpasswordsync', u'Sync ntPassword for Samba', 1, default=u'yes', checked=1),
+            web2ldap.web.forms.Checkbox('passwd_settimesync', u'Sync password setting times', 1, default=u'yes', checked=1),
+            web2ldap.web.forms.Checkbox('passwd_forcechange', u'Force password change', 1, default=u'yes', checked=0),
+            web2ldap.web.forms.Checkbox('passwd_inform', u'Password change inform action', 1, default="display_url", checked=0),
+        ]
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        for field in web2ldap.app.passwd.passwd_fields():
+        for field in self.fields():
             self.addField(field)
 
 
