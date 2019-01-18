@@ -99,7 +99,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
                 remote_ip,
                 self.max_session_count_per_ip,
             )
-            raise web2ldap.web.session.MaxSessionCountExceeded(self.max_session_count_per_ip)
+            raise web2ldap.web.session.MaxSessionPerIPExceeded(remote_ip, self.max_session_count_per_ip)
         session_id = web2ldap.web.session.WebSession.newSession(self, env)
         current_concurrent_sessions = len(self.sessiondict) / 2
         if current_concurrent_sessions > self.max_concurrent_sessions:

@@ -97,6 +97,20 @@ class MaxSessionCountExceeded(SessionException):
         return "Maximum number of sessions exceeded. Limit is %d." % (self.max_session_count)
 
 
+class MaxSessionPerIPExceeded(SessionException):
+    """Raised if maximum number of sessions is exceeded."""
+
+    def __init__(self, remote_ip, max_session_count):
+        self.remote_ip = remote_ip
+        self.max_session_count = max_session_count
+
+    def __str__(self):
+        return "Maximum number of sessions exceeded for %r. Limit is %d." % (
+            self.remote_ip,
+            self.max_session_count,
+        )
+
+
 class BadSessionId(SessionException):
     """Raised if session ID not found in session dictionary."""
 
