@@ -41,7 +41,6 @@ import ipaddress
 import ldap0
 import ldap0.ldapurl
 import ldap0.schema.models
-from ldap0.schema.subentry import SubSchema
 
 import web2ldapcnf
 
@@ -1220,15 +1219,6 @@ class PreformattedMultilineText(MultilineText):
     oid = 'PreformattedMultilineText-oid'
     cols = 66
     tab_identiation = '&nbsp;&nbsp;&nbsp;&nbsp;'
-    whitespace_cleaning = None
-
-    def sanitizeInput(self, attrValue):
-        if self.whitespace_cleaning is None:
-            return attrValue
-        return self.lineSep.join([
-            self.whitespace_cleaning(l)
-            for l in self._split_lines(attrValue.decode(self._app.form.accept_charset))
-        ]).encode(self._app.ls.charset)
 
     def displayValue(self, valueindex=0, commandbutton=False):
         lines = [

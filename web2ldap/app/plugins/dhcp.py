@@ -30,7 +30,6 @@ class DHCPConfigStatement(MultilineText):
     oid = 'DHCPConfigStatement-oid'
     desc = 'DHCP configuration statement'
     lineSep = u''
-    whitespace_cleaning = False
 
     def displayValue(self, valueindex=0, commandbutton=False):
         r = ['<code>%s</code>' % (

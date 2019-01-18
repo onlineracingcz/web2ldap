@@ -139,7 +139,6 @@ class OlcMultilineText(MultilineText):
     desc = 'OpenLDAP multiline configuration strings'
     cols = 90
     minInputRows = 3
-    whitespace_cleaning = False
 
     def displayValue(self, valueindex=0, commandbutton=False):
         return '<code>%s</code>' % MultilineText.displayValue(self, valueindex, commandbutton)
