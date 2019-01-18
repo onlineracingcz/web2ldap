@@ -287,11 +287,11 @@ class DHCPRange(IA5String):
     def formValue(self):
         form_value = IA5String.formValue(self)
         if not form_value:
-          try:
-            ipv4_network = self._get_ipnetwork().hosts()
-            form_value = u' '.join((unicode(ipv4_network[0]), unicode(ipv4_network[-1])))
-          except Exception:
-            pass
+            try:
+                ipv4_network = self._get_ipnetwork().hosts()
+                form_value = u' '.join((unicode(ipv4_network[0]), unicode(ipv4_network[-1])))
+            except Exception:
+                pass
         return form_value
 
     def sanitizeInput(self, attrValue):
