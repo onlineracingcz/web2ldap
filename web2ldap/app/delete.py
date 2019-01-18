@@ -505,7 +505,7 @@ def w2l_delete(app):
         # Delete a single whole entry
         #-----------------------------
 
-        app.ls.deleteEntry(app.dn)
+        app.ls.l.delete_s(app.dn.encode(app.ls.charset))
         old_dn = app.dn
         app.dn = app.parent_dn
         web2ldap.app.gui.SimpleMessage(

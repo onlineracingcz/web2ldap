@@ -1007,11 +1007,6 @@ class LDAPSession(object):
             entry_uuid = None
         return new_dn, entry_uuid # renameEntry()
 
-    def deleteEntry(self, dn, serverctrls=None):
-        """Delete single entry"""
-        self.l.delete_s(self.uc_encode(dn)[0], serverctrls=serverctrls)
-        return # deleteEntry()
-
     def setDN(self, dn):
         """
         Set currently used DN.
