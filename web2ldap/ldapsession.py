@@ -583,9 +583,8 @@ class LDAPSession(object):
     def init_rootdse(self):
         """Retrieve attributes from Root DSE"""
         self._reset_rootdse_attrs()
-        self.rootDSE = ldap0.cidict.cidict()
         try:
-            self.rootDSE = self.l.read_rootdse_s(attrlist=ROOTDSE_ATTRS)
+            self.rootDSE = self.l.read_rootdse_s(attrlist=ROOTDSE_ATTRS)or {}
         except (
                 ldap0.CONFIDENTIALITY_REQUIRED,
                 ldap0.CONSTRAINT_VIOLATION,
