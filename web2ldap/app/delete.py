@@ -217,7 +217,7 @@ def delete_entries(
     if scope == ldap0.SCOPE_SUBTREE and tree_delete_control:
         # Try to directly delete the whole subtree with the tree delete control
         app.ls.l.delete_s(dn, serverctrls=delete_server_ctrls)
-        return True
+        return (1, set())
     else:
         leafs_deleter = DeleteLeafs(app.ls.l, tree_delete_control, delete_server_ctrls)
         deleted_entries_count = 0
