@@ -349,8 +349,8 @@ def w2l_conninfo(app):
             app.form.utf2display(sasl_mech),
             sasl_auth_info,
             app.form.utf2display(sasl_ssf),
-            app.form.utf2display(app.dn),
-            app.form.utf2display(app.parent_dn),
+            app.form.utf2display(app.dn or u'- World -'),
+            app.form.utf2display(app.parent_dn if app.parent_dn is not None else u''),
             app.form.utf2display(app.naming_context),
         )
     )
