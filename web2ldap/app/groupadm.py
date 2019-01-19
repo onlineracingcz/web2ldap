@@ -136,15 +136,11 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         if not gad[1] is None
     ]
 
-    result_dnlist = app.ls.readEntry(app.dn, all_membership_attrs)
-    if not result_dnlist:
+    search_result = app.ls.l.read_s(app.dn.encode(app.ls.charset),attrlist=all_membership_attrs)
+    if not search_result:
         raise web2ldap.app.core.ErrorExit(u'No search result when reading entry.')
 
-    user_entry = ldap0.schema.models.Entry(
-        app.schema,
-        app.ldap_dn,
-        result_dnlist[0][1],
-    )
+    user_entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, search_result)
 
     # Extract form parameters
     group_search_root = app.form.getInputValue('groupadm_searchroot', [app.naming_context])[0]
