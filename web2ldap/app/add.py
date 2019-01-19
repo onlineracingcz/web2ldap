@@ -85,7 +85,7 @@ def w2l_add(app):
     invalid_attrs = None
 
     if add_clonedn:
-        entry, _ = web2ldap.app.addmodifyform.ReadOldEntry(app.ls, add_clonedn, app.schema, None, {'*':'*'})
+        entry, _ = web2ldap.app.addmodifyform.read_old_entry(app.ls, add_clonedn, app.schema, None, {'*':'*'})
         add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_clonedn)
         add_rdn_dnlist = ldap0.dn.str2dn(add_rdn.encode(app.ls.charset))
         add_rdn = u'+'.join(['%s=' % (at) for at, _, _ in add_rdn_dnlist[0]]).decode(app.ls.charset)
@@ -125,7 +125,7 @@ def w2l_add(app):
         web2ldap.app.addmodifyform.w2l_addform(
             app,
             add_rdn, add_basedn, entry,
-            Msg=error_msg,
+            msg=error_msg,
             invalid_attrs=invalid_attrs,
         )
         return
@@ -145,7 +145,7 @@ def w2l_add(app):
         web2ldap.app.addmodifyform.w2l_addform(
             app,
             add_rdn, add_basedn, entry,
-            Msg='Wrong format of RDN string.',
+            msg='Wrong format of RDN string.',
         )
         return
 
@@ -165,7 +165,7 @@ def w2l_add(app):
                 app,
                 add_rdn.decode(app.ls.charset),
                 add_basedn, entry,
-                Msg='Attribute <var>%s</var> required for RDN not in entry data.' % (
+                msg='Attribute <var>%s</var> required for RDN not in entry data.' % (
                     app.form.utf2display(rdn_attr_type.decode('ascii'))
                 ),
             )
@@ -227,7 +227,7 @@ def w2l_add(app):
         web2ldap.app.addmodifyform.w2l_addform(
             app,
             add_rdn.decode(app.ls.charset), add_basedn.decode(app.ls.charset), entry,
-            Msg=app.ldap_error_msg(e),
+            msg=app.ldap_error_msg(e),
         )
     else:
         # Try to extract Post Read Entry response control

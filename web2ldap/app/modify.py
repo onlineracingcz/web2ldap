@@ -101,7 +101,7 @@ def w2l_modify(app):
         web2ldap.app.addmodifyform.w2l_modifyform(
             app,
             new_entry,
-            Msg=error_msg,
+            msg=error_msg,
             invalid_attrs=invalid_attrs,
         )
         return
@@ -112,7 +112,7 @@ def w2l_modify(app):
         in_oldattrtypes[attr_type] = None
 
     try:
-        old_entry, dummy = web2ldap.app.addmodifyform.ReadOldEntry(app, app.dn, app.schema, in_assertion)
+        old_entry, dummy = web2ldap.app.addmodifyform.read_old_entry(app, app.dn, app.schema, in_assertion)
     except ldap0.NO_SUCH_OBJECT:
         raise web2ldap.app.core.ErrorExit(u'Old entry was removed or modified in between! You have to edit it again.')
 
@@ -215,7 +215,7 @@ def w2l_modify(app):
         web2ldap.app.addmodifyform.w2l_modifyform(
             app,
             new_entry,
-            Msg=app.ldap_error_msg(e),
+            msg=app.ldap_error_msg(e),
         )
         return
 

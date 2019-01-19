@@ -1039,14 +1039,14 @@ def nomatching_attrs(sub_schema, entry, allowed_attrs_dict, required_attrs_dict)
     return nomatching_attrs_dict # nomatching_attrs()
 
 
-def ReadOldEntry(app, dn, sub_schema, assertion_filter, read_attrs=None):
+WRITEABLE_ATTRS_NONE = None
+WRITEABLE_ATTRS_SLAPO_ALLOWED = 1
+WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS = 2
+
+def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
     """
     Retrieve all editable attribute types an entry
     """
-
-    WRITEABLE_ATTRS_NONE = None
-    WRITEABLE_ATTRS_SLAPO_ALLOWED = 1
-    WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS = 2
 
     server_ctrls = []
 
@@ -1124,16 +1124,16 @@ def ReadOldEntry(app, dn, sub_schema, assertion_filter, read_attrs=None):
                         )
                 del entry[';'.join((dummy1, dummy2, attr_type))]
 
-    return entry, writeable_attr_oids # ReadOldEntry()
+    return entry, writeable_attr_oids # read_old_entry()
 
 
 def w2l_addform(
         app,
-        add_rdn, add_basedn, entry, Msg='', invalid_attrs=None,
+        add_rdn, add_basedn, entry, msg='', invalid_attrs=None,
     ):
 
-    if Msg:
-        Msg = '<p class="ErrorMessage">%s</p>' % (Msg)
+    if msg:
+        msg = '<p class="ErrorMessage">%s</p>' % (msg)
 
     input_formtype = app.form.getInputValue(
         'in_ft',
@@ -1176,8 +1176,8 @@ def w2l_addform(
 
     relax_rules_enabled = app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
     if relax_rules_enabled:
-        Msg = ''.join((
-            Msg,
+        msg = ''.join((
+            msg,
             '<p class="WarningMessage">Relax Rules Control enabled! Be sure you know what you are doing!</p>',
         ))
 
@@ -1185,14 +1185,14 @@ def w2l_addform(
     if input_formtype == u'Template':
         template_oc, read_template_dict = input_form_entry.get_html_templates('input_template')
         if not template_oc:
-            Msg = ''.join((
-                Msg,
+            msg = ''.join((
+                msg,
                 '<p class="WarningMessage">No templates defined for chosen object classes.</p>'
             ))
             input_formtype = u'Table'
         elif relax_rules_enabled:
-            Msg = ''.join((
-                Msg,
+            msg = ''.join((
+                msg,
                 '<p class="WarningMessage">Forced to table input because Relax Rules Control is enabled.</p>'
             ))
             input_formtype = u'Table'
@@ -1207,7 +1207,7 @@ def w2l_addform(
     app.outf.write(
         INPUT_FORM_BEGIN_TMPL.format(
             text_heading=H1_MSG[app.command],
-            text_msg=Msg,
+            text_msg=msg,
             text_supentry=supentry_display_string,
             form_begin=app.form.beginFormHTML(app.command, app.sid, 'POST', target=None, enctype='multipart/form-data'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
@@ -1245,10 +1245,10 @@ def w2l_addform(
     return # w2l_addform()
 
 
-def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
+def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
-    if Msg:
-        Msg = '<p class="ErrorMessage">%s</p>' % (Msg)
+    if msg:
+        msg = '<p class="ErrorMessage">%s</p>' % (msg)
 
     input_formtype = app.form.getInputValue(
         'in_ft',
@@ -1259,7 +1259,7 @@ def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
         # Read objectclass(es) from input form
         entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].value]
 
-    old_entry, read_writeable_attr_oids = ReadOldEntry(app, app.dn, app.schema, None)
+    old_entry, read_writeable_attr_oids = read_old_entry(app, app.dn, app.schema, None)
     if not entry:
         entry = old_entry
 
@@ -1297,23 +1297,23 @@ def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
 
     relax_rules_enabled = app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
     if relax_rules_enabled:
-        Msg = ''.join((
-            Msg,
+        msg = ''.join((
+            msg,
             '<p class="WarningMessage">Relax Rules Control enabled! Be sure you know what you are doing!</p>',
         ))
 
     # Check whether to fall back to table input mode
     if input_formtype == u'Template':
-        template_oc, read_template_dict = input_form_entry.get_html_templates('input_template')
+        template_oc, _ = input_form_entry.get_html_templates('input_template')
         if not template_oc:
-            Msg = ''.join((
-                Msg,
+            msg = ''.join((
+                msg,
                 '<p class="WarningMessage">No templates defined for chosen object classes.</p>',
             ))
             input_formtype = u'Table'
         elif relax_rules_enabled:
-            Msg = ''.join((
-                Msg,
+            msg = ''.join((
+                msg,
                 '<p class="WarningMessage">Forced to table input because Relax Rules Control is enabled.</p>',
             ))
             input_formtype = u'Table'
@@ -1328,7 +1328,7 @@ def w2l_modifyform(app, entry, Msg='', invalid_attrs=None):
     app.outf.write(
         INPUT_FORM_BEGIN_TMPL.format(
             text_heading=H1_MSG[app.command],
-            text_msg=Msg,
+            text_msg=msg,
             text_supentry=supentry_display_string,
             form_begin=app.form.beginFormHTML(
                 app.command, app.sid, 'POST',
