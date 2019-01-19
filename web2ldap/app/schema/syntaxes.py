@@ -1844,7 +1844,6 @@ class BitArrayInteger(MultilineText, Integer):
         False:'-',
         True:'+',
     }
-    minValue = 0
 
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         Integer.__init__(self, app, dn, schema, attrType, attrValue, entry)
