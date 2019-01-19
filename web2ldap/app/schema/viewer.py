@@ -674,7 +674,6 @@ class DisplayDITStructureRule(DisplaySchemaElement):
             <dl>
             <dt>Schema element string:</dt>
             <dd><code>%s</code></dd>
-            %s
             </dl>
             """ % (
                 oid_input_form(self._app, ''),
@@ -684,9 +683,9 @@ class DisplayDITStructureRule(DisplaySchemaElement):
                 ),
                 self.se.ruleid,
                 self._app.form.utf2display(str(self.se).decode(self._app.ls.charset)),
-                ''.join(self.disp_details()),
             )
         )
+        self.disp_details()
         web2ldap.app.gui.Footer(self._app)
 
     def disp_details(self):
