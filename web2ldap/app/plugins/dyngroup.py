@@ -31,10 +31,10 @@ class MemberUrl(LDAPUrl):
         try:
             # Try a dummy base-levelsearch with search base and filter string
             # to provoke server-side errors
-            _ = self._app.ls.readEntry(
-                search_base,
-                attrtype_list=ldap_url.attrs,
-                search_filter=ldap_url.filterstr or '(objectClass=*)',
+            self._app.ls.l.read_s(
+                ldap_url.dn,
+                attrlist=ldap_url.attrs,
+                filterstr=ldap_url.filterstr or '(objectClass=*)',
             )
         except ldap0.LDAPError:
             return False
