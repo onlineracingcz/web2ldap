@@ -309,7 +309,7 @@ class LDAPSyntax(object):
         if se and se.single_value:
             return ''
         return '<button formaction="%s#in_a_%s" type="submit" name="in_mr" value="%s%d">%s</button>' % (
-            self._app.form.actionUrlHTML(command, self._app.sid),
+            self._app.form.action_url(command, self._app.sid),
             self._app.form.utf2display(self._app.ls.uc_decode(self.attrType)[0]),
             mode, row, link_text
         )

@@ -250,7 +250,7 @@ class AppHandler(object):
         res = '<a class="CommandLink"%s%s href="%s?%s%s">%s</a>' % (
             target_attr,
             title_attr,
-            self.form.actionUrlHTML(command, self.sid),
+            self.form.action_url(command, self.sid),
             '&amp;'.join([
                 '%s=%s' % (param_name, urllib.quote(self.form.uc_encode(param_value)[0]))
                 for param_name, param_value in form_parameters

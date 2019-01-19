@@ -151,7 +151,7 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
             default=u'0',
         ))
 
-    def actionUrlHTML(self, command, sid):
+    def action_url(self, command, sid):
         return '%s/%s%s' % (
             self.script_name,
             command,
@@ -179,7 +179,7 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
             accept-charset="%s"
           >
           """  % (
-              self.actionUrlHTML(command, sid),
+              self.action_url(command, sid),
               method,
               target,
               enctype,
