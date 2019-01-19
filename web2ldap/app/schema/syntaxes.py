@@ -1759,10 +1759,10 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
 
     def _readReferencedEntry(self, dn):
         try:
-            ldap_result = self._app.ls.readEntry(
-                dn.decode(self._app.ls.charset),
-                attrtype_list=self.lu_obj.attrs,
-                search_filter=self._determineFilter(),
+            ref_entry = self._app.ls.l.read_s(
+                dn,
+                attrlist=self.lu_obj.attrs,
+                filterstr=self._determineFilter(),
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -1772,9 +1772,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
                 ldap0.REFERRAL,
             ):
             return None
-        if ldap_result:
-            return ldap_result[0][1]
-        return None
+        return ref_entry
 
     def _validate(self, attrValue):
         return self._readReferencedEntry(attrValue) is not None
