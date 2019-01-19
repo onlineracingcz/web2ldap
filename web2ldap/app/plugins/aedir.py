@@ -281,10 +281,10 @@ class AEGIDNumber(GidNumber):
             return attrValues
         # first try to re-read gidNumber from existing entry
         try:
-            ldap_result = self._app.ls.readEntry(
-                self._dn,
-                attrtype_list=[self.attrType],
-                search_filter='({0}=*)'.format(self.attrType),
+            ldap_result = self._app.ls.l.read_s(
+                self._dn.encode(self._app.ls.charset),
+                attrlist=[self.attrType],
+                filterstr='({0}=*)'.format(self.attrType),
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -294,7 +294,7 @@ class AEGIDNumber(GidNumber):
             pass
         else:
             if ldap_result:
-                return ldap_result[0][1][self.attrType]
+                return ldap_result[self.attrType]
         # return next ID from pool entry
         return [str(self._get_next_gid())] # formValue()
 
@@ -1388,10 +1388,10 @@ class AEDerefAttribute(DirectoryString):
 
     def _read_person_attr(self):
         try:
-            ldap_result = self._app.ls.readEntry(
-                self._entry[self.deref_attribute_type][0].decode(self._app.ls.charset),
-                attrtype_list=[self.attrType],
-                search_filter=self.deref_filter_tmpl.format(
+            person_entry = self._app.ls.l.read_s(
+                self._entry[self.deref_attribute_type][0],
+                attrlist=[self.attrType],
+                filterstr=self.deref_filter_tmpl.format(
                     deref_object_class=self.deref_object_class,
                     attribute_type=self.attrType,
                 ),
@@ -1399,8 +1399,7 @@ class AEDerefAttribute(DirectoryString):
         except ldap0.LDAPError:
             result = None
         else:
-            if ldap_result:
-                _, person_entry = ldap_result[0]
+            if person_entry:
                 result = person_entry[self.attrType][0].decode(self._app.ls.charset)
             else:
                 result = None
