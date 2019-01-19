@@ -377,16 +377,12 @@ def w2l_delete(app):
     if delete_confirm is None:
         # First show delete confirmation and delete mode select form
         # Read the editable attribute values of entry
-        try:
-            ldap_entry = app.ls.readEntry(
-                app.dn,
-                [a.encode(app.ls.charset) for a in delete_attr],
-                search_filter='(objectClass=*)',
-                no_cache=1,
-                server_ctrls=None,
-            )[0][1]
-        except IndexError:
-            ldap_entry = {}
+        ldap_entry = app.ls.l.read_s(
+            app.dn.encode(app.ls.charset),
+            attrlist=[a.encode(app.ls.charset) for a in delete_attr],
+            filterstr='(objectClass=*)',
+            cache_ttl=-1.0,
+        ) or {}
         entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, ldap_entry)
         if delete_attr:
             inner_form = del_attr_form(app, entry, delete_attr)
