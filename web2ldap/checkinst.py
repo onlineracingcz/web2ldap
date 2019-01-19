@@ -80,6 +80,3 @@ def check_inst():
     logger.debug('ldap0.SASL_AVAIL = %r', ldap0.SASL_AVAIL)
     logger.debug('*** ldap0.OPT_API_INFO ***')
     logger.debug(pformat(ldap0.get_option(ldap0.OPT_API_INFO)))
-
-if __name__ == '__main__':
-    check_inst()
