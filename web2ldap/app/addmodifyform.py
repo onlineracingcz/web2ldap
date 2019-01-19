@@ -571,9 +571,9 @@ def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
         for oc in inputform_supentrytemplate.keys():
             inputform_supentrytemplate_attrtypes.update(GrabKeys(inputform_supentrytemplate[oc]).keys)
         try:
-            parent_search_result = app.ls.readEntry(
-                parent_dn,
-                attrtype_list=list(inputform_supentrytemplate_attrtypes),
+            parent_search_result = app.ls.l.read_s(
+                parent_dn.encode(app.ls.charset),
+                attrlist=list(inputform_supentrytemplate_attrtypes),
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -585,9 +585,9 @@ def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
             if parent_search_result:
                 parent_entry = web2ldap.app.read.DisplayEntry(
                     app, parent_dn, app.schema,
-                    parent_search_result[0][1], 'readSep', 0
+                    parent_search_result, 'readSep', 0
                 )
-                for oc in parent_search_result[0][1].get('objectClass', []):
+                for oc in parent_search_result.get('objectClass', []):
                     try:
                         inputform_supentrytemplate[oc]
                     except KeyError:
@@ -635,9 +635,9 @@ def ObjectClassForm(
                 'OpenLDAProotDSE' not in app.ls.rootDSE.get('objectClass', [])
             ):
             try:
-                parent_search_result = app.ls.readEntry(
-                    parent_dn,
-                    attrtype_list=['allowedChildClasses', 'allowedChildClassesEffective'],
+                parent_entry = app.ls.l.read_s(
+                    parent_dn.encode(app.ls.charset),
+                    attrlist=['allowedChildClasses', 'allowedChildClassesEffective'],
                 )
             except (
                     ldap0.NO_SUCH_OBJECT,
@@ -646,8 +646,7 @@ def ObjectClassForm(
                 ):
                 pass
             else:
-                if parent_search_result:
-                    parent_entry = parent_search_result[0][1]
+                if parent_entry:
                     try:
                         allowed_child_classes = parent_entry['allowedChildClasses']
                     except KeyError:
