@@ -143,12 +143,14 @@ def w2l_rename(app):
 
     if app.schema.sed[ldap0.schema.models.NameForm]:
         # Determine if there are name forms defined for structural object class
-        search_result = app.ls.readEntry(app.dn, ['objectClass', 'structuralObjectClass', 'governingStructureRule'])
+        search_result = app.ls.l.read_s(
+            app.dn.encode(app.ls.charset),
+            attrlist=['objectClass', 'structuralObjectClass', 'governingStructureRule'],
+        )
         if not search_result:
-            # This should normally not happen, only if entry got deleted in between
             raise web2ldap.app.core.ErrorExit(u'Empty search result when reading entry to be renamed.')
 
-        entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result[0][1])
+        entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result)
 
         # Determine possible name forms for new RDN
         rdn_options = entry.get_rdn_templates()
