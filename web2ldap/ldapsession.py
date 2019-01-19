@@ -698,10 +698,6 @@ class LDAPSession(object):
             self.namingContexts or naming_contexts or [],
         )
 
-    def isLeafEntry(self, dn):
-        """Returns 1 if the node is a leaf entry, 0 otherwise"""
-        return not self.subOrdinates(dn)[0]
-
     def count(
             self,
             dn,
