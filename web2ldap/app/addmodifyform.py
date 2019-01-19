@@ -814,16 +814,25 @@ def ObjectClassForm(
         add_tmpl_dict = {}
         for template_name in addform_entry_templates_keys:
             ldif_dn, ldif_entry = ReadLDIFTemplate(app, template_name)
-            tmpl_parent_dn = web2ldap.ldaputil.base.parent_dn(ldif_dn.decode(app.ls.charset)).decode(app.ls.charset) or parent_dn
+            tmpl_parent_dn = web2ldap.ldaputil.base.parent_dn(
+                ldif_dn.decode(app.ls.charset)).decode(app.ls.charset
+            ) or parent_dn
             # first check whether mandatory attributes in parent entry are readable
             if addform_parent_attrs:
                 try:
-                    parent_result = app.ls.readEntry(tmpl_parent_dn, attrtype_list=addform_parent_attrs)
+                    parent_result = app.ls.l.read_s(
+                        tmpl_parent_dn.encode(app.ls.charset),
+                        attrlist=addform_parent_attrs,
+                    )
                 except (ldap0.NO_SUCH_OBJECT, ldap0.INSUFFICIENT_ACCESS):
                     continue
                 if not parent_result:
                     continue
-                parent_entry = ldap0.schema.models.Entry(app.schema, parent_result[0][0], parent_result[0][1])
+                parent_entry = ldap0.schema.models.Entry(
+                    app.schema,
+                    tmpl_parent_dn.encode(app.ls.charset),
+                    parent_result,
+                )
                 missing_parent_attrs = set([
                     attr_type
                     for attr_type in addform_parent_attrs
@@ -1075,13 +1084,13 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
 
     # Read the editable attribute values of entry
     try:
-        ldap_entry = app.ls.readEntry(
-            dn,
-            read_attrs.values(),
-            search_filter=(assertion_filter or u'(objectClass=*)').encode(app.ls.charset),
-            no_cache=1,
-            server_ctrls=server_ctrls or None,
-        )[0][1]
+        ldap_entry = app.ls.l.read_s(
+            dn.encode(app.ls.charset),
+            attrlist=read_attrs.values(),
+            filterstr=(assertion_filter or u'(objectClass=*)').encode(app.ls.charset),
+            cache_ttl=-1.0,
+            serverctrls=server_ctrls or None,
+        )
     except IndexError:
         raise ldap0.NO_SUCH_OBJECT
 
