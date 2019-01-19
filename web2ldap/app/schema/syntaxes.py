@@ -1660,13 +1660,13 @@ class DynamicValueSelectList(SelectList, DirectoryString):
     def _determineSearchDN(self, current_dn, ldap_url_dn):
         ldap_url_dn = self._app.ls.uc_decode(ldap_url_dn)[0]
         if ldap_url_dn == '_':
-            result_dn = self._app.ls.getSearchRoot(current_dn or self._dn or self._app.ls._dn)
+            result_dn = self._app.ls.get_search_root(current_dn or self._dn or self._app.ls._dn)
         elif ldap_url_dn == '.':
             result_dn = current_dn
         elif ldap_url_dn == '..':
             result_dn = web2ldap.ldaputil.base.parent_dn(current_dn)
         elif ldap_url_dn.endswith(',_'):
-            result_dn = ','.join((ldap_url_dn[:-2], self._app.ls.getSearchRoot(self._dn)))
+            result_dn = ','.join((ldap_url_dn[:-2], self._app.ls.naming_context))
         elif ldap_url_dn.endswith(',.'):
             result_dn = ','.join((ldap_url_dn[:-2], current_dn))
         elif ldap_url_dn.endswith(',..'):

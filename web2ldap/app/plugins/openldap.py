@@ -435,7 +435,7 @@ class ReqEntryUUID(UUID):
                     ),
                     (
                         'search_root',
-                        self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._entry['reqDN'][0])[0]),
+                        self._app.ls.get_search_root(self._app.ls.uc_decode(self._entry['reqDN'][0])[0]),
                     ),
                 ),
                 title=u'Search entry by UUID',

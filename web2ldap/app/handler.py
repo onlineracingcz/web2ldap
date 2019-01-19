@@ -185,7 +185,7 @@ class AppHandler(object):
         self._parent_dn = web2ldap.ldaputil.base.parent_dn(self._dn)
         if self.ls:
             ldap_charset = self.ls.charset
-            self.naming_context = self.ls.getSearchRoot(self._dn)
+            self.naming_context = self.ls.get_search_root(self._dn)
         else:
             ldap_charset = 'utf-8'
             self.naming_context = u''

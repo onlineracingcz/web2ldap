@@ -684,7 +684,7 @@ class LDAPSession(object):
         self._update_rootdse_attrs()
         return # init_rootdse()
 
-    def getSearchRoot(self, dn, naming_contexts=None):
+    def get_search_root(self, dn, naming_contexts=None):
         """
         Returns the namingContexts value matching best the
         distinguished name given in dn

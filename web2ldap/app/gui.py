@@ -715,7 +715,7 @@ def SearchRootField(
     if app.dn:
         dn_select_list = [app.dn] + web2ldap.ldaputil.base.parent_dn_list(
             app.dn,
-            app.ls.getSearchRoot(app.dn, naming_contexts=naming_contexts),
+            app.ls.get_search_root(app.dn, naming_contexts=naming_contexts),
         )
     else:
         dn_select_list = []

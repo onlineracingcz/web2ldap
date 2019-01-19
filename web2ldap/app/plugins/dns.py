@@ -51,7 +51,7 @@ class AssociatedDomain(DNSDomain):
         if self._dn:
             dn_u = self._app.ls.uc_decode(self._dn)[0]
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.getSearchRoot(dn_u).encode(self._app.ls.charset),
+                self._app.ls.get_search_root(dn_u).encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
                 '(&(objectClass=dNSDomain)(|(sOARecord=*)(nSRecord=*))(associatedDomain=*))',
                 attrlist=['associatedDomain'],
@@ -100,7 +100,7 @@ class AssociatedDomain(DNSDomain):
             r.append(self._app.anchor(
                 'search', 'Ref. RRs',
                 (
-                    ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
+                    ('dn', self._app.naming_context),
                     ('searchform_mode', u'adv'),
                     ('search_mode', u'(|%s)'),
                     ('search_attr', u'cNAMERecord'),
@@ -120,7 +120,7 @@ class AssociatedDomain(DNSDomain):
                 r.append(self._app.anchor(
                     'search', 'SOA RR',
                     (
-                        ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
+                        ('dn', self._app.naming_context),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'sOARecord'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
@@ -142,7 +142,7 @@ class AssociatedDomain(DNSDomain):
                     r.append(self._app.anchor(
                         'search', 'A RRs',
                         (
-                            ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
+                            ('dn', self._app.naming_context),
                             ('searchform_mode', u'adv'),
                             ('search_attr', u'aRecord'),
                             ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -154,7 +154,7 @@ class AssociatedDomain(DNSDomain):
                         r.append(self._app.anchor(
                             'search', 'IP host(s)',
                             (
-                                ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
+                                ('dn', self._app.naming_context),
                                 ('searchform_mode', u'adv'),
                                 ('search_attr', u'ipHostNumber'),
                                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -166,7 +166,7 @@ class AssociatedDomain(DNSDomain):
                         r.append(self._app.anchor(
                             'search', 'DHCP host(s)',
                             (
-                                ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
+                                ('dn', self._app.naming_context),
                                 ('searchform_mode', u'adv'),
                                 ('search_attr', u'dhcpStatements'),
                                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -253,7 +253,7 @@ class ARecord(IPv4HostAddress):
                 r.append(self._app.anchor(
                     'search', 'PTR RR',
                     (
-                        ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
+                        ('dn', self._app.naming_context),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -265,7 +265,7 @@ class ARecord(IPv4HostAddress):
                     r.append(self._app.anchor(
                         'search', 'IP host(s)',
                         (
-                            ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
+                            ('dn', self._app.naming_context),
                             ('searchform_mode', u'adv'),
                             ('search_attr', u'ipHostNumber'),
                             ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -277,7 +277,7 @@ class ARecord(IPv4HostAddress):
                     r.append(self._app.anchor(
                         'search', 'DHCP host(s)',
                         (
-                            ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
+                            ('dn', self._app.naming_context),
                             ('searchform_mode', u'adv'),
                             ('search_attr', u'dhcpStatements'),
                             ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -310,7 +310,7 @@ class AAAARecord(IPv6HostAddress):
                 r.append(self._app.anchor(
                     'search', 'PTR RR',
                     (
-                        ('dn', self._app.ls.getSearchRoot(self._app.ls.uc_decode(self._dn)[0])),
+                        ('dn', self._app.naming_context),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),

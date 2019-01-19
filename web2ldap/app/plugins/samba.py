@@ -99,7 +99,7 @@ class SambaSID(IA5String):
             domain_filter = '(objectClass=sambaDomain)'
         try:
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.getSearchRoot(self._dn).encode(self._app.ls.charset),
+                self._app.naming_context.encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
                 domain_filter,
                 attrlist=['sambaSID', 'sambaDomainName'],

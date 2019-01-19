@@ -46,7 +46,7 @@ class AutogenNumber(object):
             return u''
         try:
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.getSearchRoot(self._dn).encode(self._app.ls.charset),
+                self._app.naming_context.encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
                 '(&(objectClass={0})({1}>={2})({1}<={3}))'.format(
                     self.object_class,

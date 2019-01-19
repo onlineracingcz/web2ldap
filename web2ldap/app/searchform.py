@@ -229,7 +229,7 @@ def w2l_searchform(
 
     search_root = app.form.getInputValue(
         'search_root',
-        [search_root or app.ls.getSearchRoot(app.dn, naming_contexts)],
+        [search_root or app.ls.get_search_root(app.dn, naming_contexts)],
     )[0]
     search_root_field = web2ldap.app.gui.SearchRootField(
         app,
