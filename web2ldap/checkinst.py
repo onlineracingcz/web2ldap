@@ -27,9 +27,6 @@ import ldap0
 from web2ldap.log import logger
 
 
-YES_NO = {False:'no', True:'yes'}
-
-
 def check_inst():
     """
     Display Python and OpenLDAP installation details
