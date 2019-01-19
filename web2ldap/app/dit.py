@@ -86,9 +86,14 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
         except KeyError:
             # Try to read the missing entry
             try:
-                ldap_result = app.ls.readEntry(dn, DIT_ATTR_LIST)
-                node_entry = decode_dict(ldap_result[0][1], app.ls.charset)
-            except Exception:
+                node_entry = decode_dict(
+                    app.ls.l.read_s(
+                        dn.encode(app.ls.charset),
+                        attrlist=DIT_ATTR_LIST,
+                    ) or {},
+                    app.ls.charset,
+                )
+            except ldap0.LDAPError:
                 node_entry = {}
 
         if size_limit:
