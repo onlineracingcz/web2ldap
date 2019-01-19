@@ -218,17 +218,16 @@ def w2l_conninfo(app):
             ('ou=system', 'System'),
         ])
 
-    current_audit_context = app.ls.getAuditContext(app.naming_context)
-    if not current_audit_context is None:
+    if app.audit_context:
         context_menu_list.extend([
             app.anchor(
                 'read', 'Audit DB',
-                [('dn', current_audit_context)],
+                [('dn', app.audit_context)],
             ),
             app.anchor(
                 'search', 'Audit my access',
                 [
-                    ('dn', current_audit_context),
+                    ('dn', app.audit_context),
                     ('filterstr', '(&(objectClass=auditObject)(reqAuthzID=%s))' % (escape_filter_chars(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
@@ -237,7 +236,7 @@ def w2l_conninfo(app):
             app.anchor(
                 'search', 'Audit my writes',
                 [
-                    ('dn', current_audit_context),
+                    ('dn', app.audit_context),
                     ('filterstr', '(&(objectClass=auditWriteObject)(reqAuthzID=%s))' % (escape_filter_chars(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
@@ -246,7 +245,7 @@ def w2l_conninfo(app):
             app.anchor(
                 'search', 'Last logins',
                 [
-                    ('dn', current_audit_context),
+                    ('dn', app.audit_context),
                     ('filterstr', '(&(objectClass=auditBind)(reqDN=%s))' % (escape_filter_chars(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
@@ -364,8 +363,8 @@ def w2l_conninfo(app):
                 title=u'Flush all cached information for this LDAP connection'
             ),
             len(app.ls.l._cache),
-            len(app.ls.schema_dn_cache),
-            len(app.ls.schema_cache),
+            len(app.ls._schema_dn_cache),
+            len(app.ls._schema_cache),
             app.ls.l.cache_hit_ratio(),
         )
     )

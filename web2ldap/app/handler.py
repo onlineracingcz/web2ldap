@@ -158,7 +158,8 @@ class AppHandler(object):
         self.command, self.sid = self.path_info(env)
         self.form = None
         self.ls = None
-        self.naming_context = self._ldap_dn = self._dn = self._parent_dn = None
+        # class attributes later set by dn property method
+        self.naming_context = self._ldap_dn = self._dn = self._parent_dn = self.audit_context = None
         self.query_string = env.get('QUERY_STRING', '')
         self.ldap_url = None
         self.schema = None
@@ -186,9 +187,11 @@ class AppHandler(object):
         if self.ls:
             ldap_charset = self.ls.charset
             self.naming_context = self.ls.get_search_root(self._dn)
+            self.audit_context = self.ls.get_audit_context(self.naming_context)
         else:
             ldap_charset = 'utf-8'
             self.naming_context = u''
+            self.audit_context = None
         assert isinstance(self.naming_context, unicode), TypeError(
             'Expected class attribute naming_context to be unicode , was %r' % (self.naming_context)
         )
@@ -298,7 +301,7 @@ class AppHandler(object):
             COMMAND_FUNCTION[self.command].__module__,
             COMMAND_FUNCTION[self.command].__name__,
         )
-        self.schema = self.ls.retrieveSubSchema(
+        self.schema = self.ls.get_sub_schema(
             self.dn,
             self.cfg_param('_schema', None),
             self.cfg_param('supplement_schema', None),
@@ -774,6 +777,9 @@ class AppHandler(object):
             # Store session data in case anything goes wrong after here
             # to give the exception handler a good chance
             session_store.storeSession(self.sid, self.ls)
+
+            # trigger update of various DN-related class properties
+            self.dn = self.dn
 
             # Execute the command module
             try:

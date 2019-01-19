@@ -459,7 +459,7 @@ class LDAPSession(object):
         # Set to not connected
         self.uri = None
         self.namingContexts = None
-        self._auditContextCache = ldap0.cidict.cidict()
+        self._audit_context = ldap0.cidict.cidict()
         self._traceLevel = traceLevel
         # Character set/encoding of data stored on this particular host
         self.charset = 'utf-8'
@@ -471,8 +471,8 @@ class LDAPSession(object):
         self.secureConn = 0
         self.saslAuth = None
         self.startTLSOption = 0
-        self.schema_dn_cache = {}
-        self.schema_cache = {}
+        self._schema_dn_cache = {}
+        self._schema_cache = {}
         # Supports feature described in draft-zeilenga-ldap-opattrs
         self.supportsAllOpAttr = 0
         # IP adress, host name or other free form information
@@ -824,25 +824,24 @@ class LDAPSession(object):
         """
         Determine DN of sub schema sub entry for current part of DIT
         """
-        if self.schema_dn_cache.has_key(dn):
+        if dn in self._schema_dn_cache:
             # grab DN of sub schema sub entry from schema DN cache
-            subschemasubentry_dn = self.schema_dn_cache[dn]
-        else:
-            # Search the DN of sub schema sub entry
+            return self._schema_dn_cache[dn]
+        # Search the DN of sub schema sub entry
+        try:
+            subschemasubentry_dn = self.l.search_subschemasubentry_s(self.uc_encode(dn)[0])
+        except ldap0.LDAPError:
+            subschemasubentry_dn = None
+        if subschemasubentry_dn is None:
             try:
-                subschemasubentry_dn = self.l.search_subschemasubentry_s(self.uc_encode(dn)[0])
+                subschemasubentry_dn = self.l.search_subschemasubentry_s('')
             except ldap0.LDAPError:
                 subschemasubentry_dn = None
-            if subschemasubentry_dn is None:
-                try:
-                    subschemasubentry_dn = self.l.search_subschemasubentry_s('')
-                except ldap0.LDAPError:
-                    subschemasubentry_dn = None
-            # Store DN of sub schema sub entry in schema DN cache
-            self.schema_dn_cache[dn] = subschemasubentry_dn
+        # Store DN of sub schema sub entry in schema DN cache
+        self._schema_dn_cache[dn] = subschemasubentry_dn
         return subschemasubentry_dn
 
-    def retrieveSubSchema(self, dn, default, supplement_schema_ldif, strict_check=True):
+    def get_sub_schema(self, dn, default, supplement_schema_ldif, strict_check=True):
         """Retrieve parsed sub schema sub entry for current part of DIT"""
         assert isinstance(default, SubSchema), \
             TypeError('Expected default to be instance of SubSchema, was %r' % (default))
@@ -852,9 +851,9 @@ class LDAPSession(object):
         if subschemasubentry_dn is None:
             # No sub schema sub entry found => return default schema
             return default
-        elif subschemasubentry_dn in self.schema_cache:
+        elif subschemasubentry_dn in self._schema_cache:
             # Return parsed schema from cache
-            return self.schema_cache[subschemasubentry_dn]
+            return self._schema_cache[subschemasubentry_dn]
         try:
             # Read the sub schema sub entry
             subschemasubentry = self.l.read_subschemasubentry_s(
@@ -885,41 +884,15 @@ class LDAPSession(object):
         except SubschemaError:
             return default
         # Store parsed schema in schema cache
-        self.schema_cache[subschemasubentry_dn] = sub_schema
+        self._schema_cache[subschemasubentry_dn] = sub_schema
         # Determine what to return
         return sub_schema
 
-    def readEntry(
-            self,
-            dn,
-            attrtype_list=None,
-            only_attrtypes=0,
-            search_filter='(objectClass=*)',
-            no_cache=False,
-            server_ctrls=None,
-        ):
-        """
-        Read a single entry
-        """
-        assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
-        if attrtype_list == ['*']:
-            attrtype_list = None
-        # Read single entry from LDAP server
-        search_result = self.l.search_s(
-            self.uc_encode(dn)[0],
-            ldap0.SCOPE_BASE,
-            self.uc_encode(search_filter)[0],
-            attrlist=attrtype_list,
-            attrsonly=only_attrtypes,
-            cache_ttl={True:0, False:None}[no_cache],
-            serverctrls=server_ctrls,
-        )
-        return search_result
-
     def flushCache(self):
         """Flushes all LDAP cache data"""
-        self.schema_dn_cache = {}
-        self.schema_cache = {}
+        self._schema_dn_cache = {}
+        self._schema_cache = {}
+        self._audit_context = ldap0.cidict.cidict()
         try:
             self.l.flush_cache()
         except AttributeError:
@@ -987,28 +960,30 @@ class LDAPSession(object):
             entry_uuid = None
         return new_dn, entry_uuid # renameEntry()
 
-    def getAuditContext(self, search_root_dn):
+    def get_audit_context(self, search_root_dn):
+        if self.l is None:
+            return None
+        if search_root_dn in self._audit_context:
+            return self._audit_context[search_root_dn]
         try:
-            audit_context_dn = self._auditContextCache[search_root_dn]
-        except KeyError:
-            try:
-                result = self.readEntry(search_root_dn, ['auditContext'])
-            except AttributeError:
-                audit_context_dn = None
-            except ldap0.LDAPError:
-                audit_context_dn = None
-            else:
-                if result:
-                    try:
-                        audit_context_dn = ldap0.cidict.cidict(
-                            result[0][1]
-                        )['auditContext'][0].decode(self.charset)
-                    except KeyError:
-                        audit_context_dn = None
-                else:
+            result = self.l.read_s(
+                search_root_dn.encode(self.charset),
+                attrlist=['auditContext'],
+            )
+        except ldap0.LDAPError:
+            audit_context_dn = None
+        else:
+            if result:
+                try:
+                    audit_context_dn = ldap0.cidict.cidict(
+                        result
+                    )['auditContext'][0].decode(self.charset)
+                except KeyError:
                     audit_context_dn = None
-            self._auditContextCache[search_root_dn] = audit_context_dn
-        return audit_context_dn # getAuditContext()
+            else:
+                audit_context_dn = None
+        self._audit_context[search_root_dn] = audit_context_dn
+        return audit_context_dn # get_audit_context()
 
     def get_bind_dn(
             self,
@@ -1181,16 +1156,14 @@ class LDAPSession(object):
         # Read the user's entry if self.who is a DN to get name and preferences
         if self.who and web2ldap.ldaputil.base.is_dn(self.who):
             try:
-                userEntryDN, self.userEntry = self.readEntry(
-                    self.who,
-                    attrtype_list=USER_ENTRY_ATTRIBUTES,
-                    search_filter='(objectClass=*)',
-                    no_cache=True,
-                )[0]
+                self.userEntry = self.l.read_s(
+                    self.who.encode(self.charset),
+                    attrlist=USER_ENTRY_ATTRIBUTES,
+                    filterstr='(objectClass=*)',
+                    cache_ttl=-1.0,
+                ) or {}
             except (ldap0.LDAPError, IndexError):
                 self.userEntry = {}
-            else:
-                self.who = userEntryDN.decode(self.charset)
         else:
             self.userEntry = {}
         return # bind()
@@ -1200,10 +1173,11 @@ class LDAPSession(object):
         Determine the governing structure rule for the entry specified with dn
         in the subschema specified in argument schema
         """
+        ldap_dn = self.uc_encode(dn)[0]
         governing_structure_rule = None
         try:
-            search_result = self.readEntry(
-                dn,
+            search_result = self.l.read_s(
+                ldap_dn,
                 (
                     'objectClass',
                     'structuralObjectClass',
@@ -1217,7 +1191,7 @@ class LDAPSession(object):
             return None
         if not search_result:
             return None
-        entry = ldap0.schema.models.Entry(schema, dn, search_result[0][1])
+        entry = ldap0.schema.models.Entry(schema, dn, search_result)
         try:
             # Try to directly read the governing structure rule ID
             # from operational attribute in entry
@@ -1227,7 +1201,7 @@ class LDAPSession(object):
         else:
             return governing_structure_rule
         possible_dit_structure_rules = {}.fromkeys((
-            entry.get_possible_dit_structure_rules(self.uc_encode(dn)[0]) or []
+            entry.get_possible_dit_structure_rules(ldap_dn) or []
         ))
         parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
         administrative_roles = entry.get('administrativeRole', [])

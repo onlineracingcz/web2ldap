@@ -250,15 +250,14 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
             )
         )
 
-    current_audit_context = app.ls.getAuditContext(app.naming_context)
-    if not current_audit_context is None:
+    if app.audit_context:
         accesslog_any_filterstr = logdb_filter(u'auditObject', app.dn, entry_uuid)
         accesslog_write_filterstr = logdb_filter(u'auditWriteObject', app.dn, entry_uuid)
         result.extend([
             app.anchor(
                 'search', 'Audit access',
                 [
-                    ('dn', current_audit_context),
+                    ('dn', app.audit_context),
                     ('filterstr', accesslog_any_filterstr),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
@@ -267,7 +266,7 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
             app.anchor(
                 'search', 'Audit writes',
                 [
-                    ('dn', current_audit_context),
+                    ('dn', app.audit_context),
                     ('filterstr', accesslog_write_filterstr),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],

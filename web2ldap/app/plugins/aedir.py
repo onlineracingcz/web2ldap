@@ -920,12 +920,11 @@ class AEEntryDNAEUser(DistinguishedName):
     def _additional_links(self):
         attr_value_u = self.attrValue.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
-        audit_context = self._app.ls.getAuditContext(self._app.naming_context)
-        if audit_context:
+        if self._app.audit_context:
             r.append(self._app.anchor(
                 'search', 'Activity',
                 (
-                    ('dn', audit_context),
+                    ('dn', self._app.audit_context),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'objectClass'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -1006,12 +1005,11 @@ class AEEntryDNAEZone(DistinguishedName):
     def _additional_links(self):
         attr_value_u = self.attrValue.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
-        audit_context = self._app.ls.getAuditContext(self._app.naming_context)
-        if audit_context:
+        if self._app.audit_context:
             r.append(self._app.anchor(
                 'search', 'Audit all',
                 (
-                    ('dn', audit_context),
+                    ('dn', self._app.audit_context),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'objectClass'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -1025,7 +1023,7 @@ class AEEntryDNAEZone(DistinguishedName):
             r.append(self._app.anchor(
                 'search', 'Audit writes',
                 (
-                    ('dn', audit_context),
+                    ('dn', self._app.audit_context),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'objectClass'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
