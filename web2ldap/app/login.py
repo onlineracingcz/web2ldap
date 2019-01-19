@@ -68,7 +68,7 @@ def w2l_login(
     )
 
     if app.ls.rootDSE:
-        app.form.field['login_mech'].setOptions(app.ls.rootDSE.get('supportedSASLMechanisms', None))
+        app.form.field['login_mech'].setOptions(app.ls.supportedSASLMechanisms or [])
 
     # Determine the bind mech to be used from the
     # form data or the key-word argument login_default_mech
@@ -77,9 +77,7 @@ def w2l_login(
     login_fields = login_template_str.format(
         field_login_mech=app.form.field['login_mech'].inputHTML(default=login_mech),
         value_ldap_who=app.form.utf2display(who),
-        value_ldap_filter=app.form.utf2display(
-            app.cfg_param('binddnsearch', ur'(uid=%s)')
-        ),
+        value_ldap_filter=app.form.utf2display(app.binddnsearch),
         field_login_search_root=login_search_root_field.inputHTML(),
         field_login_authzid_prefix=app.form.field['login_authzid_prefix'].inputHTML(),
         value_submit={False:'Login', True:'Retry w/login'}[relogin],

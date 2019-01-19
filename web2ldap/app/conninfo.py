@@ -303,9 +303,9 @@ def w2l_conninfo(app):
         who_html = 'anonymous'
 
     try:
-        whoami_result = '&quot;%s&quot;' % (app.form.utf2display(app.ls.whoami()))
-    except ldap0.LDAPError as e:
-        whoami_result = '<strong>Failed:</strong> %s' % (app.ldap_error_msg(e))
+        whoami_result = '&quot;%s&quot;' % (app.form.utf2display(app.ls.l.whoami_s().decode(app.ls.charset)))
+    except ldap0.LDAPError as ldap_err:
+        whoami_result = '<strong>Failed:</strong> %s' % (app.ldap_error_msg(ldap_err))
 
     if app.ls.saslAuth:
         sasl_mech = u'SASL/%s' % (app.ls.saslAuth.mech)
@@ -323,8 +323,8 @@ def w2l_conninfo(app):
 
     try:
         sasl_ssf = unicode(app.ls.l.get_option(ldap0.OPT_X_SASL_SSF))
-    except ldap0.LDAPError as e:
-        sasl_ssf = u'error reading option: %s' % (app.ldap_error_msg(e))
+    except ldap0.LDAPError as ldap_err:
+        sasl_ssf = u'error reading option: %s' % (app.ldap_error_msg(ldap_err))
     except ValueError:
         sasl_ssf = u'option not available'
 

@@ -13,6 +13,3 @@ web2ldap 1.4
 
   - Maintain limited list of DNs last searched by MyLDAPObject.search()
     and use these as <datalist> in DN input field of *ldapparams*.
-
-  - Handle string value of form parameter *binddnsearch* as new Python
-    string template and properly escape LDAP filter chars.

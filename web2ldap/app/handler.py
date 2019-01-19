@@ -203,6 +203,10 @@ class AppHandler(object):
         return web2ldap.app.cnf.ldap_def.get_param(cfg_url, param_key, default)
 
     @property
+    def binddnsearch(self):
+        return self.cfg_param('binddnsearch', ur'(uid={user})')
+
+    @property
     def parent_dn(self):
         return self._parent_dn
 
@@ -743,8 +747,11 @@ class AppHandler(object):
                             self.form.getInputValue('login_authzid', [self.ldap_url.saslAuthzId or ''])[0],
                         )) or None,
                         self.form.getInputValue('login_realm', [self.ldap_url.saslRealm])[0],
-                        binddn_filtertemplate=self.form.getInputValue('login_filterstr', [ur'(uid=%s)'])[0],
-                        whoami_filtertemplate=self.cfg_param('binddnsearch', ur'(uid=%s)'),
+                        binddn_filtertemplate=self.form.getInputValue(
+                            'login_filterstr',
+                            self.binddnsearch,
+                        )[0],
+                        whoami_filtertemplate=self.binddnsearch,
                         loginSearchRoot=login_search_root,
                     )
                 except ldap0.NO_SUCH_OBJECT as e:
@@ -903,10 +910,7 @@ class AppHandler(object):
                         [
                             ('dn', login_search_root),
                             ('scope', str(ldap0.SCOPE_SUBTREE)),
-                            (
-                                'filterstr',
-                                self.cfg_param('binddnsearch', r'(uid=%s)').replace('%s', who),
-                            )
+                            ('filterstr', self.binddnsearch.format(user=who)),
                         ]
                     ),
                 ]),

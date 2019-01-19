@@ -35,6 +35,7 @@ from ldap0.controls.ppolicy import PasswordPolicyControl
 from ldap0.controls.sessiontrack import SessionTrackingControl, SESSION_TRACKING_FORMAT_OID_USERNAME
 
 import web2ldap.ldaputil.base
+from web2ldap.log import logger
 from web2ldap.ldaputil.base import escape_ldap_filter_chars
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 
@@ -435,14 +436,14 @@ class PWD_EXPIRED(PasswordPolicyException):
 
 class USERNAME_NOT_FOUND(LDAPSessionException):
     """
-    Simple exception class raised when getBindDN() does not
+    Simple exception class raised when get_bind_dn() does not
     find any entry matching search
     """
 
 
 class USERNAME_NOT_UNIQUE(LDAPSessionException):
     """
-    Simple exception class raised when getBindDN() does not
+    Simple exception class raised when get_bind_dn() does not
     find more than one entry matching search
     """
 
@@ -1030,7 +1031,7 @@ class LDAPSession(object):
             self._auditContextCache[search_root_dn] = audit_context_dn
         return audit_context_dn # getAuditContext()
 
-    def getBindDN(
+    def get_bind_dn(
             self,
             username,       # User name or complete bind DN (Unicode)
             searchroot,     # search root for user entry search
@@ -1051,8 +1052,8 @@ class LDAPSession(object):
             'defaultNamingContext',
             [''],
         )[0].decode(self.charset) or u''
-        username_filter_escaped = escape_ldap_filter_chars(username)
-        searchfilter = filtertemplate.replace(u'%s', username_filter_escaped)
+        searchfilter = filtertemplate.format(user=escape_ldap_filter_chars(username))
+        logger.debug('Searching user entry with filter %r', searchfilter)
         # Try to find a unique entry with filtertemplate
         try:
             result = self.l.search_s(
@@ -1062,25 +1063,22 @@ class LDAPSession(object):
                 attrlist=['1.1'],
                 sizelimit=2
             )
-        except ldap0.SIZELIMIT_EXCEEDED:
+        except ldap0.SIZELIMIT_EXCEEDED as ldap_err:
+            logger.warn('Searching user entry failed: %s', ldap_err)
             raise USERNAME_NOT_UNIQUE({'desc':'More than one matching user entries.'})
         except ldap0.NO_SUCH_OBJECT:
+            logger.warn('Searching user entry failed: %s', ldap_err)
             raise USERNAME_NOT_FOUND({'desc':'Smart login did not find a matching user entry.'})
-        else:
-            # Ignore search continuations in search result list
-            result = [r for r in result if r[0] is not None]
-            if not result:
-                raise USERNAME_NOT_FOUND({'desc':'Smart login did not find a matching user entry.'})
-            elif len(result) != 1:
-                raise USERNAME_NOT_UNIQUE({'desc':'More than one matching user entries.'})
-            else:
-                return web2ldap.ldaputil.base.normalize_dn(unicode(result[0][0], self.charset))
-
-    def whoami(self):
-        wai = self.l.whoami_s()
-        if wai is not None:
-            wai = wai.decode(self.charset)
-        return wai
+        # Ignore search continuations in search result list
+        result = [r for r in result if r[0] is not None]
+        if not result:
+            logger.warn('No result when searching user entry')
+            raise USERNAME_NOT_FOUND({'desc':'Smart login did not find a matching user entry.'})
+        elif len(result) != 1:
+            logger.warn('More than one matching user entries: %r', result)
+            raise USERNAME_NOT_UNIQUE({'desc':'More than one matching user entries.'})
+        logger.info('Found user %r with filter %r', result[0][0], searchfilter)
+        return web2ldap.ldaputil.base.normalize_dn(result[0][0].decode(self.charset))
 
     def bind(
             self,
@@ -1089,8 +1087,8 @@ class LDAPSession(object):
             sasl_mech,
             sasl_authzid,
             sasl_realm,
-            binddn_filtertemplate=u'(uid=%s)',
-            whoami_filtertemplate=u'(uid=%s)',
+            binddn_filtertemplate=u'(uid={user})',
+            whoami_filtertemplate=u'(uid={user})',
             loginSearchRoot=u''
         ):
         """
@@ -1147,7 +1145,7 @@ class LDAPSession(object):
                 who = None; cred = None
             else:
                 # Search bind DN by "user name" for simple bind
-                who = self.getBindDN(who, loginSearchRoot, binddn_filtertemplate)
+                who = self.get_bind_dn(who, loginSearchRoot, binddn_filtertemplate)
             # Call simple bind
             try:
                 self.l.simple_bind_s(
@@ -1167,8 +1165,8 @@ class LDAPSession(object):
 
         # Determine identity by sending LDAPv3 Who Am I? extended operation
         try:
-            whoami = self.whoami()
-        except ldap0.LDAPError as e:
+            whoami = self.l.whoami_s().decode(self.charset)
+        except ldap0.LDAPError:
             if who:
                 self.who = u'u:%s' % (who)
             else:
@@ -1197,7 +1195,7 @@ class LDAPSession(object):
 
             # Search for a user entry which matches the username known so far
             try:
-                self.who = self.getBindDN(who, loginSearchRoot, whoami_filtertemplate)
+                self.who = self.get_bind_dn(who, loginSearchRoot, whoami_filtertemplate)
             except (ldap0.LDAPError, USERNAME_NOT_FOUND, USERNAME_NOT_UNIQUE):
                 pass
 

@@ -95,9 +95,7 @@ def w2l_chasereferral(app, ref_exc):
     login_fields = login_template_str.format(
         field_login_mech=app.form.field['login_mech'].inputHTML(),
         value_ldap_who=app.form.utf2display(app.ls.who),
-        value_ldap_filter=app.form.utf2display(
-            app.cfg_param('binddnsearch', ur'(uid=%s)'),
-        ),
+        value_ldap_filter=app.form.utf2display(app.binddnsearch),
         field_login_search_root=login_search_root_field.inputHTML(),
         field_login_authzid_prefix=app.form.field['login_authzid_prefix'].inputHTML(),
         value_submit='Chase Referral',

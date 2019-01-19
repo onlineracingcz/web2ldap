@@ -332,7 +332,7 @@ CN_CONFIG = Web2LDAPConfig(
 AE_DIR_CONFIG = Web2LDAPConfig(
     description=u'Æ-DIR',
     top_template=os.path.join(templates_dir, 'ae-dir', 'top.html'),
-    binddnsearch=ur'(|(uid=%s)(uidNumber=%s))',
+    binddnsearch=ur'(|(uid={user})(uidNumber={user}))',
     boundas_template={
         'aeUser':r'<span title="%(displayName)s: %(description)s">%(uid)s: %(description)s</span>',
     },
@@ -733,7 +733,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
 
     # Search filter template for smart login
     # Use indexed attributes here!
-    binddnsearch=ur'(|(cn=%s)(uid=%s)(sAMAccountName=%s)(userPrincipalName=%s))',
+    binddnsearch=ur'(|(cn={user})(uid={user})(sAMAccountName={user})(userPrincipalName={user}))',
 
     # HTML template strings used to bind name in the status section
     # on top of page depending on the object class of an entry.

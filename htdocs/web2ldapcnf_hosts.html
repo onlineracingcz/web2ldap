@@ -186,11 +186,9 @@ addform_entry_templates={
   <dt id="binddnsearch">binddnsearch</dt>
   <dd>
     Search filter template for smart login. Occurences of
-    %s are substituted by the string the user entered.<br>
-    Note:<br>Think about using indexed attributes here! A bad filter
-    template can be a performance hog.
+    <code>{user}</code> are substituted by the string the user entered.
     <dl>
-      <dt>Default:</dt><dd><code>'(uid=%s)'</code></dd>
+      <dt>Default:</dt><dd><code>'(uid={user})'</code></dd>
       <dt>Example:</dt>
       <dd>
         <samp>
