@@ -945,23 +945,6 @@ class LDAPSession(object):
         self.l.modify_s(dn_str, modlist, serverctrls=serverctrls)
         return # modifyEntry()
 
-    def copyEntry(self, dn, new_rdn, new_superior):
-        """Copy an entry"""
-        new_dn = u','.join((new_rdn, new_superior))
-        r = self.readEntry(dn)
-        if r:
-            _, entry = r[0]
-            mod_list = ldap0.modlist.add_modlist(entry)
-            self.l.add_s(
-                self.uc_encode(new_dn)[0],
-                mod_list,
-                serverctrls=None
-            )
-        else:
-            raise ldap0.NO_SUCH_OBJECT
-        entry_uuid = None
-        return new_dn, entry_uuid # renameEntry()
-
     def renameEntry(self, dn, new_rdn, new_superior=None, delold=1):
         """Rename an entry"""
         self.l.uncache(dn.encode(self.charset))
