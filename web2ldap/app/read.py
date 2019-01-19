@@ -18,7 +18,7 @@ from UserDict import IterableUserDict
 
 import ldap0.schema
 from ldap0.cidict import cidict
-from ldap0.schema.models import SchemaElementOIDSet
+from ldap0.schema.models import SchemaElementOIDSet, AttributeType
 from ldap0.schema.subentry import SubSchema
 
 import web2ldap.web.forms
@@ -401,34 +401,27 @@ def w2l_read(app):
     operational_attrs_template = get_opattr_template(app)
 
     # Read the entry's data
-    search_result = app.ls.readEntry(
-        app.dn,
-        wanted_attrs or {False:None, True:['*', '+']}[app.ls.supportsAllOpAttr],
-        search_filter=filterstr,
-        no_cache=read_nocache
+    search_result = app.ls.l.read_s(
+        app.dn.encode(app.ls.charset),
+        attrlist=wanted_attrs or {False:None, True:['*', '+']}[app.ls.supportsAllOpAttr],
+        filterstr=filterstr.encode(app.ls.charset),
+        cache_ttl=None if read_nocache else -1.0,
     )
 
     if not search_result:
         raise web2ldap.app.core.ErrorExit(u'Empty search result.')
 
-    dn = search_result[0][0].decode(app.ls.charset)
-    entry = ldap0.schema.models.Entry(app.schema, dn.encode(app.ls.charset), search_result[0][1])
+    entry = ldap0.schema.models.Entry(app.schema, app.dn.encode(app.ls.charset), search_result)
 
-    requested_attrs = [
-        at
-        for at in union(
-            GrabKeys(operational_attrs_template)(),
-            app.cfg_param('requested_attrs', []),
-        )
-        if not at in entry and app.schema.get_obj(ldap0.schema.models.AttributeType, at) is not None
-    ]
+    requested_attrs = SchemaElementOIDSet(app.schema, AttributeType, GrabKeys(operational_attrs_template)())
+    requested_attrs.update(app.cfg_param('requested_attrs', []))
     if not wanted_attrs and requested_attrs:
         try:
-            search_result = app.ls.readEntry(
-                app.dn,
-                requested_attrs,
-                search_filter=filterstr,
-                no_cache=read_nocache,
+            search_result = app.ls.l.read_s(
+                app.dn.encode(app.ls.charset),
+                attrlist=requested_attrs.names(),
+                filterstr=filterstr.encode(app.ls.charset),
+                cache_ttl=None if read_nocache else -1.0,
             )
         except (
                 ldap0.NO_SUCH_ATTRIBUTE,
@@ -438,9 +431,9 @@ def w2l_read(app):
             pass
         else:
             if search_result:
-                entry.update(search_result[0][1])
+                entry.update(search_result)
 
-    display_entry = DisplayEntry(app, dn, app.schema, entry, 'readSep', 1)
+    display_entry = DisplayEntry(app, app.dn, app.schema, entry, 'readSep', 1)
 
     # Save session into database mainly for storing LDAPSession cache
     session_store.storeSession(app.sid, app.ls)
@@ -493,7 +486,7 @@ def w2l_read(app):
         else:
 
             # We have to create an LDAPSyntax instance to be able to call its methods
-            attr_instance = syntax_se(app, dn, app.schema, attr_type, None, entry)
+            attr_instance = syntax_se(app, app.dn, app.schema, attr_type, None, entry)
             # Determine (hopefully) appropriate MIME-type
             read_attrmimetype = app.form.getInputValue(
                 'read_attrmimetype',
@@ -539,7 +532,7 @@ def w2l_read(app):
             app.form.formHTML(
                 'search', 'Export', 'GET', app.sid,
                 [
-                    ('dn', dn),
+                    ('dn', app.dn),
                     ('scope', u'0'),
                     ('filterstr', u'(objectClass=*)'),
                     ('search_resnumber', u'0'),
@@ -558,13 +551,13 @@ def w2l_read(app):
 
         # Display the DN if no templates were used above
         if not displayed_attrs:
-            if not dn:
+            if not app.dn:
                 h1_display_name = u'Root DSE'
             else:
                 h1_display_name = entry.get(
                     'displayName',
                     entry.get('cn', [''])
-                )[0].decode(app.ls.charset) or web2ldap.ldaputil.base.split_rdn(dn)[0]
+                )[0].decode(app.ls.charset) or web2ldap.ldaputil.base.split_rdn(app.dn)[0]
             app.outf.write(
                 '<h1>{0}</h1>\n<p class="EntryDN">{1}</p>\n'.format(
                     app.form.utf2display(h1_display_name),
@@ -621,7 +614,7 @@ def w2l_read(app):
             """ % (
                 app.form.beginFormHTML('read', app.sid, 'GET'),
                 app.form.hiddenFieldHTML('read_nocache', u'1', u''),
-                app.form.hiddenFieldHTML('dn', dn, u''),
+                app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('read_output', read_output, u''),
                 ','.join([
                     app.form.utf2display(a.decode(app.ls.charset), sp_entity='  ')
@@ -658,7 +651,7 @@ def w2l_read(app):
             else:
                 break
         display_entry = VCardEntry(app.schema, entry)
-        display_entry['dn'] = [dn.encode(app.ls.charset)]
+        display_entry['dn'] = [app.dn.encode(app.ls.charset)]
         web2ldap.app.gui.Header(
             app,
             'text/x-vcard',
