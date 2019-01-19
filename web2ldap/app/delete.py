@@ -378,7 +378,7 @@ def w2l_delete(app):
         # First show delete confirmation and delete mode select form
         # Read the editable attribute values of entry
         ldap_entry = app.ls.l.read_s(
-            app.dn.encode(app.ls.charset),
+            app.ldap_dn,
             attrlist=[a.encode(app.ls.charset) for a in delete_attr],
             filterstr='(objectClass=*)',
             cache_ttl=-1.0,
@@ -501,7 +501,7 @@ def w2l_delete(app):
         # Delete a single whole entry
         #-----------------------------
 
-        app.ls.l.delete_s(app.dn.encode(app.ls.charset))
+        app.ls.l.delete_s(app.ldap_dn)
         old_dn = app.dn
         app.dn = app.parent_dn
         web2ldap.app.gui.SimpleMessage(

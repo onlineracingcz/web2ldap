@@ -402,7 +402,7 @@ def w2l_read(app):
 
     # Read the entry's data
     search_result = app.ls.l.read_s(
-        app.dn.encode(app.ls.charset),
+        app.ldap_dn,
         attrlist=wanted_attrs or {False:None, True:['*', '+']}[app.ls.supportsAllOpAttr],
         filterstr=filterstr.encode(app.ls.charset),
         cache_ttl=None if read_nocache else -1.0,
@@ -411,14 +411,14 @@ def w2l_read(app):
     if not search_result:
         raise web2ldap.app.core.ErrorExit(u'Empty search result.')
 
-    entry = ldap0.schema.models.Entry(app.schema, app.dn.encode(app.ls.charset), search_result)
+    entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, search_result)
 
     requested_attrs = SchemaElementOIDSet(app.schema, AttributeType, GrabKeys(operational_attrs_template)())
     requested_attrs.update(app.cfg_param('requested_attrs', []))
     if not wanted_attrs and requested_attrs:
         try:
             search_result = app.ls.l.read_s(
-                app.dn.encode(app.ls.charset),
+                app.ldap_dn,
                 attrlist=requested_attrs.names(),
                 filterstr=filterstr.encode(app.ls.charset),
                 cache_ttl=None if read_nocache else -1.0,
@@ -651,7 +651,7 @@ def w2l_read(app):
             else:
                 break
         display_entry = VCardEntry(app.schema, entry)
-        display_entry['dn'] = [app.dn.encode(app.ls.charset)]
+        display_entry['dn'] = [app.ldap_dn]
         web2ldap.app.gui.Header(
             app,
             'text/x-vcard',

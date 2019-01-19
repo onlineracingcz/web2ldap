@@ -136,7 +136,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         if not gad[1] is None
     ]
 
-    search_result = app.ls.l.read_s(app.dn.encode(app.ls.charset),attrlist=all_membership_attrs)
+    search_result = app.ls.l.read_s(app.ldap_dn, attrlist=all_membership_attrs)
     if not search_result:
         raise web2ldap.app.core.ErrorExit(u'No search result when reading entry.')
 

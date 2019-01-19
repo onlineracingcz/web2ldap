@@ -367,8 +367,10 @@ class MyLDAPObject(ReconnectLDAPObject):
             timeout=-1,
             sizelimit=0,
         ):
-        assert isinstance(base, bytes), TypeError("Type of argument 'base' must be str but was %r" % base)
-        assert isinstance(filterstr, bytes), TypeError("Type of argument 'filterstr' must be str but was %r" % (filterstr))
+        assert isinstance(base, bytes), \
+            TypeError("Type of 'base' must be bytes, was %r" % (base))
+        assert isinstance(filterstr, bytes), \
+            TypeError("Type of 'filterstr' must be bytes, was %r" % (filterstr))
         return ReconnectLDAPObject.search(
             self,
             base,
@@ -1178,7 +1180,7 @@ class LDAPSession(object):
         try:
             search_result = self.l.read_s(
                 ldap_dn,
-                (
+                attrlist=(
                     'objectClass',
                     'structuralObjectClass',
                     'governingStructureRule',
@@ -1191,7 +1193,7 @@ class LDAPSession(object):
             return None
         if not search_result:
             return None
-        entry = ldap0.schema.models.Entry(schema, dn, search_result)
+        entry = ldap0.schema.models.Entry(schema, ldap_dn, search_result)
         try:
             # Try to directly read the governing structure rule ID
             # from operational attribute in entry
