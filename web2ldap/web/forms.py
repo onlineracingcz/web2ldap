@@ -906,13 +906,13 @@ class Form:
             return self.env.get('CONTENT_TYPE', 'application/x-www-form-urlencoded').lower() or None
         return 'application/x-www-form-urlencoded'
 
-    def addField(self, field):
+    def add_field(self, field):
         """
         Add a input field object f to the form.
         """
         field.setCharset(self.accept_charset)
         self.field[field.name] = field
-        return # Form.addField()
+        return # Form.add_field()
 
     def getInputValue(self, name, default=[]):
         """

@@ -109,30 +109,30 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
 
     def _add_fields(self):
         web2ldap.web.forms.Form._add_fields(self)
-        self.addField(web2ldap.web.forms.Input(
+        self.add_field(web2ldap.web.forms.Input(
             'delsid',
             u'Old SID to be deleted',
             session_store.session_id_len,
             1,
             session_store.session_id_re.pattern
         ))
-        self.addField(web2ldap.web.forms.Input('who', u'Bind DN/AuthcID', 1000, 1, u'.*', size=40))
-        self.addField(web2ldap.web.forms.Input('cred', u'with Password', 200, 1, u'.*', size=15))
-        self.addField(web2ldap.web.forms.Select('login_authzid_prefix', u'SASL AuthzID', 1, options=[(u'', u'- no prefix -'), ('u:', u'user-ID'), ('dn:', u'DN')], default=None))
-        self.addField(web2ldap.web.forms.Input('login_authzid', u'SASL AuthzID', 1000, 1, u'.*', size=20))
-        self.addField(web2ldap.web.forms.Input('login_realm', u'SASL Realm', 1000, 1, u'.*', size=20))
-        self.addField(AuthMechSelect('login_mech', u'Authentication mechanism'))
-        self.addField(web2ldap.web.forms.Input('ldapurl', u'LDAP Url', 1024, 1, '[ ]*ldap(|i|s)://.*', size=30))
-        self.addField(web2ldap.web.forms.Input('host', u'Host:Port', 255, 1, '(%s|[a-zA-Z0-9/._-]+)' % web2ldap.app.gui.host_pattern, size=30))
-        self.addField(DistinguishedNameInput('dn', 'Distinguished Name'))
-        self.addField(web2ldap.web.forms.Select(
+        self.add_field(web2ldap.web.forms.Input('who', u'Bind DN/AuthcID', 1000, 1, u'.*', size=40))
+        self.add_field(web2ldap.web.forms.Input('cred', u'with Password', 200, 1, u'.*', size=15))
+        self.add_field(web2ldap.web.forms.Select('login_authzid_prefix', u'SASL AuthzID', 1, options=[(u'', u'- no prefix -'), ('u:', u'user-ID'), ('dn:', u'DN')], default=None))
+        self.add_field(web2ldap.web.forms.Input('login_authzid', u'SASL AuthzID', 1000, 1, u'.*', size=20))
+        self.add_field(web2ldap.web.forms.Input('login_realm', u'SASL Realm', 1000, 1, u'.*', size=20))
+        self.add_field(AuthMechSelect('login_mech', u'Authentication mechanism'))
+        self.add_field(web2ldap.web.forms.Input('ldapurl', u'LDAP Url', 1024, 1, '[ ]*ldap(|i|s)://.*', size=30))
+        self.add_field(web2ldap.web.forms.Input('host', u'Host:Port', 255, 1, '(%s|[a-zA-Z0-9/._-]+)' % web2ldap.app.gui.host_pattern, size=30))
+        self.add_field(DistinguishedNameInput('dn', 'Distinguished Name'))
+        self.add_field(web2ldap.web.forms.Select(
             'scope', 'Scope', 1,
             options=web2ldap.app.searchform.SEARCH_SCOPE_OPTIONS,
             default=web2ldap.app.searchform.SEARCH_SCOPE_STR_SUBTREE,
         ))
-        self.addField(DistinguishedNameInput('login_search_root', 'Login search root'))
-        self.addField(web2ldap.web.forms.Input('login_filterstr', u'Login search filter string', 300, 1, '.*'))
-        self.addField(web2ldap.web.forms.Select(
+        self.add_field(DistinguishedNameInput('login_search_root', 'Login search root'))
+        self.add_field(web2ldap.web.forms.Input('login_filterstr', u'Login search filter string', 300, 1, '.*'))
+        self.add_field(web2ldap.web.forms.Select(
             'conntype', 'Connection type', 1,
             options=[
                 (u'0', u'LDAP clear-text connection'),
@@ -253,10 +253,10 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(web2ldap.web.forms.Input('search_submit', u'Search form submit button', 6, 1, '(Search|[+-][0-9]+)'))
-        self.addField(web2ldap.web.forms.Select('searchform_mode', u'Search form mode', 1, options=[(u'base', u'Base'), (u'adv', u'Advanced'), (u'exp', u'Expert')], default=u'base'))
-        self.addField(DistinguishedNameInput('search_root', 'Search root'))
-        self.addField(web2ldap.web.forms.Input(
+        self.add_field(web2ldap.web.forms.Input('search_submit', u'Search form submit button', 6, 1, '(Search|[+-][0-9]+)'))
+        self.add_field(web2ldap.web.forms.Select('searchform_mode', u'Search form mode', 1, options=[(u'base', u'Base'), (u'adv', u'Advanced'), (u'exp', u'Expert')], default=u'base'))
+        self.add_field(DistinguishedNameInput('search_root', 'Search root'))
+        self.add_field(web2ldap.web.forms.Input(
             'filterstr',
             u'Search filter string',
             1200,
@@ -264,7 +264,7 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
             '.*',
             size=90,
         ))
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Input(
                 'searchform_template',
                 u'Search form template name',
@@ -273,7 +273,7 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
                 u'[a-zA-Z0-9. ()_-]+',
             )
         )
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Select(
                 'search_resnumber', u'Number of results to display', 1,
                 options=[
@@ -283,7 +283,7 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
                 default=u'10'
             )
         )
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Select(
                 'search_lastmod', u'Interval of last creation/modification', 1,
                 options=[
@@ -304,14 +304,14 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
                 default=u'-1'
             )
         )
-        self.addField(InclOpAttrsCheckbox('search_opattrs', u'Request operational attributes', default=u'yes', checked=0))
-        self.addField(web2ldap.web.forms.Select('search_mode', u'Search Mode', 1, options=[ur'(&%s)', ur'(|%s)']))
-        self.addField(web2ldap.web.forms.Input('search_attr', u'Attribute(s) to be searched', 100, web2ldapcnf.max_searchparams, ur'[\w,_;-]+'))
-        self.addField(web2ldap.web.forms.Input('search_mr', u'Matching Rule', 100, web2ldapcnf.max_searchparams, ur'[\w,_;-]+'))
-        self.addField(web2ldap.web.forms.Select('search_option', u'Search option', web2ldapcnf.max_searchparams, options=web2ldap.app.searchform.search_options))
-        self.addField(web2ldap.web.forms.Input('search_string', u'Search string', 600, web2ldapcnf.max_searchparams, u'.*', size=60))
-        self.addField(SearchAttrs())
-        self.addField(ExportFormatSelect('search_output'))
+        self.add_field(InclOpAttrsCheckbox('search_opattrs', u'Request operational attributes', default=u'yes', checked=0))
+        self.add_field(web2ldap.web.forms.Select('search_mode', u'Search Mode', 1, options=[ur'(&%s)', ur'(|%s)']))
+        self.add_field(web2ldap.web.forms.Input('search_attr', u'Attribute(s) to be searched', 100, web2ldapcnf.max_searchparams, ur'[\w,_;-]+'))
+        self.add_field(web2ldap.web.forms.Input('search_mr', u'Matching Rule', 100, web2ldapcnf.max_searchparams, ur'[\w,_;-]+'))
+        self.add_field(web2ldap.web.forms.Select('search_option', u'Search option', web2ldapcnf.max_searchparams, options=web2ldap.app.searchform.search_options))
+        self.add_field(web2ldap.web.forms.Input('search_string', u'Search string', 600, web2ldapcnf.max_searchparams, u'.*', size=60))
+        self.add_field(SearchAttrs())
+        self.add_field(ExportFormatSelect('search_output'))
 
 
 class Web2LDAPForm_search(Web2LDAPForm_searchform):
@@ -319,7 +319,7 @@ class Web2LDAPForm_search(Web2LDAPForm_searchform):
 
     def _add_fields(self):
         Web2LDAPForm_searchform._add_fields(self)
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Input(
                 'search_resminindex',
                 u'Minimum index of search results',
@@ -327,7 +327,7 @@ class Web2LDAPForm_search(Web2LDAPForm_searchform):
                 u'[0-9]+',
             )
         )
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Input(
                 'search_resnumber',
                 u'Number of results to display',
@@ -342,7 +342,7 @@ class Web2LDAPForm_conninfo(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Select(
                 'conninfo_flushcaches',
                 u'Flush caches',
@@ -357,7 +357,7 @@ class Web2LDAPForm_ldapparams(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Select(
                 'ldapparam_all_controls',
                 u'List all controls',
@@ -366,7 +366,7 @@ class Web2LDAPForm_ldapparams(Web2LDAPForm):
                 default=u'0',
             )
         )
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Input(
                 'ldapparam_enable_control',
                 u'Enable LDAPv3 Boolean Control',
@@ -374,7 +374,7 @@ class Web2LDAPForm_ldapparams(Web2LDAPForm):
                 u'([0-9]+.)*[0-9]+',
             )
         )
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Input(
                 'ldapparam_disable_control',
                 u'Disable LDAPv3 Boolean Control',
@@ -382,7 +382,7 @@ class Web2LDAPForm_ldapparams(Web2LDAPForm):
                 u'([0-9]+.)*[0-9]+',
             )
         )
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Select(
                 'ldap_deref',
                 u'Dereference aliases',
@@ -408,18 +408,18 @@ class Web2LDAPForm_input(Web2LDAPForm):
     """Base class for entry data input not directly used"""
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(web2ldap.web.forms.Input('in_oc', u'Object classes', 60, 40, u'[a-zA-Z0-9.-]+'))
-        self.addField(web2ldap.web.forms.Select('in_ft', u'Type of input form', 1, options=[u'Template', u'Table', u'LDIF', u'OC'], default=u'Template'))
-        self.addField(web2ldap.web.forms.Input(
+        self.add_field(web2ldap.web.forms.Input('in_oc', u'Object classes', 60, 40, u'[a-zA-Z0-9.-]+'))
+        self.add_field(web2ldap.web.forms.Select('in_ft', u'Type of input form', 1, options=[u'Template', u'Table', u'LDIF', u'OC'], default=u'Template'))
+        self.add_field(web2ldap.web.forms.Input(
             'in_mr',
             u'Add/del row',
             8, 1,
             '(Template|Table|LDIF|[+-][0-9]+)',
         ))
-        self.addField(web2ldap.web.forms.Select('in_oft', u'Type of input form', 1, options=[u'Template', u'Table', u'LDIF'], default=u'Template'))
-        self.addField(AttributeType('in_at', u'Attribute type', web2ldapcnf.input_maxattrs))
-        self.addField(AttributeType('in_avi', u'Value index', web2ldapcnf.input_maxattrs))
-        self.addField(
+        self.add_field(web2ldap.web.forms.Select('in_oft', u'Type of input form', 1, options=[u'Template', u'Table', u'LDIF'], default=u'Template'))
+        self.add_field(AttributeType('in_at', u'Attribute type', web2ldapcnf.input_maxattrs))
+        self.add_field(AttributeType('in_avi', u'Value index', web2ldapcnf.input_maxattrs))
+        self.add_field(
             AttributeValueInput(
                 'in_av', u'Attribute Value',
                 web2ldapcnf.input_maxfieldlen,
@@ -427,7 +427,7 @@ class Web2LDAPForm_input(Web2LDAPForm):
                 ('.*', re.U|re.M|re.S)
             )
         )
-        self.addField(LDIFTextArea('in_ldif', u'LDIF data'))
+        self.add_field(LDIFTextArea('in_ldif', u'LDIF data'))
 
 
 class Web2LDAPForm_add(Web2LDAPForm_input):
@@ -435,11 +435,11 @@ class Web2LDAPForm_add(Web2LDAPForm_input):
 
     def _add_fields(self):
         Web2LDAPForm_input._add_fields(self)
-        self.addField(web2ldap.web.forms.Input('add_rdn', u'RDN of new entry', 255, 1, u'.*', size=50))
-        self.addField(DistinguishedNameInput('add_clonedn', u'DN of template entry'))
-        self.addField(web2ldap.web.forms.Input('add_template', u'LDIF template name', 60, web2ldapcnf.max_searchparams, u'.+'))
-        self.addField(web2ldap.web.forms.Input('add_basedn', u'Base DN of new entry', 1024, 1, u'.*', size=50))
-        self.addField(web2ldap.web.forms.Select(
+        self.add_field(web2ldap.web.forms.Input('add_rdn', u'RDN of new entry', 255, 1, u'.*', size=50))
+        self.add_field(DistinguishedNameInput('add_clonedn', u'DN of template entry'))
+        self.add_field(web2ldap.web.forms.Input('add_template', u'LDIF template name', 60, web2ldapcnf.max_searchparams, u'.+'))
+        self.add_field(web2ldap.web.forms.Input('add_basedn', u'Base DN of new entry', 1024, 1, u'.*', size=50))
+        self.add_field(web2ldap.web.forms.Select(
             'in_ocf', u'Object class form mode', 1,
             options=[
                 (u'tmpl', u'LDIF templates'),
@@ -454,9 +454,9 @@ class Web2LDAPForm_modify(Web2LDAPForm_input):
 
     def _add_fields(self):
         Web2LDAPForm_input._add_fields(self)
-        self.addField(AttributeType('in_oldattrtypes', u'Old attribute types', web2ldapcnf.input_maxattrs))
-        self.addField(AttributeType('in_wrtattroids', u'Writeable attribute types', web2ldapcnf.input_maxattrs))
-        self.addField(web2ldap.web.forms.Input('in_assertion', u'Assertion filter string', 2000, 1, '.*', required=False))
+        self.add_field(AttributeType('in_oldattrtypes', u'Old attribute types', web2ldapcnf.input_maxattrs))
+        self.add_field(AttributeType('in_wrtattroids', u'Writeable attribute types', web2ldapcnf.input_maxattrs))
+        self.add_field(web2ldap.web.forms.Input('in_assertion', u'Assertion filter string', 2000, 1, '.*', required=False))
 
 
 class Web2LDAPForm_dds(Web2LDAPForm):
@@ -464,8 +464,8 @@ class Web2LDAPForm_dds(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(web2ldap.web.forms.Input('dds_renewttlnum', u'Request TTL number', 12, 1, '[0-9]+', default=None))
-        self.addField(web2ldap.web.forms.Select(
+        self.add_field(web2ldap.web.forms.Input('dds_renewttlnum', u'Request TTL number', 12, 1, '[0-9]+', default=None))
+        self.add_field(web2ldap.web.forms.Select(
             'dds_renewttlfac',
             u'Request TTL factor',
             1,
@@ -484,13 +484,13 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(web2ldap.web.forms.Input('bulkmod_submit', u'Search form submit button', 6, 1, u'(Next>>|<<Back|Apply|Cancel|[+-][0-9]+)'))
+        self.add_field(web2ldap.web.forms.Input('bulkmod_submit', u'Search form submit button', 6, 1, u'(Next>>|<<Back|Apply|Cancel|[+-][0-9]+)'))
         bulkmod_ctrl_options = [
             (control_oid, OID_REG.get(control_oid, (control_oid,))[0])
             for control_oid, control_spec in AVAILABLE_BOOLEAN_CONTROLS.items()
             if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'modify' in control_spec[0]
         ]
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Select(
                 'bulkmod_ctrl',
                 u'Extended controls',
@@ -501,15 +501,15 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
                 multiSelect=1,
             )
         )
-        self.addField(web2ldap.web.forms.Input('filterstr', u'Search filter string for searching entries to be deleted', 1200, 1, '.*'))
-        self.addField(web2ldap.web.forms.Input(
+        self.add_field(web2ldap.web.forms.Input('filterstr', u'Search filter string for searching entries to be deleted', 1200, 1, '.*'))
+        self.add_field(web2ldap.web.forms.Input(
             'bulkmod_modrow',
             u'Add/del row',
             8, 1,
             '(Template|Table|LDIF|[+-][0-9]+)',
         ))
-        self.addField(AttributeType('bulkmod_at', u'Attribute type', web2ldapcnf.input_maxattrs))
-        self.addField(
+        self.add_field(AttributeType('bulkmod_at', u'Attribute type', web2ldapcnf.input_maxattrs))
+        self.add_field(
             web2ldap.web.forms.Select(
                 'bulkmod_op',
                 u'Modification type',
@@ -524,7 +524,7 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
                 default=None,
             )
         )
-        self.addField(
+        self.add_field(
             AttributeValueInput(
                 'bulkmod_av', u'Attribute Value',
                 web2ldapcnf.input_maxfieldlen,
@@ -533,8 +533,8 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
                 size=30,
             )
         )
-        self.addField(DistinguishedNameInput('bulkmod_newsuperior', u'New superior DN'))
-        self.addField(web2ldap.web.forms.Checkbox('bulkmod_cp', u'Copy entries', 1, default=u'yes', checked=0))
+        self.add_field(DistinguishedNameInput('bulkmod_newsuperior', u'New superior DN'))
+        self.add_field(web2ldap.web.forms.Checkbox('bulkmod_cp', u'Copy entries', 1, default=u'yes', checked=0))
 
 
 class Web2LDAPForm_delete(Web2LDAPForm):
@@ -542,14 +542,14 @@ class Web2LDAPForm_delete(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(web2ldap.web.forms.Select('delete_confirm', u'Confirmation', 1, options=['yes', 'no'], default=u'no'))
+        self.add_field(web2ldap.web.forms.Select('delete_confirm', u'Confirmation', 1, options=['yes', 'no'], default=u'no'))
         delete_ctrl_options = [
             (control_oid, OID_REG.get(control_oid, (control_oid,))[0])
             for control_oid, control_spec in AVAILABLE_BOOLEAN_CONTROLS.items()
             if '**all**' in control_spec[0] or '**write**' in control_spec[0] or 'delete' in control_spec[0]
         ]
         delete_ctrl_options.append((web2ldap.ldapsession.CONTROL_TREEDELETE, u'Tree Deletion'))
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Select(
                 'delete_ctrl',
                 u'Extended controls',
@@ -560,8 +560,8 @@ class Web2LDAPForm_delete(Web2LDAPForm):
                 multiSelect=1,
             )
         )
-        self.addField(web2ldap.web.forms.Input('filterstr', u'Search filter string for searching entries to be deleted', 1200, 1, '.*'))
-        self.addField(web2ldap.web.forms.Input('delete_attr', u'Attribute to be deleted', 255, 100, ur'[\w_;-]+'))
+        self.add_field(web2ldap.web.forms.Input('filterstr', u'Search filter string for searching entries to be deleted', 1200, 1, '.*'))
+        self.add_field(web2ldap.web.forms.Input('delete_attr', u'Attribute to be deleted', 255, 100, ur'[\w_;-]+'))
 
 
 class Web2LDAPForm_rename(Web2LDAPForm):
@@ -569,10 +569,10 @@ class Web2LDAPForm_rename(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(web2ldap.web.forms.Input('rename_newrdn', u'New RDN', 255, 1, web2ldap.ldaputil.base.rdn_pattern, size=50))
-        self.addField(DistinguishedNameInput('rename_newsuperior', u'New superior DN'))
-        self.addField(web2ldap.web.forms.Checkbox('rename_delold', u'Delete old', 1, default=u'yes', checked=1))
-        self.addField(
+        self.add_field(web2ldap.web.forms.Input('rename_newrdn', u'New RDN', 255, 1, web2ldap.ldaputil.base.rdn_pattern, size=50))
+        self.add_field(DistinguishedNameInput('rename_newsuperior', u'New superior DN'))
+        self.add_field(web2ldap.web.forms.Checkbox('rename_delold', u'Delete old', 1, default=u'yes', checked=1))
+        self.add_field(
             web2ldap.web.forms.Input(
                 'rename_newsupfilter',
                 u'Filter string for searching new superior entry', 300, 1, '.*',
@@ -580,8 +580,8 @@ class Web2LDAPForm_rename(Web2LDAPForm):
                 size=50,
             )
         )
-        self.addField(DistinguishedNameInput('rename_searchroot', u'Search root under which to look for new superior entry.'))
-        self.addField(web2ldap.web.forms.Input('rename_supsearchurl', u'LDAP URL for searching new superior entry', 100, 1, '.*', size=30))
+        self.add_field(DistinguishedNameInput('rename_searchroot', u'Search root under which to look for new superior entry.'))
+        self.add_field(web2ldap.web.forms.Input('rename_supsearchurl', u'LDAP URL for searching new superior entry', 100, 1, '.*', size=30))
 
 
 class Web2LDAPForm_passwd(Web2LDAPForm):
@@ -630,7 +630,7 @@ class Web2LDAPForm_passwd(Web2LDAPForm):
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
         for field in self.fields():
-            self.addField(field)
+            self.add_field(field)
 
 
 class Web2LDAPForm_read(Web2LDAPForm):
@@ -638,15 +638,15 @@ class Web2LDAPForm_read(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(web2ldap.web.forms.Input('filterstr', u'Search filter string when reading single entry', 1200, 1, '.*'))
-        self.addField(web2ldap.web.forms.Select('read_nocache', u'Force fresh read', 1, options=[u'0', u'1'], default=u"0"))
-        self.addField(web2ldap.web.forms.Input('read_attr', u'Read attribute', 255, 100, ur'[\w_;-]+'))
-        self.addField(web2ldap.web.forms.Select('read_attrmode', u'Read attribute', 1, options=[u'view', u'load']))
-        self.addField(web2ldap.web.forms.Input('read_attrindex', u'Read attribute', 255, 1, u'[0-9]+'))
-        self.addField(web2ldap.web.forms.Input('read_attrmimetype', u'MIME type', 255, 1, ur'[\w.-]+/[\w.-]+'))
-        self.addField(web2ldap.web.forms.Select('read_output', u'Read output format', 1, options=[u'table', u'vcard', u'template'], default=u'template'))
-        self.addField(SearchAttrs())
-        self.addField(web2ldap.web.forms.Input('read_expandattr', u'Attributes to be read', 1000, 1, ur'[*+\w,_;-]+'))
+        self.add_field(web2ldap.web.forms.Input('filterstr', u'Search filter string when reading single entry', 1200, 1, '.*'))
+        self.add_field(web2ldap.web.forms.Select('read_nocache', u'Force fresh read', 1, options=[u'0', u'1'], default=u"0"))
+        self.add_field(web2ldap.web.forms.Input('read_attr', u'Read attribute', 255, 100, ur'[\w_;-]+'))
+        self.add_field(web2ldap.web.forms.Select('read_attrmode', u'Read attribute', 1, options=[u'view', u'load']))
+        self.add_field(web2ldap.web.forms.Input('read_attrindex', u'Read attribute', 255, 1, u'[0-9]+'))
+        self.add_field(web2ldap.web.forms.Input('read_attrmimetype', u'MIME type', 255, 1, ur'[\w.-]+/[\w.-]+'))
+        self.add_field(web2ldap.web.forms.Select('read_output', u'Read output format', 1, options=[u'table', u'vcard', u'template'], default=u'template'))
+        self.add_field(SearchAttrs())
+        self.add_field(web2ldap.web.forms.Input('read_expandattr', u'Attributes to be read', 1000, 1, ur'[*+\w,_;-]+'))
 
 
 class Web2LDAPForm_groupadm(Web2LDAPForm):
@@ -654,11 +654,11 @@ class Web2LDAPForm_groupadm(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(DistinguishedNameInput('groupadm_searchroot', u'Group search root'))
-        self.addField(web2ldap.web.forms.Input('groupadm_name', u'Group name', 100, 1, u'.*', size=30))
-        self.addField(DistinguishedNameInput('groupadm_add', u'Add to group', 300))
-        self.addField(DistinguishedNameInput('groupadm_remove', u'Remove from group', 300))
-        self.addField(
+        self.add_field(DistinguishedNameInput('groupadm_searchroot', u'Group search root'))
+        self.add_field(web2ldap.web.forms.Input('groupadm_name', u'Group name', 100, 1, u'.*', size=30))
+        self.add_field(DistinguishedNameInput('groupadm_add', u'Add to group', 300))
+        self.add_field(DistinguishedNameInput('groupadm_remove', u'Remove from group', 300))
+        self.add_field(
             web2ldap.web.forms.Select(
                 'groupadm_view',
                 u'Group list view',
@@ -674,7 +674,7 @@ class Web2LDAPForm_login(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(DistinguishedNameInput('login_who', u'Bind DN'))
+        self.add_field(DistinguishedNameInput('login_who', u'Bind DN'))
 
 
 class Web2LDAPForm_locate(Web2LDAPForm):
@@ -682,7 +682,7 @@ class Web2LDAPForm_locate(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(
+        self.add_field(
             web2ldap.web.forms.Input('locate_name', u'Location name', 500, 1, u'.*', size=25)
         )
 
@@ -692,8 +692,8 @@ class Web2LDAPForm_oid(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.addField(OIDInput('oid', u'OID'))
-        self.addField(
+        self.add_field(OIDInput('oid', u'OID'))
+        self.add_field(
             web2ldap.web.forms.Select(
                 'oid_class',
                 u'Schema element class',

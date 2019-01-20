@@ -165,7 +165,7 @@ def passwd_form(
     # input fields must be added to the form
     for field in Web2LDAPForm_passwd.fields():
         if field.name not in app.form.field:
-            app.form.addField(field)
+            app.form.add_field(field)
 
     if error_msg:
         error_msg = '<p class="ErrorMessage">%s</p>' % (error_msg)
