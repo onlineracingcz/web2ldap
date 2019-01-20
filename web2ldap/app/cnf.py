@@ -14,8 +14,13 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-from ldap0.cidict import cidict
+from pprint import pformat
+
 from ldap0.ldapurl import LDAPUrl
+from ldap0.dn import is_dn
+from ldap0.ldapurl import isLDAPUrl
+
+from web2ldap.log import logger
 
 
 class Web2LDAPConfig(object):
@@ -37,34 +42,30 @@ from web2ldap.ldapsession import LDAPSession
 import web2ldap.app.schema
 
 
-class Web2LDAPConfigDict(cidict):
+class Web2LDAPConfigDict(object):
+
+    def __init__(self, cfg_dict):
+        self.cfg_data = {}
+        for key, val in cfg_dict.items():
+            self.set_cfg(key, val)
 
     @staticmethod
     def normalize_key(key):
-        """Returns a normalized string for an LDAP URL"""
+        """
+        Returns a normalized string for an LDAP URL
+        """
+        if key == '_':
+            return '_'
         if isinstance(key, str):
-            if key == '_':
-                return '_'
-            key = key.strip()
-            key = LDAPUrl(key)
-            key.attrs = None
-            key.filterstr = None
-            key.scope = None
-            key.extensions = None
-        elif isinstance(key, LDAPUrl):
-            key = LDAPUrl(
-                urlscheme=key.urlscheme.lower(),
-                hostport=key.hostport,
-                dn=key.dn,
-                attrs=None,
-                scope=None,
-                filterstr=None,
-                extensions=None,
-                who=None,
-                cred=None
-            )
-        else:
-            raise TypeError("Invalid type of argument 'key': %s" % (type(key)))
+            if isLDAPUrl(key):
+                key = LDAPUrl(key)
+            elif is_dn(key):
+                key = LDAPUrl(dn=key.lower())
+        assert isinstance(key, LDAPUrl), TypeError("Expected LDAPUrl in 'key', was %r" % (key))
+        key.attrs = None
+        key.filterstr = None
+        key.scope = None
+        key.extensions = None
         try:
             host, port = key.hostport.split(':')
         except ValueError:
@@ -73,39 +74,34 @@ class Web2LDAPConfigDict(cidict):
             if (key.urlscheme == 'ldap' and port == '389') or \
                (key.urlscheme == 'ldaps' and port == '636'):
                 key.hostport = host
-        result = str(key)
+        return (key.initializeUrl().lower(), key.dn.lower())
+
+    def set_cfg(self, cfg_uri, cfg_data):
+        cfg_key = self.normalize_key(cfg_uri)
+        self.cfg_data[cfg_key] = cfg_data
+
+    def get_param(self, uri, dn, param_key, default):
+        uri = uri.lower()
+        dn = dn.lower()
+        result = default
+        for cfg_key in (
+                (uri, dn),
+                ('ldap://', dn),
+                (uri, ''),
+                '_',
+            ):
+            if cfg_key in self.cfg_data and hasattr(self.cfg_data[cfg_key], param_key):
+                result = getattr(self.cfg_data[cfg_key], param_key)
+                logger.debug(
+                    'Found %r with key %r: %s',
+                    param_key,
+                    cfg_key,
+                    pformat(result),
+                )
+                break
         return result
 
-    def __getitem__(self, key):
-        return cidict.__getitem__(self, self.normalize_key(key))
-
-    def __delitem__(self, key):
-        return cidict.__delitem__(self, self.normalize_key(key))
-
-    def __setitem__(self, key, value):
-        return cidict.__setitem__(self, self.normalize_key(key), value)
-
-    def has_key(self, key):
-        return cidict.has_key(self, self.normalize_key(key))
-
-    def get_param(self, backend_key, param_key, default):
-        lu_key = self.normalize_key(backend_key or '_')
-        try:
-            return self[lu_key].__dict__[param_key]
-        except KeyError:
-            if lu_key == '_':
-                return default
-            try:
-                return self[str(LDAPUrl(dn=LDAPUrl(lu_key).dn))].__dict__[param_key]
-            except KeyError:
-                try:
-                    return self[LDAPUrl(lu_key).initializeUrl()].__dict__[param_key]
-                except KeyError:
-                    try:
-                        return self['_'].__dict__[param_key]
-                    except KeyError:
-                        return default
-
+logger.debug('Initialize ldap_def')
 ldap_def = Web2LDAPConfigDict(web2ldapcnf.hosts.ldap_def)
 web2ldap.app.schema.parse_fake_schema(ldap_def)
 

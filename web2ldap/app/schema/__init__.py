@@ -149,9 +149,9 @@ def parse_fake_schema(ldap_def):
     For each configuration item try to retrieve and
     parse site-specific subschema
     """
-    for k in ldap_def.keys():
+    for k in ldap_def.cfg_data.keys():
         try:
-            schema_uri = ldap_def[k].schema_uri
+            schema_uri = ldap_def.cfg_data[k].schema_uri
         except AttributeError:
             continue
         logger.debug('Retrieve schema for %r from %r', k, schema_uri)
@@ -163,5 +163,5 @@ def parse_fake_schema(ldap_def):
         if schema is None:
             continue
         # Store the pre-parsed schema in the configuration
-        ldap_def[k]._schema = schema
+        ldap_def.cfg_data[k]._schema = schema
     return # end of parse_fake_schema()

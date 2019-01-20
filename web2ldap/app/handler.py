@@ -199,11 +199,15 @@ class AppHandler(object):
 
     def cfg_param(self, param_key, default):
         if self.ls and self.ls.uri:
-            cfg_url = LDAPUrl(self.ls.uri)
+            cfg_url = self.ls.uri
         else:
-            cfg_url = LDAPUrl('ldap://')
-        cfg_url.dn = (self.naming_context or u'').encode('utf-8')
-        return web2ldap.app.cnf.ldap_def.get_param(cfg_url, param_key, default)
+            cfg_url = 'ldap://'
+        return web2ldap.app.cnf.ldap_def.get_param(
+            cfg_url,
+            (self.naming_context or u'').encode('utf-8'),
+            param_key,
+            default,
+        )
 
     @property
     def binddnsearch(self):

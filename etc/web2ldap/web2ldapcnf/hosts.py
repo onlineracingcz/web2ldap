@@ -1179,4 +1179,3 @@ ldap_def['ldap://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com']
 
 ldap_def['ldap:///dc=stroeder,dc=local'] = ldap_def['ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de']
 ldap_def['ldap:///dc=stroeder,dc=de'] = ldap_def['ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de']
-
