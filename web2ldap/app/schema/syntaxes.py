@@ -99,12 +99,12 @@ class SyntaxRegistry(object):
             if hasattr(cls, 'oid'):
                 self.reg_syntax(cls)
 
-    def reg_at(self, syntax_oid, attrTypes, structural_oc_oids=None):
+    def reg_at(self, syntax_oid, attr_types, structural_oc_oids=None):
         """
         register an attribute type (by OID) to explicitly use a certain LDAPSyntax class
         """
         structural_oc_oids = filter(None, map(str.strip, structural_oc_oids or [])) or [None]
-        for a in attrTypes:
+        for a in attr_types:
             a = a.strip()
             for oc_oid in structural_oc_oids:
                 # FIX ME!
@@ -126,9 +126,15 @@ class SyntaxRegistry(object):
         """
         returns LDAPSyntax class for given attribute type
         """
-        attrtype_oid = schema.getoid(ldap0.schema.models.AttributeType, attrtype_nameoroid.strip())
+        attrtype_oid = schema.getoid(
+            ldap0.schema.models.AttributeType,
+            attrtype_nameoroid.strip(),
+        )
         if structural_oc:
-            structural_oc_oid = schema.getoid(ldap0.schema.models.ObjectClass, structural_oc.strip())
+            structural_oc_oid = schema.getoid(
+                ldap0.schema.models.ObjectClass,
+                structural_oc.strip(),
+            )
         else:
             structural_oc_oid = None
         syntax_oid = LDAPSyntax.oid
@@ -308,7 +314,14 @@ class LDAPSyntax(object):
         se = self._schema.get_obj(ldap0.schema.models.AttributeType, self.attrType)
         if se and se.single_value:
             return ''
-        return '<button formaction="%s#in_a_%s" type="submit" name="in_mr" value="%s%d">%s</button>' % (
+        return (
+            '<button'
+            ' formaction="%s#in_a_%s"'
+            ' type="submit"'
+            ' name="in_mr"'
+            ' value="%s%d">%s'
+            '</button>'
+        ) % (
             self._app.form.action_url(command, self._app.sid),
             self._app.form.utf2display(self._app.ls.uc_decode(self.attrType)[0]),
             mode, row, link_text
@@ -558,7 +571,11 @@ class AuthzDN(DistinguishedName):
     def displayValue(self, valueindex=0, commandbutton=False):
         result = DistinguishedName.displayValue(self, valueindex, commandbutton)
         if commandbutton:
-            simple_display_str = DistinguishedName.displayValue(self, valueindex, commandbutton=False)
+            simple_display_str = DistinguishedName.displayValue(
+                self,
+                valueindex,
+                commandbutton=False,
+            )
             whoami_display_str = web2ldap.app.gui.WhoAmITemplate(
                 self._app,
                 who=self.attrValue.decode(self._app.ls.charset)
@@ -655,7 +672,11 @@ class GeneralizedTime(IA5String):
         r'%d.%m.%Y',
         r'%m/%d/%Y',
     )
-    dtDisplayFormat = '<time datetime="%Y-%m-%dT%H:%M:%SZ">%A (%W. week) %Y-%m-%d %H:%M:%S+00:00</time>'
+    dtDisplayFormat = (
+        '<time datetime="%Y-%m-%dT%H:%M:%SZ">'
+        '%A (%W. week) %Y-%m-%d %H:%M:%S+00:00'
+        '</time>'
+    )
 
     def _validate(self, attrValue):
         try:
@@ -694,11 +715,20 @@ class GeneralizedTime(IA5String):
         if self.timeDefault:
             date_format = r'%Y%m%d'+self.timeDefault+'Z'
             if attrValue in ('T', 'TODAY'):
-                return datetime.datetime.strftime(datetime.datetime.utcnow(), date_format)
+                return datetime.datetime.strftime(
+                    datetime.datetime.utcnow(),
+                    date_format,
+                )
             elif attrValue in ('Y', 'YESTERDAY'):
-                return datetime.datetime.strftime(datetime.datetime.today()-datetime.timedelta(days=1), date_format)
+                return datetime.datetime.strftime(
+                    datetime.datetime.today()-datetime.timedelta(days=1),
+                    date_format,
+                )
             elif attrValue in ('T', 'TOMORROW'):
-                return datetime.datetime.strftime(datetime.datetime.today()+datetime.timedelta(days=1), date_format)
+                return datetime.datetime.strftime(
+                    datetime.datetime.today()+datetime.timedelta(days=1),
+                    date_format,
+                )
         # Try to parse various datetime syntaxes
         for time_format in self.dtFormats:
             try:
@@ -777,7 +807,9 @@ class NullTerminatedDirectoryString(DirectoryString):
         return self._app.ls.uc_decode((self.attrValue or chr(0))[:-1])[0]
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        return self._app.form.utf2display(self._app.ls.uc_decode((self.attrValue or chr(0))[:-1])[0])
+        return self._app.form.utf2display(
+            self._app.ls.uc_decode((self.attrValue or chr(0))[:-1])[0]
+        )
 
 
 class OtherMailbox(DirectoryString):
@@ -993,20 +1025,33 @@ class Image(Binary):
             else:
                 width, height = im.size
                 if width > maxwidth:
-                    size_attr_html = 'width="%d" height="%d"' % (maxwidth, int(float(maxwidth)/width*height))
+                    size_attr_html = 'width="%d" height="%d"' % (
+                        maxwidth,
+                        int(float(maxwidth)/width*height),
+                    )
                 elif height > maxheight:
-                    size_attr_html = 'width="%d" height="%d"' % (int(float(maxheight)/height*width), maxheight)
+                    size_attr_html = 'width="%d" height="%d"' % (
+                        int(float(maxheight)/height*width),
+                        maxheight,
+                    )
                 else:
                     size_attr_html = 'width="%d" height="%d"' % (width, height)
         attr_value_len = len(self.attrValue)
-        img_link = "%s/read/%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d&amp;read_attrmode=load&amp" % (
+        img_link = (
+            '%s/read/%s'
+            '?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d&amp;read_attrmode=load'
+        ) % (
             self._app.form.script_name, self._app.sid,
             urllib.quote(self._dn.encode(self._app.form.accept_charset)),
             urllib.quote(self.attrType),
             valueindex,
         )
         if attr_value_len <= self.inline_maxlen:
-            return '<a href="%s"><img src="data:%s;base64,\n%s" alt="%d bytes of image data" %s></a>' % (
+            return (
+                '<a href="%s">'
+                '<img src="data:%s;base64,\n%s" alt="%d bytes of image data" %s>'
+                '</a>'
+            ) % (
                 img_link,
                 self.mimeType,
                 self.attrValue.encode('base64'),
@@ -1061,10 +1106,18 @@ class OID(IA5String):
             name, description, reference = OID_REG[self.attrValue]
         except (KeyError, ValueError):
             try:
-                se = self._schema.get_obj(ldap0.schema.models.ObjectClass, self.attrValue, raise_keyerror=1)
+                se = self._schema.get_obj(
+                    ldap0.schema.models.ObjectClass,
+                    self.attrValue,
+                    raise_keyerror=1,
+                )
             except KeyError:
                 try:
-                    se = self._schema.get_obj(ldap0.schema.models.AttributeType, self.attrValue, raise_keyerror=1)
+                    se = self._schema.get_obj(
+                        ldap0.schema.models.AttributeType,
+                        self.attrValue,
+                        raise_keyerror=1,
+                    )
                 except KeyError:
                     return IA5String.displayValue(self, valueindex, commandbutton)
                 return web2ldap.app.gui.SchemaElementName(
@@ -1108,7 +1161,9 @@ class LDAPUrl(Uri):
             else:
                 commandbuttonstr = ''
         except ValueError:
-            return '<strong>Not a valid LDAP URL:</strong> %s' % self._app.form.utf2display(repr(self.attrValue))
+            return '<strong>Not a valid LDAP URL:</strong> %s' % (
+                self._app.form.utf2display(repr(self.attrValue).decode('ascii'))
+            )
         return '<table><tr><td>%s</td><td><a href="%s">%s</a></td></tr></table>' % (
             commandbuttonstr,
             self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0]),
@@ -1134,7 +1189,13 @@ class OctetString(Binary):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         lines = [
-            '<tr><td><code>%0.6X</code></td><td><code>%s</code></td><td><code>%s</code></td></tr>'% (
+            (
+                '<tr>'
+                '<td><code>%0.6X</code></td>'
+                '<td><code>%s</code></td>'
+                '<td><code>%s</code></td>'
+                '</tr>'
+            ) % (
                 i*self.bytes_split,
                 ':'.join(x.encode('hex').upper() for x in c),
                 self._app.form.utf2display(unicode(web2ldap.msbase.ascii_dump(c), 'ascii')),
@@ -1180,7 +1241,11 @@ class MultilineText(DirectoryString):
         return [v]
 
     def sanitizeInput(self, attrValue):
-        return attrValue.replace(u'\r', u'').replace(u'\n', self.lineSep).encode(self._app.ls.charset)
+        return attrValue.replace(
+            u'\r', u''
+        ).replace(
+            u'\n', self.lineSep
+        ).encode(self._app.ls.charset)
 
     def displayValue(self, valueindex=0, commandbutton=False):
         lines = [
@@ -1267,7 +1332,12 @@ class TelephoneNumber(PrintableString):
 class FacsimileTelephoneNumber(TelephoneNumber):
     oid = '1.3.6.1.4.1.1466.115.121.1.22'
     desc = 'Facsimile Number'
-    reObj = re.compile(r'^[0-9+x(). /-]+(\$(twoDimensional|fineResolution|unlimitedLength|b4Length|a3Width|b4Width|uncompressed))*$')
+    reObj = re.compile(
+        r'^[0-9+x(). /-]+'
+        r'(\$'
+        r'(twoDimensional|fineResolution|unlimitedLength|b4Length|a3Width|b4Width|uncompressed)'
+        r')*$'
+    )
 
 
 class TelexNumber(PrintableString):
@@ -1922,7 +1992,9 @@ class GSER(DirectoryString):
 class UUID(IA5String):
     oid = '1.3.6.1.1.16.1'
     desc = 'UUID'
-    reObj = re.compile('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')
+    reObj = re.compile(
+        '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
+    )
 
     def sanitizeInput(self, attrValue):
         try:
