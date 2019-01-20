@@ -532,32 +532,6 @@ def LDAPURLButton(app, data):
     )
 
 
-def DataStr(
-        app,
-        dn,
-        schema,
-        attrtype_name,
-        value,
-        valueindex=0,
-        commandbutton=False,
-        entry=None
-    ):
-    """
-    Return a pretty HTML-formatted string of the attribute value
-    """
-    attr_instance = web2ldap.app.schema.syntaxes.syntax_registry.get_at(
-        app, dn, schema, attrtype_name, value, entry,
-    )
-    try:
-        result = attr_instance.displayValue(valueindex, commandbutton)
-    except UnicodeError:
-        attr_instance = web2ldap.app.schema.syntaxes.OctetString(
-            app, dn, schema, attrtype_name, value, entry,
-        )
-        result = attr_instance.displayValue(valueindex, commandbutton)
-    return result
-
-
 def AttributeTypeSelectField(
         app,
         field_name,
