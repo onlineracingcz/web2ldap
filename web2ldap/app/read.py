@@ -32,21 +32,21 @@ from web2ldap.msbase import union, GrabKeys
 from web2ldap.app.session import session_store
 
 
-class VCardEntry(ldap0.schema.models.Entry):
+class VCardEntry(IterableUserDict):
 
-    def __init__(self, schema, entry, ldap_charset='utf-8', out_charset='utf-8'):
-        ldap0.schema.models.Entry.__init__(self, schema, None, entry)
-        self._ldap_charset = ldap_charset
+    def __init__(self, app, entry, out_charset='utf-8'):
+        self._app = app
+        self._entry = entry
         self._out_charset = out_charset
 
+    def __contains__(self, nameoroid):
+        return self._entry.__contains__(nameoroid)
+
     def __getitem__(self, nameoroid):
-        if web2ldap.app.schema.no_humanreadable_attr(self._s, nameoroid):
+        if web2ldap.app.schema.no_humanreadable_attr(self._app.schema, nameoroid):
             return ''
-        try:
-            values = ldap0.schema.models.Entry.__getitem__(self, nameoroid)
-        except KeyError:
-            return ''
-        return values[0].decode(self._ldap_charset).encode(self._out_charset)
+        value = self._entry.get(nameoroid, [''])[0]
+        return value.decode(self._app.ls.charset).encode(self._out_charset)
 
 
 def get_vcard_template(app, object_classes):
@@ -67,7 +67,7 @@ def generate_vcard(template_str, vcard_entry):
         attr_types = GrabKeys(l).keys
         if attr_types:
             for attr_type in attr_types:
-                if vcard_entry.has_key(attr_type):
+                if attr_type in vcard_entry:
                     template_lines_new.append(l.strip())
                     break
         else:
@@ -651,8 +651,8 @@ def w2l_read(app):
                 pass
             else:
                 break
-        display_entry = VCardEntry(app.schema, entry)
-        display_entry['dn'] = [app.ldap_dn]
+        entry['dn'] = [app.ldap_dn]
+        display_entry = VCardEntry(app, entry)
         web2ldap.app.gui.Header(
             app,
             'text/x-vcard',
