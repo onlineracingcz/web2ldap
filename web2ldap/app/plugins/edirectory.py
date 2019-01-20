@@ -241,7 +241,13 @@ class TaggedNameAndString(DirectoryString):
             )
         else:
             dstring_disp = DirectoryString.displayValue(self, valueindex, commandbutton)
-        return '<dl><dt>name:</dt><dd>%s</dd><dt>number:</dt><dd>%s</dd><dt>dstring:</dt><dd>%s</dd></dl>' % (
+        return (
+            '<dl>'
+            '<dt>name:</dt><dd>%s</dd>'
+            '<dt>number:</dt><dd>%s</dd>'
+            '<dt>dstring:</dt><dd>%s</dd>'
+            '</dl>'
+        ) % (
             DisplayDN(self._app, dn, commandbutton=commandbutton),
             number,
             '<code>%s</code>' % dstring_disp,
