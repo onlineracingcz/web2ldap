@@ -46,7 +46,7 @@ def w2l_login(
 
     login_search_root = login_search_root or app.dn
 
-    login_search_root_field = web2ldap.app.gui.SearchRootField(
+    login_search_root_field = web2ldap.app.gui.search_root_field(
         app,
         name='login_search_root',
     )

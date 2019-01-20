@@ -366,7 +366,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         context_menu_list=[]
     )
 
-    group_search_root_field = web2ldap.app.gui.SearchRootField(
+    group_search_root_field = web2ldap.app.gui.search_root_field(
         app,
         name='groupadm_searchroot'
     )

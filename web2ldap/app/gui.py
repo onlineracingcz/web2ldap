@@ -613,7 +613,7 @@ def footer(app):
     app.outf.write(HTML_FOOTER)
 
 
-def SearchRootField(
+def search_root_field(
         app,
         name='dn',
         text=u'Search Root',
@@ -668,7 +668,7 @@ def SearchRootField(
         ignoreCase=1
     )
     srf.setCharset(app.form.accept_charset)
-    return srf # SearchRootField()
+    return srf # search_root_field()
 
 
 def ExceptionMsg(app, Heading, Msg):

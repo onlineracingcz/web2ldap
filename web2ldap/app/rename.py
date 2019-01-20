@@ -134,7 +134,7 @@ def w2l_rename(app):
         rename_newsupfilter_default = app.form.field['rename_newsupfilter'].default
         scope_default = unicode(ldap0.SCOPE_SUBTREE)
 
-    rename_search_root_field = web2ldap.app.gui.SearchRootField(app, name='rename_searchroot')
+    rename_search_root_field = web2ldap.app.gui.search_root_field(app, name='rename_searchroot')
     rename_new_superior_field = new_superior_field(app, sup_search_url, old_superior)
 
     name_forms_text = ''

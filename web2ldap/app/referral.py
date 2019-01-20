@@ -88,7 +88,7 @@ def w2l_chasereferral(app, ref_exc):
         app, 'login_template', u'referral login form'
     )
 
-    login_search_root_field = web2ldap.app.gui.SearchRootField(
+    login_search_root_field = web2ldap.app.gui.search_root_field(
         app,
         name='login_search_root',
     )

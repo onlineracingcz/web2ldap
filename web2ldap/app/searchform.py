@@ -231,7 +231,7 @@ def w2l_searchform(
         'search_root',
         [search_root or app.ls.get_search_root(app.dn, naming_contexts)],
     )[0]
-    search_root_field = web2ldap.app.gui.SearchRootField(
+    search_root_field = web2ldap.app.gui.search_root_field(
         app,
         name='search_root',
         search_root_searchurl=app.cfg_param('searchform_search_root_url', None),
