@@ -525,7 +525,7 @@ def w2l_bulkmod(app):
                 num_sum, num_mods, num_sum, num_mods,
                 num_errors,
                 num_sum, num_errors, num_errors,
-                web2ldap.app.gui.DisplayDN(app, app.dn),
+                app.display_dn(app.dn),
                 web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
                 app.form.beginFormHTML('bulkmod', app.sid, 'POST'),

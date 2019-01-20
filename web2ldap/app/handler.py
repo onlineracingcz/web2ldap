@@ -332,6 +332,18 @@ class AppHandler(object):
                 c, s = path_info, ''
         return c, s # path_info()
 
+    def display_dn(self, dn, commandbutton=False):
+        """Display a DN as LDAP URL with or without button"""
+        assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+        dn_str = self.form.utf2display(dn or u'- World -')
+        if commandbutton:
+            command_buttons = [
+                dn_str,
+                self.anchor('read', 'Read', [('dn', dn)])
+            ]
+            return web2ldapcnf.command_link_separator.join(command_buttons)
+        return dn_str
+
     def simple_message(
             self,
             title=u'',
@@ -859,7 +871,7 @@ class AppHandler(object):
                 self.ldap_error_msg(
                     ldap_err,
                     template='{{error_msg}}<br>{0}{{matched_dn}}'.format(
-                        web2ldap.app.gui.DisplayDN(self, failed_dn)
+                        self.display_dn(failed_dn)
                     )
                 )
             )

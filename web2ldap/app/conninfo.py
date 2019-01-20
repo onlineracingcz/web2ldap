@@ -284,7 +284,7 @@ def w2l_conninfo(app):
 
     if app.ls.who:
         who_html = '%s<br>( %s )' % (
-            web2ldap.app.gui.DisplayDN(app, app.ls.who, commandbutton=False),
+            app.display_dn(app.ls.who, commandbutton=False),
             web2ldapcnf.command_link_separator.join((
                 app.anchor(
                     'read', 'Read',

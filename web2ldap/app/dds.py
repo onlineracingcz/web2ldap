@@ -58,7 +58,7 @@ def dds_form(app, msg):
             text_info_message=msg,
             form_begin=app.form.beginFormHTML('dds', app.sid, 'POST'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
-            text_dn=web2ldap.app.gui.DisplayDN(app, app.dn),
+            text_dn=app.display_dn(app.dn),
             field_dds_renewttlnum=app.form.field['dds_renewttlnum'].inputHTML(),
             field_dds_renewttlfac=app.form.field['dds_renewttlfac'].inputHTML(),
         )
@@ -93,12 +93,12 @@ def w2l_dds(app):
     else:
         if request_ttl and extop_resp_obj.responseTtl != request_ttl:
             msg = '<p class="WarningMessage">Refreshed entry %s with TTL %d instead of %d.</p>' % (
-                web2ldap.app.gui.DisplayDN(app, app.dn),
+                app.display_dn(app.dn),
                 extop_resp_obj.responseTtl, request_ttl
             )
         else:
             msg = '<p class="SuccessMessage">Refreshed entry %s with TTL %d.</p>' % (
-                web2ldap.app.gui.DisplayDN(app, app.dn),
+                app.display_dn(app.dn),
                 extop_resp_obj.responseTtl
             )
         app.simple_message(

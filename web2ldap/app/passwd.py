@@ -514,7 +514,7 @@ def w2l_passwd(app):
             <p>%s</p>
             <p>%s</p>
             """ % (
-                web2ldap.app.gui.DisplayDN(app, passwd_who),
+                app.display_dn(passwd_who),
                 password_attr_types_msg,
                 passwd_link,
             ),

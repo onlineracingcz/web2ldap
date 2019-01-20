@@ -268,7 +268,7 @@ def delete_entries(
 
 def del_singleentry_form(app):
     return '<p class="WarningMessage">Delete whole entry %s?</p>' % (
-        web2ldap.app.gui.DisplayDN(app, app.dn)
+        app.display_dn(app.dn)
     )
 
 
@@ -294,7 +294,7 @@ def del_subtree_form(app, scope):
     else:
         numAllSubordinates_html = ''
     return DELETE_SUBTREE_FORM_TMPL.format(
-        text_dn=web2ldap.app.gui.DisplayDN(app, app.dn),
+        text_dn=app.display_dn(app.dn),
         text_num_sub_ordinates=numSubordinates_html,
         text_num_all_sub_ordinates=numAllSubordinates_html,
         field_delete_scope=delete_scope_field.inputHTML(),
@@ -311,7 +311,7 @@ def del_attr_form(app, entry, delete_attr):
     <p class="WarningMessage">Delete following attribute(s) of entry %s?</p>
     <p>%s</p>
     """ % (
-        web2ldap.app.gui.DisplayDN(app, app.dn),
+        app.display_dn(app.dn),
         '\n'.join([
             '<input type="checkbox" name="delete_attr" value="%s"%s>%s<br>' % (
                 app.form.utf2display(attr_type, sp_entity='  '),
@@ -343,7 +343,7 @@ def del_search_form(app, scope, delete_filter):
         else:
             num_referrals = str(num_referrals)
     return DELETE_SEARCH_FORM_TMPL.format(
-        text_dn=web2ldap.app.gui.DisplayDN(app, app.dn),
+        text_dn=app.display_dn(app.dn),
         text_scope=web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
         num_entries=num_entries,
         num_referrals=num_referrals,
@@ -453,7 +453,7 @@ def w2l_delete(app):
             'Deleted entries',
             DELETE_ENTRIES_SUCCESS_TMPL % (
                 deleted_entries_count,
-                web2ldap.app.gui.DisplayDN(app, old_dn),
+                app.display_dn(old_dn),
                 web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
                 len(non_deletable_entries),
@@ -483,7 +483,7 @@ def w2l_delete(app):
               </li>
             </ul>
             """ % (
-                web2ldap.app.gui.DisplayDN(app, app.dn),
+                app.display_dn(app.dn),
                 '</li>\n<li>'.join([
                     app.form.hiddenFieldHTML('delete_attr', attr_type, attr_type)
                     for attr_type in delete_attr
@@ -504,7 +504,7 @@ def w2l_delete(app):
         app.simple_message(
             'Deleted Entry',
             '<p class="SuccessMessage">Deleted entry: %s</p>' % (
-                web2ldap.app.gui.DisplayDN(app, old_dn)
+                app.display_dn(old_dn)
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)

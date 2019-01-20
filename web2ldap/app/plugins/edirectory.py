@@ -30,7 +30,6 @@ from web2ldap.app.schema.syntaxes import \
     XmlValue, \
     syntax_registry
 from web2ldap.app.plugins.x509 import Certificate, CertificateList
-from web2ldap.app.gui import DisplayDN
 
 
 # FIX ME! Disabled this because of double OID which eDirectory is famous for. :-(
@@ -248,7 +247,7 @@ class TaggedNameAndString(DirectoryString):
             '<dt>dstring:</dt><dd>%s</dd>'
             '</dl>'
         ) % (
-            DisplayDN(self._app, dn, commandbutton=commandbutton),
+            self._app.display_dn(dn, commandbutton=commandbutton),
             number,
             '<code>%s</code>' % dstring_disp,
         )

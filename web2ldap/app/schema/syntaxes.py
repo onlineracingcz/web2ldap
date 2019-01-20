@@ -589,8 +589,7 @@ class NameAndOptionalUID(DistinguishedName):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         value = self.attrValue.split('#')
-        dn_str = web2ldap.app.gui.DisplayDN(
-            self._app,
+        dn_str = self._app.display_dn(
             self._app.ls.uc_decode(self.attrValue)[0],
             commandbutton=commandbutton,
         )

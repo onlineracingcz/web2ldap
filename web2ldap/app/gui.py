@@ -130,19 +130,6 @@ def repr2ts(time_divisors, ts_sep, value):
     return result
 
 
-def DisplayDN(app, dn, commandbutton=False):
-    """Display a DN as LDAP URL with or without button"""
-    assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
-    dn_str = app.form.utf2display(dn or u'- World -')
-    if commandbutton:
-        command_buttons = [
-            dn_str,
-            app.anchor('read', 'Read', [('dn', dn)])
-        ]
-        return web2ldapcnf.command_link_separator.join(command_buttons)
-    return dn_str
-
-
 def command_div(
         commandlist,
         div_id='CommandDiv',
@@ -310,7 +297,7 @@ def WhoAmITemplate(app, who=None, entry=None):
             return 'anonymous'
     if web2ldap.ldaputil.base.is_dn(who):
         # Fall-back is to display the DN
-        result = DisplayDN(app, who, commandbutton=False)
+        result = app.display_dn(who, commandbutton=False)
         # Determine relevant templates dict
         bound_as_templates = ldap0.cidict.cidict(app.cfg_param('boundas_template', {}))
         # Read entry if necessary

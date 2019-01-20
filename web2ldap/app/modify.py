@@ -178,7 +178,7 @@ def w2l_modify(app):
         app.simple_message(
             'Modify result',
             '<p class="SuccessMessage">No attributes modified of entry %s</p>' % (
-                web2ldap.app.gui.DisplayDN(app, app.dn, commandbutton=True),
+                app.display_dn(app.dn, commandbutton=True),
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
@@ -222,7 +222,7 @@ def w2l_modify(app):
     app.simple_message(
         'Modify result',
         '<p class="SuccessMessage">Modified entry %s</p><dt>LDIF change record:</dt>\n<dd>%s</dd>' % (
-            web2ldap.app.gui.DisplayDN(app, app.dn, commandbutton=True),
+            app.display_dn(app.dn, commandbutton=True),
             modlist_ldif(app.dn, app.form, modlist),
         ),
         main_menu_list=web2ldap.app.gui.main_menu(app),

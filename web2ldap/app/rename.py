@@ -87,8 +87,8 @@ def w2l_rename(app):
             """<p class="SuccessMessage">Renamed/moved entry.</p>
             <dl><dt>Old name:</dt><dd>%s</dd>
             <dt>New name:</dt><dd>%s</dd></dl>""" % (
-                web2ldap.app.gui.DisplayDN(app, old_dn),
-                web2ldap.app.gui.DisplayDN(app, app.dn)
+                app.display_dn(old_dn),
+                app.display_dn(app.dn)
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(
