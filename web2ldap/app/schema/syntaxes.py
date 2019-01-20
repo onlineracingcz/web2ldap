@@ -2007,7 +2007,7 @@ class RFC822Address(DNSDomain, IA5String):
 class DomainComponent(DNSDomain):
     oid = 'DomainComponent-oid'
     desc = 'DNS domain name component'
-    reObj = re.compile('^(\*|[a-zA-Z0-9_-]+)$')
+    reObj = re.compile(r'^(\*|[a-zA-Z0-9_-]+)$')
     maxLen = min(63, DNSDomain.maxLen) # (see https://tools.ietf.org/html/rfc2181#section-11)
 
 
