@@ -1349,14 +1349,16 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         )
     )
 
-    app.outf.write('\n'.join((
-        app.form.hiddenFieldHTML('in_assertion', AssertionFilter(app, entry), u''),
-        '\n'.join([
-            app.form.hiddenFieldHTML('in_oldattrtypes', at_name.decode('ascii'), u'')
-            for at_name in app.form.getInputValue('in_oldattrtypes', entry.keys())
-        ]),
-        in_wrtattroids_values,
-    )))
+    app.outf.write(
+        '\n'.join((
+            app.form.hiddenFieldHTML('in_assertion', AssertionFilter(app, entry), u''),
+            '\n'.join([
+                app.form.hiddenFieldHTML('in_oldattrtypes', at_name.decode('ascii'), u'')
+                for at_name in app.form.getInputValue('in_oldattrtypes', entry.keys())
+            ]),
+            in_wrtattroids_values,
+        ))
+    )
 
     if input_formtype == u'Template':
         input_form_entry.template_output(
