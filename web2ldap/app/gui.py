@@ -598,6 +598,7 @@ def Header(app, content_type, charset, more_headers=None):
         charset=charset,
         more_headers=more_headers,
     )
+    app.outf.reset()
     if app.form.next_cookie:
         for _, cookie in app.form.next_cookie.items():
             headers.append(('Set-Cookie', str(cookie)[12:]))

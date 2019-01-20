@@ -42,6 +42,13 @@ class AppResponse(object):
         self.lines = []
         self.headers = []
 
+    def reset(self):
+        self.bytelen = 0
+        del self.lines
+        self.lines = []
+        del self.headers
+        self.headers = []
+
     def set_headers(self, headers):
         """
         set all HTTP headers at once
