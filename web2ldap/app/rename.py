@@ -82,8 +82,7 @@ def w2l_rename(app):
             rename_newsuperior,
             delold=rename_delold
         )
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             'Renamed/moved entry',
             """<p class="SuccessMessage">Renamed/moved entry.</p>
             <dl><dt>Old name:</dt><dd>%s</dd>

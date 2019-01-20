@@ -884,8 +884,7 @@ def w2l_schema_viewer(app):
 
     if not se_list:
         # Display error message with input form
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             title=u'',
             message='<h1>Schema elements</h1><p class="ErrorMessage">Name or OID not found in schema!</p><p>%s</p>' % (
                 oid_input_form(app, oid)

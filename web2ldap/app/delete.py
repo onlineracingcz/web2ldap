@@ -409,8 +409,7 @@ def w2l_delete(app):
         return
 
     if delete_confirm != 'yes':
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             'Canceled delete',
             '<p class="SuccessMessage">Canceled delete.</p>',
             main_menu_list=web2ldap.app.gui.main_menu(app),
@@ -450,8 +449,7 @@ def w2l_delete(app):
         old_dn = app.dn
         if scope == ldap0.SCOPE_SUBTREE and delete_filter is None:
             app.dn = app.parent_dn
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             'Deleted entries',
             DELETE_ENTRIES_SUCCESS_TMPL % (
                 deleted_entries_count,
@@ -475,8 +473,7 @@ def w2l_delete(app):
             for attr_type in delete_attr
         ]
         app.ls.modifyEntry(app.dn, mod_list, serverctrls=delete_server_ctrls)
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             'Deleted Attribute(s)',
             """
             <p class="SuccessMessage">Deleted attribute(s) from entry %s</p>
@@ -504,8 +501,7 @@ def w2l_delete(app):
         app.ls.l.delete_s(app.ldap_dn)
         old_dn = app.dn
         app.dn = app.parent_dn
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             'Deleted Entry',
             '<p class="SuccessMessage">Deleted entry: %s</p>' % (
                 web2ldap.app.gui.DisplayDN(app, old_dn)

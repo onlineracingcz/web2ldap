@@ -175,8 +175,7 @@ def w2l_modify(app):
 
     if not modlist:
         # nothing to be changed
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             'Modify result',
             '<p class="SuccessMessage">No attributes modified of entry %s</p>' % (
                 web2ldap.app.gui.DisplayDN(app, app.dn, commandbutton=True),
@@ -220,8 +219,7 @@ def w2l_modify(app):
         return
 
     # Display success message
-    web2ldap.app.gui.SimpleMessage(
-        app,
+    app.simple_message(
         'Modify result',
         '<p class="SuccessMessage">Modified entry %s</p><dt>LDIF change record:</dt>\n<dd>%s</dd>' % (
             web2ldap.app.gui.DisplayDN(app, app.dn, commandbutton=True),

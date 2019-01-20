@@ -101,8 +101,7 @@ def w2l_dds(app):
                 web2ldap.app.gui.DisplayDN(app, app.dn),
                 extop_resp_obj.responseTtl
             )
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             message=msg,
             main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app, dds_link=1)

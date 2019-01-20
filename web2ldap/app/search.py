@@ -699,8 +699,7 @@ def w2l_search(app):
 
             # Empty search results
             #--------------------------------------------------
-            web2ldap.app.gui.SimpleMessage(
-                app,
+            app.simple_message(
                 'No Search Results',
                 '<p class="WarningMessage">No entries found.</p>%s' % (search_param_html),
                 main_menu_list=web2ldap.app.gui.main_menu(app),

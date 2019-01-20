@@ -354,8 +354,7 @@ def w2l_bulkmod(app):
 
     if bulkmod_submit == u'Cancel':
 
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             'Canceled bulk modification.',
             '<p class="SuccessMessage">Canceled bulk modification.</p>',
             main_menu_list=web2ldap.app.gui.main_menu(app),
@@ -492,8 +491,7 @@ def w2l_bulkmod(app):
         num_mods = len(result_ldif_html)
         num_errors = len(ldap_error_html)
         num_sum = num_mods+num_errors
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             'Modified entries',
             """
             <p class="SuccessMessage">Modified entries.</p>

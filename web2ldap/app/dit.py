@@ -245,8 +245,7 @@ def w2l_dit(app):
                     )
                 )
 
-    web2ldap.app.gui.SimpleMessage(
-        app,
+    app.simple_message(
         'Tree view',
         """
         <h1>Directory Information Tree</h1>

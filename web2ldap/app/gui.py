@@ -493,26 +493,6 @@ def TopSection(
     return # TopSection()
 
 
-def SimpleMessage(
-        app,
-        title=u'',
-        message=u'',
-        main_div_id='Message',
-        main_menu_list=[],
-        context_menu_list=[],
-    ):
-    TopSection(
-        app,
-        title,
-        main_menu_list,
-        context_menu_list=context_menu_list,
-        main_div_id=main_div_id,
-    )
-    app.outf.write(message)
-    footer(app)
-    return # SimpleMessage()
-
-
 def SchemaElementName(
         app,
         schema,

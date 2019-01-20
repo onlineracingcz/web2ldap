@@ -239,8 +239,7 @@ def w2l_add(app):
         if prec_ctrls:
             new_dn = prec_ctrls[0].dn
         new_dn_u = new_dn.decode(app.ls.charset)
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             'Added Entry',
             """
             <p class="SuccessMessage">Successfully added new entry.</p>

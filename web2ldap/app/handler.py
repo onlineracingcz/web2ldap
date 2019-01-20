@@ -332,6 +332,25 @@ class AppHandler(object):
                 c, s = path_info, ''
         return c, s # path_info()
 
+    def simple_message(
+            self,
+            title=u'',
+            message=u'',
+            main_div_id='Message',
+            main_menu_list=[],
+            context_menu_list=[],
+        ):
+        web2ldap.app.gui.TopSection(
+            self,
+            title,
+            main_menu_list,
+            context_menu_list=context_menu_list,
+            main_div_id=main_div_id,
+        )
+        self.outf.write(message)
+        web2ldap.app.gui.footer(self)
+        return # simple_message()
+
     def simple_msg(self, msg):
         """
         Output HTML text.

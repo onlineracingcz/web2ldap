@@ -56,8 +56,7 @@ def w2l_connect(app, h1_msg='Connect', error_msg=''):
     if error_msg:
         error_msg = '<p class="ErrorMessage">%s</p>' % (error_msg)
 
-    web2ldap.app.gui.SimpleMessage(
-        app,
+    app.simple_message(
         'Connect',
         connect_template_str.format(
             text_scriptname=app.env.get('SCRIPT_NAME', '').decode('utf-8'),

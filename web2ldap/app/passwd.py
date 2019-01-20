@@ -508,8 +508,7 @@ def w2l_passwd(app):
             )
         else:
             passwd_link = ''
-        web2ldap.app.gui.SimpleMessage(
-            app,
+        app.simple_message(
             message="""
             <p class="SuccessMessage">Changed password of entry %s</p>
             <p>%s</p>

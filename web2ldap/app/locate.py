@@ -262,8 +262,7 @@ def w2l_locate(app):
                             )
                         )
 
-    web2ldap.app.gui.SimpleMessage(
-        app,
+    app.simple_message(
         'DNS lookup',
         LOCATE_INPUT_FORM_TMPL % (
             msg_html,
