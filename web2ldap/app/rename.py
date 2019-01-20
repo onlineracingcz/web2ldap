@@ -198,7 +198,7 @@ def w2l_rename(app):
 
     app.outf.write(
         rename_template_str.format(
-            form_begin=app.form.beginFormHTML('rename', app.sid, 'POST'),
+            form_begin=app.begin_form('rename', 'POST'),
             field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
             field_rename_newrdn=app.form.field['rename_newrdn'].inputHTML(),
             field_rename_new_superior=rename_new_superior_field.inputHTML(),

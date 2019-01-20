@@ -110,7 +110,7 @@ def w2l_chasereferral(app, ref_exc):
         %s\n%s\n%s\n%s
         """  % (
             app.form.utf2display(unicode(ref_url.unparse(), app.ls.charset)),
-            app.form.beginFormHTML(app.command, app.sid, 'POST'),
+            app.begin_form(app.command, 'POST'),
             app.form.hiddenFieldHTML('host', ref_url.hostport.decode(app.ls.charset), u''),
             app.form.hiddenFieldHTML('dn', ref_url.dn.decode(app.ls.charset), u''),
             login_fields,

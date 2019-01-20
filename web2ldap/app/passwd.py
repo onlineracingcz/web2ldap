@@ -210,7 +210,7 @@ def passwd_form(
     app.outf.write(passwd_template_str.format(
         text_heading=heading,
         text_msg=error_msg or app.form.utf2display(PASSWD_ACTIONS_DICT[passwd_action][1]),
-        form_begin=app.form.beginFormHTML('passwd', app.sid, 'POST'),
+        form_begin=app.begin_form('passwd', 'POST'),
         value_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
         value_passwd_action=app.form.hiddenFieldHTML('passwd_action', passwd_action, u''),
         value_passwd_who=app.form.hiddenFieldHTML('passwd_who', passwd_who, u''),

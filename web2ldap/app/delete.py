@@ -399,7 +399,7 @@ def w2l_delete(app):
         )
         app.outf.write(
             DELETE_FORM_TEMPLATE.format(
-                form_begin=app.form.beginFormHTML('delete', app.sid, 'POST'),
+                form_begin=app.begin_form('delete', 'POST'),
                 inner_form=inner_form,
                 field_delete_ctrl=app.form.field['delete_ctrl'].inputHTML(default=delete_ctrl_oids),
                 field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),

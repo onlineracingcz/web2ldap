@@ -265,6 +265,56 @@ class AppHandler(object):
         assert isinstance(res, bytes), TypeError('res must be bytes, was %r', res)
         return res
 
+    def begin_form(
+            self,
+            command,
+            method,
+            target=None,
+            enctype='application/x-www-form-urlencoded',
+        ):
+        target = {
+            False:'target="%s"' % (target),
+            True:'',
+        }[target is None]
+        return """
+          <form
+            action="%s"
+            method="%s"
+            %s
+            enctype="%s"
+            accept-charset="%s"
+          >
+          """  % (
+              self.form.action_url(command, self.sid),
+              method,
+              target,
+              enctype,
+              self.form.accept_charset
+          )
+
+    def form_html(
+            self,
+            command,
+            submitstr,
+            method,
+            form_parameters,
+            extrastr='',
+            target=None
+        ):
+        """
+        Build the HTML text of a submit form
+        """
+        form_str = [self.begin_form(command, method, target)]
+        for param_name, param_value in form_parameters:
+            form_str.append(self.form.hiddenFieldHTML(param_name, param_value, u''))
+        form_str.append(
+            '<p>\n<input type="submit" value="%s">\n%s\n</p>\n</form>' % (
+                submitstr,
+                extrastr,
+            )
+        )
+        return '\n'.join(form_str)
+
     def guess_client_addr(self):
         """
         Guesses the host name or IP address of the HTTP client by looking

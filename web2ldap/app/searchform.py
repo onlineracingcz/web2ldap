@@ -318,7 +318,7 @@ def w2l_searchform(
           {searchoptions_template_str}
         </form>
         """.format(
-            form_search_html=app.form.beginFormHTML('search', app.sid, 'GET'),
+            form_search_html=app.begin_form('search', 'GET'),
             searchform_mode=app.form.utf2display(searchform_mode),
             searchform_template=app.form.utf2display(searchform_template_name),
             search_output=app.form.getInputValue('search_output', [u'table'])[0],

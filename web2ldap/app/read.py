@@ -530,8 +530,8 @@ def w2l_read(app):
 
         # List of already displayed attributes
         app.outf.write('%s\n' % (
-            app.form.formHTML(
-                'search', 'Export', 'GET', app.sid,
+            app.form_html(
+                'search', 'Export', 'GET',
                 [
                     ('dn', app.dn),
                     ('scope', u'0'),
@@ -613,7 +613,7 @@ def w2l_read(app):
             <input name="search_attrs" value="%s" size="40" maxlength="255">
             </p></form>
             """ % (
-                app.form.beginFormHTML('read', app.sid, 'GET'),
+                app.begin_form('read', 'GET'),
                 app.form.hiddenFieldHTML('read_nocache', u'1', u''),
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('read_output', read_output, u''),

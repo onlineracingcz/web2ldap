@@ -748,8 +748,8 @@ def oid_input_form(app, oid=None):
         default=oid
     ).inputHTML(oid)
     oid_class_select_html = app.form.field['oid_class'].inputHTML('')
-    return app.form.formHTML(
-        'oid', 'Search', app.sid, 'GET',
+    return app.form_html(
+        'oid', 'Search', 'GET',
         [('dn', app.dn)],
         extrastr='\n'.join((oid_input_field_html, oid_class_select_html)),
     )

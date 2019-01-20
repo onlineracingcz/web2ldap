@@ -123,7 +123,7 @@ def w2l_login(
             app.form.utf2display(title_msg),
             '\n'.join((
                 login_msg_html,
-                app.form.beginFormHTML(action_command, None, 'POST', None),
+                app.begin_form(action_command, 'POST', None),
                 app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldapUrl('')).decode('ascii'), u''),
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('delsid', app.sid.decode('ascii'), u''),

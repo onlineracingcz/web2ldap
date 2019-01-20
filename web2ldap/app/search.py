@@ -1041,7 +1041,7 @@ def w2l_search(app):
                 </form>
                 """ % (
                     '\n'.join((
-                        app.form.beginFormHTML('search', app.sid, 'GET', target='web2ldapexport'),
+                        app.begin_form('search', 'GET', target='web2ldapexport'),
                         app.form.hiddenFieldHTML('dn', app.dn, u''),
                         app.form.hiddenFieldHTML('search_root', search_root, u''),
                         app.form.hiddenFieldHTML('scope', unicode(scope), u''),

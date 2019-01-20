@@ -138,12 +138,12 @@ def w2l_ldapparams(app):
             </table>
           </fieldset>
         """ % (
-            app.form.formHTML(
-                'read', 'Go to', app.sid, 'GET', [],
+            app.form_html(
+                'read', 'Go to', 'GET', [],
                 extrastr=app.form.field['dn'].inputHTML(),
             ),
-            app.form.formHTML(
-                'ldapparams', 'Set alias deref', app.sid, 'GET', [],
+            app.form_html(
+                'ldapparams', 'Set alias deref', 'GET', [],
                 extrastr=app.form.field['ldap_deref'].inputHTML(default=str(app.ls.l.deref)),
             ),
             app.anchor(

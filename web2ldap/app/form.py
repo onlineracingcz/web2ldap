@@ -150,34 +150,6 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
             {False:'/%s' % sid, True:''}[sid is None],
         )
 
-    def beginFormHTML(
-            self,
-            command,
-            sid,
-            method,
-            target=None,
-            enctype='application/x-www-form-urlencoded',
-        ):
-        target = {
-            False:'target="%s"' % (target),
-            True:'',
-        }[target is None]
-        return """
-          <form
-            action="%s"
-            method="%s"
-            %s
-            enctype="%s"
-            accept-charset="%s"
-          >
-          """  % (
-              self.action_url(command, sid),
-              method,
-              target,
-              enctype,
-              self.accept_charset
-          )
-
     def hiddenFieldHTML(self, name, value, desc):
         return web2ldap.app.gui.HIDDEN_FIELD % (
             name,
@@ -204,30 +176,6 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
                     val = self.uc_decode(val)[0]
                 result.append(self.hiddenFieldHTML(f.name, val, u''))
         return '\n'.join(result) # hiddenInputFieldString()
-
-    def formHTML(
-            self,
-            command,
-            submitstr,
-            sid,
-            method,
-            form_parameters,
-            extrastr='',
-            target=None
-        ):
-        """
-        Build the HTML text of a submit form
-        """
-        form_str = [self.beginFormHTML(command, sid, method, target)]
-        for param_name, param_value in form_parameters:
-            form_str.append(self.hiddenFieldHTML(param_name, param_value, u''))
-        form_str.append(
-            '<p><input type="submit" value="%s">%s</p></form>' % (
-                submitstr,
-                extrastr,
-            )
-        )
-        return '\n'.join(form_str)
 
 
 class SearchAttrs(web2ldap.web.forms.Input):

@@ -62,7 +62,7 @@ def w2l_connect(app, h1_msg='Connect', error_msg=''):
             text_scriptname=app.env.get('SCRIPT_NAME', '').decode('utf-8'),
             text_heading=h1_msg,
             text_error=error_msg,
-            form_begin=app.form.beginFormHTML('searchform', None, 'GET', None),
+            form_begin=app.begin_form('searchform', 'GET', None),
             field_uri_select=uri_select_field_html,
             disable_start={False:'', True:'<!--'}[web2ldapcnf.hosts.restricted_ldap_uri_list],
             disable_end={False:'', True:'-->'}[web2ldapcnf.hosts.restricted_ldap_uri_list],
