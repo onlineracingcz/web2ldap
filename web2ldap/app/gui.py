@@ -406,7 +406,7 @@ def main_menu(app):
     return cl # main_menu()
 
 
-def DITNavigationList(app):
+def dit_navigation(app):
     dn_list = explode_dn(app.dn)
     result = [
         app.anchor(
@@ -424,7 +424,7 @@ def DITNavigationList(app):
             title=u'Jump to root DSE',
         )
     )
-    return result # DITNavigationList()
+    return result # dit_navigation()
 
 
 def TopSection(
@@ -470,7 +470,7 @@ def TopSection(
             'ldap_url': app.ls.ldapUrl(app.dn),
             'ldap_uri': app.form.utf2display(app.ls.uri.decode('ascii')),
             'description': escape_html(app.cfg_param('description', u'').encode(app.form.accept_charset)),
-            'dit_navi': ',\n'.join(DITNavigationList(app)),
+            'dit_navi': ',\n'.join(dit_navigation(app)),
             'dn': app.form.utf2display(app.dn),
         })
         template_dict['who'] = WhoAmITemplate(app)
