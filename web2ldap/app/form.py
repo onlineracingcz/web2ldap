@@ -15,7 +15,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 import urllib
-import codecs
 import re
 import Cookie
 
@@ -49,8 +48,6 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
 
     def __init__(self, inf, env):
         web2ldap.web.forms.Form.__init__(self, inf, env)
-        self._set_charset()
-        self._add_fields()
         # Cookie handling
         try:
             self.cookies = Cookie.SimpleCookie(self.env['HTTP_COOKIE'])
@@ -110,13 +107,8 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
         self.next_cookie.update(cki)
         return cki # setNewCookie()
 
-    def _set_charset(self):
-        self.accept_charset = 'utf-8'
-        form_codec = codecs.lookup(self.accept_charset)
-        self.uc_encode, self.uc_decode = form_codec[0], form_codec[1]
-        return # _set_charset()
-
     def _add_fields(self):
+        web2ldap.web.forms.Form._add_fields(self)
         self.addField(web2ldap.web.forms.Input(
             'delsid',
             u'Old SID to be deleted',

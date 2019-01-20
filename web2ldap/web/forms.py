@@ -11,6 +11,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
+import codecs
 import sys
 import re
 import urllib
@@ -891,6 +892,10 @@ class Form:
         self.accept_charset = self.http_accept_charset.preferred()
         # Determine query string
         self.query_string = env.get('QUERY_STRING', '')
+        # initialize Unicode codecs
+        self._set_charset()
+        # add Field instances
+        self._add_fields()
         return # Form.__init__()
 
     def getContentType(self):
@@ -958,7 +963,19 @@ class Form:
                 )
         return # Form.hiddenInputFields()
 
-    def _parseFormUrlEncoded(self, maxContentLength, stripValues, unquote):
+    def _add_fields(self):
+        """
+        can be overwritten to add Field instances to the form
+        """
+        pass
+
+    def _set_charset(self):
+        self.accept_charset = 'utf-8'
+        form_codec = codecs.lookup(self.accept_charset)
+        self.uc_encode, self.uc_decode = form_codec[0], form_codec[1]
+        return # _set_charset()
+
+    def _parse_url_encoded(self, maxContentLength, stripValues, unquote):
 
         if self.request_method == 'POST':
             query_string = self.inf.read(int(self.env['CONTENT_LENGTH']))
@@ -1000,9 +1017,9 @@ class Form:
                 # Add name of field to set of input keys
                 self.inputFieldNames.add(name)
 
-        return #_parseFormUrlEncoded()
+        return #_parse_url_encoded()
 
-    def _parseMultipartFormData(self, maxContentLength):
+    def _parse_mime_multipart(self, maxContentLength):
 
         import cgi
         _, pdict = cgi.parse_header(self.env['CONTENT_TYPE'])
@@ -1027,7 +1044,7 @@ class Form:
                 # Add name of field to set of input keys
                 self.inputFieldNames.add(name)
 
-        return # _parseMultipartFormData()
+        return # _parse_mime_multipart()
 
 
     def getInputFields(
@@ -1058,13 +1075,13 @@ class Form:
         content_type = self.getContentType()
         if content_type.startswith('application/x-www-form-urlencoded'):
             # Parse user's input
-            self._parseFormUrlEncoded(
+            self._parse_url_encoded(
                 maxContentLength,
                 stripValues,
                 unquote,
             )
         elif content_type.startswith('multipart/form-data'):
-            self._parseMultipartFormData(
+            self._parse_mime_multipart(
                 maxContentLength,
             )
         else:
