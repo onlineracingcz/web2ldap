@@ -212,4 +212,4 @@ def w2l_rename(app):
         )
     )
 
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)

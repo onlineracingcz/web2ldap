@@ -63,7 +63,7 @@ def dds_form(app, msg):
             field_dds_renewttlfac=app.form.field['dds_renewttlfac'].inputHTML(),
         )
     )
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)
     return # dds_form()
 
 

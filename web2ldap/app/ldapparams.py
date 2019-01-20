@@ -161,4 +161,4 @@ def w2l_ldapparams(app):
         )
     )
 
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)

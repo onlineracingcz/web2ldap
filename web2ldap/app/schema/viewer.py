@@ -270,7 +270,7 @@ class DisplaySchemaElement:
             )
         )
         self.disp_details()
-        web2ldap.app.gui.Footer(self._app)
+        web2ldap.app.gui.footer(self._app)
 
 
 class DisplayObjectClass(DisplaySchemaElement):
@@ -686,7 +686,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
             )
         )
         self.disp_details()
-        web2ldap.app.gui.Footer(self._app)
+        web2ldap.app.gui.footer(self._app)
 
     def disp_details(self):
         """
@@ -799,7 +799,7 @@ def display_schema_elements(app, se_classes, se_list):
             ))
     else:
         app.outf.write(SCHEMA_VIEWER_USAGE)
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)
     return # end of display_schema_elements()
 
 

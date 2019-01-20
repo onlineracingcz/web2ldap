@@ -405,7 +405,7 @@ def w2l_delete(app):
                 field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
             )
         )
-        web2ldap.app.gui.Footer(app)
+        web2ldap.app.gui.footer(app)
         return
 
     if delete_confirm != 'yes':

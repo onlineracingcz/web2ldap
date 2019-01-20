@@ -341,4 +341,4 @@ def w2l_searchform(
         )
     )
 
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)

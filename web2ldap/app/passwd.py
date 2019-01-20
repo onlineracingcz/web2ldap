@@ -231,7 +231,7 @@ def passwd_form(
         form_field_passwd_settimesync=app.form.field['passwd_settimesync'].inputHTML(checked=(not own_pwd_change)),
     ))
 
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)
     return # passwd_form()
 
 

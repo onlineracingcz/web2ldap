@@ -176,7 +176,7 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
             ]
             self._app.outf.write('<tr>\n%s</tr>\n' % ('\n'.join(td_list)))
         self._app.outf.write('</table>\n')
-        web2ldap.app.gui.Footer(self._app)
+        web2ldap.app.gui.footer(self._app)
         return # processResults()
 
 
@@ -1075,7 +1075,7 @@ def w2l_search(app):
                 )
             )
 
-            web2ldap.app.gui.Footer(app)
+            web2ldap.app.gui.footer(app)
 
 
     else:

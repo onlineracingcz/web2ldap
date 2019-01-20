@@ -246,7 +246,7 @@ def bulkmod_input_form(
             field_bulkmod_cp=app.form.field['bulkmod_cp'].inputHTML(checked=bulkmod_cp),
         )
     )
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)
     return # bulkmod_input_form()
 
 
@@ -315,7 +315,7 @@ def bulkmod_confirmation_form(
             ]),
         )
     )
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)
     return # bulkmod_confirmation_form()
 
 

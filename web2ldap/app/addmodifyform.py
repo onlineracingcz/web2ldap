@@ -953,7 +953,7 @@ def ObjectClassForm(
             ))
         )
     )
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)
     return # ObjectClassForm()
 
 
@@ -1249,7 +1249,7 @@ def w2l_addform(
         input_form_entry.ldif_input()
 
     app.outf.write('</form>')
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)
     return # w2l_addform()
 
 
@@ -1377,5 +1377,5 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         input_form_entry.ldif_input()
 
     app.outf.write('</form>')
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)
     return # w2l_modifyform()

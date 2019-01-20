@@ -246,4 +246,4 @@ def w2l_monitor(app):
     else:
         app.outf.write('No active sessions.\n')
 
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)

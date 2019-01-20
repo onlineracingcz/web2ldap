@@ -509,7 +509,7 @@ def SimpleMessage(
         main_div_id=main_div_id,
     )
     app.outf.write(message)
-    web2ldap.app.gui.Footer(app)
+    footer(app)
     return # SimpleMessage()
 
 
@@ -667,7 +667,7 @@ def Header(app, content_type, charset, more_headers=None):
     return headers # Header()
 
 
-def Footer(app):
+def footer(app):
     app.outf.write(HTML_FOOTER)
 
 
@@ -751,5 +751,5 @@ def ExceptionMsg(app, Heading, Msg):
             error_msg=Msg,
         )
     )
-    Footer(app)
+    footer(app)
     return # ExceptionMsg()

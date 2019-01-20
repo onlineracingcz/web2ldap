@@ -460,4 +460,4 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             ))
         app.outf.write('</dl>\n')
 
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)

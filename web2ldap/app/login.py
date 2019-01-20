@@ -148,4 +148,4 @@ def w2l_login(
             )
         )
     app.outf.write('</form>\n')
-    web2ldap.app.gui.Footer(app)
+    web2ldap.app.gui.footer(app)
