@@ -153,7 +153,7 @@ def SearchForm_adv(app):
     )
     search_mode_select.setCharset(app.form.accept_charset)
 
-    search_attr_select = web2ldap.app.gui.AttributeTypeSelectField(
+    search_attr_select = web2ldap.app.gui.attrtype_select_field(
         app,
         'search_attr',
         u'Search attribute type',

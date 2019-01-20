@@ -159,7 +159,7 @@ def bulkmod_input_form(
             bulkmod_op.insert(insert_row_num+1, bulkmod_op[insert_row_num])
             bulkmod_av.insert(insert_row_num+1, u'')
     # Generate a select field for the attribute type
-    bulkmod_attr_select = web2ldap.app.gui.AttributeTypeSelectField(
+    bulkmod_attr_select = web2ldap.app.gui.attrtype_select_field(
         app,
         'bulkmod_at',
         u'Attribute type',

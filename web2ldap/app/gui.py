@@ -532,7 +532,7 @@ def LDAPURLButton(app, data):
     )
 
 
-def AttributeTypeSelectField(
+def attrtype_select_field(
         app,
         field_name,
         field_desc,
