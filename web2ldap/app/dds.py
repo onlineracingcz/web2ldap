@@ -50,7 +50,7 @@ def dds_form(app, msg):
         )
     web2ldap.app.gui.TopSection(
         app, 'Refresh dynamic entry',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app),
     )
     app.outf.write(
@@ -104,7 +104,7 @@ def w2l_dds(app):
         web2ldap.app.gui.SimpleMessage(
             app,
             message=msg,
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app, dds_link=1)
         )
 

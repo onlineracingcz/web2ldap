@@ -156,7 +156,7 @@ def w2l_monitor(app):
     web2ldap.app.gui.TopSection(
         app,
         'Monitor',
-        web2ldap.app.gui.EntryMainMenu(app),
+        web2ldap.app.gui.simple_main_menu(app),
         [],
     )
 

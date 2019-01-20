@@ -297,7 +297,7 @@ def w2l_searchform(
     web2ldap.app.gui.TopSection(
         app,
         '%s Search Form' % SEARCHFORM_MODE_TEXT[searchform_mode],
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=ContextMenuList,
         main_div_id='Input'
     )

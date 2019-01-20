@@ -241,7 +241,7 @@ class DisplaySchemaElement:
                 ),
                 self.se.oid
             ),
-            web2ldap.app.gui.MainMenu(self._app),
+            web2ldap.app.gui.main_menu(self._app),
             context_menu_list=schema_context_menu(self._app)
         )
         self._app.outf.write(
@@ -664,7 +664,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
                 ),
                 self.se.ruleid
             ),
-            web2ldap.app.gui.MainMenu(self._app),
+            web2ldap.app.gui.main_menu(self._app),
             context_menu_list=schema_context_menu(self._app)
         )
         self._app.outf.write(
@@ -762,7 +762,7 @@ def display_schema_elements(app, se_classes, se_list):
     web2ldap.app.gui.TopSection(
         app,
         'Schema elements',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=schema_context_menu(app)
     )
 
@@ -891,7 +891,7 @@ def w2l_schema_viewer(app):
                 oid_input_form(app, oid)
             ),
             main_div_id='Message',
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=schema_context_menu(app)
         )
         return

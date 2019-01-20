@@ -169,7 +169,7 @@ def bulkmod_input_form(
     web2ldap.app.gui.TopSection(
         app,
         'Bulk modification input',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
     )
     input_fields = '\n'.join([
         """
@@ -285,7 +285,7 @@ def bulkmod_confirmation_form(
     web2ldap.app.gui.TopSection(
         app,
         'Modify entries?',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         main_div_id='Input',
     )
     app.outf.write(
@@ -358,7 +358,7 @@ def w2l_bulkmod(app):
             app,
             'Canceled bulk modification.',
             '<p class="SuccessMessage">Canceled bulk modification.</p>',
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
         )
 
     elif not (bulk_mod_list or bulkmod_newsuperior) or \
@@ -535,7 +535,7 @@ def w2l_bulkmod(app):
                 error_messages,
                 change_records,
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
         )
 
     else:

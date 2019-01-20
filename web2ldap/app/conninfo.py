@@ -278,7 +278,7 @@ def w2l_conninfo(app):
     web2ldap.app.gui.TopSection(
         app,
         'Connection Info',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=context_menu_list
     )
 

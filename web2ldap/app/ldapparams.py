@@ -36,7 +36,7 @@ def w2l_ldapparams(app):
     web2ldap.app.gui.TopSection(
         app,
         'LDAP Connection Parameters',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=[]
     )
 

@@ -35,7 +35,7 @@ def w2l_chasereferral(app, ref_exc):
     web2ldap.app.gui.TopSection(
         app,
         'Referral received',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=[]
     )
 

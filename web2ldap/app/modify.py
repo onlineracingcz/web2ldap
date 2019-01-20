@@ -181,7 +181,7 @@ def w2l_modify(app):
             '<p class="SuccessMessage">No attributes modified of entry %s</p>' % (
                 web2ldap.app.gui.DisplayDN(app, app.dn, commandbutton=True),
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
         return
@@ -227,6 +227,6 @@ def w2l_modify(app):
             web2ldap.app.gui.DisplayDN(app, app.dn, commandbutton=True),
             modlist_ldif(app.dn, app.form, modlist),
         ),
-        main_menu_list=web2ldap.app.gui.MainMenu(app),
+        main_menu_list=web2ldap.app.gui.main_menu(app),
         context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
     )

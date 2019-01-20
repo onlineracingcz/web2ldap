@@ -260,6 +260,6 @@ def w2l_add(app):
                 web2ldap.app.gui.DisplayDN(app, new_dn_u, commandbutton=0),
                 ModlistTable(app.schema, modlist)
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=[]
         )

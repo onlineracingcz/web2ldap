@@ -473,7 +473,7 @@ def w2l_read(app):
             web2ldap.app.gui.TopSection(
                 app,
                 '',
-                web2ldap.app.gui.MainMenu(app),
+                web2ldap.app.gui.main_menu(app),
                 context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app),
             )
             web2ldap.app.viewer.viewer_func[syntax_se.oid](
@@ -516,7 +516,7 @@ def w2l_read(app):
         web2ldap.app.gui.TopSection(
             app,
             '',
-            web2ldap.app.gui.MainMenu(app),
+            web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(
                 app,
                 vcard_link=not get_vcard_template(app, entry.get('objectClass', [])) is None,

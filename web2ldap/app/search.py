@@ -703,7 +703,7 @@ def w2l_search(app):
                 app,
                 'No Search Results',
                 '<p class="WarningMessage">No entries found.</p>%s' % (search_param_html),
-                main_menu_list=web2ldap.app.gui.MainMenu(app),
+                main_menu_list=web2ldap.app.gui.main_menu(app),
                 context_menu_list=ContextMenuList
             )
 
@@ -827,7 +827,7 @@ def w2l_search(app):
             web2ldap.app.gui.TopSection(
                 app,
                 'Search Results',
-                web2ldap.app.gui.MainMenu(app),
+                web2ldap.app.gui.main_menu(app),
                 context_menu_list=ContextMenuList
             )
 

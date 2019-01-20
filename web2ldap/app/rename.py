@@ -91,7 +91,7 @@ def w2l_rename(app):
                 web2ldap.app.gui.DisplayDN(app, old_dn),
                 web2ldap.app.gui.DisplayDN(app, app.dn)
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(
                 app, entry_uuid=entry_uuid
             ),
@@ -193,7 +193,7 @@ def w2l_rename(app):
     web2ldap.app.gui.TopSection(
         app,
         'Rename Entry',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
     )
 

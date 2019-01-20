@@ -57,7 +57,7 @@ def w2l_login(
     if nomenu:
         main_menu_list = []
     else:
-        main_menu_list = web2ldap.app.gui.MainMenu(app)
+        main_menu_list = web2ldap.app.gui.main_menu(app)
 
     web2ldap.app.gui.TopSection(
         app,

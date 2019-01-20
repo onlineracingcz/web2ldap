@@ -933,7 +933,7 @@ def ObjectClassForm(
     web2ldap.app.gui.TopSection(
         app,
         H1_MSG[app.command],
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=context_menu_list,
         main_div_id='Input'
     )
@@ -1208,7 +1208,7 @@ def w2l_addform(
     web2ldap.app.gui.TopSection(
         app,
         H1_MSG[app.command],
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=[]
     )
 
@@ -1329,7 +1329,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
     web2ldap.app.gui.TopSection(
         app,
         H1_MSG[app.command],
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
     )
 

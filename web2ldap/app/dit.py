@@ -252,7 +252,7 @@ def w2l_dit(app):
         <h1>Directory Information Tree</h1>
         <div id="DIT">%s</div>
         """ % ('\n'.join(outf_lines)),
-        main_menu_list=web2ldap.app.gui.MainMenu(app),
+        main_menu_list=web2ldap.app.gui.main_menu(app),
         context_menu_list=[]
     )
 

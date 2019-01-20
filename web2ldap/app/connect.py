@@ -69,6 +69,6 @@ def w2l_connect(app, h1_msg='Connect', error_msg=''):
             disable_end={False:'', True:'-->'}[web2ldapcnf.hosts.restricted_ldap_uri_list],
             value_currenttime=time.strftime(r'%Y%m%d%H%M%SZ', time.gmtime()),
         ),
-        main_menu_list=web2ldap.app.gui.EntryMainMenu(app),
+        main_menu_list=web2ldap.app.gui.simple_main_menu(app),
         context_menu_list=[],
     )

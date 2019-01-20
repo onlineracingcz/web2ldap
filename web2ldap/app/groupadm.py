@@ -362,7 +362,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     web2ldap.app.gui.TopSection(
         app,
         'Group membership',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=[]
     )
 

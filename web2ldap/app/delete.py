@@ -394,7 +394,7 @@ def w2l_delete(app):
         web2ldap.app.gui.TopSection(
             app,
             'Delete entry?',
-            web2ldap.app.gui.MainMenu(app),
+            web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
         app.outf.write(
@@ -413,7 +413,7 @@ def w2l_delete(app):
             app,
             'Canceled delete',
             '<p class="SuccessMessage">Canceled delete.</p>',
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
         return
@@ -460,7 +460,7 @@ def w2l_delete(app):
                 end_time_stamp-begin_time_stamp,
                 len(non_deletable_entries),
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
 
@@ -492,7 +492,7 @@ def w2l_delete(app):
                     for attr_type in delete_attr
                 ]),
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )
 
@@ -510,6 +510,6 @@ def w2l_delete(app):
             '<p class="SuccessMessage">Deleted entry: %s</p>' % (
                 web2ldap.app.gui.DisplayDN(app, old_dn)
             ),
-            main_menu_list=web2ldap.app.gui.MainMenu(app),
+            main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
         )

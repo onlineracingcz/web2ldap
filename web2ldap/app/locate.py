@@ -271,6 +271,6 @@ def w2l_locate(app):
             app.form.script_name,
             app.form.accept_charset,
         ),
-        main_menu_list=web2ldap.app.gui.EntryMainMenu(app),
+        main_menu_list=web2ldap.app.gui.simple_main_menu(app),
         context_menu_list=[],
     )

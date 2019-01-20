@@ -60,7 +60,7 @@ def w2l_chasesrvrecord(app, host_list):
     web2ldap.app.gui.TopSection(
         app,
         'LDAP server located via DNS',
-        web2ldap.app.gui.MainMenu(app),
+        web2ldap.app.gui.main_menu(app),
         context_menu_list=[],
         main_div_id='Input'
     )

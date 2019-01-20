@@ -165,7 +165,7 @@ def command_div(
     return '' # command_div()
 
 
-def EntryMainMenu(app):
+def simple_main_menu(app):
     main_menu = [app.anchor('', 'Connect', [])]
     if web2ldap.app.handler.check_access(app.env, 'monitor'):
         main_menu.append(app.anchor('monitor', 'Monitor', []))
@@ -337,7 +337,7 @@ def WhoAmITemplate(app, who=None, entry=None):
 
 
 
-def MainMenu(app):
+def main_menu(app):
     """
     Returns list of main menu items
     """
@@ -416,7 +416,7 @@ def MainMenu(app):
 
         cl.append(app.anchor('', 'Connect', None, [], title=u'New connection to LDAP server'))
 
-    return cl # MainMenu()
+    return cl # main_menu()
 
 
 def DITNavigationList(app):
@@ -737,7 +737,7 @@ def ExceptionMsg(app, Heading, Msg):
       Raw string with HTML with text describing the exception
       (Security note: Must already be quoted/escaped!)
     """
-    TopSection(app, 'Error', MainMenu(app), context_menu_list=[])
+    TopSection(app, 'Error', main_menu(app), context_menu_list=[])
     if isinstance(Msg, unicode):
         Msg = Msg.encode(app.form.accept_charset)
     app.outf.write(
