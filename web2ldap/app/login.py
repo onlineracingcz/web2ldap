@@ -112,12 +112,18 @@ def w2l_login(
     else:
         login_msg_html = ''
 
+    # determine which command will be put in form's action attribute
+    if not app.command or app.command == 'login':
+        action_command = 'searchform'
+    else:
+        action_command = app.command
+
     app.outf.write(
         '<h1>%s</h1>\n%s' % (
             app.form.utf2display(title_msg),
             '\n'.join((
                 login_msg_html,
-                app.form.beginFormHTML(app.command, None, 'POST', None),
+                app.form.beginFormHTML(action_command, None, 'POST', None),
                 app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldapUrl('')).decode('ascii'), u''),
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('delsid', app.sid.decode('ascii'), u''),
