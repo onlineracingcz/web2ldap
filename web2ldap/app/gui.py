@@ -143,7 +143,7 @@ def DisplayDN(app, dn, commandbutton=False):
     return dn_str
 
 
-def CommandTableString(
+def command_div(
         commandlist,
         div_id='CommandDiv',
         separator=' ',
@@ -162,21 +162,7 @@ def CommandTableString(
             (separator).join(commandlist),
             end_tag,
         )
-    return '' # CommandTableString()
-
-
-def CommandTable(
-        app,
-        commandlist,
-        div_id='CommandDiv',
-        separator=' ',
-        semantic_tag='nav',
-    ):
-    if commandlist:
-        app.outf.write(
-            CommandTableString(commandlist, div_id, separator, semantic_tag)
-        )
-    return # CommandTable()
+    return '' # command_div()
 
 
 def EntryMainMenu(app):
@@ -485,8 +471,8 @@ def TopSection(
         'who': '-/-',
         'dn': '-/-',
         'dit_navi': '-/-',
-        'main_menu': CommandTableString(main_menu_list, div_id='MainMenu', separator='\n', semantic_tag=None),
-        'context_menu': CommandTableString(context_menu_list, div_id='ContextMenu', separator='\n', semantic_tag=None),
+        'main_menu': command_div(main_menu_list, div_id='MainMenu', separator='\n', semantic_tag=None),
+        'context_menu': command_div(context_menu_list, div_id='ContextMenu', separator='\n', semantic_tag=None),
     }
     template_dict.update([(k, escape_html(str(v))) for k, v in app.env.items()])
 

@@ -84,29 +84,30 @@ class CRLDisplayer(x509v3.CRL):
         """Display a CRL in HTML with all details"""
         asn1types.url_prefix = '%s/urlredirect/%s?' % (app.form.script_name, app.sid)
         asn1types.url_target = 'web2ldap_certurl'
-        web2ldap.app.gui.CommandTable(
-            app,
-            [
-                app.anchor(
-                    'read', 'Install',
-                    [
-                        ('dn', app.dn),
-                        ('read_attr', ldap_attrtype),
-                        ('read_attrmode', 'load'),
-                        ('read_attrindex', str(ldap_attrindex)),
-                    ],
-                ),
-                app.anchor(
-                    'read', 'Save to disk',
-                    [
-                        ('dn', app.dn),
-                        ('read_attr', ldap_attrtype),
-                        ('read_attrmode', 'load'),
-                        ('read_attrmimetype', 'application/octet-stream'),
-                        ('read_attrindex', str(ldap_attrindex)),
-                    ],
-                ),
-            ]
+        app.outf.write(
+            web2ldap.app.gui.command_div(
+                [
+                    app.anchor(
+                        'read', 'Install',
+                        [
+                            ('dn', app.dn),
+                            ('read_attr', ldap_attrtype),
+                            ('read_attrmode', 'load'),
+                            ('read_attrindex', str(ldap_attrindex)),
+                        ],
+                    ),
+                    app.anchor(
+                        'read', 'Save to disk',
+                        [
+                            ('dn', app.dn),
+                            ('read_attr', ldap_attrtype),
+                            ('read_attrmode', 'load'),
+                            ('read_attrmimetype', 'application/octet-stream'),
+                            ('read_attrindex', str(ldap_attrindex)),
+                        ],
+                    ),
+                ],
+            )
         )
         # Get the extensions as string-keyed dict but with
         # numeric string representation of OIDs
@@ -189,29 +190,30 @@ class CertificateDisplayer(x509v3.Certificate):
         """Display a X.509 certificate in HTML with all details"""
         asn1types.url_prefix = '%s/urlredirect/%s?' % (app.form.script_name, app.sid)
         asn1types.url_target = 'web2ldap_certurl'
-        web2ldap.app.gui.CommandTable(
-            app,
-            [
-                app.anchor(
-                    'read', 'Install',
-                    [
-                        ('dn', app.dn),
-                        ('read_attr', ldap_attrtype),
-                        ('read_attrmode', 'load'),
-                        ('read_attrindex', str(ldap_attrindex)),
-                    ],
-                ),
-                app.anchor(
-                    'read', 'Save to disk',
-                    [
-                        ('dn', app.dn),
-                        ('read_attr', ldap_attrtype),
-                        ('read_attrmode', 'load'),
-                        ('read_attrmimetype', 'application/octet-stream'),
-                        ('read_attrindex', str(ldap_attrindex)),
-                    ],
-                ),
-            ]
+        app.outf.write(
+            web2ldap.app.gui.command_div(
+                [
+                    app.anchor(
+                        'read', 'Install',
+                        [
+                            ('dn', app.dn),
+                            ('read_attr', ldap_attrtype),
+                            ('read_attrmode', 'load'),
+                            ('read_attrindex', str(ldap_attrindex)),
+                        ],
+                    ),
+                    app.anchor(
+                        'read', 'Save to disk',
+                        [
+                            ('dn', app.dn),
+                            ('read_attr', ldap_attrtype),
+                            ('read_attrmode', 'load'),
+                            ('read_attrmimetype', 'application/octet-stream'),
+                            ('read_attrindex', str(ldap_attrindex)),
+                        ],
+                    ),
+                ],
+            )
         )
 
         # strings containing UTCTime of begin and end of validity period
