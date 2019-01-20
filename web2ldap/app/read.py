@@ -278,6 +278,7 @@ def display_attribute_table(app, entry, attrs, comment):
     read_expandattr_set = set([
         at.strip().lower()
         for at in app.form.getInputValue('read_expandattr', [u''])[0].split(',')
+        if at
     ])
     if u'*' in read_expandattr_set:
         read_tablemaxcount_dict = {}
@@ -321,7 +322,7 @@ def display_attribute_table(app, entry, attrs, comment):
                         ('dn', app.dn),
                         (
                             'read_expandattr',
-                            ','.join(set(list(read_expandattr_set)+[attr_type_name]))
+                            ','.join(read_expandattr_set|set([attr_type_name])),
                         ),
                     ],
                     anchor_id=attr_type_anchor_id.decode('ascii')
