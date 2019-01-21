@@ -943,7 +943,7 @@ def ObjectClassForm(
         '<h1>%s</h1>\n%s\n</form>' % (
             H1_MSG[app.command],
             '\n'.join((
-                app.begin_form(app.command, app.sid, 'POST', None),
+                app.begin_form(app.command, 'POST'),
                 ''.join([
                     app.form.hiddenFieldHTML(param_name, param_value, u'')
                     for param_name, param_value in command_hidden_fields
@@ -1217,7 +1217,7 @@ def w2l_addform(
             text_heading=H1_MSG[app.command],
             text_msg=msg,
             text_supentry=supentry_display_string,
-            form_begin=app.begin_form(app.command, app.sid, 'POST', target=None, enctype='multipart/form-data'),
+            form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
             field_currentformtype=app.form.hiddenFieldHTML('in_oft', unicode(input_formtype), u''),
             text_submit=app.command[0].upper()+app.command[1:],
@@ -1338,11 +1338,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
             text_heading=H1_MSG[app.command],
             text_msg=msg,
             text_supentry=supentry_display_string,
-            form_begin=app.begin_form(
-                app.command, 'POST',
-                target=None,
-                enctype='multipart/form-data',
-            ),
+            form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
             field_currentformtype=app.form.hiddenFieldHTML('in_oft', input_formtype.decode('ascii'), u''),
             text_submit=app.command[0].upper()+app.command[1:],
