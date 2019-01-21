@@ -840,6 +840,8 @@ class AppHandler(object):
                         not web2ldap.ldaputil.base.is_dn(who) and
                         login_search_root is None
                     ):
+                    # trigger update of various DN-related class properties
+                    self.dn = self.dn
                     login_search_root = self.naming_context
                 try:
                     self.ls.bind(
