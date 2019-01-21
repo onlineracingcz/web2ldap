@@ -861,8 +861,6 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
 
     # HTML template file for Login form
     login_template=os.path.join(templates_dir, 'login.html'),
-    # Default mechanism for BindRequest (empty string for simple bind)
-    login_default_mech='',
 
     # Attributes which should be present in attribute select list of advanced search form
     search_attrs=[],
