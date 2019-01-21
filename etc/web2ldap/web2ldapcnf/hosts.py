@@ -128,7 +128,7 @@ MSAD_CONFIG = Web2LDAPConfig(
     searchform_template={
         u'_':os.path.join(templates_dir, 'searchform_msad.html'),
     },
-    requested_attrs=[
+    requested_attrs=(
         'structuralObjectClass', 'subschemaSubentry',
         # counters
         'hasSubordinates',
@@ -143,10 +143,10 @@ MSAD_CONFIG = Web2LDAPConfig(
         'lastLogonTimestamp', 'lockoutTime',
         'allowedAttributes', 'allowedAttributesEffective',
         'allowedChildClasses', 'allowedChildClassesEffective',
-    ],
-    modify_constant_attrs=[
+    ),
+    modify_constant_attrs=(
         'uSNChanged', 'uSNCreated', 'whenChanged', 'whenCreated',
-    ],
+    ),
 )
 
 #---------------------------------------------------------------------------
@@ -193,11 +193,11 @@ OPENLDAP_ACCESSLOG_CONFIG = Web2LDAPConfig(
     searchform_template={
         u'_':os.path.join(templates_dir, 'searchform_accesslog.html'),
     },
-    search_attrs=[
+    search_attrs=(
         'objectClass',
         'reqAuthzID', 'reqDN', 'reqEnd', 'reqEntryUUID', 'reqMod', 'reqOld',
         'reqResult', 'reqSession', 'reqStart', 'reqType',
-    ],
+    ),
     read_template={
         'auditAdd':os.path.join(templates_dir, 'openldap', 'read_auditAdd.html'),
         'auditModify':os.path.join(templates_dir, 'openldap', 'read_auditAdd.html'),
@@ -222,10 +222,10 @@ CHANGELOG_CONFIG = Web2LDAPConfig(
     searchform_template={
         u'_':os.path.join(templates_dir, 'searchform_changelog.html'),
     },
-    search_attrs=[
+    search_attrs=(
         'changeType', 'targetDN', 'targetEntryUUID', 'changeTime',
         'changeLogCookie', 'replicaIdentifier', 'replicationCSN', 'changeInitiatorsName',
-    ],
+    ),
     read_template={
         'changeLogEntry':os.path.join(templates_dir, 'read_changeLogEntry.html'),
     },
@@ -336,17 +336,17 @@ AE_DIR_CONFIG = Web2LDAPConfig(
     boundas_template={
         'aeUser':r'<span title="%(displayName)s: %(description)s">%(uid)s: %(description)s</span>',
     },
-    session_track_control=1,
+    session_track_control=True,
     supplement_schema=os.path.join(etc_dir, 'ae-suppl-schema.ldif'),
-    modify_constant_attrs=[
+    modify_constant_attrs=(
         # Mostly OpenLDAP
         'entryCSN', 'entryDN', 'entryUUID',
         # see RFC
         'createTimestamp', 'modifyTimestamp', 'creatorsName', 'modifiersName',
-    ],
+    ),
     login_template=os.path.join(templates_dir, 'ae-dir', 'login.html'),
-    addform_parent_attrs=['entryUUID'],
-    search_attrs=[
+    addform_parent_attrs=('entryUUID',),
+    search_attrs=(
         'aeDept',
         'aeDevicePort',
         'aeDeviceSlot',
@@ -468,8 +468,8 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'uidNumber',
         'uniqueIdentifier',
         'userPassword',
-    ],
-    searchform_search_root_url='ldap:///ou=ae-dir??one?(|(objectClass=aeZone))',
+    ),
+    searchform_search_root_url=u'ldap:///ou=ae-dir??one?(|(objectClass=aeZone))',
     searchform_template={
         u'_':os.path.join(templates_dir, 'ae-dir', 'searchform_aedir.html'),
     },
@@ -697,7 +697,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         u'Æ-DIR sudo su - root':os.path.join(templates_dir, 'ae-dir', 'add_aeSudoRule_su_root.ldif'),
     },
     passwd_template=os.path.join(templates_dir, 'ae-dir', 'passwd.html'),
-    passwd_hashtypes=['ssha', ''],
+    passwd_hashtypes=('ssha', ''),
     passwd_genchars=ur'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
     passwd_genlength=24,
     groupadm_filterstr_template=r'(&(|(objectClass=aeGroup)(objectClass=aeMailGroup))(aeStatus=0)(!(memberURL=*))(|%s))',
@@ -712,12 +712,12 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'memberUid':40,
         'memberOf':30,
     },
-    requested_attrs=[
+    requested_attrs=(
         # Proxy Authz attributes
         'authzTo', 'authzFrom',
         # password policy attributes
         'pwdPolicySubentry',
-    ],
+    ),
     rename_supsearchurl={
         u'Search for zone (aeZone)':'ldap:///_??one?(objectClass=aeZone)',
         u'Search for server/service group (aeSrvGroup)':'ldap:///_??sub?(objectClass=aeSrvGroup)',
@@ -767,11 +767,11 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     },
 
     # Send session track control
-    session_track_control=0,
+    session_track_control=False,
 
     # Attributes explicitly requested while doing read
     # and modify operations
-    requested_attrs=[
+    requested_attrs=(
         'structuralObjectClass', 'governingStructureRule', 'subschemaSubentry',
         # password policy attributes
         'passwordExpirationTime', 'passwordExpWarned',
@@ -802,11 +802,11 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         #'allowedChildClasses', 'allowedChildClassesEffective',
         # X.500 DSAs
         'administrativeRole',
-    ],
+    ),
 
     # List of attribute type names which are supposed to be constant during
     # editing an entry.
-    modify_constant_attrs=[
+    modify_constant_attrs=(
         # Mostly OpenLDAP
         'entryCSN', 'entryDN', 'entryUUID',
         # see RFC
@@ -819,7 +819,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         'entryUSN',
         # eDirectory
         'localEntryID', 'GUID',
-    ],
+    ),
 
     # vCard template files
     vcard_template={
@@ -863,7 +863,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     login_template=os.path.join(templates_dir, 'login.html'),
 
     # Attributes which should be present in attribute select list of advanced search form
-    search_attrs=[],
+    search_attrs=(),
 
     # HTML template strings used to display entries in the table
     # of search results
@@ -1107,11 +1107,11 @@ ldap_def = {
     # Adjust the settings to reflect your local LDAP installation
     'ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de': Web2LDAPConfig(
         description=u'My Address Book',
-        session_track_control=1,
+        session_track_control=True,
         # LDIF file used to extended the server's schema
         #schema_supplement=os.path.join(etc_dir, 'stroeder-dit-structure.ldif'),
         searchform_search_root_url=u'ldap:///dc=stroeder,dc=de??sub?(&(|(ou=Private)(ou:dn:=Bizness)(ou:dn:=Kultur))(|(objectClass=msOrganization)(objectClass=organizationalUnit))(hasSubordinates=TRUE)(|(organizationalStatus=0)(!(organizationalStatus=*))))',
-        search_attrs=[
+        search_attrs=(
             'authTimestamp', 'createTimestamp', 'creatorsName', 'modifiersName', 'modifyTimestamp',
             'cn', 'mail', 'sn', 'givenName', 'personalTitle', 'businessTitle', 'gender',
             'o', 'ou', 'departmentNumber', 'employeeNumber',
@@ -1126,7 +1126,7 @@ ldap_def = {
             'member', 'memberOf',
             # DHCP
             'dhcpHWAddress', 'dhcpOption', 'dhcpStatements',
-        ],
+        ),
         addform_entry_templates={
             u'stroeder.com Person':os.path.join(templates_dir, 'add_msperson.ldif'),
             u'stroeder.com Organization':os.path.join(templates_dir, 'add_msorganization.ldif'),

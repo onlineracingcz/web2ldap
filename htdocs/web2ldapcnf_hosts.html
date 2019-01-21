@@ -149,12 +149,13 @@ off a certain behaviour.
 
   <dt id="addform_parent_attrs">addform_parent_attrs</dt>
   <dd>
-    This parameter allows to define a list of attributes which must be
+    This parameter allows to define a tuple of attributes which must be
     readable in the parent entry for a LDIF template to be displayed.
     If the bound user does not have sufficient access rights the LDIF
     template will be supressed.
     <dl>
-      <dt>Default:</dt><dd><code>[]</code></dd>
+      <dt>Default:</dt>
+      <dd><code>()</code></dd>
     </dl>
   </dd>
 
@@ -667,7 +668,7 @@ rename_supsearchurl={
 
   <dt id="searchform_bases">searchform_bases</dt>
   <dd>
-    List/tuple of search bases to be added to the select list of search bases displayed in the search form.
+    Tuple of search bases to be added to the select list of search bases displayed in the search form.
     <dl>
       <dt>Default:</dt>
       <dd><code>()</code></dd>

@@ -23,13 +23,77 @@ from ldap0.ldapurl import isLDAPUrl
 from web2ldap.log import logger
 
 
+VALID_CFG_PARAM_NAMES = {
+    'addform_entry_templates': dict,
+    'addform_parent_attrs': tuple,
+    'binddnsearch': unicode,
+    'boundas_template': dict,
+    'bulkmod_delold': bool,
+    'description': unicode,
+    'dit_max_levels': int,
+    'dit_search_sizelimit': int,
+    'dit_search_timelimit': int,
+    'groupadm_defs': dict,
+    'groupadm_filterstr_template': str,
+    'groupadm_optgroup_bounds': tuple,
+    'inputform_supentrytemplate': dict,
+    'input_template': dict,
+    'login_template': str,
+    'modify_constant_attrs': tuple,
+    'naming_contexts': tuple,
+    'passwd_genchars': unicode,
+    'passwd_genlength': int,
+    'passwd_hashtypes': tuple,
+    'passwd_modlist': tuple,
+    'passwd_template': str,
+    'print_cols': int,
+    'print_template': dict,
+    'read_operationalattrstemplate': str,
+    'read_tablemaxcount': dict,
+    'read_template': dict,
+    'rename_supsearchurl': dict,
+    'rename_template': str,
+    'requested_attrs': tuple,
+    '_schema': None,
+    'schema_supplement': str,
+    'schema_strictcheck': int,
+    'schema_uri': str,
+    'search_attrs': tuple,
+    'searchform_search_root_url': unicode,
+    'searchform_template': dict,
+    'searchoptions_template': str,
+    'search_resultsperpage': int,
+    'search_tdtemplate': dict,
+    'session_track_control': bool,
+    'starttls': int,
+    'supplement_schema': str,
+    'timeout': int,
+    'tls_options': dict,
+    'top_template': str,
+    'vcard_template': dict,
+}
+
+
 class Web2LDAPConfig(object):
     """
     Base class for a web2ldap host-/backend configuration section.
     """
 
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
+    def __init__(self, **params):
+        for param_name, param_val in params.items():
+            try:
+                param_type = VALID_CFG_PARAM_NAMES[param_name]
+            except KeyError:
+                raise ValueError('Invalid config paramater %r.' % (param_name))
+            if param_type is not None and not isinstance(param_val, param_type):
+                raise TypeError(
+                    'Invalid type for config paramater %r. Expected %r, got %r' % (
+                        param_name,
+                        param_type,
+                        param_val,
+                    )
+                )
+            setattr(self, param_name, param_val)
 
     def get(self, name, default=None):
         self.__dict__.get(name, default)
@@ -80,7 +144,9 @@ class Web2LDAPConfigDict(object):
         cfg_key = self.normalize_key(cfg_uri)
         self.cfg_data[cfg_key] = cfg_data
 
-    def get_param(self, uri, dn, param_key, default):
+    def get_param(self, uri, dn, param, default):
+        if param not in VALID_CFG_PARAM_NAMES:
+            raise ValueError('Unknown config parameter %r requested' % (param))
         uri = uri.lower()
         dn = dn.lower()
         result = default
@@ -90,13 +156,13 @@ class Web2LDAPConfigDict(object):
                 (uri, ''),
                 '_',
             ):
-            if cfg_key in self.cfg_data and hasattr(self.cfg_data[cfg_key], param_key):
-                result = getattr(self.cfg_data[cfg_key], param_key)
+            if cfg_key in self.cfg_data and hasattr(self.cfg_data[cfg_key], param):
+                result = getattr(self.cfg_data[cfg_key], param)
                 logger.debug(
                     'get_param(%r, %r, %r, %r): Key %r ->\n%s',
                     uri,
                     dn,
-                    param_key,
+                    param,
                     default,
                     cfg_key,
                     pformat(result),
