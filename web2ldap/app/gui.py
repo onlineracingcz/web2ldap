@@ -431,7 +431,7 @@ def TopSection(
         app,
         title,
         main_menu_list,
-        context_menu_list=[],
+        context_menu_list=None,
         main_div_id='Message',
     ):
 
@@ -458,8 +458,18 @@ def TopSection(
         'who': '-/-',
         'dn': '-/-',
         'dit_navi': '-/-',
-        'main_menu': command_div(main_menu_list, div_id='MainMenu', separator='\n', semantic_tag=None),
-        'context_menu': command_div(context_menu_list, div_id='ContextMenu', separator='\n', semantic_tag=None),
+        'main_menu': command_div(
+            main_menu_list,
+            div_id='MainMenu',
+            separator='\n',
+            semantic_tag=None,
+        ),
+        'context_menu': command_div(
+            context_menu_list,
+            div_id='ContextMenu',
+            separator='\n',
+            semantic_tag=None,
+        ),
     }
     template_dict.update([(k, escape_html(str(v))) for k, v in app.env.items()])
 
