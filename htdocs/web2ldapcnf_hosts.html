@@ -37,7 +37,6 @@
   [<a href="#rename_supsearchurl">rename_supsearchurl</a>]
   [<a href="#rename_template">rename_template</a>]
   [<a href="#requested_attrs">requested_attrs</a>]
-  [<a href="#schema_supplement">schema_supplement</a>]
   [<a href="#schema_uri">schema_uri</a>]
   [<a href="#search_attrs">search_attrs</a>]
   [<a href="#searchform_search_root_url">searchform_search_root_url</a>]
@@ -48,6 +47,7 @@
   [<a href="#search_tdtemplate">search_tdtemplate</a>]
   [<a href="#session_track_control">session_track_control</a>]
   [<a href="#starttls">starttls</a>]
+  [<a href="#supplement_schema">supplement_schema</a>]
   [<a href="#timeout">timeout</a>]
   [<a href="#tls_options">tls_options</a>]
   [<a href="#top_template">top_template</a>]
@@ -609,11 +609,11 @@ rename_supsearchurl={
     servers with buggy schema like eDirectory or Fedora/389 DS requite
     <var>False</var> here.<br>
     Don't set to <var>False</var> if you also use
-    <a href="#schema_supplement">schema_supplement</a> because errors will be
+    <a href="#supplement_schema">supplement_schema</a> because errors will be
     possibly ignored leading to unwanted behaviour.
   </dd>
 
-  <dt id="schema_supplement">schema_supplement</dt>
+  <dt id="supplement_schema">supplement_schema</dt>
   <dd>
     LDIF file with additiona subschema attributes to be added to the
     subschema subentry read from the server. This can be used to add
