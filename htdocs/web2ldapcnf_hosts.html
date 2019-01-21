@@ -10,7 +10,7 @@
 <p>
   [<a href="#addform_entry_templates">addform_entry_templates</a>]
   [<a href="#addform_parent_attrs">addform_parent_attrs</a>]
-  [<a href="#binddnsearch">binddnsearch</a>]
+  [<a href="#binddn_mapping">binddn_mapping</a>]
   [<a href="#boundas_template">boundas_template</a>]
   [<a href="#bulkmod_delold">bulkmod_delold</a>]
   [<a href="#description">description</a>]
@@ -184,16 +184,35 @@ addform_entry_templates={
     </dl>
   </dd>
 
-  <dt id="binddnsearch">binddnsearch</dt>
+  <dt id="binddn_mapping">binddn_mapping</dt>
   <dd>
-    Search filter template for smart login. Occurences of
-    <code>{user}</code> are substituted by the string the user entered.
+    This specifies how a full bind-DN should be derived from the username
+    the user has input in the login form.
+    The syntax is a Python template string containing an LDAP URL.
+    Occurences of <code>{user}</code> are substituted by the string the user entered.
     <dl>
-      <dt>Default:</dt><dd><code>'(uid={user})'</code></dd>
-      <dt>Example:</dt>
+      <dt>
+          Default (searching a user in the current naming context by
+          attribute <var>uid</var>):
+      </dt>
+      <dd><code>u'ldap:///_??sub?(uid={user})'</code></dd>
+      <dt>
+          Example for searching a user in sub-tree <em>ou=Users</em> beneath
+          current naming context by attribute <var>uid</var> or
+          <var>mail</var>:
+      </dt>
       <dd>
         <samp>
-          <code></code>
+          <code>u'ldap:///ou=Users,_??sub?(|(uid={user})(mail={user}))'</code>
+        </samp>
+      </dd>
+      <dt>
+        Example for directly mapping the user name to a bind DN in
+        sub-tree <em>ou=Users</em> beneath current naming context:
+      </dt>
+      <dd>
+        <samp>
+          <code>u'ldap:///uid={user},ou=Users,_??base'</code>
         </samp>
       </dd>
     </dl>

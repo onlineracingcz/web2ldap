@@ -2355,26 +2355,3 @@ syntax_registry.reg_at(
 
 # Register all syntax classes in this module
 syntax_registry.reg_syntaxes(__name__)
-
-
-class AEDirLDAPSession(LDAPSessionOrig):
-    binddn_tmpl = u'uid={user},{searchroot}'
-
-    def get_bind_dn(self, username, searchroot, filtertemplate):
-        """
-        if username is not a bind-DN this returns a composed
-        bind-DN based in fixed AE-DIR search root
-        """
-        # if present prefer to get searchroot from rootDSE attribute aeRoot
-        searchroot = self.rootDSE.get(
-            'aeRoot',
-            [searchroot.encode(self.charset)]
-        )[0].decode(self.charset)
-        if not username:
-            return u''
-        elif web2ldap.ldaputil.base.is_dn(username):
-            return username
-        return self.binddn_tmpl.format(
-            user=username,
-            searchroot=searchroot,
-        )

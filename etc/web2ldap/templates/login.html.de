@@ -28,19 +28,6 @@
       </tr>
       <tr>
         <td>
-          Filter f&uuml;r Benutzersuche<br>
-          (bei leerer Eingabe keine<br>Suche nach Benutzereintrag):
-        </td>
-        <td>
-          <input name="login_filterstr"
-                 title="Filter zur Suche nach dem Bind-DN (Benutzereintrag) mithilfe der Benutzerkennung"
-                 maxlength="120"
-                 size="60"
-                 value="{value_ldap_filter}">
-        </td>
-      </tr>
-      <tr>
-        <td>
           Benutzersuche unter:
         </td>
         <td>

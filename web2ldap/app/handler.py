@@ -220,11 +220,11 @@ class AppHandler(object):
         )
 
     @property
-    def binddnsearch(self):
+    def binddn_mapping(self):
         """
-        get parameter 'binddnsearch' from cascaded configuration
+        get parameter 'binddn_mapping' from cascaded configuration
         """
-        return self.cfg_param('binddnsearch', ur'(uid={user})')
+        return self.cfg_param('binddn_mapping', u'ldap:///_??sub?(uid={user})')
 
     @property
     def parent_dn(self):
@@ -854,11 +854,8 @@ class AppHandler(object):
                             )[0],
                         )) or None,
                         self.form.getInputValue('login_realm', [self.ldap_url.saslRealm])[0],
-                        binddn_filtertemplate=self.form.getInputValue(
-                            'login_filterstr',
-                            self.binddnsearch,
-                        )[0],
-                        whoami_filtertemplate=self.binddnsearch,
+                        self.binddn_mapping,
+#                        self.form.getInputValue('login_mapping', [self.binddn_mapping])[0],
                         loginSearchRoot=login_search_root,
                     )
                 except ldap0.NO_SUCH_OBJECT as err:
@@ -966,16 +963,18 @@ class AppHandler(object):
             ) as err:
             web2ldap.app.login.w2l_login(
                 self,
-                who=who,
                 login_msg=self.ldap_error_msg(err),
-                relogin=True,
+                who=who, relogin=True,
             )
 
-        except web2ldap.ldapsession.INVALID_SIMPLE_BIND_DN as err:
+        except (
+                web2ldap.ldapsession.INVALID_SIMPLE_BIND_DN,
+                web2ldap.ldapsession.USERNAME_NOT_UNIQUE,
+            ) as err:
             web2ldap.app.login.w2l_login(
                 self,
-                login_msg=self.form.utf2display(unicode(err)),
-                who=who, relogin=True
+                login_msg=self.form.utf2display(str(err).decode('ascii')),
+                who=who, relogin=True,
             )
 
         except web2ldap.ldapsession.PWD_EXPIRATION_WARNING as err:
@@ -1007,28 +1006,6 @@ class AppHandler(object):
                 err.who.decode(self.ls.charset), None,
                 'Password change needed',
                 self.form.utf2display(err.desc.decode('ascii'))
-            )
-
-        except web2ldap.ldapsession.USERNAME_NOT_UNIQUE as err:
-            login_search_root = self.form.getInputValue(
-                'login_search_root',
-                [self.naming_context],
-            )[0]
-            web2ldap.app.login.w2l_login(
-                self,
-                login_msg=web2ldapcnf.command_link_separator.join([
-                    self.ldap_error_msg(err),
-                    self.anchor(
-                        'search', 'Show',
-                        [
-                            ('dn', login_search_root),
-                            ('scope', str(ldap0.SCOPE_SUBTREE)),
-                            ('filterstr', self.binddnsearch.format(user=who)),
-                        ]
-                    ),
-                ]),
-                who=who,
-                relogin=True
             )
 
         except (IOError, UnicodeError) as err:

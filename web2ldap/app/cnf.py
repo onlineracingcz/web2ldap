@@ -26,7 +26,7 @@ from web2ldap.log import logger
 VALID_CFG_PARAM_NAMES = {
     'addform_entry_templates': dict,
     'addform_parent_attrs': tuple,
-    'binddnsearch': unicode,
+    'binddn_mapping': unicode,
     'boundas_template': dict,
     'bulkmod_delold': bool,
     'description': unicode,

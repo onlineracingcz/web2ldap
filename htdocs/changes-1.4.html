@@ -36,9 +36,9 @@
         Because of internal API changes custom plugins have to be changed.
       </li>
       <li>
-        Configuration parameter
-        <a href="web2ldapcnf_hosts.html#binddnsearch">web2ldapcnf.hosts.binddnsearch</a>
-        is now a Python new-style string.
+        New site-specific configuration parameter
+        <a href="web2ldapcnf_hosts.html#binddn_mapping">binddn_mapping</a>
+        is used for specifying bind DN mappings with an LDAP URL.
       </li>
     </ul>
   </dd>
@@ -116,9 +116,19 @@
         is much more useful anyway.
       </li>
       <li>
+        Replaced site-specific configuration parameter
+        <var>binddnsearch</var> by more flexible parameter
+        <a href="web2ldapcnf_hosts.html#binddn_mapping">binddn_mapping</a>.
+      </li>
+      <li>
         Hunked out non-functional code for handling
         &quot;Authorization Identity Request and Response Controls&quot;
         (see <a href="https://tools.ietf.org/html/rfc3829">RFC 3829</a>).
+      </li>
+      <li>
+        Dropped login form parameter <var>login_filterstr</var>.
+        The user can search for an entry and use link [Bind as]
+        from the context menu.
       </li>
       <li>
         Removed obsolete X.509 certificate extension parser classes:

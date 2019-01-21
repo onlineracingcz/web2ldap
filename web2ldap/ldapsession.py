@@ -23,7 +23,9 @@ import ldap0
 import ldap0.ldif
 import ldap0.sasl
 import ldap0.cidict
-import ldap0.filter
+from ldap0.ldapurl import LDAPUrl
+from ldap0.filter import escape_filter_chars
+from ldap0.dn import escape_dn_chars
 from ldap0.ldapobject import ReconnectLDAPObject
 from ldap0.schema.models import DITStructureRule
 from ldap0.schema.subentry import SubschemaError, SubSchema, SCHEMA_ATTRS
@@ -191,6 +193,7 @@ USER_ENTRY_ATTRIBUTES = (
     'memberOf',
 )
 
+WHOAMI_FILTER_TMPL = u'ldap:///_??sub?(|(uid={user})(uidNumber={user})(sAMAccountName={user})(userPrincipalName={user}))'
 
 READ_CACHE_EXPIRE = 120
 
@@ -914,7 +917,7 @@ class LDAPSession(object):
                 assertion_filter_tmpl = u'{filter_str}'
             assertion_filter_str = assertion_filter_tmpl.format(
                 filter_str=assertion_filter,
-                dn_str=ldap0.filter.escape_filter_chars(dn),
+                dn_str=escape_filter_chars(dn),
             ).encode(self.charset)
             serverctrls.append(AssertionControl(False, assertion_filter_str))
         self.l.modify_s(dn_str, modlist, serverctrls=serverctrls)
@@ -987,53 +990,75 @@ class LDAPSession(object):
         self._audit_context[search_root_dn] = audit_context_dn
         return audit_context_dn # get_audit_context()
 
-    def get_bind_dn(
-            self,
-            username,       # User name or complete bind DN (Unicode)
-            searchroot,     # search root for user entry search
-            filtertemplate, # template string for LDAP filter
-        ):
+    def get_bind_dn(self, username, search_root, binddn_mapping):
         """
-        Search for a bind DN.
-
-        If username is a valid DN it's used as bind-DN without further action.
-        Otherwise filtertemplate is used to construct a LDAP search filter
-        containing username instead of %s.
+        Map username to a full bind DN if necessary
         """
         if not username:
+            # seems to be anonymous bind
             return u''
         elif web2ldap.ldaputil.base.is_dn(username):
+            # already a bind-DN -> return it normalized
             return web2ldap.ldaputil.base.normalize_dn(username)
-        searchroot = searchroot or self.rootDSE.get(
+        elif not binddn_mapping:
+            # no bind-DN mapping URL -> just return username
+            return username
+        logger.debug(
+            'Map user name %r to bind-DN with %r / search_root = %r',
+            username,
+            binddn_mapping,
+            search_root,
+        )
+        search_root = search_root or self.rootDSE.get(
             'defaultNamingContext',
             [''],
         )[0].decode(self.charset) or u''
-        searchfilter = filtertemplate.format(user=escape_ldap_filter_chars(username))
-        logger.debug('Searching user entry with filter %r', searchfilter)
-        # Try to find a unique entry with filtertemplate
+        lu_obj = LDAPUrl(binddn_mapping)
+        search_base = lu_obj.dn.format(user=escape_dn_chars(username))
+        if search_base == u'_':
+            search_base = search_root
+        elif search_base.endswith(u'_'):
+            search_base = u''.join((search_base[:-1], search_root))
+        if lu_obj.scope == ldap0.SCOPE_BASE and lu_obj.filterstr is None:
+            logger.debug('Directly mapped %r to %r', username, search_base)
+            return search_base
+        search_filter = lu_obj.filterstr.format(user=escape_ldap_filter_chars(username))
+        logger.debug(
+            'Searching user entry with base = %r / scope = %d / filter = %r',
+            search_base,
+            lu_obj.scope,
+            search_filter,
+        )
+        # Try to find a unique entry with binddn_mapping
         try:
             result = self.l.search_s(
-                self.uc_encode(searchroot)[0],
-                ldap0.SCOPE_SUBTREE,
-                self.uc_encode(searchfilter)[0],
+                search_base.encode(self.charset),
+                lu_obj.scope,
+                search_filter.encode(self.charset),
                 attrlist=['1.1'],
                 sizelimit=2
             )
         except ldap0.SIZELIMIT_EXCEEDED as ldap_err:
             logger.warn('Searching user entry failed: %s', ldap_err)
             raise USERNAME_NOT_UNIQUE({'desc':'More than one matching user entries.'})
-        except ldap0.NO_SUCH_OBJECT:
+        except ldap0.NO_SUCH_OBJECT as ldap_err:
             logger.warn('Searching user entry failed: %s', ldap_err)
-            raise USERNAME_NOT_FOUND({'desc':'Smart login did not find a matching user entry.'})
+            raise USERNAME_NOT_FOUND({'desc':'Login did not find a matching user entry.'})
         # Ignore search continuations in search result list
         result = [r for r in result if r[0] is not None]
         if not result:
             logger.warn('No result when searching user entry')
-            raise USERNAME_NOT_FOUND({'desc':'Smart login did not find a matching user entry.'})
+            raise USERNAME_NOT_FOUND({'desc':'Login did not find a matching user entry.'})
         elif len(result) != 1:
             logger.warn('More than one matching user entries: %r', result)
             raise USERNAME_NOT_UNIQUE({'desc':'More than one matching user entries.'})
-        logger.info('Found user %r with filter %r', result[0][0], searchfilter)
+        logger.debug(
+            'Found user entry %r with base = %r / scope = %d / filter = %r',
+            result[0][0],
+            search_base,
+            lu_obj.scope,
+            search_filter,
+        )
         return web2ldap.ldaputil.base.normalize_dn(result[0][0].decode(self.charset))
 
     def bind(
@@ -1043,8 +1068,8 @@ class LDAPSession(object):
             sasl_mech,
             sasl_authzid,
             sasl_realm,
-            binddn_filtertemplate=u'(uid={user})',
-            whoami_filtertemplate=u'(uid={user})',
+            binddn_mapping,
+            whoami_filtertemplate=WHOAMI_FILTER_TMPL,
             loginSearchRoot=u''
         ):
         """
@@ -1101,7 +1126,7 @@ class LDAPSession(object):
                 who = None; cred = None
             else:
                 # Search bind DN by "user name" for simple bind
-                who = self.get_bind_dn(who, loginSearchRoot, binddn_filtertemplate)
+                who = self.get_bind_dn(who, loginSearchRoot, binddn_mapping)
             # Call simple bind
             try:
                 self.l.simple_bind_s(

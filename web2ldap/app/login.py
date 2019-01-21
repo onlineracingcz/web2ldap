@@ -77,7 +77,7 @@ def w2l_login(
     login_fields = login_template_str.format(
         field_login_mech=app.form.field['login_mech'].inputHTML(default=login_mech),
         value_ldap_who=app.form.utf2display(who),
-        value_ldap_filter=app.form.utf2display(app.binddnsearch),
+        value_ldap_mapping=app.form.utf2display(app.binddn_mapping),
         field_login_search_root=login_search_root_field.inputHTML(),
         field_login_authzid_prefix=app.form.field['login_authzid_prefix'].inputHTML(),
         value_submit={False:'Login', True:'Retry w/login'}[relogin],
@@ -143,7 +143,7 @@ def w2l_login(
                     'ldapurl', 'conntype', 'host', 'who', 'cred',
                     'dn', 'scope', 'filterstr', 'search_attrs',
                     'login_mech', 'login_authzid', 'login_authzid_prefix', 'login_realm',
-                    'login_search_root', 'login_filterstr'
+                    'login_search_root',
                 ])
             )
         )

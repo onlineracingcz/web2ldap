@@ -131,7 +131,6 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
             default=web2ldap.app.searchform.SEARCH_SCOPE_STR_SUBTREE,
         ))
         self.add_field(DistinguishedNameInput('login_search_root', 'Login search root'))
-        self.add_field(web2ldap.web.forms.Input('login_filterstr', u'Login search filter string', 300, 1, '.*'))
         self.add_field(web2ldap.web.forms.Select(
             'conntype', 'Connection type', 1,
             options=[

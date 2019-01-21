@@ -128,6 +128,7 @@ MSAD_CONFIG = Web2LDAPConfig(
     searchform_template={
         u'_':os.path.join(templates_dir, 'searchform_msad.html'),
     },
+    binddn_mapping=u'',
     requested_attrs=(
         'structuralObjectClass', 'subschemaSubentry',
         # counters
@@ -332,7 +333,7 @@ CN_CONFIG = Web2LDAPConfig(
 AE_DIR_CONFIG = Web2LDAPConfig(
     description=u'Æ-DIR',
     top_template=os.path.join(templates_dir, 'ae-dir', 'top.html'),
-    binddnsearch=ur'(|(uid={user})(uidNumber={user}))',
+    binddn_mapping=u'ldap:///uid={user},_??base',
     boundas_template={
         'aeUser':r'<span title="%(displayName)s: %(description)s">%(uid)s: %(description)s</span>',
     },
@@ -733,7 +734,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
 
     # Search filter template for smart login
     # Use indexed attributes here!
-    binddnsearch=ur'(|(cn={user})(uid={user})(sAMAccountName={user})(userPrincipalName={user}))',
+    binddn_mapping=u'ldap:///_??sub?(|(cn={user})(mail={user})(uid={user})(sAMAccountName={user})(userPrincipalName={user}))',
 
     # HTML template strings used to bind name in the status section
     # on top of page depending on the object class of an entry.
@@ -1173,7 +1174,7 @@ ldap_def = {
 }
 
 # You can apply sections defined above to other configuration keys
-ldap_def['ldap://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com']
+ldap_def['ldap://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com'] = AE_DIR_CONFIG
 
 ldap_def['ldap:///dc=stroeder,dc=local'] = ldap_def['ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de']
 ldap_def['ldap:///dc=stroeder,dc=de'] = ldap_def['ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de']
