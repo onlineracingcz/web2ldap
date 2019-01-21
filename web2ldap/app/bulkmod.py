@@ -229,7 +229,7 @@ def bulkmod_input_form(
         </form>
         """.format(
             text_msg=Msg,
-            form_begin=app.begin_form('bulkmod', app.sid, 'POST'),
+            form_begin=app.begin_form('bulkmod', 'POST'),
             field_bulkmod_ctrl=app.form.field['bulkmod_ctrl'].inputHTML(default=app.form.field['bulkmod_ctrl'].value),
             input_fields=input_fields,
             field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, app.dn),
@@ -290,7 +290,7 @@ def bulkmod_confirmation_form(
     )
     app.outf.write(
         BULKMOD_CONFIRMATION_FORM_TMPL.format(
-            form_begin=app.begin_form('bulkmod', app.sid, 'POST'),
+            form_begin=app.begin_form('bulkmod', 'POST'),
             field_bulkmod_ctrl='\n'.join([
                 '<li>%s (%s)</li>' % (
                     app.form.utf2display(OID_REG.get(ctrl_oid, (ctrl_oid,))[0]),
