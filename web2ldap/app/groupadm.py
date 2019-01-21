@@ -399,7 +399,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             </form>
             """ % (
                 # form for changing group membership
-                app.begin_form('groupadm', 'POST', target='_top'),
+                app.begin_form('groupadm', 'POST'),
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('groupadm_searchroot', group_search_root, u''),
                 group_select_field(
