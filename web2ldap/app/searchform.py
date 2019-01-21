@@ -237,7 +237,7 @@ def w2l_searchform(
         search_root_searchurl=app.cfg_param('searchform_search_root_url', None),
         naming_contexts=naming_contexts,
     )
-    search_root_field.setDefault(search_root)
+    search_root_field.set_default(search_root)
 
     ContextMenuList = [
         app.anchor(

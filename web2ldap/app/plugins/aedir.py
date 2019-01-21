@@ -647,7 +647,7 @@ class AEMemberUid(MemberUID):
             self.maxLen, self.maxValues, None,
         )
         input_field.charset = self._app.form.accept_charset
-        input_field.setDefault(self.formValue())
+        input_field.set_default(self.formValue())
         return input_field
 
 syntax_registry.reg_at(
@@ -1424,7 +1424,7 @@ class AEDerefAttribute(DirectoryString):
             self.maxLen, self.maxValues, None,
         )
         input_field.charset = self._app.form.accept_charset
-        input_field.setDefault(self.formValue())
+        input_field.set_default(self.formValue())
         return input_field
 
 
@@ -2200,7 +2200,7 @@ class AERFC822MailMember(DynamicValueSelectList):
             self.maxLen, self.maxValues, None,
         )
         input_field.charset = self._app.form.accept_charset
-        input_field.setDefault(self.formValue())
+        input_field.set_default(self.formValue())
         return input_field
 
 syntax_registry.reg_at(

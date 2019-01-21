@@ -184,7 +184,7 @@ class AppHandler(object):
         )
         self._dn = web2ldap.ldaputil.base.normalize_dn(dn)
         self._parent_dn = web2ldap.ldaputil.base.parent_dn(self._dn)
-        if self.ls:
+        if self.ls and self.ls.uri:
             ldap_charset = self.ls.charset
             self.naming_context = self.ls.get_search_root(self._dn)
             self.audit_context = self.ls.get_audit_context(self.naming_context)
@@ -272,25 +272,17 @@ class AppHandler(object):
             target=None,
             enctype='application/x-www-form-urlencoded',
         ):
-        target = {
-            False:'target="%s"' % (target),
-            True:'',
-        }[target is None]
-        return """
-          <form
-            action="%s"
-            method="%s"
-            %s
-            enctype="%s"
-            accept-charset="%s"
-          >
-          """  % (
-              self.form.action_url(command, self.sid),
-              method,
-              target,
-              enctype,
-              self.form.accept_charset
-          )
+        """
+        convenience wrapper for Web2LDAPForm.begin_form()
+        which sets non-zero sid
+        """
+        return self.form.begin_form(
+            command,
+            self.sid,
+            method,
+            target=target,
+            enctype=enctype,
+        )
 
     def form_html(
             self,

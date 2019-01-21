@@ -1172,7 +1172,7 @@ def w2l_addform(
         # Just a normal <input> text field
         rdn_input_field = app.form.field['add_rdn']
     if add_rdn:
-        rdn_input_field.setDefault(add_rdn)
+        rdn_input_field.set_default(add_rdn)
     else:
         rdn_candidate_attr_nameoroids = [
             (required_attrs_dict[at_oid].names or (at_oid,))[0]
@@ -1180,7 +1180,7 @@ def w2l_addform(
             if at_oid != '2.5.4.0' and not web2ldap.app.schema.no_humanreadable_attr(app.schema, at_oid)
         ]
         if len(rdn_candidate_attr_nameoroids) == 1:
-            rdn_input_field.setDefault(rdn_candidate_attr_nameoroids[0]+'=')
+            rdn_input_field.set_default(rdn_candidate_attr_nameoroids[0]+'=')
 
     relax_rules_enabled = app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
     if relax_rules_enabled:

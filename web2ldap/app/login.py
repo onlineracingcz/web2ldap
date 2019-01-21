@@ -50,7 +50,7 @@ def w2l_login(
         app,
         name='login_search_root',
     )
-    login_search_root_field.setDefault(login_search_root)
+    login_search_root_field.set_default(login_search_root)
 
     login_template_str = web2ldap.app.gui.ReadTemplate(app, 'login_template', u'login form')
 
@@ -123,7 +123,7 @@ def w2l_login(
             app.form.utf2display(title_msg),
             '\n'.join((
                 login_msg_html,
-                app.begin_form(action_command, 'POST', None),
+                app.form.begin_form(action_command, None, 'POST', None),
                 app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldapUrl('')).decode('ascii'), u''),
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('delsid', app.sid.decode('ascii'), u''),

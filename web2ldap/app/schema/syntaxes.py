@@ -355,7 +355,7 @@ class LDAPSyntax(object):
             size=min(self.maxLen, self.inputSize),
         )
         input_field.charset = self._app.form.accept_charset
-        input_field.setDefault(self.formValue())
+        input_field.set_default(self.formValue())
         return input_field
 
     def getMimeType(self):

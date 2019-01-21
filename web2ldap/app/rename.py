@@ -53,7 +53,7 @@ def new_superior_field(app, sup_search_url, old_superior_dn):
     else:
         nssf = web2ldap.app.form.DistinguishedNameInput('rename_newsuperior', 'New Superior DN')
     nssf.setCharset(app.form.accept_charset)
-    nssf.setDefault(old_superior_dn)
+    nssf.set_default(old_superior_dn)
     return nssf # new_superior_field()
 
 
@@ -102,7 +102,7 @@ def w2l_rename(app):
 
     old_rdn, old_superior = web2ldap.ldaputil.base.split_rdn(app.dn)
 
-    app.form.field['rename_newrdn'].setDefault(old_rdn)
+    app.form.field['rename_newrdn'].set_default(old_rdn)
 
     rename_template_str = web2ldap.app.gui.ReadTemplate(app, 'rename_template', u'rename form')
 

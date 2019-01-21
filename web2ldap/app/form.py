@@ -150,6 +150,34 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
             {False:'/%s' % sid, True:''}[sid is None],
         )
 
+    def begin_form(
+            self,
+            command,
+            sid,
+            method,
+            target=None,
+            enctype='application/x-www-form-urlencoded',
+        ):
+        target = {
+            False:'target="%s"' % (target),
+            True:'',
+        }[target is None]
+        return """
+          <form
+            action="%s"
+            method="%s"
+            %s
+            enctype="%s"
+            accept-charset="%s"
+          >
+          """  % (
+              self.action_url(command, sid),
+              method,
+              target,
+              enctype,
+              self.accept_charset
+          )
+
     def hiddenFieldHTML(self, name, value, desc):
         return web2ldap.app.gui.HIDDEN_FIELD % (
             name,

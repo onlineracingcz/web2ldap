@@ -70,7 +70,7 @@ class Field(object):
         # Charset is the preferred character set of the browser.
         # This is set by Form.add() the something meaningful.
         self.charset = 'iso-8859-1'
-        self.setDefault(default)
+        self.set_default(default)
         self.setRegex(pattern)
 
     def _accessKeyAttr(self):
@@ -96,7 +96,7 @@ class Field(object):
             return self.value
         return self.value[0]
 
-    def setDefault(self, default):
+    def set_default(self, default):
         """
         Set the default of a field.
 
@@ -418,7 +418,7 @@ class Radio(Field):
           for options with different option value and description.
         """
         self.setOptions(options)
-        self.setDefault(default)
+        self.set_default(default)
         Field.__init__(self, name, text, self.maxLen, maxValues, '', required, default, accessKey)
 
     def _validateFormat(self, value):
@@ -479,7 +479,7 @@ class Radio(Field):
             )
         return self.inputHTMLTemplate % '\n'.join(s)
 
-    def setDefault(self, default):
+    def set_default(self, default):
         """
         Set the default of a default field.
 
@@ -624,7 +624,7 @@ class DataList(Input, Select):
         self.multiSelect = 0
         self.ignoreCase = ignoreCase
         self.setOptions(options)
-        self.setDefault(default)
+        self.set_default(default)
 
     def inputHTML(self, default=None, id_value=None, title=None):
         datalist_id = str(uuid.uuid4())

@@ -371,7 +371,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         name='groupadm_searchroot'
     )
     group_search_root_field.charset = app.form.accept_charset
-    group_search_root_field.setDefault(group_search_root)
+    group_search_root_field.set_default(group_search_root)
 
     if error_msg:
         app.outf.write('<p class="ErrorMessage">%s</p>' % (error_msg))
