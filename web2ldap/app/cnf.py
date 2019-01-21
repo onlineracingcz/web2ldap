@@ -84,10 +84,10 @@ class Web2LDAPConfig(object):
             try:
                 param_type = VALID_CFG_PARAM_NAMES[param_name]
             except KeyError:
-                raise ValueError('Invalid config paramater %r.' % (param_name))
+                raise ValueError('Invalid config parameter %r.' % (param_name))
             if param_type is not None and not isinstance(param_val, param_type):
                 raise TypeError(
-                    'Invalid type for config paramater %r. Expected %r, got %r' % (
+                    'Invalid type for config parameter %r. Expected %r, got %r' % (
                         param_name,
                         param_type,
                         param_val,
