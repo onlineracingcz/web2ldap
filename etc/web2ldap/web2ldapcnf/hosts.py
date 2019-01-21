@@ -42,7 +42,7 @@ ldap_uri_list = [
     (
         (
             'ldaps://demo.ae-dir.com/ou=ae-dir????'
-            'bindname=uid%3Daead%2Cou%3Dae-dir,X-BINDPW=CorrectHorseBatteryStaple'
+            'bindname=aead,X-BINDPW=CorrectHorseBatteryStaple'
         ),
         u'Æ-DIR demo role Æ admin',
     ),
@@ -1160,21 +1160,41 @@ ldap_def = {
     # Æ-DIR's main DB
     'ldap:///ou=ae-dir': AE_DIR_CONFIG,
 
-    # Æ-DIR's accesslog
-    'ldap:///cn=accesslog-ae-dir': OPENLDAP_ACCESSLOG_CONFIG,
+    # Æ-DIR's accesslog (override description)
+    'ldap:///cn=accesslog-ae-dir': OPENLDAP_ACCESSLOG_CONFIG.clone(
+        description=u'Æ-DIR accesslog',
+    ),
 
     # Æ-DIR's online demo
-    'ldaps://demo.ae-dir.com': Web2LDAPConfig(
-        description=u'AE-DIR demo',
+    #-----------------------------------------------------------------------
+
+    # This creates a new config based on config preset instance
+    # AE_DIR_CONFIG and just sets a specific description
+    'ldaps://demo.ae-dir.com/ou=ae-dir': AE_DIR_CONFIG.clone(
+        description=u'Æ-DIR demo',
+    ),
+
+    # another cloned config for setting specific LDAPS parameters
+    'ldaps://demo.ae-dir.com': AE_DIR_CONFIG.clone(
         tls_options={
             ldap0.OPT_X_TLS_CACERTFILE:os.path.join(etc_dir, 'ssl', 'crt', 'DST_Root_CA_X3.pem'),
         },
-    )
+    ),
+
+    # another cloned config for setting specific StartTLS parameters
+    'ldap://demo.ae-dir.com': AE_DIR_CONFIG.clone(
+        # StartTLS mandatory
+        starttls=2,
+        tls_options={
+            ldap0.OPT_X_TLS_CACERTFILE:os.path.join(etc_dir, 'ssl', 'crt', 'DST_Root_CA_X3.pem'),
+        },
+    ),
 
 }
 
 # You can apply sections defined above to other configuration keys
-ldap_def['ldap://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com'] = AE_DIR_CONFIG
+#---------------------------------------------------------------------------
 
+# simply register some configs with additional keys
 ldap_def['ldap:///dc=stroeder,dc=local'] = ldap_def['ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de']
 ldap_def['ldap:///dc=stroeder,dc=de'] = ldap_def['ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de']

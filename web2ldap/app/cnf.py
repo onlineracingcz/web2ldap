@@ -80,7 +80,11 @@ class Web2LDAPConfig(object):
     """
 
     def __init__(self, **params):
+        self.update(params)
+
+    def update(self, params):
         for param_name, param_val in params.items():
+#            logger.debug('%s.update() %r // %r', self, param_name, param_val)
             try:
                 param_type = VALID_CFG_PARAM_NAMES[param_name]
             except KeyError:
@@ -94,6 +98,24 @@ class Web2LDAPConfig(object):
                     )
                 )
             setattr(self, param_name, param_val)
+
+    def clone(self, **params):
+        old_params = dict([
+            (param_name, getattr(self, param_name))
+            for param_name in VALID_CFG_PARAM_NAMES
+            if hasattr(self, param_name)
+        ])
+        new = Web2LDAPConfig(**old_params)
+        new.update(params)
+        logger.debug(
+            'Cloned config %s with %d parameters to %s with %d new params %s',
+            id(self),
+            len(old_params),
+            id(new),
+            len(params),
+            pformat(params),
+        )
+        return new
 
     def get(self, name, default=None):
         self.__dict__.get(name, default)
