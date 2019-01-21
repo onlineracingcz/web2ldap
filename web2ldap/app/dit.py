@@ -183,7 +183,7 @@ def w2l_dit(app):
     root_dit_dict = dit_dict
 
     dn_levels = len(dn_components)
-    dit_max_levels = int(app.form.getInputValue('dit_max_levels', ['10'])[0])
+    dit_max_levels = app.cfg_param('dit_max_levels', 10)
     cut_off_levels = max(0, dn_levels-dit_max_levels)
 
     for i in range(1, dn_levels-cut_off_levels+1):
@@ -195,8 +195,8 @@ def w2l_dit(app):
                 ldap0.SCOPE_ONELEVEL,
                 '(objectClass=*)',
                 attrlist=DIT_ATTR_LIST,
-                timeout=int(app.form.getInputValue('dit_search_timelimit', ['10'])[0]),
-                sizelimit=int(app.form.getInputValue('dit_search_sizelimit', ['50'])[0]),
+                timeout=app.cfg_param('dit_search_timelimit', 10),
+                sizelimit=app.cfg_param('dit_search_sizelimit', 50),
             )
             for res in app.ls.l.results(msg_id):
                 # FIX ME! Search continuations are ignored for now
