@@ -21,6 +21,7 @@
   [<a href="#groupadm_filterstr_template">groupadm_filterstr_template</a>]
   [<a href="#groupadm_optgroup_bounds">groupadm_optgroup_bounds</a>]
   [<a href="#input_template">input_template</a>]
+  [<a href="#inputform_supentrytemplate">inputform_supentrytemplate</a>]
   [<a href="#login_template">login_template</a>]
   [<a href="#modify_constant_attrs">modify_constant_attrs</a>]
   [<a href="#naming_contexts">naming_contexts</a>]
@@ -530,6 +531,27 @@ input_template={
   'inetOrgPerson':os.path.join(web2ldapcnf.templates_dir,'inputform_inetOrgPerson.html'),
   'posixAccount':os.path.join(web2ldapcnf.templates_dir,'inputform_posixAccount.html'),
   'msPerson':os.path.join(web2ldapcnf.templates_dir,'inputform_msPerson.html'),
+},
+          </pre>
+        </samp>
+      </dd>
+    </dl>
+  </dd>
+
+  <dt id="inputform_supentrytemplate">inputform_supentrytemplate</dt>
+  <dd>
+    Dictionary defining HTML template snippets for displaying short
+    description of parent entry in input form.
+    <dl>
+      <dt>Default:</dt>
+      <dd><code>{}</code></dd>
+      <dt>Example:</dt>
+      <dd>
+        <samp>
+          <pre class="cli">
+inputform_supentrytemplate={
+    'organization':r'Organization <strong>%(o)s</strong>',
+    'organizationalUnit':r'Organizational Unit <strong>%(ou)s</strong>',
 },
           </pre>
         </samp>
