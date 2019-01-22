@@ -397,11 +397,11 @@ def main_menu(app):
             app.anchor('oid', 'Schema', [('dn', app.dn)], title=u'Browse/view subschema'),
         ))
 
-        cl.append(app.anchor('disconnect', 'Disconnect', [], title=u'Disconnect from LDAP server'))
+        cl.append(app.anchor('disconnect', 'Disconnect', (), title=u'Disconnect from LDAP server'))
 
     else:
 
-        cl.append(app.anchor('', 'Connect', None, [], title=u'New connection to LDAP server'))
+        cl.append(app.anchor('', 'Connect', (), title=u'New connection to LDAP server'))
 
     return cl # main_menu()
 
