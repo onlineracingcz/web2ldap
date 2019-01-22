@@ -736,15 +736,14 @@ class AppHandler(object):
             # Connect to LDAP server
             #-------------------------------------------------
 
-            if self.ldap_url.hostport is not None and \
-               self.ldap_url.hostport == '' and \
+            if self.ldap_url.hostport == '' and \
                self.ldap_url.urlscheme == 'ldap' and \
                self.ls.uri is None:
                 # Force a SRV RR lookup for dc-style DNs,
                 # create list of URLs to connect to
                 dns_srv_rrs = web2ldap.ldaputil.dns.dcDNSLookup(self.dn)
                 init_uri_list = [
-                    ExtendedLDAPUrl(urlscheme='ldap', hostport=host, dn=self.dn).init_uri()
+                    ExtendedLDAPUrl(urlscheme='ldap', hostport=host, dn=self.dn).initializeUrl()
                     for host in dns_srv_rrs
                 ]
                 if not init_uri_list:
@@ -759,12 +758,13 @@ class AppHandler(object):
                 elif len(init_uri_list) == 1:
                     init_uri = init_uri_list[0]
                 else:
+                    # more than one possible servers => let user choose one
                     web2ldap.app.srvrr.w2l_chasesrvrecord(
                         self,
                         init_uri_list
                     )
                     return
-            elif not self.ldap_url.hostport is None:
+            elif self.ldap_url.hostport is not None:
                 init_uri = str(self.ldap_url.initializeUrl()[:])
             else:
                 init_uri = None
