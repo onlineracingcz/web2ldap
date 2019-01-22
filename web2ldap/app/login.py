@@ -35,11 +35,10 @@ def w2l_login(
     Provide a input form for doing a (re-)login
     """
 
-    login_search_root = (
-        app.form.getInputValue('login_search_root', [u''])[0] or
-        app.naming_context or
-        app.dn
-    )
+    login_search_root = app.form.getInputValue(
+        'login_search_root',
+        [app.naming_context or app.dn or u''],
+    )[0]
 
     if 'login_who' in app.form.inputFieldNames:
         who = app.form.field['login_who'].value[0]
