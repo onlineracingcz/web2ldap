@@ -171,6 +171,7 @@ class Web2LDAPConfigDict(object):
         store config data in internal dictionary
         """
         cfg_key = self.normalize_key(cfg_uri)
+        logger.debug('Store config for %r with key %r', cfg_uri, cfg_key)
         self.cfg_data[cfg_key] = cfg_data
 
     def get_param(self, uri, naming_context, param, default):
