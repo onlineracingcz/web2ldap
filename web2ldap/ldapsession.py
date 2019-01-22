@@ -463,7 +463,7 @@ class LDAPSession(object):
         self.l = None
         # Set to not connected
         self.uri = None
-        self.namingContexts = None
+        self.namingContexts = set()
         self._audit_context = ldap0.cidict.cidict()
         self._traceLevel = traceLevel
         # Character set/encoding of data stored on this particular host
@@ -621,7 +621,7 @@ class LDAPSession(object):
     def _reset_rootdse_attrs(self):
         """Forget all old RootDSE values"""
         self.supportsAllOpAttr = False
-        self.namingContexts = None
+        self.namingContexts = set()
         self.rootDSE = ldap0.cidict.cidict()
         # some rootDSE attributes made available as class attributes
         self.supportedLDAPVersion = frozenset([])
@@ -635,7 +635,7 @@ class LDAPSession(object):
         """
         Derive some class attributes from rootDSE attributes
         """
-        self.namingContexts = set([])
+        self.namingContexts = set()
         self.namingContexts.update([
             unicode({'\x00':''}.get(v, v), self.charset)
             for v in self.rootDSE.get('namingContexts', [])
