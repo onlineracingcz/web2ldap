@@ -602,6 +602,7 @@ class LDAPSession(object):
         elif self.uri.lower().startswith('ldaps:') or self.uri.lower().startswith('ldapi:'):
             self.secureConn = 1
         self.connStartTime = time.time()
+        self.init_rootdse()
         return # open()
 
     def unbind(self):
