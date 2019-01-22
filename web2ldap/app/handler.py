@@ -255,7 +255,7 @@ class AppHandler(object):
         assert isinstance(command, bytes), \
             TypeError('command must be string, but was %r', command)
         assert isinstance(anchor_text, bytes), \
-            TypeError('anchor_text must be string, but was %r', anchor_text)
+            TypeError('anchor_text must be bytes, but was %r', anchor_text)
         assert anchor_id is None or isinstance(anchor_id, unicode), \
             TypeError('anchor_id must be None or unicode, but was %r', anchor_id)
         assert target is None or isinstance(target, str), \
@@ -700,6 +700,11 @@ class AppHandler(object):
 
             # Check access here
             if not check_access(self.env, self.command):
+                logger.warn(
+                    'Access denied from %r to command %r',
+                    self.env['REMOTE_ADDR'],
+                    self.command,
+                )
                 raise ErrorExit(u'Access denied.')
 
             # Handle simple early-exit commands
@@ -1043,7 +1048,7 @@ class AppHandler(object):
                 )
 
         except ErrorExit as error_exit:
-            logger.warn(str(error_exit))
+            logger.warn('ErrorExit: %r', error_exit.Msg)
             ExceptionMsg(
                 self,
                 u'Error',
