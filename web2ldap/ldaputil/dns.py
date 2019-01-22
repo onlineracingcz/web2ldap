@@ -18,7 +18,7 @@ import socket
 
 from .base import explode_dn
 
-from dns import rdatatype, resolver
+from dns import resolver
 
 def dcdn2dnsdomain(dn=''):
   """convert dc-style DN to DNS domain name (see RFC 2247)"""

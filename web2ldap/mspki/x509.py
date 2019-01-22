@@ -19,7 +19,7 @@ import hashlib
 # Pisces
 from web2ldap.pisces import asn1
 # mspki itself
-from . import utctime, util, x500, asn1helper
+from . import util, x500, asn1helper
 from .utctime import UTCTime
 
 class Attribute(asn1.ASN1Object):

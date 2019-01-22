@@ -13,7 +13,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import re,base64
+import re
 
 pem_re = re.compile('-----BEGIN (CERTIFICATE|X509 CRL|CERTIFICATE REQUEST|PKCS7|CMS|PRIVATE KEY|ATTRIBUTE CERTIFICATE)-----([ \w+/=\r\n]+?)-----END (CERTIFICATE|X509 CRL|CERTIFICATE REQUEST|PKCS7)-----',re.S+re.M)
 base64_re = re.compile('^[ \w+/=\r\n]+$',re.S+re.M)

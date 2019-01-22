@@ -34,7 +34,6 @@ from web2ldap.app.plugins.groups import GroupEntryDN
 from web2ldap.app.plugins.oath import OathHOTPToken
 from web2ldap.app.plugins.opensshlpk import SshPublicKey
 from web2ldap.app.plugins.posixautogen import HomeDirectory
-from web2ldap.ldapsession import LDAPSession as LDAPSessionOrig
 from web2ldap.app.schema.syntaxes import \
     ComposedAttribute, \
     DirectoryString, \

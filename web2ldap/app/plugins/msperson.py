@@ -7,7 +7,6 @@ from __future__ import absolute_import
 
 import re
 import os.path
-import datetime
 
 import web2ldapcnf
 
@@ -15,7 +14,6 @@ from web2ldap.app.schema.syntaxes import \
     DateOfBirth, \
     DirectoryString, \
     IA5String, \
-    ISO8601Date, \
     PropertiesSelectList, \
     syntax_registry
 
