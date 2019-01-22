@@ -212,7 +212,7 @@ class AppHandler(object):
             cfg_url = self.ls.uri
         else:
             cfg_url = 'ldap://'
-        return web2ldap.app.cnf.ldap_def.get_param(
+        return web2ldap.app.cnf.LDAP_DEF.get_param(
             cfg_url,
             (self.naming_context or u'').encode('utf-8'),
             param_key,

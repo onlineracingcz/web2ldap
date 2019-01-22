@@ -14,8 +14,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-from pprint import pformat
-
 from ldap0.ldapurl import LDAPUrl
 from ldap0.dn import is_dn
 from ldap0.ldapurl import isLDAPUrl
@@ -83,6 +81,9 @@ class Web2LDAPConfig(object):
         self.update(params)
 
     def update(self, params):
+        """
+        sets params as class attributes
+        """
         for param_name, param_val in params.items():
 #            logger.debug('%s.update() %r // %r', self, param_name, param_val)
             try:
@@ -100,6 +101,10 @@ class Web2LDAPConfig(object):
             setattr(self, param_name, param_val)
 
     def clone(self, **params):
+        """
+        returns a copy of the current Web2LDAPConfig
+        with some more params set
+        """
         old_params = dict([
             (param_name, getattr(self, param_name))
             for param_name in VALID_CFG_PARAM_NAMES
@@ -113,22 +118,21 @@ class Web2LDAPConfig(object):
             len(old_params),
             id(new),
             len(params),
-            pformat(params),
+            params,
         )
         return new
-
-    def get(self, name, default=None):
-        self.__dict__.get(name, default)
 
 
 # these imports must happen after declaring class Web2LDAPConfig!
 import web2ldapcnf.hosts
 
-from web2ldap.ldapsession import LDAPSession
 import web2ldap.app.schema
 
 
 class Web2LDAPConfigDict(object):
+    """
+    the configuration registry for site-specific parameters
+    """
 
     def __init__(self, cfg_dict):
         self.cfg_data = {}
@@ -163,18 +167,24 @@ class Web2LDAPConfigDict(object):
         return (key.initializeUrl().lower(), key.dn.lower())
 
     def set_cfg(self, cfg_uri, cfg_data):
+        """
+        store config data in internal dictionary
+        """
         cfg_key = self.normalize_key(cfg_uri)
         self.cfg_data[cfg_key] = cfg_data
 
-    def get_param(self, uri, dn, param, default):
+    def get_param(self, uri, naming_context, param, default):
+        """
+        retrieve a site-specific config parameter
+        """
         if param not in VALID_CFG_PARAM_NAMES:
             raise ValueError('Unknown config parameter %r requested' % (param))
         uri = uri.lower()
-        dn = dn.lower()
+        naming_context = naming_context.lower()
         result = default
         for cfg_key in (
-                (uri, dn),
-                ('ldap://', dn),
+                (uri, naming_context),
+                ('ldap://', naming_context),
                 (uri, ''),
                 '_',
             ):
@@ -183,21 +193,25 @@ class Web2LDAPConfigDict(object):
                 logger.debug(
                     'get_param(%r, %r, %r, %r): Key %r ->\n%s',
                     uri,
-                    dn,
+                    naming_context,
                     param,
                     default,
                     cfg_key,
-                    pformat(result),
+                    result,
                 )
                 break
         return result
 
 logger.debug('Initialize ldap_def')
-ldap_def = Web2LDAPConfigDict(web2ldapcnf.hosts.ldap_def)
-web2ldap.app.schema.parse_fake_schema(ldap_def)
+LDAP_DEF = Web2LDAPConfigDict(web2ldapcnf.hosts.ldap_def)
+web2ldap.app.schema.parse_fake_schema(LDAP_DEF)
 
 
 def set_target_check_dict(ldap_uri_list):
+    """
+    generate a dictionary of known target servers
+    with the string of the LDAP URI used as key
+    """
     ldap_uri_list_check_dict = {}
     for ldap_uri in ldap_uri_list:
         try:
@@ -206,6 +220,7 @@ def set_target_check_dict(ldap_uri_list):
             pass
         lu_obj = LDAPUrl(ldap_uri)
         ldap_uri_list_check_dict[lu_obj.initializeUrl()] = None
+        logger.debug('Added target LDAP URI %s / %r', ldap_uri, desc)
     return ldap_uri_list_check_dict
 
 # Set up configuration for restricting access to the preconfigured LDAP URI list
