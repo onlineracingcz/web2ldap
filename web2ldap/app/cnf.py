@@ -191,7 +191,7 @@ class Web2LDAPConfigDict(object):
             if cfg_key in self.cfg_data and hasattr(self.cfg_data[cfg_key], param):
                 result = getattr(self.cfg_data[cfg_key], param)
                 logger.debug(
-                    'get_param(%r, %r, %r, %r): Key %r ->\n%s',
+                    'get_param(%r, %r, %r, %r): Key %r -> %s',
                     uri,
                     naming_context,
                     param,
