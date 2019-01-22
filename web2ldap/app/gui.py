@@ -631,7 +631,9 @@ def search_root_field(
         search_root_searchurl=None,
         naming_contexts=None
     ):
-    """Prepare input field for search root"""
+    """
+    Returns input field for search root
+    """
 
     def sortkey_func(d):
         try:
@@ -644,37 +646,44 @@ def search_root_field(
             return ','.join(dn_list)
         return ''
 
+    dn_select_list = set()
     if app.dn:
-        dn_select_list = [app.dn] + web2ldap.ldaputil.base.parent_dn_list(
-            app.dn,
-            app.ls.get_search_root(app.dn, naming_contexts=naming_contexts),
+        # add the current DN and all parent DNs
+        dn_select_list.update(
+            [app.dn] +
+            web2ldap.ldaputil.base.parent_dn_list(
+                app.dn,
+                app.ls.get_search_root(app.dn, naming_contexts=naming_contexts),
+            )
         )
-    else:
-        dn_select_list = []
-    dn_select_list = web2ldap.msbase.union(app.ls.namingContexts, dn_select_list)
+    # add all known naming contexts
+    dn_select_list.update(app.ls.namingContexts)
     if search_root_searchurl:
+        # search for more search bases
         slu = ldap0.ldapurl.LDAPUrl(search_root_searchurl.encode(app.ls.charset))
         try:
             ldap_result = app.ls.l.search_s(slu.dn, slu.scope, slu.filterstr, attrlist=['1.1'])
         except ldap0.LDAPError:
             pass
         else:
-            dn_select_list = web2ldap.msbase.union(
-                [
-                    app.ls.uc_decode(ldap_dn)[0]
-                    for ldap_dn, _ in ldap_result
-                    if ldap_dn is not None
-                ],
-                dn_select_list,
-            )
-    dn_select_list.append((u'', u'- World -'))
-    dn_select_list = list(set(dn_select_list))
-    dn_select_list.sort(key=sortkey_func)
+            dn_select_list.update([
+                app.ls.uc_decode(ldap_dn)[0]
+                for ldap_dn, _ in ldap_result
+                if ldap_dn is not None
+            ])
+    # Remove empty search base string because it will re-added with description
+    if u'' in dn_select_list:
+        dn_select_list.remove(u'')
+    # Add root search base string with description
+    dn_select_list.add((u'', u'- World -'))
     srf = web2ldap.web.forms.Select(
         name, text, 1,
         size=1,
-        default=default or app.naming_context,
-        options=dn_select_list,
+        options=sorted(
+            dn_select_list,
+            key=sortkey_func,
+        ),
+        default=default or app.naming_context or app.dn,
         ignoreCase=1
     )
     srf.setCharset(app.form.accept_charset)
