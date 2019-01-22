@@ -785,6 +785,8 @@ class AppHandler(object):
                 if web2ldapcnf.hosts.restricted_ldap_uri_list and \
                    init_uri not in web2ldap.app.cnf.LDAP_URI_LIST_CHECK_DICT:
                     raise ErrorExit(u'Only pre-configured LDAP servers allowed.')
+                # set this to make .cfg_param() retrieve correct site-specific config parameters
+                self.ls.uri = init_uri
                 # Connect to new specified host
                 self.ls.open(
                     init_uri,
@@ -814,6 +816,7 @@ class AppHandler(object):
             # Store session data in case anything goes wrong after here
             # to give the exception handler a good chance
             session_store.storeSession(self.sid, self.ls)
+            self.dn = self.dn
 
             login_mech = self.form.getInputValue(
                 'login_mech',
@@ -838,16 +841,12 @@ class AppHandler(object):
                     (who is not None and cred is not None) or
                     login_mech in ldap0.sasl.SASL_NONINTERACTIVE_MECHS
                 ):
+                self.dn = self.dn
                 # real bind operation
-                login_search_root = self.form.getInputValue('login_search_root', [None])[0]
-                if (
-                        who is not None and
-                        not web2ldap.ldaputil.base.is_dn(who) and
-                        login_search_root is None
-                    ):
-                    # trigger update of various DN-related class properties
-                    self.dn = self.dn
-                    login_search_root = self.naming_context
+                login_search_root = self.form.getInputValue(
+                    'login_search_root',
+                    [self.naming_context],
+                )[0]
                 try:
                     self.ls.bind(
                         who,
@@ -862,7 +861,6 @@ class AppHandler(object):
                         )) or None,
                         self.form.getInputValue('login_realm', [self.ldap_url.saslRealm])[0],
                         self.binddn_mapping,
-#                        self.form.getInputValue('login_mapping', [self.binddn_mapping])[0],
                         loginSearchRoot=login_search_root,
                     )
                 except ldap0.NO_SUCH_OBJECT as err:
