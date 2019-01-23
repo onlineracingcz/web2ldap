@@ -27,34 +27,6 @@ from web2ldap.mspki import x509v3, asn1helper, asn1types
 viewer_func = {}
 
 
-def DisplayBinaryAttribute(
-        app,
-        attrtype,
-        entry,
-        index=None,
-        mimetype='application/octet-stream',
-        attachment_filename='web2ldap-export.bin'
-    ):
-    """
-    Display a binary attribute
-    """
-    if entry[attrtype][index].startswith('{ASN}'):
-        value = binascii.unhexlify(entry[attrtype][index][5:])
-    else:
-        value = entry[attrtype][index]
-    # Send HTTP header with appropriate MIME type
-    web2ldap.app.gui.Header(
-        app,
-        mimetype,
-        app.form.accept_charset,
-        more_headers=[
-            ('Content-Disposition', 'inline; filename=%s' % attachment_filename),
-        ]
-    )
-    # send attribute value
-    app.outf.write(value)
-
-
 def x509_prep(value):
     """
     This function returns raw DER cert data no matter what mess was stored

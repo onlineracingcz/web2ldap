@@ -469,13 +469,13 @@ def w2l_read(app):
         if (
                 (read_attrmode == 'view') and
                 hasattr(syntax_se, 'oid') and
-                web2ldap.app.viewer.viewer_func.has_key(syntax_se.oid)
+                syntax_se.oid in web2ldap.app.viewer.viewer_func
             ):
 
             # Nice displaying of binary attribute with viewer class
             web2ldap.app.gui.top_section(
                 app,
-                '',
+                'Attribute %s' % (app.form.utf2display(attr_type.decode('ascii'))),
                 web2ldap.app.gui.main_menu(app),
                 context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app),
             )
@@ -491,24 +491,26 @@ def w2l_read(app):
 
             # We have to create an LDAPSyntax instance to be able to call its methods
             attr_instance = syntax_se(app, app.dn, app.schema, attr_type, None, entry)
-            # Determine (hopefully) appropriate MIME-type
-            read_attrmimetype = app.form.getInputValue(
-                'read_attrmimetype',
-                [attr_instance.getMimeType()],
-            )[0]
-            # Determine (hopefully) appropriate file extension
-            read_filename = app.form.getInputValue(
-                'read_filename',
-                ['web2ldap-export.%s' % (attr_instance.fileExt)]
-            )[0]
-            # Output send the binary attribute value to the browser
-            web2ldap.app.viewer.DisplayBinaryAttribute(
+            # Send HTTP header with appropriate MIME type
+            web2ldap.app.gui.Header(
                 app,
-                attr_type, entry,
-                index=read_attrindex,
-                mimetype=read_attrmimetype.encode('ascii'),
-                attachment_filename=read_filename
+                app.form.getInputValue(
+                    'read_attrmimetype',
+                    [attr_instance.getMimeType()],
+                )[0].encode('ascii'),
+                app.form.accept_charset,
+                more_headers=[
+                    (
+                        'Content-Disposition',
+                        'inline; filename=%s' % app.form.getInputValue(
+                            'read_filename',
+                            ['web2ldap-export.%s' % (attr_instance.fileExt)]
+                        )[0],
+                    ),
+                ]
             )
+            # send attribute value
+            app.outf.write(entry[attr_type][read_attrindex])
 
         return # end of single attribute display
 
