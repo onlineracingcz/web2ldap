@@ -72,7 +72,7 @@ class Certificate(Binary):
       </dl>
       """
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         if asn1crypto.pem.detect(attrValue):
             try:
                 _, _, attrValue = asn1crypto.pem.unarmor(attrValue, multiple=False)
@@ -153,7 +153,7 @@ class CertificateList(Binary):
       </dl>
       """
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         if asn1crypto.pem.detect(attrValue):
             try:
                 _, _, attrValue = asn1crypto.pem.unarmor(attrValue, multiple=False)

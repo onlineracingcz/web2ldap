@@ -69,8 +69,8 @@ class AssociatedDomain(DNSDomain):
                         pass
         return result
 
-    def sanitizeInput(self, attrValue):
-        attrValue = DNSDomain.sanitizeInput(self, attrValue)
+    def sanitize(self, attrValue):
+        attrValue = DNSDomain.sanitize(self, attrValue)
         if not attrValue:
             parent_domain = (self._parent_domain() or u'').encode(self._app.ls.charset)
             try:
@@ -78,7 +78,7 @@ class AssociatedDomain(DNSDomain):
             except (KeyError, IndexError):
                 pass
             else:
-                attrValue = DNSDomain.sanitizeInput(self, '.'.join((dc_value, parent_domain)))
+                attrValue = DNSDomain.sanitize(self, '.'.join((dc_value, parent_domain)))
         return attrValue
 
     def formValue(self):
@@ -348,7 +348,7 @@ class SSHFPRecord(IA5String):
         '2': 2*hashlib.sha256().digest_size,
     }
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         if not attrValue:
             return attrValue
         try:

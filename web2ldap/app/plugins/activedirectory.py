@@ -124,7 +124,7 @@ class ObjectSID(OctetString, IA5String):
         ])
         return ''.join(result_list)
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         if attrValue:
             return self._sddl2sid(attrValue)
         return ''
@@ -446,7 +446,7 @@ class LogonHours(OctetString):
         # For whatever reason the list has to be shifted one hour
         return hour_flags
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         if not attrValue:
             return ''
         attrValue = attrValue.replace('\r', '').replace('\n', '')
@@ -625,11 +625,11 @@ class MsAdGUID(OctetString):
     oid = 'MsAdGUID-oid'
     desc = 'GUID in Active Directory'
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         try:
             object_guid_uuid = uuid.UUID(attrValue.replace(':', ''))
         except ValueError:
-            return OctetString.sanitizeInput(self, attrValue)
+            return OctetString.sanitize(self, attrValue)
         return object_guid_uuid.bytes
 
     def displayValue(self, valueindex=0, commandbutton=False):

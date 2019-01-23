@@ -43,9 +43,9 @@ class SshPublicKey(DirectoryString):
         'ssh-dss': 2048,
     }
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         if attrValue:
-            return DirectoryString.sanitizeInput(
+            return DirectoryString.sanitize(
                 self, attrValue
             ).strip().replace('\r', '').replace('\n', '')
         return attrValue

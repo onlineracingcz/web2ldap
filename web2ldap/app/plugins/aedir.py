@@ -377,7 +377,7 @@ class AEUserUid(AEUid):
             default=self.formValue()
         )
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         return attrValue.strip().lower()
 
 syntax_registry.reg_at(
@@ -1825,7 +1825,7 @@ class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
     reObj = re.compile(r'^[a-z0-9]+-[a-z0-9-]+$')
     special_names = ('zone-admins', 'zone-auditors')
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         return attrValue.strip()
 
     def transmute(self, attrValues):

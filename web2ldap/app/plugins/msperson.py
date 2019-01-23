@@ -104,7 +104,7 @@ class EuVATId(IA5String):
             return vatnumber.check_vat(attrValue)
         return IA5String._validate(self, attrValue)
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         return attrValue.upper().replace(' ', '')
 
 syntax_registry.reg_at(

@@ -142,7 +142,7 @@ class OathInitPwAlphabet(DirectoryString):
     oid = 'OathInitPwAlphabet-oid'
     desc = 'Alphabet used to generate init passwords'
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         return ''.join([
             self._app.ls.uc_encode(c)[0]
             for c in sorted(set(

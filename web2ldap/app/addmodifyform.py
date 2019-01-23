@@ -164,7 +164,7 @@ def get_entry_input(app):
             entry=entry,
         )
         try:
-            attr_value = attr_instance.sanitizeInput(in_value)
+            attr_value = attr_instance.sanitize(in_value)
         except LDAPSyntaxValueError:
             attr_value = in_value
         attr_values.append(attr_value)
@@ -183,7 +183,7 @@ def get_entry_input(app):
                 entry=entry,
             )
             try:
-                attr_value = attr_instance.sanitizeInput(in_value)
+                attr_value = attr_instance.sanitize(in_value)
             except LDAPSyntaxValueError:
                 attr_value = in_value
             attr_values.append(attr_value)

@@ -245,7 +245,7 @@ class DHCPHWAddress(MacAddress):
     maxLen = 26
     reObj = re.compile(r'^(ethernet|token-ring|fddi) ([0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}$')
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         attrValue = attrValue.strip()
         if len(attrValue) == 17:
             return 'ethernet %s' % attrValue
@@ -294,7 +294,7 @@ class DHCPRange(IA5String):
                 pass
         return form_value
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         return attrValue.strip().replace('  ', ' ').replace('-', ' ').replace('..', ' ')
 
     def _validate(self, attrValue):

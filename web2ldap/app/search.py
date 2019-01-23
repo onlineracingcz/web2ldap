@@ -358,7 +358,7 @@ def w2l_search(app):
             attr_instance = syntax_registry.get_at(
                 app, app.dn, app.schema, search_attr[i].encode('ascii'), None, entry=None
             )
-            search_av_string = attr_instance.sanitizeInput(search_av_string.encode(app.form.accept_charset))
+            search_av_string = attr_instance.sanitize(search_av_string.encode(app.form.accept_charset))
         if search_mr[i]:
             search_mr_string = ':%s:' % (search_mr[i])
         else:

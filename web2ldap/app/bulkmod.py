@@ -95,7 +95,7 @@ def input_modlist(app, bulkmod_at, bulkmod_op, bulkmod_av):
             app, u'', app.schema, mod_type, None, entry=None,
         )
         try:
-            mod_val = attr_instance.sanitizeInput(bulkmod_av[i] or '')
+            mod_val = attr_instance.sanitize(bulkmod_av[i] or '')
         except LDAPSyntaxValueError:
             mod_val = ''
             input_errors.add(i)

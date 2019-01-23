@@ -237,7 +237,7 @@ class LDAPSyntax(object):
         self._dn = dn
         self._entry = entry
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         """
         Transforms the HTML form input field values into LDAP string
         representations and returns raw binary string.
@@ -332,7 +332,7 @@ class LDAPSyntax(object):
         values. Returns Unicode string to be encoded with the browser's
         accepted charset.
 
-        This is the inverse of LDAPSyntax.sanitizeInput().
+        This is the inverse of LDAPSyntax.sanitize().
         """
         try:
             result = self._app.ls.uc_decode(self._av or '')[0]
@@ -450,8 +450,8 @@ class DirectoryString(LDAPSyntax):
             return False
         return True
 
-    def sanitizeInput(self, attrValue):
-        return LDAPSyntax.sanitizeInput(
+    def sanitize(self, attrValue):
+        return LDAPSyntax.sanitize(
             self,
             self._app.ls.uc_encode(self._app.form.uc_decode(attrValue)[0])[0],
         )
@@ -696,7 +696,7 @@ class GeneralizedTime(IA5String):
             result = unicode(datetime.datetime.strftime(dt, self.formValueFormat))
         return result
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         attrValue = attrValue.strip().upper()
         # Special cases first
         if attrValue in ('N', 'NOW', '0'):
@@ -742,11 +742,11 @@ class GeneralizedTime(IA5String):
                 try:
                     dt = datetime.datetime.strptime(attrValue, time_format)
                 except ValueError:
-                    result = IA5String.sanitizeInput(self, attrValue)
+                    result = IA5String.sanitize(self, attrValue)
                 else:
                     result = datetime.datetime.strftime(dt, r'%Y%m%d'+self.timeDefault+'Z')
                     break
-        return result # sanitizeInput()
+        return result # sanitize()
 
     def displayValue(self, valueindex=0, commandbutton=False):
         try:
@@ -796,7 +796,7 @@ class NullTerminatedDirectoryString(DirectoryString):
     oid = 'NullTerminatedDirectoryString-oid'
     desc = 'Directory String terminated by null-byte'
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         return attrValue+chr(0)
 
     def _validate(self, attrValue):
@@ -850,7 +850,7 @@ class Integer(IA5String):
             (max_value is None or intValue <= max_value)
         )
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         try:
             return str(int(attrValue))
         except ValueError:
@@ -937,7 +937,7 @@ class MacAddress(IA5String):
     maxLen = 17
     reObj = re.compile(r'^([0-9a-f]{2}\:){5}[0-9a-f]{2}$')
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         attr_value = attrValue.translate(None, '.-: ').lower().strip()
         if len(attr_value) == 12:
             return ':'.join([attr_value[i*2:i*2+2] for i in range(6)])
@@ -995,7 +995,7 @@ class Image(Binary):
     def _validate(self, attrValue):
         return imghdr.what(None, attrValue) == self.imageFormat.lower()
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         if not self._validate(attrValue) and PILImage:
             imgfile = BytesIO(attrValue)
             try:
@@ -1096,7 +1096,7 @@ class OID(IA5String):
             return ''
         return IA5String.valueButton(self, command, row, mode, link_text=link_text)
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         attrValue = attrValue.strip()
         if attrValue.startswith('{') and attrValue.endswith('}'):
             try:
@@ -1187,7 +1187,7 @@ class OctetString(Binary):
     maxInputRows = 15 # maximum number of rows for in input field
     bytes_split = 16
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         attrValue = attrValue.translate(None, ': ,\r\n')
         try:
             result_str = attrValue.decode('hex')
@@ -1248,7 +1248,7 @@ class MultilineText(DirectoryString):
             return value.split(self.lineSep)
         return [value]
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         return attrValue.replace(
             u'\r', u''
         ).replace(
@@ -1304,7 +1304,7 @@ class PostalAddress(MultilineText):
             for v in value.split(self.lineSep.strip())
         ]
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         return attrValue.replace('\r', '').replace('\n', self.lineSep)
 
 
@@ -1397,7 +1397,7 @@ class Date(IA5String):
             return False
         return True
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         attrValue = attrValue.strip()
         result = attrValue
         for time_format in self.acceptableDateformats:
@@ -1408,7 +1408,7 @@ class Date(IA5String):
             else:
                 result = datetime.datetime.strftime(time_tuple, self.storageFormat)
                 break
-        return result # sanitizeInput()
+        return result # sanitize()
 
 
 class NumstringDate(Date):
@@ -1505,13 +1505,13 @@ class Timespan(Integer):
     )
     sep = u','
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         if attrValue:
             try:
 
                 result = str(web2ldap.app.gui.repr2ts(self.time_divisors, self.sep, attrValue))
             except ValueError:
-                result = Integer.sanitizeInput(self, attrValue)
+                result = Integer.sanitize(self, attrValue)
         else:
             result = attrValue
         return result
@@ -1929,7 +1929,7 @@ class BitArrayInteger(MultilineText, Integer):
         self.maxValue = sum([j for i, j in self.flag_desc_table])
         self.minInputRows = self.maxInputRows = max(len(self.flag_desc_table), 1)
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         try:
             result = int(attrValue)
         except ValueError:
@@ -2004,7 +2004,7 @@ class UUID(IA5String):
         '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
     )
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         try:
             return str(uuid.UUID(attrValue.replace(':', '')))
         except ValueError:
@@ -2021,8 +2021,8 @@ class DNSDomain(IA5String):
         str.strip,
     )
 
-    def sanitizeInput(self, attrValue):
-        attrValue = IA5String.sanitizeInput(self, attrValue)
+    def sanitize(self, attrValue):
+        attrValue = IA5String.sanitize(self, attrValue)
         return '.'.join([
             dc.encode('idna')
             for dc in attrValue.decode(self._app.form.accept_charset).split(u'.')
@@ -2071,7 +2071,7 @@ class RFC822Address(DNSDomain, IA5String):
             dns_domain.formValue()
         ))
 
-    def sanitizeInput(self, attrValue):
+    def sanitize(self, attrValue):
         try:
             localpart, domainpart = attrValue.rsplit('@')
         except ValueError:
@@ -2079,7 +2079,7 @@ class RFC822Address(DNSDomain, IA5String):
         else:
             return '@'.join((
                 localpart,
-                DNSDomain.sanitizeInput(self, domainpart)
+                DNSDomain.sanitize(self, domainpart)
             ))
 
 
