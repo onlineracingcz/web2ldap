@@ -1006,7 +1006,7 @@ class Image(Binary):
                 im = PILImage.open(imgfile)
                 imgfile.seek(0)
                 im.save(imgfile, self.imageFormat)
-            except (IOError, ValueError):
+            except Exception:
                 pass
             else:
                 attrValue = imgfile.getvalue()
