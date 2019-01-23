@@ -321,13 +321,9 @@ def display_attribute_table(app, entry, attrs, comment):
                 dt_list.append(app.anchor(
                     'read',
                     '(%d of %d values)' % (read_tablemaxcount, attr_value_count),
-                    [
-                        ('dn', app.dn),
-                        (
-                            'read_expandattr',
-                            ','.join(read_expandattr_set|set([attr_type_name])),
-                        ),
-                    ],
+                    app.form.allInputFields(
+                        fields=[('read_expandattr', attr_type_name)],
+                    ),
                     anchor_id=attr_type_anchor_id.decode('ascii')
                 ))
             else:
