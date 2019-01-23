@@ -36,10 +36,11 @@ import web2ldap.app.form
 import web2ldap.app.gui
 import web2ldap.app.read
 import web2ldap.app.schema
-from web2ldap.app.schema.viewer import display_nameoroid_list
+from web2ldap.app.schema.viewer import schema_anchors
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.msbase import GrabKeys
 from web2ldap.app.schema.syntaxes import LDAPSyntaxValueError
+from web2ldap.app.schema.viewer import schema_anchor
 
 
 H1_MSG = {
@@ -478,7 +479,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         attr_types = attr_type_names.keys()
         attr_types.sort(key=str.lower)
         for attr_type in attr_types:
-            attr_type_name = web2ldap.app.gui.SchemaElementName(self._app, self.entry._s, attr_type, AttributeType)
+            attr_type_name = schema_anchor(self._app, attr_type, AttributeType, link_text='&raquo')
             attr_value_field_html = self[attr_type]
             self._app.outf.write(
                 '<tr>\n<td class="InputAttrType">\n%s\n</td>\n<td>\n%s\n</td>\n</tr>\n' % (
@@ -621,7 +622,7 @@ def ObjectClassForm(
                 if subord_structural_oc:
                     all_structural_oc = subord_structural_oc
                     dit_structure_rule_html = 'DIT structure rules:<br>%s' % ('<br>'.join(
-                        display_nameoroid_list(
+                        schema_anchors(
                             app,
                             subord_structural_ruleids,
                             DITStructureRule
@@ -700,7 +701,12 @@ def ObjectClassForm(
                     ]
                 dit_content_rule_html = '%s<br>DIT content rule:<br>%s' % (
                     dit_content_rule_status_text,
-                    web2ldap.app.gui.SchemaElementName(app, app.schema, dit_content_rule.names[0], DITContentRule)
+                    schema_anchor(
+                        app,
+                        dit_content_rule.names[0],
+                        DITContentRule,
+                        link_text='&raquo',
+                    )
                 )
 
         abstract_select_field = web2ldap.app.form.ObjectClassSelect(

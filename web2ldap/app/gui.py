@@ -490,34 +490,6 @@ def top_section(
     return # top_section()
 
 
-def SchemaElementName(
-        app,
-        schema,
-        se_nameoroid,
-        se_class,
-        name_template=r'%s',
-    ):
-    """
-    Return a pretty HTML-formatted string describing a schema element
-    referenced by name or OID
-    """
-    result = [name_template % (se_nameoroid.encode())]
-    if se_class:
-        se = schema.get_obj(se_class, se_nameoroid, None)
-        if not se is None:
-            result.append(
-                app.anchor(
-                    'oid', '&raquo;',
-                    [
-                        ('dn', app.dn),
-                        ('oid', se.oid),
-                        ('oid_class', ldap0.schema.SCHEMA_ATTR_MAPPING[se_class]),
-                    ]
-                )
-            )
-    return '\n'.join(result)
-
-
 def ldap_url_anchor(app, data):
     if isinstance(data, LDAPUrl):
         l = data

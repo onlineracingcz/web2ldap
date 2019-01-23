@@ -1086,6 +1086,9 @@ class PhotoG3Fax(Binary):
     fileExt = 'tif'
 
 
+# late import of schema_anchor()
+from web2ldap.app.schema.viewer import schema_anchor
+
 class OID(IA5String):
     oid = '1.3.6.1.4.1.1466.115.121.1.38'
     desc = 'OID'
@@ -1125,10 +1128,12 @@ class OID(IA5String):
                     )
                 except KeyError:
                     return IA5String.displayValue(self, valueindex, commandbutton)
-                return web2ldap.app.gui.SchemaElementName(
-                    self._app, self._schema, self.attrValue,
+                return schema_anchor(
+                    self._app,
+                    self.attrValue,
                     ldap0.schema.models.AttributeType,
                     name_template=r'%s',
+                    link_text='&raquo',
                 )
             name_template = {
                 0: r'%s <em>STRUCTURAL</em>',
@@ -1136,10 +1141,12 @@ class OID(IA5String):
                 2: r'%s <em>AUXILIARY</em>'
             }[se.kind]
             # objectClass attribute is displayed with different function
-            return web2ldap.app.gui.SchemaElementName(
-                self._app, self._schema, self.attrValue,
+            return schema_anchor(
+                self._app,
+                self.attrValue,
                 ldap0.schema.models.ObjectClass,
-                name_template=name_template
+                name_template=name_template,
+                link_text='&raquo',
             )
         return '<strong>%s</strong> (%s):<br>%s (see %s)' % (
             self._app.form.utf2display(name),

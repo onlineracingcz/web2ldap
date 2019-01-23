@@ -30,6 +30,7 @@ import web2ldap.app.viewer
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.msbase import GrabKeys
 from web2ldap.app.session import session_store
+from web2ldap.app.schema.viewer import schema_anchor
 
 
 class VCardEntry(IterableUserDict):
@@ -296,8 +297,9 @@ def display_attribute_table(app, entry, attrs, comment):
     entry.sep = None
     for attr_type_name in show_attrs:
         attr_type_anchor_id = 'readattr_%s' % app.form.utf2display(attr_type_name.decode('ascii'))
-        attr_type_str = web2ldap.app.gui.SchemaElementName(
-            app, app.schema, attr_type_name,
+        attr_type_str = schema_anchor(
+            app,
+            attr_type_name,
             ldap0.schema.models.AttributeType,
             name_template=r'<var>%s</var>'
         )
