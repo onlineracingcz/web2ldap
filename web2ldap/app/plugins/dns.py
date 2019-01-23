@@ -223,12 +223,12 @@ class MXRecord(ResourceRecord):
     desc = 'A resource record pointing to a mail exchanger (MX)'
     reObj = re.compile(r'^[0-9]+[ ]+[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$')
 
-    def _searchReferencedEntry(self, attrValue):
+    def _search_ref(self, attrValue):
         try:
             _, hostname = attrValue.split(' ', 1)
         except ValueError:
             return None
-        return ResourceRecord._searchReferencedEntry(self, hostname.strip())
+        return ResourceRecord._search_ref(self, hostname.strip())
 
 syntax_registry.reg_at(
     MXRecord.oid, [

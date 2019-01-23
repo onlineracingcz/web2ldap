@@ -592,15 +592,15 @@ class NameAndOptionalUID(DistinguishedName):
     oid = '1.3.6.1.4.1.1466.115.121.1.34'
     desc = 'Name And Optional UID'
 
-    def _splitDNandUID(self, v):
+    def _splitDNandUID(self, val):
         try:
-            sep_ind = v.rindex(u'#')
+            sep_ind = val.rindex(u'#')
         except ValueError:
-            dn = v
+            dn = val
             uid = None
         else:
-            dn = v[0:sep_ind]
-            uid = v[sep_ind+1:]
+            dn = val[0:sep_ind]
+            uid = val[sep_ind+1:]
         return dn, uid
 
     def _validate(self, attrValue):
@@ -1247,10 +1247,10 @@ class MultilineText(DirectoryString):
     minInputRows = 1  # minimum number of rows for input field
     maxInputRows = 30 # maximum number of rows for in input field
 
-    def _split_lines(self, v):
+    def _split_lines(self, value):
         if self.lineSep:
-            return v.split(self.lineSep)
-        return [v]
+            return value.split(self.lineSep)
+        return [value]
 
     def sanitizeInput(self, attrValue):
         return attrValue.replace(
@@ -1659,14 +1659,14 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         self.minLen = len(self.valuePrefix)+len(self.valueSuffix)
         SelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
-    def _determineFilter(self):
+    def _filterstr(self):
         return self.lu_obj.filterstr or '(objectClass=*)'
 
-    def _searchReferencedEntry(self, attrValue):
-        search_dn = self._determineSearchDN(self._dn, self.lu_obj.dn)
+    def _search_ref(self, attrValue):
+        search_dn = self._search_root(self._dn, self.lu_obj.dn)
         attr_value = attrValue[len(self.valuePrefix):-len(self.valueSuffix) or None]
         search_filter = '(&%s(%s=%s))' % (
-            self._determineFilter(),
+            self._filterstr(),
             self.lu_obj.attrs[0],
             attr_value,
         )
@@ -1705,11 +1705,11 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                 (self.maxLen is not None and len(attrValue) > self.maxLen)
             ):
             return False
-        return self._searchReferencedEntry(attrValue) is not None
+        return self._search_ref(attrValue) is not None
 
     def displayValue(self, valueindex=0, commandbutton=False):
         if commandbutton and self.lu_obj.attrs:
-            ref_result = self._searchReferencedEntry(self.attrValue)
+            ref_result = self._search_ref(self.attrValue)
             if ref_result:
                 ref_dn, ref_entry = ref_result
                 try:
@@ -1738,7 +1738,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             link_html,
         ))
 
-    def _determineSearchDN(self, current_dn, ldap_url_dn):
+    def _search_root(self, current_dn, ldap_url_dn):
         ldap_url_dn = self._app.ls.uc_decode(ldap_url_dn)[0]
         if ldap_url_dn == '_':
             result_dn = self._app.ls.get_search_root(current_dn or self._dn or self._app.ls._dn)
@@ -1756,7 +1756,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             result_dn = ldap_url_dn
         if result_dn.endswith(','):
             result_dn = result_dn[:-1]
-        return result_dn # _determineSearchDN()
+        return result_dn # _search_root()
 
     def _get_attr_value_dict(self):
         attr_value_dict = SelectList._get_attr_value_dict(self)
@@ -1766,7 +1766,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                     self.lu_obj.hostport
                 )
             )
-        search_dn = self._determineSearchDN(self._dn, self.lu_obj.dn)
+        search_dn = self._search_root(self._dn, self.lu_obj.dn)
         search_scope = self.lu_obj.scope or ldap0.SCOPE_BASE
         search_attrs = (self.lu_obj.attrs or []) + ['description', 'info']
         # Use the existing LDAP connection as current user
@@ -1774,7 +1774,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             ldap_result = self._app.ls.l.search_s(
                 self._app.ls.uc_encode(search_dn)[0],
                 search_scope,
-                filterstr=self._determineFilter(),
+                filterstr=self._filterstr(),
                 attrlist=search_attrs,
             )
         except (
@@ -1838,12 +1838,12 @@ class DynamicValueSelectList(SelectList, DirectoryString):
 class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
     oid = 'DynamicDNSelectList-oid'
 
-    def _readReferencedEntry(self, dn):
+    def _get_ref_entry(self, dn):
         try:
             ref_entry = self._app.ls.l.read_s(
                 dn,
                 attrlist=self.lu_obj.attrs,
-                filterstr=self._determineFilter(),
+                filterstr=self._filterstr(),
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -1856,11 +1856,11 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
         return ref_entry
 
     def _validate(self, attrValue):
-        return self._readReferencedEntry(attrValue) is not None
+        return self._get_ref_entry(attrValue) is not None
 
     def displayValue(self, valueindex=0, commandbutton=False):
         if commandbutton and self.lu_obj.attrs:
-            ref_entry = self._readReferencedEntry(self.attrValue) or {}
+            ref_entry = self._get_ref_entry(self.attrValue) or {}
             try:
                 attr_value_desc = self._app.ls.uc_decode(ref_entry[self.lu_obj.attrs[0]][0])[0]
             except (KeyError, IndexError):
@@ -1886,9 +1886,9 @@ class Boolean(SelectList, IA5String):
     def _get_attr_value_dict(self):
         attr_value_dict = SelectList._get_attr_value_dict(self)
         if self.attrValue and self.attrValue.lower() == self.attrValue:
-            for k, v in attr_value_dict.items():
-                del attr_value_dict[k]
-                attr_value_dict[k.lower()] = v.lower()
+            for key, val in attr_value_dict.items():
+                del attr_value_dict[key]
+                attr_value_dict[key.lower()] = val.lower()
         return attr_value_dict
 
     def _validate(self, attrValue):
@@ -2048,8 +2048,7 @@ class DNSDomain(IA5String):
                 IA5String.displayValue(self, valueindex, commandbutton),
                 self._app.form.utf2display(self.formValue())
             )
-        else:
-            return IA5String.displayValue(self, valueindex, commandbutton)
+        return IA5String.displayValue(self, valueindex, commandbutton)
 
 
 class RFC822Address(DNSDomain, IA5String):
@@ -2126,11 +2125,11 @@ class JSONValue(PreformattedMultilineText):
             return False
         return True
 
-    def _split_lines(self, val):
+    def _split_lines(self, value):
         try:
-            obj = json.loads(val)
+            obj = json.loads(value)
         except ValueError:
-            return PreformattedMultilineText._split_lines(self, val)
+            return PreformattedMultilineText._split_lines(self, value)
         return PreformattedMultilineText._split_lines(
             self,
             self._app.ls.uc_decode(

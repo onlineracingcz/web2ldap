@@ -163,7 +163,7 @@ class AEObjectUtil:
         if not person_filter_parts:
             return []
         ldap_result = self._app.ls.l.search_s(
-            self._app.ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
+            self._app.ls.uc_encode(self._search_root(self._dn, self.lu_obj.dn))[0],
             ldap0.SCOPE_SUBTREE,
             '(&{0})'.format(''.join(person_filter_parts)),
             attrlist=person_attrs or ['1.1'],
@@ -460,13 +460,13 @@ class AENwDevice(DynamicDNSelectList):
         (None, u'Siblings', None, u'Search sibling network devices'),
     )
 
-    def _determineSearchDN(self, current_dn, ldap_url_dn):
+    def _search_root(self, current_dn, ldap_url_dn):
         if self._dn.startswith('host='):
             return self._dn
-        return DynamicDNSelectList._determineSearchDN(self, current_dn, ldap_url_dn)
+        return DynamicDNSelectList._search_root(self, current_dn, ldap_url_dn)
 
-    def _determineFilter(self):
-        orig_filter = DynamicDNSelectList._determineFilter(self)
+    def _filterstr(self):
+        orig_filter = DynamicDNSelectList._filterstr(self)
         try:
             dev_name = self._entry['cn'][0]
         except (KeyError, IndexError):
@@ -510,9 +510,9 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
                 result[attr_type] = set(self._entry[attr_type])
         return result
 
-    def _determineFilter(self):
+    def _filterstr(self):
         return '(&{0}{1})'.format(
-            DynamicDNSelectList._determineFilter(self),
+            DynamicDNSelectList._filterstr(self),
             self._zone_filter(),
         )
 
@@ -528,9 +528,9 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
         attr_value_dict = SelectList._get_attr_value_dict(self)
         try:
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
+                self._app.ls.uc_encode(self._search_root(self._dn, self.lu_obj.dn))[0],
                 self.lu_obj.scope or ldap0.SCOPE_SUBTREE,
-                filterstr=self._determineFilter(),
+                filterstr=self._filterstr(),
                 attrlist=self.lu_obj.attrs+['description'],
                 serverctrls=srv_ctrls,
                 add_ctrls=1,
@@ -831,7 +831,7 @@ class AESameZoneObject(DynamicDNSelectList, AEObjectUtil):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeObject)(aeStatus=0))'
 
-    def _determineSearchDN(self, current_dn, ldap_url_dn):
+    def _search_root(self, current_dn, ldap_url_dn):
         return self._get_zone_dn()
 
 
@@ -840,7 +840,7 @@ class AESrvGroup(AESameZoneObject):
     desc = 'AE-DIR: DN of referenced aeSrvGroup entry'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
 
-    def _determineFilter(self):
+    def _filterstr(self):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
         dn_u = self._dn.decode(self._app.ls.charset)
         parent_dn = web2ldap.ldaputil.parent_dn(dn_u)
@@ -861,7 +861,7 @@ class AEProxyFor(AESameZoneObject, AEObjectUtil):
     desc = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
 
-    def _determineFilter(self):
+    def _filterstr(self):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
@@ -1286,9 +1286,9 @@ class AEPerson(DynamicDNSelectList, AEObjectUtil):
             ),
         )
 
-    def _determineFilter(self):
+    def _filterstr(self):
         filter_components = [
-            DynamicDNSelectList._determineFilter(self),
+            DynamicDNSelectList._filterstr(self),
             self._status_filter(),
             #ae_validity_filter(),
         ]
@@ -1316,7 +1316,7 @@ class AEPerson2(AEPerson):
     def formValue(self):
         form_value = DistinguishedName.formValue(self)
         if self.attrValue:
-            person_entry = self._readReferencedEntry(self.attrValue)
+            person_entry = self._get_ref_entry(self.attrValue)
             if person_entry:
                 form_value = person_entry.get(
                     'displayName',
@@ -1331,12 +1331,12 @@ class AEPerson2(AEPerson):
         if not attrValues or not attrValues[0]:
             return attrValues
         sanitize_filter = '(&{0}{1})'.format(
-            self._determineFilter(),
+            self._filterstr(),
             self.sanitize_filter_tmpl.format(av=escape_filter_chars(attrValues[0])),
         )
         try:
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
+                self._app.ls.uc_encode(self._search_root(self._dn, self.lu_obj.dn))[0],
                 ldap0.SCOPE_SUBTREE,
                 sanitize_filter,
                 attrlist=self.lu_obj.attrs,
@@ -1538,7 +1538,7 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
             return True
         return DynamicValueSelectList._validate(self, attrValue)
 
-    def _determineFilter(self):
+    def _filterstr(self):
         return (
           '(&'
             '(objectClass=aeUser)'
@@ -2181,7 +2181,7 @@ class AERFC822MailMember(DynamicValueSelectList):
             map_filter_parts('entryDN', self._entry['member']),
         )
         ldap_result = self._app.ls.l.search_s(
-            self._app.ls.uc_encode(self._determineSearchDN(self._dn, self.lu_obj.dn))[0],
+            self._app.ls.uc_encode(self._search_root(self._dn, self.lu_obj.dn))[0],
             ldap0.SCOPE_SUBTREE,
             entrydn_filter,
             attrlist=['mail'],
@@ -2286,13 +2286,13 @@ class AEOathHOTPToken(OathHOTPToken):
     )
     input_fallback = False
 
-    def _determineFilter(self):
+    def _filterstr(self):
         if 'aePerson' in self._entry:
             return '(&{0}(aeOwner={1}))'.format(
-                OathHOTPToken._determineFilter(self),
+                OathHOTPToken._filterstr(self),
                 self._entry['aePerson'][0],
             )
-        return OathHOTPToken._determineFilter(self)
+        return OathHOTPToken._filterstr(self)
 
 syntax_registry.reg_at(
     AEOathHOTPToken.oid, [

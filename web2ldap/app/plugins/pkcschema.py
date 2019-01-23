@@ -47,11 +47,11 @@ class PkcX509Issuer(DynamicValueSelectList, DistinguishedName):
         r.append(self._app.anchor(
             'search', '&raquo;',
             [
-                ('dn', self._determineSearchDN(self._dn, self.lu_obj.dn)),
+                ('dn', self._search_root(self._dn, self.lu_obj.dn)),
                 (
                     'filterstr',
                     u'(&%s(x509subject=%s))' % (
-                        self._determineFilter().decode('utf-8'),
+                        self._filterstr().decode('utf-8'),
                         escape_filter_chars(self._app.ls.uc_decode(self.attrValue)[0]),
                     )
                 ),
