@@ -118,9 +118,9 @@ def w2l_add(app):
             add_clonedn or add_template or
             not entry or
             invalid_attrs or
-            'in_mr' in app.form.inputFieldNames or
-            'in_oc' in app.form.inputFieldNames or
-            'in_ft' in app.form.inputFieldNames
+            'in_mr' in app.form.input_field_names or
+            'in_oc' in app.form.input_field_names or
+            'in_ft' in app.form.input_field_names
         ):
         web2ldap.app.addmodifyform.w2l_addform(
             app,

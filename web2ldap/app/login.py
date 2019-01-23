@@ -40,7 +40,7 @@ def w2l_login(
         [app.naming_context or app.dn or u''],
     )[0]
 
-    if 'login_who' in app.form.inputFieldNames:
+    if 'login_who' in app.form.input_field_names:
         who = app.form.field['login_who'].value[0]
 
     login_search_root = login_search_root or app.dn

@@ -258,7 +258,7 @@ def w2l_passwd(app):
         user_entry.get('objectClass', []),
     )
 
-    if 'passwd_newpasswd' not in app.form.inputFieldNames:
+    if 'passwd_newpasswd' not in app.form.input_field_names:
 
         # New password not yet provided => ask for it
         #---------------------------------------------

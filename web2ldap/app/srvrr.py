@@ -77,7 +77,10 @@ def w2l_chasesrvrecord(app, host_list):
             'Change host',
         )
     )
-    app.form.hiddenInputFields(app.outf, {'ldapurl', 'host', 'dn', 'who', 'cred'})
+    app.form.hiddenInputFields(
+        app.outf,
+        ignore_fields={'ldapurl', 'host', 'dn', 'who', 'cred'},
+    )
     app.outf.write('</form>\n')
 
     web2ldap.app.gui.footer(app)

@@ -552,7 +552,7 @@ class AppHandler(object):
         else:
             # Extract the connection parameters from form fields
             self._handle_del_sid()
-            if 'ldapurl' in self.form.inputFieldNames:
+            if 'ldapurl' in self.form.input_field_names:
                 # One form parameter with LDAP URL
                 ldap_url_input = self.form.field['ldapurl'].value[0]
                 try:

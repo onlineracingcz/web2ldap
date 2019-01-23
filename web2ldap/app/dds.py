@@ -72,8 +72,8 @@ def w2l_dds(app):
     Dynamic entry refresh operation
     """
 
-    if  'dds_renewttlnum' not in app.form.inputFieldNames or \
-        'dds_renewttlfac' not in app.form.inputFieldNames:
+    if  'dds_renewttlnum' not in app.form.input_field_names or \
+        'dds_renewttlfac' not in app.form.input_field_names:
 
         dds_form(app, None)
         return

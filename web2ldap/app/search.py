@@ -665,7 +665,7 @@ def w2l_search(app):
                             ('dn', app.dn),
                             ('searchform_mode', 'adv')
                         ],
-                        ignoreFieldNames=('dn', 'searchform_mode'),
+                        ignore_fields=('dn', 'searchform_mode'),
                     ),
                     title=u'Modify search parameters',
                 )

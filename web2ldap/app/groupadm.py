@@ -210,8 +210,8 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     # Apply changes to group membership
     #################################################################
 
-    if 'groupadm_add' in app.form.inputFieldNames or \
-       'groupadm_remove' in app.form.inputFieldNames:
+    if 'groupadm_add' in app.form.input_field_names or \
+       'groupadm_remove' in app.form.input_field_names:
 
         ldaperror_entries = []
         successful_group_mods = []

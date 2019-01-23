@@ -1153,7 +1153,7 @@ def w2l_addform(
         app.form.getInputValue('in_oft', ['OC'])
     )[0]
 
-    if 'in_oc' in app.form.inputFieldNames:
+    if 'in_oc' in app.form.input_field_names:
         # Read objectclass(es) from input form
         entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].value]
 
@@ -1268,7 +1268,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         app.form.getInputValue('in_oft', ['Template'])
     )[0]
 
-    if 'in_oc' in app.form.inputFieldNames:
+    if 'in_oc' in app.form.input_field_names:
         # Read objectclass(es) from input form
         entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].value]
 

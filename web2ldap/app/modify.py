@@ -93,9 +93,9 @@ def w2l_modify(app):
         error_msg = ''
 
     # Check if the user just switched/modified input form
-    if 'in_ft' in app.form.inputFieldNames or \
-       'in_oc' in app.form.inputFieldNames or \
-       'in_mr' in app.form.inputFieldNames or \
+    if 'in_ft' in app.form.input_field_names or \
+       'in_oc' in app.form.input_field_names or \
+       'in_mr' in app.form.input_field_names or \
        not new_entry or \
        invalid_attrs:
         web2ldap.app.addmodifyform.w2l_modifyform(

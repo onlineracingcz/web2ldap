@@ -881,7 +881,7 @@ class Form:
         # Dictionary of Field objects
         self.field = {}
         # set of parameters names received with input
-        self.inputFieldNames = set()
+        self.input_field_names = set()
         # Save the environment vars
         self.env = env
         # input file object
@@ -925,40 +925,40 @@ class Form:
         Return input value of a field defined by name if presented
         in form input. Return default else.
         """
-        if name in self.inputFieldNames:
+        if name in self.input_field_names:
             return self.field[name].value
         return default
 
-    def allInputFields(self, fields=None, ignoreFieldNames=None):
+    def allInputFields(self, fields=None, ignore_fields=None):
         """
         Return list with all former input parameters.
 
-        ignoreFieldNames
+        ignore_fields
             Names of parameters to be excluded.
         """
-        ignoreFieldNames = set(ignoreFieldNames or [])
+        ignore_fields = set(ignore_fields or [])
         result = list(fields) or []
         for f in [
                 self.field[p]
-                for p in self.inputFieldNames-ignoreFieldNames
+                for p in self.input_field_names-ignore_fields
             ]:
             for val in f.value:
                 result.append((f.name, val))
         return result # allInputFields()
 
-    def hiddenInputFields(self, outf=sys.stdout, ignoreFieldNames=None):
+    def hiddenInputFields(self, outf=sys.stdout, ignore_fields=None):
         """
         Output all parameters as hidden fields.
 
         outf
             File object for output.
-        ignoreFieldNames
+        ignore_fields
             Names of parameters to be excluded.
         """
-        ignoreFieldNames = ignoreFieldNames or []
+        ignore_fields = ignore_fields or []
         for field in [
                 self.field[p]
-                for p in self.inputFieldNames-ignoreFieldNames
+                for p in self.input_field_names-ignore_fields
             ]:
             for val in field.value:
                 outf.write(
@@ -1021,7 +1021,7 @@ class Form:
                 # Input is stored in field instance
                 self.field[name].setValue(value)
                 # Add name of field to set of input keys
-                self.inputFieldNames.add(name)
+                self.input_field_names.add(name)
 
         return #_parse_url_encoded()
 
@@ -1048,7 +1048,7 @@ class Form:
                 # Input is stored in field instance
                 self.field[name].setValue(value)
                 # Add name of field to set of input keys
-                self.inputFieldNames.add(name)
+                self.input_field_names.add(name)
 
         return # _parse_mime_multipart()
 
@@ -1096,7 +1096,7 @@ class Form:
         # Are all required parameters present?
         missing_params = []
         for _, field in self.field.items():
-            if field.required and field.name not in self.inputFieldNames:
+            if field.required and field.name not in self.input_field_names:
                 missing_params.append((field.name, field.text))
         if missing_params:
             raise ParamsMissing(missing_params)

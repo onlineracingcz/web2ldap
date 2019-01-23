@@ -194,7 +194,7 @@ class Web2LDAPForm(web2ldap.web.forms.Form):
         result = []
         for f in [
                 self.field[p]
-                for p in self.inputFieldNames
+                for p in self.input_field_names
                 if not p in ignoreFieldNames
             ]:
             for val in f.value:

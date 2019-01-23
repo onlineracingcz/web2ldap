@@ -116,7 +116,10 @@ def w2l_chasereferral(app, ref_exc):
             login_fields,
         )
     )
-    app.form.hiddenInputFields(app.outf, {'sid', 'host', 'dn', 'who', 'cred', 'login_search_root'})
+    app.form.hiddenInputFields(
+        app.outf,
+        ignore_fields={'sid', 'host', 'dn', 'who', 'cred', 'login_search_root'},
+    )
     app.outf.write('</form>\n')
 
     web2ldap.app.gui.footer(app)
