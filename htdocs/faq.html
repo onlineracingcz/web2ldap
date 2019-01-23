@@ -48,9 +48,7 @@
     You are probably running a wrong Python version or one of the
     <a href="web2ldapcnf.html">configuration modules</a>
     is screwed up.<br>
-    See <a href="install.html#Prerequisites">required software</a>
-    before starting web2ldap or have a closer look at the traceback where
-    the <var>SyntaxError</var> appears.
+    Have a closer look at the traceback where the <var>SyntaxError</var> appears.
   </dd>
 
   <dt>
@@ -58,9 +56,10 @@
     distribution</var> and get strange errors with...
   </dt>
   <dd>
-    Please check whether packages coming with your distribution
-    match the <em>version</em> of <a href="install.html#Prerequisites">
-    required software</a> before starting web2ldap.
+    Note that many Linux distribution ship outdated Python modules in
+    their package repositories. Thus for an easy start it is highly
+    recommended to install in a virtual env like described in the
+    <a href="install.html">installation instructions</a>.
   </dd>
 
   <dt>
@@ -150,15 +149,23 @@
     I would like to define a "select" item for certain input fields.
   </dt>
   <dd>
-    This can be easily done by defining a plug-in class based on
-    base class <var>w2lapp.schema.syntaxes.SelectList</var>
+    This can be easily done by defining a plug-in class
+    based on base class <var>web2ldap.app.schema.syntaxes.SelectList</var>
     and register it as a LDAP syntax handler or explicitly for an attribute type.
-    A simple example can be found in file
-    <var>web2ldap/w2lapp/schema/plugins/msperson.py</var>.<br>
+    A simple example can be found in the
+    <a href="https://gitlab.com/ae-dir/web2ldap/blob/master/web2ldap/app/plugins/samba.py#L153">
+      plugin module for Samba, class <var>SambaGroupType</var>
+    </a>.
+    <br>
     The select list can also be defined based on LDAP URLs specifying a
     dynamic result set used for the select options. Watch out for plugin
     classes based on <var>DynamicValueSelectList</var> or
     <var>DynamicDNSelectList</var>.
+    <br>
+    A simple example for that can also be found in the
+    <a href="https://gitlab.com/ae-dir/web2ldap/blob/master/web2ldap/app/plugins/samba.py#L153">
+      plugin module for Samba, class <var>SambaGroupSID</var>
+    </a>.
   </dd>
 
   <dt>
