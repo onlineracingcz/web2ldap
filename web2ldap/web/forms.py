@@ -416,7 +416,7 @@ class Radio(Field):
         """
         pattern and maxLen are determined from __init__ params
         Additional parameters:
-        options=[]
+        options
           List of options. Either just a list of strings
           ['value1','value2',..] for simple options
           or a list of tuples of string pairs
@@ -920,7 +920,7 @@ class Form:
         self.field[field.name] = field
         return # Form.add_field()
 
-    def getInputValue(self, name, default=[]):
+    def getInputValue(self, name, default=None):
         """
         Return input value of a field defined by name if presented
         in form input. Return default else.
