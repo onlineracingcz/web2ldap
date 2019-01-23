@@ -2231,34 +2231,44 @@ class ComposedAttribute(LDAPSyntax):
     attribute ComposedDirectoryString.compose_templates.
     See examples in module web2ldap.app.plugins.inetorgperson.
 
-    Obviously this only works for single value attributes.
+    Obviously this only works for single-valued attributes,
+    more precisely only the "first" attribute value is used.
     """
     oid = 'ComposedDirectoryString-oid'
     compose_templates = ()
 
     class single_value_dict(dict):
+        """
+        dictionary-like class which only stores and returns the
+        first value of an attribute value list
+        """
 
         def __init__(self, entry=None):
             dict.__init__(self)
             entry = entry or {}
-            for k, v in entry.items():
-                self.__setitem__(k, v)
+            for key, val in entry.items():
+                self.__setitem__(key, val)
 
-        def __setitem__(self, k, v):
-            if v and v[0]:
-                dict.__setitem__(self, k, v[0])
+        def __setitem__(self, key, val):
+            if val and val[0]:
+                dict.__setitem__(self, key, val[0])
 
     def formValue(self):
         """
-        Return a dummy value that attribute seen when calling .transmute()
+        Return a dummy value that attribute is returned from input form and
+        then seen by .transmute()
         """
         return u''
 
     def transmute(self, attrValues):
-        e = self.single_value_dict(self._entry)
-        for t in self.compose_templates:
+        """
+        always returns a list with a single value based on the first
+        successfully applied compose template
+        """
+        entry = self.single_value_dict(self._entry)
+        for template in self.compose_templates:
             try:
-                attr_values = [t.format(**e)]
+                attr_values = [template.format(**entry)]
             except KeyError:
                 continue
             else:
@@ -2268,6 +2278,9 @@ class ComposedAttribute(LDAPSyntax):
         return attr_values
 
     def formField(self):
+        """
+        composed attributes must only have hidden input field
+        """
         input_field = web2ldap.web.forms.HiddenInput(
             self.attrType,
             ': '.join([self.attrType, self.desc]),
