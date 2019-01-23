@@ -288,7 +288,7 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     return result # ContextMenuSingleEntry()
 
 
-def WhoAmITemplate(app, who=None, entry=None):
+def display_authz_dn(app, who=None, entry=None):
     if who is None:
         if hasattr(app.ls, 'who') and app.ls.who:
             who = app.ls.who
@@ -320,7 +320,7 @@ def WhoAmITemplate(app, who=None, entry=None):
                         pass
     else:
         result = app.form.utf2display(who)
-    return result # WhoAmITemplate()
+    return result # display_authz_dn()
 
 
 
@@ -483,7 +483,7 @@ def top_section(
             'dit_navi': ',\n'.join(dit_navigation(app)),
             'dn': app.form.utf2display(app.dn),
         })
-        template_dict['who'] = WhoAmITemplate(app)
+        template_dict['who'] = display_authz_dn(app)
 
     app.outf.write(top_template_str.format(**template_dict))
 

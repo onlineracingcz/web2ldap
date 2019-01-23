@@ -579,7 +579,7 @@ class AuthzDN(DistinguishedName):
                 valueindex,
                 commandbutton=False,
             )
-            whoami_display_str = web2ldap.app.gui.WhoAmITemplate(
+            whoami_display_str = web2ldap.app.gui.display_authz_dn(
                 self._app,
                 who=self.attrValue.decode(self._app.ls.charset)
             )

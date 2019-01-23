@@ -215,7 +215,7 @@ def passwd_form(
         value_passwd_action=app.form.hiddenFieldHTML('passwd_action', passwd_action, u''),
         value_passwd_who=app.form.hiddenFieldHTML('passwd_who', passwd_who, u''),
         text_desc={False:'Change password for', True:'Change own password of'}[own_pwd_change],
-        text_whoami=web2ldap.app.gui.WhoAmITemplate(app, passwd_who),
+        text_whoami=web2ldap.app.gui.display_authz_dn(app, passwd_who),
         disable_oldpw_start={False:'', True:'<!--'}[not own_pwd_change],
         disable_oldpw_end={False:'', True:'-->'}[not own_pwd_change],
         disable_ownuser_start={False:'', True:'<!--'}[own_pwd_change],
