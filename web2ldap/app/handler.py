@@ -688,15 +688,15 @@ class AppHandler(object):
         # initialize Form instance
         self.form = FORM_CLASS.get(self.command, Web2LDAPForm)(self.inf, self.env)
 
-        if self.command in FORM_CLASS and not isLDAPUrl(self.form.query_string):
-            # get the input fields
-            self.form.getInputFields()
-
         #---------------------------------------------------------------
         # try-except block for gracefully exception handling in the UI
         #---------------------------------------------------------------
 
         try:
+
+            if self.command in FORM_CLASS and not isLDAPUrl(self.form.query_string):
+                # get the input fields
+                self.form.getInputFields()
 
             # Check access here
             if not check_access(self.env, self.command):
