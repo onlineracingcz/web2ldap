@@ -8,10 +8,11 @@ from __future__ import absolute_import
 
 import re
 import hashlib
-from base64 import b64encode
+import binascii
 
 import paramiko
 
+from web2ldap.log import logger
 from web2ldap.app.schema.syntaxes import DirectoryString, syntax_registry
 
 PARAMIKO_KEYCLASS = {
@@ -57,12 +58,13 @@ class SshPublicKey(DirectoryString):
             pk_comment = None
             pk_type, pk_base64 = attr_value.split(' ', 1)
         try:
-            pk_bin = pk_base64.decode('base64')
+            pk_bin = binascii.a2b_base64(pk_base64)
             pk_fingerprints = dict([
                 (hash_algo, hashlib.new(hash_algo, pk_bin).digest())
                 for hash_algo in self.hash_algorithms
             ])
-        except Exception:
+        except Exception as err:
+            logger.warn('Error decoding SSH public key: %s', err)
             pk_bin, pk_fingerprints = None, None
         return pk_type, pk_comment, pk_bin, pk_fingerprints
 
@@ -129,7 +131,7 @@ class SshPublicKey(DirectoryString):
                         hash_algo,
                         self._app.form.utf2display(
                             self._strip_padding(
-                                b64encode(pk_fingerprints[hash_algo]).strip()
+                                binascii.b2a_base64(pk_fingerprints[hash_algo]).strip()
                             ).decode('ascii')
                         ),
                     )

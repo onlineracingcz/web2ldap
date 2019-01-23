@@ -16,12 +16,7 @@ from __future__ import absolute_import
 import re
 
 pem_re = re.compile('-----BEGIN (CERTIFICATE|X509 CRL|CERTIFICATE REQUEST|PKCS7|CMS|PRIVATE KEY|ATTRIBUTE CERTIFICATE)-----([ \w+/=\r\n]+?)-----END (CERTIFICATE|X509 CRL|CERTIFICATE REQUEST|PKCS7)-----',re.S+re.M)
-base64_re = re.compile('^[ \w+/=\r\n]+$',re.S+re.M)
 
-def is_base64(s):
-  """Regex based check if s has only chars used with base64 encoding"""
-  rm = base64_re.match(s)
-  return rm!=None
 
 def HexString(data,delimiter=':',wrap=None,indent=0,linesep='\n'):
   """

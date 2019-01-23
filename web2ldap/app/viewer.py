@@ -22,7 +22,6 @@ import web2ldap.web.forms
 import web2ldap.web.helper
 import web2ldap.app.gui
 import web2ldap.app.core
-from web2ldap.mspki.util import is_base64
 from web2ldap.mspki import x509v3, asn1helper, asn1types
 
 viewer_func = {}
@@ -59,10 +58,12 @@ def x509_prep(value):
     This function returns raw DER cert data no matter what mess was stored
     in value before.
     """
-    if is_base64(value):
-        return value.strip().decode('base64')
-    elif value.startswith('{ASN}'):
+    if value.startswith('{ASN}'):
         return binascii.unhexlify(value[5:])
+    try:
+        return binascii.a2b_base64(value.strip())
+    except binascii.Error:
+        pass
     return value
 
 
