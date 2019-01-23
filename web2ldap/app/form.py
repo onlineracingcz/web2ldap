@@ -373,7 +373,8 @@ class Web2LDAPForm_ldapparams(Web2LDAPForm):
 
 
 class AttributeValueInput(web2ldap.web.forms.Input):
-    def _encodeValue(self, value):
+
+    def _decodeValue(self, value):
         return value
 
 
