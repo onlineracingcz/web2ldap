@@ -16,18 +16,13 @@ from __future__ import absolute_import
 
 import time
 
-import web2ldap.web.forms
-
-# Modules shipped with web2ldap
 import web2ldapcnf
 import web2ldapcnf.hosts
 
+import web2ldap.web.forms
 import web2ldap.app.core
 import web2ldap.app.gui
 
-##############################################################################
-# Connect form
-##############################################################################
 
 def w2l_connect(app, h1_msg='Connect', error_msg=''):
     """
