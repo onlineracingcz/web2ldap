@@ -83,12 +83,12 @@ class Certificate(Binary):
     def displayValue(self, valueindex=0, commandbutton=False):
         html = [
             '%d bytes | %s' % (
-                len(self.attrValue),
+                len(self._av),
                 self._app.anchor(
                     'read', 'View/Load',
                     [
                         ('dn', self._dn),
-                        ('read_attr', self.attrType),
+                        ('read_attr', self._at),
                         ('read_attrindex', str(valueindex)),
                         ('read_attrmode', 'view'),
                     ],
@@ -96,7 +96,7 @@ class Certificate(Binary):
             )
         ]
         try:
-            x509 = asn1crypto.x509.Certificate.load(self.attrValue)
+            x509 = asn1crypto.x509.Certificate.load(self._av)
         except ValueError:
             return ''.join(html)
         html.append(
@@ -163,19 +163,19 @@ class CertificateList(Binary):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         links_html = '%d bytes | %s' % (
-            len(self.attrValue),
+            len(self._av),
             self._app.anchor(
                 'read', 'View/Load',
                 [
                     ('dn', self._dn),
-                    ('read_attr', self.attrType),
+                    ('read_attr', self._at),
                     ('read_attrindex', str(valueindex)),
                     ('read_attrmode', 'view'),
                 ],
             )
         )
         try:
-            x509 = asn1crypto.crl.CertificateList.load(self.attrValue)
+            x509 = asn1crypto.crl.CertificateList.load(self._av)
         except ValueError:
             crl_html = ''
         else:

@@ -395,7 +395,7 @@ class OpenDSSyncHist(OctetString, DirectoryString):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         try:
-            mod_attr_type, mod_number, mod_type, mod_value = self.attrValue.split(':', 3)
+            mod_attr_type, mod_number, mod_type, mod_value = self._av.split(':', 3)
         except ValueError:
             return OctetString.displayValue(self, valueindex, commandbutton)
         first_str = self._app.form.utf2display(
@@ -422,10 +422,10 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
     desc = 'OpenDS/OpenDJ alternative bind DN'
 
     def formValue(self):
-        if not self.attrValue:
+        if not self._av:
             return u''
         entry = ldap0.cidict.cidict(self._entry)
-        attr_value = self.attrValue.decode(self._app.ls.charset)
+        attr_value = self._av.decode(self._app.ls.charset)
         try:
             dn_comp_list = explode_dn(attr_value)
         except ldap0.DECODING_ERROR:

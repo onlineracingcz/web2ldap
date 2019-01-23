@@ -161,9 +161,9 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
         return # __init__()
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        if not commandbutton or not self.attrValue:
+        if not commandbutton or not self._av:
             return OlcMultilineText.displayValue(self, valueindex, commandbutton)
-        srd = ldap0.openldap.SyncReplDesc(self.attrValue)
+        srd = ldap0.openldap.SyncReplDesc(self._av)
         return ' '.join((
             OlcMultilineText.displayValue(self, valueindex, commandbutton),
             web2ldap.app.gui.ldap_url_anchor(
@@ -261,7 +261,7 @@ class AuditContext(NamingContexts):
                 self._app.anchor(
                     'searchform', 'Search',
                     [
-                        ('dn', self.attrValue),
+                        ('dn', self._av),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
                     title=u'Go to search form for audit log',
@@ -269,7 +269,7 @@ class AuditContext(NamingContexts):
                 self._app.anchor(
                     'search', 'List all',
                     [
-                        ('dn', self.attrValue),
+                        ('dn', self._av),
                         ('filterstr', u'(objectClass=auditObject)'),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
@@ -278,7 +278,7 @@ class AuditContext(NamingContexts):
                 self._app.anchor(
                     'search', 'List writes',
                     [
-                        ('dn', self.attrValue),
+                        ('dn', self._av),
                         ('filterstr', u'(objectClass=auditWriteObject)'),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
@@ -312,11 +312,11 @@ class ReqMod(OctetString, DirectoryString):
     known_modtypes = {'+', '-', '=', '#', ''}
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        if self.attrValue == ':':
+        if self._av == ':':
             # magic value used for fixing OpenLDAP ITS#6545
-            return self.attrValue
+            return self._av
         try:
-            mod_attr_type, mod_attr_rest = self.attrValue.split(':', 1)
+            mod_attr_type, mod_attr_rest = self._av.split(':', 1)
             mod_type = mod_attr_rest[0].strip()
         except (ValueError, IndexError):
             return OctetString.displayValue(self, valueindex, commandbutton)
@@ -361,7 +361,7 @@ class ReqControls(IA5String):
     def displayValue(self, valueindex=0, commandbutton=False):
         result_lines = [IA5String.displayValue(self, valueindex, commandbutton)]
         # Eliminate X-ORDERED prefix
-        _, rest = self.attrValue.strip().split('}{', 1)
+        _, rest = self._av.strip().split('}{', 1)
         # check whether it ends with }
         if rest.endswith('}'):
             result_lines.append('Extracted:')
@@ -431,7 +431,7 @@ class ReqEntryUUID(UUID):
                     ('dn', self._dn),
                     (
                         'filterstr',
-                        u'(entryUUID=%s)' % (self.attrValue.decode('ascii')),
+                        u'(entryUUID=%s)' % (self._av.decode('ascii')),
                     ),
                     (
                         'search_root',
@@ -466,7 +466,7 @@ class ReqSession(Integer):
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'reqSession'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', self._app.ls.uc_decode(self.attrValue)[0]),
+                    ('search_string', self._app.ls.uc_decode(self._av)[0]),
                 ),
                 title=u'Search all audit entries with same session number',
             )
@@ -509,7 +509,7 @@ class OpenLDAPSpecialBackendSuffix(NamingContexts):
     desc = 'OpenLDAP special backend suffix'
 
     def _config_link(self):
-        attr_type_u = self._app.ls.uc_decode(self.attrType)[0][:-7]
+        attr_type_u = self._app.ls.uc_decode(self._at)[0][:-7]
         try:
             config_context = self._app.ls.uc_decode(self._app.ls.rootDSE['configContext'][0])[0]
         except KeyError:

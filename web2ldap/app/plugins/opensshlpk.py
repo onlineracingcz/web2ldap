@@ -146,7 +146,7 @@ class SshPublicKey(DirectoryString):
         return result
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        pk_type, pk_comment, pk_bin, pk_fingerprints = self._extract_pk_params(self.attrValue)
+        pk_type, pk_comment, pk_bin, pk_fingerprints = self._extract_pk_params(self._av)
         result = ['<dl>']
         result.extend(
             self._display_lines(

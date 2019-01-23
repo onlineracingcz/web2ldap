@@ -66,13 +66,13 @@ class SambaAcctFlags(IA5String):
     }
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        flags = self.attrValue[1:-1] # trim brackets
+        flags = self._av[1:-1] # trim brackets
         table_rows = [
             '<tr><td>%s</td><td>%s</td></tr>\n' % ({True:'*', False:''}[f in flags], d)
             for f, d in self.flags_dict.items()
         ]
         return '<pre>%s</pre><table>\n%s\n</table>\n' % (
-            self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0]),
+            self._app.form.utf2display(self._app.ls.uc_decode(self._av)[0]),
             ''.join(table_rows)
         )
 

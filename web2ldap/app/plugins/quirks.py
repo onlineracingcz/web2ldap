@@ -168,7 +168,7 @@ class NamingContexts(DistinguishedName):
     ldap_url = 'ldap:///cn=cn=config?olcSuffix?one?(objectClass=olcDatabaseConfig)'
 
     def _config_link(self):
-        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self._av)[0]
         config_context = None
         config_scope_str = None
         config_filter = None
@@ -201,7 +201,7 @@ class NamingContexts(DistinguishedName):
         return None
 
     def _monitor_link(self):
-        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self._av)[0]
         monitor_context = None
         monitor_scope_str = None
         monitor_filter = None
@@ -235,7 +235,7 @@ class NamingContexts(DistinguishedName):
         return None
 
     def _additional_links(self):
-        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self._av)[0]
         r = DistinguishedName._additional_links(self)
         r.append(self._app.anchor(
             'search', 'Down',

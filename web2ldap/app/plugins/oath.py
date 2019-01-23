@@ -172,7 +172,7 @@ class OathSecret(OctetString):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         return '<br>'.join((
-            self._app.form.utf2display(base64.b32encode(self.attrValue).decode('ascii')),
+            self._app.form.utf2display(base64.b32encode(self._av).decode('ascii')),
             OctetString.displayValue(self, valueindex, commandbutton),
         ))
 
@@ -198,7 +198,7 @@ class OathSecretTime(GeneralizedTime):
         else:
             return gt_disp_html
         try:
-            oath_secret_time_dt = strptime(self.attrValue)
+            oath_secret_time_dt = strptime(self._av)
         except ValueError:
             return gt_disp_html
         try:

@@ -50,11 +50,11 @@ class AutogenNumber(object):
                 ldap0.SCOPE_SUBTREE,
                 '(&(objectClass={0})({1}>={2})({1}<={3}))'.format(
                     self.object_class,
-                    self.attrType,
+                    self._at,
                     self.__class__.minNewValue,
                     self.__class__.maxNewValue
                 ),
-                attrlist=[self.attrType],
+                attrlist=[self._at],
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -68,9 +68,9 @@ class AutogenNumber(object):
             if ldap_dn is not None:
                 ldap_dn = ldap_dn.decode(self._app.ls.charset)
                 if ldap_dn == self._dn:
-                    return ldap_entry[self.attrType][0].decode(self._app.ls.charset)
+                    return ldap_entry[self._at][0].decode(self._app.ls.charset)
                 else:
-                    idnumber_set.add(int(ldap_entry[self.attrType][0]))
+                    idnumber_set.add(int(ldap_entry[self._at][0]))
         for idnumber in xrange(self.__class__.minNewValue, self.maxNewValue+1):
             if idnumber in idnumber_set:
                 self.__class__.minNewValue = idnumber

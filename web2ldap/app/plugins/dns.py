@@ -96,7 +96,7 @@ class AssociatedDomain(DNSDomain):
     def displayValue(self, valueindex=0, commandbutton=False):
         r = [DNSDomain.displayValue(self, valueindex, commandbutton)]
         if commandbutton:
-            av = self._app.ls.uc_decode(self.attrValue)[0].lower()
+            av = self._app.ls.uc_decode(self._av)[0].lower()
             r.append(self._app.anchor(
                 'search', 'Ref. RRs',
                 (
@@ -244,7 +244,7 @@ class ARecord(IPv4HostAddress):
     def displayValue(self, valueindex=0, commandbutton=False):
         r = [IPv4HostAddress.displayValue(self, valueindex, commandbutton)]
         if commandbutton:
-            ip_addr = self.addr_class(self.attrValue.decode('ascii'))
+            ip_addr = self.addr_class(self._av.decode('ascii'))
             try:
                 ip_addr.reverse_dns
             except AttributeError:
@@ -301,7 +301,7 @@ class AAAARecord(IPv6HostAddress):
     def displayValue(self, valueindex=0, commandbutton=False):
         r = [IPv6HostAddress.displayValue(self, valueindex, commandbutton)]
         if commandbutton:
-            ip_addr = self.addr_class(self.attrValue.decode('ascii'))
+            ip_addr = self.addr_class(self._av.decode('ascii'))
             try:
                 ip_addr.reverse_dns
             except AttributeError:
@@ -378,7 +378,7 @@ class SSHFPRecord(IA5String):
     def displayValue(self, valueindex=0, commandbutton=False):
         display_value = IA5String.displayValue(self, valueindex, commandbutton)
         try:
-            key_algo, fp_algo, _ = filter(None, map(string.strip, self.attrValue.split(' ')))
+            key_algo, fp_algo, _ = filter(None, map(string.strip, self._av.split(' ')))
         except ValueError:
             r = display_value
         else:

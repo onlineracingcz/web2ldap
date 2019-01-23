@@ -48,14 +48,14 @@ class UniventionLDAPACLData(Binary, MultilineText):
     desc = 'bzip2-ed LDAP ACL data in Univention'
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        attr_value = bz2.decompress(self.attrValue)
+        attr_value = bz2.decompress(self._av)
         attr_value_u = self._app.ls.uc_decode(attr_value)[0]
         lines = [
             self._app.form.utf2display(l, tab_identiation='    ')
             for l in self._split_lines(attr_value_u)
         ]
         return '<p>%d bytes <em>BZ2</em> data contains %d chars:</p><pre>%s</pre>' % (
-            len(self.attrValue),
+            len(self._av),
             len(attr_value_u),
             '<br>'.join(lines),
         )

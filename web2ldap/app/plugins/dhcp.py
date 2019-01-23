@@ -37,9 +37,9 @@ class DHCPConfigStatement(MultilineText):
         )]
         if commandbutton:
             try:
-                dhcp_type, dhcp_value = self.attrValue.split(' ', 1)
+                dhcp_type, dhcp_value = self._av.split(' ', 1)
             except ValueError:
-                dhcp_type, dhcp_value = self.attrValue, ''
+                dhcp_type, dhcp_value = self._av, ''
             dhcp_type = self._app.ls.uc_decode(dhcp_type.lower().strip())[0]
             dhcp_value = self._app.ls.uc_decode(dhcp_value.replace('"', '').strip())[0]
             if dhcp_type == 'host-name':

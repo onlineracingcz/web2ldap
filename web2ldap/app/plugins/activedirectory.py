@@ -130,15 +130,15 @@ class ObjectSID(OctetString, IA5String):
         return ''
 
     def formValue(self):
-        if self.attrValue:
-            return unicode(self._sid2sddl(self.attrValue), 'ascii')
+        if self._av:
+            return unicode(self._sid2sddl(self._av), 'ascii')
         return u''
 
     def formField(self):
         return IA5String.formField(self)
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        sddl_str = unicode(self._sid2sddl(self.attrValue), 'ascii')
+        sddl_str = unicode(self._sid2sddl(self._av), 'ascii')
         return '%s<br>%s' % (
             self._app.form.utf2display(sddl_str),
             OctetString.displayValue(self, valueindex, commandbutton),
@@ -205,7 +205,7 @@ class OtherSID(ObjectSID):
     }
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        sddl_str = unicode(self._sid2sddl(self.attrValue), 'ascii')
+        sddl_str = unicode(self._sid2sddl(self._av), 'ascii')
         search_anchor = self.well_known_sids.get(sddl_str, '')
         if commandbutton and sddl_str not in self.well_known_sids:
             search_anchor = self._app.anchor(
@@ -464,7 +464,7 @@ class LogonHours(OctetString):
         return len(attrValue) == 21
 
     def formValue(self):
-        hour_flags = self._extract_hours(self.attrValue)
+        hour_flags = self._extract_hours(self._av)
         if hour_flags:
             day_bits = [
                 ''.join(hour_flags[24*day:24*day+24])
@@ -477,8 +477,8 @@ class LogonHours(OctetString):
     def formField(self):
         form_value = self.formValue()
         return web2ldap.web.forms.Textarea(
-            self.attrType,
-            ': '.join([self.attrType, self.desc]),
+            self._at,
+            ': '.join([self._at, self.desc]),
             self.maxLen,
             1,
             None,
@@ -488,7 +488,7 @@ class LogonHours(OctetString):
         )
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        hour_flags = self._extract_hours(self.attrValue)
+        hour_flags = self._extract_hours(self._av)
         result_lines = [
             """<tr>
             <th width="10%%">Day</th>
@@ -574,7 +574,7 @@ class DNWithOctetString(DistinguishedName):
 
     def _validate(self, attrValue):
         try:
-            octet_tag, count, octet_string, dn = self.attrValue.split(':')
+            octet_tag, count, octet_string, dn = self._av.split(':')
         except ValueError:
             return False
         try:
@@ -590,9 +590,9 @@ class DNWithOctetString(DistinguishedName):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         try:
-            octet_tag, count, octet_string, dn = self.attrValue.split(':', 3)
+            octet_tag, count, octet_string, dn = self._av.split(':', 3)
         except ValueError:
-            return self._app.form.utf2display(self._app.ls.uc_decode(self.attrValue)[0])
+            return self._app.form.utf2display(self._app.ls.uc_decode(self._av)[0])
         return ':'.join([
             octet_tag,
             count,
@@ -633,7 +633,7 @@ class MsAdGUID(OctetString):
         return object_guid_uuid.bytes
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        object_guid_uuid = uuid.UUID(bytes=self.attrValue)
+        object_guid_uuid = uuid.UUID(bytes=self._av)
         return '{%s}<br>%s' % (
             str(object_guid_uuid),
             OctetString.displayValue(self, valueindex=0, commandbutton=False),
@@ -658,15 +658,15 @@ class Interval(MicrosoftLargeInteger):
         return (long(attrValue)-116444736000000000L)/10000000
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        if self.attrValue == '9223372036854775807':
+        if self._av == '9223372036854775807':
             return '-1: unlimited/off'
-        delta = self._delta(self.attrValue)
+        delta = self._delta(self._av)
         if delta >= 0:
             return '%s (%s)' % (
                 MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton),
                 self._app.form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
             )
-        return self.attrValue
+        return self._av
 
 
 class LockoutTime(Interval):
@@ -674,7 +674,7 @@ class LockoutTime(Interval):
     desc = 'Timestamp of password failure lockout'
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        delta = self._delta(self.attrValue)
+        delta = self._delta(self._av)
         if delta == 0:
             return '%s (not locked)' % (MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton))
         elif delta < 0:

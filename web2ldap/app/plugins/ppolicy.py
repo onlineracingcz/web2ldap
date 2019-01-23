@@ -83,7 +83,7 @@ class PwdMaxAge(Timespan):
         return (
             ('search_attr', 'pwdChangedTime'),
             ('search_option', web2ldap.app.searchform.SEARCH_OPT_LE_THAN),
-            ('search_string', self._search_timestamp(int(self.attrValue.strip()))),
+            ('search_string', self._search_timestamp(int(self._av.strip()))),
         )
 
     def displayValue(self, valueindex=0, commandbutton=False):
@@ -123,7 +123,7 @@ class PwdExpireWarning(PwdMaxAge):
     title_text = u'Search for entries with this password policy and soon to expire password'
 
     def _timespan_search_params(self):
-        pwd_expire_warning = int(self.attrValue.strip())
+        pwd_expire_warning = int(self._av.strip())
         pwd_max_age = int(self._entry['pwdMaxAge'][0].strip())
         warn_timestamp = pwd_max_age-pwd_expire_warning
         return (
@@ -154,8 +154,8 @@ class PwdAccountLockedTime(GeneralizedTime):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         gt_disp_html = GeneralizedTime.displayValue(self, valueindex, commandbutton)
-        if self.attrValue in self.magic_values:
-            return '%s (%s)' % (gt_disp_html, self.magic_values[self.attrValue])
+        if self._av in self.magic_values:
+            return '%s (%s)' % (gt_disp_html, self.magic_values[self._av])
         return gt_disp_html
 
 syntax_registry.reg_at(
@@ -173,7 +173,7 @@ class PwdChangedTime(GeneralizedTime):
     def displayValue(self, valueindex=0, commandbutton=False):
         gt_disp_html = GeneralizedTime.displayValue(self, valueindex, commandbutton)
         try:
-            pwd_changed_dt = strptime(self.attrValue)
+            pwd_changed_dt = strptime(self._av)
         except ValueError:
             return gt_disp_html
         try:

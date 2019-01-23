@@ -17,7 +17,7 @@ class EntryTTL(Timespan):
     desc = 'Time-to-live of dynamic entry'
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        expiration_time = time.time()+int(self.attrValue)
+        expiration_time = time.time()+int(self._av)
         return '%s, expires %s' % (
             Timespan.displayValue(self, valueindex, commandbutton),
             strftimeiso8601(time.gmtime(expiration_time)),
@@ -36,7 +36,7 @@ class DynamicSubtrees(DistinguishedName):
 
     def _additional_links(self):
         r = DistinguishedName._additional_links(self)
-        attr_value_u = self._app.ls.uc_decode(self.attrValue)[0]
+        attr_value_u = self._app.ls.uc_decode(self._av)[0]
         r.append(
             self._app.anchor(
                 'search', 'Search',

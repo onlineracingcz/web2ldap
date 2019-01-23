@@ -114,7 +114,7 @@ class OctetStringGUID(OctetString):
         ))
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        if self.attrType == u'GUID':
+        if self._at == u'GUID':
             # GUID of an entry is displayed in several variants
             return """
             <table summary="GUID representation variants">
@@ -126,20 +126,20 @@ class OctetStringGUID(OctetString):
             </table>
             """ % (
                 OctetString.displayValue(self, valueindex, commandbutton),
-                str(uuid.UUID(bytes=self.attrValue)),
-                self._guid2association(self.attrValue),
-                self._guid2assoc(self.attrValue),
-                self._guid2assoc_c1(self.attrValue),
+                str(uuid.UUID(bytes=self._av)),
+                self._guid2association(self._av),
+                self._guid2assoc(self._av),
+                self._guid2assoc_c1(self._av),
             )
         # GUID of an referenced entry is just displayed as in Console 1 / iManager
         # with a link for searching the entry
         return web2ldapcnf.command_link_separator.join((
-            self._guid2assoc_c1(self.attrValue),
+            self._guid2assoc_c1(self._av),
             self._app.anchor(
                 'searchform', '&raquo;',
                 [
                     ('dn', self._dn),
-                    ('filterstr', ldap0.filter.escape_filter_chars(self.attrValue, 2)),
+                    ('filterstr', ldap0.filter.escape_filter_chars(self._av, 2)),
                     ('searchform_mode', u'exp'),
                 ],
                 title=u'Search entry with this GUID',
@@ -180,7 +180,7 @@ class IndexDefinition(DollarSeparatedMultipleLines):
                 index_type,
                 value_state,
                 nds_attribute_name,
-            ) = self.attrValue.split('$')
+            ) = self._av.split('$')
             version = int(version)
             index_name = self._app.ls.uc_decode(index_name)[0]
             state = int(state)
@@ -222,13 +222,13 @@ class TaggedNameAndString(DirectoryString):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         try:
-            ind2 = self.attrValue.rindex('#')
-            ind1 = self.attrValue.rindex('#', 0, ind2-1)
+            ind2 = self._av.rindex('#')
+            ind1 = self._av.rindex('#', 0, ind2-1)
         except ValueError:
             return DirectoryString.displayValue(self, valueindex, commandbutton)
-        dn = self._app.ls.uc_decode(self.attrValue[0:ind1])[0]
-        number = self.attrValue[ind1+1:ind2]
-        dstring = self.attrValue[ind2+1:]
+        dn = self._app.ls.uc_decode(self._av[0:ind1])[0]
+        number = self._av[ind1+1:ind2]
+        dstring = self._av[ind2+1:]
         try:
             dstring.decode('utf8')
         except UnicodeError:
