@@ -690,17 +690,17 @@ def search_root_field(
     return srf # search_root_field()
 
 
-def ExceptionMsg(app, Heading, Msg):
+def exception_message(app, h1_msg, error_msg):
     """
-    Heading
+    h1_msg
       Unicode string with text for the <h1> heading
-    Msg
+    error_msg
       Raw string with HTML with text describing the exception
       (Security note: Must already be quoted/escaped!)
     """
     top_section(app, 'Error', main_menu(app), context_menu_list=[])
-    if isinstance(Msg, unicode):
-        Msg = Msg.encode(app.form.accept_charset)
+    if isinstance(error_msg, unicode):
+        error_msg = error_msg.encode(app.form.accept_charset)
     app.outf.write(
         """
         <h1>{heading}</h1>
@@ -708,9 +708,9 @@ def ExceptionMsg(app, Heading, Msg):
           {error_msg}
         </p>
         """.format(
-            heading=app.form.utf2display(Heading),
-            error_msg=Msg,
+            heading=app.form.utf2display(h1_msg),
+            error_msg=error_msg,
         )
     )
     footer(app)
-    return # ExceptionMsg()
+    return # exception_message()

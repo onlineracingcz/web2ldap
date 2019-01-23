@@ -64,7 +64,7 @@ import web2ldap.app.urlredirect
 import web2ldap.app.bulkmod
 import web2ldap.app.srvrr
 import web2ldap.app.schema.viewer
-from web2ldap.app.gui import ExceptionMsg
+from web2ldap.app.gui import exception_message
 from web2ldap.app.form import Web2LDAPForm
 from web2ldap.app.session import session_store
 from web2ldap.app.schema.syntaxes import syntax_registry
@@ -900,7 +900,7 @@ class AppHandler(object):
 
         except web2ldap.web.forms.FormException as form_error:
             log_exception(self.env, self.ls)
-            ExceptionMsg(
+            exception_message(
                 self,
                 u'Error parsing form',
                 u'Error parsing form: %s' % (
@@ -936,7 +936,7 @@ class AppHandler(object):
             failed_dn = self.dn
             if 'matched' in ldap_err.args[0]:
                 self.dn = ldap_err.args[0]['matched']
-            ExceptionMsg(
+            exception_message(
                 self,
                 u'No such object',
                 self.ldap_error_msg(
@@ -1015,7 +1015,7 @@ class AppHandler(object):
 
         except (IOError, UnicodeError) as err:
             log_exception(self.env, self.ls)
-            ExceptionMsg(
+            exception_message(
                 self,
                 u'Unhandled %s' % err.__class__.__name__.decode('ascii'),
                 self.form.utf2display(str(err).decode('ascii')),
@@ -1023,7 +1023,7 @@ class AppHandler(object):
 
         except ldap0.LDAPError as ldap_err:
             log_exception(self.env, self.ls)
-            ExceptionMsg(
+            exception_message(
                 self,
                 u'Unhandled %s' % ldap_err.__class__.__name__.decode('ascii'),
                 self.ldap_error_msg(ldap_err),
@@ -1039,7 +1039,7 @@ class AppHandler(object):
                 socket_errno = None
             if socket_errno not in (errno.EPIPE, errno.ECONNRESET):
                 log_exception(self.env, self.ls)
-                ExceptionMsg(
+                exception_message(
                     self,
                     u'Socket Error',
                     self.form.utf2display(str(socket_err).decode('ascii')),
@@ -1047,7 +1047,7 @@ class AppHandler(object):
 
         except ErrorExit as error_exit:
             logger.warn('ErrorExit: %r', error_exit.Msg)
-            ExceptionMsg(
+            exception_message(
                 self,
                 u'Error',
                 error_exit.Msg,
