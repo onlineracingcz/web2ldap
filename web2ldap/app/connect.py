@@ -34,7 +34,7 @@ def w2l_connect(app, h1_msg='Connect', error_msg=''):
     Display the landing page with a connect form
     """
 
-    connect_template_str = web2ldap.app.gui.ReadTemplate(
+    connect_template_str = web2ldap.app.gui.read_template(
         app, None, u'connect form',
         tmpl_filename=web2ldapcnf.connect_template
     )

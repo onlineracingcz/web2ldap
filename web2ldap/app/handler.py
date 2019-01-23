@@ -446,7 +446,7 @@ class AppHandler(object):
         if self.form is None:
             self.form = Web2LDAPForm(None, self.env)
         target_url = target_url or self.script_name
-        url_redirect_template_str = web2ldap.app.gui.ReadTemplate(
+        url_redirect_template_str = web2ldap.app.gui.read_template(
             self, None, u'redirect',
             tmpl_filename=web2ldapcnf.redirect_template,
         )

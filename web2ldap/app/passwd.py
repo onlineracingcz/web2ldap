@@ -193,7 +193,7 @@ def passwd_form(
     nthash_available = '1.3.6.1.4.1.7165.2.1.25' in all_attrs
     show_clientside_pw_fields = passwd_action == 'setuserpassword' and not unicode_pwd_avail
 
-    passwd_template_str = web2ldap.app.gui.ReadTemplate(
+    passwd_template_str = web2ldap.app.gui.read_template(
         app,
         'passwd_template',
         u'password form',

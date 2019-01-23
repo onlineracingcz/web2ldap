@@ -104,7 +104,7 @@ def w2l_rename(app):
 
     app.form.field['rename_newrdn'].set_default(old_rdn)
 
-    rename_template_str = web2ldap.app.gui.ReadTemplate(app, 'rename_template', u'rename form')
+    rename_template_str = web2ldap.app.gui.read_template(app, 'rename_template', u'rename form')
 
     rename_supsearchurl = app.form.getInputValue('rename_supsearchurl', [None])[0]
     try:

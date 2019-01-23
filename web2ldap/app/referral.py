@@ -84,7 +84,7 @@ def w2l_chasereferral(app, ref_exc):
         web2ldap.app.gui.footer(app)
         return
 
-    login_template_str = web2ldap.app.gui.ReadTemplate(
+    login_template_str = web2ldap.app.gui.read_template(
         app, 'login_template', u'referral login form'
     )
 

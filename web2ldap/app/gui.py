@@ -84,7 +84,7 @@ def GetVariantFilename(pathname, variantlist):
     return variant_filename
 
 
-def ReadTemplate(app, config_key, form_desc=u'', tmpl_filename=None):
+def read_template(app, config_key, form_desc=u'', tmpl_filename=None):
     if not tmpl_filename:
         tmpl_filename = app.cfg_param(config_key, None)
     if not tmpl_filename:
@@ -95,7 +95,7 @@ def ReadTemplate(app, config_key, form_desc=u'', tmpl_filename=None):
         tmpl_str = open(tmpl_filename, 'r').read()
     except IOError:
         raise web2ldap.app.core.ErrorExit(u'I/O error during reading %s template file.' % (form_desc))
-    return tmpl_str # ReadTemplate()
+    return tmpl_str # read_template()
 
 
 def dn_anchor_hash(dn):
@@ -439,7 +439,7 @@ def top_section(
     Header(app, 'text/html', app.form.accept_charset)
 
     # Read the template file for TopSection
-    top_template_str = web2ldap.app.gui.ReadTemplate(app, 'top_template', u'top section')
+    top_template_str = web2ldap.app.gui.read_template(app, 'top_template', u'top section')
 
     script_name = escape_html(app.form.script_name)
 

@@ -51,7 +51,7 @@ def w2l_login(
     )
     login_search_root_field.set_default(login_search_root)
 
-    login_template_str = web2ldap.app.gui.ReadTemplate(app, 'login_template', u'login form')
+    login_template_str = web2ldap.app.gui.read_template(app, 'login_template', u'login form')
 
     if nomenu:
         main_menu_list = []
