@@ -48,7 +48,7 @@ def dds_form(app, msg):
             'Enter time-to-live for refresh request or leave empty for server-side default.'
             '</p>'
         )
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app, 'Refresh dynamic entry',
         web2ldap.app.gui.main_menu(app),
         context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app),

@@ -294,7 +294,7 @@ def w2l_searchform(
     )
     searchoptions_template_str = open(searchoptions_template_filename, 'r').read()
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         '%s Search Form' % SEARCHFORM_MODE_TEXT[searchform_mode],
         web2ldap.app.gui.main_menu(app),

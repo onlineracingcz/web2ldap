@@ -814,8 +814,8 @@ def ObjectClassForm(
         for template_name in addform_entry_templates_keys:
             ldif_dn, ldif_entry = ReadLDIFTemplate(app, template_name)
             tmpl_parent_dn = web2ldap.ldaputil.base.parent_dn(
-                ldif_dn.decode(app.ls.charset)).decode(app.ls.charset
-            ) or parent_dn
+                ldif_dn.decode(app.ls.charset)
+            ).decode(app.ls.charset) or parent_dn
             # first check whether mandatory attributes in parent entry are readable
             if addform_parent_attrs:
                 try:
@@ -929,7 +929,7 @@ def ObjectClassForm(
     else:
         context_menu_list = web2ldap.app.gui.ContextMenuSingleEntry(app)
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         H1_MSG[app.command],
         web2ldap.app.gui.main_menu(app),
@@ -1204,7 +1204,7 @@ def w2l_addform(
             ))
             input_formtype = u'Table'
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         H1_MSG[app.command],
         web2ldap.app.gui.main_menu(app),
@@ -1325,7 +1325,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
             ))
             input_formtype = u'Table'
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         H1_MSG[app.command],
         web2ldap.app.gui.main_menu(app),

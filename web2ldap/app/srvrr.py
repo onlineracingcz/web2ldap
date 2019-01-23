@@ -57,7 +57,7 @@ def w2l_chasesrvrecord(app, host_list):
         'host', 'Host selection', 1,
         options=host_list, default=host_list[0], ignoreCase=1
     )
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         'LDAP server located via DNS',
         web2ldap.app.gui.main_menu(app),

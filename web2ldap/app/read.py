@@ -470,7 +470,7 @@ def w2l_read(app):
             ):
 
             # Nice displaying of binary attribute with viewer class
-            web2ldap.app.gui.TopSection(
+            web2ldap.app.gui.top_section(
                 app,
                 '',
                 web2ldap.app.gui.main_menu(app),
@@ -513,7 +513,7 @@ def w2l_read(app):
 
         # Display the whole entry with all its attributes
 
-        web2ldap.app.gui.TopSection(
+        web2ldap.app.gui.top_section(
             app,
             '',
             web2ldap.app.gui.main_menu(app),

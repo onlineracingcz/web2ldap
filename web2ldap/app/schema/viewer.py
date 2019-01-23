@@ -232,7 +232,7 @@ class DisplaySchemaElement:
                         )
                     )
         obsolete = self.se.__dict__.get('obsolete', 0)
-        web2ldap.app.gui.TopSection(
+        web2ldap.app.gui.top_section(
             self._app,
             '%s %s (%s)' % (
                 self.type_desc,
@@ -655,7 +655,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
     )
 
     def display(self):
-        web2ldap.app.gui.TopSection(
+        web2ldap.app.gui.top_section(
             self._app,
             '%s %s (%s)' % (
                 self.type_desc,
@@ -759,7 +759,7 @@ def display_schema_elements(app, se_classes, se_list):
     se_list = se_list or []
     se_classes = filter(None, se_classes or []) or SCHEMA_CLASS_MAPPING.values()
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         'Schema elements',
         web2ldap.app.gui.main_menu(app),

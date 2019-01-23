@@ -391,7 +391,7 @@ def w2l_delete(app):
         else:
             inner_form = del_subtree_form(app, scope)
         # Output confirmation form
-        web2ldap.app.gui.TopSection(
+        web2ldap.app.gui.top_section(
             app,
             'Delete entry?',
             web2ldap.app.gui.main_menu(app),

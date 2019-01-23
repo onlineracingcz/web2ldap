@@ -156,7 +156,7 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
                         ])
                     table.append(self._p[template_oc[0]] % (tableentry))
         # Output search results as pretty-printable table without buttons
-        web2ldap.app.gui.TopSection(self._app, 'Printable Search Results', [])
+        web2ldap.app.gui.top_section(self._app, 'Printable Search Results', [])
         self._app.outf.write(
             """
             <table
@@ -820,7 +820,7 @@ def w2l_search(app):
                 search_bookmark,
             )
 
-            web2ldap.app.gui.TopSection(
+            web2ldap.app.gui.top_section(
                 app,
                 'Search Results',
                 web2ldap.app.gui.main_menu(app),

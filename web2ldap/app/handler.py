@@ -415,7 +415,7 @@ class AppHandler(object):
             main_menu_list=None,
             context_menu_list=None,
         ):
-        web2ldap.app.gui.TopSection(
+        web2ldap.app.gui.top_section(
             self,
             title,
             main_menu_list,

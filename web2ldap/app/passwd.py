@@ -199,7 +199,7 @@ def passwd_form(
         u'password form',
     )
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         'Change password',
         web2ldap.app.gui.main_menu(app),

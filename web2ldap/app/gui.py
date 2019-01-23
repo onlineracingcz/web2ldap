@@ -427,7 +427,7 @@ def dit_navigation(app):
     return result # dit_navigation()
 
 
-def TopSection(
+def top_section(
         app,
         title,
         main_menu_list,
@@ -487,7 +487,7 @@ def TopSection(
 
     app.outf.write(top_template_str.format(**template_dict))
 
-    return # TopSection()
+    return # top_section()
 
 
 def SchemaElementName(
@@ -698,7 +698,7 @@ def ExceptionMsg(app, Heading, Msg):
       Raw string with HTML with text describing the exception
       (Security note: Must already be quoted/escaped!)
     """
-    TopSection(app, 'Error', main_menu(app), context_menu_list=[])
+    top_section(app, 'Error', main_menu(app), context_menu_list=[])
     if isinstance(Msg, unicode):
         Msg = Msg.encode(app.form.accept_charset)
     app.outf.write(

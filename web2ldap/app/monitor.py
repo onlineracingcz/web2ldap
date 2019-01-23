@@ -153,7 +153,7 @@ def w2l_monitor(app):
     except KeyError:
         posix_username = '-/-'
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         'Monitor',
         web2ldap.app.gui.simple_main_menu(app),

@@ -189,7 +189,7 @@ def w2l_rename(app):
         rename_supsearchurl_field.setOptions(rename_supsearchurl_cfg.keys())
 
     # Output empty input form for new RDN
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         'Rename Entry',
         web2ldap.app.gui.main_menu(app),

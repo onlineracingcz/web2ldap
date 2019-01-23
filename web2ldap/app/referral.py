@@ -32,7 +32,7 @@ def w2l_chasereferral(app, ref_exc):
     Present an input form to change to a server referenced by referral
     """
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         'Referral received',
         web2ldap.app.gui.main_menu(app),

@@ -166,7 +166,7 @@ def bulkmod_input_form(
         [], default_attr_options=None
     )
     # Output confirmation form
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         'Bulk modification input',
         web2ldap.app.gui.main_menu(app),
@@ -282,7 +282,7 @@ def bulkmod_confirmation_form(
         bulk_mod_list_ldif = '- none -'
 
     # Output confirmation form
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         'Modify entries?',
         web2ldap.app.gui.main_menu(app),

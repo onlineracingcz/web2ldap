@@ -33,7 +33,7 @@ def w2l_ldapparams(app):
     if ldap_deref:
         app.ls.l.deref = int(ldap_deref[0])
 
-    web2ldap.app.gui.TopSection(
+    web2ldap.app.gui.top_section(
         app,
         'LDAP Connection Parameters',
         web2ldap.app.gui.main_menu(app),
