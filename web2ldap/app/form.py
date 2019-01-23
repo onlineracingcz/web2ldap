@@ -372,12 +372,6 @@ class Web2LDAPForm_ldapparams(Web2LDAPForm):
         )
 
 
-class AttributeValueInput(web2ldap.web.forms.Input):
-
-    def _decodeValue(self, value):
-        return value
-
-
 class Web2LDAPForm_input(Web2LDAPForm):
 
     """Base class for entry data input not directly used"""
@@ -395,7 +389,7 @@ class Web2LDAPForm_input(Web2LDAPForm):
         self.add_field(AttributeType('in_at', u'Attribute type', web2ldapcnf.input_maxattrs))
         self.add_field(AttributeType('in_avi', u'Value index', web2ldapcnf.input_maxattrs))
         self.add_field(
-            AttributeValueInput(
+            web2ldap.web.forms.BytesInput(
                 'in_av', u'Attribute Value',
                 web2ldapcnf.input_maxfieldlen,
                 web2ldapcnf.input_maxattrs,
@@ -500,7 +494,7 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
             )
         )
         self.add_field(
-            AttributeValueInput(
+            web2ldap.web.forms.BytesInput(
                 'bulkmod_av', u'Attribute Value',
                 web2ldapcnf.input_maxfieldlen,
                 web2ldapcnf.input_maxattrs,

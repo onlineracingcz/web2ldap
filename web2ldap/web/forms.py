@@ -339,6 +339,12 @@ class HiddenInput(Input):
         )
 
 
+class BytesInput(Input):
+
+    def _decodeValue(self, value):
+        return value
+
+
 class File(Input):
     """
     File upload field
