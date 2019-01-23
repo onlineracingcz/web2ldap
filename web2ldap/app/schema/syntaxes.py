@@ -1006,8 +1006,13 @@ class Image(Binary):
                 im = PILImage.open(imgfile)
                 imgfile.seek(0)
                 im.save(imgfile, self.imageFormat)
-            except Exception:
-                pass
+            except Exception as err:
+                logger.warn(
+                    'Error converting image data (%d bytes) to %s: %r',
+                    len(attrValue),
+                    self.imageFormat,
+                    err,
+                )
             else:
                 attrValue = imgfile.getvalue()
         return attrValue
