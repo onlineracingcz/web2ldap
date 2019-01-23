@@ -592,7 +592,7 @@ class NameAndOptionalUID(DistinguishedName):
     oid = '1.3.6.1.4.1.1466.115.121.1.34'
     desc = 'Name And Optional UID'
 
-    def _splitDNandUID(self, val):
+    def _split_dn_and_uid(self, val):
         try:
             sep_ind = val.rindex(u'#')
         except ValueError:
@@ -604,7 +604,7 @@ class NameAndOptionalUID(DistinguishedName):
         return dn, uid
 
     def _validate(self, attrValue):
-        dn, _ = self._splitDNandUID(self._app.ls.uc_decode(attrValue)[0])
+        dn, _ = self._split_dn_and_uid(self._app.ls.uc_decode(attrValue)[0])
         return is_dn(dn)
 
     def displayValue(self, valueindex=0, commandbutton=False):
