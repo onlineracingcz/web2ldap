@@ -35,7 +35,9 @@ def DisplayBinaryAttribute(
         mimetype='application/octet-stream',
         attachment_filename='web2ldap-export.bin'
     ):
-    """Display a binary attribute."""
+    """
+    Display a binary attribute
+    """
     if entry[attrtype][index].startswith('{ASN}'):
         value = binascii.unhexlify(entry[attrtype][index][5:])
     else:
@@ -82,7 +84,9 @@ class CRLDisplayer(x509v3.CRL):
     """
 
     def html(self, app, ldap_attrtype, ldap_attrindex):
-        """Display a CRL in HTML with all details"""
+        """
+        Display a CRL in HTML with all details
+        """
         asn1types.url_prefix = '%s/urlredirect/%s?' % (app.form.script_name, app.sid)
         asn1types.url_target = 'web2ldap_certurl'
         app.outf.write(
@@ -188,7 +192,9 @@ class CertificateDisplayer(x509v3.Certificate):
     """
 
     def html(self, app, ldap_attrtype, ldap_attrindex):
-        """Display a X.509 certificate in HTML with all details"""
+        """
+        Display a X.509 certificate in HTML with all details
+        """
         asn1types.url_prefix = '%s/urlredirect/%s?' % (app.form.script_name, app.sid)
         asn1types.url_target = 'web2ldap_certurl'
         app.outf.write(
@@ -282,7 +288,9 @@ class CertificateDisplayer(x509v3.Certificate):
 
 
 def display_x509_cert(app, attr, entry, index=None):
-    """Display a base64-encoded X.509 certificate attribute"""
+    """
+    Display a X.509 certificate attribute
+    """
     app.outf.write('<h1>%s</h1>' % (attr))
     attr_value_count = len(entry[attr])
     for i in range(attr_value_count):
@@ -298,7 +306,9 @@ def display_x509_cert(app, attr, entry, index=None):
 
 
 def display_x509_crl(app, attr, entry, index=None):
-    """Display a base64-encoded CRL attribute"""
+    """
+    Display a CRL attribute
+    """
     app.outf.write('<h1>%s</h1>' % (attr))
     attr_value_count = len(entry[attr])
     for i in range(attr_value_count):
