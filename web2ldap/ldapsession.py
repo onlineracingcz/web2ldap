@@ -632,6 +632,10 @@ class LDAPSession(object):
         self.supportedSASLMechanisms = frozenset([])
         self.supportsAllOpAttr = False
 
+    @property
+    def is_openldap(self):
+        return 'OpenLDAProotDSE' in self.rootDSE.get('objectClass', [])
+
     def _update_rootdse_attrs(self):
         """
         Derive some class attributes from rootDSE attributes
@@ -660,9 +664,11 @@ class LDAPSession(object):
             setattr(self, attr_type, frozenset(self.rootDSE.get(attr_type, [])))
         for attr_type in ('vendorName', 'vendorVersion'):
             setattr(self, attr_type, self.rootDSE.get(attr_type, [None])[0])
-        self.supportsAllOpAttr = \
-            ('1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures) or \
-            ('OpenLDAProotDSE' in self.rootDSE.get('objectClass', []))
+        # determine whether server returns all operational attributes (RFC 3673)
+        self.supportsAllOpAttr = (
+            '1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures or
+            self.is_openldap
+        )
         return # _update_rootdse_attrs()
 
     def init_rootdse(self):
@@ -911,7 +917,7 @@ class LDAPSession(object):
         serverctrls = serverctrls or []
         dn_str = dn.encode(self.charset)
         if AssertionControl.controlType in self.supportedControl and assertion_filter:
-            if 'OpenLDAProotDSE' in self.rootDSE.get('objectClass', []):
+            if self.is_openldap:
                 # work-around for OpenLDAP ITS#6916
                 assertion_filter_tmpl = u'(|{filter_str}(!(entryDN={dn_str})))'
             else:

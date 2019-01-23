@@ -328,10 +328,11 @@ def w2l_conninfo(app):
         sasl_ssf = u'option not available'
 
     vendor_name = (
-        app.ls.rootDSE.get('vendorName', '') or
-        monitored_info or
-        [{True:'OpenLDAP', False:''}['OpenLDAProotDSE' in app.ls.rootDSE.get('objectClass', [])]] or ['unknown']
-    )[0].decode(app.ls.charset)
+        app.ls.vendorName
+        or (monitored_info or [None])[0]
+        or {True:'OpenLDAP', False:''}[app.ls.is_openldap]
+        or 'unknown'
+    ).decode(app.ls.charset)
 
     app.outf.write(
         CONNINFO_LDAP_TEMPLATE % (

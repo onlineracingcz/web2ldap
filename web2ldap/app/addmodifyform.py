@@ -632,7 +632,7 @@ def ObjectClassForm(
         # attribute 'allowedChildClasses' (MS AD or OpenLDAP with slapo-allowed)
         elif (
                 '1.2.840.113556.1.4.912' in app.schema.sed[AttributeType] and
-                'OpenLDAProotDSE' not in app.ls.rootDSE.get('objectClass', [])
+                not app.ls.is_openldap
             ):
             try:
                 parent_entry = app.ls.l.read_s(

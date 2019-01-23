@@ -301,7 +301,7 @@ def del_subtree_form(app, scope):
         value_delete_ctrl_oid=web2ldap.ldapsession.CONTROL_TREEDELETE,
         value_delete_ctrl_checked=' checked'*int(
             web2ldap.ldapsession.CONTROL_TREEDELETE in app.ls.supportedControl and \
-            'OpenLDAProotDSE' not in app.ls.rootDSE.get('objectClass', [])
+            not app.ls.is_openldap
         ),
     )
 
