@@ -1159,7 +1159,7 @@ class LDAPUrl(Uri):
     def displayValue(self, valueindex=0, commandbutton=False):
         try:
             if commandbutton:
-                commandbuttonstr = web2ldap.app.gui.LDAPURLButton(
+                commandbuttonstr = web2ldap.app.gui.ldap_url_anchor(
                     self._app,
                     self._command_ldap_url(self.attrValue),
                 )

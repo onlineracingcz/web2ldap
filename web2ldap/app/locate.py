@@ -204,7 +204,7 @@ def w2l_locate(app):
                                     """ % (
                                         hostname,
                                         host_address,
-                                        web2ldap.app.gui.LDAPURLButton(app, str(ldap_url)),
+                                        web2ldap.app.gui.ldap_url_anchor(app, str(ldap_url)),
                                         ldap_url.unparse(),
                                         ldap_url.unparse(),
                                     )
@@ -225,7 +225,7 @@ def w2l_locate(app):
                                     <td><a href="%s">Search %s</a></td>
                                     </tr>
                                     """ % (
-                                        web2ldap.app.gui.LDAPURLButton(app, ldap_url),
+                                        web2ldap.app.gui.ldap_url_anchor(app, ldap_url),
                                         ldap_url.unparse(),
                                         ldap_url.unparse(),
                                     )
@@ -256,7 +256,7 @@ def w2l_locate(app):
                             LOCATE_HOST_RESULT_TMPL % (
                                 alias_name,
                                 host_address,
-                                web2ldap.app.gui.LDAPURLButton(app, ldap_url),
+                                web2ldap.app.gui.ldap_url_anchor(app, ldap_url),
                                 ldap_url.unparse(),
                                 ldap_url.unparse(),
                             )

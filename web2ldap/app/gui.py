@@ -518,7 +518,7 @@ def SchemaElementName(
     return '\n'.join(result)
 
 
-def LDAPURLButton(app, data):
+def ldap_url_anchor(app, data):
     if isinstance(data, LDAPUrl):
         l = data
     else:
@@ -540,6 +540,7 @@ def LDAPURLButton(app, data):
             ('scope', unicode(l.scope or ldap0.SCOPE_SUBTREE)),
         ],
     )
+    # end of ldap_url_anchor()
 
 
 def attrtype_select_field(
