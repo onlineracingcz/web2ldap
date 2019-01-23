@@ -741,7 +741,7 @@ class AppHandler(object):
                self.ls.uri is None:
                 # Force a SRV RR lookup for dc-style DNs,
                 # create list of URLs to connect to
-                dns_srv_rrs = web2ldap.ldaputil.dns.dcDNSLookup(self.dn)
+                dns_srv_rrs = web2ldap.ldaputil.dns.dc_dn_lookup(self.dn)
                 init_uri_list = [
                     ExtendedLDAPUrl(urlscheme='ldap', hostport=host, dn=self.dn).initializeUrl()
                     for host in dns_srv_rrs
@@ -924,7 +924,7 @@ class AppHandler(object):
         except ldap0.NO_SUCH_OBJECT as ldap_err:
 
             # first try to lookup dc-style DN via DNS
-            host_list = web2ldap.ldaputil.dns.dcDNSLookup(self.dn)
+            host_list = web2ldap.ldaputil.dns.dc_dn_lookup(self.dn)
             logger.debug('host_list = %r', host_list)
             if host_list and ExtendedLDAPUrl(self.ls.uri).hostport not in host_list:
                 # Found LDAP server for this naming context via DNS SRV RR

@@ -19,6 +19,7 @@ import socket
 from dns import resolver
 
 import ldap0
+from ldap0.dn import DNObj
 from ldap0.ldapurl import LDAPUrlExtension, LDAPUrlExtensions
 
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
@@ -94,7 +95,7 @@ def w2l_locate(app):
         if web2ldap.ldaputil.base.is_dn(locate_name):
             # Use dc-style LDAP DN
             msg_html = 'Input is considered LDAP distinguished name.'
-            locate_domain = web2ldap.ldaputil.dns.dcdn2dnsdomain(locate_name)
+            locate_domain = DNObj.fromstring(locate_name).domain(only_dc=False).decode('utf-8').encode('idna')
             locate_name_type = LOCATE_NAME_DCDN
         elif u'@' in locate_name:
             # Use domain part of RFC822 mail address
@@ -122,7 +123,7 @@ def w2l_locate(app):
                     for label in dns_name.split('.')
                 ])
 
-                search_base = web2ldap.ldaputil.dns.dnsdomain2dcdn(dns_name)
+                search_base = str(DNObj.fromdomain(dns_name))
                 if dns_name.endswith('de-mail-test.de') or dns_name.endswith('de-mail.de'):
                     search_base = ','.join((search_base, 'cn=de-mail'))
                     lu_extensions = LDAPUrlExtensions({
@@ -145,7 +146,10 @@ def w2l_locate(app):
                     # Search for a SRV RR of dns_name
                     srv_prefix = '_%s._tcp' % (url_scheme)
                     try:
-                        dns_result = web2ldap.ldaputil.dns.ldapSRV(dns_name, srv_prefix=srv_prefix)
+                        dns_result = web2ldap.ldaputil.dns.srv_lookup(
+                            dns_name,
+                            srv_prefix=srv_prefix,
+                        )
                     except (
                             resolver.NoAnswer,
                             resolver.NoNameservers,

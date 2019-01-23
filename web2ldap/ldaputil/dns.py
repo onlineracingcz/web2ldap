@@ -16,80 +16,63 @@ from __future__ import absolute_import
 
 import socket
 
-from .base import explode_dn
+from ldap0.dn import DNObj
 
 from dns import resolver
 
-def dcdn2dnsdomain(dn=''):
-  """convert dc-style DN to DNS domain name (see RFC 2247)"""
-  dn_components = explode_dn(dn.lower())
-  dns_components = []
-  for i in range(len(dn_components)-1,-1,-1):
-    attrtype,value = dn_components[i].split('=',1)
-    if attrtype!='dc':
-      break
-    dns_components.append(value.strip())
-  dns_components.reverse()
-  return '.'.join(dns_components)
+from web2ldap.log import logger
 
 
-def dnsdomain2dcdn(domain=''):
-  """convert DNS domain name to dc-style DN (see RFC 2247)"""
-  return ','.join(
-    [
-      'dc=%s' % d
-      for d in domain.split('.')
+def srv_lookup(dns_name, srv_prefix='_ldap._tcp'):
+    """
+    Look up SRV RR with name _ldap._tcp.dns_name and return
+    list of tuples of results.
+
+    dns_name
+          Domain name
+    dns_resolver
+          Address/port tuple of name server to use.
+    """
+    if not dns_name:
+        return []
+    logger.debug('Query DNS for SRV RR %s.%s', srv_prefix, dns_name)
+    srv_result = resolver.query('%s.%s' % (srv_prefix, dns_name.encode('idna')), 'SRV')
+    if not srv_result:
+        return []
+    srv_result_answers = [
+        (
+            res.priority,
+            res.weight,
+            res.port,
+            res.target.to_text().rstrip('.'),
+        )
+        for res in srv_result
+        #if res['typename'] == 'SRV'
     ]
-  )
+    srv_result_answers.sort()
+    return srv_result_answers
 
 
-def ldapSRV(dns_name,dns_resolver=None,srv_prefix='_ldap._tcp'):
-  """
-  Look up SRV RR with name _ldap._tcp.dns_name and return
-  list of tuples of results.
-
-  dns_name
-        Domain name
-  dns_resolver
-        Address/port tuple of name server to use.
-  """
-  if not dns_name:
-    return []
-  srv_result = resolver.query('%s.%s' % (srv_prefix,dns_name.encode('idna')), 'SRV')
-  if not srv_result:
-    return []
-  srv_result_answers = [
-    # priority,weight,port,hostname
-    (
-      res.priority,
-      res.weight,
-      res.port,
-      res.target.to_text().rstrip('.'),
-    )
-    for res in srv_result
-#    if res['typename']=='SRV'
-  ]
-  srv_result_answers.sort()
-  return srv_result_answers
-
-
-def dcDNSLookup(dn):
-  if dn:
+def dc_dn_lookup(dn):
+    """
+    Query DNS for _ldap._tcp SRV RR for the distinguished name in :dn:
+    """
+    if not dn:
+        return []
+    dns_domain = DNObj.fromstring(dn).domain(only_dc=False).decode('utf-8').encode('idna')
     try:
-      dns_result = ldapSRV(dcdn2dnsdomain(dn).encode('idna'))
+        dns_result = srv_lookup(dns_domain)
     except (
-      resolver.NoAnswer,
-      resolver.NoNameservers,
-      resolver.NotAbsolute,
-      resolver.NoRootSOA,
-      resolver.NXDOMAIN,
-      socket.error,
-    ):
-      return []
-    else:
-      return [
-        '%s%s' % (host,(':%d' % port)*(port!=389))
-        for _,_,port,host in dns_result
-      ]
-  else:
-    return []
+            resolver.NoAnswer,
+            resolver.NoNameservers,
+            resolver.NotAbsolute,
+            resolver.NoRootSOA,
+            resolver.NXDOMAIN,
+            socket.error,
+        ) as dns_err:
+        logger.warn('Error looking up SRV RR for %s: %s', dns_domain, dns_err)
+        return []
+    return [
+        '%s%s' % (host, (':%d' % port)*(port != 389))
+        for _, _, port, host in dns_result
+    ]
