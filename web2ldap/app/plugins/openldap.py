@@ -158,19 +158,19 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
 
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         OlcMultilineText.__init__(self, app, dn, schema, attrType, attrValue, entry)
-        self._sync_repl_desc = ldap0.openldap.SyncReplDesc(attrValue)
         return # __init__()
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        if commandbutton and self.attrValue:
-            return ' '.join((
-                OlcMultilineText.displayValue(self, valueindex, commandbutton),
-                web2ldap.app.gui.LDAPURLButton(
-                    self._app,
-                    self._sync_repl_desc.ldap_url(),
-                ),
-            ))
-        return OlcMultilineText.displayValue(self, valueindex, commandbutton)
+        if not commandbutton or not self.attrValue:
+            return OlcMultilineText.displayValue(self, valueindex, commandbutton)
+        srd = ldap0.openldap.SyncReplDesc(self.attrValue)
+        return ' '.join((
+            OlcMultilineText.displayValue(self, valueindex, commandbutton),
+            web2ldap.app.gui.LDAPURLButton(
+                self._app,
+                srd.ldap_url(),
+            ),
+        ))
 
 syntax_registry.reg_at(
     OlcSyncRepl.oid, [
