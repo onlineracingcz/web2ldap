@@ -14,7 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-from cStringIO import StringIO
+from io import BytesIO
 
 import ldap0
 import ldap0.ldif
@@ -526,7 +526,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         return displayed_attrs # template_output()
 
     def ldif_input(self):
-        f = StringIO()
+        f = BytesIO()
         ldif_writer = ldap0.ldif.LDIFWriter(f)
         ldap_entry = {}
         for attr_type in self.entry.keys():

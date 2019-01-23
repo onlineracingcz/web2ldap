@@ -29,7 +29,7 @@ import warnings
 import xml.etree.ElementTree
 from xml.etree.ElementTree import ParseError as XMLParseError
 from collections import defaultdict
-from cStringIO import StringIO
+from io import BytesIO
 
 # Detect Python Imaging Library (PIL)
 try:
@@ -418,7 +418,7 @@ class Audio(Binary):
     fileExt = 'au'
 
     def _validate(self, attrValue):
-        fileobj = StringIO(attrValue)
+        fileobj = BytesIO(attrValue)
         res = sndhdr.test_au(attrValue, fileobj)
         return res is not None
 
@@ -1001,7 +1001,7 @@ class Image(Binary):
 
     def sanitizeInput(self, attrValue):
         if not self._validate(attrValue) and PILImage:
-            imgfile = StringIO(attrValue)
+            imgfile = BytesIO(attrValue)
             try:
                 im = PILImage.open(imgfile)
                 imgfile.seek(0)
@@ -1017,7 +1017,7 @@ class Image(Binary):
         width, height = None, None
         size_attr_html = ''
         if PILImage:
-            f = StringIO(self.attrValue)
+            f = BytesIO(self.attrValue)
             try:
                 im = PILImage.open(f)
             except IOError:

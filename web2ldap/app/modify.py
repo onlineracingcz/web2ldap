@@ -14,7 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-from cStringIO import StringIO
+from io import BytesIO
 
 import ldap0
 import ldap0.ldif
@@ -38,7 +38,7 @@ def modlist_ldif(dn, form, modlist):
     """
     s = []
     s.append('<pre>')
-    f = StringIO()
+    f = BytesIO()
     ldif_writer = ldap0.ldif.LDIFWriter(f)
     ldif_writer.unparse(dn.encode('utf-8'), modlist)
     s.append(form.utf2display(f.getvalue().decode('utf-8')).replace('\n', '<br>'))
