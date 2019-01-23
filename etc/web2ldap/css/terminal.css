@@ -117,11 +117,6 @@ html>body #ContextMenu {
   position:fixed;
 }
 
-#CommandTable {
-  margin:0.8em;
-  display:inline;
-}
-
 #SrchResList {
   width:100%;
   margin:1em 0 1em 0;
@@ -138,11 +133,8 @@ html>body #ContextMenu {
   border-top:2px solid;
 }
 
-#SrchResList td.CommandTable {
+#SrchResList td.CT {
   width:6.1em;
-}
-
-#SrchRes {
 }
 
 table.ReadAttrTable {
@@ -241,7 +233,7 @@ a:focus {
 }
 
 
-a.CommandLink {
+a.CL {
   text-align:center;
   padding:0.2em;
   font-size:95%;
@@ -251,56 +243,56 @@ a.CommandLink {
   text-align:center;
 }
 
-a.CommandLink:hover {
+a.CL:hover {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-a.CommandLink:active {
+a.CL:active {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-a.CommandLink:focus {
+a.CL:focus {
   color:#FFFFFF;
   background-color:#c63;
 }
 
 
-#TopSection a.CommandLink {
+#TopSection a.CL {
   text-align:center;
 }
 
-#MainMenu a.CommandLink {
+#MainMenu a.CL {
   display:block;
   padding:0.2em;
   margin:0.5em 0 0.5em 0;
   border:1px solid #00ff00;
 }
 
-#ContextMenu a.CommandLink {
+#ContextMenu a.CL {
   display:block;
   padding:0.2em;
   margin:0.5em 0 0.5em 0;
   border:1px solid #00ff00;
 }
 
-#TopSection a.CommandLink:hover {
+#TopSection a.CL:hover {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-#TopSection a.CommandLink:active {
+#TopSection a.CL:active {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-#TopSection a.CommandLink:focus {
+#TopSection a.CL:focus {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-#StatusLine a.CommandLink {
+#StatusLine a.CL {
   border:none;
   display:inline;
   color:#ffae2f;
@@ -308,7 +300,7 @@ a.CommandLink:focus {
   background-color:transparent;
 }
 
-#StatusLine a.CommandLink:hover {
+#StatusLine a.CL:hover {
   color:#FFFFFF;
   background-color:#c63;
 }

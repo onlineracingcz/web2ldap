@@ -107,7 +107,7 @@ def w2l_add(app):
         ]
         error_msg = 'Wrong syntax in following attributes: %s' % (
             ', '.join([
-                '<a class="CommandLink" href="#in_a_%s">%s</a>' % (v, v)
+                '<a class="CL" href="#in_a_%s">%s</a>' % (v, v)
                 for v in invalid_attr_types_ui
             ])
         )

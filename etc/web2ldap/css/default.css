@@ -79,7 +79,6 @@ img.logo {
   border:none;
   overflow:auto;
   background-color:#5a5d5d;
-  background-repeat:no-repeat;
   white-space: nowrap;
 }
 
@@ -92,7 +91,6 @@ img.logo {
   padding:0.5em;
   color:#ffffff;
   background-color:#282b2b;
-  background-repeat:no-repeat;
   white-space: nowrap;
   overflow:hidden;
 }
@@ -143,11 +141,6 @@ html>body #ContextMenu {
   position:fixed;
 }
 
-#CommandTable {
-  margin:0.8em;
-  display:inline;
-}
-
 #SrchResList {
   width:100%;
   margin:1em 0 1em 0;
@@ -163,13 +156,10 @@ html>body #ContextMenu {
 #SrchResList tr {
 }
 
-#SrchResList td.CommandTable {
+#SrchResList td.CT {
   width:7.1em;
   padding:0em;
   padding-top:0.5em;
-}
-
-#SrchRes {
 }
 
 table.HexDump td {
@@ -356,7 +346,7 @@ a:hover,a:active,a:focus {
 }
 
 
-a.CommandLink {
+a.CL {
   text-align:center;
   color:#c81f2a;
   text-decoration:none;
@@ -364,7 +354,7 @@ a.CommandLink {
   text-align:center;
 }
 
-a.CommandLink:hover,a.CommandLink:active,a.CommandLink:focus {
+a.CL:hover,a.CL:active,a.CL:focus {
   color:#197a3a;
 }
 
@@ -387,14 +377,14 @@ table.PrintSearchResults {
   color: #000000;
 }
 
-#TopSection a.CommandLink {
+#TopSection a.CL {
   border:none;
   padding:0.1em;
   color:#ffffff;
   background-color:transparent;
 }
 
-#MainMenu a.CommandLink {
+#MainMenu a.CL {
   display:block;
   padding:0.2em;
   margin:0.5em 0 0.5em 0;
@@ -402,12 +392,12 @@ table.PrintSearchResults {
   background-repeat:no-repeat;
 }
 
-#MainMenu a.CommandLink:hover,#MainMenu a.CommandLink:active,#MainMenu a.CommandLink:focus {
+#MainMenu a.CL:hover,#MainMenu a.CL:active,#MainMenu a.CL:focus {
   background-color:#197a3a;
   background-repeat:no-repeat;
 }
 
-#ContextMenu a.CommandLink {
+#ContextMenu a.CL {
   display:block;
   padding:0.2em;
   margin:0.5em 0 0.5em 0;
@@ -415,12 +405,12 @@ table.PrintSearchResults {
   background-repeat:no-repeat;
 }
 
-#ContextMenu a.CommandLink:hover,#ContextMenu a.CommandLink:active,#ContextMenu a.CommandLink:focus {
+#ContextMenu a.CL:hover,#ContextMenu a.CL:active,#ContextMenu a.CL:focus {
   background-color:#197a3a;
   background-repeat:no-repeat;
 }
 
-#TopSection a.CommandLink:hover,#TopSection a.CommandLink:active,#TopSection a.CommandLink:focus {
+#TopSection a.CL:hover,#TopSection a.CL:active,#TopSection a.CL:focus {
   text-decoration:underline;
 }
 

@@ -1,7 +1,4 @@
-/***********************************************************************/
-/* Style sheet for printable output of web2ldap                        */
-/* web2ldap - web-based LDAP Client, see http://www.web2ldap.de        */
-/***********************************************************************/
+/* Style sheet for printable output of web2ldap */
 
 @page {
   margin-top:1.5cm;
@@ -68,7 +65,7 @@ td.ReadAttrValue {
   display:none;
 }
 
-a.CommandLink {
+a.CL {
   display:none;
 }
 

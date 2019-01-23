@@ -270,7 +270,7 @@ class AppHandler(object):
             title_attr = ' title="%s"' % (self.form.utf2display(title).replace(' ', '&nbsp;'))
         if anchor_id:
             anchor_id = '#%s' % (self.form.utf2display(anchor_id))
-        res = '<a class="CommandLink"%s%s href="%s?%s%s">%s</a>' % (
+        res = '<a class="CL"%s%s href="%s?%s%s">%s</a>' % (
             target_attr,
             title_attr,
             self.form.action_url(command, self.sid),

@@ -95,16 +95,36 @@ textarea {
   border:none;
   border-radius: 10px;
   overflow:hidden;
+}
 
+#DITNavigation {
+  z-index:10;
+  top:3.7em;
+  left:0em;
+  right:0em;
+  text-align:left;
+  padding:0.5em;
+  color:#ffffff;
+  white-space: nowrap;
+  overflow:hidden;
 }
 
 html>body #StatusLine {
   position:fixed;
 }
 
+html>body #DITNavigation {
+  position:fixed;
+}
+
 #StatusLine table {
   top:0;
   width:100%;
+  font-size:0.95em;
+}
+
+#StatusLine td {
+  padding:0.1em;
 }
 
 #MainMenu {
@@ -135,11 +155,6 @@ html>body #ContextMenu {
   position:fixed;
 }
 
-#CommandTable {
-  margin:0.8em;
-  display:inline;
-}
-
 #SrchResList {
   width:100%;
   margin:1em 0 1em 0;
@@ -156,11 +171,8 @@ html>body #ContextMenu {
   border-top:2px solid;
 }
 
-#SrchResList td.CommandTable {
+#SrchResList td.CT {
   width:6.2em;
-}
-
-#SrchRes {
 }
 
 table.ReadAttrTable {
@@ -276,7 +288,7 @@ a:focus {
 }
 
 
-a.CommandLink {
+a.CL {
   text-align:center;
   padding:0.2em;
   font-size:95%;
@@ -286,29 +298,29 @@ a.CommandLink {
   text-align:center;
 }
 
-a.CommandLink:hover {
+a.CL:hover {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-a.CommandLink:active {
+a.CL:active {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-a.CommandLink:focus {
+a.CL:focus {
   color:#FFFFFF;
   background-color:#c63;
 }
 
 
-#TopSection a.CommandLink {
+#TopSection a.CL {
   text-align:center;
   color:#000000;
   background-color:#f7f7f7;
 }
 
-#MainMenu a.CommandLink {
+#MainMenu a.CL {
   display:block;
   padding:0.2em;
   margin:0.5em 0 0.5em 0;
@@ -317,7 +329,7 @@ a.CommandLink:focus {
   background-color:#ffeeff;
 }
 
-#ContextMenu a.CommandLink {
+#ContextMenu a.CL {
   display:block;
   padding:0.2em;
   margin:0.5em 0 0.5em 0;
@@ -326,22 +338,22 @@ a.CommandLink:focus {
   background-color:#aaffee;
 }
 
-#TopSection a.CommandLink:hover {
+#TopSection a.CL:hover {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-#TopSection a.CommandLink:active {
+#TopSection a.CL:active {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-#TopSection a.CommandLink:focus {
+#TopSection a.CL:focus {
   color:#FFFFFF;
   background-color:#c63;
 }
 
-#StatusLine a.CommandLink {
+#StatusLine a.CL {
   border:none;
   display:inline;
   color:#AA4012;
@@ -349,7 +361,7 @@ a.CommandLink:focus {
   background-color:transparent;
 }
 
-#StatusLine a.CommandLink:hover {
+#StatusLine a.CL:hover {
   color:#FFFFFF;
   background-color:#c63;
 }

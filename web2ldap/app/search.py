@@ -156,10 +156,7 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
                         ])
                     table.append(self._p[template_oc[0]] % (tableentry))
         # Output search results as pretty-printable table without buttons
-        web2ldap.app.gui.TopSection(
-            self._app, 'search', self._dn,
-            'Printable Search Results', [],
-        )
+        web2ldap.app.gui.TopSection(self._app, 'Printable Search Results', [])
         self._app.outf.write(
             """
             <table
@@ -945,19 +942,10 @@ def w2l_search(app):
                     command_table = []
 
                     # A [Read] link is added in any case
-                    read_title_list = [app.dn]
-                    for attr_type in (u'description', u'structuralObjectClass'):
-                        try:
-                            first_attr_value = entry[attr_type][0].decode(app.ls.charset)
-                        except KeyError:
-                            pass
-                        else:
-                            read_title_list.append(u'%s: %s' % (attr_type, first_attr_value))
                     command_table.append(
                         app.anchor(
                             'read', 'Read',
                             [('dn', dn)],
-                            title=u'\n'.join(read_title_list)
                         )
                     )
 
@@ -1021,8 +1009,8 @@ def w2l_search(app):
                 app.outf.write(
                     """
                     <tr>
-                      <td class="CommandTable">\n%s\n</td>
-                      <td class="SrchRes">\n%s\n</td>
+                      <td class="CT">\n%s\n</td>
+                      <td>\n%s\n</td>
                     </tr>
                     """ % (
                         '\n'.join(command_table),

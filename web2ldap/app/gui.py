@@ -143,7 +143,7 @@ def command_div(
         start_tag = ''
         end_tag = ''
     if commandlist:
-        return '%s<p id="%s" class="CommandTable">\n%s\n</p>%s\n' % (
+        return '%s<p id="%s" class="CT">\n%s\n</p>%s\n' % (
             start_tag,
             div_id,
             (separator).join(commandlist),
