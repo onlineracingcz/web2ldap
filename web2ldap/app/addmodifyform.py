@@ -819,7 +819,7 @@ def ObjectClassForm(
         add_tmpl_dict = {}
         for template_name in addform_entry_templates_keys:
             ldif_dn, ldif_entry = ReadLDIFTemplate(app, template_name)
-            tmpl_parent_dn = web2ldap.ldaputil.base.parent_dn(
+            tmpl_parent_dn = web2ldap.ldaputil.parent_dn(
                 ldif_dn.decode(app.ls.charset)
             ).decode(app.ls.charset) or parent_dn
             # first check whether mandatory attributes in parent entry are readable

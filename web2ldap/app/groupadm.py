@@ -19,7 +19,7 @@ import ldap0.cidict
 
 import web2ldap.app.core
 import web2ldap.app.gui
-from web2ldap.ldaputil.base import explode_dn
+from web2ldap.ldaputil import explode_dn
 
 ACTION2MODTYPE = {
     'add': ldap0.MOD_ADD,

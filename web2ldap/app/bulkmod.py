@@ -21,7 +21,7 @@ import ldap0
 import web2ldapcnf
 
 import web2ldap.ldapsession
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 import web2ldap.app.cnf
 import web2ldap.app.gui
 import web2ldap.app.ldapparams
@@ -237,7 +237,7 @@ def bulkmod_input_form(
             field_hidden_scope=app.form.hiddenFieldHTML(
                 'scope',
                 unicode(scope),
-                unicode(web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope]),
+                unicode(web2ldap.ldaputil.SEARCH_SCOPE_STR[scope]),
             ),
             field_bulkmod_newsuperior=app.form.field['bulkmod_newsuperior'].inputHTML(
                 default=bulkmod_newsuperior,
@@ -300,7 +300,7 @@ def bulkmod_confirmation_form(
             ]) or '- none -',
             field_hidden_dn=app.form.hiddenFieldHTML('dn', dn, dn),
             field_hidden_filterstr=app.form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
-            field_hidden_scope=app.form.hiddenFieldHTML('scope', unicode(scope), unicode(web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope])),
+            field_hidden_scope=app.form.hiddenFieldHTML('scope', unicode(scope), unicode(web2ldap.ldaputil.SEARCH_SCOPE_STR[scope])),
             field_bulkmod_newsuperior=app.form.hiddenFieldHTML(
                 'bulkmod_newsuperior',
                 bulkmod_newsuperior,
@@ -442,7 +442,7 @@ def w2l_bulkmod(app):
 
                 # Apply the modrdn request
                 if bulkmod_newsuperior:
-                    old_rdn, _ = web2ldap.ldaputil.base.split_rdn(ldap_dn_u)
+                    old_rdn, _ = web2ldap.ldaputil.split_rdn(ldap_dn_u)
                     try:
                         if bulkmod_cp:
                             new_ldap_dn = u','.join((
@@ -526,7 +526,7 @@ def w2l_bulkmod(app):
                 num_errors,
                 num_sum, num_errors, num_errors,
                 app.display_dn(app.dn),
-                web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
+                web2ldap.ldaputil.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
                 app.begin_form('bulkmod', 'POST'),
                 app.form.hiddenInputHTML(ignoreFieldNames=['bulkmod_submit']),

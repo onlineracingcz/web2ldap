@@ -153,7 +153,7 @@ class DisplayEntry(IterableUserDict):
         entry_rdn_dict = ldap0.schema.models.Entry(
             self.schema,
             dn.encode(self._app.ls.charset),
-            web2ldap.ldaputil.base.rdn_dict(dn)
+            web2ldap.ldaputil.rdn_dict(dn)
         )
         for attr_type, attr_values in entry_rdn_dict.items():
             del entry_rdn_dict[attr_type]
@@ -560,7 +560,7 @@ def w2l_read(app):
                 h1_display_name = entry.get(
                     'displayName',
                     entry.get('cn', [''])
-                )[0].decode(app.ls.charset) or web2ldap.ldaputil.base.split_rdn(app.dn)[0]
+                )[0].decode(app.ls.charset) or web2ldap.ldaputil.split_rdn(app.dn)[0]
             app.outf.write(
                 '<h1>{0}</h1>\n<p class="EntryDN">{1}</p>\n'.format(
                     app.form.utf2display(h1_display_name),

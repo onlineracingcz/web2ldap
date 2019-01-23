@@ -22,7 +22,7 @@ from ldap0.filter import escape_filter_chars
 import web2ldapcnf
 
 import web2ldap.utctime
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 import web2ldap.app.core
 import web2ldap.app.gui
 from web2ldap.app.session import session_store
@@ -310,7 +310,7 @@ def w2l_conninfo(app):
         sasl_mech = u'SASL/%s' % (app.ls.saslAuth.mech)
         sasl_auth_info = '<table>%s</table>' % '\n'.join([
             '<tr><td>%s</td><td>%s</td></tr>' % (
-                app.form.utf2display(web2ldap.ldaputil.base.LDAP_OPT_NAMES_DICT.get(k, str(k)).decode('ascii')),
+                app.form.utf2display(web2ldap.ldaputil.LDAP_OPT_NAMES_DICT.get(k, str(k)).decode('ascii')),
                 app.form.utf2display(repr(v).decode(app.ls.charset))
             )
             for k, v in app.ls.saslAuth.cb_value_dict.items()

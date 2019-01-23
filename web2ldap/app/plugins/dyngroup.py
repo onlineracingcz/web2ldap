@@ -7,7 +7,7 @@ from __future__ import absolute_import
 import ldap0
 import ldap0.ldapurl
 
-from web2ldap.ldaputil.base import is_dn
+from web2ldap.ldaputil import is_dn
 
 from web2ldap.app.schema.syntaxes import LDAPUrl, syntax_registry
 

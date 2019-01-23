@@ -10,7 +10,7 @@ import re
 import ldap0
 import ldap0.cidict
 
-from web2ldap.ldaputil.base import explode_dn, rdn_dict
+from web2ldap.ldaputil import explode_dn, rdn_dict
 from web2ldap.app.schema.syntaxes import \
     BindDN, \
     DirectoryString, \

@@ -21,7 +21,7 @@ import ldap0
 import web2ldap.web.forms
 import web2ldap.ldaputil.async
 import web2ldap.ldapsession
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
@@ -344,7 +344,7 @@ def del_search_form(app, scope, delete_filter):
             num_referrals = str(num_referrals)
     return DELETE_SEARCH_FORM_TMPL.format(
         text_dn=app.display_dn(app.dn),
-        text_scope=web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
+        text_scope=web2ldap.ldaputil.SEARCH_SCOPE_STR[scope],
         num_entries=num_entries,
         num_referrals=num_referrals,
         value_delete_filter=app.form.utf2display(delete_filter),
@@ -454,7 +454,7 @@ def w2l_delete(app):
             DELETE_ENTRIES_SUCCESS_TMPL % (
                 deleted_entries_count,
                 app.display_dn(old_dn),
-                web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
+                web2ldap.ldaputil.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
                 len(non_deletable_entries),
             ),

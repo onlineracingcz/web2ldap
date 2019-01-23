@@ -86,14 +86,14 @@ def w2l_add(app):
 
     if add_clonedn:
         entry, _ = web2ldap.app.addmodifyform.read_old_entry(app, add_clonedn, app.schema, None, {'*':'*'})
-        add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_clonedn)
+        add_rdn, add_basedn = web2ldap.ldaputil.split_rdn(add_clonedn)
         add_rdn_dnlist = ldap0.dn.str2dn(add_rdn.encode(app.ls.charset))
         add_rdn = u'+'.join(['%s=' % (at) for at, _, _ in add_rdn_dnlist[0]]).decode(app.ls.charset)
         add_basedn = add_basedn or app.dn
     elif add_template:
         add_dn, entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(app, add_template)
         entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, entry)
-        add_rdn, add_basedn = web2ldap.ldaputil.base.split_rdn(add_dn.decode(app.ls.charset))
+        add_rdn, add_basedn = web2ldap.ldaputil.split_rdn(add_dn.decode(app.ls.charset))
         add_basedn = add_basedn or app.dn
     else:
         entry, invalid_attrs = web2ldap.app.addmodifyform.get_entry_input(app)

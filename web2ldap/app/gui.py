@@ -35,9 +35,8 @@ import web2ldap.app.cnf
 import web2ldap.app.schema.syntaxes
 import web2ldap.app.searchform
 from web2ldap.msbase import GrabKeys
-import web2ldap.ldaputil.base
-from web2ldap.ldaputil.base import \
-    explode_dn, logdb_filter
+import web2ldap.ldaputil
+from web2ldap.ldaputil import explode_dn, logdb_filter
 
 
 #---------------------------------------------------------------------------
@@ -295,7 +294,7 @@ def display_authz_dn(app, who=None, entry=None):
             entry = app.ls.userEntry
         else:
             return 'anonymous'
-    if web2ldap.ldaputil.base.is_dn(who):
+    if web2ldap.ldaputil.is_dn(who):
         # Fall-back is to display the DN
         result = app.display_dn(who, commandbutton=False)
         # Determine relevant templates dict
@@ -614,7 +613,7 @@ def search_root_field(
         except ValueError:
             dn = d
         if dn:
-            dn_list = web2ldap.ldaputil.base.explode_dn(dn.lower())
+            dn_list = web2ldap.ldaputil.explode_dn(dn.lower())
             dn_list.reverse()
             return ','.join(dn_list)
         return ''
@@ -624,7 +623,7 @@ def search_root_field(
         # add the current DN and all parent DNs
         dn_select_list.update(
             [app.dn] +
-            web2ldap.ldaputil.base.parent_dn_list(
+            web2ldap.ldaputil.parent_dn_list(
                 app.dn,
                 app.ls.get_search_root(app.dn, naming_contexts=naming_contexts),
             )

@@ -17,7 +17,7 @@ from __future__ import absolute_import
 import ldap0
 
 import web2ldap.app.gui
-from web2ldap.ldaputil.base import explode_dn, split_rdn, parent_dn
+from web2ldap.ldaputil import explode_dn, split_rdn, parent_dn
 from web2ldap.app.gui import dn_anchor_hash
 
 

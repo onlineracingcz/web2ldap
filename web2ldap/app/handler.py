@@ -32,7 +32,7 @@ import web2ldap.web.forms
 import web2ldap.web.helper
 import web2ldap.web.session
 import web2ldap.__about__
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 import web2ldap.ldaputil.dns
 import web2ldap.ldapsession
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
@@ -68,7 +68,7 @@ from web2ldap.app.gui import exception_message
 from web2ldap.app.form import Web2LDAPForm
 from web2ldap.app.session import session_store
 from web2ldap.app.schema.syntaxes import syntax_registry
-from web2ldap.ldaputil.base import AD_LDAP49_ERROR_CODES, AD_LDAP49_ERROR_PREFIX
+from web2ldap.ldaputil import AD_LDAP49_ERROR_CODES, AD_LDAP49_ERROR_PREFIX
 from web2ldap.app.core import ErrorExit
 
 SCOPE2COMMAND = {
@@ -189,11 +189,11 @@ class AppHandler(object):
         """
         if isinstance(dn, bytes) and self.ls is not None:
             dn = dn.decode(self.ls.charset)
-        assert web2ldap.ldaputil.base.is_dn(dn), ValueError(
+        assert web2ldap.ldaputil.is_dn(dn), ValueError(
             'Expected LDAP DN as dn, was %r' % (dn)
         )
-        self._dn = web2ldap.ldaputil.base.normalize_dn(dn)
-        self._parent_dn = web2ldap.ldaputil.base.parent_dn(self._dn)
+        self._dn = web2ldap.ldaputil.normalize_dn(dn)
+        self._parent_dn = web2ldap.ldaputil.parent_dn(self._dn)
         if self.ls and self.ls.uri:
             ldap_charset = self.ls.charset
             self.naming_context = self.ls.get_search_root(self._dn)
@@ -606,7 +606,7 @@ class AppHandler(object):
             "Type of 'cred' must be unicode, was %r" % (cred)
         )
 
-        if not web2ldap.ldaputil.base.is_dn(dn):
+        if not web2ldap.ldaputil.is_dn(dn):
             raise ErrorExit(u'Invalid DN.')
 
         scope_str = self.form.getInputValue(

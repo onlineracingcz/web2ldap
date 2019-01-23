@@ -19,7 +19,7 @@ import ldap0.ldapurl
 
 import web2ldap.web.forms
 
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
@@ -100,7 +100,7 @@ def w2l_rename(app):
     # No input yet => output an input form
     #--------------------------------------
 
-    old_rdn, old_superior = web2ldap.ldaputil.base.split_rdn(app.dn)
+    old_rdn, old_superior = web2ldap.ldaputil.split_rdn(app.dn)
 
     app.form.field['rename_newrdn'].set_default(old_rdn)
 

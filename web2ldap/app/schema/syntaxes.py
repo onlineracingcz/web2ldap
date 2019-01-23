@@ -52,11 +52,11 @@ from web2ldap.pisces import asn1
 import web2ldap.web.forms
 import web2ldap.msbase
 import web2ldap.mspki.asn1helper
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 import web2ldap.app.gui
 import web2ldap.utctime
 from web2ldap.utctime import strftimeiso8601
-from web2ldap.ldaputil.base import is_dn
+from web2ldap.ldaputil import is_dn
 from web2ldap.ldaputil.oidreg import OID_REG
 from web2ldap.log import logger
 
@@ -1104,7 +1104,7 @@ class OID(IA5String):
         attrValue = attrValue.strip()
         if attrValue.startswith('{') and attrValue.endswith('}'):
             try:
-                attrValue = web2ldap.ldaputil.base.ietf_oid_str(attrValue)
+                attrValue = web2ldap.ldaputil.ietf_oid_str(attrValue)
             except ValueError:
                 pass
         return attrValue
@@ -1745,13 +1745,13 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         elif ldap_url_dn == '.':
             result_dn = current_dn
         elif ldap_url_dn == '..':
-            result_dn = web2ldap.ldaputil.base.parent_dn(current_dn)
+            result_dn = web2ldap.ldaputil.parent_dn(current_dn)
         elif ldap_url_dn.endswith(',_'):
             result_dn = ','.join((ldap_url_dn[:-2], self._app.naming_context))
         elif ldap_url_dn.endswith(',.'):
             result_dn = ','.join((ldap_url_dn[:-2], current_dn))
         elif ldap_url_dn.endswith(',..'):
-            result_dn = ','.join((ldap_url_dn[:-3], web2ldap.ldaputil.base.parent_dn(current_dn)))
+            result_dn = ','.join((ldap_url_dn[:-3], web2ldap.ldaputil.parent_dn(current_dn)))
         else:
             result_dn = ldap_url_dn
         if result_dn.endswith(','):

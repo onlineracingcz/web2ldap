@@ -29,14 +29,14 @@ import web2ldap.web.forms
 from web2ldap.web import escape_html
 import web2ldap.ldaputil.async
 import web2ldap.msbase
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
 import web2ldap.app.read
 import web2ldap.app.searchform
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
-from web2ldap.ldaputil.base import escape_ldap_filter_chars
+from web2ldap.ldaputil import escape_ldap_filter_chars
 from web2ldap.msbase import GrabKeys
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.app.searchform import SEARCH_OPT_ATTR_EXISTS, SEARCH_OPT_ATTR_NOT_EXISTS
@@ -646,7 +646,7 @@ def w2l_search(app):
                     ('search_root', search_root),
                     ('search_output', {False:'raw', True:'table'}[search_output == 'table']),
                     ('scope', str(scope)),
-                    ('filterstr', web2ldap.ldaputil.base.negate_filter(filterstr)),
+                    ('filterstr', web2ldap.ldaputil.negate_filter(filterstr)),
                     ('search_resminindex', str(search_resminindex)),
                     ('search_resnumber', str(search_resnumber)),
                     ('search_lastmod', unicode(search_lastmod)),
@@ -687,7 +687,7 @@ def w2l_search(app):
               </tr>
             </table>
             """ % (
-                web2ldap.ldaputil.base.SEARCH_SCOPE_STR[scope],
+                web2ldap.ldaputil.SEARCH_SCOPE_STR[scope],
                 utf2display(search_root),
                 utf2display(filterstr2),
             )

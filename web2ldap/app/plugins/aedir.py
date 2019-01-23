@@ -22,8 +22,8 @@ from ldap0.controls.deref import DereferenceControl
 import web2ldapcnf
 
 from web2ldap.web.forms import HiddenInput
-import web2ldap.ldaputil.base
-from web2ldap.ldaputil.base import compose_filter, map_filter_parts
+import web2ldap.ldaputil
+from web2ldap.ldaputil import compose_filter, map_filter_parts
 import web2ldap.app.searchform
 import web2ldap.app.plugins.inetorgperson
 import web2ldap.app.plugins.sudoers
@@ -843,7 +843,7 @@ class AESrvGroup(AESameZoneObject):
     def _determineFilter(self):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
         dn_u = self._dn.decode(self._app.ls.charset)
-        parent_dn = web2ldap.ldaputil.base.parent_dn(dn_u)
+        parent_dn = web2ldap.ldaputil.parent_dn(dn_u)
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
             parent_dn.encode(self._app.ls.charset),
@@ -955,7 +955,7 @@ class AEEntryDNAEHost(DistinguishedName):
 
     def _additional_links(self):
         attr_value_u = self.attrValue.decode(self._app.ls.charset)
-        parent_dn = web2ldap.ldaputil.base.parent_dn(attr_value_u)
+        parent_dn = web2ldap.ldaputil.parent_dn(attr_value_u)
         aesrvgroup_filter = u''.join([
             u'(aeSrvGroup=%s)' % av.decode(self._app.ls.charset)
             for av in self._entry.get('aeSrvGroup', [])

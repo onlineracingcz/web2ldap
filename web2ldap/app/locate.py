@@ -25,7 +25,7 @@ from ldap0.ldapurl import LDAPUrlExtension, LDAPUrlExtensions
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 
 # Modules shipped with web2ldap
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 import web2ldap.ldaputil.dns
 import web2ldap.app.gui
 
@@ -92,7 +92,7 @@ def w2l_locate(app):
     if locate_name:
 
         # Try to determine the format of the input parameter
-        if web2ldap.ldaputil.base.is_dn(locate_name):
+        if web2ldap.ldaputil.is_dn(locate_name):
             # Use dc-style LDAP DN
             msg_html = 'Input is considered LDAP distinguished name.'
             locate_domain = DNObj.fromstring(locate_name).domain(only_dc=False).decode('utf-8').encode('idna')

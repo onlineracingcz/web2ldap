@@ -36,9 +36,9 @@ from ldap0.controls.readentry import PreReadControl, PostReadControl
 from ldap0.controls.ppolicy import PasswordPolicyControl
 from ldap0.controls.sessiontrack import SessionTrackingControl, SESSION_TRACKING_FORMAT_OID_USERNAME
 
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 from web2ldap.log import logger
-from web2ldap.ldaputil.base import escape_ldap_filter_chars
+from web2ldap.ldaputil import escape_ldap_filter_chars
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 
 START_TLS_NO = 0
@@ -699,7 +699,7 @@ class LDAPSession(object):
         """
         if self.namingContexts is None and self.l is not None:
             self.init_rootdse()
-        return web2ldap.ldaputil.base.match_dnlist(
+        return web2ldap.ldaputil.match_dnlist(
             dn,
             self.namingContexts or naming_contexts or [],
         )
@@ -929,9 +929,9 @@ class LDAPSession(object):
         self.l.uncache(dn.encode(self.charset))
         if not new_superior is None:
             self.l.uncache(new_superior.encode(self.charset))
-        old_superior_str = web2ldap.ldaputil.base.parent_dn(web2ldap.ldaputil.base.normalize_dn(dn))
+        old_superior_str = web2ldap.ldaputil.parent_dn(web2ldap.ldaputil.normalize_dn(dn))
         if new_superior is not None:
-            if old_superior_str == web2ldap.ldaputil.base.normalize_dn(new_superior):
+            if old_superior_str == web2ldap.ldaputil.normalize_dn(new_superior):
                 new_superior_str = None
             else:
                 new_superior_str = self.uc_encode(new_superior)[0]
@@ -998,9 +998,9 @@ class LDAPSession(object):
         if not username:
             # seems to be anonymous bind
             return u''
-        elif web2ldap.ldaputil.base.is_dn(username):
+        elif web2ldap.ldaputil.is_dn(username):
             # already a bind-DN -> return it normalized
-            return web2ldap.ldaputil.base.normalize_dn(username)
+            return web2ldap.ldaputil.normalize_dn(username)
         elif not binddn_mapping:
             # no bind-DN mapping URL -> just return username
             return username
@@ -1060,7 +1060,7 @@ class LDAPSession(object):
             lu_obj.scope,
             search_filter,
         )
-        return web2ldap.ldaputil.base.normalize_dn(result[0][0].decode(self.charset))
+        return web2ldap.ldaputil.normalize_dn(result[0][0].decode(self.charset))
 
     def bind(
             self,
@@ -1168,7 +1168,7 @@ class LDAPSession(object):
 
         # Try to look up the user entry's DN in case self.who is still not a DN
         if whoami_filtertemplate and \
-           (self.who == None or not web2ldap.ldaputil.base.is_dn(self.who)):
+           (self.who == None or not web2ldap.ldaputil.is_dn(self.who)):
             if self.saslAuth and self.saslAuth.mech in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
                 # For SASL mechs EXTERNAL and GSSAPI the user did not enter a SASL username
                 # => try to determine it through OpenLDAP's libldap
@@ -1182,7 +1182,7 @@ class LDAPSession(object):
                 pass
 
         # Read the user's entry if self.who is a DN to get name and preferences
-        if self.who and web2ldap.ldaputil.base.is_dn(self.who):
+        if self.who and web2ldap.ldaputil.is_dn(self.who):
             try:
                 self.userEntry = self.l.read_s(
                     self.who.encode(self.charset),
@@ -1231,7 +1231,7 @@ class LDAPSession(object):
         possible_dit_structure_rules = {}.fromkeys((
             entry.get_possible_dit_structure_rules(ldap_dn) or []
         ))
-        parent_dn = web2ldap.ldaputil.base.parent_dn(dn)
+        parent_dn = web2ldap.ldaputil.parent_dn(dn)
         administrative_roles = entry.get('administrativeRole', [])
         if 'subschemaAdminSpecificArea' in administrative_roles or not parent_dn:
             # If the current entry is a subschema administrative point all

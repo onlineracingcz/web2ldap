@@ -25,7 +25,7 @@ import web2ldapcnf
 
 import web2ldap.web.forms
 from web2ldap.web import escape_html
-import web2ldap.ldaputil.base
+import web2ldap.ldaputil
 from web2ldap.ldaputil.oidreg import OID_REG
 import web2ldap.ldapsession
 import web2ldap.ldaputil.passwd
@@ -538,7 +538,7 @@ class Web2LDAPForm_rename(Web2LDAPForm):
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)
-        self.add_field(web2ldap.web.forms.Input('rename_newrdn', u'New RDN', 255, 1, web2ldap.ldaputil.base.rdn_pattern, size=50))
+        self.add_field(web2ldap.web.forms.Input('rename_newrdn', u'New RDN', 255, 1, web2ldap.ldaputil.rdn_pattern, size=50))
         self.add_field(DistinguishedNameInput('rename_newsuperior', u'New superior DN'))
         self.add_field(web2ldap.web.forms.Checkbox('rename_delold', u'Delete old', 1, default=u'yes', checked=1))
         self.add_field(
@@ -687,7 +687,7 @@ class DistinguishedNameInput(web2ldap.web.forms.Input):
         )
 
     def _validateFormat(self, value):
-        if value and not web2ldap.ldaputil.base.is_dn(value):
+        if value and not web2ldap.ldaputil.is_dn(value):
             raise web2ldap.web.forms.InvalidValueFormat(
                 self.name,
                 self.text.encode(self.charset),
@@ -861,7 +861,7 @@ class AttributeType(web2ldap.web.forms.Input):
             text,
             500,
             maxValues,
-            web2ldap.ldaputil.base.attr_type_pattern,
+            web2ldap.ldaputil.attr_type_pattern,
             required=False,
             size=30
         )

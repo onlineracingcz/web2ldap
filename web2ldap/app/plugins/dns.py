@@ -17,7 +17,7 @@ import ldap0.schema.models
 import web2ldapcnf
 
 import web2ldap.app.searchform
-from web2ldap.ldaputil.base import match_dnlist
+from web2ldap.ldaputil import match_dnlist
 from web2ldap.app.schema.syntaxes import \
     IA5String, \
     DNSDomain, \
