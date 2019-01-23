@@ -19,21 +19,8 @@
   Changes already done are listed in <a href="changes-1.4.html">1.4.x changes</a>.
 </p>
 <ul>
-  <li>Again lots of code-cleaning, e.g. PEP-8 compliance</li>
   <li>
-    Will require software updates / different installation:
-    <ul>
-      <li>
-        Use module
-        <a href="https://passlib.readthedocs.io/en/stable/lib/passlib.hash.html#ldap-rfc2307-hashes">
-          passlib.hash
-        </a>
-        for generating client-side password hashes.
-      </li>
-    </ul>
-  </li>
-  <li>
-    More access control for the different <var>PATH_INFO</var> URLs
+    Access control for the different <var>PATH_INFO</var> URLs
     based on regex-matching of arbitrary environment vars.
   </li>
   <li>
@@ -41,9 +28,6 @@
   </li>
   <li>
     Make use of HTML 5 features like &lt;datalist&gt; etc.
-  </li>
-  <li>
-    More password hashing/crypting schemes.
   </li>
   <li>
     &lt;optgroup&gt; markup in all dynamic select lists for grouping
@@ -58,13 +42,19 @@
     CSS style chooser.
   </li>
   <li>
-    Time zone chooser.
-  </li>
-  <li>
     HTTP-LDAP login bindings:<br>
     Define binding conditions between HTTP connection parameters
     (<var>REMOTE_ADDR</var>, <var>REMOTE_USER</var>, etc.) and a LDAP
     authz-DN entry which is result of a LDAP bind.
+  </li>
+  <li>
+    Use module
+    <a href="https://passlib.readthedocs.io/en/stable/lib/passlib.hash.html#ldap-rfc2307-hashes">
+      passlib.hash
+    </a>
+    for generating client-side password hashes.
+    <br>
+    Support more password hashing/crypting schemes.
   </li>
 </ul>
 
@@ -76,6 +66,9 @@
   <li>
     Drop-down menu structure with all possible context menu items reachable
     by one click.
+  </li>
+  <li>
+    Time zone chooser.
   </li>
   <li>
     More powerful handling of attribute input fields:
