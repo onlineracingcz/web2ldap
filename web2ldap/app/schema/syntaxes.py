@@ -237,10 +237,6 @@ class LDAPSyntax(object):
         self._dn = dn
         self._entry = entry
 
-    def setAttrValue(self, attrValue):
-        self.validate(attrValue)
-        self._av = attrValue
-
     def sanitizeInput(self, attrValue):
         """
         Transforms the HTML form input field values into LDAP string
