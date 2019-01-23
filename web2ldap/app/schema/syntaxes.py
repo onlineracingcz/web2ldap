@@ -25,6 +25,7 @@ import datetime
 import time
 import json
 import inspect
+import warnings
 import xml.etree.ElementTree
 from xml.etree.ElementTree import ParseError as XMLParseError
 from collections import defaultdict
@@ -35,6 +36,8 @@ try:
     from PIL import Image as PILImage
 except ImportError:
     PILImage = None
+else:
+    warnings.simplefilter('error', PILImage.DecompressionBombWarning)
 
 import ipaddress
 
@@ -415,8 +418,8 @@ class Audio(Binary):
     fileExt = 'au'
 
     def _validate(self, attrValue):
-        with StringIO(attrValue) as fileobj:
-            res = sndhdr.test_au(attrValue, fileobj)
+        fileobj = StringIO(attrValue)
+        res = sndhdr.test_au(attrValue, fileobj)
         return res is not None
 
     def displayValue(self, valueindex=0, commandbutton=False):
@@ -998,18 +1001,15 @@ class Image(Binary):
 
     def sanitizeInput(self, attrValue):
         if not self._validate(attrValue) and PILImage:
-            f = StringIO(attrValue)
-            f2 = StringIO()
+            imgfile = StringIO(attrValue)
             try:
-                try:
-                    im = PILImage.open(f)
-                    im.save(f2, self.imageFormat)
-                except (IOError, ValueError):
-                    attrValue = None
-                else:
-                    attrValue = f2.getvalue()
-            finally:
-                f.close()
+                im = PILImage.open(imgfile)
+                imgfile.seek(0)
+                im.save(imgfile, self.imageFormat)
+            except (IOError, ValueError):
+                pass
+            else:
+                attrValue = imgfile.getvalue()
         return attrValue
 
     def displayValue(self, valueindex=0, commandbutton=False):
