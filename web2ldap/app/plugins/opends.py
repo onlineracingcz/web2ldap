@@ -425,7 +425,7 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
         if not self._av:
             return u''
         entry = ldap0.cidict.cidict(self._entry)
-        attr_value = self._av.decode(self._app.ls.charset)
+        attr_value = self.av_u
         try:
             dn_comp_list = explode_dn(attr_value)
         except ldap0.DECODING_ERROR:

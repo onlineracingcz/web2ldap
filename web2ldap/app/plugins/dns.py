@@ -49,9 +49,8 @@ class AssociatedDomain(DNSDomain):
         """
         result = None
         if self._dn:
-            dn_u = self._app.ls.uc_decode(self._dn)[0]
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.get_search_root(dn_u).encode(self._app.ls.charset),
+                self._app.ls.get_search_root(self._dn).encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
                 '(&(objectClass=dNSDomain)(|(sOARecord=*)(nSRecord=*))(associatedDomain=*))',
                 attrlist=['associatedDomain'],
@@ -64,7 +63,7 @@ class AssociatedDomain(DNSDomain):
                 ])
                 if d:
                     try:
-                        result = unicode(d[match_dnlist(dn_u, d.keys())]) or None
+                        result = unicode(d[match_dnlist(self._dn, d.keys())]) or None
                     except KeyError:
                         pass
         return result
@@ -96,7 +95,7 @@ class AssociatedDomain(DNSDomain):
     def displayValue(self, valueindex=0, commandbutton=False):
         r = [DNSDomain.displayValue(self, valueindex, commandbutton)]
         if commandbutton:
-            av = self._app.ls.uc_decode(self._av)[0].lower()
+            av = self.av_u.lower()
             r.append(self._app.anchor(
                 'search', 'Ref. RRs',
                 (
@@ -244,47 +243,42 @@ class ARecord(IPv4HostAddress):
     def displayValue(self, valueindex=0, commandbutton=False):
         r = [IPv4HostAddress.displayValue(self, valueindex, commandbutton)]
         if commandbutton:
-            ip_addr = self.addr_class(self._av.decode('ascii'))
-            try:
-                ip_addr.reverse_dns
-            except AttributeError:
-                pass
-            else:
+            ip_addr = self.addr_class(self.av_u)
+            r.append(self._app.anchor(
+                'search', 'PTR RR',
+                (
+                    ('dn', self._app.naming_context),
+                    ('searchform_mode', u'adv'),
+                    ('search_attr', u'associatedDomain'),
+                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_string', self._app.ls.uc_decode(ip_addr.reverse_pointer)[0][:-1]),
+                ),
+                title=u'Search PTR RR for this A address',
+            ))
+            if self._schema.sed[ldap0.schema.models.AttributeType].has_key('1.3.6.1.1.1.1.19'):
                 r.append(self._app.anchor(
-                    'search', 'PTR RR',
+                    'search', 'IP host(s)',
                     (
                         ('dn', self._app.naming_context),
                         ('searchform_mode', u'adv'),
-                        ('search_attr', u'associatedDomain'),
+                        ('search_attr', u'ipHostNumber'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', self._app.ls.uc_decode(ip_addr.reverse_dns)[0][:-1]),
+                        ('search_string', self._app.ls.uc_decode(str(ip_addr))[0]),
                     ),
-                    title=u'Search PTR RR for this A address',
+                    title=u'Search IP host(s) for this A address',
                 ))
-                if self._schema.sed[ldap0.schema.models.AttributeType].has_key('1.3.6.1.1.1.1.19'):
-                    r.append(self._app.anchor(
-                        'search', 'IP host(s)',
-                        (
-                            ('dn', self._app.naming_context),
-                            ('searchform_mode', u'adv'),
-                            ('search_attr', u'ipHostNumber'),
-                            ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                            ('search_string', self._app.ls.uc_decode(str(ip_addr))[0]),
-                        ),
-                        title=u'Search IP host(s) for this A address',
-                    ))
-                if self._schema.sed[ldap0.schema.models.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
-                    r.append(self._app.anchor(
-                        'search', 'DHCP host(s)',
-                        (
-                            ('dn', self._app.naming_context),
-                            ('searchform_mode', u'adv'),
-                            ('search_attr', u'dhcpStatements'),
-                            ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                            ('search_string', u'fixed-address %s' % self._app.ls.uc_decode(str(ip_addr))[0]),
-                        ),
-                        title=u'Search DHCP host(s) for this A address',
-                    ))
+            if self._schema.sed[ldap0.schema.models.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
+                r.append(self._app.anchor(
+                    'search', 'DHCP host(s)',
+                    (
+                        ('dn', self._app.naming_context),
+                        ('searchform_mode', u'adv'),
+                        ('search_attr', u'dhcpStatements'),
+                        ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                        ('search_string', u'fixed-address %s' % self._app.ls.uc_decode(str(ip_addr))[0]),
+                    ),
+                    title=u'Search DHCP host(s) for this A address',
+                ))
         return web2ldapcnf.command_link_separator.join(r)
 
 syntax_registry.reg_at(

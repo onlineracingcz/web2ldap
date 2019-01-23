@@ -443,6 +443,14 @@ class DirectoryString(LDAPSyntax):
     desc = 'Directory String'
     html_tmpl = '{av}'
 
+    @property
+    def av_u(self):
+        try:
+            return self._av_u
+        except AttributeError:
+            self._av_u = self._app.ls.uc_decode(self._av)[0]
+        return self._av_u
+
     def _validate(self, attrValue):
         try:
             _ = self._app.ls.uc_encode(self._app.ls.uc_decode(attrValue)[0])[0]
@@ -458,7 +466,7 @@ class DirectoryString(LDAPSyntax):
 
     def displayValue(self, valueindex=0, commandbutton=False):
         return self.html_tmpl.format(
-            av=self._app.form.utf2display(self._app.ls.uc_decode(self._av)[0])
+            av=self._app.form.utf2display(self.av_u)
         )
 
 
@@ -482,20 +490,19 @@ class DistinguishedName(DirectoryString):
         return self.hasSubordinates and not self._at.lower() in self.noSubordinateAttrs
 
     def _additional_links(self):
-        attr_value_u = self._app.ls.uc_decode(self._av)[0]
         r = []
         if self._at.lower() != 'entrydn':
             r.append(
                 self._app.anchor(
                     'read', 'Read',
-                    [('dn', attr_value_u)],
+                    [('dn', self.av_u)],
                 )
             )
         if self._has_subordinates():
             r.append(self._app.anchor(
                 'search', 'Down',
                 (
-                    ('dn', attr_value_u),
+                    ('dn', self.av_u),
                     ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
                     ('filterstr', u'(objectClass=*)'),
                 )
@@ -509,9 +516,9 @@ class DistinguishedName(DirectoryString):
                     [
                         ('ldapurl', str(ldap_url_obj).decode('ascii')),
                         ('dn', self._dn),
-                        ('login_who', attr_value_u),
+                        ('login_who', self.av_u),
                     ],
-                    title=u'Connect and bind new session as\r\n%s' % (attr_value_u)
+                    title=u'Connect and bind new session as\r\n%s' % (self.av_u)
                 ),
             )
         # If self.ref_attrs is not empty then add links for searching back-linking entries
@@ -524,7 +531,7 @@ class DistinguishedName(DirectoryString):
             ref_attr = ref_attr or self._at
             ref_dn = ref_dn or self._dn
             ref_title = ref_title or u'Search %s entries referencing entry %s in attribute %s' % (
-                ref_oc, attr_value_u, ref_attr,
+                ref_oc, self.av_u, ref_attr,
             )
             r.append(self._app.anchor(
                 'search', self._app.form.utf2display(ref_text),
@@ -543,15 +550,14 @@ class DistinguishedName(DirectoryString):
                     ('search_string', ref_oc or u''),
                     ('search_attr', ref_attr),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', attr_value_u),
+                    ('search_string', self.av_u),
                 ),
                 title=ref_title,
             ))
         return r
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        attr_value_u = self._app.ls.uc_decode(self._av)[0]
-        r = [self._app.form.utf2display(attr_value_u or u'- World -')]
+        r = [self._app.form.utf2display(self.av_u or u'- World -')]
         if commandbutton:
             r.extend(self._additional_links())
         return web2ldapcnf.command_link_separator.join(r)
@@ -577,7 +583,7 @@ class AuthzDN(DistinguishedName):
             )
             whoami_display_str = web2ldap.app.gui.display_authz_dn(
                 self._app,
-                who=self._av.decode(self._app.ls.charset)
+                who=self.av_u
             )
             if whoami_display_str != simple_display_str:
                 result = '<br>'.join((whoami_display_str, result))
@@ -606,7 +612,7 @@ class NameAndOptionalUID(DistinguishedName):
     def displayValue(self, valueindex=0, commandbutton=False):
         value = self._av.split('#')
         dn_str = self._app.display_dn(
-            self._app.ls.uc_decode(self._av)[0],
+            self.av_u,
             commandbutton=commandbutton,
         )
         if len(value) == 1 or not value[1]:
@@ -763,7 +769,7 @@ class GeneralizedTime(IA5String):
         time_span = (current_time-dt_utc).total_seconds()
         return '{dt_utc} ({av})<br>{timespan_disp} {timespan_comment}'.format(
             dt_utc=dt_utc_str,
-            av=self._app.form.utf2display(self._app.ls.uc_decode(self._av)[0]),
+            av=self._app.form.utf2display(self.av_u),
             timespan_disp=self._app.form.utf2display(
                 web2ldap.app.gui.ts2repr(Timespan.time_divisors, u' ', abs(time_span))
             ),
@@ -956,7 +962,7 @@ class Uri(DirectoryString):
     )
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        attr_value = self._app.ls.uc_decode(self._av)[0]
+        attr_value = self.av_u
         try:
             url, label = attr_value.split(u' ', 1)
         except ValueError:
@@ -1174,8 +1180,8 @@ class LDAPUrl(Uri):
             )
         return '<table><tr><td>%s</td><td><a href="%s">%s</a></td></tr></table>' % (
             commandbuttonstr,
-            self._app.form.utf2display(self._app.ls.uc_decode(self._av)[0]),
-            self._app.form.utf2display(self._app.ls.uc_decode(self._av)[0])
+            self._app.form.utf2display(self.av_u),
+            self._app.form.utf2display(self.av_u)
         )
 
 
@@ -1258,7 +1264,7 @@ class MultilineText(DirectoryString):
     def displayValue(self, valueindex=0, commandbutton=False):
         lines = [
             self._app.form.utf2display(l)
-            for l in self._split_lines(self._app.ls.uc_decode(self._av)[0])
+            for l in self._split_lines(self.av_u)
         ]
         return '<br>'.join(lines)
 
@@ -1287,7 +1293,7 @@ class PreformattedMultilineText(MultilineText):
     def displayValue(self, valueindex=0, commandbutton=False):
         lines = [
             self._app.form.utf2display(l, self.tab_identiation)
-            for l in self._split_lines(self._app.ls.uc_decode(self._av)[0])
+            for l in self._split_lines(self.av_u)
         ]
         return '<code>%s</code>' % '<br>'.join(lines)
 
@@ -1553,20 +1559,20 @@ class SelectList(DirectoryString):
 
     def _sorted_select_options(self):
         # First generate a set of all other currently available attribute values
-        attr_value_u = DirectoryString.formValue(self)
+        form_value = DirectoryString.formValue(self)
         # Initialize a dictionary with all options
         d = self._get_attr_value_dict()
         # Remove other existing values from the options dict
         for v in self._entry.get(self._at, []):
             v = self._app.ls.uc_decode(v)[0]
-            if v != attr_value_u:
+            if v != form_value:
                 try:
                     del d[v]
                 except KeyError:
                     pass
         # Add the current attribute value if needed
-        if not attr_value_u in d:
-            d[attr_value_u] = attr_value_u
+        if not form_value in d:
+            d[form_value] = form_value
         # Finally return the sorted option list
         result = []
         for k, v in d.items():

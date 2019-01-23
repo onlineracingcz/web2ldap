@@ -466,7 +466,7 @@ class ReqSession(Integer):
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'reqSession'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', self._app.ls.uc_decode(self._av)[0]),
+                    ('search_string', self.av_u),
                 ),
                 title=u'Search all audit entries with same session number',
             )

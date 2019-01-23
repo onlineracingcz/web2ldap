@@ -52,7 +52,7 @@ class PkcX509Issuer(DynamicValueSelectList, DistinguishedName):
                     'filterstr',
                     u'(&%s(x509subject=%s))' % (
                         self._filterstr().decode('utf-8'),
-                        escape_filter_chars(self._app.ls.uc_decode(self._av)[0]),
+                        escape_filter_chars(self.av_u),
                     )
                 ),
             ],

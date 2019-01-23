@@ -55,7 +55,7 @@ class GidNumber(DynamicValueSelectList, Integer):
                 ('search_string', u'posixAccount'),
                 ('search_attr', u'gidNumber'),
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                ('search_string', self._app.ls.uc_decode(self._av)[0]),
+                ('search_string', self.av_u),
             ]
         else:
             title = None
@@ -106,7 +106,7 @@ class MemberUID(IA5String, DynamicValueSelectList):
                     ('dn', self._dn),
                     (
                         'filterstr', '(&(objectClass=posixAccount)(uid=%s))' % (
-                            self._app.form.utf2display(self._app.ls.uc_decode(self._av)[0])
+                            self._app.form.utf2display(self.av_u)
                         )
                     ),
                     ('searchform_mode', u'exp'),

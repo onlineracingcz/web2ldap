@@ -168,7 +168,6 @@ class NamingContexts(DistinguishedName):
     ldap_url = 'ldap:///cn=cn=config?olcSuffix?one?(objectClass=olcDatabaseConfig)'
 
     def _config_link(self):
-        attr_value_u = self._app.ls.uc_decode(self._av)[0]
         config_context = None
         config_scope_str = None
         config_filter = None
@@ -183,10 +182,10 @@ class NamingContexts(DistinguishedName):
                 pass
             else:
                 config_context = u'cn=Backends,cn=config'
-                config_filter = u'(&(objectClass=ds-cfg-backend)(ds-cfg-base-dn=%s))' % (attr_value_u)
+                config_filter = u'(&(objectClass=ds-cfg-backend)(ds-cfg-base-dn=%s))' % (self.av_u)
                 config_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         else:
-            config_filter = u'(&(objectClass=olcDatabaseConfig)(olcSuffix=%s))' % (attr_value_u)
+            config_filter = u'(&(objectClass=olcDatabaseConfig)(olcSuffix=%s))' % (self.av_u)
             config_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         if config_context and config_scope_str and config_filter:
             return self._app.anchor(
@@ -201,7 +200,6 @@ class NamingContexts(DistinguishedName):
         return None
 
     def _monitor_link(self):
-        attr_value_u = self._app.ls.uc_decode(self._av)[0]
         monitor_context = None
         monitor_scope_str = None
         monitor_filter = None
@@ -216,11 +214,11 @@ class NamingContexts(DistinguishedName):
                 pass
             else:
                 monitor_context = u'cn=monitor'
-                monitor_filter = u'(&(objectClass=ds-backend-monitor-entry)(ds-backend-base-dn=%s))' % (attr_value_u)
+                monitor_filter = u'(&(objectClass=ds-backend-monitor-entry)(ds-backend-base-dn=%s))' % (self.av_u)
                 monitor_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         else:
             monitor_context = u'cn=Databases,cn=Monitor'
-            monitor_filter = u'(&(objectClass=monitoredObject)(namingContexts=%s))' % (attr_value_u)
+            monitor_filter = u'(&(objectClass=monitoredObject)(namingContexts=%s))' % (self.av_u)
             monitor_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         if monitor_context and monitor_scope_str and monitor_filter:
             return self._app.anchor(
@@ -235,21 +233,18 @@ class NamingContexts(DistinguishedName):
         return None
 
     def _additional_links(self):
-        attr_value_u = self._app.ls.uc_decode(self._av)[0]
         r = DistinguishedName._additional_links(self)
         r.append(self._app.anchor(
             'search', 'Down',
             (
-                ('dn', attr_value_u),
+                ('dn', self.av_u),
                 ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
                 ('filterstr', u'(objectClass=*)'),
             )
         ))
         r.append(self._app.anchor(
             'dit', 'Tree',
-            (
-                ('dn', attr_value_u),
-            )
+            (('dn', self.av_u),),
         ))
         config_link = self._config_link()
         if config_link:

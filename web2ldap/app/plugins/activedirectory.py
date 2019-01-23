@@ -592,7 +592,7 @@ class DNWithOctetString(DistinguishedName):
         try:
             octet_tag, count, octet_string, dn = self._av.split(':', 3)
         except ValueError:
-            return self._app.form.utf2display(self._app.ls.uc_decode(self._av)[0])
+            return self._app.form.utf2display(self.av_u)
         return ':'.join([
             octet_tag,
             count,

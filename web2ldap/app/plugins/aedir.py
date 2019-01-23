@@ -841,8 +841,7 @@ class AESrvGroup(AESameZoneObject):
 
     def _filterstr(self):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
-        dn_u = self._dn.decode(self._app.ls.charset)
-        parent_dn = web2ldap.ldaputil.parent_dn(dn_u)
+        parent_dn = web2ldap.ldaputil.parent_dn(self._dn)
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
             parent_dn.encode(self._app.ls.charset),
@@ -916,7 +915,6 @@ class AEEntryDNAEUser(DistinguishedName):
     desc = 'AE-DIR: entryDN of aeUser entry'
 
     def _additional_links(self):
-        attr_value_u = self._av.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
         if self._app.audit_context:
             r.append(self._app.anchor(
@@ -929,9 +927,9 @@ class AEEntryDNAEUser(DistinguishedName):
                     ('search_string', u'auditObject'),
                     ('search_attr', u'reqAuthzID'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', attr_value_u),
+                    ('search_string', self.av_u),
                 ),
-                title=u'Search modifications made by %s in accesslog DB' % (attr_value_u),
+                title=u'Search modifications made by %s in accesslog DB' % (self.av_u),
             ))
         return r
 
@@ -953,8 +951,7 @@ class AEEntryDNAEHost(DistinguishedName):
     )
 
     def _additional_links(self):
-        attr_value_u = self._av.decode(self._app.ls.charset)
-        parent_dn = web2ldap.ldaputil.parent_dn(attr_value_u)
+        parent_dn = web2ldap.ldaputil.parent_dn(self.av_u)
         aesrvgroup_filter = u''.join([
             u'(aeSrvGroup=%s)' % av.decode(self._app.ls.charset)
             for av in self._entry.get('aeSrvGroup', [])
@@ -1001,7 +998,6 @@ class AEEntryDNAEZone(DistinguishedName):
     desc = 'AE-DIR: entryDN of aeZone entry'
 
     def _additional_links(self):
-        attr_value_u = self._av.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
         if self._app.audit_context:
             r.append(self._app.anchor(
@@ -1014,9 +1010,9 @@ class AEEntryDNAEZone(DistinguishedName):
                     ('search_string', u'auditObject'),
                     ('search_attr', u'reqDN'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_DN_SUBTREE),
-                    ('search_string', attr_value_u),
+                    ('search_string', self.av_u),
                 ),
-                title=u'Search all audit log entries for sub-tree %s' % (attr_value_u),
+                title=u'Search all audit log entries for sub-tree %s' % (self.av_u),
             ))
             r.append(self._app.anchor(
                 'search', 'Audit writes',
@@ -1028,10 +1024,10 @@ class AEEntryDNAEZone(DistinguishedName):
                     ('search_string', u'auditObject'),
                     ('search_attr', u'reqDN'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_DN_SUBTREE),
-                    ('search_string', attr_value_u),
+                    ('search_string', self.av_u),
                 ),
                 title=u'Search audit log entries for write operation within sub-tree %s' % (
-                    attr_value_u
+                    self.av_u
                 ),
             ))
         return r
@@ -1130,7 +1126,6 @@ class AEEntryDNAESrvGroup(DistinguishedName):
     )
 
     def _additional_links(self):
-        attr_value_u = self._av.decode(self._app.ls.charset)
         r = DistinguishedName._additional_links(self)
         r.append(
             self._app.anchor(
@@ -1141,10 +1136,15 @@ class AEEntryDNAESrvGroup(DistinguishedName):
                     ('searchform_mode', u'exp'),
                     (
                         'filterstr',
-                        u'(&(|(objectClass=aeHost)(objectClass=aeService))(|(entryDN:dnSubordinateMatch:={0})(aeSrvGroup={0})))'.format(attr_value_u)
+                        (
+                            u'(&'
+                            u'(|(objectClass=aeHost)(objectClass=aeService))'
+                            u'(|(entryDN:dnSubordinateMatch:={0})(aeSrvGroup={0}))'
+                            u')'
+                        ).format(self.av_u)
                     ),
                 ),
-                title=u'Search all service and host entries which are member in this service/host group {0}'.format(attr_value_u),
+                title=u'Search all service and host entries which are member in this service/host group {0}'.format(self.av_u),
             )
         )
         return r
@@ -1846,7 +1846,7 @@ class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
             if not self._av:
                 result = zone_cn+u'-'
             elif self._av in self.special_names:
-                result = '-'.join((zone_cn, self._av.decode(self._app.ls.charset)))
+                result = '-'.join((zone_cn, self.av_u))
         return result # formValue()
 
 
@@ -1891,7 +1891,7 @@ class AECommonNameAETag(AEZonePrefixCommonName):
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'aeTag'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', self._app.ls.uc_decode(self._av)[0]),
+                    ('search_string', self.av_u),
                 ),
                 title=u'Search all entries tagged with this tag',
             )
