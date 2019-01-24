@@ -24,6 +24,7 @@ from ipaddress import ip_address, ip_network
 
 import ldap0
 from ldap0.ldapurl import isLDAPUrl
+from ldap0.dn import DNObj
 
 import web2ldapcnf
 import web2ldapcnf.hosts
@@ -163,7 +164,7 @@ class AppHandler(object):
         self.form = None
         self.ls = None
         # class attributes later set by dn property method
-        self.naming_context = self._ldap_dn = self._dn = self._parent_dn = self.audit_context = None
+        self.dn_obj = None
         self.query_string = env.get('QUERY_STRING', '')
         self.ldap_url = None
         self.schema = None
@@ -180,7 +181,7 @@ class AppHandler(object):
         """
         get current DN
         """
-        return self._dn
+        return unicode(self.dn_obj)
 
     @dn.setter
     def dn(self, dn):
@@ -192,20 +193,39 @@ class AppHandler(object):
         assert web2ldap.ldaputil.is_dn(dn), ValueError(
             'Expected LDAP DN as dn, was %r' % (dn)
         )
-        self._dn = web2ldap.ldaputil.normalize_dn(dn)
-        self._parent_dn = web2ldap.ldaputil.parent_dn(self._dn)
+        self.dn_obj = DNObj.fromstring(dn)
         if self.ls and self.ls.uri:
-            ldap_charset = self.ls.charset
-            self.naming_context = self.ls.get_search_root(self._dn)
-            self.audit_context = self.ls.get_audit_context(self.naming_context)
+            self.dn_obj.charset = self.ls.charset
+
+    @property
+    def naming_context(self):
+        if self.ls and self.ls.uri:
+            res = self.ls.get_search_root(self.dn)
         else:
-            ldap_charset = 'utf-8'
-            self.naming_context = u''
-            self.audit_context = None
-        assert isinstance(self.naming_context, unicode), TypeError(
-            'Expected class attribute naming_context to be unicode , was %r' % (self.naming_context)
-        )
-        self._ldap_dn = dn.encode(ldap_charset)
+            res = u''
+        return res
+
+    @property
+    def audit_context(self):
+        if self.ls and self.ls.uri:
+            res = self.ls.get_audit_context(self.naming_context)
+        else:
+            res = None
+        return res
+
+    @property
+    def parent_dn(self):
+        """
+        get parent DN of current DN
+        """
+        return unicode(self.dn_obj.parent())
+
+    @property
+    def ldap_dn(self):
+        """
+        get LDAP encoding (UTF-8) of current DN
+        """
+        return bytes(self.dn_obj)
 
     def cfg_param(self, param_key, default):
         if self.ls and self.ls.uri:
@@ -225,20 +245,6 @@ class AppHandler(object):
         get parameter 'binddn_mapping' from cascaded configuration
         """
         return self.cfg_param('binddn_mapping', u'ldap:///_??sub?(uid={user})')
-
-    @property
-    def parent_dn(self):
-        """
-        get parent DN of current DN
-        """
-        return self._parent_dn
-
-    @property
-    def ldap_dn(self):
-        """
-        get LDAP encoding (UTF-8) of current DN
-        """
-        return self._ldap_dn
 
     def anchor(
             self,
