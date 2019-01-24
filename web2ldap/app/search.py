@@ -22,6 +22,7 @@ import xlwt
 
 import ldap0
 import ldap0.cidict
+import ldap0.filter
 import ldap0.schema.models
 from ldap0.controls.openldap import SearchNoOpControl
 
@@ -650,7 +651,7 @@ def w2l_search(app):
                     ('search_root', search_root),
                     ('search_output', {False:'raw', True:'table'}[search_output == 'table']),
                     ('scope', str(scope)),
-                    ('filterstr', web2ldap.ldaputil.negate_filter(filterstr)),
+                    ('filterstr', ldap0.filter.negate_filter(filterstr)),
                     ('search_resminindex', str(search_resminindex)),
                     ('search_resnumber', str(search_resnumber)),
                     ('search_lastmod', unicode(search_lastmod)),

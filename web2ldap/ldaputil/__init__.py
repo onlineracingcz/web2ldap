@@ -266,15 +266,6 @@ def compose_filter(operand, filter_parts):
     return res
 
 
-def negate_filter(filterstr):
-    """
-    Returns simple negated filterstr
-    """
-    if filterstr.startswith(u'(!') and filterstr.endswith(u')'):
-        return filterstr[2:-1]
-    return u'(!%s)' % filterstr
-
-
 def logdb_filter(logdb_objectclass, dn, entry_uuid=None):
     """
     returns a filter for querying a changelog or accesslog DB for
