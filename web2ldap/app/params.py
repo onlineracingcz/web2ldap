@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-web2ldap.app.ldapparams: Display (SSL) connection data
+web2ldap.app.params: Display (SSL) connection data
 
 web2ldap - a web-based LDAP Client,
 see https://www.web2ldap.de for details
@@ -26,7 +26,7 @@ from web2ldap.ldapsession import AVAILABLE_BOOLEAN_CONTROLS
 # LDAP connection parameters
 ##############################################################################
 
-def w2l_ldapparams(app):
+def w2l_params(app):
 
     # Set the LDAP connection option for deferencing aliases
     ldap_deref = app.form.getInputValue('ldap_deref', [])
@@ -93,7 +93,7 @@ def w2l_ldapparams(app):
             </tr>
             """ % (
                 app.anchor(
-                    'ldapparams',
+                    'params',
                     {False:'Enable', True:'Disable'}[control_enabled],
                     [
                         ('dn', app.dn),
@@ -143,11 +143,11 @@ def w2l_ldapparams(app):
                 extrastr=app.form.field['dn'].inputHTML(),
             ),
             app.form_html(
-                'ldapparams', 'Set alias deref', 'GET', [],
+                'params', 'Set alias deref', 'GET', [],
                 extrastr=app.form.field['ldap_deref'].inputHTML(default=str(app.ls.l.deref)),
             ),
             app.anchor(
-                'ldapparams',
+                'params',
                 {False:'all', True:'only known'}[ldapparam_all_controls],
                 [
                     ('dn', app.dn),

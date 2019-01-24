@@ -32,7 +32,7 @@ import web2ldap.ldaputil.passwd
 import web2ldap.app.core
 import web2ldap.app.gui
 import web2ldap.app.searchform
-import web2ldap.app.ldapparams
+import web2ldap.app.params
 import web2ldap.app.session
 from web2ldap.app.session import session_store
 from web2ldap.ldapsession import AVAILABLE_BOOLEAN_CONTROLS
@@ -326,8 +326,8 @@ class Web2LDAPForm_conninfo(Web2LDAPForm):
             )
         )
 
-class Web2LDAPForm_ldapparams(Web2LDAPForm):
-    command = 'ldapparams'
+class Web2LDAPForm_params(Web2LDAPForm):
+    command = 'params'
 
     def _add_fields(self):
         Web2LDAPForm._add_fields(self)

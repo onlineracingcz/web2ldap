@@ -51,7 +51,7 @@ import web2ldap.app.add
 import web2ldap.app.modify
 import web2ldap.app.dds
 import web2ldap.app.delete
-import web2ldap.app.ldapparams
+import web2ldap.app.params
 import web2ldap.app.read
 import web2ldap.app.conninfo
 import web2ldap.app.login
@@ -122,7 +122,7 @@ COMMAND_FUNCTION = {
     'passwd': web2ldap.app.passwd.w2l_passwd,
     'read': web2ldap.app.read.w2l_read,
     'conninfo': web2ldap.app.conninfo.w2l_conninfo,
-    'ldapparams': web2ldap.app.ldapparams.w2l_ldapparams,
+    'params': web2ldap.app.params.w2l_params,
     'login': web2ldap.app.login.w2l_login,
     'groupadm': web2ldap.app.groupadm.w2l_groupadm,
     'oid': web2ldap.app.schema.viewer.w2l_schema_viewer,

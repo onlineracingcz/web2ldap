@@ -391,7 +391,7 @@ def main_menu(app):
                 title=u'Add a new entry below of %s' % (app.dn or u'Root DSE')
             ),
             app.anchor('conninfo', 'ConnInfo', [('dn', app.dn)], title=u'Show information about HTTP and LDAP connections'),
-            app.anchor('ldapparams', 'Params', [('dn', app.dn)], title=u'Tweak parameters used for LDAP operations (controls etc.)'),
+            app.anchor('params', 'Params', [('dn', app.dn)], title=u'Tweak parameters used for LDAP operations (controls etc.)'),
             app.anchor('login', 'Bind', [('dn', app.dn)], title=u'Login to directory'),
             app.anchor('oid', 'Schema', [('dn', app.dn)], title=u'Browse/view subschema'),
         ))

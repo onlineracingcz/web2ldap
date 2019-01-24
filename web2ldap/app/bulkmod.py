@@ -24,7 +24,7 @@ import web2ldap.ldapsession
 import web2ldap.ldaputil
 import web2ldap.app.cnf
 import web2ldap.app.gui
-import web2ldap.app.ldapparams
+import web2ldap.app.params
 from web2ldap.ldaputil.oidreg import OID_REG
 from web2ldap.app.schema.syntaxes import syntax_registry, LDAPSyntaxValueError
 from web2ldap.app.modify import modlist_ldif
