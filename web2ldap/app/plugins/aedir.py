@@ -163,7 +163,7 @@ class AEObjectUtil:
         if not person_filter_parts:
             return []
         ldap_result = self._app.ls.l.search_s(
-            self._app.ls.uc_encode(self._search_root(self._dn, self.lu_obj.dn))[0],
+            self._search_root(),
             ldap0.SCOPE_SUBTREE,
             '(&{0})'.format(''.join(person_filter_parts)),
             attrlist=person_attrs or ['1.1'],
@@ -459,10 +459,10 @@ class AENwDevice(DynamicDNSelectList):
         (None, u'Siblings', None, u'Search sibling network devices'),
     )
 
-    def _search_root(self, current_dn, ldap_url_dn):
+    def _search_root(self):
         if self._dn.startswith('host='):
             return self._dn
-        return DynamicDNSelectList._search_root(self, current_dn, ldap_url_dn)
+        return DynamicDNSelectList._search_root(self)
 
     def _filterstr(self):
         orig_filter = DynamicDNSelectList._filterstr(self)
@@ -527,7 +527,7 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
         attr_value_dict = SelectList._get_attr_value_dict(self)
         try:
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.uc_encode(self._search_root(self._dn, self.lu_obj.dn))[0],
+                self._search_root(),
                 self.lu_obj.scope or ldap0.SCOPE_SUBTREE,
                 filterstr=self._filterstr(),
                 attrlist=self.lu_obj.attrs+['description'],
@@ -830,7 +830,7 @@ class AESameZoneObject(DynamicDNSelectList, AEObjectUtil):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeObject)(aeStatus=0))'
 
-    def _search_root(self, current_dn, ldap_url_dn):
+    def _search_root(self):
         return self._get_zone_dn()
 
 
@@ -1335,7 +1335,7 @@ class AEPerson2(AEPerson):
         )
         try:
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.uc_encode(self._search_root(self._dn, self.lu_obj.dn))[0],
+                self._search_root(),
                 ldap0.SCOPE_SUBTREE,
                 sanitize_filter,
                 attrlist=self.lu_obj.attrs,
@@ -2180,7 +2180,7 @@ class AERFC822MailMember(DynamicValueSelectList):
             map_filter_parts('entryDN', self._entry['member']),
         )
         ldap_result = self._app.ls.l.search_s(
-            self._app.ls.uc_encode(self._search_root(self._dn, self.lu_obj.dn))[0],
+            self._search_root(),
             ldap0.SCOPE_SUBTREE,
             entrydn_filter,
             attrlist=['mail'],

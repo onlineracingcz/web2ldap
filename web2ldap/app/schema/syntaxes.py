@@ -1665,7 +1665,6 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         return self.lu_obj.filterstr or '(objectClass=*)'
 
     def _search_ref(self, attrValue):
-        search_dn = self._search_root(self._dn, self.lu_obj.dn)
         attr_value = attrValue[len(self.valuePrefix):-len(self.valueSuffix) or None]
         search_filter = '(&%s(%s=%s))' % (
             self._filterstr(),
@@ -1674,7 +1673,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         )
         try:
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.uc_encode(search_dn)[0],
+                self._search_root(),
                 self.lu_obj.scope,
                 search_filter,
                 attrlist=self.lu_obj.attrs,
@@ -1740,25 +1739,26 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             link_html,
         ))
 
-    def _search_root(self, current_dn, ldap_url_dn):
-        ldap_url_dn = self._app.ls.uc_decode(ldap_url_dn)[0]
-        if ldap_url_dn == '_':
-            result_dn = self._app.ls.get_search_root(current_dn or self._dn or self._app.ls._dn)
-        elif ldap_url_dn == '.':
-            result_dn = current_dn
-        elif ldap_url_dn == '..':
-            result_dn = web2ldap.ldaputil.parent_dn(current_dn)
-        elif ldap_url_dn.endswith(',_'):
-            result_dn = ','.join((ldap_url_dn[:-2], self._app.naming_context))
-        elif ldap_url_dn.endswith(',.'):
-            result_dn = ','.join((ldap_url_dn[:-2], current_dn))
-        elif ldap_url_dn.endswith(',..'):
-            result_dn = ','.join((ldap_url_dn[:-3], web2ldap.ldaputil.parent_dn(current_dn)))
+    def _search_root(self):
+        ldap_url_dn = self._app.ls.uc_decode(self.lu_obj.dn)[0]
+        if ldap_url_dn == u'_':
+            result_dn = self._app.naming_context
+        elif ldap_url_dn == u'.':
+            result_dn = self._dn
+        elif ldap_url_dn == u'..':
+            result_dn = web2ldap.ldaputil.parent_dn(self._dn)
+        elif ldap_url_dn.endswith(u',_'):
+            result_dn = u','.join((ldap_url_dn[:-2], self._app.naming_context))
+        elif ldap_url_dn.endswith(u',.'):
+            result_dn = u','.join((ldap_url_dn[:-2], self._dn))
+        elif ldap_url_dn.endswith(u',..'):
+            result_dn = u','.join((ldap_url_dn[:-3], web2ldap.ldaputil.parent_dn(self._dn)))
         else:
             result_dn = ldap_url_dn
-        if result_dn.endswith(','):
+        if result_dn.endswith(u','):
             result_dn = result_dn[:-1]
-        return result_dn # _search_root()
+        return self._app.ls.uc_encode(result_dn)[0]
+        # end of _search_root()
 
     def _get_attr_value_dict(self):
         attr_value_dict = SelectList._get_attr_value_dict(self)
@@ -1768,13 +1768,12 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                     self.lu_obj.hostport
                 )
             )
-        search_dn = self._search_root(self._dn, self.lu_obj.dn)
         search_scope = self.lu_obj.scope or ldap0.SCOPE_BASE
         search_attrs = (self.lu_obj.attrs or []) + ['description', 'info']
         # Use the existing LDAP connection as current user
         try:
             ldap_result = self._app.ls.l.search_s(
-                self._app.ls.uc_encode(search_dn)[0],
+                self._search_root(),
                 search_scope,
                 filterstr=self._filterstr(),
                 attrlist=search_attrs,
