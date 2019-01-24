@@ -329,6 +329,12 @@ import web2ldap.app.plugins.oath
 import web2ldap.app.plugins.mspwdreset
 
 #---------------------------------------------------------------------------
-# Add more local or experimental plugins from here
+# Debian schema used on ldap://db.debian.org
+#---------------------------------------------------------------------------
+
+import web2ldap.app.plugins.debian
+
+#---------------------------------------------------------------------------
+# Add more local plugins here
 #---------------------------------------------------------------------------
 
