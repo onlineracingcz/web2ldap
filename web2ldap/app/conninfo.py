@@ -79,6 +79,10 @@ CONNINFO_LDAP_TEMPLATE = """
     <td>Naming Context:</td>
     <td>%s</td>
   </tr>
+  <tr>
+    <td>%d last search bases:</td>
+    <td>%s</td>
+  </tr>
 </table>
 """
 
@@ -353,6 +357,11 @@ def w2l_conninfo(app):
             app.form.utf2display(app.dn or u'- World -'),
             app.form.utf2display(app.parent_dn if app.parent_dn is not None else u''),
             app.form.utf2display(app.naming_context),
+            min(len(app.ls.l.last_search_bases), app.ls.l.last_search_bases.maxlen),
+            '<br>'.join([
+                app.display_dn(search_base.decode(app.ls.charset), commandbutton=True)
+                for search_base in app.ls.l.last_search_bases
+            ])
         )
     )
 

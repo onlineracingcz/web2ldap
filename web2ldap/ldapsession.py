@@ -18,6 +18,7 @@ import sys
 import socket
 import time
 import codecs
+from collections import deque
 
 import ldap0
 import ldap0.ldif
@@ -248,6 +249,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             retry_delay=retry_delay,
             cache_ttl=cache_ttl,
         )
+        self.last_search_bases = deque(maxlen=30)
 
     def _get_server_ctrls(self, method):
         all_s_ctrls = {}
@@ -374,6 +376,8 @@ class MyLDAPObject(ReconnectLDAPObject):
             TypeError("Type of 'base' must be bytes, was %r" % (base))
         assert isinstance(filterstr, bytes), \
             TypeError("Type of 'filterstr' must be bytes, was %r" % (filterstr))
+        if base not in self.last_search_bases:
+            self.last_search_bases.append(base)
         return ReconnectLDAPObject.search(
             self,
             base,
