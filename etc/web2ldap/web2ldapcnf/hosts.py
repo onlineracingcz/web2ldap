@@ -82,10 +82,6 @@ ldap_uri_list = [
         u'A-Trust PKI Verzeichnisdienst',
     ),
     (
-        'ldap://directory.s-trust.de',
-        u'S-Trust',
-    ),
-    (
         'ldap://ldap1.pca.dfn.de/ou%3DDFN-PKI%2Co%3DDFN-Verein%2Cc%3Dde??one',
         u'DFN-PKI',
     ),
