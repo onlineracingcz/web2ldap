@@ -15,7 +15,7 @@ from web2ldap.app.schema.syntaxes import \
 
 class SudoUserGroup(DynamicValueSelectList):
     oid = 'SudoUserGroup-oid'
-    desc = 'United Internet: sudoUser'
+    desc = 'sudo-ldap: sudoUser (group)'
     ldap_url = 'ldap:///_?cn,cn?sub?(objectClass=posixGroup)'
     valuePrefix = '%'
 
