@@ -38,7 +38,7 @@ class Field(object):
             pattern,
             required=0,
             default=None,
-            accessKey='',
+            accesskey='',
         ):
         """
         name
@@ -53,7 +53,7 @@ class Field(object):
             default value to be used in method inputfield()
         required
             flag which marks field as mandantory input field
-        accessKey
+        accesskey
             key for accessing this field to be displayed by method inputHTML()
         pattern
             regex pattern of valid values either as string
@@ -65,20 +65,20 @@ class Field(object):
         self.maxLen = maxLen
         self.maxValues = maxValues
         self.required = required
-        self.accessKey = accessKey
+        self.accesskey = accesskey
         self.inputHTMLTemplate = r'%s'
         # Charset is the preferred character set of the browser.
         # This is set by Form.add() the something meaningful.
-        self.charset = 'iso-8859-1'
+        self._charset = 'utf-8'
         self.set_default(default)
         self.setRegex(pattern)
 
-    def _accessKeyAttr(self):
-        if self.accessKey:
-            return 'accesskey="%s"' % (self.accessKey)
-        return ''
+    def _accesskey_attr(self):
+        if not self.accesskey:
+            return ''
+        return 'accesskey="%s" ' % (self.accesskey)
 
-    def idAttrStr(self, id_value):
+    def id_attr(self, id_value):
         if id_value is None:
             return ''
         return 'id="%s" ' % (id_value)
@@ -197,9 +197,15 @@ class Field(object):
         self._validateMaxValue()
         self.value.append(value)
 
-    def setCharset(self, charset):
-        """Define the character set of the user's input."""
-        self.charset = charset
+    @property
+    def charset(self):
+        """Return the character set used for the field"""
+        return self._charset
+
+    @charset.setter
+    def charset(self, charset):
+        """Set the character set used for the field"""
+        self._charset = charset
 
     def _defaultValue(self, default):
         """returns default value"""
@@ -229,13 +235,13 @@ class Textarea(Field):
             pattern,
             required=0,
             default=None,
-            accessKey='',
+            accesskey='',
             rows=10,
             cols=60,
         ):
         self.rows = rows
         self.cols = cols
-        Field.__init__(self, name, text, maxLen, maxValues, None, required, default, accessKey)
+        Field.__init__(self, name, text, maxLen, maxValues, None, required, default, accesskey)
 
     def setRegex(self, pattern):
         """
@@ -251,13 +257,13 @@ class Textarea(Field):
         """Returns string with HTML input field."""
         return self.inputHTMLTemplate % (
             '<textarea %stitle="%s" name="%s" %s rows="%d" cols="%d">%s</textarea>' % (
-                self.idAttrStr(id_value),
+                self.id_attr(id_value),
                 self.titleHTML(title),
                 self.name,
-                self._accessKeyAttr(),
+                self._accesskey_attr(),
                 self.rows,
                 self.cols,
-                self._defaultHTML(default)
+                self._defaultHTML(default),
             )
         )
 
@@ -267,6 +273,7 @@ class Input(Field):
     Normal one-line input field:
     <input>
     """
+    input_type = None
 
     def __init__(
             self,
@@ -277,27 +284,32 @@ class Input(Field):
             pattern,
             required=0,
             default=None,
-            accessKey='',
+            accesskey='',
             size=None
         ):
         self.size = size or maxLen
-        Field.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accessKey)
+        Field.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accesskey)
 
     def inputHTML(self, default=None, id_value=None, title=None):
+        if self.input_type is not None:
+            type_attr = ' type="%s"' % (escape_html(self.input_type))
+        else:
+            type_attr = ''
         if self._re is not None:
             pattern_attr = ' pattern="%s"' % (escape_html(self._re.pattern))
         else:
             pattern_attr = ''
         return self.inputHTMLTemplate % (
-            '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d"%s value="%s">' % (
-                self.idAttrStr(id_value),
+            '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d"%s%s value="%s">' % (
+                self.id_attr(id_value),
                 self.titleHTML(title),
                 self.name,
-                self._accessKeyAttr(),
+                self._accesskey_attr(),
                 self.maxLen,
                 self.size,
+                type_attr,
                 pattern_attr,
-                self._defaultHTML(default)
+                self._defaultHTML(default),
             )
         )
 
@@ -317,9 +329,9 @@ class HiddenInput(Input):
             pattern,
             required=0,
             default=None,
-            accessKey='',
+            accesskey='',
         ):
-        Input.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accessKey)
+        Input.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accesskey)
 
     def inputHTML(self, default=None, id_value=None, title=None, show=0):
         default_html = self._defaultHTML(default)
@@ -329,10 +341,10 @@ class HiddenInput(Input):
             default_str = ''
         return self.inputHTMLTemplate % (
             '<input type="hidden" %stitle="%s" name="%s" %s  value="%s">%s' % (
-                self.idAttrStr(id_value),
+                self.id_attr(id_value),
                 self.titleHTML(title),
                 self.name,
-                self._accessKeyAttr(),
+                self._accesskey_attr(),
                 default_html,
                 default_str
             )
@@ -365,10 +377,10 @@ class File(Input):
     def inputHTML(self, default=None, id_value=None, title=None, mimeType=None):
         return self.inputHTMLTemplate % (
             '<input type="file" %stitle="%s" name="%s" %s accept="%s">' % (
-                self.idAttrStr(id_value),
+                self.id_attr(id_value),
                 self.titleHTML(title),
                 self.name,
-                self._accessKeyAttr(),
+                self._accesskey_attr(),
                 mimeType or self.mimeType
             )
         )
@@ -379,22 +391,7 @@ class Password(Input):
     Password input field:
     <input type="password">
     """
-
-    def inputHTML(self, default=None, id_value=None, title=None):
-        return self.inputHTMLTemplate % (
-            (
-                '<input %stitle="%s" name="%s" %s maxlength="%d" '
-                'size="%d" type="password" value="%s">'
-            ) % (
-                self.idAttrStr(id_value),
-                self.titleHTML(title),
-                self.name,
-                self._accessKeyAttr(),
-                self.maxLen,
-                self.size,
-                default or ''
-            )
-        )
+    input_type = 'password'
 
 
 class Radio(Field):
@@ -410,7 +407,7 @@ class Radio(Field):
             maxValues=1,
             required=0,
             default=None,
-            accessKey='',
+            accesskey='',
             options=None
         ):
         """
@@ -425,7 +422,7 @@ class Radio(Field):
         """
         self.setOptions(options)
         self.set_default(default)
-        Field.__init__(self, name, text, self.maxLen, maxValues, '', required, default, accessKey)
+        Field.__init__(self, name, text, self.maxLen, maxValues, '', required, default, accesskey)
 
     def _validateFormat(self, value):
         """
@@ -474,10 +471,10 @@ class Radio(Field):
                   %s
                 >%s<br>
                 """ % (
-                    self.idAttrStr(id_value),
+                    self.id_attr(id_value),
                     self.titleHTML(title),
                     self.name.encode(self.charset),
-                    self._accessKeyAttr(),
+                    self._accesskey_attr(),
                     optionValue.encode(self.charset),
                     ' checked'*(optionValue == default_value),
                     optionText.encode(self.charset)
@@ -530,7 +527,7 @@ class Select(Radio):
             maxValues,
             required=0,
             default=None,
-            accessKey='',
+            accesskey='',
             options=None,
             size=1,
             ignoreCase=0,
@@ -550,7 +547,7 @@ class Select(Radio):
         self.size = size
         self.multiSelect = multiSelect
         self.ignoreCase = ignoreCase
-        Radio.__init__(self, name, text, maxValues, required, default, accessKey, options)
+        Radio.__init__(self, name, text, maxValues, required, default, accesskey, options)
 
     def _defaultValue(self, default):
         """returns default value"""
@@ -562,10 +559,10 @@ class Select(Radio):
 
     def inputHTML(self, default=None, id_value=None, title=None):
         res = ['<select %stitle="%s" name="%s" %s  size="%d" %s>' % (
-            self.idAttrStr(id_value),
+            self.id_attr(id_value),
             self.titleHTML(title),
             self.name,
-            self._accessKeyAttr(),
+            self._accesskey_attr(),
             self.size,
             " multiple"*(self.multiSelect > 0)
         )]
@@ -617,15 +614,16 @@ class DataList(Input, Select):
             pattern=None,
             required=0,
             default=None,
-            accessKey='',
+            accesskey='',
             options=None,
             size=None,
             ignoreCase=0,
         ):
-        Input.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accessKey)
-    #    if size==None:
-    #      # FIX ME!
-    #      size = max(map(lambda x:max(len(x),len(x[1])),options or []))
+        Input.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accesskey)
+        if size is None:
+            size = max([
+                len(option) for option, _ in options or []
+            ])
         self.size = size or 20
         self.multiSelect = 0
         self.ignoreCase = ignoreCase
@@ -637,10 +635,10 @@ class DataList(Input, Select):
         s = [
             self.inputHTMLTemplate % (
                 '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d" value="%s" list="%s">' % (
-                    self.idAttrStr(id_value),
+                    self.id_attr(id_value),
                     self.titleHTML(title),
                     self.name,
-                    self._accessKeyAttr(),
+                    self._accesskey_attr(),
                     self.maxLen,
                     self.size,
                     self._defaultHTML(default),
@@ -671,7 +669,7 @@ class Checkbox(Field):
             text,
             maxValues=1,
             required=0,
-            accessKey='',
+            accesskey='',
             default=None,
             checked=0,
         ):
@@ -681,18 +679,18 @@ class Checkbox(Field):
         pattern = default
         maxLen = len(default or '')
         self.checked = checked
-        Field.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accessKey)
+        Field.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accesskey)
 
     def inputHTML(self, default=None, id_value=None, title=None, checked=None):
         if checked is None:
             checked = self.checked
         return self.inputHTMLTemplate % (
             '<input type="checkbox" %stitle="%s" name="%s" %s value="%s"%s>' % (
-                self.idAttrStr(id_value),
+                self.id_attr(id_value),
                 self.titleHTML(title),
                 self.name,
-                self._accessKeyAttr(),
-                self._defaultValue(default),
+                self._accesskey_attr(),
+                self._defaultHTML(default),
                 ' checked'*(checked),
             )
         )
@@ -916,7 +914,7 @@ class Form:
         """
         Add a input field object f to the form.
         """
-        field.setCharset(self.accept_charset)
+        field.charset = self.accept_charset
         self.field[field.name] = field
         return # Form.add_field()
 
@@ -981,7 +979,7 @@ class Form:
         self.uc_encode, self.uc_decode = form_codec[0], form_codec[1]
         return # _set_charset()
 
-    def _parse_url_encoded(self, maxContentLength, stripValues, unquote):
+    def _parse_url_encoded(self, maxContentLength):
 
         if self.request_method == 'POST':
             query_string = self.inf.read(int(self.env['CONTENT_LENGTH']))
@@ -993,6 +991,8 @@ class Form:
         inputlist = query_string.split('&')
 
         contentLength = 0
+
+        unquote = urllib.unquote_plus
 
         # Loop over all name attributes declared
         for param in inputlist:
@@ -1009,12 +1009,11 @@ class Form:
                 if name not in self.field:
                     raise InvalidFieldName(name)
 
-                value = unquote(value)
-                if stripValues:
-                    value = value.strip()
+                value = unquote(value).strip()
 
                 contentLength += len(value)
-                # Gesamtlaenge der Daten noch zulaessig?
+
+                # Overall length of input data still valid?
                 if contentLength > maxContentLength:
                     raise ContentLengthExceeded(contentLength, maxContentLength)
 
@@ -1053,25 +1052,14 @@ class Form:
         return # _parse_mime_multipart()
 
 
-    def getInputFields(
-            self,
-            stripValues=True,
-            unquotePlus=False,
-        ):
+    def getInputFields(self):
         """
         Process user's <form> input and store the values in each
         field instance's content attribute.
 
         When a processing error occurs FormException (or derivatives)
         are raised.
-
-        stripValues=1               If true leading and trailing whitespaces
-                                    are stripped from all input values.
-        unquotePlus=0
-           If non-zero urllib.unquote_plus() is used instead of urllib.unquote().
         """
-
-        unquote = {False:urllib.unquote_plus, True:urllib.unquote_plus}[unquotePlus]
 
         # Calculate maxContentLength
         maxContentLength = 0
@@ -1081,11 +1069,7 @@ class Form:
         content_type = self.getContentType()
         if content_type.startswith('application/x-www-form-urlencoded'):
             # Parse user's input
-            self._parse_url_encoded(
-                maxContentLength,
-                stripValues,
-                unquote,
-            )
+            self._parse_url_encoded(maxContentLength)
         elif content_type.startswith('multipart/form-data'):
             self._parse_mime_multipart(
                 maxContentLength,

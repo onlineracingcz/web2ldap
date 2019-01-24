@@ -151,7 +151,7 @@ def SearchForm_adv(app):
         ],
         default=search_mode
     )
-    search_mode_select.setCharset(app.form.accept_charset)
+    search_mode_select.charset = app.form.accept_charset
 
     search_attr_select = web2ldap.app.gui.attrtype_select_field(
         app,
@@ -174,7 +174,7 @@ def SearchForm_adv(app):
         web2ldapcnf.max_searchparams,
         options=mr_list,
     )
-    search_mr_select.setCharset(app.form.accept_charset)
+    search_mr_select.charset = app.form.accept_charset
 
     search_fields_html_list = []
 

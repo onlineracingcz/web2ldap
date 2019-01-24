@@ -552,7 +552,7 @@ def attrtype_select_field(
         field_name, field_desc, 1,
         options=sorted_attr_options,
     )
-    attr_select.setCharset(app.form.accept_charset)
+    attr_select.charset = app.form.accept_charset
     return attr_select
 
 
@@ -658,7 +658,7 @@ def search_root_field(
         default=default or app.naming_context or app.dn,
         ignoreCase=1
     )
-    srf.setCharset(app.form.accept_charset)
+    srf.charset = app.form.accept_charset
     return srf # search_root_field()
 
 

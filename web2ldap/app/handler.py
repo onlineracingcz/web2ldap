@@ -477,7 +477,7 @@ class AppHandler(object):
             web2ldapcnf.ldap_trace_level,
             web2ldapcnf.ldap_cache_ttl,
         )
-        ls.cookie = self.form.setNewCookie(str(id(ls)))
+        ls.cookie = self.form.set_cookie(str(id(ls)))
         session_store.storeSession(self.sid, self.ls)
         return ls # end of _get_session()
 
@@ -525,7 +525,7 @@ class AppHandler(object):
                 pass
             else:
                 # Remove session cookie
-                self.form.unsetCookie(old_ls.cookie)
+                self.form.unset_cookie(old_ls.cookie)
             # Explicitly remove old session
             session_store.deleteSession(del_sid)
         return # end of _handle_del_sid()
@@ -716,7 +716,7 @@ class AppHandler(object):
 
             if self.command == 'disconnect':
                 # Remove session cookie
-                self.form.unsetCookie(self.ls.cookie)
+                self.form.unset_cookie(self.ls.cookie)
                 # Explicitly remove old session
                 session_store.deleteSession(self.sid)
                 # Redirect to start page to avoid people bookmarking disconnect URL
@@ -779,7 +779,7 @@ class AppHandler(object):
                     web2ldapcnf.ldap_trace_level,
                     web2ldapcnf.ldap_cache_ttl,
                 )
-                self.ls.cookie = self.form.setNewCookie(str(id(self.ls)))
+                self.ls.cookie = self.form.set_cookie(str(id(self.ls)))
                 session_store.storeSession(self.sid, self.ls)
                 # Check whether access to target LDAP server is allowed
                 if web2ldapcnf.hosts.restricted_ldap_uri_list and \
@@ -903,7 +903,7 @@ class AppHandler(object):
             exception_message(
                 self,
                 u'Error parsing form',
-                u'Error parsing form: %s' % (
+                u'Error parsing form:<br>%s' % (
                     self.form.utf2display(str(form_error).decode(self.form.accept_charset)),
                 ),
             )

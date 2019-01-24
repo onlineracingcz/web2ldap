@@ -526,7 +526,7 @@ def w2l_read(app):
             )
         )
 
-        export_field = web2ldap.app.form.ExportFormatSelect('search_output')
+        export_field = web2ldap.app.form.ExportFormatSelect()
         export_field.charset = app.form.accept_charset
 
         # List of already displayed attributes
@@ -540,7 +540,11 @@ def w2l_read(app):
                     ('search_resnumber', u'0'),
                     ('search_attrs', u','.join(map(unicode, wanted_attrs))),
                 ],
-                extrastr=export_field.inputHTML()+'Incl. op. attrs.:'+web2ldap.app.form.InclOpAttrsCheckbox('search_opattrs', u'Request operational attributes', default='yes', checked=0).inputHTML(),
+                extrastr='\n'.join((
+                    export_field.inputHTML(),
+                    'Incl. op. attrs.:',
+                    web2ldap.app.form.InclOpAttrsCheckbox().inputHTML(),
+                )),
                 target='web2ldapexport',
             ),
         ))

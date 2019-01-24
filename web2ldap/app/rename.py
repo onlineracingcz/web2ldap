@@ -52,7 +52,7 @@ def new_superior_field(app, sup_search_url, old_superior_dn):
         nssf.text = 'New Superior DN'
     else:
         nssf = web2ldap.app.form.DistinguishedNameInput('rename_newsuperior', 'New Superior DN')
-    nssf.setCharset(app.form.accept_charset)
+    nssf.charset = app.form.accept_charset
     nssf.set_default(old_superior_dn)
     return nssf # new_superior_field()
 

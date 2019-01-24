@@ -482,7 +482,11 @@ def w2l_search(app):
 
     elif search_output in {'ldif', 'ldif1'}:
         # read all attributes
-        read_attrs = search_attrs or ({False:['*'], True:['*', '+']}[app.ls.supportsAllOpAttr and search_opattrs]+requested_attrs) or None
+        read_attrs = (
+            search_attrs
+            or {False:('*',), True:('*', '+')}[app.ls.supportsAllOpAttr and search_opattrs]+requested_attrs
+            or None
+        )
         result_handler = LDIFWriter(app.ls.l, app.outf)
         if search_output == 'ldif1':
             result_handler.header = LDIF1_HEADER % (
@@ -827,7 +831,7 @@ def w2l_search(app):
                 context_menu_list=ContextMenuList
             )
 
-            export_field = web2ldap.app.form.ExportFormatSelect('search_output')
+            export_field = web2ldap.app.form.ExportFormatSelect()
             export_field.charset = app.form.accept_charset
 
             app.outf.write('\n'.join((SearchWarningMsg, result_message)))
@@ -1039,12 +1043,7 @@ def w2l_search(app):
                         app.form.hiddenFieldHTML('search_attrs', u','.join(search_attrs), u''),
                     )),
                     export_field.inputHTML(),
-                    web2ldap.app.form.InclOpAttrsCheckbox(
-                        'search_opattrs',
-                        u'Request operational attributes',
-                        default="yes",
-                        checked=0,
-                    ).inputHTML(),
+                    web2ldap.app.form.InclOpAttrsCheckbox().inputHTML(),
                 )
             )
 
