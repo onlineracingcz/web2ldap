@@ -14,7 +14,6 @@ from web2ldap.app.schema.syntaxes import DumpASN1CfgOID
 from web2ldap.app.schema.syntaxes import \
     DistinguishedName, \
     SelectList, \
-    DynamicValueSelectList, \
     syntax_registry
 
 
@@ -33,32 +32,25 @@ syntax_registry.reg_at(
 )
 
 
-class PkcX509Issuer(DynamicValueSelectList, DistinguishedName):
+class PkcX509Issuer(DistinguishedName):
     oid = 'PkcX509Issuer-oid'
-    ldap_url = 'ldap:///_?x509subject,x509subject?sub?(objectClass=x509caCertificate)'
 
-    def _validate(self, attrValue):
-        return DistinguishedName._validate(self, attrValue)
-
-    def displayValue(self, valueindex=0, commandbutton=False):
-        r = [
-            DistinguishedName.displayValue(self, valueindex, commandbutton=False),
+    def _additional_links(self):
+        return [
+            self._app.anchor(
+                'search', 'Issuer',
+                [
+                    ('dn', self._app.naming_context),
+                    (
+                        'filterstr',
+                        u'(&(objectClass=x509caCertificate)(x509subject=%s))' % (
+                            escape_filter_chars(self.av_u),
+                        )
+                    ),
+                ],
+                title=u'Search for issuer entries',
+            ),
         ]
-        r.append(self._app.anchor(
-            'search', '&raquo;',
-            [
-                ('dn', self._search_root(self._dn, self.lu_obj.dn)),
-                (
-                    'filterstr',
-                    u'(&%s(x509subject=%s))' % (
-                        self._filterstr().decode('utf-8'),
-                        escape_filter_chars(self.av_u),
-                    )
-                ),
-            ],
-            title=u'Search for issuer entries',
-        ))
-        return ' '.join(r)
 
 syntax_registry.reg_at(
     PkcX509Issuer.oid, [
