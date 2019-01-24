@@ -333,7 +333,7 @@ class Web2LDAPForm_params(Web2LDAPForm):
         Web2LDAPForm._add_fields(self)
         self.add_field(
             web2ldap.web.forms.Select(
-                'ldapparam_all_controls',
+                'params_all_controls',
                 u'List all controls',
                 1,
                 options=(u'0', u'1'),
@@ -342,7 +342,7 @@ class Web2LDAPForm_params(Web2LDAPForm):
         )
         self.add_field(
             web2ldap.web.forms.Input(
-                'ldapparam_enable_control',
+                'params_enable_control',
                 u'Enable LDAPv3 Boolean Control',
                 50, 1,
                 u'([0-9]+.)*[0-9]+',
@@ -350,7 +350,7 @@ class Web2LDAPForm_params(Web2LDAPForm):
         )
         self.add_field(
             web2ldap.web.forms.Input(
-                'ldapparam_disable_control',
+                'params_disable_control',
                 u'Disable LDAPv3 Boolean Control',
                 50, 1,
                 u'([0-9]+.)*[0-9]+',
