@@ -130,10 +130,7 @@ def schema_tree_html(app, schema, se_class, se_tree, se_oid, level):
     if se_tree[se_oid]:
         app.outf.write('<dd>')
         for sub_se_oid in se_tree[se_oid]:
-            schema_tree_html(
-                app, schema,
-                se_class, se_tree, sub_se_oid, level+1
-            )
+            schema_tree_html(app, schema, se_class, se_tree, sub_se_oid, level+1)
         app.outf.write('</dd>')
     else:
         app.outf.write('<dd></dd>')
