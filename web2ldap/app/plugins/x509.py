@@ -184,7 +184,7 @@ class CertificateList(Binary):
                 crl_this_update=x509['tbs_cert_list']['this_update'].native,
                 crl_next_update=x509['tbs_cert_list']['next_update'].native,
             )
-        return ''.join((crl_html, links_html))
+        return ''.join((links_html, crl_html))
 
 
 class CertificatePair(ASN1Object):
