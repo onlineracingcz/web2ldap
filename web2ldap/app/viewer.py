@@ -18,6 +18,7 @@ import binascii
 
 import web2ldapcnf
 
+from web2ldap.log import logger, log_exception
 import web2ldap.web.forms
 import web2ldap.web.helper
 import web2ldap.app.gui
@@ -272,7 +273,8 @@ def display_x509_cert(app, attr, entry, index=None):
             CertificateDisplayer(x509_prep(entry[attr][i])).html(
                 app, attr, index,
             )
-        except CertificateParserError:
+        except CertificateParserError as cert_err:
+            log_exception(app.env, app.ls)
             app.outf.write('<p class="ErrorMessage">Error parsing certificate.</p>')
     return # display_x509_cert()
 
@@ -290,7 +292,8 @@ def display_x509_crl(app, attr, entry, index=None):
             CRLDisplayer(x509_prep(entry[attr][index])).html(
                 app, attr, i,
             )
-        except CertificateParserError:
+        except CertificateParserError as cert_err:
+            log_exception(app.env, app.ls)
             app.outf.write('<p class="ErrorMessage">Error parsing CRL.</p>')
     return # display_x509_crl()
 
