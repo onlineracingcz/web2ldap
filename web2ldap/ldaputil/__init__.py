@@ -50,13 +50,6 @@ AD_LDAP49_ERROR_PREFIX = 'AcceptSecurityContext error, data '
 attr_type_pattern = ur'[\w;.-]+(;[\w_-]+)*'
 attr_value_pattern = ur'(([^,]|\\,)+|".*?")'
 rdn_pattern = attr_type_pattern + ur'[ ]*=[ ]*' + attr_value_pattern
-dn_pattern = rdn_pattern + r'([ ]*,[ ]*' + rdn_pattern + r')*[ ]*'
-
-dc_rdn_pattern = ur'(dc|)[ ]*=[ ]*' + attr_value_pattern
-dc_dn_pattern = dc_rdn_pattern + r'([ ]*,[ ]*' + dc_rdn_pattern + r')*[ ]*'
-
-#rdn_regex = re.compile('^%s$' % rdn_pattern)
-dn_regex = re.compile(u'^%s$' % unicode(dn_pattern))
 
 
 def ietf_oid_str(oid):
