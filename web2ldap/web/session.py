@@ -215,23 +215,17 @@ class WebSession(object):
         self.session_id_re = re.compile('^[%s]+$' % (re.escape(self.session_id_chars)))
         return # __init__()
 
-    def sync(self):
-        """
-        Call sync if self.sessiondict has .sync() method
-        """
-        if hasattr(self.sessiondict, 'sync'):
-            self.sessiondict.sync()
-
-    def close(self):
-        """
-        Call close() if self.sessiondict has .close() method
-        """
-        if hasattr(self.sessiondict, 'close'):
-            # Close e.g. a database
-            self.sessiondict.close()
-        else:
-            # Make sessiondict inaccessible
-            self.sessiondict = None
+    @staticmethod
+    def _remote_ip(env):
+        return env.get(
+            'FORWARDED_FOR',
+            env.get(
+                'HTTP_X_FORWARDED_FOR',
+                env.get(
+                    'HTTP_X_REAL_IP',
+                    env.get(
+                        'REMOTE_ADDR',
+                        env.get('REMOTE_HOST', '__UNKNOWN__')))))
 
     def _validateSessionIdFormat(self, session_id):
         """
@@ -288,7 +282,6 @@ class WebSession(object):
         try:
             # Store session data with timestamp
             self.sessiondict[session_id] = (time.time(), session_data)
-            self.sync()
         finally:
             self._session_lock.release()
         return session_id
@@ -304,7 +297,6 @@ class WebSession(object):
                 del self.sessiondict[session_id]
             if self.sessiondict.has_key('__session_checkvars__'+session_id):
                 del self.sessiondict['__session_checkvars__'+session_id]
-            self.sync()
         finally:
             self._session_lock.release()
         return session_id
@@ -361,7 +353,6 @@ class WebSession(object):
             # was created successfully
             self.sessiondict[session_id] = (time.time(), '_created_')
             self.sessiondict['__session_checkvars__'+session_id] = self._generateCrosscheckEnv(env)
-            self.sync()
             self.sessionCounter += 1
         finally:
             self._session_lock.release()

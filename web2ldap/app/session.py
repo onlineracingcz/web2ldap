@@ -75,18 +75,6 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
             id(self),
         )
 
-    @staticmethod
-    def _remote_ip(env):
-        return env.get(
-            'FORWARDED_FOR',
-            env.get(
-                'HTTP_X_FORWARDED_FOR',
-                env.get(
-                    'HTTP_X_REAL_IP',
-                    env.get(
-                        'REMOTE_HOST',
-                        env.get('REMOTE_ADDR', '__UNKNOWN__')))))
-
     def newSession(self, env=None):
         self.log(logging.DEBUG, 'newSession(): creating a new session')
         remote_ip = self._remote_ip(env)
