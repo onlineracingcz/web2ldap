@@ -50,7 +50,7 @@ SCHEMA_VIEWER_USAGE = """
 
 def schema_link_text(se, charset):
     names = map(escape_html, se.__dict__.get('names', (())))
-    obsolete = se.__dict__.get('obsolete', 0)
+    obsolete = se.__dict__.get('obsolete', False)
     if len(names) == 1:
         res = names[0]
     elif len(names) > 1:
@@ -73,21 +73,23 @@ def schema_anchor(
     Return a pretty HTML-formatted string describing a schema element
     referenced by name or OID
     """
-    result = [name_template % (se_nameoroid.encode())]
-    if se_class:
-        se = app.schema.get_obj(se_class, se_nameoroid, None)
-        if not se is None:
-            result.append(
-                app.anchor(
-                    'oid', link_text or schema_link_text(se, app.form.accept_charset),
-                    [
-                        ('dn', app.dn),
-                        ('oid', se.oid),
-                        ('oid_class', ldap0.schema.SCHEMA_ATTR_MAPPING[se_class]),
-                    ]
-                )
-            )
-    return '\n'.join(result)
+    se = app.schema.get_obj(se_class, se_nameoroid, None)
+    if se is None:
+        return name_template % (app.form.utf2display(se_nameoroid).decode('ascii'))
+    anchor = app.anchor(
+        'oid', link_text or schema_link_text(se, app.form.accept_charset),
+        [
+            ('dn', app.dn),
+            ('oid', se.oid),
+            ('oid_class', ldap0.schema.SCHEMA_ATTR_MAPPING[se_class]),
+        ]
+    )
+    if link_text is None:
+        return name_template % (anchor)
+    return '%s\n%s' % (
+        name_template % (app.form.utf2display(se_nameoroid.decode('ascii'))),
+        anchor,
+    )
     # end of schema_anchor()
 
 
@@ -123,7 +125,7 @@ def schema_tree_html(app, schema, se_class, se_tree, se_oid, level):
     if se_obj is not None:
         display_id = (se_obj.names or (se_oid,))[0]
         app.outf.write(
-            '<dt><strong>%s</strong></dt>' % (
+            '<dt>%s</dt>' % (
                 schema_anchor(app, display_id, se_class),
             )
         )
