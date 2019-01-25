@@ -56,7 +56,7 @@ setup(
         'certifi',
     ],
     extras_require = {
-        'image_conversion':  ["Pillow"]
+        'image':  ["Pillow"]
     },
     zip_safe=False,
     entry_points={
