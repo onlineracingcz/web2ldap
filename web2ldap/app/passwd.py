@@ -163,7 +163,7 @@ def passwd_form(
 
     # depending on the calling code part the necessary
     # input fields must be added to the form
-    for field in Web2LDAPForm_passwd.fields():
+    for field in Web2LDAPForm_passwd.passwd_fields():
         if field.name not in app.form.field:
             app.form.add_field(field)
 

@@ -899,7 +899,8 @@ class Form:
         # initialize Unicode codecs
         self._set_charset()
         # add Field instances
-        self._add_fields()
+        for field in self.fields():
+            self.add_field(field)
         return # Form.__init__()
 
     def getContentType(self):
