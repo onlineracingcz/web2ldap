@@ -911,6 +911,12 @@ class Form:
             return self.env.get('CONTENT_TYPE', 'application/x-www-form-urlencoded').lower() or None
         return 'application/x-www-form-urlencoded'
 
+    def fields(self):
+        """
+        Return a list of Field instances to be added to this Form instance.
+        """
+        return []
+
     def add_field(self, field):
         """
         Add a input field object f to the form.
