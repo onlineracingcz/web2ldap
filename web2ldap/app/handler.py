@@ -16,7 +16,6 @@ from __future__ import absolute_import
 import sys
 import inspect
 import socket
-import errno
 import time
 import urllib
 
@@ -1019,12 +1018,17 @@ class AppHandler(object):
                 self.form.utf2display(err.desc.decode('ascii'))
             )
 
-        except (IOError, UnicodeError) as err:
+        except (
+                socket.error,
+                socket.gaierror,
+                IOError,
+                UnicodeError,
+            ) as err:
             log_exception(self.env, self.ls)
             exception_message(
                 self,
                 u'Unhandled %s' % err.__class__.__name__.decode('ascii'),
-                self.form.utf2display(str(err).decode('ascii')),
+                self.form.utf2display(str(err).decode('utf-8')),
             )
 
         except ldap0.LDAPError as ldap_err:
@@ -1034,22 +1038,6 @@ class AppHandler(object):
                 u'Unhandled %s' % ldap_err.__class__.__name__.decode('ascii'),
                 self.ldap_error_msg(ldap_err),
             )
-
-        except (
-                socket.error,
-                socket.gaierror,
-            ) as socket_err:
-            try:
-                socket_errno = socket_err.errno
-            except AttributeError:
-                socket_errno = None
-            if socket_errno not in (errno.EPIPE, errno.ECONNRESET):
-                log_exception(self.env, self.ls)
-                exception_message(
-                    self,
-                    u'Socket Error',
-                    self.form.utf2display(str(socket_err).decode('ascii')),
-                )
 
         except ErrorExit as error_exit:
             logger.warn('ErrorExit: %r', error_exit.Msg)
