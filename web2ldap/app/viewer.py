@@ -28,20 +28,6 @@ from web2ldap.mspki import x509v3, asn1helper, asn1types
 viewer_func = {}
 
 
-def x509_prep(value):
-    """
-    This function returns raw DER cert data no matter what mess was stored
-    in value before.
-    """
-    if value.startswith('{ASN}'):
-        return binascii.unhexlify(value[5:])
-    try:
-        return binascii.a2b_base64(value.strip())
-    except binascii.Error:
-        pass
-    return value
-
-
 CertificateParserError = ValueError
 
 # Get OID dictionary
@@ -270,7 +256,7 @@ def display_x509_cert(app, attr, entry, index=None):
         if attr_value_count > 1:
             app.outf.write('<h2>%d. / %d</h2>' % (i+1, attr_value_count))
         try:
-            CertificateDisplayer(x509_prep(entry[attr][i])).html(
+            CertificateDisplayer(entry[attr][i]).html(
                 app, attr, index,
             )
         except CertificateParserError as cert_err:
@@ -289,7 +275,7 @@ def display_x509_crl(app, attr, entry, index=None):
         if attr_value_count > 1:
             app.outf.write('<h2>%d. / %d</h2>' % (i+1, attr_value_count))
         try:
-            CRLDisplayer(x509_prep(entry[attr][index])).html(
+            CRLDisplayer(entry[attr][index]).html(
                 app, attr, i,
             )
         except CertificateParserError as cert_err:
