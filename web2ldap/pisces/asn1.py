@@ -34,14 +34,10 @@ from __future__ import absolute_import
 
 import struct
 import sys
-import types
 import UserList
 import UserString
 import time
 from cStringIO import StringIO
-
-class EOFError(IOError):
-    pass
 
 # tags for universal types
 INTEGER = 0x02
@@ -222,7 +218,7 @@ class GeneralizedTime(ASN1Object):
     """
 
     def __init__(self, val=None):
-        if type(val) == types.StringType:
+        if isinstance(val, bytes):
             self.val = val
             self._val = None
         else:
@@ -245,7 +241,7 @@ class GeneralizedTime(ASN1Object):
         # UTC is easier to cope with because the user can make sure a
         # time tuple is in  UTC, but it would be a pain for me to do that.
         self._val = time.mktime(val)
-        if type(val) != types.TupleType:
+        if not isinstance(val, tuple):
             try:
                 val = time.gmtime(val)
             except TypeError:
@@ -299,7 +295,7 @@ class UTCTime(ASN1Object):
     """
 
     def __init__(self, val=None):
-        if type(val) == types.StringType:
+        if isinstance(val, bytes):
             self.val = val
             self._val = None
         else:
@@ -322,7 +318,7 @@ class UTCTime(ASN1Object):
         # UTC is easier to cope with because the user can make sure a
         # time tuple is in  UTC, but it would be a pain for me to do that.
         self._val = time.mktime(val)
-        if type(val) != types.TupleType:
+        if not isinstance(val, tuple):
             try:
                 val = time.gmtime(val)
             except TypeError:
@@ -414,7 +410,7 @@ class Constructed(ASN1Object):
         self._parse(val)
 
     def _parse(self, val):
-        assert type(val) == types.StringType, '***bah!'
+        assert isinstance(val, bytes), TypeError('Expected val to be bytes, was %r' % (val))
         p = ASN1Parser(StringIO(val))
         self.val = p.parse()
         self.val_tag = p.tag
@@ -460,11 +456,11 @@ class OID(ASN1Object):
         return '.'.join(map(str, self.val))
     def _encode(self, io):
         elts = self.val
-        bytes = []
-        bytes.append(40 * elts[0] + elts[1])
+        byts = []
+        byts.append(40 * elts[0] + elts[1])
         for elt in elts[2:]:
             if elt < 0x7F:
-                bytes.append(elt)
+                byts.append(elt)
             else:
                 temp = []
                 div = rem = elt
@@ -472,10 +468,10 @@ class OID(ASN1Object):
                     div, rem = divmod(div, 128)
                     temp.append(rem)
                 temp.reverse()
-                head = map(lambda x:x | 0x80, temp[:-1])
-                bytes = bytes + head + temp[-1:]
-        io.write(chr(OBJECT_IDENTIFIER) + unparseLength(len(bytes))
-                 + ''.join(map(chr, bytes)))
+                head = map(lambda x: x | 0x80, temp[:-1])
+                byts = byts + head + temp[-1:]
+        io.write(chr(OBJECT_IDENTIFIER) + unparseLength(len(byts))
+                 + ''.join(map(chr, byts)))
 
 class ASN1Parser:
     # Keeps some state around between method invocations, which
@@ -596,7 +592,7 @@ class ASN1Parser:
     def parseInteger(self):
         buf = self.getBody()
         if len(buf) == 0:
-           raise EOFError
+            raise EOFError
         return getInteger(buf)
 
     def parseZero(self):
@@ -609,7 +605,7 @@ class ASN1Parser:
         seq = Sequence()
         base = self.io.tell()
         body = self.getBody()
-        assert type(body)==types.StringType,'***bah!'
+        assert isinstance(body, bytes), TypeError('Expected body to be bytes, was %r' % (body))
         newIo = StringIO(body)
         try:
             while 1:
@@ -694,35 +690,36 @@ class ASN1Parser:
         self.getBody()
         return None
 
-    __dispatch = {SEQUENCE: parseSequence,
-                  INTEGER: parseInteger,
-                  SET: parseSet,
-                  GENERALIZEDTIME: parseGeneralizedTime,
-                  UTCTIME: parseUTCTime,
-                  BIT_STRING: parseBitString,
-                  OCTET_STRING: parseOctetString,
-                  PRINTABLE_STRING: parsePrintableString,
-                  VISIBLESTRING: parseVisibleString,
-                  UNIVERSALSTRING: parseUniversalString,
-                  BMPSTRING: parseBMPString,
-                  UTF8STRING: parseUTF8String,
-                  T61STRING: parseT61String,
-                  IA5STRING: parseIA5String,
-                  SET: parseSet,
-                  OBJECT_IDENTIFIER: parseObjectIdentifier,
-                  NULL: parseNull,
-                  BOOLEAN: parseBoolean,
-                  0: parseZero,
-                  }
+    __dispatch = {
+        SEQUENCE: parseSequence,
+        INTEGER: parseInteger,
+        SET: parseSet,
+        GENERALIZEDTIME: parseGeneralizedTime,
+        UTCTIME: parseUTCTime,
+        BIT_STRING: parseBitString,
+        OCTET_STRING: parseOctetString,
+        PRINTABLE_STRING: parsePrintableString,
+        VISIBLESTRING: parseVisibleString,
+        UNIVERSALSTRING: parseUniversalString,
+        BMPSTRING: parseBMPString,
+        UTF8STRING: parseUTF8String,
+        T61STRING: parseT61String,
+        IA5STRING: parseIA5String,
+        SET: parseSet,
+        OBJECT_IDENTIFIER: parseObjectIdentifier,
+        NULL: parseNull,
+        BOOLEAN: parseBoolean,
+        0: parseZero,
+    }
 
 def getInteger(buf):
-    bytes = map(ord, buf)
-    if bytes[0] & 0x80:
+    byts = map(ord, buf)
+    if byts[0] & 0x80:
         sign = -1
     else:
         sign = 1
-    value = long(bytes[0] & 0x7F)
-    for byte in bytes[1:]:
+    value = long(byts[0] & 0x7F)
+    for byte in byts[1:]:
         value = (value << 8) | byte
     if sign == 1:
         return value
@@ -730,23 +727,18 @@ def getInteger(buf):
         return -value
 
 def encode(obj):
-    t = type(obj)
-    if t == types.StringType:
-        raise ValueError, "can't encode string: %s" % repr(obj)
+    if isinstance(obj, bytes):
+        raise ValueError("Can't encode bytes: %r" % (obj))
     if hasattr(obj, 'encode'):
         f = StringIO()
-        try:
-            obj.encode(f)
-        except TypeError:
-            print repr(obj), repr(f)
-            raise
+        obj.encode(f)
         f.seek(0, 0)
         return f.read()
-    if t in (types.IntType, types.LongType):
+    if isinstance(obj, int) or isinstance(obj, long):
         return unparseInteger(obj)
     elif obj is None:
         return unparseNull()
-    raise ValueError, "don't know how to encode: %s" % repr(obj)
+    raise ValueError("Don't know how to encode %r" % (obj))
 
 def unparseContextual(tag, enc, constructed=1):
     return chr((constructed and 0x40) | 0x80 | tag) \
@@ -773,9 +765,9 @@ def unparseInteger(num):
     else:
         sign = 1
     if num == 0:
-        bytes = [0]
+        byts = [0]
     else:
-        bytes = []
+        byts = []
         div = num
         rem = 0
         while div:
@@ -783,26 +775,26 @@ def unparseInteger(num):
                 div, rem = divmod(div, 256)
             except TypeError:
                 raise
-            bytes.append(int(rem))
-        last = bytes[-1]
+            byts.append(int(rem))
+        last = byts[-1]
         if last & 0x80:
-            bytes.append(0)
+            byts.append(0)
     if sign == -1:
-        bytes[-1] = bytes[-1] | 0x80
-    bytes.reverse()
-    return chr(INTEGER) + unparseLength(len(bytes)) \
-           + ''.join(map(chr, bytes))
+        byts[-1] = byts[-1] | 0x80
+    byts.reverse()
+    return chr(INTEGER) + unparseLength(len(byts)) \
+           + ''.join(map(chr, byts))
 
 def unparseLength(length):
     if length <= 127:
         return chr(length)
-    bytes = []
+    byts = []
     div = length
     while div:
         div, rem = divmod(div, 256)
-        bytes.append(rem)
-    bytes.reverse()
-    return chr(0x80|len(bytes)) + ''.join(map(chr, bytes))
+        byts.append(rem)
+    byts.reverse()
+    return chr(0x80|len(byts)) + ''.join(map(chr, byts))
 
 def convertOctetsToInt(buf):
     # XXX this really is a kludge
@@ -830,22 +822,22 @@ def parseCfg(io):
     line_counter = 0
     # Read first line
     line = io.readline()
+    d = {}
     while line:
         line_counter += 1
         line = line.strip()
-        if line and line[0]!='#':
+        if line and line[0] != '#':
             # Parse the line
             try:
-                name,val = line.split('=',1)
-                name,val = name.strip(),val.strip()
+                name, val = line.split('=', 1)
+                name, val = name.strip(), val.strip()
             except ValueError:
                 name = line
                 val = None
-
             if name == 'OID':
                 if oid:
                     oids[oid] = d
-                oid = OID(tuple(map(int,val.split(' '))))
+                oid = OID(tuple(map(int, val.split(' '))))
                 d = {}
             else:
                 d[name] = val
@@ -856,7 +848,7 @@ def parseCfg(io):
     return oids
 
 def parse(buf):
-    assert type(buf)==types.StringType,'***bah!'
+    assert isinstance(buf, bytes), TypeError('Expected buf to be bytes, was %r' % (buf))
     return ASN1Parser(StringIO(buf)).parse()
 
 
