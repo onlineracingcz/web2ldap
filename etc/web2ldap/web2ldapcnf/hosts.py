@@ -91,7 +91,7 @@ ldap_uri_list = [
     ),
     (
         'ldap://ldap.crl.esecure.datev.de/??one',
-        u'Datev',
+        u'DATEV',
     ),
     (
         'ldap://directory.swisssign.net/o=SwissSign,c=CH??one',
