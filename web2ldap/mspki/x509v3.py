@@ -19,167 +19,163 @@ from web2ldap.pisces import asn1
 # mspki itself
 from . import x509
 
-_ESCAPE_HTML_CHARS=list('\'&<>":={}()`')
-_ESCAPE_HTML_CHARS_TRANS = [
-  (c,'&#%d;' % ord(c))
-  for c in _ESCAPE_HTML_CHARS
-]
 
 def htmlize(e):
-  """Display certificate extension object e with HTML"""
-  if hasattr(e,'html'):
-    return e.html()
-  else:
+    """Display certificate extension object e with HTML"""
+    if hasattr(e, 'html'):
+        return e.html()
     return escape_html(str(e))
 
 
 class Extension(asn1.Sequence):
-  """
-  Extension  ::=  SEQUENCE  {
-       extnID      OBJECT IDENTIFIER,
-       critical    BOOLEAN DEFAULT FALSE,
-       extnValue   OCTET STRING  }
-  """
-  def __init__(self,val):
-    asn1.Sequence.__init__(self,val)
-    self.extnId = self.val[0]
-    if len(self.val)==3:
-      self.critical,evo = self.val[1],self.val[2]
-    elif len(self.val)==2:
-      self.critical,evo = None,self.val[1]
-    else:
-      raise ValueError, 'X.509v3 extension field has length %d' % len(self.val)
-    extnId_str = str(self.extnId)
-    if oidreg.has_key(extnId_str):
-      try:
-        self.extnValue = oidreg[extnId_str](asn1.parse(evo.val))
-      except Exception:
-        # If parsing known extension fails fall-back to generic parsing
-        self.extnValue = asn1.parse(evo.val)
-    else:
-      self.extnValue = asn1.parse(evo.val)
+    """
+    Extension  ::=  SEQUENCE  {
+         extnID      OBJECT IDENTIFIER,
+         critical    BOOLEAN DEFAULT FALSE,
+         extnValue   OCTET STRING  }
+    """
 
-  def __repr__(self):
-    return '<%s.%s: %s: %s%s>' % (
-      self.__class__.__module__,
-      self.__class__.__name__,
-      self.extnId,
-      repr(self.extnValue),
-      ' (CRITICAL)'*(self.critical==1)
-    )
+    def __init__(self, val):
+        asn1.Sequence.__init__(self, val)
+        self.extnId = self.val[0]
+        if len(self.val) == 3:
+            self.critical, evo = self.val[1], self.val[2]
+        elif len(self.val) == 2:
+            self.critical, evo = None, self.val[1]
+        else:
+            raise ValueError, 'X.509v3 extension field has length %d' % len(self.val)
+        extnId_str = str(self.extnId)
+        if oidreg.has_key(extnId_str):
+            try:
+                self.extnValue = oidreg[extnId_str](asn1.parse(evo.val))
+            except Exception:
+                # If parsing known extension fails fall-back to generic parsing
+                self.extnValue = asn1.parse(evo.val)
+        else:
+            self.extnValue = asn1.parse(evo.val)
 
-  def html(self):
-    if hasattr(self,'extnValue'):
-      if hasattr(self.extnValue,'html'):
-        extnValue_html = self.extnValue.html()
-      else:
-        extnValue_html = escape_html(str(self.extnValue))
-    else:
-      extnValue_html = ''
-    return '<dt>%s (%s)</dt><dd>%s</dd>' % (
-      self.extnValue.__class__.__name__,
-      str(self.extnId),
-      extnValue_html
-    )
+    def __repr__(self):
+        return '<%s.%s: %s: %s%s>' % (
+            self.__class__.__module__,
+            self.__class__.__name__,
+            self.extnId,
+            repr(self.extnValue),
+            ' (CRITICAL)'*(self.critical == 1)
+        )
+
+    def html(self):
+        if hasattr(self, 'extnValue'):
+            if hasattr(self.extnValue, 'html'):
+                extnValue_html = self.extnValue.html()
+            else:
+                extnValue_html = escape_html(str(self.extnValue))
+        else:
+            extnValue_html = ''
+        return '<dt>%s (%s)</dt><dd>%s</dd>' % (
+            self.extnValue.__class__.__name__,
+            self.extnId,
+            extnValue_html,
+        )
 
 
 class Extensions(asn1.Sequence):
-  """
-  Extensions  ::=  SEQUENCE SIZE (1..MAX) OF Extension
-  """
+    """
+    Extensions  ::=  SEQUENCE SIZE (1..MAX) OF Extension
+    """
 
-  def __init__(self,val):
-    for i in range(len(val)):
-      val[i]=Extension(val[i])
-    asn1.Sequence.__init__(self,val)
+    def __init__(self, val):
+        for i in range(len(val)):
+            val[i] = Extension(val[i])
+        asn1.Sequence.__init__(self, val)
 
-  def __str__(self):
-    return ', '.join(map(str,self.val))
+    def __str__(self):
+        return ', '.join(map(str, self.val))
 
-  def __repr__(self):
-    return '{%s}' % ', '.join(map(repr,self.val))
+    def __repr__(self):
+        return '{%s}' % ', '.join(map(repr, self.val))
 
-  def html(self):
-    return '<ul>\n%s\n</ul>\n' % (
-      '\n'.join([
-        '<li>%s</li>' % (htmlize(x))
-        for x in self.val
-      ])
-    )
+    def html(self):
+        return '<ul>\n%s\n</ul>\n' % (
+            '\n'.join([
+                '<li>%s</li>' % (htmlize(x))
+                for x in self.val
+            ])
+        )
 
 
 class Certificate(x509.Certificate):
-  """
-  Class for X.509v3 certificates with extensions
+    """
+    Class for X.509v3 certificates with extensions
 
-  Certificate  ::=  SEQUENCE  {
-       tbsCertificate       TBSCertificate,
-       signatureAlgorithm   AlgorithmIdentifier,
-       signatureValue       BIT STRING  }
+    Certificate  ::=  SEQUENCE  {
+         tbsCertificate       TBSCertificate,
+         signatureAlgorithm   AlgorithmIdentifier,
+         signatureValue       BIT STRING  }
 
-  TBSCertificate  ::=  SEQUENCE  {
-       version         [0]  EXPLICIT Version DEFAULT v1,
-       serialNumber         CertificateSerialNumber,
-       signature            AlgorithmIdentifier,
-       issuer               Name,
-       validity             Validity,
-       subject              Name,
-       subjectPublicKeyInfo SubjectPublicKeyInfo,
-       issuerUniqueID  [1]  IMPLICIT UniqueIdentifier OPTIONAL,
-                            -- If present, version shall be v2 or v3
-       subjectUniqueID [2]  IMPLICIT UniqueIdentifier OPTIONAL,
-                            -- If present, version shall be v2 or v3
-       extensions      [3]  EXPLICIT Extensions OPTIONAL
-                            -- If present, version shall be v3
-       }
-  """
-  def extensions(self):
-    """Return extracted X.509v3 extensions"""
-    if int(self.version())<3:
-      return None
-    for i in self.tbsCertificate[self._tbsoffset+6:len(self.tbsCertificate)]:
-      # find first occurence of tag [3]
-      if hasattr(i,'tag') and i.tag==3:
-        return Extensions(i.val)
-    return None
+    TBSCertificate  ::=  SEQUENCE  {
+         version         [0]  EXPLICIT Version DEFAULT v1,
+         serialNumber         CertificateSerialNumber,
+         signature            AlgorithmIdentifier,
+         issuer               Name,
+         validity             Validity,
+         subject              Name,
+         subjectPublicKeyInfo SubjectPublicKeyInfo,
+         issuerUniqueID  [1]  IMPLICIT UniqueIdentifier OPTIONAL,
+                              -- If present, version shall be v2 or v3
+         subjectUniqueID [2]  IMPLICIT UniqueIdentifier OPTIONAL,
+                              -- If present, version shall be v2 or v3
+         extensions      [3]  EXPLICIT Extensions OPTIONAL
+                              -- If present, version shall be v3
+         }
+    """
+
+    def extensions(self):
+        """Return extracted X.509v3 extensions"""
+        if int(self.version()) < 3:
+            return None
+        for i in self.tbsCertificate[self._tbsoffset+6:len(self.tbsCertificate)]:
+            # find first occurence of tag [3]
+            if hasattr(i, 'tag') and i.tag == 3:
+                return Extensions(i.val)
+        return None
 
 
 class CRL(x509.CRL):
-  """
-  Class for X.509v2 CRLs with extensions
+    """
+    Class for X.509v2 CRLs with extensions
 
-  CertificateList  ::=  SEQUENCE  {
-       tbsCertList          TBSCertList,
-       signatureAlgorithm   AlgorithmIdentifier,
-       signatureValue       BIT STRING  }
+    CertificateList  ::=  SEQUENCE  {
+         tbsCertList          TBSCertList,
+         signatureAlgorithm   AlgorithmIdentifier,
+         signatureValue       BIT STRING  }
 
-  TBSCertList  ::=  SEQUENCE  {
-       version                 Version OPTIONAL,
-                                    -- if present, shall be v2
-       signature               AlgorithmIdentifier,
-       issuer                  Name,
-       thisUpdate              Time,
-       nextUpdate              Time OPTIONAL,
-       revokedCertificates     SEQUENCE OF SEQUENCE  {
-            userCertificate         CertificateSerialNumber,
-            revocationDate          Time,
-            crlEntryExtensions      Extensions OPTIONAL
-                                          -- if present, shall be v2
-                                 }  OPTIONAL,
-       crlExtensions           [0]  EXPLICIT Extensions OPTIONAL
-                                          -- if present, shall be v2
-                                 }
+    TBSCertList  ::=  SEQUENCE  {
+         version                 Version OPTIONAL,
+                                      -- if present, shall be v2
+         signature               AlgorithmIdentifier,
+         issuer                  Name,
+         thisUpdate              Time,
+         nextUpdate              Time OPTIONAL,
+         revokedCertificates     SEQUENCE OF SEQUENCE  {
+              userCertificate         CertificateSerialNumber,
+              revocationDate          Time,
+              crlEntryExtensions      Extensions OPTIONAL
+                                            -- if present, shall be v2
+                                   }  OPTIONAL,
+         crlExtensions           [0]  EXPLICIT Extensions OPTIONAL
+                                            -- if present, shall be v2
+                                   }
 
-  """
+    """
 
-  def crlExtensions(self):
-    """Return extracted X.509v3 extensions"""
-    for i in self.tbsCertList[self._tbsoffset+5:len(self.tbsCertList)]:
-      # find first occurence of tag [0]
-      if hasattr(i,'tag') and i.tag==0:
-        return Extensions(i.val)
-    return None
-    
+    def crlExtensions(self):
+        """Return extracted X.509v3 extensions"""
+        for i in self.tbsCertList[self._tbsoffset+5:len(self.tbsCertList)]:
+            # find first occurence of tag [0]
+            if hasattr(i, 'tag') and i.tag == 0:
+                return Extensions(i.val)
+        return None
+
 
 # now pull all oidreg's in other modules holding classes
 # for various X.509v3 extension

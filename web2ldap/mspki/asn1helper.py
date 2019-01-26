@@ -17,26 +17,26 @@ oids = {}
 
 
 def ParseCfg(dumpasn1cfg):
-  """
-  Read descriptions of OIDs either from
-  Peter Gutmann's dumpasn1.cfg or a pickled copy.
-  """
-  f=open(dumpasn1cfg,'r')
-  oids=asn1.parseCfg(f)
-  f.close()
-  return oids
+    """
+    Read descriptions of OIDs either from
+    Peter Gutmann's dumpasn1.cfg or a pickled copy.
+    """
+    f = open(dumpasn1cfg, 'r')
+    oids = asn1.parseCfg(f)
+    f.close()
+    return oids
 
 
-def GetOIDDescription(oid,oids,includeoid=0):
-  """
-  returns description of oid if present in oids or stringed oid else
-  """
-  try:
-    cfg_entry = oids[oid]
-  except KeyError:
-    return str(oid)
-  else:
-    descr = cfg_entry['Description']
-    if includeoid:
-      descr = '%s (%s)' % (descr,repr(oid))
-    return descr
+def GetOIDDescription(oid, oids, includeoid=0):
+    """
+    returns description of oid if present in oids or stringed oid else
+    """
+    try:
+        cfg_entry = oids[oid]
+    except KeyError:
+        return str(oid)
+    else:
+        descr = cfg_entry['Description']
+        if includeoid:
+            descr = '%s (%s)' % (descr, repr(oid))
+        return descr
