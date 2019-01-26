@@ -7,12 +7,12 @@ web2ldap plugin classes for Novell eDirectory/DirXML
 from __future__ import absolute_import
 
 import uuid
+from binascii import hexlify
 
 import ldap0.filter
 
 import web2ldapcnf
 
-from web2ldap.mspki.util import HexString
 from web2ldap.app.schema.syntaxes import \
     Binary, \
     BitArrayInteger, \
@@ -70,7 +70,7 @@ class OctetStringGUID(OctetString):
         """
         format association like Edir2Edir driver: {60445C8E-D8DB-d801-808C-0008028B1EF9}
         """
-        s1 = HexString(s, delimiter='', wrap=None)
+        s1 = hexlify(s).upper()
         return '{%s}' % (
             '-'.join((
                 ''.join((s1[6:8], s1[4:6], s1[2:4], s1[0:2])),
@@ -86,7 +86,7 @@ class OctetStringGUID(OctetString):
         """
         format association like entitlement driver: {8E5C4460-DBD8-01D8-808C-0008028B1EF9}
         """
-        s1 = HexString(s, delimiter='', wrap=None)
+        s1 = hexlify(s).upper()
         return '{%s}' % ('-'.join((
             s1[0:8],
             s1[8:12],
@@ -100,7 +100,7 @@ class OctetStringGUID(OctetString):
         """
         format association like C1 and iManager: 60445C8E-D8DB-d801-808C-0008028B1EF9
         """
-        s1 = HexString(s, delimiter='', wrap=None)
+        s1 = hexlify(s).upper()
         return ''.join((
             s1[6:8],
             s1[4:6],
@@ -216,7 +216,7 @@ syntax_registry.reg_at(
 )
 
 
-class TaggedNameAndString(DirectoryString):
+class TaggedNameAndString(DirectoryString, OctetString):
     oid = '2.16.840.1.113719.1.1.5.1.15'
     desc = 'Tagged Name And String'
 
@@ -232,24 +232,19 @@ class TaggedNameAndString(DirectoryString):
         try:
             dstring.decode('utf8')
         except UnicodeError:
-            dstring_disp = '<code>%s</code>' % HexString(
-                dstring,
-                delimiter=':',
-                wrap=64,
-                linesep='<br>'
-            )
+            dstring_disp = OctetString.displayValue(self, valueindex, commandbutton)
         else:
             dstring_disp = DirectoryString.displayValue(self, valueindex, commandbutton)
         return (
             '<dl>'
             '<dt>name:</dt><dd>%s</dd>'
             '<dt>number:</dt><dd>%s</dd>'
-            '<dt>dstring:</dt><dd>%s</dd>'
+            '<dt>dstring:</dt><dd><code>%s</code></dd>'
             '</dl>'
         ) % (
             self._app.display_dn(dn, commandbutton=commandbutton),
             number,
-            '<code>%s</code>' % dstring_disp,
+            dstring_disp,
         )
 
 
