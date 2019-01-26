@@ -23,26 +23,33 @@ UTC_TIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 def strptime(s):
     # Extract and validate time zone information
-    if len(s) == 15 and s.endswith('Z'):
-        # UTC Time (Zulu Time)
-        dt = datetime.datetime.strptime(s, r'%Y%m%d%H%M%SZ')
-        return dt
-    if len(s) > 15 and s.endswith('Z'):
-        # UTC Time (Zulu Time)
-        s = s[:-1]
-        tz_offset = datetime.timedelta(0)
-    elif len(s) >= 19 and s[-5] in ('+', '-'):
+    len_dt_str = len(s)
+    if s[-1].upper() == 'Z':
+        # assume UTC Time string
+        if len_dt_str == 15:
+            # with century in the year
+            dt = datetime.datetime.strptime(s, r'%Y%m%d%H%M%SZ')
+            return dt
+        if len_dt_str == 13:
+            # without century in the year
+            dt = datetime.datetime.strptime(s, r'%y%m%d%H%M%SZ')
+            return dt
+        elif len_dt_str > 16:
+            # probably fractions in seconds part
+            s = s[:-1]
+            tz_offset = datetime.timedelta(0)
+        else:
+            raise ValueError('Could not determine UTC time format of %r' % (s))
+    elif len_dt_str >= 19 and s[-5] in {'+', '-'}:
         # Found + or - as time zone separator
         tzstr = s[-4:]
-        if len(tzstr) != 4:
-            raise ValueError('Invalid tzstr %r' % (tzstr))
         tz_offset = datetime.timedelta(
             hours=int(tzstr[0:2]),
             minutes=int(tzstr[2:4]),
         )
         s = s[:-5]
     else:
-        raise ValueError('time zone part missing in %r' % (s))
+        raise ValueError('Time zone part missing in %r' % (s))
     s = s.replace(',', '.')
     # Extract and validate date and time information
     if '.' in s:

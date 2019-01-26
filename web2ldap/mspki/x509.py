@@ -16,11 +16,11 @@ from __future__ import absolute_import
 # Python standard lib
 import hashlib
 
-# Pisces
+from web2ldap.utctime import strptime
 from web2ldap.pisces import asn1
-# mspki itself
+
 from . import util, x500, asn1helper
-from .utctime import UTCTime
+
 
 
 class Attribute(asn1.ASN1Object):
@@ -159,14 +159,14 @@ class Certificate(X509SignedObject):
 
     def validity(self):
         """
-        Returns tuple (notBefore,notAfter)
+        Returns tuple (notBefore, notAfter)
 
-        notBefore, notAfter are instances of UTCTime
+        notBefore, notAfter are instances of datetime.datetime
         containing UTCTime of begin and end of validity period.
         """
         return (
-            UTCTime(self.tbsCertificate[self._tbsoffset+3][0].val),
-            UTCTime(self.tbsCertificate[self._tbsoffset+3][1].val)
+            strptime(self.tbsCertificate[self._tbsoffset+3][0].val),
+            strptime(self.tbsCertificate[self._tbsoffset+3][1].val)
         )
 
     def subject(self):
@@ -264,13 +264,13 @@ class CRL(X509SignedObject):
 
     def thisUpdate(self):
         """Returns time tuple of thisUpdate"""
-        return UTCTime(self.tbsCertList[self._tbsoffset+2].val)
+        return strptime(self.tbsCertList[self._tbsoffset+2].val)
 
     def nextUpdate(self):
         """Returns UTCTime of nextUpdate if present, None else"""
         if isinstance(self.tbsCertList[self._tbsoffset+3], asn1.UTCTime) or \
            isinstance(self.tbsCertList[self._tbsoffset+3], asn1.GeneralizedTime):
-            return UTCTime(self.tbsCertList[self._tbsoffset+3].val)
+            return strptime(self.tbsCertList[self._tbsoffset+3].val)
         return None
 
     def revokedCertificates(self):
@@ -300,7 +300,7 @@ class CRL(X509SignedObject):
                 i_len = len(i)
                 if i_len in {2, 3}:
                     userCertificate = i[0]
-                    revocationDate = UTCTime(str(i[1].val))
+                    revocationDate = strptime(str(i[1].val))
                 else:
                     raise ValueError(
                         "Item in revokedCertificates list has invalid length (%d)." % (i_len)

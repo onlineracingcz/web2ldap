@@ -17,7 +17,7 @@ from __future__ import absolute_import
 from web2ldap.pisces import asn1
 # mspki itself
 from . import util, x500, x509, asn1types
-from .utctime import UTCTime
+from web2ldap.utctime import strptime
 
 
 class GeneralName(asn1.Constructed):
@@ -299,9 +299,9 @@ class PrivateKeyUsagePeriod(asn1.Sequence):
         self.notBefore = self.notAfter = None
         for i in self.val:
             if i.tag == 0:
-                self.notBefore = UTCTime(i.val)
+                self.notBefore = strptime(i.val)
             elif i.tag == 1:
-                self.notAfter = UTCTime(i.val)
+                self.notAfter = strptime(i.val)
             else:
                 raise ValueError, "Invalid tag %d for %s" % (i.tag, self.__class__.__name__)
 
