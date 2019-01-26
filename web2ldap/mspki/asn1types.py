@@ -27,12 +27,13 @@ class BitString(asn1.BitString):
     treated as number of the bit from 0..bit length.
     """
     bit_str = {}
+
     def __int__(self):
         return int(util.bytestolong(self.val))
 
     def __len__(self):
         """Return the possible number of bits"""
-        return len(self.bit_str.keys())
+        return len(self.bit_str)
 
     def __getitem__(self, i):
         """Return the value of a single bit"""
