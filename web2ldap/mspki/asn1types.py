@@ -99,6 +99,7 @@ class AttributeSequence(asn1.Sequence):
     """
     Base class for Sequence containing named attributes
     """
+    attr_list = []
 
     def __init__(self, val):
         asn1.Sequence.__init__(self, val)
