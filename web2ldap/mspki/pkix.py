@@ -129,7 +129,7 @@ class KeyIdentifier(asn1.OctetString):
         asn1.OctetString.__init__(self, val)
 
     def __str__(self):
-        return util.HexString(str(self.val)).strip()
+        return util.HexString(bytes(self.val))
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self)
