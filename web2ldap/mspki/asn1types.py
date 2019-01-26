@@ -72,7 +72,7 @@ class SequenceOf(asn1.Sequence):
     """
     SEQUENCE OF ItemClass
     """
-    item_class = None
+    item_class = object
 
     def __init__(self, val):
         asn1.Sequence.__init__(self, val)
