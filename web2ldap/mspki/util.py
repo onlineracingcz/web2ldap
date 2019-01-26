@@ -23,29 +23,17 @@ def HexString(data, delimiter=':', wrap=None, indent=0, linesep='\n'):
     The bytes are printed in hex separated by the character
     defined in delimiter.
     """
-    if isinstance(data, long):
-        # long integer
-        L = []
-        while data:
-            L.append(chr(data & 0xFFL))
-            data = data >> 8
-        L.reverse()
-        d = ''.join(L)
-    elif isinstance(data, bytes):
-        # string buffer
-        d = data
-    else:
-        raise TypeError('Parameter data can only be a bytes or long integer.')
+    assert isinstance(data, bytes), TypeError('Expected data to be bytes, got %r' % (data))
     if wrap:
-        bytesperline = wrap-indent / 3
+        bytesperline = wrap - indent / 3
     else:
         bytesperline = len(data)
     convert = lambda x, d=delimiter: '%02X%s' % (ord(x), d)
-    s = [' '*indent+''.join(map(convert, d[0:bytesperline]))]
+    s = [' '*indent+''.join(map(convert, data[0:bytesperline]))]
     i = bytesperline
-    while i <= len(d):
-        s.append(' '*indent+''.join(map(convert, d[i:i+bytesperline])))
-        i = i + bytesperline
+    while i <= len(data):
+        s.append(' '*indent+''.join(map(convert, data[i:i+bytesperline])))
+        i += bytesperline
     return linesep.join(s)
 
 
