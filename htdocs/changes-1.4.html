@@ -7,164 +7,158 @@
 
 <h1 id="r1.4.0">1.4.0</h1>
 <p>Release Date: 2019-01-21</p>
-<dl>
-  <dt>Installation and configuration changes</dt>
-  <dd>
-    The following changes to system installation and local configuration were made:
+
+<h2>Installation and configuration changes</h2>
+<ul>
+  <li>
+    <a href="web2ldapcnf_hosts.html">Site-specific configuration</a> is
+    now checked during startup for valid option names and their type.
+    So you have to clean up your old configuration not to contain any
+    obsolete parameter.
+  </li>
+  <li>
+    Mandates update of module
+    <a href="https://pypi.org/project/ldap0">ldap0</a>.
+  </li>
+  <li>
+    Dropped external dependency on separate module package
+    <var>pyweblib</var> because it is now partially shipped as internal
+    package <var>web2ldap.web</var>.
+  </li>
+  <li>
+    Configuration parameter
+    <a href="web2ldapcnf_hosts.html#ldap_uri_list">web2ldapcnf.hosts.ldap_uri_list</a>
+    now must contain list of 2-tuples of Unicode strings.
+  </li>
+  <li>
+    Because of internal API changes custom plugins have to be changed.
+  </li>
+  <li>
+    Some renaming in CSS identifiers to save network bandwidth when
+    displaying many search results. Thus custom CSS files must be updated.
+  </li>
+</ul>
+
+<h2>New features/enhancements</h2>
+<ul>
+  <li>
+    New site-specific configuration parameter
+    <a href="web2ldapcnf_hosts.html#binddn_mapping">binddn_mapping</a>
+    is used for specifying bind DN mappings with an LDAP URL.
+    Especially it allows statically derived bind DNs without LDAP search.
+  </li>
+  <li>
+    [ConnInfo] shows max. 30 of the last search bases used before.
+  </li>
+  <li>
+    Bulk-copying entries is now more efficient.
+  </li>
+  <li>
+    All DN information is now always request-specific (formerly session-specific).
+    This improves user experience when navigating in multiple browser tabs.
+  </li>
+  <li>
+    Heavy code-cleaning including fixing of various minor bugs:
     <ul>
       <li>
-        <a href="web2ldapcnf_hosts.html">Site-specific configuration</a> is
-        now checked during startup for valid option names and their type.
-        So you have to clean up your old configuration not to contain any
-        obsolete parameter.
+        Compliance to <a href="https://www.python.org/dev/peps/pep-0008/">PEP-8</a>
       </li>
       <li>
-        Mandates update of module
-        <a href="https://pypi.org/project/ldap0">ldap0</a>.
+        Changed some optional imports to mandatory dependencies
       </li>
       <li>
-        Dropped external dependency on separate module package
-        <var>pyweblib</var> because it is now partially shipped as internal
-        package <var>web2ldap.web</var>.
+        Handling the password policy response controls
+        (see <a href="https://tools.ietf.org/html/draft-behera-ldap-password-policy">draft-behera-ldap-password-policy</a>)
+        is now done within module package <var>ldap0</var>.
       </li>
       <li>
-        Configuration parameter
-        <a href="web2ldapcnf_hosts.html#ldap_uri_list">web2ldapcnf.hosts.ldap_uri_list</a>
-        now must contain list of 2-tuples of Unicode strings.
+        HTML5 attribute
+        <a href="https://caniuse.com/#feat=input-pattern">pattern</a>
+        is set for &lt;input&gt; tags in case the plugin class has
+        class attribute <var>input_pattern</var>.
       </li>
       <li>
-        Because of internal API changes custom plugins have to be changed.
-      </li>
-      <li>
-        Some renaming in CSS identifiers to save network bandwidth when
-        displaying many search results. Thus custom CSS files must be updated.
+        Class <var>ldap0.schema.models.SchemaElementOIDSet</var> used
+        whereever possible.
       </li>
     </ul>
-  </dd>
-  <dt>New features/enhancements</dt>
-  <dd>
+  </li>
+  <li>
+    Module <a href="https://docs.python.org/2/library/logging.html">logging</a>
+    used instead of <var>sys.stderr.write()</var> for writing log messages.
     <ul>
-      <li>
-        New site-specific configuration parameter
-        <a href="web2ldapcnf_hosts.html#binddn_mapping">binddn_mapping</a>
-        is used for specifying bind DN mappings with an LDAP URL.
-        Especially it allows statically derived bind DNs without LDAP search.
-      </li>
-      <li>
-        [ConnInfo] shows max. 30 of the last search bases used before.
-      </li>
-      <li>
-        Bulk-copying entries is now more efficient.
-      </li>
-      <li>
-        All DN information is now always request-specific (formerly session-specific).
-        This improves user experience when navigating in multiple browser tabs.
-      </li>
-      <li>
-        Heavy code-cleaning including fixing of various minor bugs:
-        <ul>
-          <li>
-            Compliance to <a href="https://www.python.org/dev/peps/pep-0008/">PEP-8</a>
-          </li>
-          <li>
-            Changed some optional imports to mandatory dependencies
-          </li>
-          <li>
-            Handling the password policy response controls
-            (see <a href="https://tools.ietf.org/html/draft-behera-ldap-password-policy">draft-behera-ldap-password-policy</a>)
-            is now done within module package <var>ldap0</var>.
-          </li>
-          <li>
-            HTML5 attribute
-            <a href="https://caniuse.com/#feat=input-pattern">pattern</a>
-            is set for &lt;input&gt; tags in case the plugin class has
-            class attribute <var>input_pattern</var>.
-          </li>
-          <li>
-            Class <var>ldap0.schema.models.SchemaElementOIDSet</var> used
-            whereever possible.
-          </li>
-        </ul>
-      </li>
-      <li>
-        Module <a href="https://docs.python.org/2/library/logging.html">logging</a>
-        used instead of <var>sys.stderr.write()</var> for writing log messages.
-        <ul>
-          <li>Improved exception logging.</li>
-          <li>Debug logging of form class registrations.</li>
-          <li>Debug logs and warnings during plugin registrations.</li>
-          <li>Debug logging of session handling.</li>
-          <li>System environment, Python interpreter, etc.</li>
-        </ul>
-      </li>
+      <li>Improved exception logging.</li>
+      <li>Debug logging of form class registrations.</li>
+      <li>Debug logs and warnings during plugin registrations.</li>
+      <li>Debug logging of session handling.</li>
+      <li>System environment, Python interpreter, etc.</li>
     </ul>
-  </dd>
-  <dt>Fixes</dt>
-  <dd>
+  </li>
+</ul>
+</dd>
+
+<h2>Fixes</h2>
+<ul>
+  <li>
+    Tree viewer now correctly uses configuration parameters
+    <a href="web2ldapcnf_hosts.html#dit_max_levels">dit_*</a>.
+  </li>
+  <li>
+    Removed some dangerous mutable default values used
+    for key-word arguments.
+  </li>
+  <li>
+    Many small fixes along code-cleaning which are not worth to be
+    mentioned separately.
+  </li>
+</ul>
+
+<h2>Dropped features</h2>
+<ul>
+  <li>
+    Dropped support for running on Windows.
+  </li>
+  <li>
+    Removed the separate <kbd>web2ldap-checkinst</kbd> console script.
+    Module requirements checking is now done via pip installation
+    anyway and some installation information is logged during startup.
+  </li>
+  <li>
+    Removed configuration parameter <var>web2ldapcnf.sec_sslacceptedciphers</var>.
+  </li>
+  <li>
+    Removed site-specific configuration parameter
+    <var>search_tablistattrs</var> because the generic parameter
+    <a href="web2ldapcnf_hosts.html#search_tdtemplate">search_tdtemplate</a>
+    is much more useful anyway.
+  </li>
+  <li>
+    Replaced site-specific configuration parameter
+    <var>binddnsearch</var> by more flexible parameter
+    <a href="web2ldapcnf_hosts.html#binddn_mapping">binddn_mapping</a>.
+  </li>
+  <li>
+    Hunked out non-functional code for handling
+    &quot;Authorization Identity Request and Response Controls&quot;
+    (see <a href="https://tools.ietf.org/html/rfc3829">RFC 3829</a>).
+  </li>
+  <li>
+    Dropped login form parameter <var>login_filterstr</var>.
+    The user can search for an entry and use link [Bind as]
+    from the context menu.
+  </li>
+  <li>
+    Removed obsolete X.509 certificate extension parser classes:
     <ul>
-      <li>
-        Tree viewer now correctly uses configuration parameters
-        <a href="web2ldapcnf_hosts.html#dit_max_levels">dit_*</a>.
-      </li>
-      <li>
-        Removed some dangerous mutable default values used
-        for key-word arguments.
-      </li>
-      <li>
-        Many small fixes along code-cleaning which are not worth to be
-        mentioned separately.
-      </li>
+      <li>web2ldap.mspki.vendorext.VerisignCZAG</li>
+      <li>web2ldap.mspki.nsext</li>
     </ul>
-  </dd>
-  <dt>Dropped features</dt>
-  <dd>
-    <ul>
-      <li>
-        Dropped support for running on Windows.
-      </li>
-      <li>
-        Removed the separate <kbd>web2ldap-checkinst</kbd> console script.
-        Module requirements checking is now done via pip installation
-        anyway and some installation information is logged during startup.
-      </li>
-      <li>
-        Removed configuration parameter <var>web2ldapcnf.sec_sslacceptedciphers</var>.
-      </li>
-      <li>
-        Removed site-specific configuration parameter
-        <var>search_tablistattrs</var> because the generic parameter
-        <a href="web2ldapcnf_hosts.html#search_tdtemplate">search_tdtemplate</a>
-        is much more useful anyway.
-      </li>
-      <li>
-        Replaced site-specific configuration parameter
-        <var>binddnsearch</var> by more flexible parameter
-        <a href="web2ldapcnf_hosts.html#binddn_mapping">binddn_mapping</a>.
-      </li>
-      <li>
-        Hunked out non-functional code for handling
-        &quot;Authorization Identity Request and Response Controls&quot;
-        (see <a href="https://tools.ietf.org/html/rfc3829">RFC 3829</a>).
-      </li>
-      <li>
-        Dropped login form parameter <var>login_filterstr</var>.
-        The user can search for an entry and use link [Bind as]
-        from the context menu.
-      </li>
-      <li>
-        Removed obsolete X.509 certificate extension parser classes:
-        <ul>
-          <li>web2ldap.mspki.vendorext.VerisignCZAG</li>
-          <li>web2ldap.mspki.nsext</li>
-        </ul>
-      </li>
-      <li>
-        Removed the tool tips from [Read] link of displayed search results
-        because tool tips in general are not helpful for better UX.
-        Better performance, less network traffic is much more important.
-      </li>
-    </ul>
-  </dd>
-</dl>
+  </li>
+  <li>
+    Removed the tool tips from [Read] link of displayed search results
+    because tool tips in general are not helpful for better UX.
+    Better performance, less network traffic is much more important.
+  </li>
+</ul>
 
 <!--#include file="ssi/footer.html" -->
