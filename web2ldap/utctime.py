@@ -18,10 +18,6 @@ import time
 import datetime
 
 
-class utcdatetime(datetime.datetime):
-    pass
-
-
 UTC_TIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 
@@ -29,7 +25,7 @@ def strptime(s):
     # Extract and validate time zone information
     if len(s) == 15 and s.endswith('Z'):
         # UTC Time (Zulu Time)
-        dt = utcdatetime.strptime(s, r'%Y%m%d%H%M%SZ')
+        dt = datetime.datetime.strptime(s, r'%Y%m%d%H%M%SZ')
         return dt
     if len(s) > 15 and s.endswith('Z'):
         # UTC Time (Zulu Time)
@@ -51,10 +47,10 @@ def strptime(s):
     # Extract and validate date and time information
     if '.' in s:
         # There seems to be a fraction part
-        dt = utcdatetime.strptime(s, r'%Y%m%d%H%M%S.%f')
+        dt = datetime.datetime.strptime(s, r'%Y%m%d%H%M%S.%f')
     else:
         # no fraction part
-        dt = utcdatetime.strptime(s, r'%Y%m%d%H%M%S')
+        dt = datetime.datetime.strptime(s, r'%Y%m%d%H%M%S')
     return dt - tz_offset
 
 
