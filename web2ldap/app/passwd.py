@@ -49,8 +49,10 @@ def get_all_attributes(schema, oc_list):
     returns single dictionary with all possible attributes
     defined in the schema for a given list of object classes
     """
-    required, allowed = schema.attribute_types(oc_list, raise_keyerror=False)
     result = SchemaElementOIDSet(schema, AttributeType, [])
+    if not oc_list:
+        return result
+    required, allowed = schema.attribute_types(oc_list, raise_keyerror=False)
     result.update(required)
     result.update(allowed)
     return result # get_all_attributes()
@@ -154,8 +156,11 @@ def password_self_change(ls, dn):
 
 def passwd_form(
         app,
-        passwd_action, passwd_who, user_objectclasses,
-        heading, error_msg
+        passwd_action,
+        passwd_who,
+        user_objectclasses,
+        heading,
+        error_msg,
     ):
     """
     display a password change input form

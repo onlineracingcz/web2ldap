@@ -429,20 +429,6 @@ class INVALID_SIMPLE_BIND_DN(ldap0.INVALID_DN_SYNTAX):
         return ': '.join((self.desc, self.who))
 
 
-class PWD_EXPIRATION_WARNING(PasswordPolicyException):
-
-    def __init__(self, who=None, desc=None, timeBeforeExpiration=None):
-        PasswordPolicyException.__init__(self, who, desc)
-        self.timeBeforeExpiration = timeBeforeExpiration
-
-
-class PWD_EXPIRED(PasswordPolicyException):
-
-    def __init__(self, who=None, desc=None, graceAuthNsRemaining=None):
-        PasswordPolicyException.__init__(self, who, desc)
-        self.graceAuthNsRemaining = graceAuthNsRemaining
-
-
 class USERNAME_NOT_FOUND(LDAPSessionException):
     """
     Simple exception class raised when get_bind_dn() does not
@@ -861,7 +847,8 @@ class LDAPSession(object):
         """Retrieve parsed sub schema sub entry for current part of DIT"""
         assert isinstance(default, SubSchema), \
             TypeError('Expected default to be instance of SubSchema, was %r' % (default))
-        if dn is None:
+        if dn is None or self.l is None:
+            # not properly connected to LDAP server yet
             return default
         subschemasubentry_dn = self.searchSubSchemaEntryDN(dn)
         if subschemasubentry_dn is None:
