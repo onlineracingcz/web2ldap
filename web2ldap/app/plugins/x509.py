@@ -10,6 +10,8 @@ Currently untested!
 
 from __future__ import absolute_import
 
+from binascii import hexlify
+
 import ldap0.dn
 
 import asn1crypto.pem
@@ -60,17 +62,21 @@ class Certificate(Binary):
     mimeType = 'application/pkix-cert'
     fileExt = 'cer'
     cert_display_template = """
-      <dl>
-        <dt>Issuer:</dt>
-        <dd>{cert_issuer_dn}</dd>
-        <dt>Subject</dt>
-        <dd>{cert_subject_dn}</dd>
-        <dt>Serial No.</dt>
-        <dd>{cert_serial_number_dec} ({cert_serial_number_hex})</dd>
-        <dt>Validity period</dt>
-        <dd>from {cert_not_before} until {cert_not_after}</dd>
-      </dl>
-      """
+    <dl>
+      <dt>Issuer:</dt>
+      <dd>{cert_issuer_dn}</dd>
+      <dt>Subject</dt>
+      <dd>{cert_subject_dn}</dd>
+      <dt>Serial No.</dt>
+      <dd>{cert_serial_number_dec} ({cert_serial_number_hex})</dd>
+      <dt>Validity period</dt>
+      <dd>from {cert_not_before} until {cert_not_after}</dd>
+    </dl>
+    """
+    cert_extn_display_template = """
+    <dt>{ext_crit} {ext_name} {ext_id} </dt>
+    <dd>{extn_value}</dd>
+    """
 
     def sanitize(self, attrValue):
         if asn1crypto.pem.detect(attrValue):
@@ -79,6 +85,22 @@ class Certificate(Binary):
             except ValueError:
                 pass
         return attrValue
+
+    def _display_extensions(self, x509):
+        html = ['<p>Extensions</p>']
+        html.append('<dl>')
+        for ext in x509['tbs_certificate']['extensions']:
+            ext_oid = unicode(ext['extn_id'])
+            html.append(
+                self.cert_extn_display_template.format(
+                    ext_id=self._app.form.utf2display(ext_oid),
+                    ext_name=asn1crypto.x509.ExtensionId._map.get(ext_oid, ext_oid),
+                    ext_crit={False:u'', True:u'critical: '}[ext['critical'].native],
+                    extn_value=self._app.form.utf2display(unicode(ext['extn_value'].parsed)),
+                )
+            )
+        html.append('</dl>')
+        return html
 
     def displayValue(self, valueindex=0, commandbutton=False):
         html = [
@@ -109,22 +131,12 @@ class Certificate(Binary):
                 cert_not_after=x509['tbs_certificate']['validity']['not_after'].native,
             )
         )
-        html.append('<p>Extensions</p>')
-        html.append('<dl>')
-        for ext in x509['tbs_certificate']['extensions']:
-            ext_oid = unicode(ext['extn_id'])
-            html.append(
-                """
-                <dt>{ext_crit} {ext_name} {ext_id} </dt>
-                <dd>{extn_value}</dd>
-                """.format(
-                    ext_id=self._app.form.utf2display(ext_oid),
-                    ext_name=asn1crypto.x509.ExtensionId._map.get(ext_oid, ext_oid),
-                    ext_crit={False:u'', True:u'critical: '}[ext['critical'].native],
-                    extn_value=self._app.form.utf2display(unicode(ext['extn_value'].parsed)),
-                )
-            )
-        html.append('</dl>')
+        # FIX ME!
+        #if __debug__ and x509['tbs_certificate']['extensions']:
+        #    print '*********************************************************'
+        #    x509['tbs_certificate']['extensions'].debug()
+        #    print '*********************************************************'
+        #    html.extend(self._display_extensions(x509))
         return ''.join(html)
 
 
