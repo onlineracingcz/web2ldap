@@ -534,6 +534,7 @@ class AppHandler(object):
                 self.form.unset_cookie(old_ls.cookie)
             # Explicitly remove old session
             session_store.deleteSession(del_sid)
+            self.sid = None
         return # end of _handle_del_sid()
 
     def _get_ldapconn_params(self):
@@ -725,6 +726,7 @@ class AppHandler(object):
                 self.form.unset_cookie(self.ls.cookie)
                 # Explicitly remove old session
                 session_store.deleteSession(self.sid)
+                self.sid = None
                 # Redirect to start page to avoid people bookmarking disconnect URL
                 self.url_redirect(u'Disconnecting...', refresh_time=0)
                 return
@@ -755,6 +757,7 @@ class AppHandler(object):
                 if not init_uri_list:
                     # No host specified in user's input
                     session_store.deleteSession(self.sid)
+                    self.sid = None
                     web2ldap.app.connect.w2l_connect(
                         self,
                         h1_msg='Connect failed',
@@ -812,6 +815,7 @@ class AppHandler(object):
 
             if self.ls.uri is None:
                 session_store.deleteSession(self.sid)
+                self.sid = None
                 web2ldap.app.connect.w2l_connect(
                     self,
                     h1_msg='Connect failed',
@@ -917,6 +921,7 @@ class AppHandler(object):
         except ldap0.SERVER_DOWN as err:
             # Server is down and reconnecting impossible => remove session
             session_store.deleteSession(self.sid)
+            self.sid = None
             # Redirect to entry page
             web2ldap.app.connect.w2l_connect(
                 self,
