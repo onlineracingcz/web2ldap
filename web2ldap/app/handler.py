@@ -24,6 +24,7 @@ from ipaddress import ip_address, ip_network
 import ldap0
 from ldap0.ldapurl import isLDAPUrl
 from ldap0.dn import DNObj
+from ldap0.err import PasswordPolicyException, PasswordPolicyExpirationWarning
 
 import web2ldapcnf
 import web2ldapcnf.hosts
@@ -195,6 +196,12 @@ class AppHandler(object):
         self.dn_obj = DNObj.fromstring(dn)
         if self.ls and self.ls.uri:
             self.dn_obj.charset = self.ls.charset
+        self.schema = self.ls.get_sub_schema(
+            self.dn,
+            self.cfg_param('_schema', None),
+            self.cfg_param('supplement_schema', None),
+            self.cfg_param('schema_strictcheck', True),
+        )
 
     @property
     def naming_context(self):
@@ -370,12 +377,6 @@ class AppHandler(object):
             self.command,
             COMMAND_FUNCTION[self.command].__module__,
             COMMAND_FUNCTION[self.command].__name__,
-        )
-        self.schema = self.ls.get_sub_schema(
-            self.dn,
-            self.cfg_param('_schema', None),
-            self.cfg_param('supplement_schema', None),
-            self.cfg_param('schema_strictcheck', True),
         )
         COMMAND_FUNCTION[self.command](self)
         return # dispatch()
@@ -987,13 +988,15 @@ class AppHandler(object):
                 who=who, relogin=True,
             )
 
-        except web2ldap.ldapsession.PWD_EXPIRATION_WARNING as err:
+        except PasswordPolicyExpirationWarning as err:
             # Setup what's required for executing command 'passwd'
-            self.dn = err.who.decode(self.ls.charset)
+            self.dn = (self.ls.l.whoami_s()[3:] or err.who).decode(self.ls.charset)
             # Output the change password form
             web2ldap.app.passwd.passwd_form(
                 self,
-                None, err.who.decode(self.ls.charset), None,
+                u'',
+                self.dn,
+                None,
                 'Password change needed',
                 self.form.utf2display(
                     u'Password will expire in %s!' % (
@@ -1006,14 +1009,15 @@ class AppHandler(object):
                 ),
             )
 
-        except web2ldap.ldapsession.PasswordPolicyException as err:
+        except PasswordPolicyException as err:
             # Setup what's required for executing command 'passwd'
-            self.dn = err.who.decode(self.ls.charset)
+            self.dn = (self.ls.l.whoami_s()[3:] or err.who).decode(self.ls.charset)
             # Output the change password form
             web2ldap.app.passwd.passwd_form(
                 self,
+                u'',
+                self.dn,
                 None,
-                err.who.decode(self.ls.charset), None,
                 'Password change needed',
                 self.form.utf2display(err.desc.decode('ascii'))
             )
