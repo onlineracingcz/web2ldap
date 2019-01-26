@@ -49,38 +49,9 @@ def HexString(data, delimiter=':', wrap=None, indent=0, linesep='\n'):
     return linesep.join(s)
 
 
-def longtobytes(n, blocksize=0):
-    """Convert a long integer to a byte string
-
-    If optional blocksize is given and greater than zero, pad the front of the
-    byte string with binary zeros so that the length is a multiple of
-    blocksize.
-    """
-    # after much testing, this algorithm was deemed to be the fastest
-    s = ''
-    pack = struct.pack
-    while n > 0:
-        s = pack('>I', n & 0xffffffffL) + s
-        n = n >> 32
-    # strip off leading zeros
-    for i in range(len(s)):
-        if s[i] <> '\000':
-            break
-    else:
-        # only happens when n == 0
-        s = '\000'
-        i = 0
-    s = s[i:]
-    # add back some pad bytes.  this could be done more efficiently w.r.t. the
-    # de-padding being done above, but sigh...
-    if blocksize > 0 and len(s) % blocksize:
-        s = (blocksize - len(s) % blocksize) * '\000' + s
-    return s
-
 def bytestolong(s):
-    """Convert a byte string to a long integer.
-
-    This is (essentially) the inverse of longtobytes().
+    """
+    Convert a byte string to a long integer.
     """
     acc = 0L
     unpack = struct.unpack
