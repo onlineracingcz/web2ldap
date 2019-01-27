@@ -435,9 +435,6 @@ def w2l_read(app):
 
     display_entry = DisplayEntry(app, app.dn, app.schema, entry, 'readSep', 1)
 
-    # Save session into database mainly for storing LDAPSession cache
-    session_store.storeSession(app.sid, app.ls)
-
     if len(wanted_attrs) == 1 and not wanted_attrs[0] in {'*', '+'}:
 
         # Display a single binary attribute either with a registered
