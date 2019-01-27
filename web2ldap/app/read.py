@@ -461,7 +461,7 @@ def w2l_read(app):
         if (
                 (read_attrmode == 'view') and
                 hasattr(syntax_se, 'oid') and
-                syntax_se.oid in web2ldap.app.viewer.viewer_func
+                syntax_se.oid in web2ldap.app.viewer.VIEWER_FUNC
             ):
 
             # Nice displaying of binary attribute with viewer class
@@ -471,7 +471,7 @@ def w2l_read(app):
                 web2ldap.app.gui.main_menu(app),
                 context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app),
             )
-            web2ldap.app.viewer.viewer_func[syntax_se.oid](
+            web2ldap.app.viewer.VIEWER_FUNC[syntax_se.oid](
                 app,
                 attr_type,
                 entry,

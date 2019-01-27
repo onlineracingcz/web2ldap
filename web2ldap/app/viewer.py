@@ -23,8 +23,6 @@ import web2ldap.app.gui
 import web2ldap.app.core
 from web2ldap.mspki import x509v3, asn1helper, asn1types
 
-viewer_func = {}
-
 
 CertificateParserError = ValueError
 
@@ -257,7 +255,7 @@ def display_x509_cert(app, attr, entry, index=None):
             CertificateDisplayer(entry[attr][i]).html(
                 app, attr, index,
             )
-        except CertificateParserError as cert_err:
+        except CertificateParserError:
             log_exception(app.env, app.ls)
             app.outf.write('<p class="ErrorMessage">Error parsing certificate.</p>')
     return # display_x509_cert()
@@ -276,13 +274,15 @@ def display_x509_crl(app, attr, entry, index=None):
             CRLDisplayer(entry[attr][index]).html(
                 app, attr, i,
             )
-        except CertificateParserError as cert_err:
+        except CertificateParserError:
             log_exception(app.env, app.ls)
             app.outf.write('<p class="ErrorMessage">Error parsing CRL.</p>')
     return # display_x509_crl()
 
 
 # register viewer functions by syntax OID
-viewer_func['1.3.6.1.4.1.1466.115.121.1.8'] = display_x509_cert
-viewer_func['CACertificate-oid'] = display_x509_cert
-viewer_func['1.3.6.1.4.1.1466.115.121.1.9'] = display_x509_crl
+VIEWER_FUNC = {
+    '1.3.6.1.4.1.1466.115.121.1.8': display_x509_cert,
+    'CACertificate-oid': display_x509_cert,
+    '1.3.6.1.4.1.1466.115.121.1.9': display_x509_crl,
+}
