@@ -622,7 +622,7 @@ def w2l_search(app):
                     d[result_dn] = result_dn
             for r in result_dnlist:
                 result_dn = r[1][0]
-                if result_dn is not None and d.has_key(result_dn):
+                if result_dn is not None and result_dn in d:
                     del d[result_dn]
             result_dnlist.extend([
                 (ldap0.RES_SEARCH_ENTRY, (result_dn.encode(app.ls.charset), {}))
