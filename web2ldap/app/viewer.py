@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 import web2ldapcnf
 
-from web2ldap.log import logger, log_exception
+from web2ldap.log import log_exception
 import web2ldap.web.forms
 import web2ldap.web.helper
 import web2ldap.app.gui
