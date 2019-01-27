@@ -493,12 +493,14 @@ def w2l_passwd(app):
 
     # Check if relogin is necessary
     if password_self_change(app.ls, passwd_who):
+        # Force current connection to anonymous
         try:
             app.ls.l.reconnect(app.ls.uri, reset_last_bind=True)
         except ldap0.INAPPROPRIATE_AUTH:
             pass
         app.ls.who = None
-        # Display login form
+        # Display login form with search form as landing page
+        app.command = 'searchform'
         web2ldap.app.login.w2l_login(
             app,
             login_msg='New login is required!<br>'+password_attr_types_msg,
