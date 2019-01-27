@@ -478,6 +478,14 @@ class LDAPSession(object):
         self._cache_ttl = cache_ttl
         return # __init__()
 
+    @property
+    def relax_rules(self):
+        return CONTROL_RELAXRULES in self.l._get_server_ctrls('**write**')
+
+    @property
+    def manage_dsa_it(self):
+        return CONTROL_MANAGEDSAIT in self.l._get_server_ctrls('**all**')
+
     def setTLSOptions(self, tls_options=None):
         tls_options = tls_options or {}
         if not self.uri.lower().startswith('ldapi:') and ldap0.TLS_AVAIL:
