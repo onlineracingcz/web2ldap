@@ -127,11 +127,9 @@ def w2l_modify(app):
         web2ldap.app.add.ADD_IGNORE_ATTR_TYPES,
     )
 
-    # Determine whether Relax Rules control is in effect
-    relax_rules_enabled = app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
-
-    if not relax_rules_enabled:
-        # Add all attributes which have NO-USER-MODIFICATION set
+    if not app.ls.relax_rules:
+        # In case Relax Rules control is not enabled
+        # ignore all attributes which have NO-USER-MODIFICATION set
         ignore_attr_types.update(app.schema.no_user_mod_attr_oids)
         # Ignore attributes which are assumed to be constant (some operational attributes)
         ignore_attr_types.update(web2ldap.app.addmodifyform.ConfiguredConstantAttributes(app).values())
@@ -140,9 +138,9 @@ def w2l_modify(app):
     # must be ignored to avoid problems with different access rights
     # after possible re-login
     ignore_attr_types.update([
-        a
-        for a in old_entry.keys()
-        if not in_oldattrtypes.has_key(a)
+        attr
+        for attr in old_entry.keys()
+        if attr not in in_oldattrtypes
     ])
 
     old_entry_structural_oc = old_entry.get_structural_oc()
