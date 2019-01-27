@@ -269,7 +269,7 @@ class WebSession(object):
         """
         newid = random_string(alphabet=SESSION_ID_CHARS, length=self.session_id_len)
         tried = 0
-        while self.sessiondict.has_key(newid):
+        while newid in self.sessiondict:
             tried += 1
             if maxtry and tried >= maxtry:
                 raise GenerateIDError(maxtry)
@@ -297,9 +297,9 @@ class WebSession(object):
         # Delete the session data
         self._session_lock.acquire()
         try:
-            if self.sessiondict.has_key(session_id):
+            if session_id in self.sessiondict:
                 del self.sessiondict[session_id]
-            if self.sessiondict.has_key('__session_checkvars__'+session_id):
+            if '__session_checkvars__'+session_id in self.sessiondict:
                 del self.sessiondict['__session_checkvars__'+session_id]
         finally:
             self._session_lock.release()
