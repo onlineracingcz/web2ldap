@@ -1072,6 +1072,6 @@ class AuthMechSelect(Select):
         options_dict[u''] = self.supported_bind_mechs[u'']
         for o in options or self.supported_bind_mechs.keys():
             o_upper = o.upper()
-            if self.supported_bind_mechs.has_key(o_upper):
+            if o_upper in self.supported_bind_mechs:
                 options_dict[o_upper] = self.supported_bind_mechs[o_upper]
         Select.setOptions(self, options_dict.items())
