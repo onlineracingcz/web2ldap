@@ -29,7 +29,6 @@ import web2ldap.app.schema
 import web2ldap.app.viewer
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.msbase import GrabKeys
-from web2ldap.app.session import session_store
 from web2ldap.app.schema.viewer import schema_anchor
 
 
