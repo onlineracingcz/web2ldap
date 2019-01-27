@@ -117,6 +117,8 @@ def w2l_login(
     else:
         action_command = app.command
 
+    logger.debug('Display login form for %r with next command %r', app.dn, action_command)
+
     app.outf.write(
         '<h1>%s</h1>\n%s' % (
             app.form.utf2display(title_msg),
