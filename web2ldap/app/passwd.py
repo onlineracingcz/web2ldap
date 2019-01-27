@@ -176,7 +176,7 @@ def passwd_form(
         error_msg = '<p class="ErrorMessage">%s</p>' % (error_msg)
 
     # Determine whether password attribute is unicodePwd on MS AD
-    unicode_pwd_avail = app.schema.sed[AttributeType].has_key('1.2.840.113556.1.4.90')
+    unicode_pwd_avail = '1.2.840.113556.1.4.90' in app.schema.sed[AttributeType]
 
     # Determine whether user changes own password
     own_pwd_change = password_self_change(app.ls, passwd_who)
@@ -312,10 +312,10 @@ def w2l_passwd(app):
     # Extend with appropriate user-must-change-password-after-reset attribute
     if passwd_forcechange:
         # draft-behera-password-policy
-        if app.schema.sed[AttributeType].has_key('1.3.6.1.4.1.42.2.27.8.1.22'):
+        if '1.3.6.1.4.1.42.2.27.8.1.22' in app.schema.sed[AttributeType]:
             passwd_modlist.append((ldap0.MOD_REPLACE, 'pwdReset', 'TRUE'))
         # MS AD
-        elif app.schema.sed[AttributeType].has_key('1.2.840.113556.1.4.96'):
+        elif '1.2.840.113556.1.4.96' in app.schema.sed[AttributeType]:
             passwd_modlist.append((ldap0.MOD_REPLACE, 'pwdLastSet', '0'))
 
     if not passwd_action:
