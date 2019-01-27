@@ -25,6 +25,7 @@ import ldap0.cidict
 import ldap0.filter
 import ldap0.schema.models
 from ldap0.controls.openldap import SearchNoOpControl
+from ldap0.schema.models import AttributeType
 
 import web2ldap.web.forms
 from web2ldap.web import escape_html
@@ -398,8 +399,8 @@ def w2l_search(app):
     search_lastmod = int(app.form.getInputValue('search_lastmod', [-1])[0])
     if search_lastmod > 0:
         timestamp_str = unicode(time.strftime('%Y%m%d%H%M%S', time.gmtime(time.time()-search_lastmod)), 'ascii')
-        if app.schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.2.2') and \
-           app.schema.sed[ldap0.schema.models.AttributeType].has_key('1.2.840.113556.1.2.3'):
+        if '1.2.840.113556.1.2.2' in app.schema.sed[AttributeType] and \
+           '1.2.840.113556.1.2.3' in app.schema.sed[AttributeType]:
             # Assume we're searching MS Active Directory
             filterstr2 = u'(&(|(whenCreated>=%s.0Z)(whenChanged>=%s.0Z))%s)' % (
                 timestamp_str, timestamp_str, filterstr,
@@ -423,7 +424,7 @@ def w2l_search(app):
         if a.strip()
     ]
 
-    search_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, ldap0.schema.models.AttributeType, search_attrs)
+    search_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, AttributeType, search_attrs)
     search_attrs = search_attr_set.names()
 
     search_ldap_url = app.ls.ldapUrl(dn=search_root or app.naming_context)
@@ -433,7 +434,7 @@ def w2l_search(app):
 
     ldap_search_command = search_ldap_url.ldapsearch_cmd().decode(app.ls.charset)
 
-    read_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, ldap0.schema.models.AttributeType, search_attrs)
+    read_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, AttributeType, search_attrs)
     if search_output in {'table', 'print'}:
         read_attr_set.add('objectClass')
 
@@ -919,7 +920,7 @@ def w2l_search(app):
                         if tdtemplate_oc:
                             template_attrs = ldap0.schema.models.SchemaElementOIDSet(
                                 app.schema,
-                                ldap0.schema.models.AttributeType,
+                                AttributeType,
                                 [],
                             )
                             for oc in tdtemplate_oc:
