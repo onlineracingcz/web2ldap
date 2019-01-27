@@ -43,6 +43,9 @@ class AppResponse(object):
         self.headers = []
 
     def reset(self):
+        """
+        reset the output completely (e.g. in case of error message)
+        """
         self.bytelen = 0
         del self.lines
         self.lines = []
