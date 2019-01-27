@@ -262,8 +262,6 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
             self, app, dn, schema, entry, 'fieldSep', False
         )
         self.existing_object_classes = existing_object_classes
-        self.relax_rules_enabled = self._app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
-        self.manage_dsait_enabled = self._app.ls.l._get_server_ctrls('**all**').has_key(web2ldap.ldapsession.CONTROL_MANAGEDSAIT)
         self.writeable_attr_oids = writeable_attr_oids
         self.invalid_attrs = invalid_attrs or {}
         new_object_classes = set(list(self.entry.object_class_oid_set())) - set([
@@ -273,12 +271,12 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         new_attribute_types = self.entry._s.attribute_types(
             new_object_classes,
             raise_keyerror=0,
-            ignore_dit_content_rule=self.relax_rules_enabled
+            ignore_dit_content_rule=self._app.ls.relax_rules
         )
         old_attribute_types = self.entry._s.attribute_types(
             existing_object_classes or [],
             raise_keyerror=0,
-            ignore_dit_content_rule=self.relax_rules_enabled
+            ignore_dit_content_rule=self._app.ls.relax_rules
         )
         self.new_attribute_types_oids = set()
         self.new_attribute_types_oids.update(new_attribute_types[0].keys())
@@ -345,11 +343,11 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                     # Check whether attribute type/value is used in the RDN => not writeable
                     self.existing_object_classes and \
                     attr_value and \
-                    self.rdn_dict.has_key(nameoroid) and \
-                    self.rdn_dict[nameoroid].has_key(attr_value)
+                    nameoroid in self.rdn_dict and \
+                    attr_value in self.rdn_dict[nameoroid]
                 ) or (
                     # Set to writeable if relax rules control is in effect and attribute is NO-USER-APP in subschema
-                    not self.relax_rules_enabled and \
+                    not self._app.ls.relax_rules and \
                     web2ldap.app.schema.no_userapp_attr(self.entry._s, oid)
                 ):
                 result.append('\n'.join((
@@ -426,8 +424,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         ]
         # Check whether Manage DIT control is in effect,
         # filter out OBSOLETE attribute types otherwise
-        relax_rules_enabled = self._app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
-        if not relax_rules_enabled:
+        if not self._app.ls.relax_rules:
             attr_type_filter.append(('obsolete', [0]))
 
         # Filter out extensibleObject
@@ -445,13 +442,13 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
             list(object_class_oids),
             attr_type_filter=attr_type_filter,
             raise_keyerror=0,
-            ignore_dit_content_rule=relax_rules_enabled
+            ignore_dit_content_rule=self._app.ls.relax_rules,
         )
 
         # Additional check whether to explicitly add object class attribute.
         # This is a work-around for LDAP servers which mark the
         # objectClass attribute as not modifiable (e.g. MS Active Directory)
-        if not required_attrs_dict.has_key('2.5.4.0') and not allowed_attrs_dict.has_key('2.5.4.0'):
+        if '2.5.4.0' not in required_attrs_dict and '2.5.4.0' not in allowed_attrs_dict:
             required_attrs_dict['2.5.4.0'] = self.entry._s.get_obj(ObjectClass, '2.5.4.0')
         return required_attrs_dict, allowed_attrs_dict
 
@@ -466,13 +463,13 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         attr_type_names = ldap0.cidict.cidict()
         for a in self.entry.keys():
             at_oid = self.entry._at2key(a)[0]
-            if attr_types_dict.has_key(at_oid):
+            if at_oid in attr_types_dict:
                 seen_attr_type_oids[at_oid] = None
                 attr_type_names[a.encode('ascii')] = None
         for at_oid, at_se in attr_types_dict.items():
             if (
                     at_se and
-                    not seen_attr_type_oids.has_key(at_oid) and
+                    at_oid not in seen_attr_type_oids and
                     not web2ldap.app.schema.no_userapp_attr(self.entry._s, at_oid)
                 ):
                 attr_type_names[(at_se.names or (at_se.oid,))[0].encode('ascii')] = None
@@ -686,7 +683,7 @@ def ObjectClassForm(
             if dit_content_rule is not None:
                 if dit_content_rule.obsolete:
                     dit_content_rule_status_text = 'Ignored obsolete'
-                elif relax_rules_enabled:
+                elif app.ls.relax_rules:
                     dit_content_rule_status_text = 'Ignored'
                 else:
                     dit_content_rule_status_text = 'Governed by'
@@ -906,11 +903,12 @@ def ObjectClassForm(
 
     in_ocf = app.form.getInputValue('in_ocf', [u'tmpl'])[0]
 
-    relax_rules_enabled = app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
-
     command_hidden_fields = [('dn', app.dn)]
 
-    existing_structural_oc, existing_abstract_oc, existing_auxiliary_oc = web2ldap.app.schema.object_class_categories(app.schema, existing_object_classes)
+    existing_structural_oc, existing_abstract_oc, existing_auxiliary_oc = web2ldap.app.schema.object_class_categories(
+        app.schema,
+        existing_object_classes,
+    )
     all_oc = [
         (app.schema.get_obj(ObjectClass, oid).names or (oid,))[0]
         for oid in app.schema.listall(ObjectClass)
@@ -965,7 +963,7 @@ def ObjectClassForm(
 def ReadLDIFTemplate(app, template_name):
     addform_entry_templates = app.cfg_param('addform_entry_templates', {})
     template_name_html = escape_html(template_name)
-    if not addform_entry_templates.has_key(template_name):
+    if template_name not in addform_entry_templates:
         raise web2ldap.app.core.ErrorExit(u'LDIF template key &quot;%s&quot; not known.' % (template_name_html))
     ldif_file_name = addform_entry_templates[template_name]
     try:
@@ -1044,8 +1042,8 @@ def nomatching_attrs(sub_schema, entry, allowed_attrs_dict, required_attrs_dict)
             nomatching_attrs_dict[at_name] = None
         else:
             if not (
-                    allowed_attrs_dict.has_key(at_oid) or
-                    required_attrs_dict.has_key(at_oid) or
+                    at_oid in allowed_attrs_dict or
+                    at_oid in required_attrs_dict or
                     at_name.lower() == 'objectclass'
                 ):
                 nomatching_attrs_dict[at_oid] = sub_schema.get_obj(AttributeType, at_oid)
@@ -1084,7 +1082,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
         ValueError('Invalid value for write_attrs_method')
 
     # Explicitly request attribute 'ref' if in manage DSA IT mode
-    if app.ls.l._get_server_ctrls('**all**').has_key(web2ldap.ldapsession.CONTROL_MANAGEDSAIT):
+    if app.ls.manage_dsa_it:
         read_attrs['ref'] = 'ref'
 
     # Read the editable attribute values of entry
@@ -1140,10 +1138,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
     return entry, writeable_attr_oids # read_old_entry()
 
 
-def w2l_addform(
-        app,
-        add_rdn, add_basedn, entry, msg='', invalid_attrs=None,
-    ):
+def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
 
     if msg:
         msg = '<p class="ErrorMessage">%s</p>' % (msg)
@@ -1187,8 +1182,7 @@ def w2l_addform(
         if len(rdn_candidate_attr_nameoroids) == 1:
             rdn_input_field.set_default(rdn_candidate_attr_nameoroids[0]+'=')
 
-    relax_rules_enabled = app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
-    if relax_rules_enabled:
+    if app.ls.relax_rules:
         msg = ''.join((
             msg,
             '<p class="WarningMessage">Relax Rules Control enabled! Be sure you know what you are doing!</p>',
@@ -1203,7 +1197,7 @@ def w2l_addform(
                 '<p class="WarningMessage">No templates defined for chosen object classes.</p>'
             ))
             input_formtype = u'Table'
-        elif relax_rules_enabled:
+        elif app.ls.relax_rules:
             msg = ''.join((
                 msg,
                 '<p class="WarningMessage">Forced to table input because Relax Rules Control is enabled.</p>'
@@ -1308,8 +1302,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
             for at_name in writeable_attr_oids or []
         ])
 
-    relax_rules_enabled = app.ls.l._get_server_ctrls('**write**').has_key(web2ldap.ldapsession.CONTROL_RELAXRULES)
-    if relax_rules_enabled:
+    if app.ls.relax_rules:
         msg = ''.join((
             msg,
             '<p class="WarningMessage">Relax Rules Control enabled! Be sure you know what you are doing!</p>',
@@ -1324,7 +1317,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
                 '<p class="WarningMessage">No templates defined for chosen object classes.</p>',
             ))
             input_formtype = u'Table'
-        elif relax_rules_enabled:
+        elif app.ls.relax_rules:
             msg = ''.join((
                 msg,
                 '<p class="WarningMessage">Forced to table input because Relax Rules Control is enabled.</p>',
