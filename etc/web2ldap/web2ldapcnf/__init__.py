@@ -164,7 +164,8 @@ cookie_domain = None
 
 # If non-zero this is the time-span in seconds after which a
 # new session ID is generated.
-# Disadvantage: The browser's back button does not work anymore.
+# Disadvantage: The browser's back button does not work anymore after
+# a new session ID was generated.
 session_paranoid = 0
 
 # unsuspicious target URLs accepted by redirector even without a session
