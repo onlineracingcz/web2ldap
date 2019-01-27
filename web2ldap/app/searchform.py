@@ -331,7 +331,10 @@ def w2l_searchform(
                     default=app.form.getInputValue('scope', [unicode(scope)])[0]
                 ),
                 field_search_resnumber=app.form.field['search_resnumber'].inputHTML(
-                    default=unicode(app.cfg_param('search_resultsperpage', 10))
+                    default=app.form.getInputValue(
+                        'search_resnumber',
+                        [unicode(app.cfg_param('search_resultsperpage', 10))],
+                    )[0]
                 ),
                 field_search_lastmod=app.form.field['search_lastmod'].inputHTML(
                     default=app.form.getInputValue('search_lastmod', [unicode(-1)])[0]
