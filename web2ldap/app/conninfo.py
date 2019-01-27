@@ -178,7 +178,7 @@ def w2l_conninfo(app):
     else:
         config_dn_list.append(('CN=MONITOR', 'Monitor'))
 
-    if app.ls.rootDSE.has_key('changelog'):
+    if 'changelog' in app.ls.rootDSE:
         context_menu_list.append(
             app.anchor(
                 'read', 'Change log',
@@ -267,7 +267,7 @@ def w2l_conninfo(app):
                 )
             )
 
-    if app.ls.rootDSE.has_key('schemaNamingContext'):
+    if 'schemaNamingContext' in app.ls.rootDSE:
         # MS AD schema configuration
         context_menu_list.append(
             app.anchor(
