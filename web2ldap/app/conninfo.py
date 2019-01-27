@@ -144,40 +144,37 @@ def w2l_conninfo(app):
     config_dn_list = []
 
     monitored_info = None
-    if app.ls.rootDSE.has_key('monitorContext'):
+    if 'monitorContext' in app.ls.rootDSE:
+        # seems to be OpenLDAP's back-monitor
+        monitor_context_dn = app.ls.rootDSE['monitorContext'][0]
         context_menu_list.append(
             app.anchor(
                 'read', 'Monitor',
-                [('dn', app.ls.rootDSE['monitorContext'][0])],
+                [('dn', monitor_context_dn)],
             )
         )
         try:
-            monitor_context_dn = app.ls.rootDSE['monitorContext'][0]
-        except KeyError:
+            monitored_info = app.ls.l.read_s(
+                monitor_context_dn,
+                attrlist=['monitoredInfo']
+            )['monitoredInfo']
+        except (ldap0.LDAPError, KeyError):
             pass
         else:
-            try:
-                monitored_info = app.ls.l.read_s(
-                    monitor_context_dn,
-                    attrlist=['monitoredInfo']
-                )['monitoredInfo']
-            except (ldap0.LDAPError, KeyError):
-                pass
-            else:
-                context_menu_list.append(app.anchor(
-                    'search', 'My connections',
-                    [
-                        ('dn', monitor_context_dn),
-                        (
-                            'filterstr',
-                            '(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (
-                                escape_filter_chars(app.ls.who or '')
-                            )
-                        ),
-                        ('scope', str(ldap0.SCOPE_SUBTREE)),
-                    ],
-                    title=u'Find own connections in Monitor database',
-                ))
+            context_menu_list.append(app.anchor(
+                'search', 'My connections',
+                [
+                    ('dn', monitor_context_dn),
+                    (
+                        'filterstr',
+                        '(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (
+                            escape_filter_chars(app.ls.who or '')
+                        )
+                    ),
+                    ('scope', str(ldap0.SCOPE_SUBTREE)),
+                ],
+                title=u'Find own connections in Monitor database',
+            ))
     else:
         config_dn_list.append(('CN=MONITOR', 'Monitor'))
 
