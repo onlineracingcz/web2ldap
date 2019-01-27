@@ -10,8 +10,6 @@ Currently untested!
 
 from __future__ import absolute_import
 
-from binascii import hexlify
-
 import ldap0.dn
 
 import asn1crypto.pem
