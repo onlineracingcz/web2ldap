@@ -144,9 +144,11 @@ class CleanUpThread(threading.Thread):
         threading.Thread.__init__(self, name=self.__class__.__module__+self.__class__.__name__)
 
     def run(self):
-        """Thread function for cleaning up session database"""
+        """
+        Thread function for cleaning up session database
+        """
         while not self._stop_event.isSet():
-            self._removed += self._sessionInstance.cleanUp()
+            self._removed += self._sessionInstance.clean()
             self._stop_event.wait(self._interval)
 
     def __repr__(self):
@@ -274,10 +276,11 @@ class WebSession(object):
             newid = random_string(alphabet=SESSION_ID_CHARS, length=self.session_id_len)
         return newid
 
-    def storeSession(self, session_id, session_data):
+    def save(self, session_id, session_data):
         """
         Store session_data under session_id.
         """
+        assert isinstance(session_id, bytes), TypeError('Expected session_id to be bytes, got %r' % (session_id))
         self._session_lock.acquire()
         try:
             # Store session data with timestamp
@@ -286,10 +289,11 @@ class WebSession(object):
             self._session_lock.release()
         return session_id
 
-    def deleteSession(self, session_id):
+    def delete(self, session_id):
         """
         Delete session_data referenced by session_id.
         """
+        assert isinstance(session_id, bytes), TypeError('Expected session_id to be bytes, got %r' % (session_id))
         # Delete the session data
         self._session_lock.acquire()
         try:
@@ -305,6 +309,7 @@ class WebSession(object):
         """
         Retrieve session data
         """
+        assert isinstance(session_id, bytes), TypeError('Expected session_id to be bytes, got %r' % (session_id))
         self._validateSessionIdFormat(session_id)
         session_vars_key = '__session_checkvars__'+session_id
         # Check if session id exists
@@ -322,14 +327,14 @@ class WebSession(object):
             finally:
                 self._session_lock.release()
         except pickle.UnpicklingError:
-            self.deleteSession(session_id)
+            self.delete(session_id)
             raise CorruptData
         current_time = time.time()
         # Check if session is already expired
         if self.session_ttl and current_time > timestamp+self.session_ttl:
             # Remove expired session entry and raise exception
             # Check if application should be able to allow relogin
-            self.deleteSession(session_id)
+            self.delete(session_id)
             raise InvalidSessionId(session_id)
         failed_vars = self._crosscheckSessionEnv(session_checkvars, env)
         if failed_vars:
@@ -338,7 +343,7 @@ class WebSession(object):
         # Everything's ok => return the session data
         return session_data
 
-    def newSession(self, env=None):
+    def new(self, env=None):
         """
         Store session data under session id
         """
@@ -358,7 +363,7 @@ class WebSession(object):
             self._session_lock.release()
         return session_id
 
-    def cleanUp(self):
+    def clean(self):
         """
         Search for expired session entries and delete them.
 
@@ -373,11 +378,11 @@ class WebSession(object):
                 except InvalidSessionId:
                     # Avoid race condition. The session might have been
                     # deleted in the meantime. But make sure everything is deleted.
-                    self.deleteSession(session_id)
+                    self.delete(session_id)
                 else:
                     # Check expiration time
                     if session_timestamp+self.session_ttl < current_time:
-                        self.deleteSession(session_id)
+                        self.delete(session_id)
                         result += 1
         return result
 

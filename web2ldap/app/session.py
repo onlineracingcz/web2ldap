@@ -75,27 +75,27 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
             id(self),
         )
 
-    def newSession(self, env=None):
-        self.log(logging.DEBUG, 'newSession(): creating a new session')
+    def new(self, env=None):
+        self.log(logging.DEBUG, 'new(): creating a new session')
         remote_ip = self._remote_ip(env)
-        self.log(logging.DEBUG, 'newSession(): remote_ip = %r', remote_ip)
+        self.log(logging.DEBUG, 'new(): remote_ip = %r', remote_ip)
         remote_ip_sessions = self.remote_ip_sessions.get(remote_ip, set())
         if len(remote_ip_sessions) >= self.max_session_count_per_ip:
             self.log(
                 logging.WARN,
-                '.newSession(): remote_ip = %r exceeded max. %d sessions',
+                '.new(): remote_ip = %r exceeded max. %d sessions',
                 remote_ip,
                 self.max_session_count_per_ip,
             )
             raise web2ldap.web.session.MaxSessionPerIPExceeded(remote_ip, self.max_session_count_per_ip)
-        session_id = web2ldap.web.session.WebSession.newSession(self, env)
+        session_id = web2ldap.web.session.WebSession.new(self, env)
         current_concurrent_sessions = len(self.sessiondict) / 2
         if current_concurrent_sessions > self.max_concurrent_sessions:
             self.max_concurrent_sessions = current_concurrent_sessions
         self.session_ip_addr[session_id] = remote_ip
         self.remote_ip_counter.update({remote_ip:1})
         self.remote_ip_sessions[remote_ip].add(session_id)
-        self.log(logging.INFO, 'newSession(): created new session for remote_ip = %r', remote_ip)
+        self.log(logging.INFO, 'new(): created new session for remote_ip = %r', remote_ip)
         return session_id
 
     def _remove_ip_assoc(self, sid, remote_ip):
@@ -112,11 +112,11 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
                 del self.remote_ip_sessions[remote_ip]
         return # _remove_ip_assoc()
 
-    def renameSession(self, old_sid, env):
+    def rename(self, old_sid, env):
         session_data = self.retrieveSession(old_sid, env)
-        new_sid = self.newSession(env)
-        self.storeSession(new_sid, session_data)
-        web2ldap.web.session.WebSession.deleteSession(self, old_sid)
+        new_sid = self.new(env)
+        self.save(new_sid, session_data)
+        web2ldap.web.session.WebSession.delete(self, old_sid)
         # Set new remote IP associations
         remote_ip = self._remote_ip(env)
         self.session_ip_addr[new_sid] = remote_ip
@@ -124,8 +124,9 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         self._remove_ip_assoc(old_sid, remote_ip)
         return new_sid
 
-    def deleteSession(self, sid):
-        self.log(logging.DEBUG, 'deleteSession(%r): remove session', sid)
+    def delete(self, sid):
+        assert isinstance(sid, bytes), TypeError('Expected sid to be bytes, got %r' % (sid))
+        self.log(logging.DEBUG, 'delete(%r): remove session', sid)
         try:
             ls_local = self.sessiondict[sid][1]
         except KeyError:
@@ -133,8 +134,8 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         else:
             if isinstance(ls_local, LDAPSession):
                 ls_local.unbind()
-        web2ldap.web.session.WebSession.deleteSession(self, sid)
-        self.log(logging.INFO, 'deleteSession(%r): removed session', sid)
+        web2ldap.web.session.WebSession.delete(self, sid)
+        self.log(logging.INFO, 'delete(%r): removed session', sid)
         # Remove old remote IP associations
         try:
             remote_ip = self.session_ip_addr[sid]
@@ -142,7 +143,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
             pass
         else:
             self._remove_ip_assoc(sid, remote_ip)
-        return # deleteSession()
+        return # delete()
 
 
 class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
@@ -186,12 +187,12 @@ class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
                     except KeyError:
                         # Avoid race condition. The session might have been
                         # deleted in the meantime. But make sure everything is deleted.
-                        self._sessionInstance.deleteSession(session_id)
+                        self._sessionInstance.delete(session_id)
                     else:
                         # Check expiration time
                         if session_timestamp+self._sessionInstance.session_ttl < current_time:
                             # Remove expired session
-                            self._sessionInstance.deleteSession(session_id)
+                            self._sessionInstance.delete(session_id)
                             self.removed_sessions += 1
                 self.last_run_time = current_time
             except (KeyboardInterrupt, SystemExit) as exit_exc:

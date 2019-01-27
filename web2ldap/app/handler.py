@@ -477,15 +477,15 @@ class AppHandler(object):
         """
         create new session
         """
-        self.sid = session_store.newSession(self.env)
-        ls = LDAPSession(
+        self.sid = session_store.new(self.env)
+        self.ls = LDAPSession(
             self.guess_client_addr(),
             web2ldapcnf.ldap_trace_level,
             web2ldapcnf.ldap_cache_ttl,
         )
-        ls.cookie = self.form.set_cookie(str(id(ls)))
-        session_store.storeSession(self.sid, self.ls)
-        return ls # end of _get_session()
+        self.ls.cookie = self.form.set_cookie(str(id(self.ls)))
+        session_store.save(self.sid, self.ls)
+        return # end of _get_session()
 
     def _get_session(self):
         """
@@ -497,45 +497,52 @@ class AppHandler(object):
                 last_session_timestamp, _ = session_store.sessiondict[self.sid]
             except KeyError:
                 pass
-            ls = session_store.retrieveSession(self.sid, self.env)
-            if not isinstance(ls, LDAPSession):
+            self.ls = session_store.retrieveSession(self.sid, self.env)
+            if not isinstance(self.ls, LDAPSession):
                 raise web2ldap.app.session.InvalidSessionInstance()
-            if ls.cookie:
+            if self.ls.cookie:
                 # Check whether HTTP_COOKIE contains the cookie of this particular session
-                cookie_name = ''.join((self.form.cookie_name_prefix, str(id(ls))))
+                cookie_name = ''.join((self.form.cookie_name_prefix, str(id(self.ls))))
                 if not (
                         cookie_name in self.form.cookies and
-                        ls.cookie[cookie_name].value == self.form.cookies[cookie_name].value
+                        self.ls.cookie[cookie_name].value == self.form.cookies[cookie_name].value
                     ):
                     raise web2ldap.app.session.WrongSessionCookie()
             if web2ldapcnf.session_paranoid and \
                self.current_access_time-last_session_timestamp > web2ldapcnf.session_paranoid:
                 # Store session with new session ID
-                self.sid = session_store.renameSession(self.sid, self.env)
+                self.sid = session_store.rename(self.sid, self.env)
         else:
-            ls = self._new_session()
-        return ls # end of _get_session()
+            self._new_session()
+        return # end of _get_session()
 
-    def _handle_del_sid(self):
+    def _del_session(self):
+        """
+        delete the current session
+        """
+        session_store.delete(self.sid)
+        del self.ls
+        self.sid = self.ls = None
+        return # end of _del_session()
+
+    def _handle_delsid(self):
         """
         if del_sid form parameter is present then delete the obsolete session
         """
         try:
-            del_sid = self.form.field['delsid'].value[0]
+            del_sid = self.form.field['delsid'].value[0].encode('ascii')
         except IndexError:
+            return
+        try:
+            old_ls = session_store.retrieveSession(del_sid, self.env)
+        except web2ldap.web.session.SessionException:
             pass
         else:
-            try:
-                old_ls = session_store.retrieveSession(del_sid, self.env)
-            except web2ldap.web.session.SessionException:
-                pass
-            else:
-                # Remove session cookie
-                self.form.unset_cookie(old_ls.cookie)
-            # Explicitly remove old session
-            session_store.deleteSession(del_sid)
-            self.sid = None
-        return # end of _handle_del_sid()
+            # Remove session cookie
+            self.form.unset_cookie(old_ls.cookie)
+        # Explicitly remove old session
+        session_store.delete(del_sid)
+        return # end of _handle_delsid()
 
     def _get_ldapconn_params(self):
         """
@@ -558,7 +565,7 @@ class AppHandler(object):
 
         else:
             # Extract the connection parameters from form fields
-            self._handle_del_sid()
+            self._handle_delsid()
             if 'ldapurl' in self.form.input_field_names:
                 # One form parameter with LDAP URL
                 ldap_url_input = self.form.field['ldapurl'].value[0]
@@ -719,13 +726,13 @@ class AppHandler(object):
                 COMMAND_FUNCTION[self.command](self)
                 return
 
-            self.ls = self._get_session()
+            self._get_session()
 
             if self.command == 'disconnect':
                 # Remove session cookie
                 self.form.unset_cookie(self.ls.cookie)
                 # Explicitly remove old session
-                session_store.deleteSession(self.sid)
+                session_store.delete(self.sid)
                 self.sid = None
                 # Redirect to start page to avoid people bookmarking disconnect URL
                 self.url_redirect(u'Disconnecting...', refresh_time=0)
@@ -756,7 +763,7 @@ class AppHandler(object):
                 ]
                 if not init_uri_list:
                     # No host specified in user's input
-                    session_store.deleteSession(self.sid)
+                    session_store.delete(self.sid)
                     self.sid = None
                     web2ldap.app.connect.w2l_connect(
                         self,
@@ -782,14 +789,8 @@ class AppHandler(object):
                     self.ls is None or self.ls.uri is None or init_uri != self.ls.uri
                 ):
                 # Delete current LDAPSession instance and create new
-                del self.ls
-                self.ls = LDAPSession(
-                    self.guess_client_addr(),
-                    web2ldapcnf.ldap_trace_level,
-                    web2ldapcnf.ldap_cache_ttl,
-                )
-                self.ls.cookie = self.form.set_cookie(str(id(self.ls)))
-                session_store.storeSession(self.sid, self.ls)
+                self._del_session()
+                self._new_session()
                 # Check whether access to target LDAP server is allowed
                 if web2ldapcnf.hosts.restricted_ldap_uri_list and \
                    init_uri not in web2ldap.app.cnf.LDAP_URI_LIST_CHECK_DICT:
@@ -811,10 +812,10 @@ class AppHandler(object):
                 self.ls.l.timeout = self.cfg_param('timeout', 60)
                 # Store session data in case anything goes wrong after here
                 # to give the exception handler a good chance
-                session_store.storeSession(self.sid, self.ls)
+                session_store.save(self.sid, self.ls)
 
             if self.ls.uri is None:
-                session_store.deleteSession(self.sid)
+                session_store.delete(self.sid)
                 self.sid = None
                 web2ldap.app.connect.w2l_connect(
                     self,
@@ -825,7 +826,7 @@ class AppHandler(object):
 
             # Store session data in case anything goes wrong after here
             # to give the exception handler a good chance
-            session_store.storeSession(self.sid, self.ls)
+            session_store.save(self.sid, self.ls)
             self.dn = self.dn
 
             login_mech = self.form.getInputValue(
@@ -892,7 +893,7 @@ class AppHandler(object):
                 return
             # Store session data in case anything goes wrong after here
             # to give the exception handler a good chance
-            session_store.storeSession(self.sid, self.ls)
+            session_store.save(self.sid, self.ls)
 
             # trigger update of various DN-related class properties
             self.dn = self.dn
@@ -906,7 +907,7 @@ class AppHandler(object):
                 self.dispatch()
             else:
                 # Store current session
-                session_store.storeSession(self.sid, self.ls)
+                session_store.save(self.sid, self.ls)
 
         except web2ldap.web.forms.FormException as form_error:
             log_exception(self.env, self.ls)
@@ -920,7 +921,7 @@ class AppHandler(object):
 
         except ldap0.SERVER_DOWN as err:
             # Server is down and reconnecting impossible => remove session
-            session_store.deleteSession(self.sid)
+            session_store.delete(self.sid)
             self.sid = None
             # Redirect to entry page
             web2ldap.app.connect.w2l_connect(
@@ -1074,7 +1075,11 @@ class AppHandler(object):
             self.url_redirect(u'Session handling error.')
 
         except Exception:
-            log_exception(self.env, self.ls)
+            if hasattr(self, 'ls'):
+                error_ls = self.ls
+            else:
+                error_ls = None
+            log_exception(self.env, error_ls)
             self.simple_msg(u'Unhandled error!')
 
         return # run()
