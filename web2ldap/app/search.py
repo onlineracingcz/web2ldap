@@ -100,10 +100,10 @@ csv.register_dialect('excel-semicolon', excel_semicolon)
 
 class LDIFWriter(web2ldap.ldaputil.async.LDIFWriter):
 
-    def preProcessing(self):
+    def pre_processing(self):
         return
 
-    def afterFirstResult(self):
+    def after_first(self):
         self._ldif_writer._output_file.set_headers(
             web2ldap.app.gui.gen_headers(
                 content_type='text/plain',
@@ -113,7 +113,7 @@ class LDIFWriter(web2ldap.ldaputil.async.LDIFWriter):
                 ]
             )
         )
-        web2ldap.ldaputil.async.LDIFWriter.preProcessing(self)
+        web2ldap.ldaputil.async.LDIFWriter.pre_processing(self)
 
 
 class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
@@ -130,8 +130,8 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
         self._p = print_template_str_dict
         return # __init__()
 
-    def processResults(self, ignoreResultsNumber=0, processResultsCount=0):
-        web2ldap.ldaputil.async.List.processResults(self)
+    def process_results(self, ignoreResultsNumber=0, processResultsCount=0):
+        web2ldap.ldaputil.async.List.process_results(self)
         self.allResults.sort()
         # This should speed up things
         utf2display = self._app.form.utf2display
@@ -176,7 +176,7 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
             self._app.outf.write('<tr>\n%s</tr>\n' % ('\n'.join(td_list)))
         self._app.outf.write('</table>\n')
         web2ldap.app.gui.footer(self._app)
-        return # processResults()
+        return # process_results()
 
 
 class CSVWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
@@ -194,7 +194,7 @@ class CSVWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
         self._ldap_charset = ldap_charset
         self._csv_charset = csv_charset
 
-    def afterFirstResult(self):
+    def after_first(self):
         self._output_file.set_headers(
             web2ldap.app.gui.gen_headers(
                 content_type='text/csv',
@@ -206,7 +206,7 @@ class CSVWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
         )
         self._csv_writer.writerow(self._attr_types)
 
-    def _processSingleResult(self, resultType, resultItem):
+    def _process_result(self, resultType, resultItem):
         if resultType in self._entryResultTypes:
             entry = ldap0.schema.models.Entry(self._s, resultItem[0], resultItem[1])
             csv_row_list = []
@@ -238,7 +238,7 @@ class ExcelWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
         self._worksheet = self._workbook.add_sheet('web2ldap_export')
         self._row_counter = 0
 
-    def afterFirstResult(self):
+    def after_first(self):
         self._f.set_headers(
             web2ldap.app.gui.gen_headers(
                 content_type='application/vnd.ms-excel',
@@ -252,10 +252,10 @@ class ExcelWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
             self._worksheet.write(0, col, self._attr_types[col])
         self._row_counter += 1
 
-    def postProcessing(self):
+    def post_processing(self):
         self._workbook.save(self._f)
 
-    def _processSingleResult(self, resultType, resultItem):
+    def _process_result(self, resultType, resultItem):
         if resultType in self._entryResultTypes:
             entry = ldap0.schema.models.Entry(self._s, resultItem[0], resultItem[1])
             csv_row_list = []
@@ -528,7 +528,7 @@ def w2l_search(app):
 
     try:
         # Start the search
-        result_handler.startSearch(
+        result_handler.start_search(
             search_root.encode(app.ls.charset),
             scope,
             filterstr2.encode(app.ls.charset),
@@ -563,7 +563,7 @@ def w2l_search(app):
         partial_results = 0
 
         try:
-            result_handler.processResults(
+            result_handler.process_results(
                 search_resminindex, search_resnumber+int(search_resnumber > 0)
             )
         except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED) as e:
@@ -1069,9 +1069,9 @@ def w2l_search(app):
     else:
 
         try:
-            result_handler.processResults()
+            result_handler.process_results()
         except (
                 ldap0.SIZELIMIT_EXCEEDED,
                 ldap0.ADMINLIMIT_EXCEEDED,
             ):
-            result_handler.postProcessing()
+            result_handler.post_processing()

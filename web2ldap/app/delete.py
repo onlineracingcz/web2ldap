@@ -123,14 +123,14 @@ class DeleteLeafs(web2ldap.ldaputil.async.AsyncSearchHandler):
         self.serverctrls = delete_server_ctrls
         self.tree_delete_ctrl = tree_delete_ctrl
 
-    def startSearch(self, searchRoot, searchScope, filterStr):
+    def start_search(self, searchRoot, searchScope, filterStr):
         if searchScope == ldap0.SCOPE_BASE:
             raise ValueError('Parameter searchScope must not be ldap0.SCOPE_BASE.')
         self.nonLeafEntries = []
         self.nonDeletableEntries = []
         self.deletedEntries = 0
         self.noSuchObjectCounter = 0
-        web2ldap.ldaputil.async.AsyncSearchHandler.startSearch(
+        web2ldap.ldaputil.async.AsyncSearchHandler.start_search(
             self,
             searchRoot,
             searchScope,
@@ -144,7 +144,7 @@ class DeleteLeafs(web2ldap.ldaputil.async.AsyncSearchHandler):
             ],
         )
 
-    def _processSingleResult(self, resultType, resultItem):
+    def _process_result(self, resultType, resultItem):
         if resultType in self._entryResultTypes:
             # Don't process search references
             dn, entry = resultItem[0], ldap0.cidict.cidict(resultItem[1])
@@ -224,8 +224,8 @@ def delete_entries(
         non_deletable_entries = set()
         while time.time() <= end_time:
             try:
-                leafs_deleter.startSearch(dn, scope, filterStr=delete_filter)
-                leafs_deleter.processResults()
+                leafs_deleter.start_search(dn, scope, filterStr=delete_filter)
+                leafs_deleter.process_results()
             except ldap0.NO_SUCH_OBJECT:
                 break
             except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
@@ -244,8 +244,8 @@ def delete_entries(
             if dn in non_deletable_entries:
                 continue
             try:
-                leafs_deleter.startSearch(dn, ldap0.SCOPE_SUBTREE, filterStr=delete_filter)
-                leafs_deleter.processResults()
+                leafs_deleter.start_search(dn, ldap0.SCOPE_SUBTREE, filterStr=delete_filter)
+                leafs_deleter.process_results()
             except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
                 deleted_entries_count += leafs_deleter.deletedEntries
                 non_leaf_entries.add(dn)

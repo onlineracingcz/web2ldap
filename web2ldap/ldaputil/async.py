@@ -55,9 +55,9 @@ class AsyncSearchHandler:
     def __init__(self, l):
         self._l = l
         self._msg_id = None
-        self._afterFirstResult = 1
+        self._after_first = 1
 
-    def startSearch(
+    def start_search(
             self,
             searchRoot,
             searchScope,
@@ -89,27 +89,27 @@ class AsyncSearchHandler:
             serverctrls=serverctrls,
             sizelimit=sizelimit,
         )
-        self._afterFirstResult = 1
-        return # startSearch()
+        self._after_first = True
+        return # start_search()
 
-    def preProcessing(self):
+    def pre_processing(self):
         """
         Do anything you want after starting search but
         before receiving and processing results
         """
 
-    def afterFirstResult(self):
+    def after_first(self):
         """
         Do anything you want right after successfully receiving but before
         processing first result
         """
 
-    def postProcessing(self):
+    def post_processing(self):
         """
         Do anything you want after receiving and processing all results
         """
 
-    def processResults(
+    def process_results(
             self,
             ignoreResultsNumber=0,
             processResultsCount=0,
@@ -121,11 +121,11 @@ class AsyncSearchHandler:
             If non-zero this parameters indicates the number of results
             processed is limited to processResultsCount.
         """
-        self.preProcessing()
+        self.pre_processing()
         result_counter = 0
         end_result_counter = ignoreResultsNumber+processResultsCount
-        go_ahead = 1
-        partial = 0
+        go_ahead = True
+        partial = False
         self.beginResultsDropped = 0
         self.endResultBreak = result_counter
         try:
@@ -133,9 +133,9 @@ class AsyncSearchHandler:
             while go_ahead:
                 while result.rtype is None and not result.data:
                     result = self._l.result(self._msg_id, 0)
-                    if self._afterFirstResult:
-                        self.afterFirstResult()
-                        self._afterFirstResult = 0
+                    if self._after_first:
+                        self.after_first()
+                        self._after_first = False
                 if not result.data:
                     break
                 if result.rtype not in SEARCH_RESULT_TYPES:
@@ -145,10 +145,10 @@ class AsyncSearchHandler:
                     if result_counter < ignoreResultsNumber:
                         self.beginResultsDropped += 1
                     elif processResultsCount == 0 or result_counter < end_result_counter:
-                        self._processSingleResult(result.rtype, result_item)
+                        self._process_result(result.rtype, result_item)
                     else:
-                        go_ahead = 0 # break-out from while go_ahead
-                        partial = 1
+                        go_ahead = False # break-out from while go_ahead
+                        partial = True
                         break # break-out from this for-loop
                     result_counter = result_counter+1
                 result = LDAPResult(None, None, None, None)
@@ -156,10 +156,10 @@ class AsyncSearchHandler:
         finally:
             if partial and self._msg_id is not None:
                 self._l.abandon(self._msg_id)
-        self.postProcessing()
-        return partial # processResults()
+        self.post_processing()
+        return partial # process_results()
 
-    def _processSingleResult(self, resultType, resultItem):
+    def _process_result(self, resultType, resultItem):
         """
         Process single entry
 
@@ -184,7 +184,7 @@ class List(AsyncSearchHandler):
         AsyncSearchHandler.__init__(self, l)
         self.allResults = []
 
-    def _processSingleResult(self, resultType, resultItem):
+    def _process_result(self, resultType, resultItem):
         self.allResults.append((resultType, resultItem))
 
 
@@ -205,14 +205,14 @@ class FileWriter(AsyncSearchHandler):
         self.header = header
         self.footer = footer
 
-    def preProcessing(self):
+    def pre_processing(self):
         """
         The header is written to output after starting search but
         before receiving and processing results.
         """
         self._f.write(self.header)
 
-    def postProcessing(self):
+    def post_processing(self):
         """
         The footer is written to output after receiving and
         processing results.
@@ -245,7 +245,7 @@ class LDIFWriter(FileWriter):
             footer,
         )
 
-    def _processSingleResult(self, resultType, resultItem):
+    def _process_result(self, resultType, resultItem):
         if resultType in ENTRY_RESULT_TYPES:
             # Search continuations are ignored
             dn, entry = resultItem
