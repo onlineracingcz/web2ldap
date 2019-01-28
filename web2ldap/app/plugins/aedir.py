@@ -1999,7 +1999,7 @@ class AEStatus(SelectList, Integer):
         ae_status = int(attrValue)
         current_time = time.gmtime(time.time())
         ae_not_before = time.strptime(
-            self._entry.get('aeNotBefore', ['19700101000000Z'])[0],
+            self._entry.get('aeNotBefore', [''])[0] or '19700101000000Z',
             r'%Y%m%d%H%M%SZ',
         )
         if 'aeNotAfter' in self._entry and self._entry['aeNotAfter'][0]:
