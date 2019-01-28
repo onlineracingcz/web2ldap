@@ -9,6 +9,14 @@
       {
          "version": "1.4.0",
          "state": "stable",
+         "scope": "minor fix",
+         "changes": "",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.4.1.tar.gz",
+         "published": "2018-01-28T20:00:00+00:00"
+      },
+      {
+         "version": "1.4.0",
+         "state": "stable",
          "scope": "major feature",
          "changes": "Heavy code-cleaning (PEP-8), configuration changes and internal API changes",
          "download": "https://www.web2ldap.de/download/web2ldap-1.4.0.tar.gz",
