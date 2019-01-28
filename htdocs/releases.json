@@ -7,7 +7,7 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.4.0",
+         "version": "1.4.1",
          "state": "stable",
          "scope": "minor fix",
          "changes": "",
