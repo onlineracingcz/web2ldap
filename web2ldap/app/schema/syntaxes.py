@@ -870,7 +870,7 @@ class Integer(IA5String):
             ': '.join([self._at, self.desc]),
             max_len,
             self.maxValues,
-            '^[0-9]*$',
+            self.input_pattern,
             default=form_value,
             size=min(self.inputSize, max_len),
         )
