@@ -5,8 +5,7 @@ body {
   color:#000000;
   margin:0;
   font-family:sans-serif;
-  -ms-text-size-adjust:100%;
-  -webkit-text-size-adjust:100%
+  line-height: 100%;
 }
 
 img {
@@ -16,41 +15,34 @@ img {
 h1 {
   font-size:1.5em;
   font-weight:bold;
-  line-height: 2em;
-  margin-top:0.5em;
-  padding-top:0.25em;
-  border-top:1px dotted #707070;
+  margin-top:0em;
+  padding-top:0em;
+  padding-bottom:0.5em;
+  border-bottom:1px dotted #707070;
 }
 
 h2 {
   font-size:1.25em;
-  line-height: 1.5em;
   font-weight:bold;
-  margin-top:0.5em;
-  padding-top:0.2em;
-  border-top:1px dotted #707070;
+  padding-top:0.3em;
+  padding-bottom:0.2em;
+  border-bottom:1px dotted #707070;
 }
 
 h3 {
   font-size:1.1em;
-  line-height: 1.25em;
   font-weight:bold;
-  margin-top:0.3em;
   padding-top:0.2em;
-  border-top:1px dotted #707070;
+  border-bottom:1px dotted #707070;
 }
 
-h4 {
-  font-size:1.0em;
-  line-height: 1.1em;
-  font-weight:bold;
-  margin-top:0.1em;
-  margin-bottom:0.05em;
+p {
+  padding-bottom:0.2em;
 }
 
 td {
   vertical-align:top;
-  padding:0.15em;
+  padding:0.2em;
 }
 
 li {
@@ -114,6 +106,7 @@ html>body #DITNavigation {
 }
 
 #MainMenu {
+  line-height: 125%;
   top:0em;
   left:0;
   margin:0;
@@ -128,6 +121,7 @@ html>body #MainMenu {
 }
 
 #ContextMenu {
+  line-height: 125%;
   top:0em;
   right:0;
   margin:0;
@@ -149,7 +143,7 @@ html>body #ContextMenu {
 #SrchResList td {
   vertical-align:top;
   padding:0.6em;
-  border-top:1px dotted;
+  border-bottom:1px dotted;
   margin-bottom:0.2em;
 }
 
@@ -180,8 +174,8 @@ tr.ReadAttrTableRow {
 td.ReadAttrType {
   text-align:right;
   width:10%;
-  border-top:1px dotted;
-  padding:0.1em;
+  border-bottom:1px dotted;
+  padding:0.2em;
   padding-right:1em;
   padding-left:0.3em;
   margin:0.2em;
@@ -189,8 +183,8 @@ td.ReadAttrType {
 }
 
 td.ReadAttrValue {
-  border-top:1px dotted;
-  padding:0.1em;
+  border-bottom:1px dotted;
+  padding:0.2em;
   margin:0.2em;
 }
 
@@ -216,8 +210,9 @@ div.Main {
   right:9em;
   left:9em;
   text-align:left;
+  line-height: 140%;
   padding:0.5em;
-  padding-top:0;
+  padding-top:0.5em;
   color:#000000;
   border:none;
   background-color:#ffffff;
@@ -230,13 +225,13 @@ div.Main {
 legend {
   background-color:#7a7a7a;
   color:#ffffff;
-  padding:0.1em 0.3em 0.1em 0.3em;
+  padding:0.3em;
 }
 
 fieldset {
   margin:0em;
   margin-top:1.0em;
-  padding:0.5em;
+  padding:0.8em;
   border:1px dotted #707070;
 }
 
@@ -274,8 +269,7 @@ input,button,select,textarea {
   vertical-align:top;
   background-color:#fcfcfc;
   border:1px solid #cccccc;
-  padding:0em;
-  font-size:0.96em;
+  padding:0.1em;
 }
 
 option {
