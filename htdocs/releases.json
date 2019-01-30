@@ -7,10 +7,18 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.4.2",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "small UI changes to improve UX",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.4.2.tar.gz",
+         "published": "2018-01-28T20:00:00+00:00"
+      },
+      {
          "version": "1.4.1",
          "state": "stable",
          "scope": "minor fix",
-         "changes": "",
+         "changes": "minor fixes",
          "download": "https://www.web2ldap.de/download/web2ldap-1.4.1.tar.gz",
          "published": "2018-01-28T20:00:00+00:00"
       },
