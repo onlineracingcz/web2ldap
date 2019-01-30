@@ -1029,7 +1029,7 @@ def w2l_search(app):
                 </table>
                 <a id="params"></a>
                 %s
-                  <h4>Export to other formats</h4>
+                  <h3>Export to other formats</h3>
                   <p>%s &nbsp; Include operational attributes %s</p>
                   <p><input type="submit" value="Export"></p>
                 </form>
@@ -1051,7 +1051,7 @@ def w2l_search(app):
 
             app.outf.write(
                 """
-                <h4>Search parameters used</h4>
+                <h3>Search parameters used</h3>
                 %s
                 <p>
                   Equivalent OpenLDAP command:<br>
