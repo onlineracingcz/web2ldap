@@ -981,10 +981,6 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         'oathTOTPParams':os.path.join(templates_dir, 'oath', 'inputform_oathTOTPParams.html'),
     },
 
-    # HTML template file used for displaying operational attributes
-    # in a footer when displaying a single entry
-    read_operationalattrstemplate=os.path.join(templates_dir, 'read_operationalattrs.html'),
-
     # Number of columns for print output
     print_cols=4,
 

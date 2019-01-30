@@ -247,19 +247,6 @@ class DisplayEntry(IterableUserDict):
         return displayed_attrs # template_output()
 
 
-def get_opattr_template(app):
-    template_pathname = app.cfg_param('read_operationalattrstemplate', None)
-    if not template_pathname:
-        return ''
-    template_filename = web2ldap.app.gui.GetVariantFilename(
-        template_pathname,
-        app.form.accept_language,
-    )
-    with open(template_filename, 'rb') as fileobj:
-        tmpl = fileobj.read()
-    return tmpl
-
-
 def display_attribute_table(app, entry, attrs, comment):
     """
     Send a table of attributes to outf
@@ -397,8 +384,6 @@ def w2l_read(app):
 
     # Determine how to get all attributes including the operational attributes
 
-    operational_attrs_template = get_opattr_template(app)
-
     # Read the entry's data
     search_result = app.ls.l.read_s(
         app.ldap_dn,
@@ -412,8 +397,7 @@ def w2l_read(app):
 
     entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, search_result)
 
-    requested_attrs = SchemaElementOIDSet(app.schema, AttributeType, GrabKeys(operational_attrs_template)())
-    requested_attrs.update(app.cfg_param('requested_attrs', []))
+    requested_attrs = SchemaElementOIDSet(app.schema, AttributeType, app.cfg_param('requested_attrs', []))
     if not wanted_attrs and requested_attrs:
         try:
             search_result = app.ls.l.read_s(
@@ -602,11 +586,6 @@ def w2l_read(app):
         display_attribute_table(app, display_entry, collective_attrs, 'Collective Attributes')
         display_attribute_table(app, display_entry, nomatching_attrs, 'Various Attributes')
         display_entry.sep_attr = 'readSep'
-
-        # Display operational attributes with template as footer
-        if read_output == u'template':
-            display_entry.sep = '<br>'
-            app.outf.write(operational_attrs_template % display_entry)
 
         app.outf.write(
             """%s\n%s\n%s<p>\n%s\n

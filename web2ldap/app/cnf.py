@@ -46,7 +46,6 @@ VALID_CFG_PARAM_NAMES = {
     'passwd_template': str,
     'print_cols': int,
     'print_template': dict,
-    'read_operationalattrstemplate': str,
     'read_tablemaxcount': dict,
     'read_template': dict,
     'rename_supsearchurl': dict,
