@@ -1,15 +1,9 @@
-/***********************************************************************/
-/* Fixed layout style sheet for web2ldap                               */
-/* looking like a old-fashioned terminal                               */
-/* web2ldap - web-based LDAP Client, see http://www.web2ldap.de        */
-/***********************************************************************/
+/* Style sheet for web2ldap application looking like a old-fashioned terminal */
 
 body {
   color:#00ff00;
   background-color:#000000;
   font-family:monospace;
-  -ms-text-size-adjust:100%;
-  -webkit-text-size-adjust:100%
 }
 
 img {
@@ -17,66 +11,74 @@ img {
 }
 
 h1 {
-  font-size:1.7em;
+  font-size:1.5em;
   font-weight:bold;
+  margin-top:0em;
+  padding-top:0em;
+  padding-bottom:0.5em;
+  border-bottom:1px solid;
 }
 
 h2 {
-  font-size:1.3em;
+  font-size:1.25em;
   font-weight:bold;
+  padding-top:0.3em;
+  padding-bottom:0.2em;
+  border-bottom:1px solid;
 }
 
 h3 {
   font-size:1.1em;
   font-weight:bold;
+  padding-top:0.2em;
+  border-bottom:1px solid;
 }
 
-select {
-  color:#00ff00;
-  background-color:#000000;
-  font-family:monospace;
-  border:1px solid #00ff00;
+p {
+  padding-bottom:0.2em;
 }
 
-input {
-  color:#00ff00;
-  background-color:#000000;
-  font-family:monospace;
-  border:1px solid #00ff00;
+td {
+  vertical-align:top;
+  padding:0.2em;
 }
 
-radio {
-  color:#00ff00;
-  background-color:#000000;
-  font-family:monospace;
-  border:1px solid #00ff00;
+li {
+  vertical-align:top;
+  list-style-type:square;
+  padding:0.2em;
 }
 
-textarea {
-  color:#00ff00;
-  background-color:#000000;
-  font-family:monospace;
-  border:1px solid #00ff00;
+img.logo {
+  width:70px;
+  size:100px;
 }
-
-/**********************************************************************/
-
 
 /* TopSection encloses StatusLine, MainMenu and ContextMenu */
 #TopSection {
 }
 
 #StatusLine {
-  z-index:100;
-  background-color:#000000;
-  top:0.4em;
-  left:0.5em;
-  right:0.5em;
-  font-size:0.9em;
+  z-index:10;
+  top:0em;
+  left:0em;
+  right:0em;
   text-align:left;
   padding:0.5em;
-  height:4.5em;
-  border:1px solid;
+  border:none;
+  overflow:auto;
+  white-space: nowrap;
+}
+
+#DITNavigation {
+  z-index:10;
+  top:3.5em;
+  margin:0;
+  left:0;
+  right:0;
+  text-align:left;
+  padding:0.5em;
+  white-space: nowrap;
   overflow:hidden;
 }
 
@@ -84,19 +86,31 @@ html>body #StatusLine {
   position:fixed;
 }
 
+html>body #DITNavigation {
+  position:fixed;
+}
+
 #StatusLine table {
   top:0;
   width:100%;
+  font-size:0.95em;
+}
+
+#StatusLine td {
+  padding:0.1em;
 }
 
 #MainMenu {
-  top:5.5em;
+  line-height: 125%;
+  height: 100%;
+  top:-0.5em;
   left:0;
   margin:0;
-  padding:0.5em;
-  width:8.5em;
+  margin-top:6.0em;
+  padding:0.3em 0 0 0;
+  min-width:6.5em;
+  width:10%;
   float:left;
-  height:100%;
 }
 
 html>body #MainMenu {
@@ -104,13 +118,16 @@ html>body #MainMenu {
 }
 
 #ContextMenu {
-  top:5.5em;
+  line-height: 125%;
+  height: 100%;
+  top:-0.5em;
   right:0;
   margin:0;
-  padding:0.5em;
-  width:8.5em;
+  margin-top:6.0em;
+  padding:0.3em 0 0 0;
+  min-width:6.5em;
+  width:10%;
   float:right;
-  height:100%;
 }
 
 html>body #ContextMenu {
@@ -118,76 +135,107 @@ html>body #ContextMenu {
 }
 
 #SrchResList {
-  width:100%;
   margin:1em 0 1em 0;
 }
 
 #SrchResList td {
   vertical-align:top;
-  padding:0.5em;
-  border-top:1px solid;
+  padding:0.6em;
+  border-bottom:2px solid;
   margin-bottom:0.2em;
 }
 
 #SrchResList tr {
-  border-top:2px solid;
 }
 
 #SrchResList td.CT {
-  width:6.1em;
+  width:7.1em;
+  padding:0em;
+  padding-top:0.5em;
+}
+
+table.HexDump td {
+  margin:0;
+  padding:0.2em;
+  border:1px solid #7a7a7a;
+  white-space: nowrap;
 }
 
 table.ReadAttrTable {
-  width:100%;
-  border:1px solid;
 }
 
 tr.ReadAttrTableRow {
 }
 
 td.ReadAttrType {
-  border:none;
-  padding:0.1em;
+  text-align:right;
+  width:10%;
+  border-bottom:1px dotted;
+  padding:0.2em;
+  padding-right:1em;
+  padding-left:0.3em;
   margin:0.2em;
+  white-space: nowrap;
 }
 
 td.ReadAttrValue {
-  border:none;
-  padding:0.1em;
+  border-bottom:1px dotted;
+  padding:0.2em;
   margin:0.2em;
 }
 
+td.InputAttrType {
+  text-align:right;
+  vertical-align:top;
+  width:10%;
+  padding:0.1em;
+  padding-right:0.3em;
+  margin:0.2em;
+  white-space: nowrap;
+}
+
 td.About {
-  font-size:100%;
-  text-align:center;
+  text-align:right;
   vertical-align:middle;
 }
 
 div.Main {
-  background-color:#000000;
   position:absolute;
-  top:6em;
-  margin: 0.5em;
-  left:9em;
-  right:9em;
+  top:5.5em;
+  bottom:0;
+  right:12%;
+  left:12%;
   text-align:left;
-  padding:0.7em;
-  border:1px solid;
-/*  white-space: nowrap; */
+  line-height: 140%;
+  padding:0.5em;
+  color:#00ff00;
+  background-color:#000000;
   overflow-x: auto;
   -ms-overflow-x: auto;
   overflow-y: auto;
   -ms-overflow-y: auto;
 }
 
+legend {
+  font-size:85%;
+  padding:0.2em 0.5em 0.1em 0.5em;
+}
+
 fieldset {
-  margin:0.7em;
-  padding:0.7em;
+  margin:0em;
+  margin-top:1.0em;
+  padding:0.8em;
   border:1px solid;
-  border:1px solid #00ff00;
 }
 
 #Message {
+}
+
+#Input {
+}
+
+.InvalidInput {
+  background-color: #f8efdf;
 }
 
 .ErrorMessage {
@@ -202,105 +250,172 @@ fieldset {
   border: 3px solid #00ff00;
 }
 
-#Input {
+.SuccessMessage {
+  font-weight:normal;
+  padding:0.5em;
+  border: 1px solid;
 }
 
+input,button,select,textarea {
+  vertical-align:top;
+  background-color:transparent;
+  border:1px solid;
+  padding:0.1em;
+}
 
-/**********************************************************************/
-/* styles for web2ldap's internal links                               */
-/**********************************************************************/
+code {
+  white-space: nowrap;
+}
+
+kbd {
+  white-space:nowrap;
+  overflow:scroll;
+  font-weight:bold;
+  font-family:Courier,mono-space;
+  font-size:1.5em;
+}
+
+input[type="submit"],input[type="reset"],button {
+  background-color:#d8d8d8;
+  border:3px solid #cccccc;
+  border-top-color:#eeeeee;
+  border-left-color:#eeeeee;
+}
+
+input[type="submit"]:hover,input[type="reset"]:hover,button:hover {
+  background-color:#dfdfdf;
+  border:3px solid #eeeeee;
+  border-top-color:#cccccc;
+  border-left-color:#cccccc;
+}
+
+#DIT dl {
+  border-left:1px dotted #606060;
+  white-space: nowrap;
+  margin:0.1em;
+  margin-left:1.7em;
+  padding:0.1em;
+}
+
+#DIT dt {
+  text-align:left;
+  margin:0.3em 0 0.2em 0.1em;
+  padding:0em;
+}
+
+#DIT dd {
+  margin:0.3em 0 0.2em 0.1em;
+  padding:0em;
+}
+
+/* link styles */
 
 a {
   text-align:center;
   padding:0.2em;
-  font-size:95%;
   color:#00a0FF;
   text-decoration:none;
   font-weight:bold;
-  text-align:center;
 }
 
-a:hover {
-  text-decoration:underline;
+#StatusLine a {
 }
 
-a:active {
-  text-decoration:underline;
-}
-
-a:focus {
+a:hover,a:active,a:focus {
   text-decoration:underline;
 }
 
 
 a.CL {
   text-align:center;
-  padding:0.2em;
-  font-size:95%;
-  color:#ffbe2f;
+  color:#c81f2a;
   text-decoration:none;
   font-weight:bold;
   text-align:center;
 }
 
-a.CL:hover {
-  color:#FFFFFF;
-  background-color:#c63;
+a.CL:hover,a.CL:active,a.CL:focus {
+  color:#197a3a;
 }
 
-a.CL:active {
-  color:#FFFFFF;
-  background-color:#c63;
+dt {
+  padding:0.1em;
 }
 
-a.CL:focus {
-  color:#FFFFFF;
-  background-color:#c63;
+dd {
+  padding:0.1em;
 }
 
+p.ScrollLink {
+  font-size:0.6em;
+  text-align:right;
+  float:right;
+}
+
+table.PrintSearchResults {
+  background: #ffffff;
+  color: #000000;
+}
 
 #TopSection a.CL {
-  text-align:center;
-}
-
-#MainMenu a.CL {
-  display:block;
-  padding:0.2em;
-  margin:0.5em 0 0.5em 0;
-  border:1px solid #00ff00;
-}
-
-#ContextMenu a.CL {
-  display:block;
-  padding:0.2em;
-  margin:0.5em 0 0.5em 0;
-  border:1px solid #00ff00;
-}
-
-#TopSection a.CL:hover {
-  color:#FFFFFF;
-  background-color:#c63;
-}
-
-#TopSection a.CL:active {
-  color:#FFFFFF;
-  background-color:#c63;
-}
-
-#TopSection a.CL:focus {
-  color:#FFFFFF;
-  background-color:#c63;
-}
-
-#StatusLine a.CL {
   border:none;
-  display:inline;
-  color:#ffae2f;
   padding:0.1em;
   background-color:transparent;
 }
 
-#StatusLine a.CL:hover {
-  color:#FFFFFF;
-  background-color:#c63;
+#MainMenu a.CL {
+  display:block;
+  padding:0.75em 0.3em 0.75em 0.3em;
+  margin:0;
+  border-bottom: 1px dotted #606060;
+}
+
+#MainMenu a.CL:hover,#MainMenu a.CL:active,#MainMenu a.CL:focus {
+  background-color:#e8e8e8;
+}
+
+#ContextMenu a.CL {
+  display:block;
+  padding:0.75em 0.3em 0.75em 0.3em;
+  margin:0;
+  border-bottom: 1px solid;
+}
+
+#ContextMenu a.CL:hover,#ContextMenu a.CL:active,#ContextMenu a.CL:focus {
+}
+
+#TopSection a.CL:hover,#TopSection a.CL:active,#TopSection a.CL:focus {
+  text-decoration:underline;
+}
+
+a.hide {
+  visibility:hidden;
+  margin:0;
+  padding:0;
+}
+
+/* Skip navigation area */
+
+#skipnavi a {
+  position:fixed;
+  z-index:0;
+  padding:0.5em;
+  top:-2em;
+  left:0em;
+  float:left;
+  text-align:left;
+  border-top-right-radius:4px;
+  background-color:transparent;
+  background:transparent;
+  -webkit-transition: top 1s ease-out, background 1s linear;
+  transition: top 1s ease-out, background 1s linear;
+}
+
+#skipnavi a:focus,#skipnavi a:hover,#skipnavi a:active {
+  top:0;
+  z-index:20;
+  background-color:#ffffff;
+  outline:0;
+  -webkit-transition: top .1s ease-in, background .5s linear;
+  transition: top .1s ease-in, background .5s linear;
 }
