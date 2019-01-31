@@ -112,7 +112,7 @@ html>body #DITNavigation {
   margin:0;
   margin-top:6.0em;
   padding:0.4em;
-  width:8em;
+  width:6.5em;
   float:left;
 }
 
@@ -127,7 +127,7 @@ html>body #MainMenu {
   margin:0;
   margin-top:6.0em;
   padding:0.4em;
-  width:8em;
+  width:6.5em;
   float:right;
 }
 
@@ -136,7 +136,6 @@ html>body #ContextMenu {
 }
 
 #SrchResList {
-  width:100%;
   margin:1em 0 1em 0;
 }
 
@@ -164,7 +163,6 @@ table.HexDump td {
 }
 
 table.ReadAttrTable {
-  width:100%;
   background-color:#fcfcfc;
 }
 
@@ -207,8 +205,8 @@ div.Main {
   position:absolute;
   top:5.5em;
   bottom:0;
-  right:9em;
-  left:9em;
+  right:7.3em;
+  left:7.3em;
   text-align:left;
   line-height: 140%;
   padding:0.5em;
@@ -244,7 +242,6 @@ fieldset {
 .InvalidInput {
   background-color: #d85f6a;
   border: 1px solid #c81f2a;
-  width: 100%;
 }
 
 .ErrorMessage {
