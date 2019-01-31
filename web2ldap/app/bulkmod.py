@@ -64,7 +64,7 @@ BULKMOD_CONFIRMATION_FORM_TMPL = """
     <strong>{text_bulkmod_cp}</strong> all entries beneath this new superior DN:
   </dt>
   <dd><strong>{field_bulkmod_newsuperior}</strong></dd>
-  <dt>Additional extended controls to be used:</dt>
+  <dt>Use extended controls:</dt>
   <dd><ul>{field_bulkmod_ctrl}<ul></dd>
 </dl>
 {hidden_fields}

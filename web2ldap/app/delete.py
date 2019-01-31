@@ -57,7 +57,7 @@ DELETE_FORM_TEMPLATE = """
   {form_begin}
     {inner_form}
     <dl>
-      <dt>Additional extended controls to be used:</dt>
+      <dt>Use extended controls:</dt>
       <dd>{field_delete_ctrl}</dd>
     </dl>
     <p class="WarningMessage">Are you sure?</p>
