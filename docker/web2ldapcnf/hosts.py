@@ -30,7 +30,7 @@ ldap_uri_list = [
     (
         (
             'ldaps://demo.ae-dir.com/ou=ae-dir????'
-            'bindname=uid%3Daead%2Cou%3Dae-dir,X-BINDPW=CorrectHorseBatteryStaple'
+            'bindname=aead,X-BINDPW=CorrectHorseBatteryStaple'
         ),
         u'Æ-DIR demo role Æ admin',
     ),
@@ -112,6 +112,7 @@ MSAD_CONFIG = Web2LDAPConfig(
     searchform_template={
         u'_':os.path.join(templates_dir, 'searchform_msad.html'),
     },
+    # anonymous search normally not allowed for MS AD
     binddn_mapping=u'',
     requested_attrs=(
         'structuralObjectClass', 'subschemaSubentry',
@@ -1113,24 +1114,29 @@ ldap_def = {
         description=u'Æ-DIR demo',
     ),
 
-    # another cloned config for setting specific LDAPS parameters
-    'ldaps://demo.ae-dir.com': AE_DIR_CONFIG.clone(
-        tls_options={
-            ldap0.OPT_X_TLS_CACERTFILE:os.path.join(etc_dir, 'ssl', 'crt', 'DST_Root_CA_X3.pem'),
-        },
-    ),
-
-    # another cloned config for setting specific StartTLS parameters
-    'ldap://demo.ae-dir.com': AE_DIR_CONFIG.clone(
-        # StartTLS mandatory
-        starttls=2,
-        tls_options={
-            ldap0.OPT_X_TLS_CACERTFILE:os.path.join(etc_dir, 'ssl', 'crt', 'DST_Root_CA_X3.pem'),
-        },
-    ),
-
 }
 
 # You can apply sections defined above to other configuration keys
 #---------------------------------------------------------------------------
 
+# another cloned config for setting specific LDAPS parameters for AE-DIR demo server
+ldap_def['ldaps://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com/ou=ae-dir'].clone(
+    tls_options={
+        ldap0.OPT_X_TLS_CACERTFILE:os.path.join(etc_dir, 'ssl', 'crt', 'DST_Root_CA_X3.pem'),
+    },
+)
+# another cloned config for mandating use of StartTLS ext.op.
+ldap_def['ldap://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com'].clone(
+    starttls=2,
+)
+
+# set MS AD configuration for all AD LDAP URIs
+for ad_uri, ad_desc in [
+        ('ldap:///DC=adt1,DC=example,DC=com', u'adt1.example.com'),
+        ('ldap:///CN=Configuration,DC=adt1,DC=example,DC=com', u'adt1.example.com'),
+        ('ldap:///DC=adt2,DC=example,DC=com', u'adt2.example.com'),
+        ('ldap:///CN=Configuration,DC=adt2,DC=example,DC=com', u'adt2.example.com'),
+    ]:
+    ldap_def[ad_uri] = MSAD_CONFIG.clone(
+        description=u'MS AD %s' % (ad_desc),
+    )
