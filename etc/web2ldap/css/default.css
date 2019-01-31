@@ -1,7 +1,7 @@
 /* Fixed layout style sheet for https://www.web2ldap.de */
 
 body {
-  background-color:#ffffff;
+  background-color:#fe;
   color:#000000;
   margin:0;
   font-family:sans-serif;
@@ -18,7 +18,7 @@ h1 {
   margin-top:0em;
   padding-top:0em;
   padding-bottom:0.5em;
-  border-bottom:1px dotted #707070;
+  border-bottom:1px dotted #606060;
 }
 
 h2 {
@@ -26,14 +26,14 @@ h2 {
   font-weight:bold;
   padding-top:0.3em;
   padding-bottom:0.2em;
-  border-bottom:1px dotted #707070;
+  border-bottom:1px dotted #606060;
 }
 
 h3 {
   font-size:1.1em;
   font-weight:bold;
   padding-top:0.2em;
-  border-bottom:1px dotted #707070;
+  border-bottom:1px dotted #606060;
 }
 
 p {
@@ -76,9 +76,10 @@ img.logo {
 
 #DITNavigation {
   z-index:10;
-  top:3.7em;
-  left:0em;
-  right:0em;
+  top:3.5em;
+  margin:0;
+  left:0;
+  right:0;
   text-align:left;
   padding:0.5em;
   color:#ffffff;
@@ -106,13 +107,17 @@ html>body #DITNavigation {
 }
 
 #MainMenu {
+  background-color:#fbfbfb;
+  border-right: 1px dotted #606060;
   line-height: 125%;
-  top:0em;
+  height: 100%;
+  top:-0.3em;
   left:0;
   margin:0;
   margin-top:6.0em;
-  padding:0.4em;
-  width:6.5em;
+  padding:0;
+  min-width:6.5em;
+  width:10%;
   float:left;
 }
 
@@ -121,13 +126,17 @@ html>body #MainMenu {
 }
 
 #ContextMenu {
+  background-color:#fbfbfb;
+  border-left: 1px dotted #606060;
   line-height: 125%;
-  top:0em;
+  height: 100%;
+  top:-0.3em;
   right:0;
   margin:0;
   margin-top:6.0em;
-  padding:0.4em;
-  width:6.5em;
+  padding:0;
+  min-width:6.5em;
+  width:10%;
   float:right;
 }
 
@@ -205,15 +214,14 @@ div.Main {
   position:absolute;
   top:5.5em;
   bottom:0;
-  right:7.3em;
-  left:7.3em;
+  right:12%;
+  left:12%;
   text-align:left;
   line-height: 140%;
   padding:0.5em;
   padding-top:0.5em;
   color:#000000;
   border:none;
-  background-color:#ffffff;
   overflow-x: auto;
   -ms-overflow-x: auto;
   overflow-y: auto;
@@ -221,16 +229,16 @@ div.Main {
 }
 
 legend {
-  background-color:#7a7a7a;
+  background-color:#7f7f7f;
   color:#ffffff;
-  padding:0.3em;
+  padding:0.1em 0.3em 0.1em 0.3em;
 }
 
 fieldset {
   margin:0em;
   margin-top:1.0em;
   padding:0.8em;
-  border:1px dotted #707070;
+  border:1px dotted #606060;
 }
 
 #Message {
@@ -300,7 +308,7 @@ input[type="submit"]:hover,input[type="reset"]:hover,button:hover {
 }
 
 #DIT dl {
-  border-left:1px dotted #707070;
+  border-left:1px dotted #606060;
   white-space: nowrap;
   margin:0.1em;
   margin-left:1.7em;
@@ -377,28 +385,26 @@ table.PrintSearchResults {
 
 #MainMenu a.CL {
   display:block;
-  padding:0.2em;
-  margin:0.5em 0 0.5em 0;
-  background-color:#a80a1a;
-  background-repeat:no-repeat;
+  padding:0.75em 0.3em 0.75em 0.3em;
+  margin:0;
+  color:#c81f2a;
+  border-bottom: 1px dotted #606060;
 }
 
 #MainMenu a.CL:hover,#MainMenu a.CL:active,#MainMenu a.CL:focus {
-  background-color:#197a3a;
-  background-repeat:no-repeat;
+  background-color:#e8e8e8;
 }
 
 #ContextMenu a.CL {
   display:block;
-  padding:0.2em;
-  margin:0.5em 0 0.5em 0;
-  background-color:#a80a1a;
-  background-repeat:no-repeat;
+  padding:0.75em 0.3em 0.75em 0.3em;
+  margin:0;
+  color:#c81f2a;
+  border-bottom: 1px dotted #606060;
 }
 
 #ContextMenu a.CL:hover,#ContextMenu a.CL:active,#ContextMenu a.CL:focus {
-  background-color:#197a3a;
-  background-repeat:no-repeat;
+  background-color:#e8e8e8;
 }
 
 #TopSection a.CL:hover,#TopSection a.CL:active,#TopSection a.CL:focus {
