@@ -248,8 +248,7 @@ fieldset {
 }
 
 .InvalidInput {
-  background-color: #d85f6a;
-  border: 1px solid #c81f2a;
+  background-color: #f8efdf;
 }
 
 .ErrorMessage {
@@ -272,7 +271,7 @@ fieldset {
 
 input,button,select,textarea {
   vertical-align:top;
-  background-color:#fcfcfc;
+  background-color:transparent;
   border:1px solid #cccccc;
   padding:0.1em;
 }
