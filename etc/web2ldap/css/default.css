@@ -276,10 +276,6 @@ input,button,select,textarea {
   padding:0.1em;
 }
 
-option {
-  background-color:#fcfcfc;
-}
-
 code {
   white-space: nowrap;
 }
