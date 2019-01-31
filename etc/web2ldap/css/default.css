@@ -111,7 +111,7 @@ html>body #DITNavigation {
   border-right: 1px dotted #606060;
   line-height: 125%;
   height: 100%;
-  top:-0.3em;
+  top:-0.5em;
   left:0;
   margin:0;
   margin-top:6.0em;
@@ -130,7 +130,7 @@ html>body #MainMenu {
   border-left: 1px dotted #606060;
   line-height: 125%;
   height: 100%;
-  top:-0.3em;
+  top:-0.5em;
   right:0;
   margin:0;
   margin-top:6.0em;
