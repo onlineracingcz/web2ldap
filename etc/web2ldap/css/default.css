@@ -1,11 +1,9 @@
-/* Fixed layout style sheet for https://www.web2ldap.de */
+/* Style sheet for web2ldap application */
 
 body {
-  background-color:#fe;
-  color:#000000;
   margin:0;
+  padding:0;
   font-family:sans-serif;
-  line-height: 100%;
 }
 
 img {
@@ -220,7 +218,7 @@ div.Main {
   line-height: 140%;
   padding:0.5em;
   color:#000000;
-  border:none;
+  background-color:#ffffff;
   overflow-x: auto;
   -ms-overflow-x: auto;
   overflow-y: auto;
