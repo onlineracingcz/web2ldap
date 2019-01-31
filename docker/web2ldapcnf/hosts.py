@@ -651,10 +651,10 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'oathTOTPParams':os.path.join(templates_dir, 'oath', 'inputform_oathTOTPParams.html'),
     },
     inputform_supentrytemplate={
-        'aeRoot':r'<em>%(entryDN)s</em><br>%(description)s (aeRoot)',
-        'aeZone':r'<em>%(entryDN)s</em><br>Zone <strong>%(cn)s</strong>: <br>%(description)s',
-        'aeSrvGroup':r'<em>%(entryDN)s</em><br>Server/service group <strong>%(cn)s</strong>: <br>%(description)s',
-        'aeHost':r'<em>%(entryDN)s</em><br>Host/server <strong>%(host)s</strong>: <br>%(description)s',
+        'aeRoot':r'%(description)s (aeRoot)',
+        'aeZone':r'Zone <strong>%(cn)s</strong>: %(description)s',
+        'aeSrvGroup':r'Service group <strong>%(cn)s</strong>: %(description)s',
+        'aeHost':r'Host/server: <strong>%(host)s</strong>',
     },
     addform_entry_templates={
         u'Æ-DIR tag':os.path.join(templates_dir, 'ae-dir', 'add_aeTag.ldif'),
