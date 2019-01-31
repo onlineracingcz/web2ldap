@@ -68,7 +68,7 @@ img.logo {
   color:#ffffff;
   border:none;
   overflow:auto;
-  background-color:#5a5d5d;
+  background-color:#636665;
   white-space: nowrap;
 }
 
@@ -226,10 +226,11 @@ div.Main {
 }
 
 legend {
-  font-size:90%;
-  background-color:#7f7f7f;
+  font-size:85%;
+  background-color:#636665;
   color:#ffffff;
-  padding:0.1em 0.3em 0.1em 0.3em;
+  padding:0.2em 0.5em 0.1em 0.5em;
+  border-radius: 0.2em;
 }
 
 fieldset {
