@@ -115,7 +115,7 @@ html>body #DITNavigation {
   left:0;
   margin:0;
   margin-top:6.0em;
-  padding:0;
+  padding:0.3em 0 0 0;
   min-width:6.5em;
   width:10%;
   float:left;
@@ -134,7 +134,7 @@ html>body #MainMenu {
   right:0;
   margin:0;
   margin-top:6.0em;
-  padding:0;
+  padding:0.3em 0 0 0;
   min-width:6.5em;
   width:10%;
   float:right;
@@ -229,6 +229,7 @@ div.Main {
 }
 
 legend {
+  font-size:90%;
   background-color:#7f7f7f;
   color:#ffffff;
   padding:0.1em 0.3em 0.1em 0.3em;
