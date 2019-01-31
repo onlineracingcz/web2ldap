@@ -461,7 +461,7 @@ class AENwDevice(DynamicDNSelectList):
 
     def _search_root(self):
         if self._dn.startswith('host='):
-            return self._dn
+            return self._app.ls.uc_encode(self._dn)[0]
         return DynamicDNSelectList._search_root(self)
 
     def _filterstr(self):
