@@ -61,49 +61,53 @@ INPUT_FORM_BEGIN_TMPL = """
   {field_dn}
   {field_currentformtype}
 
-  <input
-    type="submit"
-    value="{text_submit}"
-    title="{text_submit} the entry with your input"
-  >
+  <p>
 
-  Change input form:
+    <input
+      type="submit"
+      value="{text_submit}"
+      title="{text_submit} the entry with your input"
+    >
 
-  <button
-    type="submit"
-    name="in_ft"
-    value="Template"
-    title="Switch to HTML template input form"
-  >
-    Template
-  </button>
+    Change input form:
 
-  <button
-    type="submit"
-    name="in_ft"
-    value="Table"
-    title="Switch to attribute table input form"
-  >
-    Table
-  </button>
+    <button
+      type="submit"
+      name="in_ft"
+      value="Template"
+      title="Switch to HTML template input form"
+    >
+      Template
+    </button>
 
-  <button
-    type="submit"
-    name="in_ft"
-    value="LDIF"
-    title="Switch to multi-line LDIF input form"
-  >
-    LDIF
-  </button>
+    <button
+      type="submit"
+      name="in_ft"
+      value="Table"
+      title="Switch to attribute table input form"
+    >
+      Table
+    </button>
 
-  Change&nbsp;Object&nbsp;
-  <button
-    type="submit"
-    name="in_ft"
-    title="Switch to object class select form"
-    value="OC">
-    Classes
-  </button>
+    <button
+      type="submit"
+      name="in_ft"
+      value="LDIF"
+      title="Switch to multi-line LDIF input form"
+    >
+      LDIF
+    </button>
+
+    Change&nbsp;Object&nbsp;
+    <button
+      type="submit"
+      name="in_ft"
+      title="Switch to object class select form"
+      value="OC">
+      Classes
+    </button>
+
+  </p>
 """
 
 INPUT_FORM_LDIF_TMPL = """
