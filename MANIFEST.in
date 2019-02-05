@@ -1,7 +1,0 @@
-include clean.sh setup.py tox.ini
-recursive-include web2ldap *.py
-recursive-include web2ldapcnf *.py
-recursive-include web2ldap/css *.css
-recursive-include web2ldap/templates *.ldif *.html*
-recursive-include web2ldap/properties *.properties*
-recursive-include web2ldap/schema *.ldif
