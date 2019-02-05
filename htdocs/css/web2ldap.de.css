@@ -229,22 +229,20 @@ span.web2ldap-external-link {
 }
 
 span.web2ldap-menu-button {
+  text-align:center;
+  color:#c81f2a;
+  text-decoration:none;
   font-weight:bold;
-  border:none;
-  padding:0.1em;
-  color:#ffffff;
-  background-color:transparent;
+  text-align:center;
+  background-color:#e8e8e8;
   padding:0.2em;
   margin:0.5em 0 0.5em 0;
-  background-color:#a80a1a;
-  background-repeat:no-repeat;
 }
 
 span.web2ldap-dit-navigation {
   padding:0.1em;
   color:#ffffff;
-  background-color:#202020;
-  background-repeat:no-repeat;
+  background-color:#403F3F;
 }
 
 button.web2ldap-submit-button {
