@@ -597,7 +597,7 @@ def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
                         supentry_display_strings.append(inputform_supentrytemplate[oc] % parent_entry)
     if supentry_display_strings:
         return supentry_display_tmpl % ('\n'.join(supentry_display_strings))
-    return ''
+    return app.form.utf2display(parent_dn)
 
 
 def ObjectClassForm(
