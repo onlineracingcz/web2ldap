@@ -96,6 +96,12 @@ html>body #DITNavigation {
   font-size:0.95em;
 }
 
+#StatusLine th {
+  min-width:10%;
+  max-width:20%;
+  padding:0.1em;
+}
+
 #StatusLine td {
   padding:0.1em;
 }

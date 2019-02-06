@@ -46,9 +46,9 @@
 
           <table>
             <tr>
-              <td>
-                Server:
-              </td>
+              <th>
+                Connected to:
+              </th>
               <td>
                 <a
                   href="{script_name}/{command}?{ldap_url}"
@@ -56,9 +56,8 @@
                   rel="bookmark"
                   title="Bookmark URL"
                 >
-                  {ldap_uri}
+                  <span class="server">{ldap_uri} {description}</span>
                 </a>
-                <strong>{description}</strong>
               </td>
               <td class="About">
                 <a
@@ -70,11 +69,11 @@
               </td>
             </tr>
             <tr>
-              <td>
+              <th>
                 Bound as:
-              </td>
+              </th>
               <td colspan="2">
-                {who}
+                <span class="whoami">{who}</span>
               </td>
             </tr>
 
