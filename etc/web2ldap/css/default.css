@@ -7,7 +7,7 @@ body {
 }
 
 img {
-  max-width:150px;
+  max-width:75px;
 }
 
 h1 {
@@ -113,39 +113,33 @@ html>body #DITNavigation {
 #MainMenu {
   background-color:#fbfbfb;
   border-right: 1px dotted #606060;
-  line-height: 125%;
-  height: 100%;
-  top:0;
   left:0;
-  margin:0;
-  margin-top:5.5em;
-  padding:0.3em 0 0 0;
-  min-width:6.5em;
+  margin:3.0em 0 0 0;
+  padding:0.6em 0 0 0;
+  min-width:5em;
   width:10%;
+  height:100%;
   float:left;
 }
 
 html>body #MainMenu {
-  position:fixed;
+  position:absolute;
 }
 
 #ContextMenu {
   background-color:#fbfbfb;
   border-left: 1px dotted #606060;
-  line-height: 125%;
-  height: 100%;
-  top:0;
   right:0;
-  margin:0;
-  margin-top:5.5em;
-  padding:0.3em 0 0 0;
-  min-width:6.5em;
+  margin:3.0em 0 0 0;
+  padding:0.6em 0 0 0;
+  min-width:5em;
   width:10%;
+  height:100%;
   float:right;
 }
 
 html>body #ContextMenu {
-  position:fixed;
+  position:absolute;
 }
 
 #SrchResList {
@@ -221,7 +215,7 @@ div.Main {
   right:12%;
   left:12%;
   text-align:left;
-  line-height: 140%;
+  line-height: 120%;
   padding:0.5em;
   color:#000000;
   background-color:#ffffff;
@@ -385,7 +379,10 @@ table.PrintSearchResults {
 
 #MainMenu a.CL {
   display:block;
-  padding:0.75em 0.3em 0.75em 0.3em;
+  padding-top:0.4em;
+  padding-bottom:0.4em;
+  padding-left:0.1em;
+  padding-right:0.1em;
   margin:0;
   color:#c81f2a;
   border-bottom: 1px dotted #606060;
@@ -397,7 +394,10 @@ table.PrintSearchResults {
 
 #ContextMenu a.CL {
   display:block;
-  padding:0.75em 0.3em 0.75em 0.3em;
+  padding-top:0.4em;
+  padding-bottom:0.4em;
+  padding-left:0.1em;
+  padding-right:0.1em;
   margin:0;
   color:#c81f2a;
   border-bottom: 1px dotted #606060;
@@ -441,4 +441,65 @@ a.hide {
   outline:0;
   -webkit-transition: top .1s ease-in, background .5s linear;
   transition: top .1s ease-in, background .5s linear;
+}
+
+@media only screen and (min-width: 600px) {
+
+  img {
+    max-width:150px;
+  }
+
+  #MainMenu {
+    min-width:6.5em;
+  }
+
+  #ContextMenu {
+    min-width:6.5em;
+  }
+
+  #MainMenu a.CL {
+    padding-left:0.3em;
+    padding-right:0.3em;
+  }
+
+  #ContextMenu a.CL {
+    padding-left:0.3em;
+    padding-right:0.3em;
+  }
+
+}
+
+@media only screen and (min-height:680px) {
+
+  div.Main {
+    line-height:140%;
+    padding:0.5em;
+  }
+
+  html>body #MainMenu {
+    position:fixed;
+  }
+
+  html>body #ContextMenu {
+    position:fixed;
+  }
+
+  #MainMenu {
+    width:10%;
+  }
+
+  #ContextMenu {
+    width:10%;
+  }
+
+  #MainMenu a.CL {
+    padding-top:0.75em;
+    padding-bottom:0.75em;
+  }
+
+  #ContextMenu a.CL {
+    padding-top:0.75em;
+    padding-bottom:0.75em;
+  }
+
 }
