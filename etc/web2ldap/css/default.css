@@ -7,7 +7,7 @@ body {
 }
 
 img {
-  max-width:75px;
+  max-width:90%;
 }
 
 h1 {
@@ -445,10 +445,6 @@ a.hide {
 
 @media only screen and (min-width: 600px) {
 
-  img {
-    max-width:150px;
-  }
-
   #MainMenu {
     min-width:6.5em;
   }
@@ -473,7 +469,13 @@ a.hide {
 
   div.Main {
     line-height:140%;
-    padding:0.5em;
+    padding:1.0em;
+    margin-right:1.0em;
+  }
+
+  img {
+    max-width:30%;
+    float:right;
   }
 
   html>body #MainMenu {
