@@ -65,8 +65,7 @@ INPUT_FORM_BEGIN_TMPL = """
 
     <input
       type="submit"
-      value="{text_submit}"
-      title="{text_submit} the entry with your input"
+      value="Save"
     >
 
     Change input form:
@@ -1223,7 +1222,6 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
             form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
             field_currentformtype=app.form.hiddenFieldHTML('in_oft', unicode(input_formtype), u''),
-            text_submit=app.command[0].upper()+app.command[1:],
         )
     )
 
@@ -1343,7 +1341,6 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
             form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
             field_currentformtype=app.form.hiddenFieldHTML('in_oft', input_formtype.decode('ascii'), u''),
-            text_submit=app.command[0].upper()+app.command[1:],
         )
     )
 
