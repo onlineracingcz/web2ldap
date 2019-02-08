@@ -17,25 +17,12 @@
       <tr>
         <td>
           <input type="hidden" name="search_mr" value="">
-          <input type="hidden" name="search_attr" value="objectClass">
-          Object class of entry
-          <select name="search_option" size="1">
-            <option value="({at}={av})">is</option>
-            <option value="({at}=*)">*</option>
-          </select>
+          <input type="hidden" name="search_option" value="({at}=*{av}*)">
+          <input type="hidden" name="search_attr" value="cn">
+          Common name (cn) contains
         </td>
         <td>
-          <select title="Object class of entry" name="search_string" size="1">
-            <option value="">- not set -</option>
-            <option value="inetOrgPerson">Person (inetOrgPerson)</option>
-            <option value="groupOfNames">Group (groupOfNames)</option>
-            <option value="account">User account (account)</option>
-            <option value="posixAccount">Posix User (posixAccount)</option>
-            <option value="posixGroup">Posix Group (posixGroup)</option>
-            <option value="organization">Organization</option>
-            <option value="organizationalUnit">Org. Unit</option>
-            <option value="applicationProcess">Application Process</option>
-          </select>
+          <input name="search_string" maxlength="60" size="40" value="">
         </td>
       </tr>
 
@@ -62,18 +49,6 @@
 
       <tr>
         <td>
-          <input type="hidden" name="search_mr" value="">
-          <input type="hidden" name="search_option" value="({at}=*{av}*)">
-          <input type="hidden" name="search_attr" value="cn">
-          Common name (cn) contains
-        </td>
-        <td>
-          <input name="search_string" maxlength="60" size="40" value="">
-        </td>
-      </tr>
-
-      <tr>
-        <td>
           Entry DN
           <select title="Matching rule for entryDN" name="search_mr" size="1">
             <option value="dn">is</option>
@@ -86,6 +61,31 @@
         </td>
         <td>
           <input name="search_string" maxlength="50" size="30" value="">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="hidden" name="search_mr" value="">
+          <input type="hidden" name="search_attr" value="objectClass">
+          Object class of entry
+          <select name="search_option" size="1">
+            <option value="({at}={av})">is</option>
+            <option value="({at}=*)">*</option>
+          </select>
+        </td>
+        <td>
+          <select title="Object class of entry" name="search_string" size="1">
+            <option value="">- not set -</option>
+            <option value="inetOrgPerson">Person (inetOrgPerson)</option>
+            <option value="groupOfNames">Group (groupOfNames)</option>
+            <option value="account">User account (account)</option>
+            <option value="posixAccount">Posix User (posixAccount)</option>
+            <option value="posixGroup">Posix Group (posixGroup)</option>
+            <option value="organization">Organization</option>
+            <option value="organizationalUnit">Org. Unit</option>
+            <option value="applicationProcess">Application Process</option>
+          </select>
         </td>
       </tr>
 
