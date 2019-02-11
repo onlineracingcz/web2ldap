@@ -197,12 +197,12 @@ class AppHandler(LogHelper):
         self.dn_obj = DNObj.fromstring(dn)
         if self.ls and self.ls.uri:
             self.dn_obj.charset = self.ls.charset
-        self.schema = self.ls.get_sub_schema(
-            self.dn,
-            self.cfg_param('_schema', None),
-            self.cfg_param('supplement_schema', None),
-            self.cfg_param('schema_strictcheck', True),
-        )
+            self.schema = self.ls.get_sub_schema(
+                self.dn,
+                self.cfg_param('_schema', None),
+                self.cfg_param('supplement_schema', None),
+                self.cfg_param('schema_strictcheck', True),
+            )
 
     @property
     def naming_context(self):
@@ -516,7 +516,7 @@ class AppHandler(LogHelper):
                 # Store session with new session ID
                 self.sid = session_store.rename(self.sid, self.env)
         else:
-            self._new_session()
+            self.ls = None
         return # end of _get_session()
 
     def _del_session(self):
@@ -758,7 +758,7 @@ class AppHandler(LogHelper):
 
             if self.ldap_url.hostport == '' and \
                self.ldap_url.urlscheme == 'ldap' and \
-               self.ls.uri is None:
+               (self.ls is None or self.ls.uri is None):
                 # Force a SRV RR lookup for dc-style DNs,
                 # create list of URLs to connect to
                 dns_srv_rrs = web2ldap.ldaputil.dns.dc_dn_lookup(self.dn)
