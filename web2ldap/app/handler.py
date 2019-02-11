@@ -18,6 +18,7 @@ import inspect
 import socket
 import time
 import urllib
+import logging
 
 from ipaddress import ip_address, ip_network
 
@@ -38,7 +39,7 @@ import web2ldap.ldaputil.dns
 import web2ldap.ldapsession
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 from web2ldap.ldapsession import LDAPSession
-from web2ldap.log import logger, log_exception
+from web2ldap.log import LogHelper, logger, log_exception
 # Import the application modules
 import web2ldap.app.gui
 import web2ldap.app.cnf
@@ -148,7 +149,7 @@ def check_access(env, command):
     return False
 
 
-class AppHandler(object):
+class AppHandler(LogHelper):
     """
     Class implements web application entry point
     and dispatches requests to use-case functions w2l_*()
@@ -371,8 +372,9 @@ class AppHandler(object):
                     self.ldap_url,
                 )
             )
-        logger.debug('%s.ldap_url is %s', self.__class__.__name__, self.ldap_url)
-        logger.debug(
+        self.log(logging.DEBUG, '%s.ldap_url is %s', self.__class__.__name__, self.ldap_url)
+        self.log(
+            logging.DEBUG,
             'Dispatch command %r to function %s.%s()',
             self.command,
             COMMAND_FUNCTION[self.command].__module__,
@@ -381,12 +383,12 @@ class AppHandler(object):
         COMMAND_FUNCTION[self.command](self)
         return # dispatch()
 
-    @staticmethod
-    def path_info(env):
+    def path_info(self, env):
         """
         Extract the command and sid from PATH_INFO env var
         """
         path_info = env.get('PATH_INFO', '/')[1:]
+        self.log(logging.DEBUG, 'splitting path_info %r', path_info)
         if not path_info:
             cmd, sid = '', ''
         else:
@@ -399,6 +401,7 @@ class AppHandler(object):
                 cmd, sid = path_info.split('/', 1)
             except ValueError:
                 cmd, sid = path_info, ''
+        self.log(logging.DEBUG, 'splitted path_info to (%r, %r)', cmd, sid)
         return cmd, sid # path_info()
 
     def display_dn(self, dn, commandbutton=False):
@@ -691,11 +694,12 @@ class AppHandler(object):
         """
         Really process the request
         """
+        self.log(logging.DEBUG, 'Entering .run()')
 
         # check for valid command
         if self.command not in COMMAND_FUNCTION:
 
-            logger.warn('Received invalid command %r', self.command)
+            self.log(logging.WARN, 'Received invalid command %r', self.command)
             self.url_redirect(u'Invalid web2ldap command')
             return
 
@@ -714,7 +718,8 @@ class AppHandler(object):
 
             # Check access here
             if not check_access(self.env, self.command):
-                logger.warn(
+                self.log(
+                    logging.WARN,
                     'Access denied from %r to command %r',
                     self.env['REMOTE_ADDR'],
                     self.command,
@@ -937,7 +942,7 @@ class AppHandler(object):
 
             # first try to lookup dc-style DN via DNS
             host_list = web2ldap.ldaputil.dns.dc_dn_lookup(self.dn)
-            logger.debug('host_list = %r', host_list)
+            self.log(logging.DEBUG, 'host_list = %r', host_list)
             if host_list and ExtendedLDAPUrl(self.ls.uri).hostport not in host_list:
                 # Found LDAP server for this naming context via DNS SRV RR
                 web2ldap.app.srvrr.w2l_chasesrvrecord(self, host_list)
@@ -1050,7 +1055,7 @@ class AppHandler(object):
             )
 
         except ErrorExit as error_exit:
-            logger.warn('ErrorExit: %r', error_exit.Msg)
+            self.log(logging.WARN, 'ErrorExit: %r', error_exit.Msg)
             exception_message(
                 self,
                 u'Error',
@@ -1058,7 +1063,7 @@ class AppHandler(object):
             )
 
         except web2ldap.web.session.MaxSessionPerIPExceeded as session_err:
-            logger.warn(str(session_err))
+            self.log(logging.WARN, str(session_err))
             self.simple_msg(
                 u'Client %s exceeded limit of max. %d sessions! Try later...' % (
                     session_err.remote_ip,
@@ -1067,7 +1072,7 @@ class AppHandler(object):
             )
 
         except web2ldap.web.session.MaxSessionCountExceeded as session_err:
-            logger.warn(str(session_err))
+            self.log(logging.WARN, str(session_err))
             self.simple_msg(u'Too many web sessions! Try later...')
 
         except web2ldap.web.session.SessionException:

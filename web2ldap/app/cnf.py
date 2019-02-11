@@ -14,11 +14,13 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
+import logging
+
 from ldap0.ldapurl import LDAPUrl
 from ldap0.dn import is_dn
 from ldap0.ldapurl import isLDAPUrl
 
-from web2ldap.log import logger
+from web2ldap.log import logger, LogHelper
 
 
 VALID_CFG_PARAM_NAMES = {
@@ -71,7 +73,7 @@ VALID_CFG_PARAM_NAMES = {
 }
 
 
-class Web2LDAPConfig(object):
+class Web2LDAPConfig(LogHelper):
     """
     Base class for a web2ldap host-/backend configuration section.
     """
@@ -84,7 +86,7 @@ class Web2LDAPConfig(object):
         sets params as class attributes
         """
         for param_name, param_val in params.items():
-#            logger.debug('%s.update() %r // %r', self, param_name, param_val)
+#            self.log(logging.DEBUG, 'update() %r // %r', param_name, param_val)
             try:
                 param_type = VALID_CFG_PARAM_NAMES[param_name]
             except KeyError:
@@ -111,7 +113,8 @@ class Web2LDAPConfig(object):
         ])
         new = Web2LDAPConfig(**old_params)
         new.update(params)
-        logger.debug(
+        self.log(
+            logging.DEBUG,
             'Cloned config %s with %d parameters to %s with %d new params %s',
             id(self),
             len(old_params),
@@ -128,7 +131,7 @@ import web2ldapcnf.hosts
 import web2ldap.app.schema
 
 
-class Web2LDAPConfigDict(object):
+class Web2LDAPConfigDict(LogHelper):
     """
     the configuration registry for site-specific parameters
     """
@@ -170,7 +173,7 @@ class Web2LDAPConfigDict(object):
         store config data in internal dictionary
         """
         cfg_key = self.normalize_key(cfg_uri)
-        logger.debug('Store config for %r with key %r', cfg_uri, cfg_key)
+        self.log(logging.DEBUG, 'Store config for %r with key %r', cfg_uri, cfg_key)
         self.cfg_data[cfg_key] = cfg_data
 
     def get_param(self, uri, naming_context, param, default):
@@ -178,6 +181,7 @@ class Web2LDAPConfigDict(object):
         retrieve a site-specific config parameter
         """
         if param not in VALID_CFG_PARAM_NAMES:
+            self.log(logging.ERROR, 'Unknown config parameter %r requested', param)
             raise ValueError('Unknown config parameter %r requested' % (param))
         uri = uri.lower()
         naming_context = naming_context.lower()
@@ -190,7 +194,8 @@ class Web2LDAPConfigDict(object):
             ):
             if cfg_key in self.cfg_data and hasattr(self.cfg_data[cfg_key], param):
                 result = getattr(self.cfg_data[cfg_key], param)
-                logger.debug(
+                self.log(
+                    logging.DEBUG,
                     'get_param(%r, %r, %r, %r): Key %r -> %s',
                     uri,
                     naming_context,
