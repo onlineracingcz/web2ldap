@@ -124,15 +124,18 @@ class ObjectSID(OctetString, IA5String):
         ])
         return ''.join(result_list)
 
+    def _validate(self, attrValue):
+        return OctetString._validate(self, attrValue)
+
     def sanitize(self, attrValue):
-        if attrValue:
-            return self._sddl2sid(attrValue)
-        return ''
+        if not attrValue:
+            return ''
+        return self._sddl2sid(attrValue)
 
     def formValue(self):
-        if self._av:
-            return unicode(self._sid2sddl(self._av), 'ascii')
-        return u''
+        if not self._av:
+            return u''
+        return self._sid2sddl(self._av).decode('ascii')
 
     def formField(self):
         return IA5String.formField(self)

@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.4.5",
+         "state": "stable",
+         "scope": "minor fix",
+         "changes": "minor fix for MS AD plugin (objectSID)",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.4.5.tar.gz",
+         "published": "2019-02-13T20:00:00+00:00"
+      },
+      {
          "version": "1.4.4",
          "state": "stable",
          "scope": "minor fix",
