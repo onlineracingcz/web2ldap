@@ -308,7 +308,10 @@ def display_attribute_table(app, entry, attrs, comment):
                     'read',
                     '(%d of %d values)' % (read_tablemaxcount, attr_value_count),
                     app.form.allInputFields(
-                        fields=[('read_expandattr', attr_type_name)],
+                        fields=[
+                            ('dn', app.dn),
+                            ('read_expandattr', attr_type_name),
+                        ],
                     ),
                     anchor_id=attr_type_anchor_id.decode('ascii')
                 ))
