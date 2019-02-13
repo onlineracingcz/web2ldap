@@ -951,6 +951,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         'memberUid':40,
         'pwdHistory':2,
         'roleOccupant':40,
+        'msDS-ReplAttributeMetaData':1,
         'tokenGroups':4,
         'tokenGroupsGlobalAndUniversal':4,
         'tokenGroupsNoGCAcceptable':4,
