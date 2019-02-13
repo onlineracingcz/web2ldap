@@ -793,7 +793,7 @@ class Web2LDAPForm_read(Web2LDAPForm):
                 default=u'template',
             ),
             SearchAttrs(),
-            Input('read_expandattr', u'Attributes to be read', 1000, 1, ur'[*+\w,_;-]+'),
+            Input('read_expandattr', u'Attributes to be read', 1000, 50, ur'[*+\w,_;-]+'),
         ])
         return res
 

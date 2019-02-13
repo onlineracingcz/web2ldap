@@ -264,7 +264,7 @@ def display_attribute_table(app, entry, attrs, comment):
     # Determine which attributes are shown expanded or collapsed
     read_expandattr_set = set([
         at.strip().lower()
-        for at in app.form.getInputValue('read_expandattr', [u''])[0].split(',')
+        for at in app.form.getInputValue('read_expandattr', [])
         if at
     ])
     if u'*' in read_expandattr_set:
