@@ -14,6 +14,8 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
+import time
+
 from ldap0.ldapurl import LDAPUrl
 
 import web2ldap.app.core
@@ -99,6 +101,7 @@ def w2l_chasereferral(app, ref_exc):
         field_login_search_root=login_search_root_field.inputHTML(),
         field_login_authzid_prefix=app.form.field['login_authzid_prefix'].inputHTML(),
         value_submit='Chase Referral',
+        value_currenttime=time.strftime(r'%Y%m%d%H%M%SZ', time.gmtime()),
     )
 
     app.outf.write(
