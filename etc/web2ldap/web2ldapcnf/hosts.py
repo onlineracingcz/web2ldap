@@ -122,7 +122,11 @@ restricted_ldap_uri_list = False
 MSAD_CONFIG = Web2LDAPConfig(
     description=u'MS Active Directory',
     searchform_template={
-        u'_':os.path.join(templates_dir, 'searchform_msad.html'),
+        u'_':os.path.join(templates_dir, 'msad', 'searchform.html'),
+    },
+    boundas_template={
+        'user':r'<strong>%(cn)s</strong> (%(sAMAccountName)s)',
+        'computer':r'<strong>%(cn)s</strong> (%(sAMAccountName)s)',
     },
     # anonymous search normally not allowed for MS AD
     binddn_mapping=u'',
@@ -145,6 +149,13 @@ MSAD_CONFIG = Web2LDAPConfig(
     modify_constant_attrs=(
         'uSNChanged', 'uSNCreated', 'whenChanged', 'whenCreated',
     ),
+    addform_entry_templates={
+        u'User':os.path.join(templates_dir, 'msad', 'add_user.ldif'),
+        u'Computer':os.path.join(templates_dir, 'msad', 'add_computer.ldif'),
+        u'Organizational unit (OU)':os.path.join(templates_dir, 'add_orgunit.ldif'),
+        u'Group':os.path.join(templates_dir, 'add_group.ldif'),
+        u'Container':os.path.join(templates_dir, 'msad', 'add_container.ldif'),
+    },
 )
 
 #---------------------------------------------------------------------------

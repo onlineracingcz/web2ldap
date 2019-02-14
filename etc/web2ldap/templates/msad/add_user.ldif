@@ -1,0 +1,7 @@
+dn: cn=
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+userAccountControl: 514
+
