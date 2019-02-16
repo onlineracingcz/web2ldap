@@ -44,7 +44,15 @@ virtualenv -p python2.7 --no-site-packages /opt/web2ldap
 </pre>
 
 <p>
-  See directories <var>etc/apache2/</var> and <var>etc/uwsgi/</var>
+  For remote access to this stand-alone instance you have to explicitly
+  allow access from remote IP addresses by editing configuration option
+  <a href="web2ldapcnf.html#access_allowed">access_allowed</a>
+  in file <code>etc/web2ldap/web2ldapcnf/__init__.py</code>.
+</p>
+
+<p>
+  For serious use you should use a HTTPS-enabled web server as frontend.
+  See directories <code>etc/apache2/</code> and <code>etc/uwsgi/</code>
   in source distribution for web server integration examples.
 </p>
 
