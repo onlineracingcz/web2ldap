@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.4.7",
+         "state": "stable",
+         "scope": "minor fix",
+         "changes": "correctly ignore empty DNS SRV RR",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.4.7.tar.gz",
+         "published": "2019-02-16T20:00:00+00:00"
+      },
+      {
          "version": "1.4.6",
          "state": "stable",
          "scope": "minor fix",
