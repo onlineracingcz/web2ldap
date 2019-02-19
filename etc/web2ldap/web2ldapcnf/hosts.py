@@ -156,6 +156,9 @@ MSAD_CONFIG = Web2LDAPConfig(
         u'Group':os.path.join(templates_dir, 'add_group.ldif'),
         u'Container':os.path.join(templates_dir, 'msad', 'add_container.ldif'),
     },
+    groupadm_defs={
+        'group': ('member', None),
+    },
 )
 
 #---------------------------------------------------------------------------
