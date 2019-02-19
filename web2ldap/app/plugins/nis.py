@@ -97,6 +97,11 @@ class MemberUID(IA5String, DynamicValueSelectList):
             return DynamicValueSelectList._validate(self, attrValue)
         return IA5String._validate(self, attrValue)
 
+    def formField(self):
+        if self.ldap_url:
+            return DynamicValueSelectList.formField(self)
+        return IA5String.formField(self)
+
     def displayValue(self, valueindex=0, commandbutton=False):
         r = [IA5String.displayValue(self, valueindex, commandbutton=False)]
         if commandbutton:
