@@ -377,6 +377,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'aePerson',
         'aeProxyFor',
         'aeRemoteHost',
+        'aeRequires',
         'aeSetupGroups',
         'aeSourceUri',
         'aeSrvGroup',

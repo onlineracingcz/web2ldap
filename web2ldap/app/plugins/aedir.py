@@ -854,6 +854,25 @@ syntax_registry.reg_at(
 )
 
 
+class AERequires(DynamicDNSelectList):
+    oid = 'AERequires-oid'
+    desc = 'AE-DIR: DN of required aeSrvGroup'
+    ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0))'
+    ref_attrs = (
+        (
+            'aeRequires', u'Same require', None, 'aeSrvGroup',
+            u'Search all service groups depending on this service group.'
+        ),
+    )
+
+
+syntax_registry.reg_at(
+    AERequires.oid, [
+        AE_OID_PREFIX+'.4.48', # aeSrvGroup
+    ]
+)
+
+
 class AEProxyFor(AESameZoneObject, AEObjectUtil):
     oid = 'AEProxyFor-oid'
     desc = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
@@ -1123,6 +1142,10 @@ class AEEntryDNAESrvGroup(DistinguishedName):
     desc = 'AE-DIR: entryDN'
     ref_attrs = (
         ('aeProxyFor', u'Proxy', None, u'Search access gateway/proxy group for this server group'),
+        (
+            'aeRequires', u'Required by', None, 'aeSrvGroup',
+            u'Search all service groups depending on this service group.'
+        ),
     )
 
     def _additional_links(self):
