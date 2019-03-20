@@ -898,7 +898,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         ),
         'dhcpClass':r'%(entryDN)s<br>DHCP class <strong title="%(dhcpComments)s">%(cn)s</strong>',
         'dhcpGroup':r'%(entryDN)s<br>DHCP group <strong title="%(dhcpComments)s">%(cn)s</strong>',
-        'dhcpHost':r'%(entryDN)s<br>DHCP host <strong title="%(dhcpComments)s">%(cn)s</strong><br>%(dhcpHWAddress)s',
+        'dhcpHost':r'%(entryDN)s<br>DHCP host <strong title="%(dhcpComments)s">%(cn)s</strong><br>%(dhcpHWAddress)s<br>%(dhcpStatements)s',
         'dhcpServer':r'%(entryDN)s<br>DHCP server <strong title="%(dhcpComments)s">%(cn)s</strong>',
         'dhcpService':r'%(entryDN)s<br>DHCP service <strong title="%(dhcpComments)s">%(cn)s</strong>',
         'dhcpSharedNetwork':r'%(entryDN)s<br>DHCP shared network <strong title="%(dhcpComments)s">%(cn)s</strong>',
