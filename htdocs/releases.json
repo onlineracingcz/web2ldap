@@ -7,10 +7,18 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.4.9",
+         "version": "1.4.10",
          "state": "stable",
          "scope": "minor fix",
-         "changes": "minor fixes",
+         "changes": "Fixed setting LDAPNOINIT=1 early enough",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.4.10.tar.gz",
+         "published": "2019-03-25T10:00:00+00:00"
+      },
+      {
+         "version": "1.4.9",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "Added support for new AE-DIR attribute",
          "download": "https://www.web2ldap.de/download/web2ldap-1.4.9.tar.gz",
          "published": "2019-03-20T10:00:00+00:00"
       },

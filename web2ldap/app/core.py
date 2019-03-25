@@ -19,7 +19,6 @@ import os
 import time
 
 import web2ldap.__about__
-from web2ldap.checkinst import check_inst
 from web2ldap.log import logger
 
 logger.info('Starting web2ldap %s', web2ldap.__about__.__version__)
@@ -28,6 +27,7 @@ os.environ['LDAPNOINIT'] = '1'
 logger.debug('Disabled processing .ldaprc or ldap.conf (LDAPNOINIT=%s)', os.environ['LDAPNOINIT'])
 
 import ldap0
+from web2ldap.checkinst import check_inst
 
 check_inst()
 
