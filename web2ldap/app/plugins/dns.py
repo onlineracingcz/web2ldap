@@ -251,7 +251,7 @@ class ARecord(IPv4HostAddress):
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'associatedDomain'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', self._app.ls.uc_decode(ip_addr.reverse_pointer)[0][:-1]),
+                    ('search_string', self._app.ls.uc_decode(ip_addr.reverse_pointer)[0]),
                 ),
                 title=u'Search PTR RR for this A address',
             ))
