@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.4.12",
+         "state": "stable",
+         "scope": "minor fix",
+         "changes": "Fixed regression when displaying login form after failed SASL/GSSAPI bind",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.4.12.tar.gz",
+         "published": "2019-05-30T12:00:00+00:00"
+      },
+      {
          "version": "1.4.11",
          "state": "stable",
          "scope": "minor fix",
