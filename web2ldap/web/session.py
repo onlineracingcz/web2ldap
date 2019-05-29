@@ -15,7 +15,6 @@ import string
 import re
 import random
 import time
-import pickle
 import threading
 
 from ldap0.pw import random_string
@@ -319,16 +318,12 @@ class WebSession(object):
             ):
             raise InvalidSessionId(session_id)
         # Read the timestamped session data
+        self._session_lock.acquire()
         try:
-            self._session_lock.acquire()
-            try:
-                session_checkvars = self.sessiondict[session_vars_key]
-                timestamp, session_data = self.sessiondict[session_id]
-            finally:
-                self._session_lock.release()
-        except pickle.UnpicklingError:
-            self.delete(session_id)
-            raise CorruptData
+            session_checkvars = self.sessiondict[session_vars_key]
+            timestamp, session_data = self.sessiondict[session_id]
+        finally:
+            self._session_lock.release()
         current_time = time.time()
         # Check if session is already expired
         if self.session_ttl and current_time > timestamp+self.session_ttl:
