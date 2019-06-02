@@ -6,18 +6,23 @@
 <!--#include file="ssi/changes_navigation.html" -->
 
 <h1 id="r1.4.12">1.4.12</h1>
-<p>Release Date: 2019-05-30</p>
+<p>Release Date: 2019-06-02</p>
 <ul>
   <li>
     Fixed regression when displaying login form after failed SASL/GSSAPI bind.
   </li>
   <li>
-    Removed non-functional use of <var>pickle</var> module.
-  </li>
-  <li>
-    Module <a href="https://pypi.org/project/defusedxml/">defusedxml</a> is
-    now optionally used for parsing XML attribute values to avoid various
-    <a href="https://pypi.org/project/defusedxml/#attack-vectors">attack vectors</a>.
+    Code changes after scanning with <a href="https://pypi.org/project/bandit/">bandit</a>:
+    <ul>
+      <li>
+        Removed non-functional use of <var>pickle</var> module.
+      </li>
+      <li>
+        Module <a href="https://pypi.org/project/defusedxml/">defusedxml</a> is
+        now optionally used for parsing XML attribute values to avoid various
+        <a href="https://pypi.org/project/defusedxml/#attack-vectors">attack vectors</a>.
+      </li>
+    </ul>
   </li>
 </ul>
 

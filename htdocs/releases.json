@@ -10,9 +10,9 @@
          "version": "1.4.12",
          "state": "stable",
          "scope": "minor fix",
-         "changes": "Fixed regression when displaying login form after failed SASL/GSSAPI bind",
+         "changes": "Fixed regression when displaying login form after failed SASL/GSSAPI bind, other minor changes",
          "download": "https://www.web2ldap.de/download/web2ldap-1.4.12.tar.gz",
-         "published": "2019-05-30T12:00:00+00:00"
+         "published": "2019-06-02T15:00:00+00:00"
       },
       {
          "version": "1.4.11",
