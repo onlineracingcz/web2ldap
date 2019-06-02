@@ -56,7 +56,8 @@ setup(
         'certifi',
     ],
     extras_require = {
-        'image':  ["Pillow"]
+        'image':  ["Pillow"],
+        'xml':  ['defusedxml'],
     },
     zip_safe=False,
     entry_points={

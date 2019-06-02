@@ -26,8 +26,13 @@ import time
 import json
 import inspect
 import warnings
-import xml.etree.ElementTree
-from xml.etree.ElementTree import ParseError as XMLParseError
+try:
+    import defusedxml.ElementTree
+except ImportError:
+    defusedxml = None
+else:
+    from xml.etree.ElementTree import ParseError as XMLParseError
+
 from collections import defaultdict
 from io import BytesIO
 
@@ -2150,8 +2155,10 @@ class XmlValue(PreformattedMultilineText):
     mimeType = 'text/xml'
 
     def _validate(self, attrValue):
+        if defusedxml is None:
+            return PreformattedMultilineText._validate(self, attrValue)
         try:
-            xml.etree.ElementTree.XML(attrValue)
+            defusedxml.ElementTree.XML(attrValue)
         except XMLParseError:
             return False
         return True
