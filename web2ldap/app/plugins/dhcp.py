@@ -76,7 +76,7 @@ class DHCPConfigStatement(MultilineText):
                 ]
                 try:
                     reverse_dns = ipaddress.ip_address(dhcp_value).reverse_pointer
-                except:
+                except ipaddress.AddressValueError:
                     pass
                 else:
                     search_params.extend((
@@ -290,7 +290,7 @@ class DHCPRange(IA5String):
             try:
                 ipv4_network = self._get_ipnetwork().hosts()
                 form_value = u' '.join((unicode(ipv4_network[0]), unicode(ipv4_network[-1])))
-            except Exception:
+            except ipaddress.AddressValueError:
                 pass
         return form_value
 
