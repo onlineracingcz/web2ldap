@@ -136,7 +136,7 @@ def w2l_conninfo(app):
 
     conninfo_flushcaches = int(app.form.getInputValue('conninfo_flushcaches', ['0'])[0])
     if conninfo_flushcaches:
-        app.ls.flushCache()
+        app.ls.flush_cache()
 
     context_menu_list = []
 

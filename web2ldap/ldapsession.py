@@ -639,7 +639,7 @@ class LDAPSession(object):
             pass
         self.uri = None # delete the LDAP connection URI
         # Flush old data from cache
-        self.flushCache()
+        self.flush_cache()
         return # unbind()
 
     def _reset_rootdse_attrs(self):
@@ -924,7 +924,7 @@ class LDAPSession(object):
         # Determine what to return
         return sub_schema
 
-    def flushCache(self):
+    def flush_cache(self):
         """Flushes all LDAP cache data"""
         self._schema_dn_cache = {}
         self._schema_cache = {}
@@ -1108,7 +1108,7 @@ class LDAPSession(object):
         Send BindRequest to LDAP server
         """
         # Flush old data from cache
-        self.flushCache()
+        self.flush_cache()
         uri = self.uri
         try:
             # Drop the bind call sent before stored in ReconnectLDAPObject's class attribute
