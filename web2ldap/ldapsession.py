@@ -274,8 +274,8 @@ class MyLDAPObject(ReconnectLDAPObject):
 
     def _get_server_ctrls(self, method):
         all_s_ctrls = {}
-        for c in self._serverctrls[method]:
-            all_s_ctrls[c.controlType] = c
+        for ctrl in self._serverctrls[method]:
+            all_s_ctrls[ctrl.controlType] = ctrl
         return all_s_ctrls
 
     def add_server_control(self, method, lc):
