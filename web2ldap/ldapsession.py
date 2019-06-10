@@ -1298,24 +1298,24 @@ class LDAPSession(object):
         return governing_structure_rule # get_governing_structure_rule()
 
     def ldapUrl(self, dn, add_login=True):
-        if self.uri:
-            lu = ExtendedLDAPUrl(ldapUrl=self.uri.encode('ascii'))
-            lu.dn = dn.encode(self.charset)
-            if self.startTLSOption:
-                lu.x_startTLS = str(START_TLS_REQUIRED * (self.startTLSOption > 0))
-            if add_login:
-                if self.saslAuth:
-                    lu.saslMech = self.saslAuth.mech.encode('ascii')
-                    if self.saslAuth.mech in ldap0.sasl.SASL_PASSWORD_MECHS:
-                        lu.who = self.saslAuth.cb_value_dict.get(
-                            ldap0.sasl.CB_AUTHNAME,
-                            u'',
-                        ).encode(self.charset) or None
-                else:
-                    lu.who = (self.who or u'').encode(self.charset) or None
-            return lu # ldapUrl()
-        else:
+        if not self.uri:
             return None
+        lu = ExtendedLDAPUrl(ldapUrl=self.uri.encode('ascii'))
+        lu.dn = dn.encode(self.charset)
+        if self.startTLSOption:
+            lu.x_startTLS = str(START_TLS_REQUIRED * (self.startTLSOption > 0))
+        if add_login:
+            if self.saslAuth:
+                lu.saslMech = self.saslAuth.mech.encode('ascii')
+                if self.saslAuth.mech in ldap0.sasl.SASL_PASSWORD_MECHS:
+                    lu.who = self.saslAuth.cb_value_dict.get(
+                        ldap0.sasl.CB_AUTHNAME,
+                        u'',
+                    ).encode(self.charset) or None
+            else:
+                lu.who = (self.who or u'').encode(self.charset) or None
+        return lu
+        # end of ldapUrl()
 
     def __repr__(self):
         try:
