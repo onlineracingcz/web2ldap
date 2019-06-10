@@ -525,29 +525,30 @@ class LDAPSession(object):
                     raise
         # end of _set_tls_options()
 
-    def startTLSExtOp(self, startTLSOption):
+    def _start_tls(self, startTLSOption):
         """
         StartTLS if possible and requested
         """
         self.secureConn = 0
         self.startTLSOption = 0
-        if startTLSOption:
-            try:
-                self.l.start_tls_s()
-            except (
-                    ldap0.UNAVAILABLE,
-                    ldap0.CONNECT_ERROR,
-                    ldap0.PROTOCOL_ERROR,
-                    ldap0.INSUFFICIENT_ACCESS,
-                    ldap0.SERVER_DOWN,
-                ) as ldap_err:
-                if startTLSOption > 1:
-                    self.unbind()
-                    raise ldap_err
-            else:
-                self.startTLSOption = 2
-                self.secureConn = 1
-        return # startTLSExtOp()
+        if not startTLSOption:
+            return
+        try:
+            self.l.start_tls_s()
+        except (
+                ldap0.UNAVAILABLE,
+                ldap0.CONNECT_ERROR,
+                ldap0.PROTOCOL_ERROR,
+                ldap0.INSUFFICIENT_ACCESS,
+                ldap0.SERVER_DOWN,
+            ) as ldap_err:
+            if startTLSOption > 1:
+                self.unbind()
+                raise ldap_err
+        else:
+            self.startTLSOption = 2
+            self.secureConn = 1
+        # end of _start_tls()
 
     def _initialize(self, uri_list, tls_options=None):
         while uri_list:
@@ -621,7 +622,7 @@ class LDAPSession(object):
             self.l.add_server_control('**all**', session_tracking_ctrl)
         if self.uri.lower().startswith('ldap:'):
             # Start TLS extended operation
-            self.startTLSExtOp(startTLS)
+            self._start_tls(startTLS)
         elif self.uri.lower().startswith('ldaps:') or self.uri.lower().startswith('ldapi:'):
             self.secureConn = 1
         self.connStartTime = time.time()
