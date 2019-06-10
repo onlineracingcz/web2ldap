@@ -852,13 +852,13 @@ class Integer(IA5String):
 
     def _validate(self, attrValue):
         try:
-            intValue = int(attrValue)
+            val = int(attrValue)
         except ValueError:
             return False
         min_value, max_value = self.minValue, self.maxValue
         return (
-            (min_value is None or intValue >= min_value) and
-            (max_value is None or intValue <= max_value)
+            (min_value is None or val >= min_value) and
+            (max_value is None or val <= max_value)
         )
 
     def sanitize(self, attrValue):
@@ -2245,7 +2245,7 @@ class ComposedAttribute(LDAPSyntax):
     oid = 'ComposedDirectoryString-oid'
     compose_templates = ()
 
-    class single_value_dict(dict):
+    class SingleValueDict(dict):
         """
         dictionary-like class which only stores and returns the
         first value of an attribute value list
@@ -2273,7 +2273,7 @@ class ComposedAttribute(LDAPSyntax):
         always returns a list with a single value based on the first
         successfully applied compose template
         """
-        entry = self.single_value_dict(self._entry)
+        entry = self.SingleValueDict(self._entry)
         for template in self.compose_templates:
             try:
                 attr_values = [template.format(**entry)]
