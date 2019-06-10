@@ -71,7 +71,7 @@ def w2l_params(app):
         methods, control_class, control_value = control_spec
         control_enabled = True
         for method in methods:
-            control_enabled = control_enabled and (control_oid in app.ls.l._get_server_ctrls(method))
+            control_enabled = control_enabled and (control_oid in app.ls.l.get_ctrls(method))
         if control_enabled:
             enabled_controls.add(control_oid)
 

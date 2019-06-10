@@ -272,19 +272,19 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
         self.last_search_bases = deque(maxlen=30)
 
-    def _get_server_ctrls(self, method):
+    def get_ctrls(self, method):
         all_s_ctrls = {}
         for ctrl in self._serverctrls[method]:
             all_s_ctrls[ctrl.controlType] = ctrl
         return all_s_ctrls
 
     def add_server_control(self, method, lc):
-        _s_ctrls = self._get_server_ctrls(method)
+        _s_ctrls = self.get_ctrls(method)
         _s_ctrls[lc.controlType] = lc
         self._serverctrls[method] = _s_ctrls.values()
 
     def del_server_control(self, method, control_type):
-        _s_ctrls = self._get_server_ctrls(method)
+        _s_ctrls = self.get_ctrls(method)
         try:
             del _s_ctrls[control_type]
         except KeyError:
@@ -501,11 +501,11 @@ class LDAPSession(object):
 
     @property
     def relax_rules(self):
-        return CONTROL_RELAXRULES in self.l._get_server_ctrls('**write**')
+        return CONTROL_RELAXRULES in self.l.get_ctrls('**write**')
 
     @property
     def manage_dsa_it(self):
-        return CONTROL_MANAGEDSAIT in self.l._get_server_ctrls('**all**')
+        return CONTROL_MANAGEDSAIT in self.l.get_ctrls('**all**')
 
     def setTLSOptions(self, tls_options=None):
         tls_options = tls_options or {}
