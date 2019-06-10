@@ -1150,7 +1150,7 @@ class LDAPSession(object):
             self.saslAuth = None
             if not who or not cred:
                 # Anonymous bind
-                who = None; cred = None
+                who = cred = None
             else:
                 # Search bind DN by "user name" for simple bind
                 who = self.get_bind_dn(who, loginSearchRoot, binddn_mapping)
