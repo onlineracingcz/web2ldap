@@ -855,7 +855,7 @@ class LDAPSession(object):
                     pass
         return (hasSubordinates, numSubordinates, numAllSubordinates)
 
-    def searchSubSchemaEntryDN(self, dn):
+    def _get_sub_schema_dn(self, dn):
         """
         Determine DN of sub schema sub entry for current part of DIT
         """
@@ -883,7 +883,7 @@ class LDAPSession(object):
         if dn is None or self.l is None:
             # not properly connected to LDAP server yet
             return default
-        subschemasubentry_dn = self.searchSubSchemaEntryDN(dn)
+        subschemasubentry_dn = self._get_sub_schema_dn(dn)
         if subschemasubentry_dn is None:
             # No sub schema sub entry found => return default schema
             return default
