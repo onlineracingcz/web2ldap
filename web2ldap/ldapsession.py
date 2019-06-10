@@ -509,21 +509,21 @@ class LDAPSession(object):
     def manage_dsa_it(self):
         return CONTROL_MANAGEDSAIT in self.l.get_ctrls('**all**')
 
-    def setTLSOptions(self, tls_options=None):
+    def _set_tls_options(self, tls_options=None):
         tls_options = tls_options or {}
-        if not self.uri.lower().startswith('ldapi:') and ldap0.TLS_AVAIL:
-            # Only set the options if ldap0 was built with TLS support
-            for ldap_opt, ldap_opt_value in tls_options.items() + [
-                    (ldap0.OPT_X_TLS_REQUIRE_CERT, ldap0.OPT_X_TLS_DEMAND),
-                    (ldap0.OPT_X_TLS_NEWCTX, 0),
-                ]:
-                try:
-                    self.l.set_option(ldap_opt, ldap_opt_value)
-                except ValueError as value_error:
-                    if sys.platform != 'darwin' and \
-                       str(value_error) != 'ValueError: option error':
-                        raise
-        return # setTLSOptions()
+        if self.uri.lower().startswith('ldapi:') or not ldap0.TLS_AVAIL:
+            # Do not set TLS options
+            return
+        for ldap_opt, ldap_opt_value in tls_options.items() + [
+                (ldap0.OPT_X_TLS_REQUIRE_CERT, ldap0.OPT_X_TLS_DEMAND),
+                (ldap0.OPT_X_TLS_NEWCTX, 0),
+            ]:
+            try:
+                self.l.set_option(ldap_opt, ldap_opt_value)
+            except ValueError as value_error:
+                if sys.platform != 'darwin' and str(value_error) != 'ValueError: option error':
+                    raise
+        # end of _set_tls_options()
 
     def startTLSExtOp(self, startTLSOption):
         """
@@ -560,7 +560,7 @@ class LDAPSession(object):
                     cache_ttl=self._cache_ttl,
                 )
                 self.uri = uri
-                self.setTLSOptions(tls_options)
+                self._set_tls_options(tls_options)
                 # Default timeout 60 seconds
                 self.l.set_option(ldap0.OPT_TIMEOUT, LDAP_DEFAULT_TIMEOUT)
                 self.l.set_option(ldap0.OPT_NETWORK_TIMEOUT, LDAP_DEFAULT_TIMEOUT)
