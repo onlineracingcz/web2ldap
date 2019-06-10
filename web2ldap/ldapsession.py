@@ -1110,7 +1110,7 @@ class LDAPSession(object):
             self.l._last_bind = None
             # Force reconnecting in ReconnectLDAPObject
             self.l.reconnect(uri)
-        except ldap0.INAPPROPRIATE_AUTH as e:
+        except ldap0.INAPPROPRIATE_AUTH:
             pass
         # Prepare extended controls attached to bind request
         bind_server_ctrls = []
