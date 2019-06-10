@@ -833,7 +833,7 @@ class LDAPSession(object):
             while ldap_result == (None, None):
                 ldap_result = self.l.result(ldap_msgid, 0)
             self.l.abandon(ldap_msgid)
-            hasSubordinates = len(ldap_result) > 0
+            hasSubordinates = bool(ldap_result)
         if SearchNoOpControl.controlType in self.rootDSE.get('supportedControl', []):
             if not numSubordinates:
                 try:
