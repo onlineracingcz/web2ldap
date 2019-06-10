@@ -281,7 +281,7 @@ def del_subtree_form(app, scope):
         ),
         default=unicode(scope),
     )
-    hasSubordinates, numSubordinates, numAllSubordinates = app.ls.subOrdinates(app.dn)
+    hasSubordinates, numSubordinates, numAllSubordinates = app.ls.get_sub_ordinates(app.dn)
     if not hasSubordinates:
         return del_singleentry_form(app)
     if numSubordinates:

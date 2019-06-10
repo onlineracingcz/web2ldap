@@ -768,8 +768,10 @@ class LDAPSession(object):
             num_referrals = count_dict[ldap0.RES_SEARCH_REFERENCE]
         return num_entries, num_referrals
 
-    def subOrdinates(self, dn):
-        """Returns tuple (hasSubordinates,numSubordinates,numAllSubordinates)"""
+    def get_sub_ordinates(self, dn):
+        """
+        Returns tuple (hasSubordinates, numSubordinates, numAllSubordinates)
+        """
         # List of operational attributes suitable to determine non-leafs
         subordinate_attrs = (
             'hasSubordinates',
