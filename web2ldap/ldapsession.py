@@ -153,9 +153,10 @@ ROOTDSE_ATTRS = (
     'supportedFeatures',
     'supportedLDAPVersion',
     'supportedSASLMechanisms',
-    'supportedAuthPasswordSchemes', # RFC 3112
-    'vendorName',
-    'vendorVersion',
+    # RFC 3112
+    'supportedAuthPasswordSchemes',
+    # RFC 3045
+    'vendorName', 'vendorVersion',
     # 'informational' attributes of OpenDS/OpenDJ
     'ds-private-naming-contexts',
     # 'informational' attributes of OpenLDAP
@@ -203,7 +204,14 @@ USER_ENTRY_ATTRIBUTES = (
     'memberOf',
 )
 
-WHOAMI_FILTER_TMPL = u'ldap:///_??sub?(|(uid={user})(uidNumber={user})(sAMAccountName={user})(userPrincipalName={user}))'
+WHOAMI_FILTER_TMPL = (
+    u'ldap:///_??sub?'
+    u'(|'
+      u'(uid={user})(uidNumber={user})'
+      u'(sAMAccountName={user})'
+      u'(userPrincipalName={user})'
+    u')'
+)
 
 READ_CACHE_EXPIRE = 120
 
@@ -233,21 +241,25 @@ class MyLDAPObject(ReconnectLDAPObject):
             cache_ttl=5.0,
         ):
         self._serverctrls = {
-            '**all**':[],      # all LDAP operations
-            '**bind**':[],     # all bind operations
-            '**read**':[],     # compare,search
-            '**write**':[],    # add,delete,modify,rename
-            'abandon':[],
-            'add':[],
-            'compare':[],
-            'delete':[],
-            'modify':[],
-            'passwd':[],
-            'rename':[],
-            'search':[],
-            'unbind':[],
-            'sasl_interactive_bind_s':[],
-            'simple_bind':[],
+            # all LDAP operations
+            '**all**': [],
+            # all bind operations
+            '**bind**': [],
+            # compare,search
+            '**read**': [],
+            # add,delete,modify,rename
+            '**write**': [],
+            'abandon': [],
+            'add': [],
+            'compare': [],
+            'delete': [],
+            'modify': [],
+            'passwd': [],
+            'rename': [],
+            'search': [],
+            'unbind': [],
+            'sasl_interactive_bind_s': [],
+            'simple_bind': [],
         }
         self.flush_cache()
         ReconnectLDAPObject.__init__(
@@ -1182,7 +1194,7 @@ class LDAPSession(object):
 
         # Try to look up the user entry's DN in case self.who is still not a DN
         if whoami_filtertemplate and \
-           (self.who == None or not web2ldap.ldaputil.is_dn(self.who)):
+           (self.who is None or not web2ldap.ldaputil.is_dn(self.who)):
             if self.saslAuth and self.saslAuth.mech in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
                 # For SASL mechs EXTERNAL and GSSAPI the user did not enter a SASL username
                 # => try to determine it through OpenLDAP's libldap
