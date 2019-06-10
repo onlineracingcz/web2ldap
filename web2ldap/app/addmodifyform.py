@@ -616,7 +616,7 @@ def ObjectClassForm(
         # Determine possible structural object classes based on DIT structure rules
         # and name forms if DIT structure rules are defined in subschema
         if app.schema.sed[DITStructureRule]:
-            dit_structure_ruleid = app.ls.getGoverningStructureRule(parent_dn, app.schema)
+            dit_structure_ruleid = app.ls.get_governing_structure_rule(parent_dn, app.schema)
             if dit_structure_ruleid is not None:
                 subord_structural_ruleids, subord_structural_oc = app.schema.get_subord_structural_oc_names(dit_structure_ruleid)
                 if subord_structural_oc:
@@ -847,7 +847,7 @@ def ObjectClassForm(
                     continue
             restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, tmpl_parent_dn)
             if app.schema.sed[DITStructureRule]:
-                parent_gov_structure_rule = app.ls.getGoverningStructureRule(tmpl_parent_dn, app.schema)
+                parent_gov_structure_rule = app.ls.get_governing_structure_rule(tmpl_parent_dn, app.schema)
                 if parent_gov_structure_rule is None:
                     restricted_structural_oc = restricted_structural_oc or all_structural_oc
                 else:

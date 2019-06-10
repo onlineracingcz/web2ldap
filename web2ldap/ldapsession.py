@@ -1227,7 +1227,7 @@ class LDAPSession(object):
             self.userEntry = {}
         return # bind()
 
-    def getGoverningStructureRule(self, dn, schema):
+    def get_governing_structure_rule(self, dn, schema):
         """
         Determine the governing structure rule for the entry specified with dn
         in the subschema specified in argument schema
@@ -1279,7 +1279,7 @@ class LDAPSession(object):
         else:
             # More than one possible DIT structure rule found
             if parent_dn:
-                parent_governing_structure_rule = self.getGoverningStructureRule(parent_dn, schema)
+                parent_governing_structure_rule = self.get_governing_structure_rule(parent_dn, schema)
                 if not parent_governing_structure_rule is None:
                     subord_structural_rules, _ = schema.get_subord_structural_oc_names(
                         parent_governing_structure_rule
@@ -1292,7 +1292,7 @@ class LDAPSession(object):
                     else:
                         # FIX ME! This seems a bit blurry...
                         governing_structure_rule = None
-        return governing_structure_rule # getGoverningStructureRule()
+        return governing_structure_rule # get_governing_structure_rule()
 
     def ldapUrl(self, dn, add_login=True):
         if self.uri:
