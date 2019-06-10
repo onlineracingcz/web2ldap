@@ -524,7 +524,9 @@ class LDAPSession(object):
         return # setTLSOptions()
 
     def startTLSExtOp(self, startTLSOption):
-        """StartTLS if possible and requested"""
+        """
+        StartTLS if possible and requested
+        """
         self.secureConn = 0
         self.startTLSOption = 0
         if startTLSOption:
@@ -685,8 +687,8 @@ class LDAPSession(object):
             setattr(self, attr_type, self.rootDSE.get(attr_type, [None])[0])
         # determine whether server returns all operational attributes (RFC 3673)
         self.supportsAllOpAttr = (
-            '1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures or
-            self.is_openldap
+            '1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures
+            or self.is_openldap
         )
         return # _update_rootdse_attrs()
 
