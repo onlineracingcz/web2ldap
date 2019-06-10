@@ -486,6 +486,8 @@ class LDAPSession(object):
         # security attributes of the connection
         self.secureConn = 0
         self.saslAuth = None
+        self.who = None
+        self.userEntry = {}
         self.startTLSOption = 0
         self._schema_dn_cache = {}
         self._schema_cache = {}
