@@ -85,7 +85,7 @@ def w2l_rename(app):
 
         # Modify the RDN
         old_dn = app.dn
-        app.dn, entry_uuid = app.ls.renameEntry(
+        app.dn, entry_uuid = app.ls.rename(
             app.dn,
             rename_newrdn,
             rename_newsuperior,

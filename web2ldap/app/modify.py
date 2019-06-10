@@ -186,7 +186,7 @@ def w2l_modify(app):
 
     # Send modify-list to host
     try:
-        app.ls.modifyEntry(
+        app.ls.modify(
             app.dn,
             modlist,
             assertion_filter=in_assertion,

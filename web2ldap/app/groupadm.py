@@ -250,7 +250,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                 # Finally try to apply group membership modification(s) to single group entry
                 if modlist:
                     try:
-                        app.ls.modifyEntry(group_dn, modlist)
+                        app.ls.modify(group_dn, modlist)
                     except ldap0.LDAPError as e:
                         ldaperror_entries.append((
                             group_dn,

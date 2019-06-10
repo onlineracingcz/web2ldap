@@ -471,7 +471,7 @@ def w2l_delete(app):
             (ldap0.MOD_DELETE, attr_type, None)
             for attr_type in delete_attr
         ]
-        app.ls.modifyEntry(app.dn, mod_list, serverctrls=delete_server_ctrls)
+        app.ls.modify(app.dn, mod_list, serverctrls=delete_server_ctrls)
         app.simple_message(
             'Deleted Attribute(s)',
             """

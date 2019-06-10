@@ -934,7 +934,7 @@ class LDAPSession(object):
         except AttributeError:
             pass
 
-    def modifyEntry(self, dn, modlist, serverctrls=None, assertion_filter=None):
+    def modify(self, dn, modlist, serverctrls=None, assertion_filter=None):
         """Modify single entry"""
         if not modlist:
             return
@@ -952,9 +952,9 @@ class LDAPSession(object):
             ).encode(self.charset)
             serverctrls.append(AssertionControl(False, assertion_filter_str))
         self.l.modify_s(dn_str, modlist, serverctrls=serverctrls)
-        return # modifyEntry()
+        # end of LDAPSession.modify()
 
-    def renameEntry(self, dn, new_rdn, new_superior=None, delold=1):
+    def rename(self, dn, new_rdn, new_superior=None, delold=1):
         """Rename an entry"""
         self.l.uncache(dn.encode(self.charset))
         if not new_superior is None:
@@ -994,7 +994,8 @@ class LDAPSession(object):
         else:
             new_dn = u','.join([new_rdn, new_superior or old_superior_str])
             entry_uuid = None
-        return new_dn, entry_uuid # renameEntry()
+        return new_dn, entry_uuid
+        # end of LDAPSession.rename()
 
     def get_audit_context(self, search_root_dn):
         if self.l is None:

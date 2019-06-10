@@ -453,7 +453,7 @@ def w2l_bulkmod(app):
                                 raise ldap0.NO_SUCH_OBJECT
                             app.ls.l.add_s(new_ldap_dn, ldap_entry)
                         else:
-                            app.ls.renameEntry(
+                            app.ls.rename(
                                 ldap_dn_u,
                                 old_rdn,
                                 new_superior=bulkmod_newsuperior,

@@ -345,7 +345,7 @@ def w2l_passwd(app):
             return
         else:
             if passwd_modlist:
-                app.ls.modifyEntry(passwd_who, passwd_modlist)
+                app.ls.modify(passwd_who, passwd_modlist)
             if no_passwd_input:
                 password_attr_types_msg = 'Generated password set by the server: %s' % (
                     app.form.utf2display(passwd_input)
@@ -468,7 +468,7 @@ def w2l_passwd(app):
 
         # Modify password
         try:
-            app.ls.modifyEntry(passwd_who, passwd_modlist)
+            app.ls.modify(passwd_who, passwd_modlist)
         except (
                 ldap0.CONSTRAINT_VIOLATION,
                 ldap0.UNWILLING_TO_PERFORM,
