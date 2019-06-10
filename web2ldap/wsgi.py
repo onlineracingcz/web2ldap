@@ -152,7 +152,8 @@ def run_standalone():
     logger.info('Stopping service http://%s:%s/web2ldap', host, port)
     # Stop clean-up thread
     web2ldap.app.session.cleanUpThread.enabled = 0
-    return # end of run_standalone()
+    # end of run_standalone()
+
 
 if __name__ == '__main__':
     run_standalone()
