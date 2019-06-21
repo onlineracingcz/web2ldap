@@ -82,7 +82,7 @@ class DHCPConfigStatement(MultilineText):
                     search_params.extend((
                         ('search_attr', u'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', self._app.ls.uc_decode(reverse_dns)[0][:-1]),
+                        ('search_string', self._app.ls.uc_decode(reverse_dns)[0]),
                     ))
                 r.append(
                     self._app.anchor(
