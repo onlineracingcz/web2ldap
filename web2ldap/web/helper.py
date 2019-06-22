@@ -15,6 +15,25 @@ import os
 import UserDict
 
 
+REMOTE_ADDR_ENV_VARS = (
+    'FORWARDED_FOR',
+    'HTTP_X_FORWARDED_FOR',
+    'HTTP_X_REAL_IP',
+    'REMOTE_ADDR',
+    'REMOTE_HOST'
+)
+
+
+def get_remote_ip(env):
+    for var in REMOTE_ADDR_ENV_VARS:
+        if var in env and env[var]:
+            res = env[var]
+            break
+    else:
+        res = None
+    return res
+
+
 class AcceptHeaderDict(UserDict.UserDict):
     """
     This dictionary class is used to parse

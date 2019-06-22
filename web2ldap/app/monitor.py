@@ -195,7 +195,7 @@ def w2l_monitor(app):
             text_remoteiphitlist='\n'.join(
                 [
                     '<tr><td>%s</td><td>%d</td><td>%0.4f</td></tr>' % (
-                        app.form.utf2display(ip.decode('ascii')),
+                        app.form.utf2display((ip or '-').decode('ascii')),
                         count,
                         float(count/uptime),
                     )
@@ -222,7 +222,7 @@ def w2l_monitor(app):
                     len(real_ldap_sessions),
                     '\n'.join([
                         '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(
-                            app.form.utf2display(i[1].onBehalf.decode('ascii') or u'unknown'),
+                            app.form.utf2display((i[1].onBehalf or '').decode('ascii') or u'unknown'),
                             strftimeiso8601(time.gmtime(i[0])),
                             app.form.utf2display(i[1].uri.decode('ascii') or u'no connection'),
                             app.form.utf2display(i[1].who or u'anonymous'),

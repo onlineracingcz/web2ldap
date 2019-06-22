@@ -33,6 +33,7 @@ import web2ldapcnf.hosts
 import web2ldap.web.forms
 import web2ldap.web.helper
 import web2ldap.web.session
+from web2ldap.web.helper import get_remote_ip
 import web2ldap.__about__
 import web2ldap.ldaputil
 import web2ldap.ldaputil.dns
@@ -339,21 +340,6 @@ class AppHandler(LogHelper):
         )
         return '\n'.join(form_str)
 
-    def guess_client_addr(self):
-        """
-        Guesses the host name or IP address of the HTTP client by looking
-        at various HTTP headers mapped to CGI-BIN environment.
-        """
-        return self.env.get(
-            'FORWARDED_FOR',
-            self.env.get(
-                'HTTP_X_FORWARDED_FOR',
-                self.env.get(
-                    'HTTP_X_REAL_IP',
-                    self.env.get(
-                        'REMOTE_HOST',
-                        self.env.get('REMOTE_ADDR', None)))))
-
     def dispatch(self):
         """
         Execute function for self.command
@@ -482,7 +468,7 @@ class AppHandler(LogHelper):
         """
         self.sid = session_store.new(self.env)
         self.ls = LDAPSession(
-            self.guess_client_addr(),
+            get_remote_ip(self.env),
             web2ldapcnf.ldap_trace_level,
             web2ldapcnf.ldap_cache_ttl,
         )

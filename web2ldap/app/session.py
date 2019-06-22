@@ -19,6 +19,7 @@ import collections
 import logging
 
 import web2ldap.web.session
+from web2ldap.web.helper import get_remote_ip
 
 from web2ldap.ldapsession import LDAPSession
 from web2ldap.log import logger, LogHelper
@@ -77,7 +78,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
 
     def new(self, env=None):
         self.log(logging.DEBUG, 'new(): creating a new session')
-        remote_ip = self._remote_ip(env)
+        remote_ip = get_remote_ip(env)
         self.log(logging.DEBUG, 'new(): remote_ip = %r', remote_ip)
         remote_ip_sessions = self.remote_ip_sessions.get(remote_ip, set())
         if len(remote_ip_sessions) >= self.max_session_count_per_ip:

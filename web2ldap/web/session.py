@@ -17,6 +17,8 @@ import random
 import time
 import threading
 
+from .helper import get_remote_ip
+
 from ldap0.pw import random_string
 
 
@@ -215,18 +217,6 @@ class WebSession(object):
         self.session_id_chars = sessionIDChars or SESSION_ID_CHARS
         self.session_id_re = re.compile('^[%s]+$' % (re.escape(self.session_id_chars)))
         return # __init__()
-
-    @staticmethod
-    def _remote_ip(env):
-        return env.get(
-            'FORWARDED_FOR',
-            env.get(
-                'HTTP_X_FORWARDED_FOR',
-                env.get(
-                    'HTTP_X_REAL_IP',
-                    env.get(
-                        'REMOTE_ADDR',
-                        env.get('REMOTE_HOST', '__UNKNOWN__')))))
 
     def _validateSessionIdFormat(self, session_id):
         """
