@@ -19,7 +19,6 @@ User=web2ldap
 Group=web2ldap
 Restart=always
 KillSignal=SIGQUIT
-Type=notify
 StandardError=syslog
 NotifyAccess=all
 # various hardening options
