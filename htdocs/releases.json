@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.4.13",
+         "state": "stable",
+         "scope": "minor fix",
+         "changes": "Fixed plugin class DHCPConfigStatement, remote IP detection, some more code-cleaning",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.4.13.tar.gz",
+         "published": "2019-06-26T15:00:00+00:00"
+      },
+      {
          "version": "1.4.12",
          "state": "stable",
          "scope": "minor fix",
