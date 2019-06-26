@@ -6,8 +6,8 @@
 
 [Unit]
 Description=web2ldap - web-based LDAPv3 client (built-in HTTP demon)
-Requires=network.target local-fs.target remote-fs.target
-After=local-fs.target remote-fs.target network.target
+Requires=local-fs.target network.target
+After=local-fs.target network.target
 
 [Service]
 Type=simple
@@ -21,9 +21,11 @@ Group=web2ldap
 Restart=always
 KillSignal=SIGQUIT
 StandardError=syslog
-NotifyAccess=all
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+#AppArmorProfile=web2ldap
 # various hardening options
 PrivateTmp=yes
+PrivateDevices=yes
 ProtectSystem=full
 ProtectHome=yes
 ProtectKernelModules=yes
@@ -32,9 +34,11 @@ ProtectControlGroups=yes
 NoNewPrivileges=yes
 MountFlags=private
 SystemCallArchitectures=native
-RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
-PrivateDevices=yes
-AppArmorProfile=web2ldap
+LockPersonality=yes
+KeyringMode=private
+RestrictRealtime=yes
+RestrictNamespaces=yes
+SystemCallFilter=~ @clock @cpu-emulation @debug @keyring @module @mount @raw-io @reboot @swap @obsolete
 
 [Install]
 WantedBy=multi-user.target
