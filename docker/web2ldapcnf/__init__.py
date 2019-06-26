@@ -200,12 +200,14 @@ access_allowed = {
 # Import plugins in sub-config
 #---------------------------------------------------------------------------
 
+logger.debug('Importing web2ldapcnf.plugins')
 import web2ldapcnf.plugins
 
 #---------------------------------------------------------------------------
 # Optionally import a local sub-config file
 #---------------------------------------------------------------------------
 
+logger.debug('Importing web2ldapcnf.local')
 try:
     import web2ldapcnf.local
 except ImportError as import_error:

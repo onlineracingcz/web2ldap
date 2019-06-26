@@ -110,7 +110,11 @@ restricted_ldap_uri_list = False
 MSAD_CONFIG = Web2LDAPConfig(
     description=u'MS Active Directory',
     searchform_template={
-        u'_':os.path.join(templates_dir, 'searchform_msad.html'),
+        u'_':os.path.join(templates_dir, 'msad', 'searchform.html'),
+    },
+    boundas_template={
+        'user':r'<strong>%(cn)s</strong> (%(sAMAccountName)s)',
+        'computer':r'<strong>%(cn)s</strong> (%(sAMAccountName)s)',
     },
     # anonymous search normally not allowed for MS AD
     binddn_mapping=u'',
@@ -133,6 +137,16 @@ MSAD_CONFIG = Web2LDAPConfig(
     modify_constant_attrs=(
         'uSNChanged', 'uSNCreated', 'whenChanged', 'whenCreated',
     ),
+    addform_entry_templates={
+        u'User':os.path.join(templates_dir, 'msad', 'add_user.ldif'),
+        u'Computer':os.path.join(templates_dir, 'msad', 'add_computer.ldif'),
+        u'Organizational unit (OU)':os.path.join(templates_dir, 'add_orgunit.ldif'),
+        u'Group':os.path.join(templates_dir, 'add_group.ldif'),
+        u'Container':os.path.join(templates_dir, 'msad', 'add_container.ldif'),
+    },
+    groupadm_defs={
+        'group': ('member', None),
+    },
 )
 
 #---------------------------------------------------------------------------
@@ -351,6 +365,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'aePerson',
         'aeProxyFor',
         'aeRemoteHost',
+        'aeRequires',
         'aeSetupGroups',
         'aeSourceUri',
         'aeSrvGroup',
@@ -872,7 +887,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         ),
         'dhcpClass':r'%(entryDN)s<br>DHCP class <strong title="%(dhcpComments)s">%(cn)s</strong>',
         'dhcpGroup':r'%(entryDN)s<br>DHCP group <strong title="%(dhcpComments)s">%(cn)s</strong>',
-        'dhcpHost':r'%(entryDN)s<br>DHCP host <strong title="%(dhcpComments)s">%(cn)s</strong><br>%(dhcpHWAddress)s',
+        'dhcpHost':r'%(entryDN)s<br>DHCP host <strong title="%(dhcpComments)s">%(cn)s</strong><br>%(dhcpHWAddress)s<br>%(dhcpStatements)s',
         'dhcpServer':r'%(entryDN)s<br>DHCP server <strong title="%(dhcpComments)s">%(cn)s</strong>',
         'dhcpService':r'%(entryDN)s<br>DHCP service <strong title="%(dhcpComments)s">%(cn)s</strong>',
         'dhcpSharedNetwork':r'%(entryDN)s<br>DHCP shared network <strong title="%(dhcpComments)s">%(cn)s</strong>',
@@ -939,6 +954,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         'memberUid':40,
         'pwdHistory':2,
         'roleOccupant':40,
+        'msDS-ReplAttributeMetaData':1,
         'tokenGroups':4,
         'tokenGroupsGlobalAndUniversal':4,
         'tokenGroupsNoGCAcceptable':4,
