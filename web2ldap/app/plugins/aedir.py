@@ -638,6 +638,8 @@ class AEMemberUid(MemberUID):
         )
 
     def transmute(self, attrValues):
+        if 'member' not in self._entry:
+            return []
         if int(self._entry['aeStatus'][0]) == 2:
             return []
         return filter(None, self._member_uids_from_member())
@@ -2208,6 +2210,8 @@ class AERFC822MailMember(DynamicValueSelectList):
 
     def transmute(self, attrValues):
         if 'member' not in self._entry:
+            return []
+        if int(self._entry['aeStatus'][0]) == 2:
             return []
         entrydn_filter = compose_filter(
             '|',
