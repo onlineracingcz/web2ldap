@@ -583,6 +583,11 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
             return DistinguishedName._validate(self, attrValue)
         return SelectList._validate(self, attrValue)
 
+    def transmute(self, attrValues):
+        if int(self._entry['aeStatus'][0]) == 2:
+            return []
+        return DynamicDNSelectList.transmute(self, attrValues)
+
 syntax_registry.reg_at(
     AEGroupMember.oid, [
         '2.5.4.31', # member
@@ -633,6 +638,8 @@ class AEMemberUid(MemberUID):
         )
 
     def transmute(self, attrValues):
+        if int(self._entry['aeStatus'][0]) == 2:
+            return []
         return filter(None, self._member_uids_from_member())
 
     def formValue(self):
