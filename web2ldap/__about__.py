@@ -18,7 +18,7 @@ VersionInfo = collections.namedtuple('version_info', ('major', 'minor', 'micro')
 __version_info__ = VersionInfo(
     major=1,
     minor=4,
-    micro=14,
+    micro=15,
 )
 __version__ = '.'.join(str(val) for val in __version_info__)
 __author__ = u'Michael Stroeder'
