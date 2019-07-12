@@ -213,8 +213,6 @@ WHOAMI_FILTER_TMPL = (
     u')'
 )
 
-READ_CACHE_EXPIRE = 120
-
 LDAPLimitErrors = (
     ldap0.TIMEOUT,
     ldap0.TIMELIMIT_EXCEEDED,
@@ -226,8 +224,9 @@ LDAP_DEFAULT_TIMEOUT = 60
 
 COUNT_TIMEOUT = 5.0
 
-PYLDAP_RETRY_MAX = 8
-PYLDAP_RETRY_DELAY = 1.5
+LDAP0_RETRY_MAX = 8
+LDAP0_RETRY_DELAY = 1.5
+LDAP0_CACHE_TTL = 10.0
 
 
 class MyLDAPObject(ReconnectLDAPObject):
@@ -236,9 +235,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             self,
             uri,
             trace_level=0,
-            retry_max=PYLDAP_RETRY_MAX,
-            retry_delay=PYLDAP_RETRY_DELAY,
-            cache_ttl=5.0,
+            retry_max=LDAP0_RETRY_MAX,
+            retry_delay=LDAP0_RETRY_DELAY,
+            cache_ttl=LDAP0_CACHE_TTL,
         ):
         self._serverctrls = {
             # all LDAP operations
