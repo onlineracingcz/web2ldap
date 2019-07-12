@@ -622,6 +622,7 @@ class AEMemberUid(MemberUID):
     desc = 'AE-DIR: username (uid) of member of a group'
     ldap_url = None
     showValueButton = False
+    reobj = AEUserUid.reobj
 
     def _member_uids_from_member(self):
         return [
@@ -629,13 +630,12 @@ class AEMemberUid(MemberUID):
             for dn in self._entry.get('member', [])
         ]
 
-    # Because AEMemberUid.transmute() always resets all attribute values it's
-    # ok to not validate values thoroughly
     def _validate(self, attrValue):
-        return (
-            MemberUID._validate(self, attrValue) and
-            attrValue in set(self._member_uids_from_member())
-        )
+        """
+        Because AEMemberUid.transmute() always resets all attribute values it's
+        ok to not validate values thoroughly
+        """
+        return IA5String._validate(self, attrValue)
 
     def transmute(self, attrValues):
         if 'member' not in self._entry:
