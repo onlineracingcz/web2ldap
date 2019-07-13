@@ -49,6 +49,7 @@ import ipaddress
 import ldap0
 import ldap0.ldapurl
 import ldap0.schema.models
+from ldap0.controls.deref import DereferenceControl
 
 import web2ldapcnf
 
@@ -1879,6 +1880,39 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
             display_text,
             DistinguishedName.displayValue(self, valueindex, commandbutton)
         ))
+
+
+class DerefDynamicDNSelectList(DynamicDNSelectList):
+    oid = 'DerefDynamicDNSelectList-oid'
+
+    def _get_ref_entry(self, dn, attrlist=None):
+        deref_crtl = DereferenceControl(True, {self._at: self.lu_obj.attrs})
+        try:
+            _, _, res_ctrl = self._app.ls.l.search_s(
+                self._dn.encode(self._app.ls.charset),
+                ldap0.SCOPE_BASE,
+                attrlist=['1.1'],
+                filterstr='(objectClass=*)',
+                serverctrls=[deref_crtl],
+                add_ctrls=1,
+            )[0]
+        except (
+                ldap0.NO_SUCH_OBJECT,
+                ldap0.CONSTRAINT_VIOLATION,
+                ldap0.INSUFFICIENT_ACCESS,
+                ldap0.INVALID_DN_SYNTAX,
+                ldap0.REFERRAL,
+            ):
+            return None
+        for ref_dn, ref_entry in res_ctrl[0].derefRes[self._at]:
+            if ref_dn == dn:
+                break
+        else:
+            ref_entry = None
+        return ref_entry
+
+    def _validate(self, attrValue):
+        return SelectList._validate(self, attrValue)
 
 
 class Boolean(SelectList, IA5String):

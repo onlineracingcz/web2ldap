@@ -12,6 +12,17 @@
     Simplified syntax checking in &AElig;-DIR plugin class
     for attribute <var>memberUid</var>.
   </li>
+  <li>
+    New plugin class <var>DerefDynamicDNSelectList</var> is meant as drop-in
+    replacement for <var>DynamicDNSelectList</var> which gives caching
+    behaviour with multi-valued attributes. This requires the LDAP server
+    to support the
+    <a href="https://tools.ietf.org/html/draft-masarati-ldap-deref">Dereference Control</a>.
+  </li>
+  <li>
+    Various &AElig;-DIR plugin classes now use new base class
+    <var>DerefDynamicDNSelectList</var>.
+  </li>
 </ul>
 
 <h1 id="r1.4.14">1.4.14</h1>

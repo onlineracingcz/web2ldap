@@ -39,7 +39,7 @@ from web2ldap.app.schema.syntaxes import \
     DirectoryString, \
     DistinguishedName, \
     DNSDomain, \
-    DynamicDNSelectList, \
+    DerefDynamicDNSelectList, \
     DynamicValueSelectList, \
     IA5String, \
     Integer, \
@@ -418,7 +418,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEZoneDN(DynamicDNSelectList):
+class AEZoneDN(DerefDynamicDNSelectList):
     oid = 'AEZoneDN-oid'
     desc = 'AE-DIR: Zone'
     input_fallback = False # no fallback to normal input field
@@ -434,7 +434,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEHost(DynamicDNSelectList):
+class AEHost(DerefDynamicDNSelectList):
     oid = 'AEHost-oid'
     desc = 'AE-DIR: Host'
     input_fallback = False # no fallback to normal input field
@@ -450,7 +450,7 @@ syntax_registry.reg_at(
 )
 
 
-class AENwDevice(DynamicDNSelectList):
+class AENwDevice(DerefDynamicDNSelectList):
     oid = 'AENwDevice-oid'
     desc = 'AE-DIR: network interface'
     input_fallback = False # no fallback to normal input field
@@ -462,10 +462,10 @@ class AENwDevice(DynamicDNSelectList):
     def _search_root(self):
         if self._dn.startswith('host='):
             return self._app.ls.uc_encode(self._dn)[0]
-        return DynamicDNSelectList._search_root(self)
+        return DerefDynamicDNSelectList._search_root(self)
 
     def _filterstr(self):
-        orig_filter = DynamicDNSelectList._filterstr(self)
+        orig_filter = DerefDynamicDNSelectList._filterstr(self)
         try:
             dev_name = self._entry['cn'][0]
         except (KeyError, IndexError):
@@ -481,7 +481,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
+class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
     oid = 'AEGroupMember-oid'
     desc = 'AE-DIR: Member of a group'
     input_fallback = False # no fallback to normal input field
@@ -511,14 +511,14 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
 
     def _filterstr(self):
         return '(&{0}{1})'.format(
-            DynamicDNSelectList._filterstr(self),
+            DerefDynamicDNSelectList._filterstr(self),
             self._zone_filter(),
         )
 
     def _get_attr_value_dict(self):
         deref_person_attrset = self._deref_person_attrset()
         if not deref_person_attrset:
-            return DynamicDNSelectList._get_attr_value_dict(self)
+            return DerefDynamicDNSelectList._get_attr_value_dict(self)
         if deref_person_attrset:
             srv_ctrls = [DereferenceControl(True, {'aePerson': deref_person_attrset.keys()})]
         else:
@@ -586,7 +586,7 @@ class AEGroupMember(DynamicDNSelectList, AEObjectUtil):
     def transmute(self, attrValues):
         if int(self._entry['aeStatus'][0]) == 2:
             return []
-        return DynamicDNSelectList.transmute(self, attrValues)
+        return DerefDynamicDNSelectList.transmute(self, attrValues)
 
 syntax_registry.reg_at(
     AEGroupMember.oid, [
@@ -667,7 +667,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEGroupDN(DynamicDNSelectList):
+class AEGroupDN(DerefDynamicDNSelectList):
     oid = 'AEGroupDN-oid'
     desc = 'AE-DIR: DN of user group entry'
     input_fallback = False # no fallback to normal input field
@@ -833,7 +833,7 @@ syntax_registry.reg_at(
 )
 
 
-class AESameZoneObject(DynamicDNSelectList, AEObjectUtil):
+class AESameZoneObject(DerefDynamicDNSelectList, AEObjectUtil):
     oid = 'AESameZoneObject-oid'
     desc = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
     input_fallback = False # no fallback to normal input field
@@ -863,7 +863,7 @@ syntax_registry.reg_at(
 )
 
 
-class AERequires(DynamicDNSelectList):
+class AERequires(DerefDynamicDNSelectList):
     oid = 'AERequires-oid'
     desc = 'AE-DIR: DN of required aeSrvGroup'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0))'
@@ -1227,7 +1227,7 @@ syntax_registry.reg_at(
 )
 
 
-class AELocation(DynamicDNSelectList):
+class AELocation(DerefDynamicDNSelectList):
     oid = 'AELocation-oid'
     desc = 'AE-DIR: DN of location entry'
     input_fallback = False # no fallback to normal input field
@@ -1260,7 +1260,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEDept(DynamicDNSelectList):
+class AEDept(DerefDynamicDNSelectList):
     oid = 'AEDept-oid'
     desc = 'AE-DIR: DN of department entry'
     input_fallback = False # no fallback to normal input field
@@ -1274,7 +1274,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEOwner(DynamicDNSelectList):
+class AEOwner(DerefDynamicDNSelectList):
     oid = 'AEOwner-oid'
     desc = 'AE-DIR: DN of owner entry'
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
@@ -1289,7 +1289,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEPerson(DynamicDNSelectList, AEObjectUtil):
+class AEPerson(DerefDynamicDNSelectList, AEObjectUtil):
     oid = 'AEPerson-oid'
     desc = 'AE-DIR: DN of person entry'
     ldap_url = 'ldap:///_?displayName?sub?(objectClass=aePerson)'
@@ -1319,7 +1319,7 @@ class AEPerson(DynamicDNSelectList, AEObjectUtil):
 
     def _filterstr(self):
         filter_components = [
-            DynamicDNSelectList._filterstr(self),
+            DerefDynamicDNSelectList._filterstr(self),
             self._status_filter(),
             #ae_validity_filter(),
         ]
@@ -1390,7 +1390,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEManager(DynamicDNSelectList):
+class AEManager(DerefDynamicDNSelectList):
     oid = 'AEManager-oid'
     desc = 'AE-DIR: Manager responsible for a person/department'
     input_fallback = False # no fallback to normal input field
@@ -1964,7 +1964,7 @@ syntax_registry.reg_at(
 )
 
 
-class AESudoRuleDN(DynamicDNSelectList):
+class AESudoRuleDN(DerefDynamicDNSelectList):
     oid = 'AESudoRuleDN-oid'
     desc = 'AE-DIR: DN(s) of visible SUDO rules'
     input_fallback = False # no fallback to normal input field
