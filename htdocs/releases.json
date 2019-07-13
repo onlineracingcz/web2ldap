@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.4.15",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "Æ-DIR plugin classes now use the deref control for better performance.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.4.15.tar.gz",
+         "published": "2019-07-13T13:00:00+00:00"
+      },
+      {
          "version": "1.4.14",
          "state": "stable",
          "scope": "minor fix",
