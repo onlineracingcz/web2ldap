@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.4.16",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "changed path names for trusted CA certs, dropped dependency on certifi module",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.4.16.tar.gz",
+         "published": "2019-07-15T21:00:00+00:00"
+      },
+      {
          "version": "1.4.15",
          "state": "stable",
          "scope": "minor feature",

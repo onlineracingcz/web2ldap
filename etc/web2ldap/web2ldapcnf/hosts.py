@@ -14,7 +14,6 @@ from __future__ import absolute_import
 # Leave these import lines alone
 import os
 import ldap0
-import certifi
 
 from web2ldap.app.core import etc_dir, templates_dir
 from web2ldap.app.cnf import Web2LDAPConfig
@@ -769,10 +768,12 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         # you should really set this!
         ldap0.OPT_X_TLS_REQUIRE_CERT:ldap0.OPT_X_TLS_DEMAND,
         # Directory containing all the trusted root CA certs (symbolic hash links required!)
-        #LDAP_OPT_X_TLS_CACERTDIR = os.path.sep.join(etc_dir, 'ssl','crt'),
+        #ldap0.OPT_X_TLS_CACERTDIR:'/var/lib/ca-certificates/pem',
+        ldap0.OPT_X_TLS_CACERTDIR:os.path.join(etc_dir, 'tls','cacerts'),
         # File containing all the trusted root CA certs
-        #ldap0.OPT_X_TLS_CACERTFILE:os.path.join(etc_dir, 'ssl', 'crt', 'trusted-certs.crt'),
-        ldap0.OPT_X_TLS_CACERTFILE:certifi.where(),
+        #ldap0.OPT_X_TLS_CACERTFILE:'/etc/ssl/ca-bundle.pem',
+        #ldap0.OPT_X_TLS_CACERTFILE:'/var/lib/ca-certificates/ca-bundle.pem',
+
         #ldap0.OPT_X_TLS_CIPHER_SUITE:'ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA',
         ldap0.OPT_X_TLS_PROTOCOL_MIN:3,
         #ldap0.OPT_X_TLS_CRLCHECK:ldap0.OPT_X_TLS_CRL_PEER,
@@ -1191,7 +1192,7 @@ ldap_def = {
 # another cloned config for setting specific LDAPS parameters for AE-DIR demo server
 ldap_def['ldaps://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com/ou=ae-dir'].clone(
     tls_options={
-        ldap0.OPT_X_TLS_CACERTFILE: os.path.join(etc_dir, 'ssl', 'crt', 'DST_Root_CA_X3.pem'),
+        ldap0.OPT_X_TLS_CACERTFILE: os.path.join(etc_dir, 'tls', 'cacerts', 'DST_Root_CA_X3.pem'),
     },
 )
 # another cloned config for mandating use of StartTLS ext.op.

@@ -53,7 +53,6 @@ setup(
         'xlwt',
         'dnspython',
         'paramiko',
-        'certifi',
     ],
     extras_require = {
         'image':  ["Pillow"],
