@@ -213,7 +213,7 @@ def parent_dn_list(dn, rootdn=u''):
 def split_rdn(dn):
     """returns tuple (RDN,base DN) of dn"""
     if not dn:
-        raise ValueError('Empty DN cannot be splitted.')
+        raise ValueError('Empty DN cannot be split.')
     dn_comp = explode_dn(dn)
     return dn_comp[0], u','.join(dn_comp[1:])
 

@@ -387,7 +387,7 @@ class AppHandler(LogHelper):
                 cmd, sid = path_info.split('/', 1)
             except ValueError:
                 cmd, sid = path_info, ''
-        self.log(logging.DEBUG, 'splitted path_info to (%r, %r)', cmd, sid)
+        self.log(logging.DEBUG, 'split path_info to (%r, %r)', cmd, sid)
         return cmd, sid # path_info()
 
     def display_dn(self, dn, commandbutton=False):

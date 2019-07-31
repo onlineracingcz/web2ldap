@@ -74,7 +74,7 @@ def check_inst():
     logger.debug('ldap0.API_VERSION: %s', ldap0.API_VERSION)
     logger.debug('ldap0.VENDOR_VERSION: %s', ldap0.VENDOR_VERSION)
     # Check whether built with SSL/TLS (OpenSSL)
-    logger.debug('*** Suport for SSL/TLS ***')
+    logger.debug('*** Support for SSL/TLS ***')
     logger.debug('ldap0.TLS_AVAIL = %r', ldap0.TLS_AVAIL)
     logger.debug('ldap0.OPT_X_TLS_PACKAGE = %r', ldap0.get_option(ldap0.OPT_X_TLS_PACKAGE))
     # Check whether built with SASL (Cyrus-SASL)

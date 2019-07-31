@@ -16,7 +16,7 @@ What is web2ldap?
     within an LDAPv3 schema.
   * A customizable platform for prototyping LDAP administration use-cases.
   * For me it is a platform for implementing cutting edge LDAP features.
-  * Continously maintained software since September 1998!
+  * Continuously maintained software since September 1998!
 
 Project status
 --------------

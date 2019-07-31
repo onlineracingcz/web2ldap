@@ -62,7 +62,7 @@ class SessionException(Exception):
 
 
 class CorruptData(SessionException):
-    """Raised if data was corrupt, e.g. UnpicklingError occured"""
+    """Raised if data was corrupt, e.g. UnpicklingError occurred"""
 
     def __str__(self):
         return "Error during retrieving corrupted session data. Session deleted."

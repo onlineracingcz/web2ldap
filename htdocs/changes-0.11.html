@@ -173,7 +173,7 @@
         DN syntax.
       </li>
       <li>
-        Fixed some compability issues with upcoming
+        Fixed some compatibility issues with upcoming
         <a href="https://www.python.org/">Python 2.3</a>.
       </li>
       <li>
@@ -331,7 +331,7 @@
   <li>
     Use method <var>ldap.schema.subentry.Subschema.get_obj()</var>
     instead directly accessing schema dictionary simply by OID.
-    This solves a backward-compability problem for a schema fix
+    This solves a backward-compatibility problem for a schema fix
     introduced in upcoming python-ldap.
   </li>
   <li>
@@ -512,7 +512,7 @@
   </li>
   <li>
     The URL generated for [Disconnect] link does not contain
-    a // (empty double slash) anymore to avoid compability problems with
+    a // (empty double slash) anymore to avoid compatibility problems with
     Apache 2.x.
   </li>
   <li>
@@ -544,7 +544,7 @@
   </li>
   <li>
     <var>w2lapp.read</var>:<br>
-    Fixed supression of displaying attributes which are already
+    Fixed suppression of displaying attributes which are already
     display through HTML template in a correct schema-aware way.
   </li>
   <li>
@@ -565,12 +565,12 @@
     <var>w2lapp.addmodifyform</var>:<br>
     If form parameter <var>add_rdn</var> is not given and there is only
     one required attribute (except <var>objectClass</var>) the default
-    for the RDN input field (for chosing characteristic attribute)
+    for the RDN input field (for choosing characteristic attribute)
     is automagically chosen to be this attribute. The input field is
     still editable though.
   </li>
   <li>
-    Avoid erronously displaying an input field for attributes
+    Avoid erroneously displaying an input field for attributes
     with transfer type <var>;binary</var>.
   </li>
   <li>
@@ -707,11 +707,11 @@
 <p>Release Date: 2002-09-27</p>
 <ul>
   <li>
-    Solved backward-compability issue with Python 2.1- caused by referring
+    Solved backward-compatibility issue with Python 2.1- caused by referring
     to exception <var>socket.gaierror</var>.
   </li>
   <li>
-    Solved backward-compability issue with Python 2.1- caused by
+    Solved backward-compatibility issue with Python 2.1- caused by
     nested scope in <var>ldapsession.LDAPSession.open()</var>.
   </li>
   <li>
@@ -763,7 +763,7 @@
         necessary!<br>
         For LDAPv2 servers or if sub schema sub entry is not accessible
         schema is read from locally stored LDIF file which you
-        can specify with new host-/backend paramter
+        can specify with new host-/backend parameter
         <a href="web2ldapcnf_hosts.html#schema_uri">schema_uri</a>.
       </li>
       <li>

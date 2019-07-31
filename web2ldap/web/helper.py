@@ -94,7 +94,7 @@ class AcceptHeaderDict(UserDict.UserDict):
 
     def items(self):
         """
-        Return the accepted values as tuples (value,weigth)
+        Return the accepted values as tuples (value,weight)
         in descending order of capability weight
         """
         vals = self.data.items()
@@ -121,7 +121,7 @@ class AcceptCharsetDict(AcceptHeaderDict):
 
     def preferred(self):
         """
-        Return the value name with highest capability weigth
+        Return the value name with highest capability weight
         """
         lst = self.items()
         while lst and lst[0][0] != '*':

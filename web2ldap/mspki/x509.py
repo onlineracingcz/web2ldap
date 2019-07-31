@@ -123,7 +123,7 @@ class Certificate(X509SignedObject):
 
     def __init__(self, buf):
         X509SignedObject.__init__(self, buf)
-        # Nested object with certficate data
+        # Nested object with certificate data
         self.tbsCertificate = self.val[0]
         self._buf = buf
         # Try to determine if optional version field is present

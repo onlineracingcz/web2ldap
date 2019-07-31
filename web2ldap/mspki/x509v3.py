@@ -134,7 +134,7 @@ class Certificate(x509.Certificate):
         if int(self.version()) < 3:
             return None
         for i in self.tbsCertificate[self._tbsoffset+6:len(self.tbsCertificate)]:
-            # find first occurence of tag [3]
+            # find first occurrence of tag [3]
             if hasattr(i, 'tag') and i.tag == 3:
                 return Extensions(i.val)
         return None
@@ -171,7 +171,7 @@ class CRL(x509.CRL):
     def crlExtensions(self):
         """Return extracted X.509v3 extensions"""
         for i in self.tbsCertList[self._tbsoffset+5:len(self.tbsCertList)]:
-            # find first occurence of tag [0]
+            # find first occurrence of tag [0]
             if hasattr(i, 'tag') and i.tag == 0:
                 return Extensions(i.val)
         return None

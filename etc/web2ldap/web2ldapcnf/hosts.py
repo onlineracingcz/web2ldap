@@ -325,7 +325,7 @@ CN_CONFIG = Web2LDAPConfig(
     addform_entry_templates={
         # for OpenLDAP
         u'Modules':os.path.join(templates_dir, 'openldap', 'add_olcModuleList.ldif'),
-        u'Database - Adress book (back-hdb)':os.path.join(templates_dir, 'openldap', 'add_olcHdbConfig_AddressBook.ldif'),
+        u'Database - Address book (back-hdb)':os.path.join(templates_dir, 'openldap', 'add_olcHdbConfig_AddressBook.ldif'),
         u'Database - Unix Users (back-hdb)':os.path.join(templates_dir, 'openldap', 'add_olcHdbConfig_UnixUsers.ldif'),
         u'Database - Accesslog (back-hdb)':os.path.join(templates_dir, 'openldap', 'add_olcHdbConfig_accesslog.ldif'),
         u'Database - LDAP-Proxy (back-ldap)':os.path.join(templates_dir, 'openldap', 'add_olcLdapConfig.ldif'),

@@ -492,7 +492,7 @@ class LDAPSession(object):
         self._schema_cache = {}
         # Supports feature described in draft-zeilenga-ldap-opattrs
         self.supportsAllOpAttr = 0
-        # IP adress, host name or other free form information
+        # IP address, host name or other free form information
         # of proxy client
         self.onBehalf = onBehalf
         self.sessionStartTime = time.time()
