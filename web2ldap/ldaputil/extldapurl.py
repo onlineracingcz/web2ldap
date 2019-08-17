@@ -82,7 +82,7 @@ class ExtendedLDAPUrl(ldap0.ldapurl.LDAPUrl):
             # FIX ME! Set extensions
             pass
         return LDAPSEARCH_TMPL.format(
-            uri=self.initializeUrl(),
+            uri=self.connect_uri(),
             dn=self.dn,
             scope=scope_str,
             attrs=attrs_str,

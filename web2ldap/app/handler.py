@@ -749,7 +749,7 @@ class AppHandler(LogHelper):
                 # create list of URLs to connect to
                 dns_srv_rrs = web2ldap.ldaputil.dns.dc_dn_lookup(self.dn)
                 init_uri_list = [
-                    ExtendedLDAPUrl(urlscheme='ldap', hostport=host, dn=self.dn).initializeUrl()
+                    ExtendedLDAPUrl(urlscheme='ldap', hostport=host, dn=self.dn).connect_uri()
                     for host in dns_srv_rrs
                 ]
                 if not init_uri_list:
@@ -772,7 +772,7 @@ class AppHandler(LogHelper):
                     )
                     return
             elif self.ldap_url.hostport is not None:
-                init_uri = str(self.ldap_url.initializeUrl()[:])
+                init_uri = str(self.ldap_url.connect_uri()[:])
             else:
                 init_uri = None
 

@@ -166,7 +166,7 @@ class Web2LDAPConfigDict(LogHelper):
             if (key.urlscheme == 'ldap' and port == '389') or \
                (key.urlscheme == 'ldaps' and port == '636'):
                 key.hostport = host
-        return (key.initializeUrl().lower(), key.dn.lower())
+        return (key.connect_uri().lower(), key.dn.lower())
 
     def set_cfg(self, cfg_uri, cfg_data):
         """
@@ -224,7 +224,7 @@ def set_target_check_dict(ldap_uri_list):
         except ValueError:
             pass
         lu_obj = LDAPUrl(ldap_uri)
-        ldap_uri_list_check_dict[lu_obj.initializeUrl()] = None
+        ldap_uri_list_check_dict[lu_obj.connect_uri()] = None
         logger.debug('Added target LDAP URI %s / %r', ldap_uri, desc)
     return ldap_uri_list_check_dict
 
