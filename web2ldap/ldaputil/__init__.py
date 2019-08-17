@@ -229,10 +229,9 @@ def escape_ldap_filter_chars(search_string, charset='utf-8'):
             escape_mode = 2
     else:
         raise TypeError('Expected search_string as basestring, was %r' % (search_string))
-    result = ldap0.filter.escape_filter_chars(
+    return ldap0.filter.escape_filter_chars(
         search_string, escape_mode=escape_mode,
     ).decode(charset)
-    return result
 
 
 def map_filter_parts(assertion_type, assertion_values, escape_mode=0):
