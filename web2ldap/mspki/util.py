@@ -41,7 +41,7 @@ def bytestolong(s):
     """
     Convert a byte string to a long integer.
     """
-    acc = 0L
+    acc = 0
     unpack = struct.unpack
     length = len(s)
     if length % 4:

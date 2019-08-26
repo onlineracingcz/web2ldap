@@ -37,8 +37,8 @@ syntax_registry.reg_at(
 
 class AutogenNumber(object):
     inputSize = 12
-    minNewValue = 10000L
-    maxNewValue = 19999L
+    minNewValue = 10000
+    maxNewValue = 19999
     object_class = 'posixAccount'
 
     def formValue(self):
@@ -85,8 +85,8 @@ class AutogenNumber(object):
 class AutogenUIDNumber(UidNumber, AutogenNumber):
     oid = 'AutogenUIDNumber-oid'
     desc = 'numeric Unix-UID'
-    minNewValue = 10000L
-    maxNewValue = 19999L
+    minNewValue = 10000
+    maxNewValue = 19999
     object_class = 'posixAccount'
 
     def formValue(self):

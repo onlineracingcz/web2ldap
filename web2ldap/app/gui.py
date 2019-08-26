@@ -102,10 +102,10 @@ def dn_anchor_hash(dn):
 
 
 def ts2repr(time_divisors, ts_sep, ts_value):
-    rest = long(ts_value)
+    rest = int(ts_value)
     result = []
     for desc, divisor in time_divisors:
-        mult = rest / divisor
+        mult = rest // divisor
         rest = rest % divisor
         if mult > 0:
             result.append(u'%d %s' % (mult, desc))

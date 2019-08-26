@@ -658,7 +658,7 @@ class Interval(MicrosoftLargeInteger):
 
     @staticmethod
     def _delta(attrValue):
-        return (long(attrValue)-116444736000000000L)/10000000
+        return (int(attrValue)-116444736000000000)/10000000
 
     def displayValue(self, valueindex=0, commandbutton=False):
         if self._av == '9223372036854775807':

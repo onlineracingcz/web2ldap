@@ -31,7 +31,7 @@ class GidNumber(DynamicValueSelectList, Integer):
     oid = 'GidNumber-oid'
     desc = 'RFC2307: An integer uniquely identifying a group in an administrative domain'
     minValue = 0
-    maxValue = 4294967295L
+    maxValue = 4294967295
     ldap_url = 'ldap:///_?gidNumber,cn?sub?(objectClass=posixGroup)'
 
     def _validate(self, attrValue):
@@ -137,7 +137,7 @@ class UidNumber(Integer):
     oid = 'UidNumber-oid'
     desc = 'Numerical user ID for Posix systems'
     minValue = 0
-    maxValue = 4294967295L
+    maxValue = 4294967295
 
 syntax_registry.reg_at(
     UidNumber.oid, [

@@ -251,8 +251,8 @@ syntax_registry.reg_at(
 class AEGIDNumber(GidNumber):
     oid = 'AEGIDNumber-oid'
     desc = 'numeric Unix-GID'
-    minNewValue = 30000L
-    maxNewValue = 49999L
+    minNewValue = 30000
+    maxNewValue = 49999
     id_pool_dn = None
 
     def _get_id_pool_dn(self):
