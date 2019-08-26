@@ -29,7 +29,7 @@ from ldap0.schema.models import AttributeType
 
 import web2ldap.web.forms
 from web2ldap.web import escape_html
-import web2ldap.ldaputil.async
+import web2ldap.ldaputil.asynch
 import web2ldap.msbase
 import web2ldap.ldaputil
 import web2ldap.app.core
@@ -98,7 +98,7 @@ class excel_semicolon(csv.excel):
 csv.register_dialect('excel-semicolon', excel_semicolon)
 
 
-class LDIFWriter(web2ldap.ldaputil.async.LDIFWriter):
+class LDIFWriter(web2ldap.ldaputil.asynch.LDIFWriter):
 
     def pre_processing(self):
         return
@@ -113,17 +113,17 @@ class LDIFWriter(web2ldap.ldaputil.async.LDIFWriter):
                 ]
             )
         )
-        web2ldap.ldaputil.async.LDIFWriter.pre_processing(self)
+        web2ldap.ldaputil.asynch.LDIFWriter.pre_processing(self)
 
 
-class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
+class PrintableHTMLWriter(web2ldap.ldaputil.asynch.List):
     """
     Class for writing a stream LDAP search results to a printable file
     """
     _entryResultTypes = is_search_result
 
     def __init__(self, app, dn, sub_schema, print_template_str_dict):
-        web2ldap.ldaputil.async.List.__init__(self, app.ls.l)
+        web2ldap.ldaputil.asynch.List.__init__(self, app.ls.l)
         self._app = app
         self._dn = dn
         self._s = sub_schema
@@ -131,7 +131,7 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
         return # __init__()
 
     def process_results(self, ignoreResultsNumber=0, processResultsCount=0):
-        web2ldap.ldaputil.async.List.process_results(self)
+        web2ldap.ldaputil.asynch.List.process_results(self)
         self.allResults.sort()
         # This should speed up things
         utf2display = self._app.form.utf2display
@@ -179,14 +179,14 @@ class PrintableHTMLWriter(web2ldap.ldaputil.async.List):
         return # process_results()
 
 
-class CSVWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
+class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     """
     Class for writing a stream LDAP search results to a CSV file
     """
     _entryResultTypes = is_search_result
 
     def __init__(self, l, f, sub_schema, attr_types, ldap_charset='utf-8', csv_charset='utf-8'):
-        web2ldap.ldaputil.async.AsyncSearchHandler.__init__(self, l)
+        web2ldap.ldaputil.asynch.AsyncSearchHandler.__init__(self, l)
         self._output_file = f
         self._csv_writer = csv.writer(f, dialect='excel-semicolon')
         self._s = sub_schema
@@ -222,14 +222,14 @@ class CSVWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
             self._csv_writer.writerow(csv_row_list)
 
 
-class ExcelWriter(web2ldap.ldaputil.async.AsyncSearchHandler):
+class ExcelWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     """
     Class for writing a stream LDAP search results to a Excel file
     """
     _entryResultTypes = is_search_result
 
     def __init__(self, l, f, sub_schema, attr_types, ldap_charset='utf-8'):
-        web2ldap.ldaputil.async.AsyncSearchHandler.__init__(self, l)
+        web2ldap.ldaputil.asynch.AsyncSearchHandler.__init__(self, l)
         self._f = f
         self._s = sub_schema
         self._attr_types = attr_types
@@ -480,7 +480,7 @@ def w2l_search(app):
         read_attrs = read_attr_set.names()
 
         # Create async search handler instance
-        result_handler = web2ldap.ldaputil.async.List(app.ls.l)
+        result_handler = web2ldap.ldaputil.asynch.List(app.ls.l)
 
     elif search_output in {'ldif', 'ldif1'}:
         # read all attributes

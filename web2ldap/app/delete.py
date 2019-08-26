@@ -19,7 +19,7 @@ import time
 import ldap0
 
 import web2ldap.web.forms
-import web2ldap.ldaputil.async
+import web2ldap.ldaputil.asynch
 import web2ldap.ldapsession
 import web2ldap.ldaputil
 import web2ldap.app.core
@@ -107,7 +107,7 @@ DELETE_ENTRIES_SUCCESS_TMPL = """
 """
 
 
-class DeleteLeafs(web2ldap.ldaputil.async.AsyncSearchHandler):
+class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     """
     Class for deleting entries which are results of a search.
 
@@ -119,7 +119,7 @@ class DeleteLeafs(web2ldap.ldaputil.async.AsyncSearchHandler):
     }
 
     def __init__(self, l, tree_delete_ctrl, delete_server_ctrls):
-        web2ldap.ldaputil.async.AsyncSearchHandler.__init__(self, l)
+        web2ldap.ldaputil.asynch.AsyncSearchHandler.__init__(self, l)
         self.serverctrls = delete_server_ctrls
         self.tree_delete_ctrl = tree_delete_ctrl
 
@@ -130,7 +130,7 @@ class DeleteLeafs(web2ldap.ldaputil.async.AsyncSearchHandler):
         self.nonDeletableEntries = []
         self.deletedEntries = 0
         self.noSuchObjectCounter = 0
-        web2ldap.ldaputil.async.AsyncSearchHandler.start_search(
+        web2ldap.ldaputil.asynch.AsyncSearchHandler.start_search(
             self,
             searchRoot,
             searchScope,

@@ -1,5 +1,5 @@
 """
-web2ldap.ldaputil.async - handle async LDAP operations
+web2ldap.ldaputil.asynch - handle async LDAP operations
 
 web2ldap - a web-based LDAP Client,
 see https://www.web2ldap.de for details
