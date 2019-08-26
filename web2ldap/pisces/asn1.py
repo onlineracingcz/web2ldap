@@ -98,9 +98,9 @@ class ASN1Object:
         try:
             encode = self._encode
         except AttributeError:
-            raise AttributeError, \
-                  ("%s instance does not implement _encode" %
-                   self.__class__.__name__)
+            raise AttributeError(
+                "%s instance does not implement _encode" % (self.__class__.__name__,)
+            )
         else:
             encode(io)
         if ioFlag:
@@ -200,17 +200,17 @@ class GeneralizedTime(ASN1Object):
             try:
                 val = time.gmtime(val)
             except TypeError:
-                raise TypeError, "time must be seconds or time-tuple"
+                raise TypeError("time must be seconds or time-tuple")
         yy = val[0]
         if yy >= 2000:
             yy = yy - 2000
             if yy >= 50:
                 # man this is braind-dead
-                raise ValueError, "can't handle data that far in future"
+                raise ValueError("can't handle data that far in future")
         elif yy < 2000:
             yy = yy - 1900
             if yy < 50:
-                raise ValueError, "can't handle data that far in past"
+                raise ValueError("can't handle data that far in past")
         self.val = "%02d%02d%02d%02d%02d%02dZ" % (yy, val[1], val[2],
                                                   val[3], val[4], val[5])
 
@@ -277,17 +277,17 @@ class UTCTime(ASN1Object):
             try:
                 val = time.gmtime(val)
             except TypeError:
-                raise TypeError, "time must be seconds or time-tuple"
+                raise TypeError("time must be seconds or time-tuple")
         yy = val[0]
         if yy >= 2000:
             yy = yy - 2000
             if yy >= 50:
                 # man this is braind-dead
-                raise ValueError, "can't handle data that far in future"
+                raise ValueError("can't handle data that far in future")
         elif yy < 2000:
             yy = yy - 1900
             if yy < 50:
-                raise ValueError, "can't handle data that far in past"
+                raise ValueError("can't handle data that far in past")
         self.val = "%02d%02d%02d%02d%02d%02dZ" % (yy, val[1], val[2],
                                                   val[3], val[4], val[5])
 
@@ -433,7 +433,7 @@ class ASN1Parser:
     # simplifies programming
     #
     # This code can safely raise EOFError inside methods, which will
-    # be caught by parse and raise ValueError, "unexpected end of input"
+    # be caught by parse and raise ValueError("unexpected end of input"
 
     VERBOSE = 0
 
@@ -502,7 +502,7 @@ class ASN1Parser:
             self.tag = tag = self.getTag()
             self.length = length = self.getLength()
         except EOFError:
-            raise ValueError, "unexpected end of encoded data"
+            raise ValueError("unexpected end of encoded data")
         return self._parse(tag, length)
 
     def _parse(self, tag, length):
@@ -518,9 +518,7 @@ class ASN1Parser:
             # class is context-specific
             self.val = self.parseContextSpecific()
         else:
-            raise ValueError, \
-                  "invalid or unsupported tag: %s (id %s)" % (self.tag,
-                                                              _class)
+            raise ValueError("invalid or unsupported tag: %s (id %s)" % (self.tag, _class))
         return self.val
 
     def parseBoolean(self):
@@ -624,12 +622,12 @@ class ASN1Parser:
         for octet in map(self.ord, buf[1:]):
             if octet & 0x80:
                 if num:
-                    num = (num << 7L) | (octet & 0x7F)
+                    num = (num << 7) | (octet & 0x7F)
                 else:
                     num = long(octet & 0x7f)
             else:
                 if num:
-                    final = (num << 7L) | octet
+                    final = (num << 7) | octet
                     # Is there a better way to do this?
                     # Should I just make it long all the time?
                     try:
@@ -757,7 +755,7 @@ def convertOctetsToInt(buf):
     if l <= 4:
         return struct.unpack(">l", chr(0) * (4 - l) + buf)[0]
     else:
-        val = 0L
+        val = 0
         for byte in map(ord, buf):
             val = (val << 8) | byte
         return val
