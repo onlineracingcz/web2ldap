@@ -275,12 +275,13 @@ class LDAPSyntax(object):
 
     def _regexValidate(self, attrValue):
         if self.reObj and (self.reObj.match(attrValue) is None):
-            raise LDAPSyntaxRegexNoMatch, \
+            raise LDAPSyntaxRegexNoMatch(
                 "Class %s: %r does not match pattern %r." % (
                     self.__class__.__name__,
                     attrValue,
                     self.reObj.pattern,
                 )
+            )
         return # _regexValidate()
 
     def _validate(self, attrValue):
@@ -289,12 +290,13 @@ class LDAPSyntax(object):
     def validate(self, attrValue):
         if attrValue:
             if not self._validate(attrValue):
-                raise LDAPSyntaxValueError, \
-                  "Class %s: %r does not comply to syntax (attr type %r)." % (
-                      self.__class__.__name__,
-                      attrValue,
-                      self._at,
-                  )
+                raise LDAPSyntaxValueError(
+                    "Class %s: %r does not comply to syntax (attr type %r)." % (
+                        self.__class__.__name__,
+                        attrValue,
+                        self._at,
+                    )
+                )
             self._regexValidate(attrValue)
 
     def valueButton(self, command, row, mode, link_text=None):
