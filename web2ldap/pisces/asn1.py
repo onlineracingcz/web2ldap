@@ -71,51 +71,6 @@ CONSTRUCTED = 0x20
 PRIMITVE = 0x00
 TAG_MASK = 0x1F
 
-class Displayer:
-    def __init__(self, oids=None):
-        if oids:
-            self.oids = oids
-    def __call__(self, obj, indent=0):
-        try:
-            if obj.atomic:
-                if self.oids and isinstance(obj, OID) \
-                   and self.oids.has_key(obj):
-                    info = self.oids[obj]
-                    if info.has_key('Warning'):
-                        print " " * indent, "OID", info['Description'], \
-                              "Warning"
-                    else:
-                        print " " * indent, "OID", info['Description']
-                    return
-                print " " * indent, str(obj)
-            else:
-                if isinstance(obj, Contextual):
-                    print " " * indent, "[%d]"% obj.tag
-                    display(obj.val, indent+1)
-                else:
-                    print " " * indent, obj.__class__.__name__, "{"
-                    for elt in obj.val:
-                        display(elt, indent+1)
-                    print " " * indent, "}"
-        except AttributeError:
-            print " " * indent, repr(obj)
-
-def display(obj, indent=0):
-    # XXX doesn't work on constructed yet
-    try:
-        if obj.atomic:
-            print " " * indent + str(obj)
-        else:
-            if isinstance(obj, Contextual):
-                print " " * indent, "[%d]"% obj.tag
-                display(obj.val, indent+1)
-            else:
-                print " " * indent, obj.__class__.__name__, "{"
-                for elt in obj.val:
-                    display(elt, indent+1)
-                print " " * indent, "}"
-    except AttributeError:
-        print " " * indent, repr(obj)
 
 class ASN1Object:
     atomic = 1
