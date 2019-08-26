@@ -43,7 +43,7 @@ class Extension(asn1.Sequence):
         elif len(self.val) == 2:
             self.critical, evo = None, self.val[1]
         else:
-            raise ValueError, 'X.509v3 extension field has length %d' % len(self.val)
+            raise ValueError('X.509v3 extension field has length %d' % len(self.val))
         extnId_str = str(self.extnId)
         if oidreg.has_key(extnId_str):
             try:

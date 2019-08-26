@@ -214,7 +214,7 @@ class DistributionPointName(asn1.Contextual):
             self.val = x500.RelativeDistinguishedName(val.val)
             self.nameRelativeToCRLIssuer = self.val
         else:
-            raise ValueError, "Invalid tag %d for %s" % (val.tag, self.__class__.__name__)
+            raise ValueError("Invalid tag %d for %s" % (val.tag, self.__class__.__name__))
 
     def __str__(self):
         return str(self.val)
@@ -248,7 +248,7 @@ class DistributionPoint(asn1types.AttributeSequence):
                 elif isinstance(i, asn1.Sequence):
                     self.cRLIssuer = GeneralNames(i.val)
             else:
-                raise ValueError, "Invalid tag %d for %s" % (i.tag, self.__class__.__name__)
+                raise ValueError("Invalid tag %d for %s" % (i.tag, self.__class__.__name__))
 
 
 class CRLDistPointsSyntax(asn1types.SequenceOf):
@@ -303,7 +303,7 @@ class PrivateKeyUsagePeriod(asn1.Sequence):
             elif i.tag == 1:
                 self.notAfter = strptime(i.val)
             else:
-                raise ValueError, "Invalid tag %d for %s" % (i.tag, self.__class__.__name__)
+                raise ValueError("Invalid tag %d for %s" % (i.tag, self.__class__.__name__))
 
     def __str__(self):
         result = []
