@@ -141,13 +141,13 @@ def SearchForm_adv(app):
     if not len(search_option_list) == len(search_attr_list) == len(search_string_list):
         raise web2ldap.app.core.ErrorExit(u'Invalid search form data.')
 
-    search_mode = app.form.getInputValue('search_mode', [ur'(&%s)'])[0]
+    search_mode = app.form.getInputValue('search_mode', [u'(&%s)'])[0]
 
     search_mode_select = web2ldap.web.forms.Select(
         'search_mode', u'Search mode', 1,
         options=[
-            (ur'(&%s)', u'all'),
-            (ur'(|%s)', u'any'),
+            (u'(&%s)', u'all'),
+            (u'(|%s)', u'any'),
         ],
         default=search_mode
     )

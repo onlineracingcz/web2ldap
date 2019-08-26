@@ -340,7 +340,7 @@ def w2l_search(app):
 
     search_filter = app.form.getInputValue('filterstr', [filterstr])
 
-    search_mode = app.form.getInputValue('search_mode', [ur'(&%s)'])[0]
+    search_mode = app.form.getInputValue('search_mode', [u'(&%s)'])[0]
     search_option = app.form.getInputValue('search_option', [])
     search_attr = app.form.getInputValue('search_attr', [])
     search_mr = app.form.getInputValue('search_mr', [None]*len(search_attr))

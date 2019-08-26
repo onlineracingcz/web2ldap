@@ -710,7 +710,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
     },
     passwd_template=os.path.join(templates_dir, 'ae-dir', 'passwd.html'),
     passwd_hashtypes=('ssha', ''),
-    passwd_genchars=ur'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+    passwd_genchars=u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
     passwd_genlength=24,
     groupadm_filterstr_template=r'(&(|(objectClass=aeGroup)(objectClass=aeMailGroup))(aeStatus=0)(!(memberURL=*))(|%s))',
     groupadm_optgroup_bounds=(-2, -1),
@@ -1017,7 +1017,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     # Parameters for password generation
     # Unicode string containing all valid characters used when generating
     # password values
-    passwd_genchars=ur'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+    passwd_genchars=u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
     # Length of generated password
     passwd_genlength=24,
 

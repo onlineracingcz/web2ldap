@@ -233,7 +233,7 @@ class Web2LDAPForm(Form):
 class SearchAttrs(Input):
 
     def __init__(self, name='search_attrs', text=u'Attributes to be read'):
-        Input.__init__(self, name, text, 1000, 1, ur'[@*+0-9.\w,_;-]+')
+        Input.__init__(self, name, text, 1000, 1, u'[@*+0-9.\\w,_;-]+')
 
     def setValue(self, value):
         value = ','.join(
@@ -310,19 +310,19 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
                 default=u'-1'
             ),
             InclOpAttrsCheckbox(default=u'yes', checked=False),
-            Select('search_mode', u'Search Mode', 1, options=[ur'(&%s)', ur'(|%s)']),
+            Select('search_mode', u'Search Mode', 1, options=[u'(&%s)', u'(|%s)']),
             Input(
                 'search_attr',
                 u'Attribute(s) to be searched',
                 100,
                 web2ldapcnf.max_searchparams,
-                ur'[\w,_;-]+',
+                u'[\\w,_;-]+',
             ),
             Input(
                 'search_mr', u'Matching Rule',
                 100,
                 web2ldapcnf.max_searchparams,
-                ur'[\w,_;-]+',
+                u'[\\w,_;-]+',
             ),
             Select(
                 'search_option', u'Search option',
@@ -650,7 +650,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
                 1200, 1,
                 '.*',
             ),
-            Input('delete_attr', u'Attribute to be deleted', 255, 100, ur'[\w_;-]+'),
+            Input('delete_attr', u'Attribute to be deleted', 255, 100, u'[\\w_;-]+'),
         ])
         return res
 
@@ -782,10 +782,10 @@ class Web2LDAPForm_read(Web2LDAPForm):
                 options=[u'0', u'1'],
                 default=u'0',
             ),
-            Input('read_attr', u'Read attribute', 255, 100, ur'[\w_;-]+'),
+            Input('read_attr', u'Read attribute', 255, 100, u'[\\w_;-]+'),
             Select('read_attrmode', u'Read attribute', 1, options=(u'view', u'load')),
             Input('read_attrindex', u'Read attribute', 255, 1, u'[0-9]+'),
-            Input('read_attrmimetype', u'MIME type', 255, 1, ur'[\w.-]+/[\w.-]+'),
+            Input('read_attrmimetype', u'MIME type', 255, 1, u'[\\w.-]+/[\\w.-]+'),
             Select(
                 'read_output', u'Read output format',
                 1,
@@ -793,7 +793,7 @@ class Web2LDAPForm_read(Web2LDAPForm):
                 default=u'template',
             ),
             SearchAttrs(),
-            Input('read_expandattr', u'Attributes to be read', 1000, 50, ur'[*+\w,_;-]+'),
+            Input('read_expandattr', u'Attributes to be read', 1000, 50, u'[*+\\w,_;-]+'),
         ])
         return res
 
@@ -966,7 +966,7 @@ class ObjectClassSelect(Select):
             ignoreCase=1,
             multiSelect=1
         )
-        self.setRegex(ur'[\w]+')
+        self.setRegex(u'[\\w]+')
         self.maxLen = 200
         return # end of ObjectClassSelect()
 
