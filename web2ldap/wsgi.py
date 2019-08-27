@@ -7,7 +7,7 @@ from __future__ import absolute_import
 
 import sys
 import os
-import SocketServer
+import socketserver
 import time
 import wsgiref.util
 import wsgiref.simple_server
@@ -26,7 +26,7 @@ class W2lWSGIRequestHandler(wsgiref.simple_server.WSGIRequestHandler):
     """
 
 
-class W2lWSGIServer(wsgiref.simple_server.WSGIServer, SocketServer.ThreadingMixIn):
+class W2lWSGIServer(wsgiref.simple_server.WSGIServer, socketserver.ThreadingMixIn):
     """
     custom WSGIServer class
     """
