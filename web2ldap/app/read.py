@@ -78,7 +78,7 @@ def generate_vcard(template_str, vcard_entry):
 class DisplayEntry(IterableUserDict):
 
     def __init__(self, app, dn, schema, entry, sep_attr, commandbutton):
-        assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
         assert isinstance(schema, SubSchema), \
             TypeError('Expected schema to be instance of SubSchema, was %r' % (schema))
         self._app = app
@@ -148,7 +148,7 @@ class DisplayEntry(IterableUserDict):
         return result
 
     def _get_rdn_dict(self, dn):
-        assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
         entry_rdn_dict = ldap0.schema.models.Entry(
             self.schema,
             dn.encode(self._app.ls.charset),
@@ -521,7 +521,7 @@ def w2l_read(app):
                     ('scope', u'0'),
                     ('filterstr', u'(objectClass=*)'),
                     ('search_resnumber', u'0'),
-                    ('search_attrs', u','.join(map(unicode, wanted_attrs))),
+                    ('search_attrs', u','.join(map(str, wanted_attrs))),
                 ],
                 extrastr='\n'.join((
                     export_field.inputHTML(),

@@ -267,15 +267,15 @@ class AppHandler(LogHelper):
         Build the HTML text of a anchor with form parameters
         """
         assert isinstance(command, bytes), \
-            TypeError('command must be string, but was %r', command)
+            TypeError('command must be str, but was %r', command)
         assert isinstance(anchor_text, bytes), \
             TypeError('anchor_text must be bytes, but was %r', anchor_text)
-        assert anchor_id is None or isinstance(anchor_id, unicode), \
-            TypeError('anchor_id must be None or unicode, but was %r', anchor_id)
+        assert anchor_id is None or isinstance(anchor_id, str), \
+            TypeError('anchor_id must be None or str, but was %r', anchor_id)
         assert target is None or isinstance(target, str), \
-            TypeError('target must be None or string, but was %r', target)
-        assert title is None or isinstance(title, unicode), \
-            TypeError('title must be None or unicode, but was %r', title)
+            TypeError('target must be None or str, but was %r', target)
+        assert title is None or isinstance(title, str), \
+            TypeError('title must be None or str, but was %r', title)
         target_attr = ''
         if target:
             target_attr = ' target="%s"' % (target)
@@ -344,9 +344,9 @@ class AppHandler(LogHelper):
         """
         Execute function for self.command
         """
-        assert isinstance(self.dn, unicode), \
+        assert isinstance(self.dn, str), \
             TypeError(
-                "Class attribute %s.dn must be unicode, was %r" % (
+                "Class attribute %s.dn must be str, was %r" % (
                     self.__class__.__name__,
                     self.dn,
                 )
@@ -392,7 +392,7 @@ class AppHandler(LogHelper):
 
     def display_dn(self, dn, commandbutton=False):
         """Display a DN as LDAP URL with or without button"""
-        assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
         dn_str = self.form.utf2display(dn or u'- World -')
         if commandbutton:
             command_buttons = [
@@ -601,12 +601,12 @@ class AppHandler(LogHelper):
         assert input_ldapurl.cred is None or isinstance(input_ldapurl.cred, bytes), TypeError(
             "Type of 'input_ldapurl.cred' must be bytes, was %r" % (input_ldapurl.cred)
         )
-        assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
-        assert who is None or isinstance(who, unicode), TypeError(
-            "Type of 'who' must be unicode, was %r" % (who)
+        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
+        assert who is None or isinstance(who, str), TypeError(
+            "Type of 'who' must be str, was %r" % (who)
         )
-        assert cred is None or isinstance(cred, unicode), TypeError(
-            "Type of 'cred' must be unicode, was %r" % (cred)
+        assert cred is None or isinstance(cred, str), TypeError(
+            "Type of 'cred' must be str, was %r" % (cred)
         )
 
         if not web2ldap.ldaputil.is_dn(dn):

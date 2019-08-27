@@ -58,8 +58,8 @@ class ErrorExit(Exception):
     """Base class for web2ldap application exceptions"""
 
     def __init__(self, Msg):
-        assert isinstance(Msg, unicode), \
-            TypeError("Type of argument 'Msg' must be unicode, was %r" % (Msg))
+        assert isinstance(Msg, str), \
+            TypeError("Type of argument 'Msg' must be str, was %r" % (Msg))
         self.Msg = Msg
 
 

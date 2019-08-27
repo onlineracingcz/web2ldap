@@ -75,8 +75,8 @@ class Web2LDAPForm(Form):
             sp_entity='&nbsp;&nbsp;',
             lf_entity='\n'
         ):
-        assert isinstance(value, unicode), \
-            TypeError('Argument value must be unicode, was %r' % (value))
+        assert isinstance(value, str), \
+            TypeError('Argument value must be str, was %r' % (value))
         value = value or u''
         return escape_html(
             self.uc_encode(value, 'replace')[0]
@@ -224,7 +224,7 @@ class Web2LDAPForm(Form):
                 if not p in ignoreFieldNames
             ]:
             for val in f.value:
-                if not isinstance(val, unicode):
+                if not isinstance(val, str):
                     val = self.uc_decode(val)[0]
                 result.append(self.hiddenFieldHTML(f.name, val, u''))
         return '\n'.join(result) # hiddenInputFieldString()

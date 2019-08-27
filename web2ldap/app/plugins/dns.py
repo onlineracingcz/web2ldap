@@ -133,7 +133,7 @@ class AssociatedDomain(DNSDomain):
             if av.endswith(u'.in-addr.arpa'):
                 try:
                     ip_addr_u = u'.'.join(
-                        map(unicode, reversed(map(int, av.split(u'.')[0:4])))
+                        map(str, reversed(map(int, av.split(u'.')[0:4])))
                     )
                 except ValueError:
                     pass

@@ -598,7 +598,7 @@ class LDAPSession(object):
         """
         if not uri:
             raise ValueError('Empty value for uri')
-        elif isinstance(uri, (bytes, unicode)):
+        elif isinstance(uri, (bytes, str)):
             uri_list = [uri]
         elif isinstance(uri, (list, tuple)):
             uri_list = uri

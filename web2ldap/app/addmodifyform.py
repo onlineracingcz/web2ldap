@@ -260,7 +260,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
             existing_object_classes=None,
             invalid_attrs=None
         ):
-        assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
         web2ldap.app.read.DisplayEntry.__init__(
             self, app, dn, schema, entry, 'fieldSep', False
         )
@@ -561,7 +561,7 @@ def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
           %s
         </p>
         """
-    assert isinstance(parent_dn, unicode), TypeError("Argument 'parent_dn' must be unicode, was %r" % (parent_dn))
+    assert isinstance(parent_dn, str), TypeError("Argument 'parent_dn' must be str, was %r" % (parent_dn))
     if parent_dn is None:
         return ''
     supentry_display_strings = []

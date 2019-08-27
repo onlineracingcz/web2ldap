@@ -74,7 +74,7 @@ def ietf_oid_str(oid):
 
 def is_dn(s):
     """returns 1 if s is a LDAP DN"""
-    assert isinstance(s, unicode), TypeError("Type of argument 's' must be unicode, was %r" % (s))
+    assert isinstance(s, str), TypeError("Type of argument 's' must be str, was %r" % (s))
     return ldap0.dn.is_dn(s.encode('utf-8'))
 
 
@@ -88,7 +88,7 @@ def explode_rdn_attr(rdn):
     containing the attribute type and the attribute value unescaping
     the attribute value according to RFC 2253 if necessary.
     """
-    assert isinstance(rdn, unicode), TypeError("Argument 'rdn' must be unicode, was %r" % (rdn))
+    assert isinstance(rdn, str), TypeError("Argument 'rdn' must be str, was %r" % (rdn))
     attr_type, attr_value = rdn.split(u'=', 1)
     if attr_value:
         r = []
@@ -106,11 +106,11 @@ def explode_rdn_attr(rdn):
 
 
 def rdn_dict(dn):
-    assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+    assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
     if not dn:
         return {}
     rdn, _ = split_rdn(dn)
-    if isinstance(rdn, unicode):
+    if isinstance(rdn, str):
         rdn = rdn.encode('utf-8')
     result = {}
     for i in ldap0.dn.explode_rdn(rdn.strip()):
@@ -127,7 +127,7 @@ def explode_dn(dn):
     Unicode wrapper function for ldap0.dn.explode_dn() which returns [] for
     a zero-length DN
     """
-    assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+    assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
     if not dn:
         return []
     return [
@@ -137,7 +137,7 @@ def explode_dn(dn):
 
 
 def normalize_dn(dn):
-    assert isinstance(dn, unicode), TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+    assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
     return u','.join(explode_dn(dn))
 
 
@@ -220,7 +220,7 @@ def split_rdn(dn):
 
 def escape_ldap_filter_chars(search_string, charset='utf-8'):
     escape_mode = 0
-    if isinstance(search_string, unicode):
+    if isinstance(search_string, str):
         search_string = search_string.encode(charset)
     if isinstance(search_string, bytes):
         try:

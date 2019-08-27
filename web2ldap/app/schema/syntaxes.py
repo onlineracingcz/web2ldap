@@ -228,8 +228,8 @@ class LDAPSyntax(object):
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         if not entry:
             entry = ldap0.schema.models.Entry(schema, dn.encode(app.ls.charset), {})
-        assert isinstance(dn, unicode), \
-            TypeError("Argument 'dn' must be unicode, was %r" % (dn))
+        assert isinstance(dn, str), \
+            TypeError("Argument 'dn' must be str, was %r" % (dn))
         assert isinstance(attrType, bytes) or attrType is None, \
             TypeError("Argument 'attrType' must be bytes or None, was %r" % (attrType))
         assert isinstance(attrValue, bytes) or attrValue is None, \
@@ -1584,7 +1584,7 @@ class SelectList(DirectoryString):
         # Finally return the sorted option list
         result = []
         for k, v in d.items():
-            if isinstance(v, unicode):
+            if isinstance(v, str):
                 result.append((k, v, None))
             elif isinstance(v, tuple):
                 result.append((k, v[0], v[1]))

@@ -2869,9 +2869,9 @@ def build_reg():
     global OID_REG
     for oid, name, desc, ref in OID_LIST:
         assert isinstance(oid, str), TypeError("Wrong type for 'oid' for OID %r" % (oid))
-        assert isinstance(name, unicode), TypeError("Wrong type for 'name' for OID %r" % (oid))
-        assert isinstance(desc, unicode), TypeError("Wrong type for 'description' for OID %r" % (oid))
-        assert isinstance(ref, unicode), TypeError("Wrong type for 'reference' for OID %r" % (oid))
+        assert isinstance(name, str), TypeError("Wrong type for 'name' for OID %r" % (oid))
+        assert isinstance(desc, str), TypeError("Wrong type for 'description' for OID %r" % (oid))
+        assert isinstance(ref, str), TypeError("Wrong type for 'reference' for OID %r" % (oid))
         if oid in OID_REG:
             logger.warn(
                 'Double OID %r in web2ldap.ldaputil.oidreg.OID_LIST: %r vs. %r',

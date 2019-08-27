@@ -119,7 +119,7 @@ class Field(object):
             return pattern
         elif isinstance(pattern, bytes):
             return pattern, 0
-        elif isinstance(pattern, unicode):
+        elif isinstance(pattern, str):
             return pattern.encode(self.charset), 0
         return pattern, 0
 
@@ -172,7 +172,7 @@ class Field(object):
 
     def _decodeValue(self, value):
         """
-        Return unicode to be stored in self.value
+        Return str to be stored in self.value
         """
         try:
             value = value.decode(self.charset)
@@ -496,7 +496,7 @@ class Radio(Field):
                 option_vals.add(i[0])
             else:
                 option_vals.add(i)
-        if isinstance(default, unicode):
+        if isinstance(default, str):
             if default not in option_vals:
                 # Append option to list of options
                 self.options.append(default)
@@ -508,7 +508,7 @@ class Radio(Field):
                 if v not in option_vals
             ])
         elif default is not None:
-            raise TypeError('Expected None, unicode or list for argument default, got %r' % (default))
+            raise TypeError('Expected None, str or list for argument default, got %r' % (default))
         self.default = default
 
 

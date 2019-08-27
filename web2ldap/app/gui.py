@@ -525,7 +525,7 @@ def attrtype_select_field(
     Return web2ldap.web.forms.Select instance for choosing attribute type names
     """
     attr_options_dict = {}
-    for attr_type in (map(unicode, default_attr_options or []) or app.schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
+    for attr_type in (map(str, default_attr_options or []) or app.schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
         attr_type_se = app.schema.get_obj(ldap0.schema.models.AttributeType, attr_type)
         if attr_type_se:
             if attr_type_se.names:
@@ -671,7 +671,7 @@ def exception_message(app, h1_msg, error_msg):
       (Security note: Must already be quoted/escaped!)
     """
     top_section(app, 'Error', main_menu(app), context_menu_list=[])
-    if isinstance(error_msg, unicode):
+    if isinstance(error_msg, str):
         error_msg = error_msg.encode(app.form.accept_charset)
     app.outf.write(
         """
