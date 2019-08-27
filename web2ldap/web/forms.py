@@ -14,7 +14,7 @@ from __future__ import absolute_import
 import codecs
 import sys
 import re
-import urllib
+import urllib.parse
 import uuid
 
 from . import escape_html
@@ -999,7 +999,7 @@ class Form:
 
         contentLength = 0
 
-        unquote = urllib.unquote_plus
+        unquote = urllib.parse.unquote_plus
 
         # Loop over all name attributes declared
         for param in inputlist:

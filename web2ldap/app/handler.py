@@ -17,7 +17,7 @@ import sys
 import inspect
 import socket
 import time
-import urllib
+import urllib.parse
 import logging
 
 from ipaddress import ip_address, ip_network
@@ -289,7 +289,7 @@ class AppHandler(LogHelper):
             title_attr,
             self.form.action_url(command, self.sid),
             '&amp;'.join([
-                '%s=%s' % (param_name, urllib.quote(self.form.uc_encode(param_value)[0]))
+                '%s=%s' % (param_name, urllib.parse.quote(self.form.uc_encode(param_value)[0]))
                 for param_name, param_value in form_parameters
             ]),
             anchor_id or '',

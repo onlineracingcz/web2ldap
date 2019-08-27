@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 import time
 import csv
-import urllib
+import urllib.parse
 
 import xlwt
 
@@ -843,7 +843,7 @@ def w2l_search(app):
                     if r[0] in is_search_result:
                         mailtolist.update(r[1][1].get('mail', r[1][1].get('rfc822Mailbox', [])))
                 if mailtolist:
-                    mailtolist = [urllib.quote(m) for m in mailtolist]
+                    mailtolist = [urllib.parse.quote(m) for m in mailtolist]
                     app.outf.write('Mail to all <a href="mailto:%s?cc=%s">Cc:-ed</a> - <a href="mailto:?bcc=%s">Bcc:-ed</a>' % (
                         mailtolist[0],
                         ','.join(mailtolist[1:]),

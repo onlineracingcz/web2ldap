@@ -19,7 +19,7 @@ import os
 import re
 import imghdr
 import sndhdr
-import urllib
+import urllib.parse
 import uuid
 import datetime
 import time
@@ -438,8 +438,8 @@ class Audio(Binary):
             """ % (
                 mimetype,
                 self._app.form.script_name, self._app.sid,
-                urllib.quote(self._dn.encode(self._app.form.accept_charset)),
-                urllib.quote(self._at),
+                urllib.parse.quote(self._dn.encode(self._app.form.accept_charset)),
+                urllib.parse.quote(self._at),
                 valueindex,
                 len(self._av),
                 mimetype
@@ -1057,8 +1057,8 @@ class Image(Binary):
             '?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d&amp;read_attrmode=load'
         ) % (
             self._app.form.script_name, self._app.sid,
-            urllib.quote(self._dn.encode(self._app.form.accept_charset)),
-            urllib.quote(self._at),
+            urllib.parse.quote(self._dn.encode(self._app.form.accept_charset)),
+            urllib.parse.quote(self._at),
             valueindex,
         )
         if attr_value_len <= self.inline_maxlen:
