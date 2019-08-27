@@ -31,8 +31,8 @@
 
 <p>Install in a Python virtual environment:</p>
 <pre class="cli">
-virtualenv -p python2.7 --no-site-packages /opt/web2ldap
-/opt/web2ldap/bin/pip2 install --find-links https://www.web2ldap.de/download.html web2ldap
+python3 -m venv --no-site-packages /opt/web2ldap
+/opt/web2ldap/bin/pip3 install --find-links https://www.web2ldap.de/download.html web2ldap
 </pre>
 
 <p>
@@ -70,7 +70,7 @@ cp -av /opt/web2ldap/etc/web2ldap /path/to/backupdir/
   Then install the web2ldap upgrade (without necessarily upgrading other modules) like this:
 </p>
 <pre class="cli">
-/opt/web2ldap/bin/pip2 install --upgrade --upgrade-strategy only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap
+/opt/web2ldap/bin/pip3 install --upgrade --upgrade-strategy only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap
 </pre>
 
 <p>
