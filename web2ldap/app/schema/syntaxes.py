@@ -369,7 +369,7 @@ class LDAPSyntax(object):
         return self.mimeType
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        if ldap0.ldapurl.isLDAPUrl(self._av):
+        if ldap0.ldapurl.is_ldapurl(self._av):
             displayer_class = LDAPUrl
         elif Uri.reObj.match(self._av) is not None:
             displayer_class = Uri
@@ -978,7 +978,7 @@ class Uri(DirectoryString):
             display_url = u''
         else:
             display_url = u' (%s)' % (url)
-        if ldap0.ldapurl.isLDAPUrl(url):
+        if ldap0.ldapurl.is_ldapurl(url):
             return '<a href="%s?%s">%s%s</a>' % (
                 self._app.form.script_name,
                 self._app.form.utf2display(url),

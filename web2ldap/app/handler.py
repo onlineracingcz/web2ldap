@@ -23,7 +23,7 @@ import logging
 from ipaddress import ip_address, ip_network
 
 import ldap0
-from ldap0.ldapurl import isLDAPUrl
+from ldap0.ldapurl import is_ldapurl
 from ldap0.dn import DNObj
 from ldap0.err import PasswordPolicyException, PasswordPolicyExpirationWarning
 
@@ -172,7 +172,7 @@ class AppHandler(LogHelper):
         self.schema = None
         self.cfg_key = None
         # initialize some more if query string is an LDAP URL
-        if isLDAPUrl(self.query_string):
+        if is_ldapurl(self.query_string):
             self.ldap_url = ExtendedLDAPUrl(self.query_string)
             if not self.command:
                 self.command = SCOPE2COMMAND[self.ldap_url.scope]
@@ -537,7 +537,7 @@ class AppHandler(LogHelper):
         """
         Extract parameters either from LDAP URL in query string or real form input
         """
-        if isLDAPUrl(self.form.query_string):
+        if is_ldapurl(self.form.query_string):
             # Extract the connection parameters from a LDAP URL
             try:
                 input_ldapurl = ExtendedLDAPUrl(self.form.query_string)
@@ -698,7 +698,7 @@ class AppHandler(LogHelper):
 
         try:
 
-            if self.command in FORM_CLASS and not isLDAPUrl(self.form.query_string):
+            if self.command in FORM_CLASS and not is_ldapurl(self.form.query_string):
                 # get the input fields
                 self.form.getInputFields()
 
