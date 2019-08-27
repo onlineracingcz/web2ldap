@@ -6,19 +6,12 @@ RUN zypper --non-interactive dup --auto-agree-with-licenses --no-allow-vendor-ch
 
 # install packages from openSUSE standard repo
 RUN zypper --non-interactive install --no-confirm --no-recommends ca-certificates ca-certificates-mozilla
-# Python2 and some modules
-RUN zypper --non-interactive install --no-confirm --no-recommends python python2-virtualenv python2-setuptools python-pyweblib python-ipaddress python2-asn1crypto python2-xlwt python2-paramiko python2-certifi python2-bcrypt python2-pyasn1-modules python2-dnspython
-
-# add AE-DIR repo
-RUN zypper --non-interactive addrepo --enable --refresh https://download.opensuse.org/repositories/home:/stroeder:/AE-DIR/openSUSE_Tumbleweed/home:stroeder:AE-DIR.repo
-# refresh repo cache
-RUN zypper --non-interactive --gpg-auto-import-keys refresh
-# install non-standard Python modules
-RUN zypper --non-interactive install --no-confirm --no-recommends python-ldap0
+# Python3 and some modules
+RUN zypper --non-interactive install --no-confirm --no-recommends python3 python3-virtualenv python3-setuptools
 
 # install web2ldap in virtual env
-RUN virtualenv-2.7 -p python2.7 --system-site-packages /opt/web2ldap
-RUN /opt/web2ldap/bin/pip2 install --no-cache-dir --upgrade-strategy=only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap
+RUN python3 -m venv --no-site-packages /opt/web2ldap
+RUN /opt/web2ldap/bin/pip3 install --no-cache-dir --upgrade-strategy=only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap
 
 # Override web2ldap's config module files
 ADD --chown=root:root web2ldapcnf/*.py /opt/web2ldap/etc/web2ldap/web2ldapcnf/
