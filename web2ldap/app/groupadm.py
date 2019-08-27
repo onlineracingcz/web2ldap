@@ -80,7 +80,7 @@ def group_select_field(
                     for dn in optgroup_dict.keys()
                     if dn is not None and dn != colgroup_memberdn and dn != colgroup_authzdn
                 ],
-                key=unicode.lower
+                key=str.lower
             )
         )
         optgroup_list.append(None)
@@ -91,7 +91,7 @@ def group_select_field(
     for optgroup_dn in optgroup_list:
         if optgroup_dn:
             option_list.append('<optgroup label="%s">' % (app.form.utf2display(optgroup_dn)))
-        for dn in sorted(optgroup_dict[optgroup_dn], key=unicode.lower):
+        for dn in sorted(optgroup_dict[optgroup_dn], key=str.lower):
             option_text = app.form.utf2display(str(
                 groups_dict[dn].get(
                     'cn',
@@ -204,7 +204,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         error_msg = 'Size or time limit exceeded while searching group entries!'
 
     all_group_entries = all_groups_dict.keys()
-    all_group_entries.sort(key=unicode.lower)
+    all_group_entries.sort(key=str.lower)
 
     #################################################################
     # Apply changes to group membership
@@ -333,7 +333,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         error_msg = 'Size or time limit exceeded while searching group entries!'
 
     remove_group_dns = remove_groups_dict.keys()
-    remove_group_dns.sort(key=unicode.lower)
+    remove_group_dns.sort(key=str.lower)
 
     all_groups_dict.update(remove_groups_dict)
 

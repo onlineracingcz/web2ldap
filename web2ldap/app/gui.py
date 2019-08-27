@@ -545,7 +545,7 @@ def attrtype_select_field(
         attr_options_dict[attr_type_name] = (attr_type_name, attr_type_desc)
     sorted_attr_options = [
         (at, attr_options_dict[at][0], attr_options_dict[at][1])
-        for at in sorted(attr_options_dict.keys(), key=unicode.lower)
+        for at in sorted(attr_options_dict.keys(), key=str.lower)
     ]
     # Create a select field instance for attribute type name
     attr_select = web2ldap.web.forms.Select(
