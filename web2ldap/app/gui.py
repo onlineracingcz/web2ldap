@@ -21,7 +21,7 @@ from hashlib import md5
 import ldap0
 import ldap0.ldapurl
 from ldap0.ldapurl import LDAPUrl
-from ldap0.filter import escape_filter_chars
+import ldap0.filter
 
 import web2ldapcnf
 
@@ -276,7 +276,7 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
                 (
                     'filterstr',
                     '(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (
-                        escape_filter_chars(app.dn),
+                        ldap0.filter.escape_str(app.dn),
                     ),
                 ),
                 ('scope', str(ldap0.SCOPE_SUBTREE)),
