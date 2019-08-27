@@ -53,7 +53,7 @@ def check_inst():
     logger.debug('os.name= %r', os.name)
     logger.debug('socket.has_ipv6= %r', socket.has_ipv6)
 
-    if sys.version_info.major != 2 and sys.version_info.major != 7:
+    if sys.version_info.major < 3:
         logger.error('Unsupported Python version: sys.version_info= %r', sys.version_info)
         raise SystemExit('Unsupported Python version!')
 
