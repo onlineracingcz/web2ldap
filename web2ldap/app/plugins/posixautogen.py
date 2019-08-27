@@ -79,7 +79,7 @@ class AutogenNumber(object):
         if idnumber > self.maxNewValue:
             # end of valid range reached => no value suggested
             return u''
-        return unicode(idnumber)
+        return str(idnumber)
 
 
 class AutogenUIDNumber(UidNumber, AutogenNumber):

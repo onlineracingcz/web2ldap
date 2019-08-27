@@ -197,7 +197,7 @@ def get_entry_input(app):
         in_ldif = app.form.field['in_ldif'].getLDIFRecords()
     except ValueError as e:
         raise web2ldap.app.core.ErrorExit(
-            u'LDIF parsing error: %s' % (app.form.utf2display(unicode(e)))
+            u'LDIF parsing error: %s' % (app.form.utf2display(str(e)))
         )
     else:
         if in_ldif:
@@ -245,9 +245,9 @@ def get_entry_input(app):
                     attr_instance.validate(attr_value)
                 except LDAPSyntaxValueError:
                     try:
-                        invalid_attrs[unicode(attr_type)].append(attr_index)
+                        invalid_attrs[str(attr_type)].append(attr_index)
                     except KeyError:
-                        invalid_attrs[unicode(attr_type)] = [attr_index]
+                        invalid_attrs[str(attr_type)] = [attr_index]
 
     return entry, invalid_attrs # get_entry_input()
 
@@ -370,7 +370,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
             else:
                 attr_title = u''
                 attr_type_tags = []
-                attr_type_name = unicode(nameoroid).split(';')[0]
+                attr_type_name = str(nameoroid).split(';')[0]
                 if nameoroid_se:
                     attr_type_name = (nameoroid_se.names or [nameoroid_se.oid])[0].decode(self._app.ls.charset)
                     try:
@@ -400,7 +400,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                         web2ldap.app.gui.HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
                         input_field.inputHTML(
                             id_value=u'_'.join((
-                                u'inputattr', attr_type_name, unicode(attr_index)
+                                u'inputattr', attr_type_name, str(attr_index)
                             )).encode(self._app.form.accept_charset),
                             title=attr_title
                         ),
@@ -1221,7 +1221,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
             text_supentry=supentry_display_string,
             form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
-            field_currentformtype=app.form.hiddenFieldHTML('in_oft', unicode(input_formtype), u''),
+            field_currentformtype=app.form.hiddenFieldHTML('in_oft', str(input_formtype), u''),
         )
     )
 

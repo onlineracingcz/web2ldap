@@ -328,16 +328,16 @@ def w2l_searchform(
             searchoptions_template_str=searchoptions_template_str.format(
                 field_search_root=search_root_field.inputHTML(),
                 field_search_scope=app.form.field['scope'].inputHTML(
-                    default=app.form.getInputValue('scope', [unicode(scope)])[0]
+                    default=app.form.getInputValue('scope', [str(scope)])[0]
                 ),
                 field_search_resnumber=app.form.field['search_resnumber'].inputHTML(
                     default=app.form.getInputValue(
                         'search_resnumber',
-                        [unicode(app.cfg_param('search_resultsperpage', 10))],
+                        [str(app.cfg_param('search_resultsperpage', 10))],
                     )[0]
                 ),
                 field_search_lastmod=app.form.field['search_lastmod'].inputHTML(
-                    default=app.form.getInputValue('search_lastmod', [unicode(-1)])[0]
+                    default=app.form.getInputValue('search_lastmod', [str(-1)])[0]
                 ),
                 value_search_attrs=app.form.utf2display(app.form.getInputValue('search_attrs', [u''])[0]),
             ),

@@ -236,8 +236,8 @@ def bulkmod_input_form(
             field_hidden_filterstr=app.form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
             field_hidden_scope=app.form.hiddenFieldHTML(
                 'scope',
-                unicode(scope),
-                unicode(web2ldap.ldaputil.SEARCH_SCOPE_STR[scope]),
+                str(scope),
+                str(web2ldap.ldaputil.SEARCH_SCOPE_STR[scope]),
             ),
             field_bulkmod_newsuperior=app.form.field['bulkmod_newsuperior'].inputHTML(
                 default=bulkmod_newsuperior,
@@ -300,7 +300,7 @@ def bulkmod_confirmation_form(
             ]) or '- none -',
             field_hidden_dn=app.form.hiddenFieldHTML('dn', dn, dn),
             field_hidden_filterstr=app.form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
-            field_hidden_scope=app.form.hiddenFieldHTML('scope', unicode(scope), unicode(web2ldap.ldaputil.SEARCH_SCOPE_STR[scope])),
+            field_hidden_scope=app.form.hiddenFieldHTML('scope', str(scope), str(web2ldap.ldaputil.SEARCH_SCOPE_STR[scope])),
             field_bulkmod_newsuperior=app.form.hiddenFieldHTML(
                 'bulkmod_newsuperior',
                 bulkmod_newsuperior,

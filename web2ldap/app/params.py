@@ -82,7 +82,7 @@ def w2l_params(app):
         if not (control_enabled or ldapparam_all_controls or control_oid in app.ls.supportedControl):
             continue
         name, description, _ = OID_REG[control_oid]
-        control_oid_u = unicode(control_oid, 'ascii')
+        control_oid_u = str(control_oid, 'ascii')
         control_table_rows.append(
             """
             <tr>
@@ -151,7 +151,7 @@ def w2l_params(app):
                 {False:'all', True:'only known'}[ldapparam_all_controls],
                 [
                     ('dn', app.dn),
-                    ('params_all_controls', unicode(int(not ldapparam_all_controls))),
+                    ('params_all_controls', str(int(not ldapparam_all_controls))),
                 ],
                 title=u'Show %s controls' % (
                     {False:u'all', True:u'known'}[ldapparam_all_controls],

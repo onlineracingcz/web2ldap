@@ -98,7 +98,7 @@ def read_template(app, config_key, form_desc=u'', tmpl_filename=None):
 
 
 def dn_anchor_hash(dn):
-    return unicode(md5(dn.strip().lower().encode('utf-8')).hexdigest())
+    return str(md5(dn.strip().lower().encode('utf-8')).hexdigest())
 
 
 def ts2repr(time_divisors, ts_sep, ts_value):
@@ -508,7 +508,7 @@ def ldap_url_anchor(app, data):
         [
             ('dn', l.dn.decode(app.form.accept_charset)),
             ('filterstr', (l.filterstr or '(objectClass=*)').decode(app.form.accept_charset)),
-            ('scope', unicode(l.scope or ldap0.SCOPE_SUBTREE)),
+            ('scope', str(l.scope or ldap0.SCOPE_SUBTREE)),
         ],
     )
     # end of ldap_url_anchor()

@@ -279,7 +279,7 @@ def del_subtree_form(app, scope):
             (str(ldap0.SCOPE_ONELEVEL), u'All entries below this entry (recursive)'),
             (str(ldap0.SCOPE_SUBTREE), u'All entries including this entry (recursive)'),
         ),
-        default=unicode(scope),
+        default=str(scope),
     )
     hasSubordinates, numSubordinates, numAllSubordinates = app.ls.get_sub_ordinates(app.dn)
     if not hasSubordinates:
@@ -347,7 +347,7 @@ def del_search_form(app, scope, delete_filter):
         num_entries=num_entries,
         num_referrals=num_referrals,
         value_delete_filter=app.form.utf2display(delete_filter),
-        value_delete_scope=app.form.utf2display(unicode(scope)),
+        value_delete_scope=app.form.utf2display(str(scope)),
     )
 
 

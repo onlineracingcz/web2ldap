@@ -63,7 +63,7 @@ class AssociatedDomain(DNSDomain):
                 ])
                 if d:
                     try:
-                        result = unicode(d[match_dnlist(self._dn, d.keys())]) or None
+                        result = str(d[match_dnlist(self._dn, d.keys())]) or None
                     except KeyError:
                         pass
         return result

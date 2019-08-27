@@ -85,7 +85,7 @@ def w2l_login(
 
     scope_str = app.form.getInputValue('scope', [None])[0]
     if not scope_str and app.ldap_url.scope is not None:
-        scope_str = unicode(app.ldap_url.scope)
+        scope_str = str(app.ldap_url.scope)
     if scope_str:
         scope_hidden_field = app.form.hiddenFieldHTML('scope', scope_str, u'')
     else:
@@ -128,7 +128,7 @@ def w2l_login(
                 app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldapUrl('')).decode('ascii'), u''),
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('delsid', app.sid.decode('ascii'), u''),
-                app.form.hiddenFieldHTML('conntype', unicode(int(app.ls.startTLSOption > 0)), u''),
+                app.form.hiddenFieldHTML('conntype', str(int(app.ls.startTLSOption > 0)), u''),
                 scope_hidden_field,
                 filterstr_hidden_field,
                 login_fields,

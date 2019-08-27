@@ -303,9 +303,9 @@ def w2l_search(app):
                 ('search_root', search_root),
                 ('filterstr', filterstr),
                 ('search_output', search_output),
-                ('search_resminindex', unicode(search_resminindex)),
-                ('search_resnumber', unicode(search_resnumber)),
-                ('search_lastmod', unicode(search_lastmod)),
+                ('search_resminindex', str(search_resminindex)),
+                ('search_resnumber', str(search_resnumber)),
+                ('search_lastmod', str(search_lastmod)),
                 ('scope', str(scope)),
                 ('search_attrs', u','.join(search_attrs)),
             ],
@@ -314,7 +314,7 @@ def w2l_search(app):
         # end of page_appl_anchor()
 
     scope = app.ldap_url.scope
-    filterstr = web2ldap.app.core.str2unicode(app.ldap_url.filterstr, app.form.accept_charset)
+    filterstr = app.ldap_url.filterstr.decode(app.form.accept_charset)
 
     search_submit = app.form.getInputValue('search_submit', [u'Search'])[0]
     searchform_mode = app.form.getInputValue('searchform_mode', [u'exp'])[0]
@@ -392,13 +392,13 @@ def w2l_search(app):
     search_resnumber = int(
         app.form.getInputValue(
             'search_resnumber',
-            [unicode(app.cfg_param('search_resultsperpage', 10))]
+            [str(app.cfg_param('search_resultsperpage', 10))]
         )[0]
     )
 
     search_lastmod = int(app.form.getInputValue('search_lastmod', [-1])[0])
     if search_lastmod > 0:
-        timestamp_str = unicode(time.strftime('%Y%m%d%H%M%S', time.gmtime(time.time()-search_lastmod)), 'ascii')
+        timestamp_str = str(time.strftime('%Y%m%d%H%M%S', time.gmtime(time.time()-search_lastmod)), 'ascii')
         if '1.2.840.113556.1.2.2' in app.schema.sed[AttributeType] and \
            '1.2.840.113556.1.2.3' in app.schema.sed[AttributeType]:
             # Assume we're searching MS Active Directory
@@ -640,7 +640,7 @@ def w2l_search(app):
                     ('searchform_mode', 'exp'),
                     ('search_root', search_root),
                     ('filterstr', filterstr),
-                    ('search_lastmod', unicode(search_lastmod)),
+                    ('search_lastmod', str(search_lastmod)),
                     ('search_attrs', ','.join(search_attrs)),
                     ('scope', str(scope)),
                 ],
@@ -655,7 +655,7 @@ def w2l_search(app):
                     ('filterstr', ldap0.filter.negate_filter(filterstr)),
                     ('search_resminindex', str(search_resminindex)),
                     ('search_resnumber', str(search_resnumber)),
-                    ('search_lastmod', unicode(search_lastmod)),
+                    ('search_lastmod', str(search_lastmod)),
                     ('search_attrs', u','.join(search_attrs)),
                 ],
                 title=u'Search with negated search filter',
@@ -728,7 +728,7 @@ def w2l_search(app):
                         ('filterstr', filterstr),
                         ('search_resminindex', str(search_resminindex)),
                         ('search_resnumber', str(search_resnumber)),
-                        ('search_lastmod', unicode(search_lastmod)),
+                        ('search_lastmod', str(search_lastmod)),
                         ('search_attrs', u','.join(search_attrs)),
                     ],
                     title=u'Display %s of search results' % (
@@ -867,7 +867,7 @@ def w2l_search(app):
                         refUrl = ExtendedLDAPUrl(r[1][1][0])
                     except ValueError:
                         command_table = []
-                        result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (utf2display(unicode(r[1][1][0])))
+                        result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (utf2display(str(r[1][1][0])))
                     else:
                         result_dd_str = 'Search reference =&gt; %s' % (refUrl.htmlHREF(hrefTarget=None))
                         if scope == ldap0.SCOPE_SUBTREE:
@@ -1038,9 +1038,9 @@ def w2l_search(app):
                         app.begin_form('search', 'GET', target='web2ldapexport'),
                         app.form.hiddenFieldHTML('dn', app.dn, u''),
                         app.form.hiddenFieldHTML('search_root', search_root, u''),
-                        app.form.hiddenFieldHTML('scope', unicode(scope), u''),
+                        app.form.hiddenFieldHTML('scope', str(scope), u''),
                         app.form.hiddenFieldHTML('filterstr', filterstr, u''),
-                        app.form.hiddenFieldHTML('search_lastmod', unicode(search_lastmod), u''),
+                        app.form.hiddenFieldHTML('search_lastmod', str(search_lastmod), u''),
                         app.form.hiddenFieldHTML('search_resnumber', u'0', u''),
                         app.form.hiddenFieldHTML('search_attrs', u','.join(search_attrs), u''),
                     )),

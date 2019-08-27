@@ -665,7 +665,7 @@ class LDAPSession(object):
         """
         self.namingContexts = set()
         self.namingContexts.update([
-            unicode({'\x00':''}.get(v, v), self.charset)
+            '' if v == b'\x00' else v.decode(self.charset)
             for v in self.rootDSE.get('namingContexts', [])
         ])
         for rootdse_naming_attrtype in (
@@ -674,7 +674,7 @@ class LDAPSession(object):
                 'ds-private-naming-contexts',
             ):
             self.namingContexts.update([
-                unicode(v, self.charset)
+                str(v, self.charset)
                 for v in self.rootDSE.get(rootdse_naming_attrtype, [])
             ])
         for attr_type in (

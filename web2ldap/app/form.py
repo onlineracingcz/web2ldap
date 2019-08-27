@@ -410,12 +410,12 @@ class Web2LDAPForm_params(Web2LDAPForm):
                 'ldap_deref',
                 u'Dereference aliases',
                 maxValues=1,
-                default=unicode(ldap0.DEREF_NEVER),
+                default=str(ldap0.DEREF_NEVER),
                 options=[
-                    (unicode(ldap0.DEREF_NEVER), u'never'),
-                    (unicode(ldap0.DEREF_SEARCHING), u'searching'),
-                    (unicode(ldap0.DEREF_FINDING), u'finding'),
-                    (unicode(ldap0.DEREF_ALWAYS), u'always'),
+                    (str(ldap0.DEREF_NEVER), u'never'),
+                    (str(ldap0.DEREF_SEARCHING), u'searching'),
+                    (str(ldap0.DEREF_FINDING), u'finding'),
+                    (str(ldap0.DEREF_ALWAYS), u'always'),
                 ]
             ),
         ])
@@ -593,10 +593,10 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
                 web2ldapcnf.input_maxattrs,
                 options=(
                     (u'', u''),
-                    (unicode(ldap0.MOD_ADD), u'add'),
-                    (unicode(ldap0.MOD_DELETE), u'delete'),
-                    (unicode(ldap0.MOD_REPLACE), u'replace'),
-                    (unicode(ldap0.MOD_INCREMENT), u'increment'),
+                    (str(ldap0.MOD_ADD), u'add'),
+                    (str(ldap0.MOD_DELETE), u'delete'),
+                    (str(ldap0.MOD_REPLACE), u'replace'),
+                    (str(ldap0.MOD_INCREMENT), u'increment'),
                 ),
                 default=None,
             ),

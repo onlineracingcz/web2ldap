@@ -183,7 +183,7 @@ class AppHandler(LogHelper):
         """
         get current DN
         """
-        return unicode(self.dn_obj)
+        return str(self.dn_obj)
 
     @dn.setter
     def dn(self, dn):
@@ -226,7 +226,7 @@ class AppHandler(LogHelper):
         """
         get parent DN of current DN
         """
-        return unicode(self.dn_obj.parent())
+        return str(self.dn_obj.parent())
 
     @property
     def ldap_dn(self):
@@ -543,7 +543,7 @@ class AppHandler(LogHelper):
                 input_ldapurl = ExtendedLDAPUrl(self.form.query_string)
             except ValueError as err:
                 raise ErrorExit(u'Error parsing LDAP URL: %s.' % (
-                    self.form.utf2display(unicode(str(err)))
+                    self.form.utf2display(str(str(err)))
                 ))
             else:
                 self.command = self.command or SCOPE2COMMAND[input_ldapurl.scope]
@@ -562,7 +562,7 @@ class AppHandler(LogHelper):
                     input_ldapurl = ExtendedLDAPUrl(ldap_url_input.encode('ascii'))
                 except ValueError as err:
                     raise ErrorExit(
-                        u'Error parsing LDAP URL: %s.' % (unicode(err, self.form.accept_charset))
+                        u'Error parsing LDAP URL: %s.' % (str(err, self.form.accept_charset))
                     )
             else:
                 input_ldapurl = ExtendedLDAPUrl()

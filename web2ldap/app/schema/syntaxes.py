@@ -707,7 +707,7 @@ class GeneralizedTime(IA5String):
         except ValueError:
             result = IA5String.formValue(self)
         else:
-            result = unicode(datetime.datetime.strftime(dt, self.formValueFormat))
+            result = str(datetime.datetime.strftime(dt, self.formValueFormat))
         return result
 
     def sanitize(self, attrValue):
@@ -1220,14 +1220,14 @@ class OctetString(Binary):
             ) % (
                 i*self.bytes_split,
                 ':'.join(x.encode('hex').upper() for x in c),
-                self._app.form.utf2display(unicode(web2ldap.msbase.ascii_dump(c), 'ascii')),
+                self._app.form.utf2display(str(web2ldap.msbase.ascii_dump(c), 'ascii')),
             )
             for i, c in enumerate(web2ldap.msbase.chunks(self._av, self.bytes_split))
         ]
         return '\n<table class="HexDump">\n%s\n</table>\n' % ('\n'.join(lines))
 
     def formValue(self):
-        return unicode('\r\n'.join(
+        return str('\r\n'.join(
             web2ldap.msbase.chunks(
                 ':'.join(x.encode('hex').upper() for x in self._av or ''),
                 self.bytes_split*3

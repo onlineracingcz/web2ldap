@@ -322,7 +322,7 @@ def w2l_conninfo(app):
         sasl_auth_info = 'SASL not used'
 
     try:
-        sasl_ssf = unicode(app.ls.l.get_option(ldap0.OPT_X_SASL_SSF))
+        sasl_ssf = str(app.ls.l.get_option(ldap0.OPT_X_SASL_SSF))
     except ldap0.LDAPError as ldap_err:
         sasl_ssf = u'error reading option: %s' % (app.ldap_error_msg(ldap_err))
     except ValueError:
@@ -380,8 +380,8 @@ def w2l_conninfo(app):
     cross_check_vars.sort()
     cross_check_vars_html = '\n'.join([
         '<tr><td>%s</td><td>%s</td></tr>' % (
-            app.form.utf2display(unicode(k, app.form.accept_charset)),
-            app.form.utf2display(unicode(v, app.form.accept_charset)),
+            app.form.utf2display(str(k, app.form.accept_charset)),
+            app.form.utf2display(str(v, app.form.accept_charset)),
         )
         for k, v in cross_check_vars
     ])
@@ -389,13 +389,13 @@ def w2l_conninfo(app):
     app.outf.write(
         CONNINFO_HTTP_TEMPLATE % (
             app.ls.onBehalf,
-            app.form.utf2display(unicode(app.env.get('REMOTE_ADDR', ''))),
-            app.form.utf2display(unicode(app.env.get('REMOTE_PORT', ''))),
+            app.form.utf2display(str(app.env.get('REMOTE_ADDR', ''))),
+            app.form.utf2display(str(app.env.get('REMOTE_PORT', ''))),
             app.env.get('SERVER_SIGNATURE', ''),
-            app.form.utf2display(unicode(', '.join(app.form.accept_language))),
+            app.form.utf2display(str(', '.join(app.form.accept_language))),
             app.form.utf2display(app.form.accept_charset.upper().decode()),
             cross_check_vars_html,
-            app.form.utf2display(unicode(app.env.get('HTTP_USER_AGENT', ''), app.form.accept_charset)),
+            app.form.utf2display(str(app.env.get('HTTP_USER_AGENT', ''), app.form.accept_charset)),
         )
     )
     web2ldap.app.gui.footer(app)

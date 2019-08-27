@@ -92,14 +92,14 @@ def group_select_field(
         if optgroup_dn:
             option_list.append('<optgroup label="%s">' % (app.form.utf2display(optgroup_dn)))
         for dn in sorted(optgroup_dict[optgroup_dn], key=unicode.lower):
-            option_text = app.form.utf2display(unicode(
+            option_text = app.form.utf2display(str(
                 groups_dict[dn].get(
                     'cn',
                     [dn[:-len(group_search_root) or len(dn)].encode(app.ls.charset)]
                 )[0],
                 app.ls.charset
             ))
-            option_title = app.form.utf2display(unicode(
+            option_title = app.form.utf2display(str(
                 groups_dict[dn].get(
                     'description',
                     [dn[:-len(group_search_root)].encode(app.ls.charset)]

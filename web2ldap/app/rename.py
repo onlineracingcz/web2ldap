@@ -142,11 +142,11 @@ def w2l_rename(app):
         else:
             rename_searchroot_default = sup_search_url.dn.decode(app.ls.charset)
         rename_newsupfilter_default = sup_search_url.filterstr.decode(app.ls.charset)
-        scope_default = unicode(sup_search_url.scope)
+        scope_default = str(sup_search_url.scope)
     else:
         rename_searchroot_default = None
         rename_newsupfilter_default = app.form.field['rename_newsupfilter'].default
-        scope_default = unicode(ldap0.SCOPE_SUBTREE)
+        scope_default = str(ldap0.SCOPE_SUBTREE)
 
     rename_search_root_field = web2ldap.app.gui.search_root_field(app, name='rename_searchroot')
     rename_new_superior_field = new_superior_field(app, sup_search_url, old_superior)

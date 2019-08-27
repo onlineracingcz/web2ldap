@@ -142,13 +142,13 @@ class SambaSID(IA5String):
                     uid_number = int(self._entry['uidNumber'][0])
                     result = u'-'.join((
                         self._get_domain_sid(),
-                        unicode(2*uid_number+1000)
+                        str(2*uid_number+1000)
                     ))
                 elif 'sambaGroupMapping' in ocs and 'posixGroup' in ocs:
                     gid_number = int(self._entry['gidNumber'][0])
                     result = u'-'.join((
                         self._get_domain_sid(),
-                        unicode(2*gid_number+1001)
+                        str(2*gid_number+1001)
                     ))
             except (IndexError, KeyError, ValueError):
                 pass

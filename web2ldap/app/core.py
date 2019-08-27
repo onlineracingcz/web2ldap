@@ -54,16 +54,6 @@ import web2ldapcnf.hosts
 import web2ldap.app.cnf
 
 
-def str2unicode(string, charset):
-    if isinstance(string, bytes):
-        try:
-            return string.decode(charset)
-        except UnicodeError:
-            return string.decode('iso-8859-1')
-    else:
-        return string
-
-
 class ErrorExit(Exception):
     """Base class for web2ldap application exceptions"""
 

@@ -166,7 +166,7 @@ def w2l_monitor(app):
             text_sysfqdn=socket.getfqdn(),
             int_pid=os.getpid(),
             int_ppid=os.getppid(),
-            text_username=app.form.utf2display(unicode(posix_username)),
+            text_username=app.form.utf2display(str(posix_username)),
             int_uid=posix_uid,
             text_currenttime=strftimeiso8601(time.gmtime(time.time())),
             text_startuptime=strftimeiso8601(time.gmtime(STARTUP_TIME)),
@@ -176,7 +176,7 @@ def w2l_monitor(app):
                 [
                     '<li>%s</li>' % ''.join(
                         [
-                            app.form.utf2display(unicode(repr(t))),
+                            app.form.utf2display(str(repr(t))),
                             ', alive'*t.isAlive(),
                             ', daemon'*t.isDaemon(),
                         ]

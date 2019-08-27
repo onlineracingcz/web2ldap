@@ -289,7 +289,7 @@ class DHCPRange(IA5String):
         if not form_value:
             try:
                 ipv4_network = self._get_ipnetwork().hosts()
-                form_value = u' '.join((unicode(ipv4_network[0]), unicode(ipv4_network[-1])))
+                form_value = u' '.join((str(ipv4_network[0]), str(ipv4_network[-1])))
             except ipaddress.AddressValueError:
                 pass
         return form_value

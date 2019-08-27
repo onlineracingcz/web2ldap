@@ -88,13 +88,13 @@ class Certificate(Binary):
         html = ['<p>Extensions</p>']
         html.append('<dl>')
         for ext in x509['tbs_certificate']['extensions']:
-            ext_oid = unicode(ext['extn_id'])
+            ext_oid = str(ext['extn_id'])
             html.append(
                 self.cert_extn_display_template.format(
                     ext_id=self._app.form.utf2display(ext_oid),
                     ext_name=asn1crypto.x509.ExtensionId._map.get(ext_oid, ext_oid),
                     ext_crit={False:u'', True:u'critical: '}[ext['critical'].native],
-                    extn_value=self._app.form.utf2display(unicode(ext['extn_value'].parsed)),
+                    extn_value=self._app.form.utf2display(str(ext['extn_value'].parsed)),
                 )
             )
         html.append('</dl>')

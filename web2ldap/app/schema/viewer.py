@@ -56,7 +56,7 @@ def schema_link_text(se, charset):
     elif len(names) > 1:
         res = '%s (alias %s)' % (names[0], ', '.join(names[1:]))
     elif isinstance(se, LDAPSyntax) and se.desc is not None:
-        res = unicode(escape_html(se.desc), 'utf-8').encode(charset)
+        res = str(escape_html(se.desc), 'utf-8').encode(charset)
     else:
         res = escape_html(se.oid)
     return OBSOLETE_TEMPL[obsolete] % res
@@ -280,7 +280,7 @@ class DisplaySchemaElement:
                 self.se.oid,
                 self._app.form.script_name, self._app.sid, self.se.oid,
                 self._app.form.script_name, self._app.sid, self.se.oid,
-                self._app.form.utf2display(unicode(str(self.se), 'utf-8')),
+                self._app.form.utf2display(str(str(self.se), 'utf-8')),
                 ms_ad_schema_link,
             )
         )
@@ -367,13 +367,13 @@ class DisplayObjectClass(DisplaySchemaElement):
             '<dt>Search entries</dt>\n<dd>\n%s\n</dd>\n' % (
                 self._app.anchor(
                     'searchform',
-                    '(objectClass=%s)' % self._app.form.utf2display(unicode((self.se.names or [self.se.oid])[0])),
+                    '(objectClass=%s)' % self._app.form.utf2display(str((self.se.names or [self.se.oid])[0])),
                     [
                         ('dn', self._app.dn),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'objectClass'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', unicode((self.se.names or [self.se.oid])[0])),
+                        ('search_string', str((self.se.names or [self.se.oid])[0])),
                     ],
                     title=u'Search entries by object class',
                 )
@@ -513,11 +513,11 @@ class DisplayAttributeType(DisplaySchemaElement):
             '</dd>\n<dt>Search entries</dt>\n<dd>\n%s\n</dd>\n' % (
                 self._app.anchor(
                     'searchform',
-                    '(%s=*)' % self._app.form.utf2display(unicode((self.se.names or [self.se.oid])[0])),
+                    '(%s=*)' % self._app.form.utf2display(str((self.se.names or [self.se.oid])[0])),
                     [
                         ('dn', self._app.dn),
                         ('searchform_mode', u'adv'),
-                        ('search_attr', unicode((self.se.names or [self.se.oid])[0])),
+                        ('search_attr', str((self.se.names or [self.se.oid])[0])),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
                         ('search_string', ''),
                     ],
@@ -542,8 +542,8 @@ class DisplayAttributeType(DisplaySchemaElement):
                 oc_text = '-any-'
             self._app.outf.write('<tr><td>%s</td><td>%s.%s</td></th>\n' % (
                 oc_text,
-                self._app.form.utf2display(unicode(syntax_class.__module__)),
-                self._app.form.utf2display(unicode(syntax_class.__name__)),
+                self._app.form.utf2display(str(syntax_class.__module__)),
+                self._app.form.utf2display(str(syntax_class.__name__)),
             ))
         self._app.outf.write('</table>\n</dd>\n')
         return # disp_details()

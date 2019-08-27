@@ -141,7 +141,7 @@ class ObjectSID(OctetString, IA5String):
         return IA5String.formField(self)
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        sddl_str = unicode(self._sid2sddl(self._av), 'ascii')
+        sddl_str = str(self._sid2sddl(self._av), 'ascii')
         return '%s<br>%s' % (
             self._app.form.utf2display(sddl_str),
             OctetString.displayValue(self, valueindex, commandbutton),
@@ -208,7 +208,7 @@ class OtherSID(ObjectSID):
     }
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        sddl_str = unicode(self._sid2sddl(self._av), 'ascii')
+        sddl_str = str(self._sid2sddl(self._av), 'ascii')
         search_anchor = self.well_known_sids.get(sddl_str, '')
         if commandbutton and sddl_str not in self.well_known_sids:
             search_anchor = self._app.anchor(
@@ -667,7 +667,7 @@ class Interval(MicrosoftLargeInteger):
         if delta >= 0:
             return '%s (%s)' % (
                 MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton),
-                self._app.form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
+                self._app.form.utf2display(str(strftimeiso8601(time.gmtime(delta)))),
             )
         return self._av
 
@@ -684,7 +684,7 @@ class LockoutTime(Interval):
             return MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton)
         return '%s (locked since %s)' % (
             MicrosoftLargeInteger.displayValue(self, valueindex, commandbutton),
-            self._app.form.utf2display(unicode(strftimeiso8601(time.gmtime(delta)))),
+            self._app.form.utf2display(str(strftimeiso8601(time.gmtime(delta)))),
         )
 
 syntax_registry.reg_at(

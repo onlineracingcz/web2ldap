@@ -161,7 +161,7 @@ def w2l_locate(app):
                         outf_lines.append(
                             'DNS or socket error when querying %s: %s' % (
                                 srv_prefix,
-                                app.form.utf2display(unicode(e)),
+                                app.form.utf2display(str(e)),
                             )
                         )
                     else:
