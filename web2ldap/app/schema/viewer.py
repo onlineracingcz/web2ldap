@@ -359,7 +359,7 @@ class DisplayObjectClass(DisplaySchemaElement):
         except KeyError as e:
             self._app.outf.write('<strong>Missing schema elements referenced:<pre>%s</pre></strong>\n' % self._app.form.utf2display(str(e)))
         else:
-            if oc_tree.has_key(self.se.oid) and oc_tree[self.se.oid]:
+            if self.se.oid in oc_tree and oc_tree[self.se.oid]:
                 schema_tree_html(self._app, self.s, ObjectClass, oc_tree, self.se.oid, 0)
         self._app.outf.write('&nbsp;</dd>\n')
         # Display a link for searching entries by object class
@@ -435,7 +435,7 @@ class DisplayAttributeType(DisplaySchemaElement):
             mr_applicable_for = [
                 mr_oid
                 for mr_oid in self.s.sed[MatchingRule].keys()
-                if applies_dict.has_key(mr_oid) and applies_dict[mr_oid].has_key(at_oid)
+                if mr_oid in applies_dict and at_oid in applies_dict[mr_oid]
             ]
             if mr_applicable_for:
                 self._app.outf.write('<dt>Applicable matching rules:</dt>\n<dd>\n%s\n</dd>\n' % (
@@ -463,7 +463,7 @@ class DisplayAttributeType(DisplaySchemaElement):
         attr_type_ref_list = []
         for oc_oid in all_object_classes:
             must, may = self.s.attribute_types([oc_oid], raise_keyerror=False)
-            if must.has_key(at_oid) or may.has_key(at_oid):
+            if at_oid in must or at_oid in may:
                 attr_type_ref_list.append(oc_oid)
         if attr_type_ref_list:
             self._app.outf.write('<dt>Usable in these object classes:</dt>\n<dd>\n%s\n</dd>\n' % (
@@ -506,7 +506,7 @@ class DisplayAttributeType(DisplaySchemaElement):
         except KeyError as e:
             self._app.outf.write('<strong>Missing schema elements referenced:<pre>%s</pre></strong>\n' % self._app.form.utf2display(str(e)))
         else:
-            if at_tree.has_key(at_oid) and at_tree[at_oid]:
+            if at_oid in at_tree and at_tree[at_oid]:
                 schema_tree_html(self._app, self.s, AttributeType, at_tree, at_oid, 0)
         # Display a link for searching entries by attribute presence
         self._app.outf.write(
@@ -615,7 +615,7 @@ class DisplayMatchingRule(DisplaySchemaElement):
             mr_applicable_for = [
                 at_oid
                 for at_oid in self.s.sed[AttributeType].keys()
-                if applies_dict.has_key(at_oid)
+                if at_oid in applies_dict
             ]
             if mr_applicable_for:
                 self._app.outf.write('<dt>Applicable for attribute types per matching rule use:</dt>\n<dd>\n%s\n</dd>\n' % (

@@ -149,7 +149,7 @@ class AssociatedDomain(DNSDomain):
                         ),
                         title=u'Search referencing DNS A RR entries',
                     ))
-                    if self._schema.sed[ldap0.schema.models.AttributeType].has_key('1.3.6.1.1.1.1.19'):
+                    if '1.3.6.1.1.1.1.19' in self._schema.sed[ldap0.schema.models.AttributeType]:
                         r.append(self._app.anchor(
                             'search', 'IP host(s)',
                             (
@@ -161,7 +161,7 @@ class AssociatedDomain(DNSDomain):
                             ),
                             title=u'Search IP host(s) for this A address',
                         ))
-                    if self._schema.sed[ldap0.schema.models.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
+                    if '2.16.840.1.113719.1.203.4.3' in self._schema.sed[ldap0.schema.models.AttributeType]:
                         r.append(self._app.anchor(
                             'search', 'DHCP host(s)',
                             (
@@ -255,7 +255,7 @@ class ARecord(IPv4HostAddress):
                 ),
                 title=u'Search PTR RR for this A address',
             ))
-            if self._schema.sed[ldap0.schema.models.AttributeType].has_key('1.3.6.1.1.1.1.19'):
+            if '1.3.6.1.1.1.1.19' in self._schema.sed[ldap0.schema.models.AttributeType]:
                 r.append(self._app.anchor(
                     'search', 'IP host(s)',
                     (
@@ -267,7 +267,7 @@ class ARecord(IPv4HostAddress):
                     ),
                     title=u'Search IP host(s) for this A address',
                 ))
-            if self._schema.sed[ldap0.schema.models.AttributeType].has_key('2.16.840.1.113719.1.203.4.3'):
+            if '2.16.840.1.113719.1.203.4.3' in self._schema.sed[ldap0.schema.models.AttributeType]:
                 r.append(self._app.anchor(
                     'search', 'DHCP host(s)',
                     (

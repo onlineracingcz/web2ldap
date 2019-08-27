@@ -455,11 +455,11 @@ class LogonHours(OctetString):
         attrValue = attrValue.replace('\r', '').replace('\n', '')
         hour_flags = [
             int(attrValue[i] == 'X')<<i%8
-            for i in xrange(len(attrValue))
+            for i in range(len(attrValue))
         ]
         r = [
             chr(sum(hour_flags[i*8:(i+1)*8]))
-            for i in xrange(21)
+            for i in range(21)
         ]
         return ''.join(r)
 

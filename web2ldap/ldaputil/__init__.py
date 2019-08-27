@@ -115,7 +115,7 @@ def rdn_dict(dn):
     result = {}
     for i in ldap0.dn.explode_rdn(rdn.strip()):
         attr_type, attr_value = explode_rdn_attr(i.decode('utf-8'))
-        if result.has_key(attr_type):
+        if attr_type in result:
             result[attr_type].append(attr_value)
         else:
             result[attr_type] = [attr_value]

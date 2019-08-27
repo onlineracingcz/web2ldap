@@ -71,7 +71,7 @@ class AutogenNumber(object):
                     return ldap_entry[self._at][0].decode(self._app.ls.charset)
                 else:
                     idnumber_set.add(int(ldap_entry[self._at][0]))
-        for idnumber in xrange(self.__class__.minNewValue, self.maxNewValue+1):
+        for idnumber in range(self.__class__.minNewValue, self.maxNewValue+1):
             if idnumber in idnumber_set:
                 self.__class__.minNewValue = idnumber
             else:

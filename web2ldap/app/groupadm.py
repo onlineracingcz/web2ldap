@@ -220,7 +220,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
             for action_group_dn in app.form.getInputValue('groupadm_%s' % action, []):
                 group_dn = action_group_dn
-                if not all_groups_dict.has_key(group_dn):
+                if group_dn not in all_groups_dict:
                     # The group entry could have been removed in the mean time
                     # => Ignore that condition
                     continue
@@ -234,7 +234,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                         if user_entry_attrtype is None:
                             member_value = app.ldap_dn
                         else:
-                            if not user_entry.has_key(user_entry_attrtype):
+                            if user_entry_attrtype not in user_entry:
                                 raise web2ldap.app.core.ErrorExit(
                                     u'Object class %s requires attribute %s in group entry.' % (
                                         oc,
@@ -352,7 +352,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     add_groups = [
         group_dn
         for group_dn in all_group_entries
-        if not remove_groups_dict.has_key(group_dn)
+        if group_dn not in remove_groups_dict
     ]
 
     #########################################################

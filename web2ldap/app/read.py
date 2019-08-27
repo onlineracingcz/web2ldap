@@ -429,8 +429,8 @@ def w2l_read(app):
 
         attr_type = wanted_attrs[0]
 
-        if not entry.has_key(attr_type):
-            if entry.has_key(attr_type+';binary'):
+        if attr_type not in entry:
+            if attr_type+';binary' in entry:
                 attr_type = attr_type+';binary'
             else:
                 raise web2ldap.app.core.ErrorExit(
@@ -573,9 +573,9 @@ def w2l_read(app):
             at_oid = at_se.oid
             if at_oid in displayed_attrs:
                 continue
-            if required_attrs_dict.has_key(at_oid):
+            if at_oid in required_attrs_dict:
                 required_attrs.append(a)
-            elif allowed_attrs_dict.has_key(at_oid):
+            elif at_oid in allowed_attrs_dict:
                 allowed_attrs.append(a)
             else:
                 if at_se.collective:

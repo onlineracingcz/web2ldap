@@ -78,7 +78,7 @@ class SequenceOf(asn1.Sequence):
     def __init__(self, val):
         asn1.Sequence.__init__(self, val)
         if self.item_class != None:
-            for i in xrange(len(self.val)):
+            for i in range(len(self.val)):
                 self.val[i] = self.item_class(self.val[i])
 
     def __str__(self):
