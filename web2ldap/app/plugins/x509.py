@@ -24,7 +24,7 @@ def x509name2ldapdn(x509name, subschema=None):
     for rdn in reversed(x509name.chosen):
         rdn_list = []
         for ava in rdn:
-            type_oid = ava['type'].dotted.encode('ascii')
+            type_oid = ava['type'].dotted
             type_name = type_oid
             if subschema is not None:
                 try:
@@ -39,11 +39,11 @@ def x509name2ldapdn(x509name, subschema=None):
                     type_name = at_obj.names[0]
             rdn_list.append((
                 type_name,
-                ava['value'].native.encode('utf-8'),
+                ava['value'].native,
                 0,
             ))
         dn_list.append(rdn_list)
-    return ldap0.dn.dn2str(dn_list).decode('utf-8')
+    return str(ldap0.dn.DNObj(tuple(dn_list)))
     # end of x509name2ldapdn()
 
 
