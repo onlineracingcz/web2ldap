@@ -12,7 +12,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 from __future__ import absolute_import
 
 import os
-import UserDict
+import collections
 
 
 REMOTE_ADDR_ENV_VARS = (
@@ -34,7 +34,7 @@ def get_remote_ip(env):
     return res
 
 
-class AcceptHeaderDict(UserDict.UserDict):
+class AcceptHeaderDict(collections.UserDict):
     """
     This dictionary class is used to parse
     Accept-header lines with quality weights.
@@ -51,7 +51,7 @@ class AcceptHeaderDict(UserDict.UserDict):
             string with value of Accept-* header line
         """
         env = env or os.environ
-        UserDict.UserDict.__init__(self)
+        collections.UserDict.__init__(self)
         self.defaultValue = defaultValue
         self.preferred_value = []
         try:
