@@ -424,7 +424,7 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
     def formValue(self):
         if not self._av:
             return u''
-        entry = ldap0.cidict.cidict(self._entry)
+        entry = ldap0.cidict.CIDict(self._entry)
         attr_value = self.av_u
         try:
             dn_comp_list = explode_dn(attr_value)

@@ -16,9 +16,8 @@ from __future__ import absolute_import
 
 import logging
 
-from ldap0.ldapurl import LDAPUrl
+from ldap0.ldapurl import LDAPUrl, is_ldapurl
 from ldap0.dn import is_dn
-from ldap0.ldapurl import isLDAPUrl
 
 from web2ldap.log import logger, LogHelper
 
@@ -149,7 +148,7 @@ class Web2LDAPConfigDict(LogHelper):
         if key == '_':
             return '_'
         if isinstance(key, str):
-            if isLDAPUrl(key):
+            if is_ldapurl(key):
                 key = LDAPUrl(key)
             elif is_dn(key):
                 key = LDAPUrl(dn=key.lower())

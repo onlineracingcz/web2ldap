@@ -147,7 +147,7 @@ class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     def _process_result(self, resultType, resultItem):
         if resultType in self._entryResultTypes:
             # Don't process search references
-            dn, entry = resultItem[0], ldap0.cidict.cidict(resultItem[1])
+            dn, entry = resultItem[0], ldap0.cidict.CIDict(resultItem[1])
             try:
                 hasSubordinates = entry['hasSubordinates'][0].upper() == 'TRUE'
             except KeyError:

@@ -125,7 +125,7 @@ def group_select_field(
 
 def w2l_groupadm(app, info_msg='', error_msg=''):
 
-    groupadm_defs = ldap0.cidict.cidict(app.cfg_param('groupadm_defs', {}))
+    groupadm_defs = ldap0.cidict.CIDict(app.cfg_param('groupadm_defs', {}))
     if not groupadm_defs:
         raise web2ldap.app.core.ErrorExit(u'Group admin options empty or not set.')
     groupadm_defs_keys = groupadm_defs.keys()
@@ -197,7 +197,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         for res in app.ls.l.results(msg_id):
             for group_dn, group_entry in res.data:
                 if group_dn is not None:
-                    all_groups_dict[group_dn.decode(app.ls.charset)] = ldap0.cidict.cidict(group_entry)
+                    all_groups_dict[group_dn.decode(app.ls.charset)] = ldap0.cidict.CIDict(group_entry)
     except ldap0.NO_SUCH_OBJECT:
         error_msg = 'No such object! Did you choose a valid search base?'
     except (ldap0.SIZELIMIT_EXCEEDED, ldap0.TIMELIMIT_EXCEEDED):
@@ -326,7 +326,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         for res in app.ls.l.results(msg_id):
             for group_dn, group_entry in res.data:
                 if group_dn is not None:
-                    remove_groups_dict[group_dn.decode(app.ls.charset)] = ldap0.cidict.cidict(group_entry)
+                    remove_groups_dict[group_dn.decode(app.ls.charset)] = ldap0.cidict.CIDict(group_entry)
     except ldap0.NO_SUCH_OBJECT:
         error_msg = 'No such object! Did you choose a valid search base?'
     except (ldap0.SIZELIMIT_EXCEEDED, ldap0.TIMELIMIT_EXCEEDED):

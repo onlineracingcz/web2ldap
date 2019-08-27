@@ -17,7 +17,7 @@ from __future__ import absolute_import
 from UserDict import IterableUserDict
 
 import ldap0.schema
-from ldap0.cidict import cidict
+from ldap0.cidict import CIDict
 from ldap0.schema.models import SchemaElementOIDSet, AttributeType
 from ldap0.schema.subentry import SubSchema
 
@@ -156,7 +156,7 @@ class DisplayEntry(IterableUserDict):
         )
         for attr_type, attr_values in entry_rdn_dict.items():
             del entry_rdn_dict[attr_type]
-            d = ldap0.cidict.cidict()
+            d = ldap0.cidict.CIDict()
             for attr_value in attr_values:
                 attr_value = attr_value.encode(self._app.ls.charset)
                 assert isinstance(attr_value, bytes), \
@@ -270,7 +270,7 @@ def display_attribute_table(app, entry, attrs, comment):
     if u'*' in read_expandattr_set:
         read_tablemaxcount_dict = {}
     else:
-        read_tablemaxcount_dict = ldap0.cidict.cidict(
+        read_tablemaxcount_dict = ldap0.cidict.CIDict(
             app.cfg_param('read_tablemaxcount', {})
         )
         for at in read_expandattr_set:

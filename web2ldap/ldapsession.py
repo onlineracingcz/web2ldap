@@ -474,7 +474,7 @@ class LDAPSession(object):
         # Set to not connected
         self.uri = None
         self.namingContexts = set()
-        self._audit_context = ldap0.cidict.cidict()
+        self._audit_context = ldap0.cidict.CIDict()
         self._traceLevel = traceLevel
         # Character set/encoding of data stored on this particular host
         self.charset = 'utf-8'
@@ -646,7 +646,7 @@ class LDAPSession(object):
         """Forget all old RootDSE values"""
         self.supportsAllOpAttr = False
         self.namingContexts = set()
-        self.rootDSE = ldap0.cidict.cidict()
+        self.rootDSE = ldap0.cidict.CIDict()
         # some rootDSE attributes made available as class attributes
         self.supportedLDAPVersion = frozenset([])
         self.supportedControl = frozenset([])
@@ -930,7 +930,7 @@ class LDAPSession(object):
         """Flushes all LDAP cache data"""
         self._schema_dn_cache = {}
         self._schema_cache = {}
-        self._audit_context = ldap0.cidict.cidict()
+        self._audit_context = ldap0.cidict.CIDict()
         try:
             self.l.flush_cache()
         except AttributeError:
@@ -1014,7 +1014,7 @@ class LDAPSession(object):
         else:
             if result:
                 try:
-                    audit_context_dn = ldap0.cidict.cidict(
+                    audit_context_dn = ldap0.cidict.CIDict(
                         result
                     )['auditContext'][0].decode(self.charset)
                 except KeyError:

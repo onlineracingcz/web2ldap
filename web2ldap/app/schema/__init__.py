@@ -128,9 +128,9 @@ def object_class_categories(sub_schema, object_classes):
         kind[oc_kind] = object_classes
     else:
         kind = [
-            ldap0.cidict.cidict(),
-            ldap0.cidict.cidict(),
-            ldap0.cidict.cidict()
+            ldap0.cidict.CIDict(),
+            ldap0.cidict.CIDict(),
+            ldap0.cidict.CIDict()
         ]
         for nameoroid in object_classes:
             oc_obj = sub_schema.get_obj(ObjectClass, nameoroid)

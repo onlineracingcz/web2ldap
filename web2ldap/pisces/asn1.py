@@ -34,10 +34,9 @@ from __future__ import absolute_import
 
 import struct
 import sys
-import UserList
-import UserString
+import collections
 import time
-from cStringIO import StringIO
+from io import StringIO
 
 # tags for universal types
 INTEGER = 0x02
@@ -106,7 +105,7 @@ class ASN1Object:
         if ioFlag:
             return io.getvalue()
 
-class Sequence(ASN1Object, UserList.UserList):
+class Sequence(ASN1Object, collections.UserList):
     atomic = 0
     def __init__(self, val=None):
         if not val:
@@ -122,7 +121,7 @@ class Sequence(ASN1Object, UserList.UserList):
             encObjs.append(encode(elt))
         io.write(unparseSequence(encObjs))
 
-class Set(ASN1Object, UserList.UserList):
+class Set(ASN1Object, collections.UserList):
     atomic = 0
     def __init__(self, val):
         # XXX I don't remember why I only get a single value here
@@ -135,7 +134,7 @@ class Set(ASN1Object, UserList.UserList):
             encObjs.append(encode(elt))
         io.write(unparseSet(encObjs))
 
-class String(ASN1Object, UserString.UserString):
+class String(ASN1Object, collections.UserString):
     # abstract base class
     tag = None
     def __init__(self, val):

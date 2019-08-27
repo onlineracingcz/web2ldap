@@ -30,7 +30,7 @@ SEARCH_SCOPE_STR = ('base', 'one', 'sub', 'subordinate')
 
 LDAP_OPT_NAMES_DICT = dict([
     (v, k)
-    for k, v in vars(ldap0).items()+vars(ldap0.sasl).items()
+    for k, v in list(vars(ldap0).items())+list(vars(ldap0.sasl).items())
     if isinstance(v, int)
 ])
 

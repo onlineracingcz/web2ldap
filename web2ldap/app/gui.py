@@ -298,7 +298,7 @@ def display_authz_dn(app, who=None, entry=None):
         # Fall-back is to display the DN
         result = app.display_dn(who, commandbutton=False)
         # Determine relevant templates dict
-        bound_as_templates = ldap0.cidict.cidict(app.cfg_param('boundas_template', {}))
+        bound_as_templates = ldap0.cidict.CIDict(app.cfg_param('boundas_template', {}))
         # Read entry if necessary
         if entry is None:
             read_attrs = set(['objectClass'])

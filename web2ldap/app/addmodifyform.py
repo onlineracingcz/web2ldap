@@ -462,8 +462,8 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
             <table summary="%s">
             """ % (fieldset_title, fieldset_title, fieldset_title)
         )
-        seen_attr_type_oids = ldap0.cidict.cidict()
-        attr_type_names = ldap0.cidict.cidict()
+        seen_attr_type_oids = ldap0.cidict.CIDict()
+        attr_type_names = ldap0.cidict.CIDict()
         for a in self.entry.keys():
             at_oid = self.entry._at2key(a)[0]
             if at_oid in attr_types_dict:
@@ -990,7 +990,7 @@ def AttributeTypeDict(app, param_name, param_default):
     """
     Build a list of attributes assumed in configuration to be constant while editing entry
     """
-    attrs = ldap0.cidict.cidict()
+    attrs = ldap0.cidict.CIDict()
     for attr_type in app.cfg_param(param_name, param_default):
         attrs[attr_type] = attr_type
     return attrs # AttributeTypeDict()
@@ -1037,7 +1037,7 @@ def nomatching_attrs(sub_schema, entry, allowed_attrs_dict, required_attrs_dict)
     Determine attributes which does not appear in the schema but
     do exist in the entry
     """
-    nomatching_attrs_dict = ldap0.cidict.cidict()
+    nomatching_attrs_dict = ldap0.cidict.CIDict()
     for at_name in entry.entry.keys():
         try:
             at_oid = sub_schema.name2oid[AttributeType][at_name]
@@ -1066,7 +1066,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
 
     # Build a list of attributes to be requested
     if not read_attrs:
-        read_attrs = ldap0.cidict.cidict({'*': '*'})
+        read_attrs = ldap0.cidict.CIDict({'*': '*'})
         read_attrs.update(ConfiguredConstantAttributes(app))
         read_attrs.update(AttributeTypeDict(app, 'requested_attrs', []))
 

@@ -73,7 +73,7 @@ class SyntaxRegistry(object):
     """
 
     def __init__(self):
-        self.oid2syntax = ldap0.cidict.cidict()
+        self.oid2syntax = ldap0.cidict.CIDict()
         self.at2syntax = defaultdict(dict)
 
     def reg_syntax(self, cls):

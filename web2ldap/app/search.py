@@ -455,9 +455,9 @@ def w2l_search(app):
 
     elif search_output in {'table', 'raw'}:
 
-        search_tdtemplate = ldap0.cidict.cidict(app.cfg_param('search_tdtemplate', {}))
+        search_tdtemplate = ldap0.cidict.CIDict(app.cfg_param('search_tdtemplate', {}))
         search_tdtemplate_keys = search_tdtemplate.keys()
-        search_tdtemplate_attrs_lower = ldap0.cidict.cidict()
+        search_tdtemplate_attrs_lower = ldap0.cidict.CIDict()
         for oc in search_tdtemplate_keys:
             search_tdtemplate_attrs_lower[oc] = GrabKeys(search_tdtemplate[oc]).keys
 
@@ -616,7 +616,7 @@ def w2l_search(app):
         # HACK! Searching the root level the namingContexts is
         # appended if not already received in search result
         if not search_root and scope == ldap0.SCOPE_ONELEVEL:
-            d = ldap0.cidict.cidict()
+            d = ldap0.cidict.CIDict()
             for result_dn in app.ls.namingContexts:
                 if result_dn:
                     d[result_dn] = result_dn
@@ -862,7 +862,7 @@ def w2l_search(app):
                 if r[0] in is_search_reference:
 
                     # Display a search continuation (search reference)
-                    entry = ldap0.cidict.cidict({})
+                    entry = ldap0.cidict.CIDict({})
                     try:
                         refUrl = ExtendedLDAPUrl(r[1][1][0])
                     except ValueError:
