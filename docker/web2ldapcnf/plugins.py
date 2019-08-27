@@ -44,10 +44,10 @@ import web2ldap.app.plugins.ldapns
 
 import web2ldap.app.plugins.posixautogen
 web2ldap.app.plugins.posixautogen.HomeDirectory.homeDirectoryTemplate = '/home/{uid}'
-web2ldap.app.plugins.posixautogen.AutogenUIDNumber.minNewValue = 10000L
-web2ldap.app.plugins.posixautogen.AutogenUIDNumber.maxNewValue = 19999L
-web2ldap.app.plugins.posixautogen.AutogenGIDNumber.minNewValue = 10000L
-web2ldap.app.plugins.posixautogen.AutogenGIDNumber.maxNewValue = 19999L
+web2ldap.app.plugins.posixautogen.AutogenUIDNumber.minNewValue = 10000
+web2ldap.app.plugins.posixautogen.AutogenUIDNumber.maxNewValue = 19999
+web2ldap.app.plugins.posixautogen.AutogenGIDNumber.minNewValue = 10000
+web2ldap.app.plugins.posixautogen.AutogenGIDNumber.maxNewValue = 19999
 
 #---------------------------------------------------------------------------
 # sudo-ldap
