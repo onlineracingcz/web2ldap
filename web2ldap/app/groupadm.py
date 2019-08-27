@@ -162,7 +162,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         filter_components.append((
             oc.strip(),
             group_member_attrtype.strip(),
-            ldap0.filter.escape_filter_chars(user_entry_attrvalue),
+            ldap0.filter.escape_str(user_entry_attrvalue),
         ))
 
     #################################################################

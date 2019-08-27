@@ -24,8 +24,8 @@ import ldap0
 import ldap0.ldif
 import ldap0.sasl
 import ldap0.cidict
+import ldap0.filter
 from ldap0.ldapurl import LDAPUrl
-from ldap0.filter import escape_filter_chars
 from ldap0.dn import escape_dn_chars
 from ldap0.ldapobject import ReconnectLDAPObject
 from ldap0.schema.models import DITStructureRule
@@ -39,7 +39,6 @@ from ldap0.controls.sessiontrack import SessionTrackingControl, SESSION_TRACKING
 
 import web2ldap.ldaputil
 from web2ldap.log import logger
-from web2ldap.ldaputil import escape_ldap_filter_chars
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 
 START_TLS_NO = 0
@@ -269,7 +268,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             retry_delay=retry_delay,
             cache_ttl=cache_ttl,
         )
-        self.last_search_bases = deque(maxlen=30)
+        self.last_ldap0.filter.escape_strs = deque(maxlen=30)
 
     def get_ctrls(self, method):
         all_s_ctrls = {}
@@ -396,8 +395,8 @@ class MyLDAPObject(ReconnectLDAPObject):
             TypeError("Type of 'base' must be bytes, was %r" % (base))
         assert isinstance(filterstr, bytes), \
             TypeError("Type of 'filterstr' must be bytes, was %r" % (filterstr))
-        if base not in self.last_search_bases:
-            self.last_search_bases.append(base)
+        if base not in self.last_ldap0.filter.escape_strs:
+            self.last_ldap0.filter.escape_strs.append(base)
         return ReconnectLDAPObject.search(
             self,
             base,
@@ -950,7 +949,7 @@ class LDAPSession(object):
                 assertion_filter_tmpl = u'{filter_str}'
             assertion_filter_str = assertion_filter_tmpl.format(
                 filter_str=assertion_filter,
-                dn_str=escape_filter_chars(dn),
+                dn_str=ldap0.filter.escape_str(dn),
             ).encode(self.charset)
             serverctrls.append(AssertionControl(False, assertion_filter_str))
         self.l.modify_s(dn_str, modlist, serverctrls=serverctrls)
@@ -1048,25 +1047,25 @@ class LDAPSession(object):
             [''],
         )[0].decode(self.charset) or u''
         lu_obj = LDAPUrl(binddn_mapping)
-        search_base = lu_obj.dn.format(user=escape_dn_chars(username))
-        if search_base == u'_':
-            search_base = search_root
-        elif search_base.endswith(u'_'):
-            search_base = u''.join((search_base[:-1], search_root))
+        ldap0.filter.escape_str = lu_obj.dn.format(user=escape_dn_chars(username))
+        if ldap0.filter.escape_str == u'_':
+            ldap0.filter.escape_str = search_root
+        elif ldap0.filter.escape_str.endswith(u'_'):
+            ldap0.filter.escape_str = u''.join((ldap0.filter.escape_str[:-1], search_root))
         if lu_obj.scope == ldap0.SCOPE_BASE and lu_obj.filterstr is None:
-            logger.debug('Directly mapped %r to %r', username, search_base)
-            return search_base
-        search_filter = lu_obj.filterstr.format(user=escape_ldap_filter_chars(username))
+            logger.debug('Directly mapped %r to %r', username, ldap0.filter.escape_str)
+            return ldap0.filter.escape_str
+        search_filter = lu_obj.filterstr.format(user=ldap0.filter.escape_str(username))
         logger.debug(
             'Searching user entry with base = %r / scope = %d / filter = %r',
-            search_base,
+            ldap0.filter.escape_str,
             lu_obj.scope,
             search_filter,
         )
         # Try to find a unique entry with binddn_mapping
         try:
             result = self.l.search_s(
-                search_base.encode(self.charset),
+                ldap0.filter.escape_str.encode(self.charset),
                 lu_obj.scope,
                 search_filter.encode(self.charset),
                 attrlist=['1.1'],
@@ -1089,7 +1088,7 @@ class LDAPSession(object):
         logger.debug(
             'Found user entry %r with base = %r / scope = %d / filter = %r',
             result[0][0],
-            search_base,
+            ldap0.filter.escape_str,
             lu_obj.scope,
             search_filter,
         )

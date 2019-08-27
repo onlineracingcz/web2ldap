@@ -8,7 +8,7 @@ http://tools.ietf.org/draft/draft-ietf-pkix-ldap-pkc-schema
 
 from __future__ import absolute_import
 
-from ldap0.filter import escape_filter_chars
+import ldap0.filter
 
 from web2ldap.app.schema.syntaxes import DumpASN1CfgOID
 from web2ldap.app.schema.syntaxes import \
@@ -44,7 +44,7 @@ class PkcX509Issuer(DistinguishedName):
                     (
                         'filterstr',
                         u'(&(objectClass=x509caCertificate)(x509subject=%s))' % (
-                            escape_filter_chars(self.av_u),
+                            ldap0.filter.escape_str(self.av_u),
                         )
                     ),
                 ],

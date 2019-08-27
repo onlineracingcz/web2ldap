@@ -17,7 +17,7 @@ from __future__ import absolute_import
 import time
 
 import ldap0
-from ldap0.filter import escape_filter_chars
+import ldap0.filter
 
 import web2ldapcnf
 
@@ -168,7 +168,7 @@ def w2l_conninfo(app):
                     (
                         'filterstr',
                         '(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (
-                            escape_filter_chars(app.ls.who or '')
+                            ldap0.filter.escape_str(app.ls.who or '')
                         )
                     ),
                     ('scope', str(ldap0.SCOPE_SUBTREE)),
@@ -229,7 +229,7 @@ def w2l_conninfo(app):
                 'search', 'Audit my access',
                 [
                     ('dn', app.audit_context),
-                    ('filterstr', '(&(objectClass=auditObject)(reqAuthzID=%s))' % (escape_filter_chars(app.ls.who or ''))),
+                    ('filterstr', '(&(objectClass=auditObject)(reqAuthzID=%s))' % (ldap0.filter.escape_str(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
                 title=u'Complete audit trail for currently bound identity',
@@ -238,7 +238,7 @@ def w2l_conninfo(app):
                 'search', 'Audit my writes',
                 [
                     ('dn', app.audit_context),
-                    ('filterstr', '(&(objectClass=auditWriteObject)(reqAuthzID=%s))' % (escape_filter_chars(app.ls.who or ''))),
+                    ('filterstr', '(&(objectClass=auditWriteObject)(reqAuthzID=%s))' % (ldap0.filter.escape_str(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
                 title=u'Audit trail of write access by currently bound identity',
@@ -247,7 +247,7 @@ def w2l_conninfo(app):
                 'search', 'Last logins',
                 [
                     ('dn', app.audit_context),
-                    ('filterstr', '(&(objectClass=auditBind)(reqDN=%s))' % (escape_filter_chars(app.ls.who or ''))),
+                    ('filterstr', '(&(objectClass=auditBind)(reqDN=%s))' % (ldap0.filter.escape_str(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
                 title=u'Audit trail of last logins (binds) by currently bound identity',

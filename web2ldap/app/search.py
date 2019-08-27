@@ -38,7 +38,6 @@ import web2ldap.app.gui
 import web2ldap.app.read
 import web2ldap.app.searchform
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
-from web2ldap.ldaputil import escape_ldap_filter_chars
 from web2ldap.msbase import GrabKeys
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.app.searchform import SEARCH_OPT_ATTR_EXISTS, SEARCH_OPT_ATTR_NOT_EXISTS
@@ -369,7 +368,7 @@ def w2l_search(app):
            search_option[i] in {SEARCH_OPT_ATTR_EXISTS, SEARCH_OPT_ATTR_NOT_EXISTS}:
             search_filter.append(search_option[i].format(
                 at=''.join((search_attr[i], search_mr_string)),
-                av=escape_ldap_filter_chars(search_av_string, app.ls.charset)
+                av=ldap0.filter.escape_str(search_av_string, app.ls.charset)
             ))
 
     # Wipe out all nullable search_filter list items

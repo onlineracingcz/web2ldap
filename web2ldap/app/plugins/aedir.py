@@ -14,7 +14,7 @@ import socket
 
 # from ldap0 package
 import ldap0
-from ldap0.filter import escape_filter_chars
+import ldap0.filter
 from ldap0.pw import random_string
 from ldap0.controls.readentry import PreReadControl
 from ldap0.controls.deref import DereferenceControl
@@ -352,7 +352,7 @@ class AEUserUid(AEUid):
             uid_result = self._app.ls.l.search_s(
                 self._app.naming_context.encode(self._app.ls.charset),
                 ldap0.SCOPE_SUBTREE,
-                '(uid=%s)' % (escape_filter_chars(uid_candidate)),
+                '(uid=%s)' % (ldap0.filter.escape_str(uid_candidate)),
                 attrlist=['1.1'],
             )
             if not uid_result:
@@ -1363,7 +1363,7 @@ class AEPerson2(AEPerson):
             return attrValues
         sanitize_filter = '(&{0}{1})'.format(
             self._filterstr(),
-            self.sanitize_filter_tmpl.format(av=escape_filter_chars(attrValues[0])),
+            self.sanitize_filter_tmpl.format(av=ldap0.filter.escape_str(attrValues[0])),
         )
         try:
             ldap_result = self._app.ls.l.search_s(

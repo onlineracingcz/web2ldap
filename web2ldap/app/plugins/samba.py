@@ -9,7 +9,7 @@ import string
 import re
 
 import ldap0
-from ldap0.filter import escape_filter_chars
+import ldap0.filter
 
 from web2ldap.app.schema.syntaxes import \
     DirectoryString, \
@@ -93,7 +93,7 @@ class SambaSID(IA5String):
     def _search_domain_entry(self, domain_name):
         if domain_name:
             domain_filter = '(&(objectClass=sambaDomain)(sambaDomainName=%s))' % (
-                escape_filter_chars(domain_name)
+                ldap0.filter.escape_str(domain_name)
             )
         else:
             domain_filter = '(objectClass=sambaDomain)'

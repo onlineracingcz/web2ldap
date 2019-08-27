@@ -139,7 +139,7 @@ class OctetStringGUID(OctetString):
                 'searchform', '&raquo;',
                 [
                     ('dn', self._dn),
-                    ('filterstr', ldap0.filter.escape_filter_chars(self._av, 2)),
+                    ('filterstr', ldap0.filter.escape_str(self._av)),
                     ('searchform_mode', u'exp'),
                 ],
                 title=u'Search entry with this GUID',

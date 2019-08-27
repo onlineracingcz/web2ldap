@@ -1019,7 +1019,7 @@ def AssertionFilter(app, entry):
                 u'(%s)' % (
                     u'='.join((
                         attr_type,
-                        ldap0.filter.escape_filter_chars(attr_value).decode(app.ls.charset),
+                        ldap0.filter.escape_str(attr_value.decode(app.ls.charset)),
                     ))
                 )
                 for attr_value in attr_values

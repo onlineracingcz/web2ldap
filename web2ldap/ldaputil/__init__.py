@@ -218,46 +218,6 @@ def split_rdn(dn):
     return dn_comp[0], u','.join(dn_comp[1:])
 
 
-def escape_ldap_filter_chars(search_string, charset='utf-8'):
-    escape_mode = 0
-    if isinstance(search_string, str):
-        search_string = search_string.encode(charset)
-    if isinstance(search_string, bytes):
-        try:
-            search_string.decode(charset)
-        except UnicodeDecodeError:
-            escape_mode = 2
-    else:
-        raise TypeError('Expected search_string as basestring, was %r' % (search_string))
-    return ldap0.filter.escape_filter_chars(
-        search_string, escape_mode=escape_mode,
-    ).decode(charset)
-
-
-def map_filter_parts(assertion_type, assertion_values, escape_mode=0):
-    assert assertion_values, ValueError("'assertion_values' must be non-zero iterator")
-    return [
-        '(%s=%s)' % (
-            assertion_type,
-            ldap0.filter.escape_filter_chars(assertion_value, escape_mode=escape_mode),
-        )
-        for assertion_value in assertion_values
-    ]
-
-
-def compose_filter(operand, filter_parts):
-    assert operand in '&|', ValueError("Invalid 'operand': %r" % operand)
-    assert filter_parts, ValueError("'filter_parts' must be non-zero iterator")
-    if len(filter_parts) == 1:
-        res = filter_parts[0]
-    elif len(filter_parts) > 1:
-        res = '(%s%s)' % (
-            operand,
-            ''.join(filter_parts),
-        )
-    return res
-
-
 def logdb_filter(logdb_objectclass, dn, entry_uuid=None):
     """
     returns a filter for querying a changelog or accesslog DB for
@@ -274,14 +234,14 @@ def logdb_filter(logdb_objectclass, dn, entry_uuid=None):
     if entry_uuid:
         target_filterstr = u'(|(%s=%s)(%s=%s))' % (
             logdb_dn_attr,
-            escape_ldap_filter_chars(dn),
+            ldap0.filter.escape_str(dn),
             logdb_entryuuid_attr,
-            escape_ldap_filter_chars(entry_uuid),
+            ldap0.filter.escape_str(entry_uuid),
         )
     else:
         target_filterstr = u'(%s=%s)' % (
             logdb_dn_attr,
-            escape_ldap_filter_chars(dn),
+            ldap0.filter.escape_str(dn),
         )
     logdb_filterstr = u'(&(objectClass=%s)%s)' % (
         logdb_objectclass,
