@@ -19,5 +19,5 @@ declare -p PYTHONPATH
 PYTHONDONTWRITEBYTECODE="1"
 export PYTHONDONTWRITEBYTECODE
 
-python2 -R -tt "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
-#coverage-2.7 run "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
+python3 -R -tt "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
+#coverage-3 run "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
