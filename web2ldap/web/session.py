@@ -21,7 +21,7 @@ from ldap0.pw import random_string
 
 
 # characters to be used when generating session IDs
-SESSION_ID_CHARS = string.letters + string.digits + '-._'
+SESSION_ID_CHARS = string.ascii_letters + string.digits + '-._'
 
 # List of environment variables assumed to be constant throughout
 # web sessions with the same ID if existent.
