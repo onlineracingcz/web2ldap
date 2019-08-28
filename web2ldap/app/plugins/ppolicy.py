@@ -3,8 +3,6 @@
 web2ldap plugin classes for attributes defined in draft-behera-ldap-password-policy
 """
 
-from __future__ import absolute_import
-
 import time
 import datetime
 
@@ -19,6 +17,7 @@ from web2ldap.app.schema.syntaxes import \
     GeneralizedTime, \
     syntax_registry
 from web2ldap.app.plugins.quirks import UserPassword
+from web2ldap import cmp
 
 
 class PwdCheckQuality(SelectList):
