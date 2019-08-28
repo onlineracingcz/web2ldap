@@ -8,9 +8,8 @@ from __future__ import absolute_import
 import re
 
 import ldap0
-import ldap0.cidict
+from ldap0.dn import DNObj
 
-from web2ldap.ldaputil import explode_dn, rdn_dict
 from web2ldap.app.schema.syntaxes import \
     BindDN, \
     DirectoryString, \
@@ -424,29 +423,20 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
     def formValue(self):
         if not self._av:
             return u''
-        entry = ldap0.cidict.CIDict(self._entry)
         attr_value = self.av_u
         try:
-            dn_comp_list = explode_dn(attr_value)
+            dn_obj = DNObj(attr_value.decode(self._app.charset))
         except ldap0.DECODING_ERROR:
-            result = BindDN.formValue(self)
-        else:
-            try:
-                rdn = rdn_dict(dn_comp_list[0])
-            except ldap0.DECODING_ERROR:
-                result = BindDN.formValue(self)
-            else:
-                new_rdn = u'+'.join([
-                    u'='.join((
-                        rdn_attr,
-                        rdn_value[0] or entry.get(rdn_attr, [u''])[0]
-                    ))
-                    for rdn_attr, rdn_value in rdn.items()
-                ])
-                new_dn_comp_list = [new_rdn]
-                new_dn_comp_list.extend(dn_comp_list[1:])
-                result = u','.join(new_dn_comp_list)
-        return result
+            return BindDN.formValue(self)
+        new_rdn = DNObj(tuple([
+            (
+                rdn_attr,
+                rdn_value[0] or self._entry.get(rdn_attr, [u''])[0],
+                0
+            )
+            for rdn_attr, rdn_value in dn_obj.rdn_attrs().items()
+        ]))
+        return str(new_rdn+dn_obj.parent())
 
 syntax_registry.reg_at(
     OpenDSdsCfgAlternatebindDn.oid, [
