@@ -3,8 +3,6 @@
 web2ldap plugin classes for attributes defined in apple.schema
 """
 
-from __future__ import absolute_import
-
 import web2ldap.app.searchform
 
 from web2ldap.app.schema.syntaxes import XmlValue, UUID, DynamicValueSelectList, syntax_registry

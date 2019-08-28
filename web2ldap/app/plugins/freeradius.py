@@ -3,8 +3,6 @@
 web2ldap plugin classes for FreeRADIUS/LDAP schema
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import DynamicDNSelectList, syntax_registry
 
 

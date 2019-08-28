@@ -5,8 +5,6 @@ web2ldap plugin classes for attributes defined for pilotPerson
 see also RFC1274
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import SelectList, syntax_registry
 
 

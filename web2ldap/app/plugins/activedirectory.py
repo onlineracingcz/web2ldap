@@ -3,8 +3,6 @@
 web2ldap plugin classes for Active Directory (for some information see draft-armijo-ldap-syntax)
 """
 
-from __future__ import absolute_import
-
 import os
 import time
 import struct

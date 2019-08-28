@@ -2,8 +2,6 @@
 web2ldap plugin classes for group related attributes
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import DistinguishedName, syntax_registry
 
 

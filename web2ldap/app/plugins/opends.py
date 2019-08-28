@@ -3,8 +3,6 @@
 web2ldap plugin classes for OpenDS and OpenDJ
 """
 
-from __future__ import absolute_import
-
 import re
 
 import ldap0

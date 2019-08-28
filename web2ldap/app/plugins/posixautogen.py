@@ -5,8 +5,6 @@ Status:
 Experimental => you have to understand what it internally does when enabling it!
 """
 
-from __future__ import absolute_import
-
 import ldap0
 
 from web2ldap.msbase import Str1stValueDict

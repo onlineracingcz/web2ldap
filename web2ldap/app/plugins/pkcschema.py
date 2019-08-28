@@ -6,8 +6,6 @@ See also:
 http://tools.ietf.org/draft/draft-ietf-pkix-ldap-pkc-schema
 """
 
-from __future__ import absolute_import
-
 import ldap0.filter
 
 from web2ldap.app.schema.syntaxes import DumpASN1CfgOID

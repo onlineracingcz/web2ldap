@@ -2,8 +2,6 @@
 web2ldap plugin classes for attributes defined for so-called dynamic groups
 """
 
-from __future__ import absolute_import
-
 import ldap0
 import ldap0.ldapurl
 

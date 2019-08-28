@@ -3,8 +3,6 @@
 web2ldap plugin classes for Kerberos (see krb5-kdc.schema)
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import \
     BitArrayInteger, \
     DirectoryString, \

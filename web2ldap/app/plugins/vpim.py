@@ -3,8 +3,6 @@
 web2ldap plugin classes for attributes defined in VPIM (see RFC 4237)
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import SelectList, RFC822Address, syntax_registry
 
 

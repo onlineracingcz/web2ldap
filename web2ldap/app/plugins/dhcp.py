@@ -5,8 +5,6 @@ web2ldap plugin classes for attributes defined for DHCP service
 See http://tools.ietf.org/draft/draft-ietf-dhc-ldap-schema/
 """
 
-from __future__ import absolute_import
-
 import re
 
 import ipaddress

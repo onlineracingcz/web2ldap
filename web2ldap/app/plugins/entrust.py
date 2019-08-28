@@ -3,8 +3,6 @@
 web2ldap plugin classes for Entrust PKI
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import Binary, syntax_registry
 
 # This overrides the eventually configured OctetString syntax

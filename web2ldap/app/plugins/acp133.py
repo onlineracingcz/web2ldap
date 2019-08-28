@@ -6,8 +6,6 @@ web2ldap plugin classes for ACP-133
 Currently untested!
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import SelectList, DynamicDNSelectList, syntax_registry
 
 #---------------------------------------------------------------------------

@@ -8,8 +8,6 @@ At this time this is mainly a stub module.
 Currently untested!
 """
 
-from __future__ import absolute_import
-
 import ldap0.dn
 
 import asn1crypto.pem

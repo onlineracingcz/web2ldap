@@ -3,8 +3,6 @@
 web2ldap plugin classes for attributes defined in draft-vchu-ldap-pwd-policy
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import OnOffFlag, syntax_registry
 
 

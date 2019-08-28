@@ -3,8 +3,6 @@
 web2ldap plugin classes for attributes defined for msPerson
 """
 
-from __future__ import absolute_import
-
 import re
 import os.path
 

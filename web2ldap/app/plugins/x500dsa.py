@@ -3,8 +3,6 @@
 web2ldap plugin classes for X.500 DSAs
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import OctetString, syntax_registry
 
 

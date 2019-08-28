@@ -3,8 +3,6 @@
 web2ldap plugin classes for Univention Corporate Server
 """
 
-from __future__ import absolute_import
-
 import bz2
 
 from web2ldap.app.schema.syntaxes import \

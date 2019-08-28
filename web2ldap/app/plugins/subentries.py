@@ -3,8 +3,6 @@
 web2ldap plugin classes for attributes defined for subentries (see RFC 3672)
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import GSER, SelectList, syntax_registry
 
 

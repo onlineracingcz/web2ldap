@@ -5,8 +5,6 @@ web2ldap plugin classes for attributes defined in SCHAC
 See https://www.terena.org/activities/tf-emc2/schac.html
 """
 
-from __future__ import absolute_import
-
 import re
 import datetime
 

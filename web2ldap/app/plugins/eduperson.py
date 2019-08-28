@@ -5,8 +5,6 @@ web2ldap plugin classes for attributes defined eduPerson
 See http://middleware.internet2.edu/eduperson/
 """
 
-from __future__ import absolute_import
-
 import re
 
 from web2ldap.app.schema.syntaxes import IA5String, SelectList, DynamicDNSelectList, syntax_registry

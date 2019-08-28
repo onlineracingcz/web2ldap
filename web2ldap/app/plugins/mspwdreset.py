@@ -3,8 +3,6 @@
 web2ldap plugin classes for msPwdReset*
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import HashAlgorithmOID, syntax_registry
 
 

@@ -4,8 +4,6 @@ web2ldap plugin classes for OpenSSH-LPK
 (see https://code.google.com/p/openssh-lpk/)
 """
 
-from __future__ import absolute_import
-
 import re
 import hashlib
 import binascii

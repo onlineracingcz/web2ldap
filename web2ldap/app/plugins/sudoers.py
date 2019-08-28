@@ -4,8 +4,6 @@ web2ldap plugin classes for sudo-ldap
 (see http://www.sudo.ws/sudoers.ldap.man.html)
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import \
     DynamicValueSelectList, \
     NotBefore, \

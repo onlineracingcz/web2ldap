@@ -4,8 +4,6 @@ web2ldap plugin classes for Novell eDirectory/DirXML
 (see draft-sermersheim-nds-ldap-schema)
 """
 
-from __future__ import absolute_import
-
 import uuid
 from binascii import hexlify
 

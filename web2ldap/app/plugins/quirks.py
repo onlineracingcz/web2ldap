@@ -5,8 +5,6 @@ standard-compliant behaviour even if current subschema of
 a server is errornous or could not be retrieved.
 """
 
-from __future__ import absolute_import
-
 import ldap0.ldapurl
 
 import web2ldap.app.searchform

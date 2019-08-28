@@ -3,8 +3,6 @@
 web2ldap plugin classes for schema elements defined in RFC2307
 """
 
-from __future__ import absolute_import
-
 import re
 
 import web2ldap.app.searchform

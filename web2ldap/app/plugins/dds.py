@@ -3,8 +3,6 @@
 web2ldap plugin classes for dynamic entries (see RFC 2589)
 """
 
-from __future__ import absolute_import
-
 import time
 
 from web2ldap.utctime import strftimeiso8601

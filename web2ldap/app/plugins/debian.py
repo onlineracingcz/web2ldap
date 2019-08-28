@@ -3,8 +3,6 @@
 web2ldap plugin classes for attributes used on ldap://db.debian.org
 """
 
-from __future__ import absolute_import
-
 from web2ldap.app.schema.syntaxes import DynamicValueSelectList, syntax_registry
 
 
