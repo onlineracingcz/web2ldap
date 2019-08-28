@@ -5,8 +5,6 @@ web2ldap plugin classes for OATH-LDAP
 see https://www.stroeder.com/oath-ldap.html
 """
 
-from __future__ import absolute_import
-
 import re
 import datetime
 import base64
@@ -26,6 +24,7 @@ from web2ldap.app.schema.syntaxes import \
     SelectList, \
     Timespan, \
     syntax_registry
+from web2ldap import cmp
 
 
 syntax_registry.reg_at(
