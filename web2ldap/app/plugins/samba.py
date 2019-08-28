@@ -3,8 +3,6 @@
 web2ldap plugin classes for Samba 3
 """
 
-from __future__ import absolute_import
-
 import string
 import re
 
@@ -260,8 +258,8 @@ class SambaHomeDrive(SelectList):
     attr_value_dict = dict([
         (driveletter, driveletter)
         for driveletter in [
-            '%s:' % letter.decode('ascii')
-            for letter in string.uppercase
+            '%s:' % letter
+            for letter in string.ascii_lowercase.upper()
         ]
     ])
 
