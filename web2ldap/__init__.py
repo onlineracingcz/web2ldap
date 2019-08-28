@@ -12,4 +12,9 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
+
+def cmp(a, b):
+    """
+    Workaround to have cmp() like in Python 2
+    """
+    return bool(a > b) - bool(a < b)
