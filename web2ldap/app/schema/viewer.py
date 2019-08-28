@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import ldap0
 
 from ldap0.schema.subentry import SCHEMA_ATTRS, SCHEMA_CLASS_MAPPING, SCHEMA_ATTR_MAPPING
@@ -49,7 +47,10 @@ SCHEMA_VIEWER_USAGE = """
 
 
 def schema_link_text(se, charset):
-    names = map(escape_html, se.__dict__.get('names', (())))
+    names = [
+        escape_html(name)
+        for name in se.__dict__.get('names', (()))
+    ]
     obsolete = se.__dict__.get('obsolete', False)
     if len(names) == 1:
         res = names[0]
