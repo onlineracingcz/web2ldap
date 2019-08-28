@@ -3,8 +3,6 @@
 web2ldap.wsgi -- WSGI app wrapper eventually starting a stand-alone HTTP server
 """
 
-from __future__ import absolute_import
-
 import sys
 import os
 import socketserver
