@@ -92,11 +92,11 @@ class AcceptHeaderDict(collections.UserDict):
 
     def items(self):
         """
-        Return the accepted values as tuples (value,weight)
+        Return the accepted values as tuples (value, weight)
         in descending order of capability weight
         """
-        vals = self.data.items()
-        vals.sort(lambda x, y: cmp(y[1], x[1]))
+        vals = list(self.data.items())
+        vals.sort(key=lambda x: x[1])
         return vals
 
     def keys(self):
