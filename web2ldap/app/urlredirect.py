@@ -14,7 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import absolute_import
 
-import urlparse
+import urllib.parse
 
 import web2ldapcnf
 
@@ -27,7 +27,7 @@ def w2l_urlredirect(app):
     if not redirect_ok:
         # Check for valid target URL syntax
         try:
-            tu = urlparse.urlparse(app.form.query_string)
+            tu = urllib.parse.urlparse(app.form.query_string)
         except:
             redirect_ok = False
             error_msg = u'Rejected non-parseable redirect URL!'
