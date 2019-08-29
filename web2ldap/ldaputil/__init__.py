@@ -25,17 +25,17 @@ from . import oidreg
 
 
 AD_LDAP49_ERROR_CODES = {
-    0x525: u'user not found',
-    0x52e: u'invalid credentials',
-    0x530: u'not permitted to logon at this time',
-    0x531: u'not permitted to logon at this workstation',
-    0x532: u'password expired',
-    0x533: u'account disabled',
-    0x701: u'account expired',
-    0x773: u'user must reset password',
-    0x775: u'user account locked',
+    0x525: 'user not found',
+    0x52e: 'invalid credentials',
+    0x530: 'not permitted to logon at this time',
+    0x531: 'not permitted to logon at this workstation',
+    0x532: 'password expired',
+    0x533: 'account disabled',
+    0x701: 'account expired',
+    0x773: 'user must reset password',
+    0x775: 'user account locked',
 }
-AD_LDAP49_ERROR_PREFIX = 'AcceptSecurityContext error, data '
+AD_LDAP49_ERROR_PREFIX = b'AcceptSecurityContext error, data '
 
 attr_type_pattern = u'[\\w;.-]+(;[\\w_-]+)*'
 attr_value_pattern = u'(([^,]|\\\\,)+|".*?")'

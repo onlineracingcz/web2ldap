@@ -1073,7 +1073,7 @@ class LDAPSession(object):
                 search_base.encode(self.charset),
                 lu_obj.scope,
                 search_filter.encode(self.charset),
-                attrlist=['1.1'],
+                attrlist=[b'1.1'],
                 sizelimit=2
             )
         except ldap0.SIZELIMIT_EXCEEDED as ldap_err:
@@ -1120,7 +1120,7 @@ class LDAPSession(object):
             # Drop the bind call sent before stored in ReconnectLDAPObject's class attribute
             self.l._last_bind = None
             # Force reconnecting in ReconnectLDAPObject
-            self.l.reconnect(uri)
+            self.l.reconnect(uri.encode('ascii'))
         except ldap0.INAPPROPRIATE_AUTH:
             pass
         # Prepare extended controls attached to bind request

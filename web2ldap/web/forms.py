@@ -995,7 +995,7 @@ class Form:
 
         self.inf.close()
 
-        inputlist = query_string.split('&')
+        inputlist = query_string.split(b'&')
 
         contentLength = 0
 
@@ -1009,10 +1009,10 @@ class Form:
 
                 # Einzelne Parametername/-daten-Paare auseinandernehmen
                 try:
-                    name, value = param.split('=', 1)
+                    name, value = param.split(b'=', 1)
                 except ValueError:
                     raise InvalidFormEncoding(param)
-                name = unquote(name).strip()
+                name = unquote(name.decode('ascii')).strip()
 
                 if name not in self.field:
                     raise InvalidFieldName(name)

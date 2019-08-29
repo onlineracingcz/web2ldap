@@ -91,7 +91,7 @@ def w2l_login(
 
     filterstr = app.form.getInputValue(
         'filterstr',
-        [(app.ldap_url.filterstr or '').decode(app.ls.charset)],
+        [app.ldap_url.filterstr or ''],
     )[0]
     if filterstr:
         filterstr_hidden_field = app.form.hiddenFieldHTML('filterstr', filterstr, u'')
@@ -123,9 +123,9 @@ def w2l_login(
             '\n'.join((
                 login_msg_html,
                 app.form.begin_form(action_command, None, 'POST', None),
-                app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldapUrl('')).decode('ascii'), u''),
+                app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldapUrl('')), u''),
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
-                app.form.hiddenFieldHTML('delsid', app.sid.decode('ascii'), u''),
+                app.form.hiddenFieldHTML('delsid', app.sid, u''),
                 app.form.hiddenFieldHTML('conntype', str(int(app.ls.startTLSOption > 0)), u''),
                 scope_hidden_field,
                 filterstr_hidden_field,

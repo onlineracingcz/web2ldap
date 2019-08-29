@@ -517,7 +517,7 @@ class AppHandler(LogHelper):
         if del_sid form parameter is present then delete the obsolete session
         """
         try:
-            del_sid = self.form.field['delsid'].value[0].encode('ascii')
+            del_sid = self.form.field['delsid'].value[0]
         except IndexError:
             return
         try:
@@ -638,21 +638,21 @@ class AppHandler(LogHelper):
         if isinstance(ldap_err, ldap0.TIMEOUT) or not ldap_err.args:
             error_msg = u''
         elif isinstance(ldap_err, ldap0.INVALID_CREDENTIALS) and \
-            AD_LDAP49_ERROR_PREFIX in ldap_err.args[0].get('info', ''):
+            AD_LDAP49_ERROR_PREFIX in ldap_err.args[0].get('info', b''):
             ad_error_code_pos = (
                 ldap_err.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
             )
             ad_error_code = int(ldap_err.args[0]['info'][ad_error_code_pos:ad_error_code_pos+3], 16)
             error_msg = u'%s:\n%s (%s)' % (
                 ldap_err.args[0]['desc'].decode(self.ls.charset),
-                ldap_err.args[0].get('info', '').decode(self.ls.charset),
+                ldap_err.args[0].get('info', b'').decode(self.ls.charset),
                 AD_LDAP49_ERROR_CODES.get(ad_error_code, u'unknown'),
             )
         else:
             try:
                 error_msg = u':\n'.join((
                     ldap_err.args[0]['desc'].decode(self.ls.charset),
-                    ldap_err.args[0].get('info', '').decode(self.ls.charset),
+                    ldap_err.args[0].get('info', b'').decode(self.ls.charset),
                 ))
             except UnicodeDecodeError:
                 error_msg = u':\n'.join((
@@ -661,7 +661,7 @@ class AppHandler(LogHelper):
                 ))
             except (TypeError, IndexError):
                 error_msg = str(ldap_err).decode(self.ls.charset)
-            matched_dn = ldap_err.args[0].get('matched', '').decode(self.ls.charset)
+            matched_dn = ldap_err.args[0].get('matched', b'').decode(self.ls.charset)
         error_msg = error_msg.replace(u'\r', '').replace(u'\t', '')
         error_msg_html = self.form.utf2display(error_msg, lf_entity='<br>')
         # Add matchedDN to error message HTML if needed
