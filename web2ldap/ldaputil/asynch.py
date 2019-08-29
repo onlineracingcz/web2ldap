@@ -64,7 +64,7 @@ class AsyncSearchHandler:
             filterStr,
             attrList=None,
             sizelimit=0,
-            serverctrls=None,
+            ref_ctrls=None,
         ):
         """
         searchRoot
@@ -78,7 +78,7 @@ class AsyncSearchHandler:
         sizelimit
             Maximum number of entries a server should return
             (request client-side limit)
-        serverctrls
+        ref_ctrls
             list of server-side LDAP controls
         """
         self._msg_id = self._l.search(
@@ -86,7 +86,7 @@ class AsyncSearchHandler:
             scope=searchScope,
             filterstr=filterStr,
             attrlist=attrList,
-            serverctrls=serverctrls,
+            ref_ctrls=ref_ctrls,
             sizelimit=sizelimit,
         )
         self._after_first = True
