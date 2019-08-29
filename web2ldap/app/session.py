@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import time
 import collections
 import logging
@@ -90,7 +88,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
             )
             raise web2ldap.web.session.MaxSessionPerIPExceeded(remote_ip, self.max_session_count_per_ip)
         session_id = web2ldap.web.session.WebSession.new(self, env)
-        current_concurrent_sessions = len(self.sessiondict) / 2
+        current_concurrent_sessions = len(self.sessiondict) // 2
         if current_concurrent_sessions > self.max_concurrent_sessions:
             self.max_concurrent_sessions = current_concurrent_sessions
         self.session_ip_addr[session_id] = remote_ip
@@ -126,7 +124,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         return new_sid
 
     def delete(self, sid):
-        assert isinstance(sid, bytes), TypeError('Expected sid to be bytes, got %r' % (sid))
+        assert isinstance(sid, str), TypeError('Expected sid to be str, got %r' % (sid))
         self.log(logging.DEBUG, 'delete(%r): remove session', sid)
         try:
             ls_local = self.sessiondict[sid][1]

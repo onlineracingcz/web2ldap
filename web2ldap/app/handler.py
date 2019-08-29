@@ -11,8 +11,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import sys
 import inspect
 import socket
@@ -139,9 +137,9 @@ def check_access(env, command):
     """
     simple access control based on REMOTE_ADDR
     """
-    remote_addr = ip_address(env['REMOTE_ADDR'].decode('ascii'))
+    remote_addr = ip_address(env['REMOTE_ADDR'])
     access_allowed = web2ldapcnf.access_allowed.get(
-        command.decode('ascii'),
+        command,
         web2ldapcnf.access_allowed['_']
     )
     for net in access_allowed:
@@ -192,7 +190,7 @@ class AppHandler(LogHelper):
         """
         if isinstance(dn, bytes) and self.ls is not None:
             dn = dn.decode(self.ls.charset)
-        assert web2ldap.ldaputil.is_dn(dn), ValueError(
+        assert ldap0.dn.is_dn(dn), ValueError(
             'Expected LDAP DN as dn, was %r' % (dn)
         )
         self.dn_obj = DNObj.fromstring(dn)
@@ -210,7 +208,7 @@ class AppHandler(LogHelper):
         if self.ls and self.ls.uri:
             res = self.ls.get_search_root(self.dn)
         else:
-            res = u''
+            res = DNObj((()))
         return res
 
     @property
@@ -266,10 +264,10 @@ class AppHandler(LogHelper):
         """
         Build the HTML text of a anchor with form parameters
         """
-        assert isinstance(command, bytes), \
+        assert isinstance(command, str), \
             TypeError('command must be str, but was %r', command)
-        assert isinstance(anchor_text, bytes), \
-            TypeError('anchor_text must be bytes, but was %r', anchor_text)
+        assert isinstance(anchor_text, str), \
+            TypeError('anchor_text must be str, but was %r', anchor_text)
         assert anchor_id is None or isinstance(anchor_id, str), \
             TypeError('anchor_id must be None or str, but was %r', anchor_id)
         assert target is None or isinstance(target, str), \
@@ -295,7 +293,7 @@ class AppHandler(LogHelper):
             anchor_id or '',
             anchor_text,
         )
-        assert isinstance(res, bytes), TypeError('res must be bytes, was %r', res)
+        assert isinstance(res, str), TypeError('res must be str, was %r', res)
         return res
 
     def begin_form(
@@ -543,7 +541,7 @@ class AppHandler(LogHelper):
                 input_ldapurl = ExtendedLDAPUrl(self.form.query_string)
             except ValueError as err:
                 raise ErrorExit(u'Error parsing LDAP URL: %s.' % (
-                    self.form.utf2display(str(str(err)))
+                    self.form.utf2display(str(err))
                 ))
             else:
                 self.command = self.command or SCOPE2COMMAND[input_ldapurl.scope]
@@ -559,10 +557,10 @@ class AppHandler(LogHelper):
                 # One form parameter with LDAP URL
                 ldap_url_input = self.form.field['ldapurl'].value[0]
                 try:
-                    input_ldapurl = ExtendedLDAPUrl(ldap_url_input.encode('ascii'))
+                    input_ldapurl = ExtendedLDAPUrl(ldap_url_input)
                 except ValueError as err:
                     raise ErrorExit(
-                        u'Error parsing LDAP URL: %s.' % (str(err, self.form.accept_charset))
+                        u'Error parsing LDAP URL: %s.' % (err,)
                     )
             else:
                 input_ldapurl = ExtendedLDAPUrl()
@@ -576,30 +574,30 @@ class AppHandler(LogHelper):
         # Separate parameters for dn, who, cred and scope
         # have predecence over parameters specified in LDAP URL
 
-        dn = self.form.getInputValue('dn', [input_ldapurl.dn.decode(self.form.accept_charset)])[0]
+        dn = self.form.getInputValue('dn', [input_ldapurl.dn])[0]
 
         who = self.form.getInputValue('who', [None])[0]
         if who is None:
             if input_ldapurl.who is not None:
-                who = input_ldapurl.who.decode(self.form.accept_charset)
+                who = input_ldapurl.who
         else:
-            input_ldapurl.who = who.encode(self.form.accept_charset)
+            input_ldapurl.who = who
 
         cred = self.form.getInputValue('cred', [None])[0]
         if cred is None:
             if input_ldapurl.cred is not None:
-                cred = input_ldapurl.cred.decode(self.form.accept_charset)
+                cred = input_ldapurl.cred
         else:
-            input_ldapurl.cred = cred.encode(self.form.accept_charset)
+            input_ldapurl.cred = cred
 
-        assert isinstance(input_ldapurl.dn, bytes), TypeError(
-            "Type of 'input_ldapurl.dn' must be bytes, was %r" % (input_ldapurl.dn)
+        assert isinstance(input_ldapurl.dn, str), TypeError(
+            "Type of 'input_ldapurl.dn' must be str, was %r" % (input_ldapurl.dn)
         )
-        assert input_ldapurl.who is None or isinstance(input_ldapurl.who, bytes), TypeError(
-            "Type of 'input_ldapurl.who' must be bytes, was %r" % (input_ldapurl.who)
+        assert input_ldapurl.who is None or isinstance(input_ldapurl.who, str), TypeError(
+            "Type of 'input_ldapurl.who' must be str, was %r" % (input_ldapurl.who)
         )
-        assert input_ldapurl.cred is None or isinstance(input_ldapurl.cred, bytes), TypeError(
-            "Type of 'input_ldapurl.cred' must be bytes, was %r" % (input_ldapurl.cred)
+        assert input_ldapurl.cred is None or isinstance(input_ldapurl.cred, str), TypeError(
+            "Type of 'input_ldapurl.cred' must be str, was %r" % (input_ldapurl.cred)
         )
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
         assert who is None or isinstance(who, str), TypeError(
@@ -609,7 +607,7 @@ class AppHandler(LogHelper):
             "Type of 'cred' must be str, was %r" % (cred)
         )
 
-        if not web2ldap.ldaputil.is_dn(dn):
+        if not ldap0.dn.is_dn(dn, flags=1):
             raise ErrorExit(u'Invalid DN.')
 
         scope_str = self.form.getInputValue(
@@ -906,7 +904,7 @@ class AppHandler(LogHelper):
                 self,
                 u'Error parsing form',
                 u'Error parsing form:<br>%s' % (
-                    self.form.utf2display(str(form_error).decode(self.form.accept_charset)),
+                    self.form.utf2display(str(form_error)),
                 ),
             )
 

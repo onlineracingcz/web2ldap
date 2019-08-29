@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import os
 import time
 import socket
@@ -44,11 +42,11 @@ MONITOR_TEMPLATE = """
   </tr>
   <tr>
     <td>PID / PPID:</td>
-    <td>{int_pid} / {int_ppid}</td>
+    <td>{int_pid:d} / {int_ppid:d}</td>
   </tr>
   <tr>
     <td>UID:</td>
-    <td>{text_username} ({int_uid})</td>
+    <td>{text_username} ({int_uid:d})</td>
   </tr>
 </table>
 
@@ -160,50 +158,49 @@ def w2l_monitor(app):
         [],
     )
 
-    app.outf.write(
-        MONITOR_TEMPLATE.format(
-            text_version=web2ldap.__about__.__version__,
-            text_sysfqdn=socket.getfqdn(),
-            int_pid=os.getpid(),
-            int_ppid=os.getppid(),
-            text_username=app.form.utf2display(str(posix_username)),
-            int_uid=posix_uid,
-            text_currenttime=strftimeiso8601(time.gmtime(time.time())),
-            text_startuptime=strftimeiso8601(time.gmtime(STARTUP_TIME)),
-            text_uptime='%02d:%02d' % (int(uptime/60), int(uptime%60)),
-            int_numthreads=threading.activeCount(),
-            text_threadlist='\n'.join(
-                [
-                    '<li>%s</li>' % ''.join(
-                        [
-                            app.form.utf2display(str(repr(t))),
-                            ', alive'*t.isAlive(),
-                            ', daemon'*t.isDaemon(),
-                        ]
-                    )
-                    for t in threading.enumerate()
-                ]
-            ),
-            int_sessioncounter=session_store.sessionCounter,
-            int_maxconcurrentsessions=session_store.max_concurrent_sessions,
-            int_removedsessions=cleanUpThread.removed_sessions,
-            int_sessionlimit=web2ldapcnf.session_limit,
-            int_sessionlimitperip=web2ldapcnf.session_per_ip_limit,
-            int_sessionremoveperiod=session_store.session_ttl,
-            int_currentnumremoteipaddrs=len(session_store.remote_ip_sessions),
-            int_numremoteipaddrs=len(session_store.remote_ip_counter),
-            text_remoteiphitlist='\n'.join(
-                [
-                    '<tr><td>%s</td><td>%d</td><td>%0.4f</td></tr>' % (
-                        app.form.utf2display((ip or '-').decode('ascii')),
-                        count,
-                        float(count/uptime),
-                    )
-                    for ip, count in session_store.remote_ip_counter.most_common()
-                ]
-            ),
-        )
+    monitor_tmpl_vars = dict(
+        text_version=web2ldap.__about__.__version__,
+        text_sysfqdn=socket.getfqdn(),
+        int_pid=os.getpid(),
+        int_ppid=os.getppid(),
+        text_username=app.form.utf2display(posix_username),
+        int_uid=posix_uid,
+        text_currenttime=strftimeiso8601(time.gmtime(time.time())),
+        text_startuptime=strftimeiso8601(time.gmtime(STARTUP_TIME)),
+        text_uptime='%02d:%02d' % (int(uptime//60), int(uptime%60)),
+        int_numthreads=threading.activeCount(),
+        text_threadlist='\n'.join(
+            [
+                '<li>%s</li>' % ''.join(
+                    [
+                        app.form.utf2display(str(repr(t))),
+                        ', alive'*t.isAlive(),
+                        ', daemon'*t.isDaemon(),
+                    ]
+                )
+                for t in threading.enumerate()
+            ]
+        ),
+        int_sessioncounter=session_store.sessionCounter,
+        int_maxconcurrentsessions=session_store.max_concurrent_sessions,
+        int_removedsessions=cleanUpThread.removed_sessions,
+        int_sessionlimit=web2ldapcnf.session_limit,
+        int_sessionlimitperip=web2ldapcnf.session_per_ip_limit,
+        int_sessionremoveperiod=session_store.session_ttl,
+        int_currentnumremoteipaddrs=len(session_store.remote_ip_sessions),
+        int_numremoteipaddrs=len(session_store.remote_ip_counter),
+        text_remoteiphitlist='\n'.join(
+            [
+                '<tr><td>%s</td><td>%d</td><td>%0.4f</td></tr>' % (
+                    app.form.utf2display((ip or '-')),
+                    count,
+                    float(count/uptime),
+                )
+                for ip, count in session_store.remote_ip_counter.most_common()
+            ]
+        ),
     )
+    app.outf.write(MONITOR_TEMPLATE.format(**monitor_tmpl_vars))
 
     if session_store.sessiondict:
 
@@ -222,9 +219,9 @@ def w2l_monitor(app):
                     len(real_ldap_sessions),
                     '\n'.join([
                         '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(
-                            app.form.utf2display((i[1].onBehalf or '').decode('ascii') or u'unknown'),
+                            app.form.utf2display((i[1].onBehalf or '') or u'unknown'),
                             strftimeiso8601(time.gmtime(i[0])),
-                            app.form.utf2display(i[1].uri.decode('ascii') or u'no connection'),
+                            app.form.utf2display(i[1].uri or u'no connection'),
                             app.form.utf2display(i[1].who or u'anonymous'),
                         )
                         for k, i in real_ldap_sessions

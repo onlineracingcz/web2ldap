@@ -15,7 +15,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 import ldap0
 
 import web2ldap.app.gui
-from web2ldap.ldaputil import explode_dn, split_rdn, parent_dn
 from web2ldap.app.gui import dn_anchor_hash
 
 
@@ -173,19 +172,17 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
 
 def w2l_dit(app):
 
-    dn_components = explode_dn(app.dn)
-
     dit_dict = {}
     entry_dict = {}
 
     root_dit_dict = dit_dict
 
-    dn_levels = len(dn_components)
+    dn_levels = len(app.dn_obj)
     dit_max_levels = app.cfg_param('dit_max_levels', 10)
     cut_off_levels = max(0, dn_levels-dit_max_levels)
 
     for i in range(1, dn_levels-cut_off_levels+1):
-        search_base = u','.join(dn_components[dn_levels-cut_off_levels-i:])
+        search_base = str(app.dn_obj.slice(dn_levels-cut_off_levels-i, None))
         dit_dict[search_base] = {}
         try:
             msg_id = app.ls.l.search(

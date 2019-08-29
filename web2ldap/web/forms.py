@@ -82,7 +82,7 @@ class Field(object):
         return 'id="%s" ' % (id_value)
 
     def labelHTML(self, labelText=None, for_value=None):
-        labelText = (labelText or self.text).encode(self.charset)
+        labelText = labelText or self.text
         return '<label for="%s">%s</label>' % (for_value or self.name, labelText)
 
     def getValue(self):
@@ -113,13 +113,15 @@ class Field(object):
             Either a string containing a regex pattern,
             a tuple (pattern string, pattern options) or None.
         """
-        if isinstance(pattern, tuple):
+        if pattern is None:
+            return None, 0
+        elif isinstance(pattern, tuple):
             return pattern
-        elif isinstance(pattern, bytes):
-            return pattern, 0
         elif isinstance(pattern, str):
-            return pattern.encode(self.charset), 0
-        return pattern, 0
+            return pattern, 0
+#        elif isinstance(pattern, bytes):
+#            return pattern, 0
+        raise TypeError('Expected pattern to be None, str or tuple, got %r' % (pattern,))
 
     def setRegex(self, pattern):
         """
@@ -211,11 +213,11 @@ class Field(object):
 
     def titleHTML(self, title):
         """HTML output of default."""
-        return escape_html(title or self.text).encode(self.charset)
+        return escape_html(title or self.text)
 
     def _defaultHTML(self, default):
         """HTML output of default."""
-        return escape_html(self._defaultValue(default)).encode(self.charset)
+        return escape_html(self._defaultValue(default))
 
 
 class Textarea(Field):
@@ -588,10 +590,10 @@ class Select(Radio):
                 optionTitle_attr = ''
             res.append(
                 '<option value="%s"%s%s>%s</option>' % (
-                    escape_html(optionValue.encode(self.charset)),
+                    escape_html(optionValue),
                     optionTitle_attr,
                     ' selected'*(option_selected),
-                    escape_html(optionText.encode(self.charset)),
+                    escape_html(optionText),
                 )
             )
         res.append('</select>')
@@ -997,7 +999,8 @@ class Form:
 
         contentLength = 0
 
-        unquote = urllib.parse.unquote_plus
+        unquote = urllib.parse.unquote
+        unquote_to_bytes = urllib.parse.unquote_to_bytes
 
         # Loop over all name attributes declared
         for param in inputlist:
@@ -1014,7 +1017,7 @@ class Form:
                 if name not in self.field:
                     raise InvalidFieldName(name)
 
-                value = unquote(value).strip()
+                value = unquote_to_bytes(value).strip()
 
                 contentLength += len(value)
 

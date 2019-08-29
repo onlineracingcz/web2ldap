@@ -5,19 +5,16 @@ web2ldap plugin classes for DNS attributes
 https://drift.uninett.no/nett/ip-nett/dnsattributes.schema
 """
 
-from __future__ import absolute_import
-
 import re
-import string
 import hashlib
 
 import ldap0
 import ldap0.schema.models
+from ldap0.dn import DNObj
 
 import web2ldapcnf
 
 import web2ldap.app.searchform
-from web2ldap.ldaputil import match_dnlist
 from web2ldap.app.schema.syntaxes import \
     IA5String, \
     DNSDomain, \
@@ -47,26 +44,28 @@ class AssociatedDomain(DNSDomain):
         """
         Return the best matching domain entry for the given DN
         """
-        result = None
-        if self._dn:
-            ldap_result = self._app.ls.l.search_s(
-                self._app.ls.get_search_root(self._dn).encode(self._app.ls.charset),
-                ldap0.SCOPE_SUBTREE,
-                '(&(objectClass=dNSDomain)(|(sOARecord=*)(nSRecord=*))(associatedDomain=*))',
-                attrlist=['associatedDomain'],
+        if not self._dn:
+            return None
+        ldap_result = self._app.ls.l.search_s(
+            self._app.ls.get_search_root(self._dn).encode(self._app.ls.charset),
+            ldap0.SCOPE_SUBTREE,
+            '(&(objectClass=dNSDomain)(|(sOARecord=*)(nSRecord=*))(associatedDomain=*))',
+            attrlist=['associatedDomain'],
+        )
+        if not ldap_result:
+            return None
+        d = dict([
+            (
+                DNObj.fromstring(self._app.ls.uc_decode(dn)[0]),
+                self._app.ls.uc_decode(entry['associatedDomain'][0])[0]
             )
-            if ldap_result:
-                d = dict([
-                    (self._app.ls.uc_decode(dn)[0], self._app.ls.uc_decode(entry['associatedDomain'][0])[0])
-                    for dn, entry in ldap_result
-                    if dn
-                ])
-                if d:
-                    try:
-                        result = str(d[match_dnlist(self._dn, d.keys())]) or None
-                    except KeyError:
-                        pass
-        return result
+            for dn, entry in ldap_result
+            if dn
+        ])
+        if not d:
+            return None
+        return d[self.dn.match(d.keys())] or None
+        # end of _parent_domain()
 
     def sanitize(self, attrValue):
         attrValue = DNSDomain.sanitize(self, attrValue)
@@ -133,7 +132,7 @@ class AssociatedDomain(DNSDomain):
             if av.endswith(u'.in-addr.arpa'):
                 try:
                     ip_addr_u = u'.'.join(
-                        map(str, reversed(map(int, av.split(u'.')[0:4])))
+                        map(str, reversed(list(map(int, av.split(u'.')[0:4]))))
                     )
                 except ValueError:
                     pass
@@ -348,7 +347,7 @@ class SSHFPRecord(IA5String):
         try:
             key_algo, fp_algo, fp_value = [
                 i.encode('ascii')
-                for i in filter(None, map(string.strip, attrValue.lower().split(' ')))
+                for i in filter(None, map(str.strip, attrValue.lower().split(' ')))
             ]
         except ValueError:
             return attrValue
@@ -356,7 +355,7 @@ class SSHFPRecord(IA5String):
 
     def _validate(self, attrValue):
         try:
-            key_algo, fp_algo, fp_value = filter(None, map(string.strip, attrValue.split(' ')))
+            key_algo, fp_algo, fp_value = filter(None, map(str.strip, attrValue.split(' ')))
         except ValueError:
             return False
         else:
@@ -372,7 +371,7 @@ class SSHFPRecord(IA5String):
     def displayValue(self, valueindex=0, commandbutton=False):
         display_value = IA5String.displayValue(self, valueindex, commandbutton)
         try:
-            key_algo, fp_algo, _ = filter(None, map(string.strip, self._av.split(' ')))
+            key_algo, fp_algo, _ = filter(None, map(str.strip, self._av.split(' ')))
         except ValueError:
             r = display_value
         else:

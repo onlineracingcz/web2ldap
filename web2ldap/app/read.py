@@ -12,9 +12,7 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
-from UserDict import IterableUserDict
+from collections import UserDict
 
 import ldap0.schema
 from ldap0.cidict import CIDict
@@ -32,7 +30,7 @@ from web2ldap.msbase import GrabKeys
 from web2ldap.app.schema.viewer import schema_anchor
 
 
-class VCardEntry(IterableUserDict):
+class VCardEntry(UserDict):
 
     def __init__(self, app, entry, out_charset='utf-8'):
         self._app = app
@@ -50,7 +48,7 @@ class VCardEntry(IterableUserDict):
 
 
 def get_vcard_template(app, object_classes):
-    template_dict = cidict(app.cfg_param('vcard_template', {}))
+    template_dict = CIDict(app.cfg_param('vcard_template', {}))
     current_oc_set = set([
         s.lower()
         for s in object_classes
@@ -75,7 +73,7 @@ def generate_vcard(template_str, vcard_entry):
     return '\r\n'.join(template_lines_new) % vcard_entry
 
 
-class DisplayEntry(IterableUserDict):
+class DisplayEntry(UserDict):
 
     def __init__(self, app, dn, schema, entry, sep_attr, commandbutton):
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
@@ -171,7 +169,7 @@ class DisplayEntry(IterableUserDict):
         return # _set_dn()
 
     def get_html_templates(self, cnf_key):
-        read_template_dict = cidict(self._app.cfg_param(cnf_key, {}))
+        read_template_dict = CIDict(self._app.cfg_param(cnf_key, {}))
         # This gets all object classes no matter what
         all_object_class_oid_set = self.entry.object_class_oid_set()
         # Initialize the set with only the STRUCTURAL object class of the entry

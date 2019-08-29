@@ -5,8 +5,6 @@ web2ldap plugin classes for
 Æ-DIR -- Yet another LDAP user and systems management
 """
 
-from __future__ import absolute_import
-
 # Python's standard lib
 import re
 import time
@@ -18,12 +16,13 @@ import ldap0.filter
 from ldap0.pw import random_string
 from ldap0.controls.readentry import PreReadControl
 from ldap0.controls.deref import DereferenceControl
+from ldap0.filter import compose_filter, map_filter_parts
+from ldap0.dn import DNObj
 
 import web2ldapcnf
 
 from web2ldap.web.forms import HiddenInput
 import web2ldap.ldaputil
-from web2ldap.ldaputil import compose_filter, map_filter_parts
 import web2ldap.app.searchform
 import web2ldap.app.plugins.inetorgperson
 import web2ldap.app.plugins.sudoers
@@ -116,29 +115,10 @@ class AEObjectUtil:
         return zone_entry
 
     def _get_zone_dn(self):
-        dn_list = ldap0.dn.explode_dn(
-            self._dn[:-len(self._app.naming_context)-1].encode(self._app.ls.charset)
-        )
-        result = ','.join((
-            dn_list[-1],
-            self._app.naming_context.encode(self._app.ls.charset),
-        ))
-        return result # _get_zone_dn()
+        return self.dn.slice(None, -len(DNObj.fromstring(self._app.naming_context))-1).encode(self._app.ls.charset)
 
     def _get_zone_name(self):
-        dn_list = ldap0.dn.str2dn(
-            self._dn[:-len(self._app.naming_context)-1].encode(self._app.ls.charset)
-        )
-        try:
-            zone_cn = dict([
-                (at, av)
-                for at, av, _ in dn_list[-1]
-            ])['cn'].decode(self._app.ls.charset)
-        except (KeyError, IndexError):
-            result = None
-        else:
-            result = zone_cn
-        return result # _get_zone_name()
+        return self.dn[-len(DNObj.fromstring(self._app.naming_context))-1][1].encode(self._app.ls.charset)
 
     def _constrained_persons(
             self,
@@ -270,7 +250,7 @@ class AEGIDNumber(GidNumber):
         _, _, _, resp_ctrls = self._app.ls.l.modify_s(
             self._get_id_pool_dn(),
             [(ldap0.MOD_INCREMENT, self._at, '1')],
-            serverctrls=[prc],
+            ref_ctrls=[prc],
         )
         return int(resp_ctrls[0].entry[self._at][0])
 
@@ -531,7 +511,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
                 self.lu_obj.scope or ldap0.SCOPE_SUBTREE,
                 filterstr=self._filterstr(),
                 attrlist=self.lu_obj.attrs+['description'],
-                serverctrls=srv_ctrls,
+                ref_ctrls=srv_ctrls,
                 add_ctrls=1,
             )
             for dn, entry, controls in ldap_result:
@@ -677,13 +657,11 @@ class AEGroupDN(DerefDynamicDNSelectList):
     )
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        dn_comp_list = ldap0.dn.str2dn(self._av)
-        group_cn = dn_comp_list[0][0][1].decode(self._app.ls.charset)
-        parent_dn = ldap0.dn.dn2str(dn_comp_list[1:]).decode(self._app.ls.charset)
+        group_cn = self.dn[0][0][1].decode(self._app.ls.charset)
         r = [
             'cn=<strong>{0}</strong>,{1}'.format(
                 self._app.form.utf2display(group_cn),
-                self._app.form.utf2display(parent_dn),
+                self._app.form.utf2display(str(self.dn.parent())),
             ).encode()
         ]
         if commandbutton:
@@ -850,10 +828,9 @@ class AESrvGroup(AESameZoneObject):
 
     def _filterstr(self):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
-        parent_dn = web2ldap.ldaputil.parent_dn(self._dn)
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
-            parent_dn.encode(self._app.ls.charset),
+            ldap0.filter.escape_str(str(self.dn.parent())),
         )
 
 syntax_registry.reg_at(
@@ -979,7 +956,6 @@ class AEEntryDNAEHost(DistinguishedName):
     )
 
     def _additional_links(self):
-        parent_dn = web2ldap.ldaputil.parent_dn(self.av_u)
         aesrvgroup_filter = u''.join([
             u'(aeSrvGroup=%s)' % av.decode(self._app.ls.charset)
             for av in self._entry.get('aeSrvGroup', [])
@@ -998,7 +974,7 @@ class AEEntryDNAEHost(DistinguishedName):
                             u'(&(|(objectClass=aeHost)(objectClass=aeService))'
                             u'(|(entryDN:dnSubordinateMatch:=%s)%s))'
                         ) % (
-                            parent_dn,
+                            ldap0.filter.escape_str(str(self.dn.parent())),
                             aesrvgroup_filter,
                         )
                     ),

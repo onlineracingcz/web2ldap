@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import time
 import os
 from hashlib import md5
@@ -22,6 +20,7 @@ import ldap0
 import ldap0.ldapurl
 from ldap0.ldapurl import LDAPUrl
 import ldap0.filter
+from ldap0.dn import DNObj
 
 import web2ldapcnf
 
@@ -36,7 +35,7 @@ import web2ldap.app.schema.syntaxes
 import web2ldap.app.searchform
 from web2ldap.msbase import GrabKeys
 import web2ldap.ldaputil
-from web2ldap.ldaputil import explode_dn, logdb_filter
+from web2ldap.ldaputil import logdb_filter
 
 
 #---------------------------------------------------------------------------
@@ -91,7 +90,8 @@ def read_template(app, config_key, form_desc=u'', tmpl_filename=None):
     tmpl_filename = web2ldap.app.gui.GetVariantFilename(tmpl_filename, app.form.accept_language)
     try:
         # Read template from file
-        tmpl_str = open(tmpl_filename, 'r').read()
+        with open(tmpl_filename, 'rb') as tmpl_fileobj:
+            tmpl_str = tmpl_fileobj.read().decode('utf-8')
     except IOError:
         raise web2ldap.app.core.ErrorExit(u'I/O error during reading %s template file.' % (form_desc))
     return tmpl_str # read_template()
@@ -294,7 +294,7 @@ def display_authz_dn(app, who=None, entry=None):
             entry = app.ls.userEntry
         else:
             return 'anonymous'
-    if web2ldap.ldaputil.is_dn(who):
+    if ldap0.dn.is_dn(who):
         # Fall-back is to display the DN
         result = app.display_dn(who, commandbutton=False)
         # Determine relevant templates dict
@@ -406,15 +406,14 @@ def main_menu(app):
 
 
 def dit_navigation(app):
-    dn_list = explode_dn(app.dn)
     result = [
         app.anchor(
             'read',
-            app.form.utf2display(dn_list[i] or '[Root DSE]'),
-            [('dn', ','.join(dn_list[i:]))],
-            title=u'Jump to %s' % (u','.join(dn_list[i:])),
+            app.form.utf2display(str(app.dn_obj.slice(i, i+1)) or '[Root DSE]'),
+            [('dn', str(app.dn_obj.slice(i, None)))],
+            title=u'Jump to %s' % (str(app.dn_obj.slice(i, None))),
         )
-        for i in range(len(dn_list))
+        for i in range(len(app.dn_obj))
     ]
     result.append(
         app.anchor(
@@ -477,8 +476,8 @@ def top_section(
         # Only output something meaningful if valid connection
         template_dict.update({
             'ldap_url': app.ls.ldapUrl(app.dn),
-            'ldap_uri': app.form.utf2display(app.ls.uri.decode('ascii')),
-            'description': escape_html(app.cfg_param('description', u'').encode(app.form.accept_charset)),
+            'ldap_uri': app.form.utf2display(str(app.ls.uri)),
+            'description': escape_html(app.cfg_param('description', u'')),
             'dit_navi': ',\n'.join(dit_navigation(app)),
             'dn': app.form.utf2display(app.dn),
         })
@@ -557,8 +556,6 @@ def attrtype_select_field(
 
 
 def gen_headers(content_type, charset, more_headers=None):
-    assert isinstance(content_type, bytes), TypeError("Type of argument 'content_type' must be bytes but was %r" % (content_type))
-    assert isinstance(charset, bytes), TypeError("Type of argument 'charset' must be bytes but was %r" % (charset))
     # Get current time as GMT (seconds since epoch)
     current_datetime = time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime(time.time()))
     headers = []
@@ -612,24 +609,15 @@ def search_root_field(
             dn, _ = d
         except ValueError:
             dn = d
-        if dn:
-            dn_list = web2ldap.ldaputil.explode_dn(dn.lower())
-            dn_list.reverse()
-            return ','.join(dn_list)
-        return ''
+        if not dn:
+            return ''
+        return str(reversed(DNObj.fromstring(dn))).lower()
 
-    dn_select_list = set()
-    if app.dn:
-        # add the current DN and all parent DNs
-        dn_select_list.update(
-            [app.dn] +
-            web2ldap.ldaputil.parent_dn_list(
-                app.dn,
-                app.ls.get_search_root(app.dn, naming_contexts=naming_contexts),
-            )
-        )
     # add all known naming contexts
-    dn_select_list.update(app.ls.namingContexts)
+    dn_select_list = set(app.ls.namingContexts)
+    if app.dn:
+        # add the current DN and all its parent DNs
+        dn_select_list.update(map(str, [app.dn_obj] + app.dn_obj.parents()))
     if search_root_searchurl:
         # search for more search bases
         slu = ldap0.ldapurl.LDAPUrl(search_root_searchurl.encode(app.ls.charset))

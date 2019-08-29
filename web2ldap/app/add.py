@@ -12,12 +12,10 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import ldap0
 import ldap0.modlist
-from ldap0.dn import escape_dn_chars
 from ldap0.controls.readentry import PostReadControl
+from ldap0.dn import DNObj
 
 import web2ldap.web.forms
 from web2ldap.web import escape_html
@@ -86,6 +84,7 @@ def w2l_add(app):
 
     if add_clonedn:
         entry, _ = web2ldap.app.addmodifyform.read_old_entry(app, add_clonedn, app.schema, None, {'*':'*'})
+        add_clonedn_obj = DNObj.fromstring(add_clonedn)
         add_rdn, add_basedn = web2ldap.ldaputil.split_rdn(add_clonedn)
         add_rdn_dnlist = ldap0.dn.str2dn(add_rdn.encode(app.ls.charset))
         add_rdn = u'+'.join(['%s=' % (at) for at, _, _ in add_rdn_dnlist[0]]).decode(app.ls.charset)
@@ -172,10 +171,7 @@ def w2l_add(app):
             return
 
     # Join the list of RDN components to one RDN string
-    rdn = '+'.join([
-        '='.join((atype, escape_dn_chars(avalue or '')))
-        for atype, avalue in rdn_list
-    ])
+    rdn = DNObj((tuple(rdn_list),))
 
     # Generate list of modifications
     modlist = ldap0.modlist.add_modlist(
@@ -187,19 +183,23 @@ def w2l_add(app):
         raise web2ldap.app.core.ErrorExit(u'Cannot add entry without attribute values.')
 
     if app.dn:
-        new_dn = ','.join([rdn, add_basedn.encode(app.ls.charset)])
+        new_dn = rdn + DNObj.fromstring(add_basedn)
     else:
         # Makes it possible to add entries for a namingContext
         new_dn = rdn
 
     if PostReadControl.controlType in app.ls.supportedControl:
-        add_serverctrls = [PostReadControl(criticality=False, attrList=['entryUUID'])]
+        add_ref_ctrls = [PostReadControl(criticality=False, attrList=['entryUUID'])]
     else:
-        add_serverctrls = None
+        add_ref_ctrls = None
 
     # Try to add the new entry
     try:
-        add_result = app.ls.l.add_s(new_dn, modlist, serverctrls=add_serverctrls)
+        add_result = app.ls.l.add_s(
+            new_dn.encode(app.ls.charset),
+            modlist,
+            ref_ctrls=add_ref_ctrls
+        )
     except ldap0.NO_SUCH_OBJECT as e:
         raise web2ldap.app.core.ErrorExit(
             u"""

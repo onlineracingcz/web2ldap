@@ -8,12 +8,13 @@ import time
 import struct
 import uuid
 
+from ldap0.dn import is_dn
+
 import web2ldapcnf
 
 import web2ldap.web
 import web2ldap.app.searchform
 from web2ldap.utctime import strftimeiso8601
-from web2ldap.ldaputil import is_dn
 from web2ldap.app.plugins.groups import GroupEntryDN
 from web2ldap.app.schema.syntaxes import \
     Binary, \

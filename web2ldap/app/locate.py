@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import socket
 
 from dns import resolver
@@ -92,7 +90,7 @@ def w2l_locate(app):
     if locate_name:
 
         # Try to determine the format of the input parameter
-        if web2ldap.ldaputil.is_dn(locate_name):
+        if ldap0.dn.is_dn(locate_name):
             # Use dc-style LDAP DN
             msg_html = 'Input is considered LDAP distinguished name.'
             locate_domain = DNObj.fromstring(locate_name).domain(only_dc=False).decode('utf-8').encode('idna')

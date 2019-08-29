@@ -12,10 +12,8 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import re
-import Cookie
+import http.cookies
 
 import ldap0.ldif
 import ldap0.schema
@@ -63,10 +61,10 @@ class Web2LDAPForm(Form):
         Form.__init__(self, inf, env)
         # Cookie handling
         try:
-            self.cookies = Cookie.SimpleCookie(self.env['HTTP_COOKIE'])
+            self.cookies = http.cookies.SimpleCookie(self.env['HTTP_COOKIE'])
         except KeyError:
-            self.cookies = Cookie.SimpleCookie()
-        self.next_cookie = Cookie.SimpleCookie()
+            self.cookies = http.cookies.SimpleCookie()
+        self.next_cookie = http.cookies.SimpleCookie()
 
     def utf2display(
             self,
@@ -78,9 +76,7 @@ class Web2LDAPForm(Form):
         assert isinstance(value, str), \
             TypeError('Argument value must be str, was %r' % (value))
         value = value or u''
-        return escape_html(
-            self.uc_encode(value, 'replace')[0]
-        ).replace('\n', lf_entity).replace('\t', tab_identiation).replace('  ', sp_entity)
+        return escape_html(value).replace('\n', lf_entity).replace('\t', tab_identiation).replace('  ', sp_entity)
 
     def unset_cookie(self, cki):
         if cki is not None:
@@ -88,7 +84,7 @@ class Web2LDAPForm(Form):
                 ValueError(
                     'More than one Morsel cookie instance in cki: %d objects found' % (len(cki))
                 )
-            cookie_name = cki.keys()[0]
+            cookie_name = list(cki.keys())[0]
             cki[cookie_name] = ''
             cki[cookie_name]['max-age'] = 0
             self.next_cookie.update(cki)
@@ -108,7 +104,7 @@ class Web2LDAPForm(Form):
             length=self.cookie_length,
         )
         cookie_name = ''.join((self.cookie_name_prefix, name_suffix))
-        cki = Cookie.SimpleCookie({
+        cki = http.cookies.SimpleCookie({
             cookie_name: cookie_key,
         })
         cki[cookie_name]['path'] = self.script_name
@@ -877,7 +873,7 @@ class DistinguishedNameInput(Input):
         )
 
     def _validateFormat(self, value):
-        if value and not web2ldap.ldaputil.is_dn(value):
+        if value and not ldap0.dn.is_dn(value):
             raise InvalidValueFormat(
                 self.name,
                 self.text.encode(self.charset),
@@ -910,7 +906,7 @@ class LDIFTextArea(Textarea):
     def getLDIFRecords(self):
         if self.value:
             return list(
-                ldap0.ldif.LDIFParser.fromstring(
+                ldap0.ldif.LDIFParser.frombuf(
                     '\n'.join(self.value).encode(self.charset),
                     ignored_attr_types=[],
                     process_url_schemes=web2ldapcnf.ldif_url_schemes

@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import time
 import csv
 import urllib.parse
@@ -692,7 +690,7 @@ def w2l_search(app):
               </tr>
             </table>
             """ % (
-                web2ldap.ldaputil.SEARCH_SCOPE_STR[scope],
+                ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
                 utf2display(search_root),
                 utf2display(filterstr2),
             )

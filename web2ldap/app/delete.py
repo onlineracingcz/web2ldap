@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import time
 
 import ldap0
@@ -120,7 +118,7 @@ class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
 
     def __init__(self, l, tree_delete_ctrl, delete_server_ctrls):
         web2ldap.ldaputil.asynch.AsyncSearchHandler.__init__(self, l)
-        self.serverctrls = delete_server_ctrls
+        self.ref_ctrls = delete_server_ctrls
         self.tree_delete_ctrl = tree_delete_ctrl
 
     def start_search(self, searchRoot, searchScope, filterStr):
@@ -174,7 +172,7 @@ class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
                 self.nonLeafEntries.append(dn)
             else:
                 try:
-                    self._l.delete_s(dn, serverctrls=self.serverctrls)
+                    self._l.delete_s(dn, ref_ctrls=self.ref_ctrls)
                 except ldap0.NO_SUCH_OBJECT:
                     # Don't do anything if the entry is already gone except counting
                     # these sub-optimal cases
@@ -215,7 +213,7 @@ def delete_entries(
     ).encode(app.ls.charset)
     if scope == ldap0.SCOPE_SUBTREE and tree_delete_control:
         # Try to directly delete the whole subtree with the tree delete control
-        app.ls.l.delete_s(dn, serverctrls=delete_server_ctrls)
+        app.ls.l.delete_s(dn, ref_ctrls=delete_server_ctrls)
         return (1, set())
     else:
         leafs_deleter = DeleteLeafs(app.ls.l, tree_delete_control, delete_server_ctrls)
@@ -343,7 +341,7 @@ def del_search_form(app, scope, delete_filter):
             num_referrals = str(num_referrals)
     return DELETE_SEARCH_FORM_TMPL.format(
         text_dn=app.display_dn(app.dn),
-        text_scope=web2ldap.ldaputil.SEARCH_SCOPE_STR[scope],
+        text_scope=ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
         num_entries=num_entries,
         num_referrals=num_referrals,
         value_delete_filter=app.form.utf2display(delete_filter),
@@ -419,7 +417,7 @@ def w2l_delete(app):
     # determine extended controls to be sent with delete operation
     conn_server_ctrls = set([
         server_ctrl.controlType
-        for server_ctrl in app.ls.l._serverctrls['**all**']+app.ls.l._serverctrls['**write**']+app.ls.l._serverctrls['delete']
+        for server_ctrl in app.ls.l._ref_ctrls['**all**']+app.ls.l._ref_ctrls['**write**']+app.ls.l._ref_ctrls['delete']
     ])
     delete_server_ctrls = [
         ldap0.controls.LDAPControl(ctrl_oid, True, None)
@@ -453,7 +451,7 @@ def w2l_delete(app):
             DELETE_ENTRIES_SUCCESS_TMPL % (
                 deleted_entries_count,
                 app.display_dn(old_dn),
-                web2ldap.ldaputil.SEARCH_SCOPE_STR[scope],
+                ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
                 len(non_deletable_entries),
             ),
@@ -471,7 +469,7 @@ def w2l_delete(app):
             (ldap0.MOD_DELETE, attr_type, None)
             for attr_type in delete_attr
         ]
-        app.ls.modify(app.dn, mod_list, serverctrls=delete_server_ctrls)
+        app.ls.modify(app.dn, mod_list, ref_ctrls=delete_server_ctrls)
         app.simple_message(
             'Deleted Attribute(s)',
             """

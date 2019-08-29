@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import sys
 import os
 import re
@@ -50,6 +48,7 @@ import ldap0
 import ldap0.ldapurl
 import ldap0.schema.models
 from ldap0.controls.deref import DereferenceControl
+from ldap0.dn import DNObj, is_dn
 
 import web2ldapcnf
 
@@ -62,9 +61,9 @@ import web2ldap.ldaputil
 import web2ldap.app.gui
 import web2ldap.utctime
 from web2ldap.utctime import strftimeiso8601
-from web2ldap.ldaputil import is_dn
 from web2ldap.ldaputil.oidreg import OID_REG
 from web2ldap.log import logger
+from web2ldap import cmp
 
 
 class SyntaxRegistry(object):
@@ -242,6 +241,10 @@ class LDAPSyntax(object):
         self._schema = schema
         self._dn = dn
         self._entry = entry
+
+    @property
+    def dn(self):
+        return DNObj.fromstring(self._dn)
 
     def sanitize(self, attrValue):
         """
@@ -1749,18 +1752,18 @@ class DynamicValueSelectList(SelectList, DirectoryString):
 
     def _search_root(self):
         ldap_url_dn = self._app.ls.uc_decode(self.lu_obj.dn)[0]
-        if ldap_url_dn == u'_':
+        if ldap_url_dn == '_':
             result_dn = self._app.naming_context
-        elif ldap_url_dn == u'.':
+        elif ldap_url_dn == '.':
             result_dn = self._dn
-        elif ldap_url_dn == u'..':
-            result_dn = web2ldap.ldaputil.parent_dn(self._dn)
-        elif ldap_url_dn.endswith(u',_'):
-            result_dn = u','.join((ldap_url_dn[:-2], self._app.naming_context))
-        elif ldap_url_dn.endswith(u',.'):
-            result_dn = u','.join((ldap_url_dn[:-2], self._dn))
-        elif ldap_url_dn.endswith(u',..'):
-            result_dn = u','.join((ldap_url_dn[:-3], web2ldap.ldaputil.parent_dn(self._dn)))
+        elif ldap_url_dn == '..':
+            result_dn = str(self.dn.parent())
+        elif ldap_url_dn.endswith(',_'):
+            result_dn = ','.join((ldap_url_dn[:-2], self._app.naming_context))
+        elif ldap_url_dn.endswith(',.'):
+            result_dn = ','.join((ldap_url_dn[:-2], self._dn))
+        elif ldap_url_dn.endswith(',..'):
+            result_dn = ','.join((ldap_url_dn[:-3], str(self.dn.parent())))
         else:
             result_dn = ldap_url_dn
         if result_dn.endswith(u','):
@@ -1810,7 +1813,10 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                 ))
                 for attr_value in entry_r[list_attr]
             ]
-            attr_value_dict = dict([(u, u) for u in attr_values_u])
+            attr_value_dict = {
+                u: u
+                for u in attr_values_u
+            }
         else:
             if not self.lu_obj.attrs:
                 option_value_map, option_text_map = (None, None)
@@ -1895,7 +1901,7 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 ldap0.SCOPE_BASE,
                 attrlist=['1.1'],
                 filterstr='(objectClass=*)',
-                serverctrls=[deref_crtl],
+                ref_ctrls=[deref_crtl],
                 add_ctrls=1,
             )[0]
         except (
@@ -1971,7 +1977,10 @@ class BitArrayInteger(MultilineText, Integer):
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         Integer.__init__(self, app, dn, schema, attrType, attrValue, entry)
         self.flag_desc2int = dict(self.flag_desc_table)
-        self.flag_int2desc = dict([(j, i) for i, j in self.flag_desc_table])
+        self.flag_int2desc = {
+            j: i
+            for i, j in self.flag_desc_table
+        }
         self.maxValue = sum([j for i, j in self.flag_desc_table])
         self.minInputRows = self.maxInputRows = max(len(self.flag_desc_table), 1)
 

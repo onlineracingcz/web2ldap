@@ -24,12 +24,6 @@ from . import extldapurl
 from . import oidreg
 
 
-LDAP_OPT_NAMES_DICT = dict([
-    (v, k)
-    for k, v in list(vars(ldap0).items())+list(vars(ldap0.sasl).items())
-    if isinstance(v, int)
-])
-
 AD_LDAP49_ERROR_CODES = {
     0x525: u'user not found',
     0x52e: u'invalid credentials',

@@ -12,15 +12,13 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 from io import BytesIO
 
 import ldap0
 import ldap0.ldif
 import ldap0.schema
 from ldap0.schema.models import AttributeType
-from ldap0.modlist import modify_modlist2
+from ldap0.schema.util import modify_modlist
 
 import web2ldap.ldapsession
 import web2ldap.app.core
@@ -156,7 +154,7 @@ def w2l_modify(app):
         pass
 
     # Create modlist containing deltas
-    modlist = modify_modlist2(
+    modlist = modify_modlist(
         app.schema,
         old_entry, new_entry,
         ignore_attr_types=ignore_attr_types,

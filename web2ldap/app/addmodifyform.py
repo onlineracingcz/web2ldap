@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 from io import BytesIO
 
 import ldap0
@@ -1095,7 +1093,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
             attrlist=read_attrs.values(),
             filterstr=(assertion_filter or u'(objectClass=*)').encode(app.ls.charset),
             cache_ttl=-1.0,
-            serverctrls=server_ctrls or None,
+            ref_ctrls=server_ctrls or None,
         )
     except IndexError:
         raise ldap0.NO_SUCH_OBJECT

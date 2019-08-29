@@ -68,7 +68,6 @@ class ErrorExit(Exception):
 logger.debug('End of module %s', __name__)
 
 # Raise UnicodeError instead of output of UnicodeWarning
-from exceptions import UnicodeWarning
 from warnings import filterwarnings
 filterwarnings(action="error", category=UnicodeWarning)
 

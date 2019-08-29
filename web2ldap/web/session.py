@@ -267,7 +267,7 @@ class WebSession(object):
         """
         Store session_data under session_id.
         """
-        assert isinstance(session_id, bytes), TypeError('Expected session_id to be bytes, got %r' % (session_id))
+        assert isinstance(session_id, str), TypeError('Expected session_id to be str, got %r' % (session_id))
         self._session_lock.acquire()
         try:
             # Store session data with timestamp
@@ -280,7 +280,7 @@ class WebSession(object):
         """
         Delete session_data referenced by session_id.
         """
-        assert isinstance(session_id, bytes), TypeError('Expected session_id to be bytes, got %r' % (session_id))
+        assert isinstance(session_id, str), TypeError('Expected session_id to be str, got %r' % (session_id))
         # Delete the session data
         self._session_lock.acquire()
         try:
@@ -296,7 +296,7 @@ class WebSession(object):
         """
         Retrieve session data
         """
-        assert isinstance(session_id, bytes), TypeError('Expected session_id to be bytes, got %r' % (session_id))
+        assert isinstance(session_id, str), TypeError('Expected session_id to be str, got %r' % (session_id))
         self._validateSessionIdFormat(session_id)
         session_vars_key = '__session_checkvars__'+session_id
         # Check if session id exists

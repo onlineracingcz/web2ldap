@@ -12,14 +12,11 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import ldap0
 import ldap0.cidict
 
 import web2ldap.app.core
 import web2ldap.app.gui
-from web2ldap.ldaputil import explode_dn
 
 ACTION2MODTYPE = {
     'add': ldap0.MOD_ADD,
@@ -181,7 +178,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     )
     if groupadm_name:
         all_group_filterstr = '(&(cn=*%s*)%s)' % (
-            ldap0.filter.escape_filter_chars(groupadm_name.encode(app.ls.charset)),
+            ldap0.filter.escape_str(groupadm_name),
             all_group_filterstr
         )
 

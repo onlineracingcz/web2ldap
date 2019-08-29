@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import ldap0
 
 import web2ldapcnf
@@ -103,12 +101,10 @@ def SearchForm_base(app, searchform_template_name):
     with host-specific configuration parameter searchform_template
     """
     searchform_template_cfg = app.cfg_param('searchform_template', '')
-    assert isinstance(searchform_template_cfg, dict), \
-        TypeError("Host-specific parameter 'searchform_template' has invalid type")
     searchform_template = searchform_template_cfg.get(searchform_template_name, None)
     searchform_template_filename = web2ldap.app.gui.GetVariantFilename(searchform_template, app.form.accept_language)
     with open(searchform_template_filename, 'rb') as fileobj:
-        template_str = fileobj.read()
+        template_str = fileobj.read().decode('utf-8')
     return template_str # SearchForm_base()
 
 
@@ -229,7 +225,7 @@ def w2l_searchform(
 
     search_root = app.form.getInputValue(
         'search_root',
-        [search_root or app.ls.get_search_root(app.dn, naming_contexts)],
+        [search_root or str(app.naming_context)],
     )[0]
     search_root_field = web2ldap.app.gui.search_root_field(
         app,

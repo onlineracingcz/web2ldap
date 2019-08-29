@@ -7,6 +7,7 @@ import sys
 import os
 import socketserver
 import time
+import codecs
 import wsgiref.util
 import wsgiref.simple_server
 
@@ -47,6 +48,18 @@ class AppResponse(object):
         self.lines = []
         del self.headers
         self.headers = []
+        self._charset = None
+        self.charset = 'utf-8'
+
+    @property
+    def charset(self):
+        return self._charset
+
+    @charset.setter
+    def charset(self, charset):
+        self._charset = charset
+        codec = codecs.lookup(self._charset)
+        self._uc_encode, self._uc_decode = codec[0], codec[1]
 
     def set_headers(self, headers):
         """
@@ -58,9 +71,10 @@ class AppResponse(object):
         """
         file-like method
         """
-        assert isinstance(buf, bytes), TypeError('expected bytes for buf, but got %r', buf)
-        self.lines.append(buf)
-        self.bytelen += len(buf)
+        assert isinstance(buf, str), TypeError('expected str for buf, but got %r', buf)
+        buf_bytes = self._uc_encode(buf, 'replace')[0]
+        self.lines.append(buf_bytes)
+        self.bytelen += len(buf_bytes)
 
     def close(self):
         """

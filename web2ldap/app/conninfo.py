@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import time
 
 import ldap0
@@ -311,7 +309,7 @@ def w2l_conninfo(app):
         sasl_mech = u'SASL/%s' % (app.ls.saslAuth.mech)
         sasl_auth_info = '<table>%s</table>' % '\n'.join([
             '<tr><td>%s</td><td>%s</td></tr>' % (
-                app.form.utf2display(web2ldap.ldaputil.LDAP_OPT_NAMES_DICT.get(k, str(k)).decode('ascii')),
+                app.form.utf2display(ldap0.OPT_NAMES.get(k, str(k)).decode('ascii')),
                 app.form.utf2display(repr(v).decode(app.ls.charset))
             )
             for k, v in app.ls.saslAuth.cb_value_dict.items()

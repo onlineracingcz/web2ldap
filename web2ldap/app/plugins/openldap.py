@@ -3,8 +3,6 @@
 web2ldap plugin classes for OpenLDAP
 """
 
-from __future__ import absolute_import
-
 import re
 
 from pyasn1.codec.ber import decoder as ber_decoder
@@ -366,10 +364,10 @@ class ReqControls(IA5String):
         if rest.endswith('}'):
             result_lines.append('Extracted:')
             # consume } and split tokens
-            ctrl_tokens = filter(
+            ctrl_tokens = list(filter(
                 None,
                 [t.strip() for t in rest[:-1].split(' ')]
-            )
+            ))
             ctrl_type = ctrl_tokens[0]
             try:
                 ctrl_name, _, _ = OID_REG[ctrl_type]

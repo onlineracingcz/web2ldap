@@ -281,7 +281,7 @@ class DisplaySchemaElement:
                 self.se.oid,
                 self._app.form.script_name, self._app.sid, self.se.oid,
                 self._app.form.script_name, self._app.sid, self.se.oid,
-                self._app.form.utf2display(str(str(self.se), 'utf-8')),
+                self._app.form.utf2display(str(self.se)),
                 ms_ad_schema_link,
             )
         )

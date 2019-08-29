@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import web2ldap.ldapsession
 import web2ldap.app.cnf
 import web2ldap.app.core

@@ -24,6 +24,7 @@ import ldap0.sasl
 import ldap0.cidict
 import ldap0.filter
 import ldap0.dn
+from ldap0.base import encode_list
 from ldap0.dn import DNObj
 from ldap0.ldapurl import LDAPUrl
 from ldap0.ldapobject import ReconnectLDAPObject
@@ -267,7 +268,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             retry_delay=retry_delay,
             cache_ttl=cache_ttl,
         )
-        self.last_ldap0.filter.escape_strs = deque(maxlen=30)
+        self.last_search_bases = deque(maxlen=30)
 
     def get_ctrls(self, method):
         all_s_ctrls = {}
@@ -394,8 +395,8 @@ class MyLDAPObject(ReconnectLDAPObject):
             TypeError("Type of 'base' must be bytes, was %r" % (base))
         assert isinstance(filterstr, bytes), \
             TypeError("Type of 'filterstr' must be bytes, was %r" % (filterstr))
-        if base not in self.last_ldap0.filter.escape_strs:
-            self.last_ldap0.filter.escape_strs.append(base)
+        if base not in self.last_search_bases:
+            self.last_search_bases.append(base)
         return ReconnectLDAPObject.search(
             self,
             base,
@@ -550,7 +551,7 @@ class LDAPSession(object):
 
     def _initialize(self, uri_list, tls_options=None):
         while uri_list:
-            uri = uri_list[0].strip().encode('ascii')
+            uri = uri_list[0].strip()
             # Try connecting to LDAP host
             try:
                 self.l = MyLDAPObject(
@@ -597,12 +598,12 @@ class LDAPSession(object):
         """
         if not uri:
             raise ValueError('Empty value for uri')
-        elif isinstance(uri, (bytes, str)):
+        elif isinstance(uri, str):
             uri_list = [uri]
         elif isinstance(uri, (list, tuple)):
             uri_list = uri
         else:
-            raise TypeError("Parameter uri must be either list of strings or single string.")
+            raise TypeError('Expected either list of str or single str for uri, got %r.' % (uri,))
         self._initialize(uri_list, tls_options)
         if enableSessionTracking:
             session_tracking_ctrl = SessionTrackingControl(
@@ -694,7 +695,9 @@ class LDAPSession(object):
         """Retrieve attributes from Root DSE"""
         self._reset_rootdse_attrs()
         try:
-            self.rootDSE = self.l.read_rootdse_s(attrlist=ROOTDSE_ATTRS)or {}
+            self.rootDSE = self.l.read_rootdse_s(
+                attrlist=encode_list(ROOTDSE_ATTRS, encoding='ascii')
+            ) or {}
         except (
                 ldap0.CONFIDENTIALITY_REQUIRED,
                 ldap0.CONSTRAINT_VIOLATION,
@@ -895,8 +898,8 @@ class LDAPSession(object):
         try:
             # Read the sub schema sub entry
             subschemasubentry = self.l.read_subschemasubentry_s(
-                self.uc_encode(subschemasubentry_dn)[0],
-                SCHEMA_ATTRS,
+                subschemasubentry_dn,
+                encode_list(SCHEMA_ATTRS, encoding='ascii'),
             )
         except ldap0.LDAPError:
             return default
@@ -1048,14 +1051,14 @@ class LDAPSession(object):
             [''],
         )[0].decode(self.charset) or u''
         lu_obj = LDAPUrl(binddn_mapping)
-        ldap0.filter.escape_str = lu_obj.dn.format(user=ldap0.dn.escape_str(username))
-        if ldap0.filter.escape_str == u'_':
-            ldap0.filter.escape_str = search_root
-        elif ldap0.filter.escape_str.endswith(u'_'):
-            ldap0.filter.escape_str = u''.join((ldap0.filter.escape_str[:-1], search_root))
+        search_base =lu_obj.dn.format(user=ldap0.dn.escape_str(username))
+        if search_base == u'_':
+            search_base = search_root
+        elif search_base.endswith(u'_'):
+            search_base =u''.join((ldap0.dn.escape_str[:-1], search_root))
         if lu_obj.scope == ldap0.SCOPE_BASE and lu_obj.filterstr is None:
-            logger.debug('Directly mapped %r to %r', username, ldap0.filter.escape_str)
-            return ldap0.filter.escape_str
+            logger.debug('Directly mapped %r to %r', username, search_base)
+            return search_base
         search_filter = lu_obj.filterstr.format(user=ldap0.filter.escape_str(username))
         logger.debug(
             'Searching user entry with base = %r / scope = %d / filter = %r',
@@ -1066,7 +1069,7 @@ class LDAPSession(object):
         # Try to find a unique entry with binddn_mapping
         try:
             result = self.l.search_s(
-                ldap0.filter.escape_str.encode(self.charset),
+                search_base.encode(self.charset),
                 lu_obj.scope,
                 search_filter.encode(self.charset),
                 attrlist=['1.1'],
@@ -1089,7 +1092,7 @@ class LDAPSession(object):
         logger.debug(
             'Found user entry %r with base = %r / scope = %d / filter = %r',
             result[0][0],
-            ldap0.filter.escape_str,
+            search_base,
             lu_obj.scope,
             search_filter,
         )
@@ -1299,20 +1302,19 @@ class LDAPSession(object):
     def ldapUrl(self, dn, add_login=True):
         if not self.uri:
             return None
-        lu = ExtendedLDAPUrl(ldapUrl=self.uri.encode('ascii'))
-        lu.dn = dn.encode(self.charset)
+        lu = ExtendedLDAPUrl(ldapUrl=self.uri, dn=dn)
         if self.startTLSOption:
             lu.x_startTLS = str(START_TLS_REQUIRED * (self.startTLSOption > 0))
         if add_login:
             if self.sasl_auth:
-                lu.saslMech = self.sasl_mech.encode('ascii')
+                lu.saslMech = self.sasl_mech
                 if self.sasl_mech in ldap0.sasl.SASL_PASSWORD_MECHS:
                     lu.who = self.sasl_auth.cb_value_dict.get(
                         ldap0.sasl.CB_AUTHNAME,
                         u'',
-                    ).encode(self.charset) or None
+                    ) or None
             else:
-                lu.who = (self.who or u'').encode(self.charset) or None
+                lu.who = (self.who or u'') or None
         return lu
         # end of ldapUrl()
 

@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import time
 
 import ldap0
@@ -237,7 +235,7 @@ def bulkmod_input_form(
             field_hidden_scope=app.form.hiddenFieldHTML(
                 'scope',
                 str(scope),
-                str(web2ldap.ldaputil.SEARCH_SCOPE_STR[scope]),
+                str(ldap0.ldapurl.SEARCH_SCOPE_STR[scope]),
             ),
             field_bulkmod_newsuperior=app.form.field['bulkmod_newsuperior'].inputHTML(
                 default=bulkmod_newsuperior,
@@ -300,7 +298,7 @@ def bulkmod_confirmation_form(
             ]) or '- none -',
             field_hidden_dn=app.form.hiddenFieldHTML('dn', dn, dn),
             field_hidden_filterstr=app.form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
-            field_hidden_scope=app.form.hiddenFieldHTML('scope', str(scope), str(web2ldap.ldaputil.SEARCH_SCOPE_STR[scope])),
+            field_hidden_scope=app.form.hiddenFieldHTML('scope', str(scope), str(ldap0.ldapurl.SEARCH_SCOPE_STR[scope])),
             field_bulkmod_newsuperior=app.form.hiddenFieldHTML(
                 'bulkmod_newsuperior',
                 bulkmod_newsuperior,
@@ -390,7 +388,7 @@ def w2l_bulkmod(app):
         bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
         conn_server_ctrls = set([
             server_ctrl.controlType
-            for server_ctrl in app.ls.l._serverctrls['**all**']+app.ls.l._serverctrls['**write**']+app.ls.l._serverctrls['modify']
+            for server_ctrl in app.ls.l._ref_ctrls['**all**']+app.ls.l._ref_ctrls['**write**']+app.ls.l._ref_ctrls['modify']
         ])
         bulkmod_server_ctrls = list(set([
             ldap0.controls.LDAPControl(ctrl_oid, True, None)
@@ -427,7 +425,7 @@ def w2l_bulkmod(app):
                 # Apply the modify request
                 if bulk_mod_list:
                     try:
-                        app.ls.l.modify_s(ldap_dn, bulk_mod_list, serverctrls=bulkmod_server_ctrls)
+                        app.ls.l.modify_s(ldap_dn, bulk_mod_list, ref_ctrls=bulkmod_server_ctrls)
                     except ldap0.LDAPError as e:
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
@@ -526,7 +524,7 @@ def w2l_bulkmod(app):
                 num_errors,
                 num_sum, num_errors, num_errors,
                 app.display_dn(app.dn),
-                web2ldap.ldaputil.SEARCH_SCOPE_STR[scope],
+                ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
                 app.begin_form('bulkmod', 'POST'),
                 app.form.hiddenInputHTML(ignoreFieldNames=['bulkmod_submit']),

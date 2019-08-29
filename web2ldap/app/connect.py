@@ -52,7 +52,7 @@ def w2l_connect(app, h1_msg='Connect', error_msg=''):
     app.simple_message(
         'Connect',
         connect_template_str.format(
-            text_scriptname=app.env.get('SCRIPT_NAME', '').decode('utf-8'),
+            text_scriptname=app.env.get('SCRIPT_NAME', ''),
             text_heading=h1_msg,
             text_error=error_msg,
             form_begin=app.begin_form('searchform', 'GET'),

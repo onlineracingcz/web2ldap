@@ -4,8 +4,7 @@ web2ldap plugin classes for attributes defined for so-called dynamic groups
 
 import ldap0
 import ldap0.ldapurl
-
-from web2ldap.ldaputil import is_dn
+from ldap0.dn import is_dn
 
 from web2ldap.app.schema.syntaxes import LDAPUrl, syntax_registry
 
