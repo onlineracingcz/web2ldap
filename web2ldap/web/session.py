@@ -244,11 +244,11 @@ class WebSession(object):
         """
         Generate a dictionary of env vars for session cross-checking
         """
-        return dict([
-            (skey, env[skey])
+        return {
+            skey: env[skey]
             for skey in self.crossCheckVars
             if skey in env
-        ])
+        }
 
     def _generateSessionID(self, maxtry=1):
         """
