@@ -15,8 +15,6 @@ from web2ldap.log import logger
 import web2ldap.app.handler
 import web2ldapcnf
 
-BASE_URL = '/web2ldap'
-
 
 class W2lWSGIRequestHandler(wsgiref.simple_server.WSGIRequestHandler):
     """
@@ -60,7 +58,7 @@ class AppResponse(object):
         """
         file-like method
         """
-        assert isinstance(buf, str), TypeError('expected string for buf, but got %r', buf)
+        assert isinstance(buf, bytes), TypeError('expected bytes for buf, but got %r', buf)
         self.lines.append(buf)
         self.bytelen += len(buf)
 
