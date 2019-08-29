@@ -250,7 +250,7 @@ class AEGIDNumber(GidNumber):
         _, _, _, resp_ctrls = self._app.ls.l.modify_s(
             self._get_id_pool_dn(),
             [(ldap0.MOD_INCREMENT, self._at, '1')],
-            ref_ctrls=[prc],
+            req_ctrls=[prc],
         )
         return int(resp_ctrls[0].entry[self._at][0])
 
@@ -511,7 +511,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
                 self.lu_obj.scope or ldap0.SCOPE_SUBTREE,
                 filterstr=self._filterstr(),
                 attrlist=self.lu_obj.attrs+['description'],
-                ref_ctrls=srv_ctrls,
+                req_ctrls=srv_ctrls,
                 add_ctrls=1,
             )
             for dn, entry, controls in ldap_result:

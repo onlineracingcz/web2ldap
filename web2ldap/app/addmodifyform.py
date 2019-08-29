@@ -1093,7 +1093,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
             attrlist=read_attrs.values(),
             filterstr=(assertion_filter or u'(objectClass=*)').encode(app.ls.charset),
             cache_ttl=-1.0,
-            ref_ctrls=server_ctrls or None,
+            req_ctrls=server_ctrls or None,
         )
     except IndexError:
         raise ldap0.NO_SUCH_OBJECT

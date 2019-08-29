@@ -311,7 +311,7 @@ def w2l_search(app):
         # end of page_appl_anchor()
 
     scope = app.ldap_url.scope
-    filterstr = app.ldap_url.filterstr.decode(app.form.accept_charset)
+    filterstr = app.ldap_url.filterstr
 
     search_submit = app.form.getInputValue('search_submit', [u'Search'])[0]
     searchform_mode = app.form.getInputValue('searchform_mode', [u'exp'])[0]
@@ -366,11 +366,11 @@ def w2l_search(app):
            search_option[i] in {SEARCH_OPT_ATTR_EXISTS, SEARCH_OPT_ATTR_NOT_EXISTS}:
             search_filter.append(search_option[i].format(
                 at=''.join((search_attr[i], search_mr_string)),
-                av=ldap0.filter.escape_str(search_av_string, app.ls.charset)
+                av=ldap0.filter.escape_str(search_av_string)
             ))
 
     # Wipe out all nullable search_filter list items
-    search_filter = filter(None, search_filter)
+    search_filter = list(filter(None, search_filter))
 
     if not search_filter:
         web2ldap.app.searchform.w2l_searchform(
@@ -429,7 +429,7 @@ def w2l_search(app):
     search_ldap_url.scope = scope
     search_ldap_url.attrs = search_attrs
 
-    ldap_search_command = search_ldap_url.ldapsearch_cmd().decode(app.ls.charset)
+    ldap_search_command = search_ldap_url.ldapsearch_cmd()
 
     read_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, AttributeType, search_attrs)
     if search_output in {'table', 'print'}:

@@ -189,16 +189,16 @@ def w2l_add(app):
         new_dn = rdn
 
     if PostReadControl.controlType in app.ls.supportedControl:
-        add_ref_ctrls = [PostReadControl(criticality=False, attrList=['entryUUID'])]
+        add_req_ctrls = [PostReadControl(criticality=False, attrList=['entryUUID'])]
     else:
-        add_ref_ctrls = None
+        add_req_ctrls = None
 
     # Try to add the new entry
     try:
         add_result = app.ls.l.add_s(
             new_dn.encode(app.ls.charset),
             modlist,
-            ref_ctrls=add_ref_ctrls
+            req_ctrls=add_req_ctrls
         )
     except ldap0.NO_SUCH_OBJECT as e:
         raise web2ldap.app.core.ErrorExit(

@@ -1901,7 +1901,7 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 ldap0.SCOPE_BASE,
                 attrlist=['1.1'],
                 filterstr='(objectClass=*)',
-                ref_ctrls=[deref_crtl],
+                req_ctrls=[deref_crtl],
                 add_ctrls=1,
             )[0]
         except (

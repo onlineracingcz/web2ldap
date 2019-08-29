@@ -388,7 +388,7 @@ def w2l_bulkmod(app):
         bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
         conn_server_ctrls = set([
             server_ctrl.controlType
-            for server_ctrl in app.ls.l._ref_ctrls['**all**']+app.ls.l._ref_ctrls['**write**']+app.ls.l._ref_ctrls['modify']
+            for server_ctrl in app.ls.l._req_ctrls['**all**']+app.ls.l._req_ctrls['**write**']+app.ls.l._req_ctrls['modify']
         ])
         bulkmod_server_ctrls = list(set([
             ldap0.controls.LDAPControl(ctrl_oid, True, None)
@@ -425,7 +425,7 @@ def w2l_bulkmod(app):
                 # Apply the modify request
                 if bulk_mod_list:
                     try:
-                        app.ls.l.modify_s(ldap_dn, bulk_mod_list, ref_ctrls=bulkmod_server_ctrls)
+                        app.ls.l.modify_s(ldap_dn, bulk_mod_list, req_ctrls=bulkmod_server_ctrls)
                     except ldap0.LDAPError as e:
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (

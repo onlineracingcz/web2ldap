@@ -874,7 +874,7 @@ class LDAPSession(object):
             subschemasubentry_dn = None
         if subschemasubentry_dn is None:
             try:
-                subschemasubentry_dn = self.l.search_subschemasubentry_s('')
+                subschemasubentry_dn = self.l.search_subschemasubentry_s(b'')
             except ldap0.LDAPError:
                 subschemasubentry_dn = None
         # Store DN of sub schema sub entry in schema DN cache
