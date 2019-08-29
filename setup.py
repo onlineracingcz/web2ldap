@@ -47,7 +47,7 @@ setup(
     data_files=data_files,
     install_requires=[
         'setuptools',
-        'ldap0>=0.3.5',
+        'ldap0>=0.3.6',
         'ipaddress',
         'asn1crypto',
         'xlwt',
