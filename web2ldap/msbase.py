@@ -63,7 +63,7 @@ class GrabKeys:
 
     def __getitem__(self, name):
         self.keys.add(name)
-        return 0 # 0 is apparently compatible with all % format characters
+        return ''
 
 
 class CaseinsensitiveStringKeyDict(DefaultDict):

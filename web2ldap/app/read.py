@@ -18,6 +18,8 @@ import ldap0.schema
 from ldap0.cidict import CIDict
 from ldap0.schema.models import SchemaElementOIDSet, AttributeType
 from ldap0.schema.subentry import SubSchema
+from ldap0.base import encode_list, encode_entry_dict
+from ldap0.dn import DNObj
 
 import web2ldap.web.forms
 import web2ldap.app.core
@@ -150,13 +152,12 @@ class DisplayEntry(UserDict):
         entry_rdn_dict = ldap0.schema.models.Entry(
             self.schema,
             dn.encode(self._app.ls.charset),
-            web2ldap.ldaputil.rdn_dict(dn)
+            encode_entry_dict(DNObj.fromstring(dn).rdn_attrs()),
         )
         for attr_type, attr_values in entry_rdn_dict.items():
             del entry_rdn_dict[attr_type]
             d = ldap0.cidict.CIDict()
             for attr_value in attr_values:
-                attr_value = attr_value.encode(self._app.ls.charset)
                 assert isinstance(attr_value, bytes), \
                     TypeError("Var 'attr_value' must be bytes, was %r" % (attr_value))
                 d[attr_value] = None
@@ -220,16 +221,17 @@ class DisplayEntry(UserDict):
                 continue
             try:
                 with open(read_template_filename, 'rb') as template_file:
-                    template_str = template_file.read()
+                    template_str = template_file.read().decode('utf-8')
             except IOError:
                 error_msg = 'I/O error reading template file'
                 continue
             try:
                 template_attr_oid_set = set([
-                    self.entry._s.getoid(ldap0.schema.models.AttributeType, attr_type_name)
+                    self.entry._s.get_oid(ldap0.schema.models.AttributeType, attr_type_name)
                     for attr_type_name in GrabKeys(template_str)()
                 ])
             except TypeError:
+                raise
                 error_msg = 'Type error using template'
                 continue
             if display_duplicate_attrs or not displayed_attrs.intersection(template_attr_oid_set):
@@ -280,7 +282,7 @@ def display_attribute_table(app, entry, attrs, comment):
     # Set separation of attribute values inactive
     entry.sep = None
     for attr_type_name in show_attrs:
-        attr_type_anchor_id = 'readattr_%s' % app.form.utf2display(attr_type_name.decode('ascii'))
+        attr_type_anchor_id = 'readattr_%s' % app.form.utf2display(attr_type_name)
         attr_type_str = schema_anchor(
             app,
             attr_type_name,
@@ -403,7 +405,7 @@ def w2l_read(app):
         try:
             search_result = app.ls.l.read_s(
                 app.ldap_dn,
-                attrlist=requested_attrs.names(),
+                attrlist=encode_list(requested_attrs.names(), encoding='ascii'),
                 filterstr=filterstr.encode(app.ls.charset),
                 cache_ttl=None if read_nocache else -1.0,
             )
@@ -544,7 +546,7 @@ def w2l_read(app):
                 h1_display_name = entry.get(
                     'displayName',
                     entry.get('cn', [''])
-                )[0].decode(app.ls.charset) or web2ldap.ldaputil.split_rdn(app.dn)[0]
+                )[0] or str(app.dn_obj.slice(0, 1))
             app.outf.write(
                 '<h1>{0}</h1>\n<p class="EntryDN">{1}</p>\n'.format(
                     app.form.utf2display(h1_display_name),
@@ -599,8 +601,8 @@ def w2l_read(app):
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('read_output', read_output, u''),
                 ','.join([
-                    app.form.utf2display(a.decode(app.ls.charset), sp_entity='  ')
-                    for a in wanted_attrs or {False:['*'], True:['*', '+']}[app.ls.supportsAllOpAttr]
+                    app.form.utf2display(at, sp_entity='  ')
+                    for at in wanted_attrs or {False:['*'], True:['*', '+']}[app.ls.supportsAllOpAttr]
                 ])
             )
         )

@@ -182,7 +182,7 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
             app.anchor(
                 'login', 'Bind as',
                 [
-                    ('ldapurl', str(ldap_url_obj).decode('ascii')),
+                    ('ldapurl', str(ldap_url_obj)),
                     ('dn', app.dn),
                     ('login_who', app.dn),
                 ],
@@ -312,7 +312,7 @@ def display_authz_dn(app, who=None, entry=None):
             display_entry = web2ldap.app.read.DisplayEntry(app, app.dn, app.schema, entry, 'readSep', True)
             user_structural_oc = display_entry.entry.get_structural_oc()
             for oc in bound_as_templates.keys():
-                if app.schema.getoid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:
+                if app.schema.get_oid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:
                     try:
                         result = bound_as_templates[oc] % display_entry
                     except KeyError:

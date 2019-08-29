@@ -88,7 +88,7 @@ def schema_anchor(
     if link_text is None:
         return name_template % (anchor)
     return '%s\n%s' % (
-        name_template % (app.form.utf2display(se_nameoroid.decode('ascii'))),
+        name_template % (app.form.utf2display(se_nameoroid)),
         anchor,
     )
     # end of schema_anchor()
@@ -329,7 +329,7 @@ class DisplayObjectClass(DisplaySchemaElement):
         structural_oc_list = []
         for _, content_rule in self.s.sed[DITContentRule].items():
             for aux_class_name in content_rule.aux:
-                aux_class_oid = self.s.getoid(ObjectClass, aux_class_name)
+                aux_class_oid = self.s.get_oid(ObjectClass, aux_class_name)
                 if aux_class_oid == self.se.oid:
                     dcr_list.append(content_rule.oid)
                     structural_oc_list.append(content_rule.oid)
@@ -431,7 +431,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                 applies_dict[mr_oid] = {}
                 mr_use_se = self.s.get_obj(MatchingRuleUse, mr_oid)
                 for a in mr_use_se.applies:
-                    applies_dict[mr_oid][self.s.getoid(AttributeType, a)] = None
+                    applies_dict[mr_oid][self.s.get_oid(AttributeType, a)] = None
             # Display list of attribute types for which this matching rule is applicable
             mr_applicable_for = [
                 mr_oid
@@ -611,7 +611,7 @@ class DisplayMatchingRule(DisplaySchemaElement):
         if mr_use_se:
             applies_dict = {}
             for a in mr_use_se.applies:
-                applies_dict[self.s.getoid(AttributeType, a)] = None
+                applies_dict[self.s.get_oid(AttributeType, a)] = None
             # Display list of attribute types for which this matching rule is applicable
             mr_applicable_for = [
                 at_oid

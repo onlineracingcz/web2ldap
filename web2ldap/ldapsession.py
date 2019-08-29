@@ -1005,12 +1005,13 @@ class LDAPSession(object):
     def get_audit_context(self, search_root_dn):
         if self.l is None:
             return None
-        if search_root_dn in self._audit_context:
+        search_root_str = search_root_dn.encode(self.charset)
+        if search_root_str in self._audit_context:
             return self._audit_context[search_root_dn]
         try:
             result = self.l.read_s(
-                search_root_dn.encode(self.charset),
-                attrlist=['auditContext'],
+                search_root_str,
+                attrlist=[b'auditContext'],
             )
         except ldap0.LDAPError:
             audit_context_dn = None
@@ -1019,12 +1020,12 @@ class LDAPSession(object):
                 try:
                     audit_context_dn = ldap0.cidict.CIDict(
                         result
-                    )['auditContext'][0].decode(self.charset)
+                    )[b'auditContext'][0].decode(self.charset)
                 except KeyError:
                     audit_context_dn = None
             else:
                 audit_context_dn = None
-        self._audit_context[search_root_dn] = audit_context_dn
+        self._audit_context[search_root_str] = audit_context_dn
         return audit_context_dn # get_audit_context()
 
     def get_bind_dn(self, username, search_root, binddn_mapping):

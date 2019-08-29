@@ -134,12 +134,12 @@ class SyntaxRegistry(object):
         """
         returns LDAPSyntax class for given attribute type
         """
-        attrtype_oid = schema.getoid(
+        attrtype_oid = schema.get_oid(
             ldap0.schema.models.AttributeType,
             attrtype_nameoroid.strip(),
         )
         if structural_oc:
-            structural_oc_oid = schema.getoid(
+            structural_oc_oid = schema.get_oid(
                 ldap0.schema.models.ObjectClass,
                 structural_oc.strip(),
             )
@@ -229,8 +229,8 @@ class LDAPSyntax(object):
             entry = ldap0.schema.models.Entry(schema, dn.encode(app.ls.charset), {})
         assert isinstance(dn, str), \
             TypeError("Argument 'dn' must be str, was %r" % (dn))
-        assert isinstance(attrType, bytes) or attrType is None, \
-            TypeError("Argument 'attrType' must be bytes or None, was %r" % (attrType))
+        assert isinstance(attrType, str) or attrType is None, \
+            TypeError("Argument 'attrType' must be str or None, was %r" % (attrType))
         assert isinstance(attrValue, bytes) or attrValue is None, \
             TypeError("Argument 'attrValue' must be bytes or None, was %r" % (attrValue))
         assert entry is None or isinstance(entry, ldap0.schema.models.Entry), \
@@ -277,7 +277,7 @@ class LDAPSyntax(object):
         return attrValues
 
     def _regexValidate(self, attrValue):
-        if self.reObj and (self.reObj.match(attrValue) is None):
+        if self.reObj and (self.reObj.match(attrValue.decode(self._app.ls.charset)) is None):
             raise LDAPSyntaxRegexNoMatch(
                 "Class %s: %r does not match pattern %r." % (
                     self.__class__.__name__,
@@ -1129,21 +1129,21 @@ class OID(IA5String):
             try:
                 se = self._schema.get_obj(
                     ldap0.schema.models.ObjectClass,
-                    self._av,
+                    self._av.decode('ascii'),
                     raise_keyerror=1,
                 )
             except KeyError:
                 try:
                     se = self._schema.get_obj(
                         ldap0.schema.models.AttributeType,
-                        self._av,
+                        self._av.decode('ascii'),
                         raise_keyerror=1,
                     )
                 except KeyError:
                     return IA5String.displayValue(self, valueindex, commandbutton)
                 return schema_anchor(
                     self._app,
-                    self._av,
+                    self._av.decode('ascii'),
                     ldap0.schema.models.AttributeType,
                     name_template=r'%s',
                     link_text='&raquo',
@@ -1156,7 +1156,7 @@ class OID(IA5String):
             # objectClass attribute is displayed with different function
             return schema_anchor(
                 self._app,
-                self._av,
+                self._av.decode('ascii'),
                 ldap0.schema.models.ObjectClass,
                 name_template=name_template,
                 link_text='&raquo',

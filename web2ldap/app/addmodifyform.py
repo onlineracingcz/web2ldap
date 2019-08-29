@@ -266,7 +266,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         self.writeable_attr_oids = writeable_attr_oids
         self.invalid_attrs = invalid_attrs or {}
         new_object_classes = set(list(self.entry.object_class_oid_set())) - set([
-            self.entry._s.getoid(ObjectClass, oc_name)
+            self.entry._s.get_oid(ObjectClass, oc_name)
             for oc_name in existing_object_classes or []
         ])
         new_attribute_types = self.entry._s.attribute_types(
@@ -689,13 +689,13 @@ def ObjectClassForm(
                 else:
                     dit_content_rule_status_text = 'Governed by'
                     all_auxiliary_oc_oids = set([
-                        app.schema.getoid(ObjectClass, nameoroid)
+                        app.schema.get_oid(ObjectClass, nameoroid)
                         for nameoroid in dit_content_rule.aux
                     ])
                     all_auxiliary_oc = [
                         oc
                         for oc in all_auxiliary_oc
-                        if app.schema.getoid(ObjectClass, oc) in all_auxiliary_oc_oids
+                        if app.schema.get_oid(ObjectClass, oc) in all_auxiliary_oc_oids
                     ]
                 dit_content_rule_html = '%s<br>DIT content rule:<br>%s' % (
                     dit_content_rule_status_text,
@@ -1132,7 +1132,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
                 else:
                     if v[0].lower().find(',write:1,') >= 0:
                         writeable_attr_oids.add(
-                            sub_schema.getoid(AttributeType, a[2]).decode('ascii')
+                            sub_schema.get_oid(AttributeType, a[2]).decode('ascii')
                         )
                 del entry[';'.join((dummy1, dummy2, attr_type))]
 
