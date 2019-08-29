@@ -12,8 +12,6 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-from __future__ import absolute_import
-
 import sys
 import socket
 import time
@@ -25,8 +23,9 @@ import ldap0.ldif
 import ldap0.sasl
 import ldap0.cidict
 import ldap0.filter
+import ldap0.dn
+from ldap0.dn import DNObj
 from ldap0.ldapurl import LDAPUrl
-from ldap0.dn import escape_dn_chars
 from ldap0.ldapobject import ReconnectLDAPObject
 from ldap0.schema.models import DITStructureRule
 from ldap0.schema.subentry import SubschemaError, SubSchema, SCHEMA_ATTRS
@@ -238,7 +237,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             retry_delay=LDAP0_RETRY_DELAY,
             cache_ttl=LDAP0_CACHE_TTL,
         ):
-        self._serverctrls = {
+        self._req_ctrls = {
             # all LDAP operations
             '**all**': [],
             # all bind operations
@@ -272,14 +271,14 @@ class MyLDAPObject(ReconnectLDAPObject):
 
     def get_ctrls(self, method):
         all_s_ctrls = {}
-        for ctrl in self._serverctrls[method]:
+        for ctrl in self._req_ctrls[method]:
             all_s_ctrls[ctrl.controlType] = ctrl
         return all_s_ctrls
 
     def add_server_control(self, method, lc):
         _s_ctrls = self.get_ctrls(method)
         _s_ctrls[lc.controlType] = lc
-        self._serverctrls[method] = _s_ctrls.values()
+        self._req_ctrls[method] = _s_ctrls.values()
 
     def del_server_control(self, method, control_type):
         _s_ctrls = self.get_ctrls(method)
@@ -287,16 +286,16 @@ class MyLDAPObject(ReconnectLDAPObject):
             del _s_ctrls[control_type]
         except KeyError:
             pass
-        self._serverctrls[method] = _s_ctrls.values()
+        self._req_ctrls[method] = _s_ctrls.values()
 
-    def abandon(self, msgid, serverctrls=None):
+    def abandon(self, msgid, req_ctrls=None):
         return ReconnectLDAPObject.abandon(
             self,
             msgid,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['abandon'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['abandon'],
         )
 
-    def simple_bind(self, who='', cred='', serverctrls=None):
+    def simple_bind(self, who='', cred='', req_ctrls=None):
         assert isinstance(who, bytes), TypeError("Type of argument 'who' must be str but was %r" % (who))
         assert isinstance(cred, bytes), TypeError("Type of argument 'cred' must be str but was %r" % (cred))
         self.flush_cache()
@@ -304,30 +303,30 @@ class MyLDAPObject(ReconnectLDAPObject):
             self,
             who,
             cred,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**bind**']+self._serverctrls['simple_bind'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**bind**']+self._req_ctrls['simple_bind'],
         )
 
-    def sasl_interactive_bind_s(self, who, auth, serverctrls=None, sasl_flags=ldap0.SASL_QUIET):
+    def sasl_interactive_bind_s(self, who, auth, req_ctrls=None, sasl_flags=ldap0.SASL_QUIET):
         assert isinstance(who, bytes), TypeError("Type of argument 'who' must be str but was %r" % (who))
         self.flush_cache()
         return ReconnectLDAPObject.sasl_interactive_bind_s(
             self,
             who,
             auth,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**bind**']+self._serverctrls['sasl_interactive_bind_s'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**bind**']+self._req_ctrls['sasl_interactive_bind_s'],
             sasl_flags
         )
 
-    def add(self, dn, modlist, serverctrls=None):
+    def add(self, dn, modlist, req_ctrls=None):
         assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
         return ReconnectLDAPObject.add(
             self,
             dn,
             modlist,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['add'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['add'],
         )
 
-    def compare(self, dn, attr, value, serverctrls=None):
+    def compare(self, dn, attr, value, req_ctrls=None):
         assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
         assert isinstance(attr, bytes), TypeError("Type of argument 'attr' must be str but was %r" % attr)
         assert isinstance(value, bytes), TypeError("Type of argument 'value' must be str but was %r" % value)
@@ -336,27 +335,27 @@ class MyLDAPObject(ReconnectLDAPObject):
             dn,
             attr,
             value,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**read**']+self._serverctrls['compare'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**read**']+self._req_ctrls['compare'],
         )
 
-    def delete(self, dn, serverctrls=None):
+    def delete(self, dn, req_ctrls=None):
         assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
         return ReconnectLDAPObject.delete(
             self,
             dn,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['delete'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['delete'],
         )
 
-    def modify(self, dn, modlist, serverctrls=None):
+    def modify(self, dn, modlist, req_ctrls=None):
         assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
         return ReconnectLDAPObject.modify(
             self,
             dn,
             modlist,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['modify'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['modify'],
         )
 
-    def passwd(self, user, oldpw, newpw, serverctrls=None):
+    def passwd(self, user, oldpw, newpw, req_ctrls=None):
         assert isinstance(user, bytes), TypeError("Type of argument 'user' must be str but was %r" % user)
         assert oldpw is None or isinstance(oldpw, bytes), TypeError("Type of argument 'oldpw' must be None or str but was %r" % oldpw)
         assert isinstance(newpw, bytes), TypeError("Type of argument 'newpw' must be str but was %r" % newpw)
@@ -365,10 +364,10 @@ class MyLDAPObject(ReconnectLDAPObject):
             user,
             oldpw,
             newpw,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['passwd'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['passwd'],
         )
 
-    def rename(self, dn, newrdn, newsuperior=None, delold=1, serverctrls=None):
+    def rename(self, dn, newrdn, newsuperior=None, delold=1, req_ctrls=None):
         assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
         assert isinstance(newrdn, bytes), TypeError("Type of argument 'newrdn' must be str but was %r" % newrdn)
         return ReconnectLDAPObject.rename(
@@ -377,7 +376,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             newrdn,
             newsuperior,
             delold,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**write**']+self._serverctrls['rename'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['rename'],
         )
 
     def search(
@@ -387,7 +386,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             filterstr='(objectClass=*)',
             attrlist=None,
             attrsonly=0,
-            serverctrls=None,
+            req_ctrls=None,
             timeout=-1,
             sizelimit=0,
         ):
@@ -404,15 +403,15 @@ class MyLDAPObject(ReconnectLDAPObject):
             filterstr,
             attrlist,
             attrsonly,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['**read**']+self._serverctrls['search'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**read**']+self._req_ctrls['search'],
             timeout,
             sizelimit,
         )
 
-    def unbind(self, serverctrls=None):
+    def unbind(self, req_ctrls=None):
         return ReconnectLDAPObject.unbind(
             self,
-            (serverctrls or [])+self._serverctrls['**all**']+self._serverctrls['unbind'],
+            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['unbind'],
         )
 
 
@@ -483,7 +482,8 @@ class LDAPSession(object):
         self._reset_rootdse_attrs()
         # security attributes of the connection
         self.secureConn = 0
-        self.saslAuth = None
+        self.sasl_mech = None
+        self.sasl_auth = None
         self.who = None
         self.userEntry = {}
         self.startTLSOption = 0
@@ -663,18 +663,15 @@ class LDAPSession(object):
         Derive some class attributes from rootDSE attributes
         """
         self.namingContexts = set()
-        self.namingContexts.update([
-            '' if v == b'\x00' else v.decode(self.charset)
-            for v in self.rootDSE.get('namingContexts', [])
-        ])
         for rootdse_naming_attrtype in (
+                'namingContexts',
                 'configContext',
                 'monitorContext',
                 'ds-private-naming-contexts',
             ):
             self.namingContexts.update([
-                str(v, self.charset)
-                for v in self.rootDSE.get(rootdse_naming_attrtype, [])
+                DNObj.fromstring('' if val == b'\x00' else val.decode(self.charset))
+                for val in self.rootDSE.get(rootdse_naming_attrtype, [])
             ])
         for attr_type in (
                 'supportedLDAPVersion',
@@ -725,12 +722,16 @@ class LDAPSession(object):
 
         naming_contexts is used if not None and LDAPSession.namingContexts is empty
         """
+        if naming_contexts:
+            naming_contexts = [
+                DNObj.fromstring(nc)
+                for nc in naming_contexts or []
+            ]
+        else:
+            naming_contexts = self.namingContexts
         if self.namingContexts is None and self.l is not None:
             self.init_rootdse()
-        return web2ldap.ldaputil.match_dnlist(
-            dn,
-            self.namingContexts or naming_contexts or [],
-        )
+        return DNObj.fromstring(dn).match(naming_contexts)
 
     def count(
             self,
@@ -935,11 +936,11 @@ class LDAPSession(object):
         except AttributeError:
             pass
 
-    def modify(self, dn, modlist, serverctrls=None, assertion_filter=None):
+    def modify(self, dn, modlist, req_ctrls=None, assertion_filter=None):
         """Modify single entry"""
         if not modlist:
             return
-        serverctrls = serverctrls or []
+        req_ctrls = req_ctrls or []
         dn_str = dn.encode(self.charset)
         if AssertionControl.controlType in self.supportedControl and assertion_filter:
             if self.is_openldap:
@@ -951,8 +952,8 @@ class LDAPSession(object):
                 filter_str=assertion_filter,
                 dn_str=ldap0.filter.escape_str(dn),
             ).encode(self.charset)
-            serverctrls.append(AssertionControl(False, assertion_filter_str))
-        self.l.modify_s(dn_str, modlist, serverctrls=serverctrls)
+            req_ctrls.append(AssertionControl(False, assertion_filter_str))
+        self.l.modify_s(dn_str, modlist, req_ctrls=req_ctrls)
         # end of LDAPSession.modify()
 
     def rename(self, dn, new_rdn, new_superior=None, delold=1):
@@ -960,25 +961,25 @@ class LDAPSession(object):
         self.l.uncache(dn.encode(self.charset))
         if not new_superior is None:
             self.l.uncache(new_superior.encode(self.charset))
-        old_superior_str = web2ldap.ldaputil.parent_dn(web2ldap.ldaputil.normalize_dn(dn))
+        old_superior_dn = DNObj.fromstring(dn).parent()
         if new_superior is not None:
-            if old_superior_str == web2ldap.ldaputil.normalize_dn(new_superior):
+            if old_superior_dn == DNObj.fromstring(new_superior):
                 new_superior_str = None
             else:
                 new_superior_str = self.uc_encode(new_superior)[0]
-        rename_serverctrls = []
+        rename_req_ctrls = []
         if PreReadControl.controlType in self.supportedControl:
-            rename_serverctrls.append(PreReadControl(criticality=False, attrList=['entryUUID']))
+            rename_req_ctrls.append(PreReadControl(criticality=False, attrList=['entryUUID']))
         if PostReadControl.controlType in self.supportedControl:
-            rename_serverctrls.append(PostReadControl(criticality=False, attrList=['entryUUID']))
-        rename_serverctrls = rename_serverctrls or None
+            rename_req_ctrls.append(PostReadControl(criticality=False, attrList=['entryUUID']))
+        rename_req_ctrls = rename_req_ctrls or None
         # Send ModRDNRequest
         _, _, _, rename_resp_ctrls = self.l.rename_s(
             self.uc_encode(dn)[0],
             self.uc_encode(new_rdn)[0],
             new_superior_str,
             delold,
-            serverctrls=rename_serverctrls
+            req_ctrls=rename_req_ctrls
         )
         # Try to extract Read Entry controls from response
         prec_ctrls = dict([
@@ -993,7 +994,7 @@ class LDAPSession(object):
             except (IndexError, KeyError):
                 entry_uuid = None
         else:
-            new_dn = u','.join([new_rdn, new_superior or old_superior_str])
+            new_dn = u','.join([new_rdn, new_superior or str(old_superior_dn)])
             entry_uuid = None
         return new_dn, entry_uuid
         # end of LDAPSession.rename()
@@ -1030,9 +1031,9 @@ class LDAPSession(object):
         if not username:
             # seems to be anonymous bind
             return u''
-        elif web2ldap.ldaputil.is_dn(username):
+        elif ldap0.dn.is_dn(username):
             # already a bind-DN -> return it normalized
-            return web2ldap.ldaputil.normalize_dn(username)
+            return str(DNObj.fromstring(username))
         elif not binddn_mapping:
             # no bind-DN mapping URL -> just return username
             return username
@@ -1047,7 +1048,7 @@ class LDAPSession(object):
             [''],
         )[0].decode(self.charset) or u''
         lu_obj = LDAPUrl(binddn_mapping)
-        ldap0.filter.escape_str = lu_obj.dn.format(user=escape_dn_chars(username))
+        ldap0.filter.escape_str = lu_obj.dn.format(user=ldap0.dn.escape_str(username))
         if ldap0.filter.escape_str == u'_':
             ldap0.filter.escape_str = search_root
         elif ldap0.filter.escape_str.endswith(u'_'):
@@ -1092,7 +1093,7 @@ class LDAPSession(object):
             lu_obj.scope,
             search_filter,
         )
-        return web2ldap.ldaputil.normalize_dn(result[0][0].decode(self.charset))
+        return str(DNObj.fromstring(result[0][0].decode(self.charset)))
 
     def bind(
             self,
@@ -1137,14 +1138,14 @@ class LDAPSession(object):
                     ldap0.sasl.CB_USER: (sasl_authzid or u'').encode(self.charset),
                     ldap0.sasl.CB_GETREALM: (sasl_realm or u'').encode(self.charset),
                 },
-                sasl_mech
             )
             if ldap0.SASL_AVAIL:
-                self.l.sasl_interactive_bind_s('', sasl_auth, serverctrls=bind_server_ctrls)
-                self.saslAuth = sasl_auth
+                self.l.sasl_interactive_bind_s(sasl_mech, sasl_auth, req_ctrls=bind_server_ctrls)
+                self.sasl_mech = sasl_mech
+                self.sasl_auth = sasl_auth
                 # Don't store the password
                 try:
-                    del self.saslAuth.cb_value_dict[ldap0.sasl.CB_PASS]
+                    del self.sasl_auth.cb_value_dict[ldap0.sasl.CB_PASS]
                 except KeyError:
                     pass
             else:
@@ -1153,7 +1154,7 @@ class LDAPSession(object):
         else:
             # Simple bind
             #-------------------------------
-            self.saslAuth = None
+            self.sasl_auth = None
             if not who or not cred:
                 # Anonymous bind
                 who = cred = None
@@ -1165,7 +1166,7 @@ class LDAPSession(object):
                 self.l.simple_bind_s(
                     self.uc_encode(who or u'')[0],
                     self.uc_encode(cred or u'')[0],
-                    serverctrls=bind_server_ctrls,
+                    req_ctrls=bind_server_ctrls,
                 )
             except ldap0.INVALID_DN_SYNTAX:
                 self.who = None
@@ -1200,8 +1201,8 @@ class LDAPSession(object):
 
         # Try to look up the user entry's DN in case self.who is still not a DN
         if whoami_filtertemplate and \
-           (self.who is None or not web2ldap.ldaputil.is_dn(self.who)):
-            if self.saslAuth and self.saslAuth.mech in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
+           (self.who is None or not ldap0.dn.is_dn(self.who)):
+            if self.sasl_auth and sasl_mech in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
                 # For SASL mechs EXTERNAL and GSSAPI the user did not enter a SASL username
                 # => try to determine it through OpenLDAP's libldap
                 # Ask libldap for SASL username for later LDAP search
@@ -1214,7 +1215,7 @@ class LDAPSession(object):
                 pass
 
         # Read the user's entry if self.who is a DN to get name and preferences
-        if self.who and web2ldap.ldaputil.is_dn(self.who):
+        if self.who and ldap0.dn.is_dn(self.who):
             try:
                 self.userEntry = self.l.read_s(
                     self.who.encode(self.charset),
@@ -1263,7 +1264,7 @@ class LDAPSession(object):
         possible_dit_structure_rules = {}.fromkeys((
             entry.get_possible_dit_structure_rules(ldap_dn) or []
         ))
-        parent_dn = web2ldap.ldaputil.parent_dn(dn)
+        parent_dn = str(DNObj.fromstring(dn).parent())
         administrative_roles = entry.get('administrativeRole', [])
         if 'subschemaAdminSpecificArea' in administrative_roles or not parent_dn:
             # If the current entry is a subschema administrative point all
@@ -1303,10 +1304,10 @@ class LDAPSession(object):
         if self.startTLSOption:
             lu.x_startTLS = str(START_TLS_REQUIRED * (self.startTLSOption > 0))
         if add_login:
-            if self.saslAuth:
-                lu.saslMech = self.saslAuth.mech.encode('ascii')
-                if self.saslAuth.mech in ldap0.sasl.SASL_PASSWORD_MECHS:
-                    lu.who = self.saslAuth.cb_value_dict.get(
+            if self.sasl_auth:
+                lu.saslMech = self.sasl_mech.encode('ascii')
+                if self.sasl_mech in ldap0.sasl.SASL_PASSWORD_MECHS:
+                    lu.who = self.sasl_auth.cb_value_dict.get(
                         ldap0.sasl.CB_AUTHNAME,
                         u'',
                     ).encode(self.charset) or None
