@@ -55,7 +55,7 @@ class AsyncSearchHandler:
     def __init__(self, l):
         self._l = l
         self._msg_id = None
-        self._after_first = 1
+        self._after_first = True
 
     def start_search(
             self,
@@ -123,7 +123,7 @@ class AsyncSearchHandler:
         """
         self.pre_processing()
         result_counter = 0
-        end_result_counter = ignoreResultsNumber+processResultsCount
+        end_result_counter = ignoreResultsNumber + processResultsCount
         go_ahead = True
         partial = False
         self.beginResultsDropped = 0
