@@ -1055,8 +1055,8 @@ class LDAPSession(object):
         search_base =lu_obj.dn.format(user=ldap0.dn.escape_str(username))
         if search_base == u'_':
             search_base = search_root
-        elif search_base.endswith(u'_'):
-            search_base =u''.join((ldap0.dn.escape_str[:-1], search_root))
+        elif search_base.endswith(u',_'):
+            search_base = u''.join((search_base[:-1], search_root))
         if lu_obj.scope == ldap0.SCOPE_BASE and lu_obj.filterstr is None:
             logger.debug('Directly mapped %r to %r', username, search_base)
             return search_base
