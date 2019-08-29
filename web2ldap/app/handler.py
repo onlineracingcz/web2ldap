@@ -979,7 +979,7 @@ class AppHandler(LogHelper):
             ) as err:
             web2ldap.app.login.w2l_login(
                 self,
-                login_msg=self.form.utf2display(str(err).decode('ascii')),
+                login_msg=self.form.utf2display(str(err)),
                 who=who, relogin=True,
             )
 

@@ -989,13 +989,15 @@ class Form:
     def _parse_url_encoded(self, maxContentLength):
 
         if self.request_method == 'POST':
-            query_string = self.inf.read(int(self.env['CONTENT_LENGTH']))
+            query_string = self.uc_decode(
+                self.inf.read(int(self.env['CONTENT_LENGTH']))
+            )[0]
         elif self.request_method == 'GET':
             query_string = self.env.get('QUERY_STRING', '')
 
         self.inf.close()
 
-        inputlist = query_string.split(b'&')
+        inputlist = query_string.split('&')
 
         contentLength = 0
 
@@ -1009,10 +1011,10 @@ class Form:
 
                 # Einzelne Parametername/-daten-Paare auseinandernehmen
                 try:
-                    name, value = param.split(b'=', 1)
+                    name, value = param.split('=', 1)
                 except ValueError:
                     raise InvalidFormEncoding(param)
-                name = unquote(name.decode('ascii')).strip()
+                name = unquote(name).strip()
 
                 if name not in self.field:
                     raise InvalidFieldName(name)

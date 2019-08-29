@@ -24,7 +24,7 @@ import ldap0.sasl
 import ldap0.cidict
 import ldap0.filter
 import ldap0.dn
-from ldap0.base import encode_list
+from ldap0.base import encode_list, decode_entry_dict
 from ldap0.dn import DNObj
 from ldap0.ldapurl import LDAPUrl
 from ldap0.ldapobject import ReconnectLDAPObject
@@ -181,26 +181,26 @@ ROOTDSE_ATTRS = (
 
 # Attributes to be read from user's entry
 USER_ENTRY_ATTRIBUTES = (
-    '*',
-    'uid',
-    'uidNumber',
-    'gidNumber',
-    'cn',
-    'displayName',
-    'sAMAccountName',
-    'userPrincipalName',
-    'employeeNumber',
-    'employeeID',
-    'preferredLanguage',
-    'objectClass',
-    'pwdExpire',
-    'pwdLastSet',
-    'badPasswordTime',
-    'badPwdCount',
-    'lastLogin',
-    'shadowLastChange',
-    'sambaPwdLastSet',
-    'memberOf',
+    b'*',
+    b'uid',
+    b'uidNumber',
+    b'gidNumber',
+    b'cn',
+    b'displayName',
+    b'sAMAccountName',
+    b'userPrincipalName',
+    b'employeeNumber',
+    b'employeeID',
+    b'preferredLanguage',
+    b'objectClass',
+    b'pwdExpire',
+    b'pwdLastSet',
+    b'badPasswordTime',
+    b'badPwdCount',
+    b'lastLogin',
+    b'shadowLastChange',
+    b'sambaPwdLastSet',
+    b'memberOf',
 )
 
 WHOAMI_FILTER_TMPL = (
@@ -279,7 +279,7 @@ class MyLDAPObject(ReconnectLDAPObject):
     def add_server_control(self, method, lc):
         _s_ctrls = self.get_ctrls(method)
         _s_ctrls[lc.controlType] = lc
-        self._req_ctrls[method] = _s_ctrls.values()
+        self._req_ctrls[method] = list(_s_ctrls.values())
 
     def del_server_control(self, method, control_type):
         _s_ctrls = self.get_ctrls(method)
@@ -287,7 +287,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             del _s_ctrls[control_type]
         except KeyError:
             pass
-        self._req_ctrls[method] = _s_ctrls.values()
+        self._req_ctrls[method] = list(_s_ctrls.values())
 
     def abandon(self, msgid, req_ctrls=None):
         return ReconnectLDAPObject.abandon(
@@ -384,7 +384,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             self,
             base,
             scope,
-            filterstr='(objectClass=*)',
+            filterstr=b'(objectClass=*)',
             attrlist=None,
             attrsonly=0,
             req_ctrls=None,
@@ -513,10 +513,12 @@ class LDAPSession(object):
         if self.uri.lower().startswith('ldapi:') or not ldap0.TLS_AVAIL:
             # Do not set TLS options
             return
-        for ldap_opt, ldap_opt_value in tls_options.items() + [
+        for ldap_opt, ldap_opt_value in list(tls_options.items()) + [
                 (ldap0.OPT_X_TLS_REQUIRE_CERT, ldap0.OPT_X_TLS_DEMAND),
                 (ldap0.OPT_X_TLS_NEWCTX, 0),
             ]:
+            if isinstance(ldap_opt_value, str):
+                ldap_opt_value = ldap_opt_value.encode(self.charset)
             try:
                 self.l.set_option(ldap_opt, ldap_opt_value)
             except ValueError as value_error:
@@ -918,8 +920,8 @@ class LDAPSession(object):
                 subschemasubentry.update(supplement_schema or {})
         try:
             sub_schema = ldap0.schema.subentry.SubSchema(
-                subschemasubentry,
-                self.uc_encode(subschemasubentry_dn)[0],
+                decode_entry_dict(subschemasubentry),
+                subschemasubentry_dn,
                 check_uniqueness=strict_check,
             )
         except SubschemaError:
@@ -1050,7 +1052,7 @@ class LDAPSession(object):
         search_root = search_root or self.rootDSE.get(
             'defaultNamingContext',
             [''],
-        )[0].decode(self.charset) or u''
+        )[0] or u''
         lu_obj = LDAPUrl(binddn_mapping)
         search_base =lu_obj.dn.format(user=ldap0.dn.escape_str(username))
         if search_base == u'_':
@@ -1224,7 +1226,7 @@ class LDAPSession(object):
                 self.userEntry = self.l.read_s(
                     self.who.encode(self.charset),
                     attrlist=USER_ENTRY_ATTRIBUTES,
-                    filterstr='(objectClass=*)',
+                    filterstr=b'(objectClass=*)',
                     cache_ttl=-1.0,
                 ) or {}
             except (ldap0.LDAPError, IndexError):

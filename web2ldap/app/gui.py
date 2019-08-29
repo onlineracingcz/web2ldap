@@ -620,9 +620,14 @@ def search_root_field(
         dn_select_list.update(map(str, [app.dn_obj] + app.dn_obj.parents()))
     if search_root_searchurl:
         # search for more search bases
-        slu = ldap0.ldapurl.LDAPUrl(search_root_searchurl.encode(app.ls.charset))
+        slu = ldap0.ldapurl.LDAPUrl(search_root_searchurl)
         try:
-            ldap_result = app.ls.l.search_s(slu.dn, slu.scope, slu.filterstr, attrlist=['1.1'])
+            ldap_result = app.ls.l.search_s(
+                slu.dn.encode(app.ls.charset),
+                slu.scope,
+                slu.filterstr.encode(app.ls.charset),
+                attrlist=[b'1.1']
+            )
         except ldap0.LDAPError:
             pass
         else:
