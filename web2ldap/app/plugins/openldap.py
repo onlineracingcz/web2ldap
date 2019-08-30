@@ -507,7 +507,7 @@ class OpenLDAPSpecialBackendSuffix(NamingContexts):
     desc = 'OpenLDAP special backend suffix'
 
     def _config_link(self):
-        attr_type_u = self._app.ls.uc_decode(self._at)[0][:-7]
+        attr_type_u = self._at[:-7]
         try:
             config_context = self._app.ls.uc_decode(self._app.ls.rootDSE['configContext'][0])[0]
         except KeyError:

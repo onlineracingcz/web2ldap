@@ -333,7 +333,7 @@ class LDAPSyntax(object):
             '</button>'
         ) % (
             self._app.form.action_url(command, self._app.sid),
-            self._app.form.utf2display(self._app.ls.uc_decode(self._at)[0]),
+            self._app.form.utf2display(self._at),
             mode, row, link_text
         )
 
@@ -346,7 +346,7 @@ class LDAPSyntax(object):
         This is the inverse of LDAPSyntax.sanitize().
         """
         try:
-            result = self._app.ls.uc_decode(self._av or '')[0]
+            result = self._app.ls.uc_decode(self._av or b'')[0]
         except UnicodeDecodeError:
             result = u'!!!snipped because of UnicodeDecodeError!!!'
         return result
@@ -1230,9 +1230,11 @@ class OctetString(Binary):
         return '\n<table class="HexDump">\n%s\n</table>\n' % ('\n'.join(lines))
 
     def formValue(self):
+        hex_av = (self._av or b'').hex().upper()
+        hex_range = range(0, len(hex_av), 2)        
         return str('\r\n'.join(
             web2ldap.msbase.chunks(
-                ':'.join(x.encode('hex').upper() for x in self._av or ''),
+                ':'.join([hex_av[i:i+2] for i in hex_range]),
                 self.bytes_split*3
             )
         ))
@@ -1280,7 +1282,7 @@ class MultilineText(DirectoryString):
         return '<br>'.join(lines)
 
     def formValue(self):
-        splitted_lines = self._split_lines(self._app.ls.uc_decode(self._av or '')[0])
+        splitted_lines = self._split_lines(self._app.ls.uc_decode(self._av or b'')[0])
         return u'\r\n'.join(splitted_lines)
 
     def formField(self):

@@ -17,6 +17,7 @@ from io import BytesIO
 import ldap0
 import ldap0.ldif
 import ldap0.schema
+from ldap0.base import decode_list, encode_list
 from ldap0.schema.models import \
     AttributeType, \
     ObjectClass, \
@@ -227,7 +228,7 @@ def get_entry_input(app):
 
     # Checking for invalid input done after sanitizing all values so
     # plugin classes can use all entry's attributes for cross-checking input
-    for attr_type, attr_values in entry.items():
+    for attr_type, attr_values in list(entry.items()):
         attr_values = entry[attr_type]
         if not attr_values:
             del entry[attr_type]
@@ -282,7 +283,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         self.new_attribute_types_oids = set()
         self.new_attribute_types_oids.update(new_attribute_types[0].keys())
         self.new_attribute_types_oids.update(new_attribute_types[1].keys())
-        for at_oid in old_attribute_types[0].keys()+old_attribute_types[1].keys():
+        for at_oid in list(old_attribute_types[0].keys())+list(old_attribute_types[1].keys()):
             try:
                 self.new_attribute_types_oids.remove(at_oid)
             except KeyError:
@@ -297,7 +298,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         """
         Return HTML input field(s) for the attribute specified by nameoroid.
         """
-        oid = self.entry._at2key(nameoroid)[0]
+        oid = self.entry.name2key(nameoroid)[0]
         nameoroid_se = self.entry._s.get_obj(AttributeType, nameoroid)
         syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.get_syntax(
             self.entry._s,
@@ -315,7 +316,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
 
         # Eliminate binary attribute values from input form
         if not syntax_class.editable:
-            attr_values = ['']
+            attr_values = [b'']
 
         attr_inst = syntax_class(
             self._app, self.dn, self.entry._s, nameoroid, None, self.entry
@@ -370,9 +371,9 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                 attr_type_tags = []
                 attr_type_name = str(nameoroid).split(';')[0]
                 if nameoroid_se:
-                    attr_type_name = (nameoroid_se.names or [nameoroid_se.oid])[0].decode(self._app.ls.charset)
+                    attr_type_name = (nameoroid_se.names or [nameoroid_se.oid])[0]
                     try:
-                        attr_title = (nameoroid_se.desc or '').decode(self._app.ls.charset)
+                        attr_title = (nameoroid_se.desc or '')
                     except UnicodeError:
                         # This happens sometimes because of wrongly encoded schema files
                         attr_title = u''
@@ -391,7 +392,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                         '<span class="InvalidInput">'*highlight_invalid,
                         web2ldap.app.gui.HIDDEN_FIELD % (
                             'in_at',
-                            ';'.join([attr_type_name.encode('ascii')]+attr_type_tags),
+                            ';'.join([attr_type_name]+attr_type_tags),
                             ''
                         ),
 
@@ -411,7 +412,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
             self.attr_counter += 1
 
         return '<a class="hide" id="in_a_%s"></a>%s' % (
-            self._app.form.utf2display(nameoroid.decode('ascii')),
+            self._app.form.utf2display(nameoroid),
             '\n<br>\n'.join(result),
         )
 
@@ -463,7 +464,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         seen_attr_type_oids = ldap0.cidict.CIDict()
         attr_type_names = ldap0.cidict.CIDict()
         for a in self.entry.keys():
-            at_oid = self.entry._at2key(a)[0]
+            at_oid = self.entry.name2key(a)[0]
             if at_oid in attr_types_dict:
                 seen_attr_type_oids[at_oid] = None
                 attr_type_names[a.encode('ascii')] = None
@@ -502,7 +503,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         )
         # Output hidden fields for attributes not displayed in template-based input form
         for attr_type, attr_values in self.entry.items():
-            at_oid = self.entry._at2key(attr_type)[0]
+            at_oid = self.entry.name2key(attr_type)[0]
             syntax_class = syntax_registry.get_syntax(self.entry._s, attr_type, self.soc)
             if syntax_class.editable and \
                not web2ldap.app.schema.no_userapp_attr(self.entry._s, attr_type) and \
@@ -511,7 +512,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                     attr_inst = syntax_class(
                         self._app, self.dn, self.entry._s, attr_type, attr_value, self.entry
                     )
-                    self._app.outf.write(self._app.form.hiddenFieldHTML('in_at', attr_type.decode('ascii'), u''))
+                    self._app.outf.write(self._app.form.hiddenFieldHTML('in_at', attr_type, u''))
                     self._app.outf.write(web2ldap.app.gui.HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''))
                     try:
                         attr_value_html = self._app.form.utf2display(attr_inst.formValue(), sp_entity='  ')
@@ -571,7 +572,7 @@ def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
         try:
             parent_search_result = app.ls.l.read_s(
                 parent_dn.encode(app.ls.charset),
-                attrlist=list(inputform_supentrytemplate_attrtypes),
+                attrlist=encode_list(inputform_supentrytemplate_attrtypes, encoding='ascii'),
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -1090,7 +1091,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
     try:
         ldap_entry = app.ls.l.read_s(
             dn.encode(app.ls.charset),
-            attrlist=read_attrs.values(),
+            attrlist=encode_list(read_attrs.values(), encoding='ascii'),
             filterstr=(assertion_filter or u'(objectClass=*)').encode(app.ls.charset),
             cache_ttl=-1.0,
             req_ctrls=server_ctrls or None,
@@ -1283,7 +1284,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         ObjectClassForm(app, entry['objectClass'], entry.get_structural_oc())
         return
 
-    existing_object_classes = entry['objectClass'][:]
+    existing_object_classes = decode_list(entry['objectClass'][:], encoding='ascii')
 
     input_form_entry = InputFormEntry(
         app, app.dn, app.schema,
@@ -1338,7 +1339,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
             text_supentry=supentry_display_string,
             form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
-            field_currentformtype=app.form.hiddenFieldHTML('in_oft', input_formtype.decode('ascii'), u''),
+            field_currentformtype=app.form.hiddenFieldHTML('in_oft', input_formtype, u''),
         )
     )
 
@@ -1346,7 +1347,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         '\n'.join((
             app.form.hiddenFieldHTML('in_assertion', AssertionFilter(app, entry), u''),
             '\n'.join([
-                app.form.hiddenFieldHTML('in_oldattrtypes', at_name.decode('ascii'), u'')
+                app.form.hiddenFieldHTML('in_oldattrtypes', at_name, u'')
                 for at_name in app.form.getInputValue('in_oldattrtypes', entry.keys())
             ]),
             in_wrtattroids_values,
