@@ -390,7 +390,10 @@ def w2l_read(app):
     # Read the entry's data
     search_result = app.ls.l.read_s(
         app.ldap_dn,
-        attrlist=wanted_attrs or {False:None, True:['*', '+']}[app.ls.supportsAllOpAttr],
+        attrlist=encode_list(
+            wanted_attrs or {False:None, True:['*', '+']}[app.ls.supportsAllOpAttr],
+            encoding='ascii',
+        ),
         filterstr=filterstr.encode(app.ls.charset),
         cache_ttl=None if read_nocache else -1.0,
     )
