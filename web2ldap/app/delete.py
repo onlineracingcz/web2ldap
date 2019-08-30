@@ -134,11 +134,11 @@ class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
             searchScope,
             filterStr=filterStr,
             attrList=[
-                'hasSubordinates',
-                'subordinateCount',
-                'numSubordinates',
-                'numAllSubordinates',
-                'msDS-Approx-Immed-Subordinates',
+                b'hasSubordinates',
+                b'subordinateCount',
+                b'numSubordinates',
+                b'numAllSubordinates',
+                b'msDS-Approx-Immed-Subordinates',
             ],
         )
 
