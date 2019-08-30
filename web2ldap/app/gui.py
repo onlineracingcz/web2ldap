@@ -605,6 +605,8 @@ def search_root_field(
     """
 
     def sortkey_func(d):
+        if isinstance(d, DNObj):
+            return str(reversed(d)).lower()
         try:
             dn, _ = d
         except ValueError:
@@ -614,7 +616,7 @@ def search_root_field(
         return str(reversed(DNObj.fromstring(dn))).lower()
 
     # add all known naming contexts
-    dn_select_list = set(app.ls.namingContexts)
+    dn_select_list = set(map(str, app.ls.namingContexts))
     if app.dn:
         # add the current DN and all its parent DNs
         dn_select_list.update(map(str, [app.dn_obj] + app.dn_obj.parents()))
@@ -648,7 +650,7 @@ def search_root_field(
             dn_select_list,
             key=sortkey_func,
         ),
-        default=default or app.naming_context or app.dn,
+        default=default or str(app.naming_context) or app.dn,
         ignoreCase=1
     )
     srf.charset = app.form.accept_charset
