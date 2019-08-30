@@ -674,7 +674,7 @@ def exception_message(app, h1_msg, error_msg):
         </p>
         """.format(
             heading=app.form.utf2display(h1_msg),
-            error_msg=error_msg,
+            error_msg=error_msg.decode(app.ls.charset),
         )
     )
     footer(app)
