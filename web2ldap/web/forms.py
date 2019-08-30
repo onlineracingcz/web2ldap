@@ -493,7 +493,7 @@ class Radio(Field):
                 if v not in option_vals
             ])
         elif default is not None:
-            raise TypeError('Expected None, str or list for argument default, got %r' % (default))
+            raise TypeError('Expected None, str or list for argument default, got %r' % (default,))
         self.default = default
 
 
