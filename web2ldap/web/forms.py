@@ -81,19 +81,6 @@ class Field(object):
             return ''
         return 'id="%s" ' % (id_value)
 
-    def labelHTML(self, labelText=None, for_value=None):
-        labelText = labelText or self.text
-        return '<label for="%s">%s</label>' % (for_value or self.name, labelText)
-
-    def getValue(self):
-        """
-        Returns self.value in case of multi-valued input or
-        self.value[0] if only one value is allowed.
-        """
-        if self.maxValues > 1:
-            return self.value
-        return self.value[0]
-
     def set_default(self, default):
         """
         Set the default of a field.
@@ -105,7 +92,7 @@ class Field(object):
             self.default = [i for i in default if i is not None]
         self.default = default or u''
 
-    def _patternAndOptions(self, pattern):
+    def _regex_with_options(self, pattern):
         """
         The result is a tuple (pattern string, pattern options).
 
@@ -119,8 +106,6 @@ class Field(object):
             return pattern
         elif isinstance(pattern, str):
             return pattern, 0
-#        elif isinstance(pattern, bytes):
-#            return pattern, 0
         raise TypeError('Expected pattern to be None, str or tuple, got %r' % (pattern,))
 
     def setRegex(self, pattern):
@@ -133,10 +118,10 @@ class Field(object):
         pattern
             Either a string containing a regex pattern,
             a tuple (pattern string, pattern options) or None.
-            If None regex checking in _validateFormat is switched off
+            If None regex checking in _validate_format is switched off
             (not recommended).
         """
-        patternstring, patternoptions = self._patternAndOptions(pattern)
+        patternstring, patternoptions = self._regex_with_options(pattern)
         if patternstring is None:
             # Regex checking is completely switched off
             self._re = None
@@ -145,12 +130,12 @@ class Field(object):
             patternoptions = patternoptions | re.U
             self._re = re.compile('%s$' % patternstring, patternoptions)
 
-    def _validateLen(self, value):
+    def _validate_len(self, value):
         """Check length of the user's value for this field."""
         if len(value) > self.maxLen:
             raise InvalidValueLen(self.name, self.text, len(value), self.maxLen)
 
-    def _validateFormat(self, value):
+    def _validate_format(self, value):
         """
         Check format of the user's value for this field.
 
@@ -166,7 +151,7 @@ class Field(object):
                     value.encode(self.charset)
                 )
 
-    def _validateMaxValue(self):
+    def _validate_val_count(self):
         if len(self.value) >= self.maxValues:
             raise TooManyValues(self.name, self.text, len(self.value), self.maxValues)
 
@@ -191,10 +176,10 @@ class Field(object):
         assert isinstance(value, bytes), TypeError('Expected value to be bytes, was %r' % (value))
         value = self._decodeValue(value)
         # Length valid?
-        self._validateLen(value)
+        self._validate_len(value)
         # Format valid?
-        self._validateFormat(value)
-        self._validateMaxValue()
+        self._validate_format(value)
+        self._validate_val_count()
         self.value.append(value)
 
     @property
@@ -215,7 +200,7 @@ class Field(object):
         """HTML output of default."""
         return escape_html(title or self.text)
 
-    def _defaultHTML(self, default):
+    def _default_html(self, default):
         """HTML output of default."""
         return escape_html(self._defaultValue(default))
 
@@ -248,7 +233,7 @@ class Textarea(Field):
         Like Field.setRegex() but pattern options re.S and re.M are
         automatically added.
         """
-        patternstring, patternoptions = self._patternAndOptions(pattern)
+        patternstring, patternoptions = self._regex_with_options(pattern)
         # This is a Unicode input field
         patternoptions = patternoptions | re.M | re.S
         Field.setRegex(self, (patternstring, patternoptions))
@@ -263,7 +248,7 @@ class Textarea(Field):
                 self._accesskey_attr(),
                 self.rows,
                 self.cols,
-                self._defaultHTML(default),
+                self._default_html(default),
             )
         )
 
@@ -309,7 +294,7 @@ class Input(Field):
                 self.size,
                 type_attr,
                 pattern_attr,
-                self._defaultHTML(default),
+                self._default_html(default),
             )
         )
 
@@ -334,7 +319,7 @@ class HiddenInput(Input):
         Input.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accesskey)
 
     def inputHTML(self, default=None, id_value=None, title=None, show=0):
-        default_html = self._defaultHTML(default)
+        default_html = self._default_html(default)
         if show:
             default_str = default_html
         else:
@@ -364,7 +349,7 @@ class File(Input):
     """
     mimeType = 'application/octet-stream'
 
-    def _validateFormat(self, value):
+    def _validate_format(self, value):
         """Binary data is assumed to be valid all the time"""
         return
 
@@ -424,7 +409,7 @@ class Radio(Field):
         self.set_default(default)
         Field.__init__(self, name, text, self.maxLen, maxValues, '', required, default, accesskey)
 
-    def _validateFormat(self, value):
+    def _validate_format(self, value):
         """
         Check format of the user's value for this field.
 
@@ -641,7 +626,7 @@ class DataList(Input, Select):
                     self._accesskey_attr(),
                     self.maxLen,
                     self.size,
-                    self._defaultHTML(default),
+                    self._default_html(default),
                     datalist_id,
                 )
             )
@@ -690,7 +675,7 @@ class Checkbox(Field):
                 self.titleHTML(title),
                 self.name,
                 self._accesskey_attr(),
-                self._defaultHTML(default),
+                self._default_html(default),
                 ' checked'*(checked),
             )
         )

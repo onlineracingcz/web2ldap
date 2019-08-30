@@ -872,7 +872,7 @@ class DistinguishedNameInput(Input):
             size=70, required=required, default=default
         )
 
-    def _validateFormat(self, value):
+    def _validate_format(self, value):
         if value and not ldap0.dn.is_dn(value):
             raise InvalidValueFormat(
                 self.name,
