@@ -91,8 +91,8 @@ class AssociatedDomain(DNSDomain):
                 form_value = u'.'.join((dc_value, parent_domain))
         return form_value
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        r = [DNSDomain.displayValue(self, valueindex, commandbutton)]
+    def display(self, valueindex=0, commandbutton=False):
+        r = [DNSDomain.display(self, valueindex, commandbutton)]
         if commandbutton:
             av = self.av_u.lower()
             r.append(self._app.anchor(
@@ -193,8 +193,8 @@ class ResourceRecord(DNSDomain, DynamicValueSelectList):
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        return DynamicValueSelectList.displayValue(self, valueindex, commandbutton)
+    def display(self, valueindex=0, commandbutton=False):
+        return DynamicValueSelectList.display(self, valueindex, commandbutton)
 
 syntax_registry.reg_at(
     ResourceRecord.oid, [
@@ -239,8 +239,8 @@ class ARecord(IPv4HostAddress):
     oid = 'ARecord-oid'
     desc = 'A resource record pointing to IPv4 address'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        r = [IPv4HostAddress.displayValue(self, valueindex, commandbutton)]
+    def display(self, valueindex=0, commandbutton=False):
+        r = [IPv4HostAddress.display(self, valueindex, commandbutton)]
         if commandbutton:
             ip_addr = self.addr_class(self.av_u)
             r.append(self._app.anchor(
@@ -291,8 +291,8 @@ class AAAARecord(IPv6HostAddress):
     oid = 'AAAARecord-oid'
     desc = 'AAAA resource record pointing to IPv6 address'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        r = [IPv6HostAddress.displayValue(self, valueindex, commandbutton)]
+    def display(self, valueindex=0, commandbutton=False):
+        r = [IPv6HostAddress.display(self, valueindex, commandbutton)]
         if commandbutton:
             ip_addr = self.addr_class(self._av.decode('ascii'))
             try:
@@ -368,8 +368,8 @@ class SSHFPRecord(IA5String):
                 result = result and len(fp_value) == fp_algo_len
         return result
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        display_value = IA5String.displayValue(self, valueindex, commandbutton)
+    def display(self, valueindex=0, commandbutton=False):
+        display_value = IA5String.display(self, valueindex, commandbutton)
         try:
             key_algo, fp_algo, _ = filter(None, map(str.strip, self._av.split(' ')))
         except ValueError:

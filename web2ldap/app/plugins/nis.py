@@ -35,12 +35,12 @@ class GidNumber(DynamicValueSelectList, Integer):
     def _validate(self, attrValue):
         return Integer._validate(self, attrValue)
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         # Possibly display a link
         ocs = self._entry.object_class_oid_set()
         if 'posixAccount' in ocs or 'shadowAccount' in ocs:
-            return DynamicValueSelectList.displayValue(self, valueindex, commandbutton)
-        r = [Integer.displayValue(self, valueindex, commandbutton=False)]
+            return DynamicValueSelectList.display(self, valueindex, commandbutton)
+        r = [Integer.display(self, valueindex, commandbutton=False)]
         if not commandbutton:
             return r[0]
         if 'posixGroup' in ocs:
@@ -100,8 +100,8 @@ class MemberUID(IA5String, DynamicValueSelectList):
             return DynamicValueSelectList.formField(self)
         return IA5String.formField(self)
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        r = [IA5String.displayValue(self, valueindex, commandbutton=False)]
+    def display(self, valueindex=0, commandbutton=False):
+        r = [IA5String.display(self, valueindex, commandbutton=False)]
         if commandbutton:
             r.append(self._app.anchor(
                 'searchform', '&raquo;',

@@ -45,7 +45,7 @@ class UniventionLDAPACLData(Binary, MultilineText):
     oid = 'UniventionLDAPACLData-oid'
     desc = 'bzip2-ed LDAP ACL data in Univention'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         attr_value = bz2.decompress(self._av)
         attr_value_u = self._app.ls.uc_decode(attr_value)[0]
         lines = [

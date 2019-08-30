@@ -169,10 +169,10 @@ class OathSecret(OctetString):
     oid = 'OathSecret-oid'
     desc = 'OATH shared secret'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         return '<br>'.join((
             self._app.form.utf2display(base64.b32encode(self._av).decode('ascii')),
-            OctetString.displayValue(self, valueindex, commandbutton),
+            OctetString.display(self, valueindex, commandbutton),
         ))
 
 syntax_registry.reg_at(
@@ -187,9 +187,9 @@ class OathSecretTime(GeneralizedTime):
     desc = 'OATH secret change time'
     time_divisors = Timespan.time_divisors
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         ocs = self._entry.object_class_oid_set()
-        gt_disp_html = GeneralizedTime.displayValue(self, valueindex, commandbutton)
+        gt_disp_html = GeneralizedTime.display(self, valueindex, commandbutton)
         if 'oathHOTPToken' in ocs:
             oath_params_dn_attr = 'oathHOTPParams'
         elif 'oathTOTPToken' in ocs:

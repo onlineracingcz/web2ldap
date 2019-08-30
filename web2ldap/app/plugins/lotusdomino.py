@@ -29,7 +29,7 @@ class DominoCertificate(MultilineText):
     mimeType = 'text/plain'
     cols = 36
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         lines = [
             self._app.form.utf2display(l)
             for l in self._split_lines(self._av.decode('ascii'))

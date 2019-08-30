@@ -29,9 +29,9 @@ class DHCPConfigStatement(MultilineText):
     desc = 'DHCP configuration statement'
     lineSep = u''
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         r = ['<code>%s</code>' % (
-            MultilineText.displayValue(self, valueindex, commandbutton)
+            MultilineText.display(self, valueindex, commandbutton)
         )]
         if commandbutton:
             try:

@@ -111,7 +111,7 @@ class OctetStringGUID(OctetString):
             s1[16:32],
         ))
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         if self._at == u'GUID':
             # GUID of an entry is displayed in several variants
             return """
@@ -123,7 +123,7 @@ class OctetStringGUID(OctetString):
               <tr><td>C1/iManager assoc.</td><td>%s</td></tr>
             </table>
             """ % (
-                OctetString.displayValue(self, valueindex, commandbutton),
+                OctetString.display(self, valueindex, commandbutton),
                 str(uuid.UUID(bytes=self._av)),
                 self._guid2association(self._av),
                 self._guid2assoc(self._av),
@@ -168,7 +168,7 @@ class IndexDefinition(DollarSeparatedMultipleLines):
     oid = 'IndexDefinition-oid'
     desc = 'Index Definition'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         try:
             (
                 version,
@@ -187,7 +187,7 @@ class IndexDefinition(DollarSeparatedMultipleLines):
             value_state = int(value_state)
             nds_attribute_name = self._app.ls.uc_decode(nds_attribute_name)[0]
         except (ValueError, UnicodeDecodeError):
-            return DollarSeparatedMultipleLines.displayValue(self, valueindex, commandbutton)
+            return DollarSeparatedMultipleLines.display(self, valueindex, commandbutton)
         return """
           <table>
             <tr><td>Version:</td><td>%s</td></tr>
@@ -218,21 +218,21 @@ class TaggedNameAndString(DirectoryString, OctetString):
     oid = '2.16.840.1.113719.1.1.5.1.15'
     desc = 'Tagged Name And String'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         try:
             ind2 = self._av.rindex('#')
             ind1 = self._av.rindex('#', 0, ind2-1)
         except ValueError:
-            return DirectoryString.displayValue(self, valueindex, commandbutton)
+            return DirectoryString.display(self, valueindex, commandbutton)
         dn = self._app.ls.uc_decode(self._av[0:ind1])[0]
         number = self._av[ind1+1:ind2]
         dstring = self._av[ind2+1:]
         try:
             dstring.decode('utf8')
         except UnicodeError:
-            dstring_disp = OctetString.displayValue(self, valueindex, commandbutton)
+            dstring_disp = OctetString.display(self, valueindex, commandbutton)
         else:
-            dstring_disp = DirectoryString.displayValue(self, valueindex, commandbutton)
+            dstring_disp = DirectoryString.display(self, valueindex, commandbutton)
         return (
             '<dl>'
             '<dt>name:</dt><dd>%s</dd>'

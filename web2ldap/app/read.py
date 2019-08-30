@@ -118,7 +118,7 @@ class DisplayEntry(UserDict):
                 self.entry,
             )
             try:
-                attr_value_html = attr_instance.displayValue(
+                attr_value_html = attr_instance.display(
                     valueindex=i,
                     commandbutton=self.commandbutton,
                 )
@@ -132,7 +132,7 @@ class DisplayEntry(UserDict):
                     values[i],
                     self.entry,
                 )
-                attr_value_html = attr_instance.displayValue(
+                attr_value_html = attr_instance.display(
                     valueindex=i,
                     commandbutton=True,
                 )

@@ -138,8 +138,8 @@ class OlcMultilineText(MultilineText):
     cols = 90
     minInputRows = 3
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        return '<code>%s</code>' % MultilineText.displayValue(self, valueindex, commandbutton)
+    def display(self, valueindex=0, commandbutton=False):
+        return '<code>%s</code>' % MultilineText.display(self, valueindex, commandbutton)
 
 syntax_registry.reg_at(
     OlcMultilineText.oid, [
@@ -158,12 +158,12 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
         OlcMultilineText.__init__(self, app, dn, schema, attrType, attrValue, entry)
         return # __init__()
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         if not commandbutton or not self._av:
-            return OlcMultilineText.displayValue(self, valueindex, commandbutton)
+            return OlcMultilineText.display(self, valueindex, commandbutton)
         srd = ldap0.openldap.SyncReplDesc(self._av)
         return ' '.join((
-            OlcMultilineText.displayValue(self, valueindex, commandbutton),
+            OlcMultilineText.display(self, valueindex, commandbutton),
             web2ldap.app.gui.ldap_url_anchor(
                 self._app,
                 srd.ldap_url(),
@@ -252,8 +252,8 @@ class AuditContext(NamingContexts):
     oid = 'AuditContext'
     desc = 'OpenLDAP DN pointing to audit naming context'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        r = [DistinguishedName.displayValue(self, valueindex, commandbutton)]
+    def display(self, valueindex=0, commandbutton=False):
+        r = [DistinguishedName.display(self, valueindex, commandbutton)]
         if commandbutton:
             r.extend([
                 self._app.anchor(
@@ -309,7 +309,7 @@ class ReqMod(OctetString, DirectoryString):
     desc = 'List of modifications/old values'
     known_modtypes = {'+', '-', '=', '#', ''}
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         if self._av == ':':
             # magic value used for fixing OpenLDAP ITS#6545
             return self._av
@@ -317,14 +317,14 @@ class ReqMod(OctetString, DirectoryString):
             mod_attr_type, mod_attr_rest = self._av.split(':', 1)
             mod_type = mod_attr_rest[0].strip()
         except (ValueError, IndexError):
-            return OctetString.displayValue(self, valueindex, commandbutton)
+            return OctetString.display(self, valueindex, commandbutton)
         if not mod_type in self.known_modtypes:
-            return OctetString.displayValue(self, valueindex, commandbutton)
+            return OctetString.display(self, valueindex, commandbutton)
         if len(mod_attr_rest) > 1:
             try:
                 mod_type, mod_attr_value = mod_attr_rest.split(' ', 1)
             except ValueError:
-                return OctetString.displayValue(self, valueindex, commandbutton)
+                return OctetString.display(self, valueindex, commandbutton)
         else:
             mod_attr_value = ''
         mod_attr_type_u = mod_attr_type.decode(self._app.ls.charset)
@@ -341,7 +341,7 @@ class ReqMod(OctetString, DirectoryString):
                 )[:-1]
             )
         else:
-            return DirectoryString.displayValue(self, valueindex, commandbutton)
+            return DirectoryString.display(self, valueindex, commandbutton)
         raise ValueError
 
 syntax_registry.reg_at(
@@ -356,8 +356,8 @@ class ReqControls(IA5String):
     oid = '1.3.6.1.4.1.4203.666.11.5.3.1'
     desc = 'List of LDAPv3 extended controls sent along with a request'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        result_lines = [IA5String.displayValue(self, valueindex, commandbutton)]
+    def display(self, valueindex=0, commandbutton=False):
+        result_lines = [IA5String.display(self, valueindex, commandbutton)]
         # Eliminate X-ORDERED prefix
         _, rest = self._av.strip().split('}{', 1)
         # check whether it ends with }
@@ -417,8 +417,8 @@ syntax_registry.reg_at(
 class ReqEntryUUID(UUID):
     oid = 'ReqEntryUUID-oid'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        display_value = UUID.displayValue(self, valueindex, commandbutton)
+    def display(self, valueindex=0, commandbutton=False):
+        display_value = UUID.display(self, valueindex, commandbutton)
         if not commandbutton:
             return display_value
         return web2ldapcnf.command_link_separator.join((
@@ -450,8 +450,8 @@ syntax_registry.reg_at(
 class ReqSession(Integer):
     oid = 'ReqSession-oid'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        display_value = Integer.displayValue(self, valueindex, commandbutton)
+    def display(self, valueindex=0, commandbutton=False):
+        display_value = Integer.display(self, valueindex, commandbutton)
         if not commandbutton:
             return display_value
         return web2ldapcnf.command_link_separator.join((

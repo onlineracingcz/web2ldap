@@ -98,7 +98,7 @@ class Certificate(Binary):
         html.append('</dl>')
         return html
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         html = [
             '%d bytes | %s' % (
                 len(self._av),
@@ -169,7 +169,7 @@ class CertificateList(Binary):
                 pass
         return attrValue
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         links_html = '%d bytes | %s' % (
             len(self._av),
             self._app.anchor(

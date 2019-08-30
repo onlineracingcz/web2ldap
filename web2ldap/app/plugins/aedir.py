@@ -656,7 +656,7 @@ class AEGroupDN(DerefDynamicDNSelectList):
         ('memberOf', u'Members', None, u'Search all member entries of this user group'),
     )
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         group_cn = self.dn[0][0][1]
         r = [
             'cn=<strong>{0}</strong>,{1}'.format(
@@ -1888,8 +1888,8 @@ syntax_registry.reg_at(
 class AECommonNameAETag(AEZonePrefixCommonName):
     oid = 'AECommonNameAETag-oid'
 
-    def displayValue(self, valueindex=0, commandbutton=False):
-        display_value = AEZonePrefixCommonName.displayValue(self, valueindex, commandbutton)
+    def display(self, valueindex=0, commandbutton=False):
+        display_value = AEZonePrefixCommonName.display(self, valueindex, commandbutton)
         if commandbutton:
             search_anchor = self._app.anchor(
                 'searchform', '&raquo;',
@@ -2053,10 +2053,10 @@ class AEStatus(SelectList, Integer):
                         ae_status = ae_expiry_status
         return [str(ae_status)]
 
-    def displayValue(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False):
         if not commandbutton:
-            return Integer.displayValue(self, valueindex)
-        return SelectList.displayValue(self, valueindex, commandbutton)
+            return Integer.display(self, valueindex)
+        return SelectList.display(self, valueindex, commandbutton)
 
 syntax_registry.reg_at(
     AEStatus.oid, [
