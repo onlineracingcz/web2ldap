@@ -24,7 +24,7 @@ import ldap0.sasl
 import ldap0.cidict
 import ldap0.filter
 import ldap0.dn
-from ldap0.base import encode_list, decode_entry_dict
+from ldap0.base import decode_list, encode_list, decode_entry_dict
 from ldap0.dn import DNObj
 from ldap0.ldapurl import LDAPUrl
 from ldap0.ldapobject import ReconnectLDAPObject
@@ -680,7 +680,7 @@ class LDAPSession(object):
             ):
             self.namingContexts.update([
                 DNObj.fromstring('' if val == b'\x00' else val.decode(self.charset))
-                for val in self.rootDSE.get(rootdse_naming_attrtype, [])
+                for val in self.rootDSE.get(rootdse_naming_attrtype.encode('ascii'), [])
             ])
         for attr_type in (
                 'supportedLDAPVersion',
@@ -689,9 +689,18 @@ class LDAPSession(object):
                 'supportedFeatures',
                 'supportedSASLMechanisms',
             ):
-            setattr(self, attr_type, frozenset(self.rootDSE.get(attr_type, [])))
+            setattr(
+                self,
+                attr_type,
+                frozenset(
+                    decode_list(
+                        self.rootDSE.get(attr_type.encode('ascii'), []),
+                        encoding='ascii'
+                    )
+                )
+            )
         for attr_type in ('vendorName', 'vendorVersion'):
-            setattr(self, attr_type, self.rootDSE.get(attr_type, [None])[0])
+            setattr(self, attr_type, self.rootDSE.get(attr_type.encode('ascii'), [None])[0])
         # determine whether server returns all operational attributes (RFC 3673)
         self.supportsAllOpAttr = (
             '1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures
