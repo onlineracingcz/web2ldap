@@ -1115,7 +1115,7 @@ class OID(IA5String):
 
     def sanitize(self, attrValue):
         attrValue = attrValue.strip()
-        if attrValue.startswith('{') and attrValue.endswith('}'):
+        if attrValue.startswith(b'{') and attrValue.endswith(b'}'):
             try:
                 attrValue = web2ldap.ldaputil.ietf_oid_str(attrValue)
             except ValueError:

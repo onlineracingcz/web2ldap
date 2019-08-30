@@ -136,8 +136,7 @@ def object_class_categories(sub_schema, object_classes):
                 continue
             kind[oc_obj.kind][nameoroid] = None
         for k in range(3):
-            lst = kind[k].keys()
-            lst.sort(key=str.lower)
+            lst = sorted(kind[k].keys(), key=str.lower)
             kind[k] = lst
     return tuple(kind)
 

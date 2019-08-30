@@ -24,6 +24,7 @@ import ldap0.filter
 import ldap0.schema.models
 from ldap0.controls.openldap import SearchNoOpControl
 from ldap0.schema.models import AttributeType
+from ldap0.base import decode_list
 
 import web2ldap.web.forms
 from web2ldap.web import escape_html
@@ -355,7 +356,7 @@ def w2l_search(app):
         if not '*' in search_option[i]:
             # If an exact assertion value is needed we can normalize via plugin class
             attr_instance = syntax_registry.get_at(
-                app, app.dn, app.schema, search_attr[i].encode('ascii'), None, entry=None
+                app, app.dn, app.schema, search_attr[i], None, entry=None
             )
             search_av_string = attr_instance.sanitize(search_av_string.encode(app.form.accept_charset))
         if search_mr[i]:
@@ -425,7 +426,7 @@ def w2l_search(app):
     search_attrs = search_attr_set.names()
 
     search_ldap_url = app.ls.ldapUrl(dn=search_root or app.naming_context)
-    search_ldap_url.filterstr = filterstr2.encode(app.ls.charset)
+    search_ldap_url.filterstr = filterstr2
     search_ldap_url.scope = scope
     search_ldap_url.attrs = search_attrs
 
@@ -861,7 +862,7 @@ def w2l_search(app):
                     # Display a search continuation (search reference)
                     entry = ldap0.cidict.CIDict({})
                     try:
-                        refUrl = ExtendedLDAPUrl(r[1][1][0])
+                        refUrl = ExtendedLDAPUrl(r[1][1][0].decode(app.ls.charset))
                     except ValueError:
                         command_table = []
                         result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (utf2display(str(r[1][1][0])))
@@ -869,7 +870,7 @@ def w2l_search(app):
                         result_dd_str = 'Search reference =&gt; %s' % (refUrl.htmlHREF(hrefTarget=None))
                         if scope == ldap0.SCOPE_SUBTREE:
                             refUrl.scope = refUrl.scope or scope
-                            refUrl.filterstr = ((refUrl.filterstr or '').decode(app.ls.charset) or filterstr).encode(app.form.accept_charset)
+                            refUrl.filterstr = ((refUrl.filterstr or '') or filterstr)
                             command_table = [
                                 app.anchor(
                                     'search', 'Continue search',
@@ -909,7 +910,7 @@ def w2l_search(app):
                         oc_set = ldap0.schema.models.SchemaElementOIDSet(
                             app.schema,
                             ldap0.schema.models.ObjectClass,
-                            entry.get('objectClass', []),
+                            decode_list(entry.get('objectClass', []), encoding='ascii'),
                         )
                         tdtemplate_oc = oc_set.intersection(search_tdtemplate_keys).names()
                         tableentry_attrs = None
