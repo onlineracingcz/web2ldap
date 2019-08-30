@@ -43,7 +43,7 @@ def w2l_chasereferral(app, ref_exc):
     try:
         ldap_url_info = [
             s.strip()
-            for s in ref_exc.args[0].get('info', '').split('\n')
+            for s in ref_exc.args[0].get('info', b'').decode(app.ls.charset).split('\n')
         ]
     except ValueError:
         app.outf.write(
@@ -110,10 +110,10 @@ def w2l_chasereferral(app, ref_exc):
         </p>
         %s\n%s\n%s\n%s
         """  % (
-            app.form.utf2display(str(ref_url.unparse(), app.ls.charset)),
+            app.form.utf2display(ref_url.unparse()),
             app.begin_form(app.command, 'POST'),
-            app.form.hiddenFieldHTML('host', ref_url.hostport.decode(app.ls.charset), u''),
-            app.form.hiddenFieldHTML('dn', ref_url.dn.decode(app.ls.charset), u''),
+            app.form.hiddenFieldHTML('host', ref_url.hostport, u''),
+            app.form.hiddenFieldHTML('dn', ref_url.dn, u''),
             login_fields,
         )
     )
