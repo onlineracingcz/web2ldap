@@ -57,7 +57,7 @@ def dc_dn_lookup(dn):
     """
     if not dn:
         return []
-    dns_domain = DNObj.fromstring(dn).domain(only_dc=False).decode('utf-8').encode('idna')
+    dns_domain = DNObj.fromstring(dn).domain(only_dc=False)
     try:
         dns_result = srv_lookup(dns_domain)
     except (
