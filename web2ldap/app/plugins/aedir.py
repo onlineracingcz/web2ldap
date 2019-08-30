@@ -657,7 +657,7 @@ class AEGroupDN(DerefDynamicDNSelectList):
     )
 
     def displayValue(self, valueindex=0, commandbutton=False):
-        group_cn = self.dn[0][0][1].decode(self._app.ls.charset)
+        group_cn = self.dn[0][0][1]
         r = [
             'cn=<strong>{0}</strong>,{1}'.format(
                 self._app.form.utf2display(group_cn),
