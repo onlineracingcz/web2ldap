@@ -297,8 +297,8 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def simple_bind(self, who='', cred='', req_ctrls=None):
-        assert isinstance(who, bytes), TypeError("Type of argument 'who' must be str but was %r" % (who))
-        assert isinstance(cred, bytes), TypeError("Type of argument 'cred' must be str but was %r" % (cred))
+        assert isinstance(who, bytes), TypeError("Type of argument 'who' must be bytes but was %r" % (who))
+        assert isinstance(cred, bytes), TypeError("Type of argument 'cred' must be bytes but was %r" % (cred))
         self.flush_cache()
         return ReconnectLDAPObject.simple_bind(
             self,
@@ -307,19 +307,25 @@ class MyLDAPObject(ReconnectLDAPObject):
             (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**bind**']+self._req_ctrls['simple_bind'],
         )
 
-    def sasl_interactive_bind_s(self, who, auth, req_ctrls=None, sasl_flags=ldap0.SASL_QUIET):
-        assert isinstance(who, bytes), TypeError("Type of argument 'who' must be str but was %r" % (who))
+    def sasl_interactive_bind_s(
+            self,
+            sasl_mech,
+            auth,
+            req_ctrls=None,
+            sasl_flags=ldap0.SASL_QUIET
+        ):
+        assert isinstance(sasl_mech, bytes), TypeError("Type of argument 'sasl_mech' must be bytes but was %r" % (sasl_mech,))
         self.flush_cache()
         return ReconnectLDAPObject.sasl_interactive_bind_s(
             self,
-            who,
+            sasl_mech,
             auth,
             (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**bind**']+self._req_ctrls['sasl_interactive_bind_s'],
             sasl_flags
         )
 
     def add(self, dn, modlist, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
+        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
         return ReconnectLDAPObject.add(
             self,
             dn,
@@ -328,9 +334,9 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def compare(self, dn, attr, value, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
-        assert isinstance(attr, bytes), TypeError("Type of argument 'attr' must be str but was %r" % attr)
-        assert isinstance(value, bytes), TypeError("Type of argument 'value' must be str but was %r" % value)
+        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
+        assert isinstance(attr, bytes), TypeError("Type of argument 'attr' must be bytes but was %r" % attr)
+        assert isinstance(value, bytes), TypeError("Type of argument 'value' must be bytes but was %r" % value)
         return ReconnectLDAPObject.compare(
             self,
             dn,
@@ -340,7 +346,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def delete(self, dn, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
+        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
         return ReconnectLDAPObject.delete(
             self,
             dn,
@@ -348,7 +354,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def modify(self, dn, modlist, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
+        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
         return ReconnectLDAPObject.modify(
             self,
             dn,
@@ -357,9 +363,9 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def passwd(self, user, oldpw, newpw, req_ctrls=None):
-        assert isinstance(user, bytes), TypeError("Type of argument 'user' must be str but was %r" % user)
-        assert oldpw is None or isinstance(oldpw, bytes), TypeError("Type of argument 'oldpw' must be None or str but was %r" % oldpw)
-        assert isinstance(newpw, bytes), TypeError("Type of argument 'newpw' must be str but was %r" % newpw)
+        assert isinstance(user, bytes), TypeError("Type of argument 'user' must be bytes but was %r" % user)
+        assert oldpw is None or isinstance(oldpw, bytes), TypeError("Type of argument 'oldpw' must be None or bytes but was %r" % oldpw)
+        assert isinstance(newpw, bytes), TypeError("Type of argument 'newpw' must be bytes but was %r" % newpw)
         return ReconnectLDAPObject.passwd(
             self,
             user,
@@ -369,8 +375,8 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def rename(self, dn, newrdn, newsuperior=None, delold=1, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be str but was %r" % dn)
-        assert isinstance(newrdn, bytes), TypeError("Type of argument 'newrdn' must be str but was %r" % newrdn)
+        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
+        assert isinstance(newrdn, bytes), TypeError("Type of argument 'newrdn' must be bytes but was %r" % newrdn)
         return ReconnectLDAPObject.rename(
             self,
             dn,
@@ -1146,7 +1152,11 @@ class LDAPSession(object):
                 },
             )
             if ldap0.SASL_AVAIL:
-                self.l.sasl_interactive_bind_s(sasl_mech, sasl_auth, req_ctrls=bind_server_ctrls)
+                self.l.sasl_interactive_bind_s(
+                    sasl_mech.encode('ascii'),
+                    sasl_auth,
+                    req_ctrls=bind_server_ctrls,
+                )
                 self.sasl_mech = sasl_mech
                 self.sasl_auth = sasl_auth
                 # Don't store the password
