@@ -784,25 +784,25 @@ class LDAPSession(object):
         """
         # List of operational attributes suitable to determine non-leafs
         subordinate_attrs = (
-            'hasSubordinates',
-            'subordinateCount',
-            'numSubordinates',
-            'numAllSubordinates',
-            'msDS-Approx-Immed-Subordinates',
+            b'hasSubordinates',
+            b'subordinateCount',
+            b'numSubordinates',
+            b'numAllSubordinates',
+            b'msDS-Approx-Immed-Subordinates',
         )
         # First try to read operational attributes from entry itself
         # which might indicate whether there are subordinate entries
         entry = self.l.read_s(
             self.uc_encode(dn)[0],
-            '(objectClass=*)',
+            b'(objectClass=*)',
             subordinate_attrs,
         )
         hasSubordinates = numSubordinates = numAllSubordinates = numSubordinates_attr = None
         if entry:
             for a in (
-                    'subordinateCount',
-                    'numSubordinates',
-                    'msDS-Approx-Immed-Subordinates',
+                    b'subordinateCount',
+                    b'numSubordinates',
+                    b'msDS-Approx-Immed-Subordinates',
                 ):
                 try:
                     numSubordinates = int(entry[a][0])
@@ -812,13 +812,13 @@ class LDAPSession(object):
                     numSubordinates_attr = a
                     break
             try:
-                numAllSubordinates = int(entry['numAllSubordinates'][0])
+                numAllSubordinates = int(entry[b'numAllSubordinates'][0])
             except KeyError:
                 if numSubordinates is not None:
                     ldap_result = self.l.search_s(
                         self.uc_encode(dn)[0],
                         ldap0.SCOPE_SUBTREE,
-                        '(objectClass=*)',
+                        b'(objectClass=*)',
                         attrlist=[numSubordinates_attr],
                         timeout=COUNT_TIMEOUT
                     )
@@ -826,7 +826,7 @@ class LDAPSession(object):
                     for _, ldap_entry in ldap_result:
                         numAllSubordinates += int(ldap_entry[numSubordinates_attr][0])
             try:
-                hasSubordinates = (entry['hasSubordinates'][0].upper() == 'TRUE')
+                hasSubordinates = (entry[b'hasSubordinates'][0].upper() == b'TRUE')
             except KeyError:
                 if numSubordinates is not None or numAllSubordinates is not None:
                     hasSubordinates = (numSubordinates or numAllSubordinates or 0) > 0
@@ -837,8 +837,8 @@ class LDAPSession(object):
             ldap_msgid = self.l.search(
                 self.uc_encode(dn)[0],
                 ldap0.SCOPE_ONELEVEL,
-                '(objectClass=*)',
-                ['1.1'],
+                b'(objectClass=*)',
+                [b'1.1'],
                 sizelimit=1
             )
 
@@ -1013,12 +1013,12 @@ class LDAPSession(object):
     def get_audit_context(self, search_root_dn):
         if self.l is None:
             return None
-        search_root_str = search_root_dn.encode(self.charset)
-        if search_root_str in self._audit_context:
-            return self._audit_context[search_root_dn]
+        search_root_bytes = search_root_dn.encode(self.charset)
+        if search_root_bytes in self._audit_context:
+            return self._audit_context[search_root_bytes]
         try:
             result = self.l.read_s(
-                search_root_str,
+                search_root_bytes,
                 attrlist=[b'auditContext'],
             )
         except ldap0.LDAPError:
@@ -1033,7 +1033,7 @@ class LDAPSession(object):
                     audit_context_dn = None
             else:
                 audit_context_dn = None
-        self._audit_context[search_root_str] = audit_context_dn
+        self._audit_context[search_root_bytes] = audit_context_dn
         return audit_context_dn # get_audit_context()
 
     def get_bind_dn(self, username, search_root, binddn_mapping):
