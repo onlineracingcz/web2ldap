@@ -1014,7 +1014,7 @@ class AppHandler(LogHelper):
                 self.dn,
                 None,
                 'Password change needed',
-                self.form.utf2display(err.desc.decode('ascii'))
+                self.form.utf2display(err.desc)
             )
 
         except (
@@ -1026,15 +1026,15 @@ class AppHandler(LogHelper):
             log_exception(self.env, self.ls)
             exception_message(
                 self,
-                u'Unhandled %s' % err.__class__.__name__.decode('ascii'),
-                self.form.utf2display(str(err).decode('utf-8')),
+                u'Unhandled %s' % err.__class__.__name__,
+                self.form.utf2display(str(err)),
             )
 
         except ldap0.LDAPError as ldap_err:
             log_exception(self.env, self.ls)
             exception_message(
                 self,
-                u'Unhandled %s' % ldap_err.__class__.__name__.decode('ascii'),
+                u'Unhandled %s' % ldap_err.__class__.__name__,
                 self.ldap_error_msg(ldap_err),
             )
 
