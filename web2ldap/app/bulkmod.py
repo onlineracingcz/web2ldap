@@ -15,6 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import time
 
 import ldap0
+from ldap0.dn import DNObj
 
 import web2ldapcnf
 
@@ -440,7 +441,7 @@ def w2l_bulkmod(app):
 
                 # Apply the modrdn request
                 if bulkmod_newsuperior:
-                    old_rdn, _ = web2ldap.ldaputil.split_rdn(ldap_dn_u)
+                    old_rdn = str(DNObj.fromstring(ldap_dn_u).rdn())
                     try:
                         if bulkmod_cp:
                             new_ldap_dn = u','.join((
