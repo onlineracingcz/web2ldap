@@ -472,6 +472,13 @@ class LDAPSession:
     """
     Class for handling LDAP connection objects
     """
+    subordinate_attrs = (
+        b'hasSubordinates',
+        b'subordinateCount',
+        b'numSubordinates',
+        b'numAllSubordinates',
+        b'msDS-Approx-Immed-Subordinates',
+    )
 
     def __init__(self, onBehalf, traceLevel, cache_ttl):
         """Initialize a LDAPSession object"""
@@ -792,19 +799,12 @@ class LDAPSession:
         Returns tuple (hasSubordinates, numSubordinates, numAllSubordinates)
         """
         # List of operational attributes suitable to determine non-leafs
-        subordinate_attrs = (
-            b'hasSubordinates',
-            b'subordinateCount',
-            b'numSubordinates',
-            b'numAllSubordinates',
-            b'msDS-Approx-Immed-Subordinates',
-        )
         # First try to read operational attributes from entry itself
         # which might indicate whether there are subordinate entries
         entry = self.l.read_s(
             self.uc_encode(dn)[0],
             b'(objectClass=*)',
-            subordinate_attrs,
+            self.subordinate_attrs,
         )
         hasSubordinates = numSubordinates = numAllSubordinates = numSubordinates_attr = None
         if entry:
@@ -856,7 +856,7 @@ class LDAPSession:
                 ldap_result = self.l.result(ldap_msgid, 0)
             self.l.abandon(ldap_msgid)
             hasSubordinates = bool(ldap_result)
-        if SearchNoOpControl.controlType in self.rootDSE.get('supportedControl', []):
+        if SearchNoOpControl.controlType in self.rootDSE.get(b'supportedControl', []):
             if not numSubordinates:
                 try:
                     numSubordinates, _ = self.l.noop_search(

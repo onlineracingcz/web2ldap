@@ -954,14 +954,14 @@ def w2l_search(app):
                     )
 
                     # Try to determine from entry's attributes if there are subordinates
-                    hasSubordinates = entry.get('hasSubordinates', ['TRUE'])[0].upper() == 'TRUE'
+                    hasSubordinates = entry.get('hasSubordinates', [b'TRUE'])[0].upper() == b'TRUE'
                     try:
                         subordinateCountFlag = int(
                             entry.get(
                                 'subordinateCount',
                                 entry.get(
                                     'numAllSubordinates',
-                                    entry.get('msDS-Approx-Immed-Subordinates', ['1'])))[0]
+                                    entry.get('msDS-Approx-Immed-Subordinates', [b'1'])))[0]
                         )
                     except ValueError:
                         subordinateCountFlag = 1
