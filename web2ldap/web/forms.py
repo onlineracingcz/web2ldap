@@ -1018,6 +1018,8 @@ class Form:
     def _parse_mime_multipart(self, maxContentLength):
 
         _, pdict = cgi.parse_header(self.env['CONTENT_TYPE'])
+        pdict['boundary'] = pdict['boundary'].encode('ascii')
+        pdict['CONTENT-LENGTH'] = self.env['CONTENT_LENGTH'].encode('ascii')
         parts = cgi.parse_multipart(self.inf, pdict)
 
         contentLength = 0
