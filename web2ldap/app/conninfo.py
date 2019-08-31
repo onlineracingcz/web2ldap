@@ -154,8 +154,8 @@ def w2l_conninfo(app):
         try:
             monitored_info = app.ls.l.read_s(
                 monitor_context_dn,
-                attrlist=['monitoredInfo']
-            )['monitoredInfo']
+                attrlist=[b'monitoredInfo']
+            )[b'monitoredInfo'][0].decode(app.ls.charset)
         except (ldap0.LDAPError, KeyError):
             pass
         else:
@@ -254,7 +254,7 @@ def w2l_conninfo(app):
 
     for config_dn, txt in config_dn_list:
         try:
-            app.ls.l.read_s(config_dn, attrlist=['1.1'])
+            app.ls.l.read_s(config_dn.encode(app.ls.charset), attrlist=[b'1.1'])
         except ldap0.LDAPError:
             pass
         else:
@@ -305,14 +305,14 @@ def w2l_conninfo(app):
     except ldap0.LDAPError as ldap_err:
         whoami_result = '<strong>Failed:</strong> %s' % (app.ldap_error_msg(ldap_err))
 
-    if app.ls.saslAuth:
-        sasl_mech = u'SASL/%s' % (app.ls.saslAuth.mech)
+    if app.ls.sasl_auth:
+        sasl_mech = u'SASL/%s' % (app.ls.sasl_mech)
         sasl_auth_info = '<table>%s</table>' % '\n'.join([
             '<tr><td>%s</td><td>%s</td></tr>' % (
                 app.form.utf2display(ldap0.OPT_NAMES.get(k, str(k)).decode('ascii')),
                 app.form.utf2display(repr(v).decode(app.ls.charset))
             )
-            for k, v in app.ls.saslAuth.cb_value_dict.items()
+            for k, v in app.ls.sasl_auth.cb_value_dict.items()
             if v
         ])
     else:
@@ -328,10 +328,10 @@ def w2l_conninfo(app):
 
     vendor_name = (
         app.ls.vendorName
-        or (monitored_info or [None])[0]
+        or monitored_info
         or {True:'OpenLDAP', False:''}[app.ls.is_openldap]
         or 'unknown'
-    ).decode(app.ls.charset)
+    )
 
     app.outf.write(
         CONNINFO_LDAP_TEMPLATE % (
@@ -343,7 +343,7 @@ def w2l_conninfo(app):
             time.time()-app.ls.connStartTime,
             app.ls.l._reconnects_done,
             app.form.utf2display(vendor_name),
-            app.form.utf2display(app.ls.rootDSE.get('vendorVersion', [''])[0].decode(app.ls.charset)),
+            app.form.utf2display(app.ls.rootDSE.get(b'vendorVersion', [b''])[0].decode(app.ls.charset)),
             who_html,
             whoami_result,
             app.form.utf2display(sasl_mech),
@@ -351,7 +351,7 @@ def w2l_conninfo(app):
             app.form.utf2display(sasl_ssf),
             app.form.utf2display(app.dn or u'- World -'),
             app.form.utf2display(app.parent_dn if app.parent_dn is not None else u''),
-            app.form.utf2display(app.naming_context),
+            app.form.utf2display(str(app.naming_context)),
             min(len(app.ls.l.last_search_bases), app.ls.l.last_search_bases.maxlen),
             '<br>'.join([
                 app.display_dn(search_base.decode(app.ls.charset), commandbutton=True)
@@ -375,13 +375,12 @@ def w2l_conninfo(app):
     )
 
     cross_check_vars = session_store.sessiondict['__session_checkvars__'+app.sid].items()
-    cross_check_vars.sort()
     cross_check_vars_html = '\n'.join([
         '<tr><td>%s</td><td>%s</td></tr>' % (
-            app.form.utf2display(str(k, app.form.accept_charset)),
-            app.form.utf2display(str(v, app.form.accept_charset)),
+            app.form.utf2display(k),
+            app.form.utf2display(v),
         )
-        for k, v in cross_check_vars
+        for k, v in sorted(cross_check_vars)
     ])
 
     app.outf.write(
@@ -391,9 +390,9 @@ def w2l_conninfo(app):
             app.form.utf2display(str(app.env.get('REMOTE_PORT', ''))),
             app.env.get('SERVER_SIGNATURE', ''),
             app.form.utf2display(str(', '.join(app.form.accept_language))),
-            app.form.utf2display(app.form.accept_charset.upper().decode()),
+            app.form.utf2display(app.form.accept_charset.upper()),
             cross_check_vars_html,
-            app.form.utf2display(str(app.env.get('HTTP_USER_AGENT', ''), app.form.accept_charset)),
+            app.form.utf2display(app.env.get('HTTP_USER_AGENT', '')),
         )
     )
     web2ldap.app.gui.footer(app)
