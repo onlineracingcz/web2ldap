@@ -117,7 +117,6 @@ class DisplayEntry(UserDict):
                 value,
                 self.entry,
             )
-            print('nameoroid', nameoroid, 'value', value)
             try:
                 attr_value_html = attr_instance.display(
                     valueindex=i,
@@ -314,7 +313,7 @@ def display_attribute_table(app, entry, attrs, comment):
                             ('read_expandattr', attr_type_name),
                         ],
                     ),
-                    anchor_id=attr_type_anchor_id.decode('ascii')
+                    anchor_id=attr_type_anchor_id
                 ))
             else:
                 dt_list.append('(%d values)' % (attr_value_count))
@@ -368,14 +367,10 @@ def w2l_read(app):
     read_nocache = int(app.form.getInputValue('read_nocache', [u'0'])[0] or '0')
 
     # Specific attributes requested with form parameter read_attr?
-    wanted_attrs = [
-        a.strip().encode('ascii')
-        for a in app.form.getInputValue('read_attr', app.ldap_url.attrs or [])
-    ]
     wanted_attr_set = SchemaElementOIDSet(
         app.schema,
         ldap0.schema.models.AttributeType,
-        wanted_attrs,
+        app.form.getInputValue('read_attr', app.ldap_url.attrs or []),
     )
     wanted_attrs = wanted_attr_set.names()
 
@@ -383,7 +378,7 @@ def w2l_read(app):
     search_attrs = app.form.getInputValue('search_attrs', [u''])[0]
     if search_attrs:
         wanted_attrs.extend([
-            a.strip().encode('ascii') for a in search_attrs.split(',')
+            a.strip() for a in search_attrs.split(',')
         ])
 
     # Determine how to get all attributes including the operational attributes
@@ -549,8 +544,8 @@ def w2l_read(app):
             else:
                 h1_display_name = entry.get(
                     'displayName',
-                    entry.get('cn', [''])
-                )[0] or str(app.dn_obj.slice(0, 1))
+                    entry.get('cn', [b''])
+                )[0].decode(app.ls.charset) or str(app.dn_obj.slice(0, 1))
             app.outf.write(
                 '<h1>{0}</h1>\n<p class="EntryDN">{1}</p>\n'.format(
                     app.form.utf2display(h1_display_name),
