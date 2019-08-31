@@ -57,7 +57,7 @@ def schema_link_text(se, charset):
     elif len(names) > 1:
         res = '%s (alias %s)' % (names[0], ', '.join(names[1:]))
     elif isinstance(se, LDAPSyntax) and se.desc is not None:
-        res = str(escape_html(se.desc), 'utf-8').encode(charset)
+        res = escape_html(se.desc)
     else:
         res = escape_html(se.oid)
     return OBSOLETE_TEMPL[obsolete] % res
@@ -208,7 +208,7 @@ class DisplaySchemaElement:
                     class_attr_value_list = [class_attr_value]
                 if se_class is None:
                     value_output = ', '.join([
-                        self._app.form.utf2display(v.decode('utf-8'), sp_entity=' ', lf_entity='<br>')
+                        self._app.form.utf2display(v, sp_entity=' ', lf_entity='<br>')
                         for v in class_attr_value_list
                     ])
                 else:
