@@ -90,11 +90,12 @@ def chunks(l,s):
         yield l[q*s:]
 
 
-def ascii_dump(s):
+def ascii_dump(buf):
+    assert isinstance(buf, bytes), ValueError('Expected buf to be bytes, got %r' % (buf,))
     r = []
-    for b in s:
-        if ' ' <= b <= '~':
-            r.append(b)
+    for b in buf:
+        if ord(' ') <= b <= ord('~'):
+            r.append(chr(b))
         else:
             r.append('.')
     return ''.join(r)

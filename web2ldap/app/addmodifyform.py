@@ -128,20 +128,11 @@ INPUT_FORM_LDIF_TMPL = """
 def get_entry_input(app):
 
     # Get all the attribute types
-    in_attrtype_list = [
-        a.encode('ascii')
-        for a in app.form.getInputValue('in_at', [])
-    ]
-    # Grab the raw input strings
-    in_value_indexes = [
-        a for a in app.form.getInputValue('in_avi', [])
-    ]
-    # Grab the raw input strings
-    in_value_list = [
-        a for a in app.form.getInputValue('in_av', [])
-    ]
+    in_attrtype_list = app.form.getInputValue('in_at', [])
+    # Get all the attribute values
+    in_value_list = app.form.getInputValue('in_av', [])
 
-    if not len(in_attrtype_list) == len(in_value_list) == len(in_value_indexes):
+    if not len(in_attrtype_list) == len(in_value_list):
         raise web2ldap.app.core.ErrorExit(u'Different count of attribute types and values input.')
 
     entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, {})
@@ -149,7 +140,6 @@ def get_entry_input(app):
     # Stuff input field lists into raw dictionary
     for i, attr_type in enumerate(in_attrtype_list):
         attr_value = in_value_list[i]
-        assert isinstance(attr_value, bytes)
         try:
             entry[attr_type].append(attr_value)
         except KeyError:
@@ -157,20 +147,15 @@ def get_entry_input(app):
 
     # Convert input field string representation into potential LDAP string representation
     # sanitize 'objectClass' first
-    attr_type = 'objectClass'
-    attr_values = []
-    for in_value in entry.get(attr_type, []):
-        attr_instance = syntax_registry.get_at(
-            app, app.dn, app.schema,
-            attr_type, None,
-            entry=entry,
-        )
-        try:
-            attr_value = attr_instance.sanitize(in_value)
-        except LDAPSyntaxValueError:
-            attr_value = in_value
-        attr_values.append(attr_value)
-    entry[attr_type] = attr_values
+    oc_attr_instance = syntax_registry.get_at(
+        app, app.dn, app.schema,
+        'objectClass', None,
+        entry=entry,
+    )
+    entry['objectClass'] = [
+        oc_attr_instance.sanitize(oc)
+        for oc in entry.get('objectClass', [])
+    ]
 
     # sanitize rest of dict
     for attr_type, in_values in entry.items():
@@ -354,7 +339,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                 ):
                 result.append('\n'.join((
                     '<span class="InvalidInput">'*highlight_invalid,
-                    self._app.form.hiddenFieldHTML('in_at', nameoroid.decode('ascii'), u''),
+                    self._app.form.hiddenFieldHTML('in_at', nameoroid, u''),
                     web2ldap.app.gui.HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
                     web2ldap.app.gui.HIDDEN_FIELD % (
                         'in_av',
@@ -467,15 +452,15 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
             at_oid = self.entry.name2key(a)[0]
             if at_oid in attr_types_dict:
                 seen_attr_type_oids[at_oid] = None
-                attr_type_names[a.encode('ascii')] = None
+                attr_type_names[a] = None
         for at_oid, at_se in attr_types_dict.items():
             if (
                     at_se and
                     at_oid not in seen_attr_type_oids and
                     not web2ldap.app.schema.no_userapp_attr(self.entry._s, at_oid)
                 ):
-                attr_type_names[(at_se.names or (at_se.oid,))[0].encode('ascii')] = None
-        attr_types = attr_type_names.keys()
+                attr_type_names[(at_se.names or (at_se.oid,))[0]] = None
+        attr_types = list(attr_type_names.keys())
         attr_types.sort(key=str.lower)
         for attr_type in attr_types:
             attr_type_name = schema_anchor(self._app, attr_type, AttributeType, link_text='&raquo')

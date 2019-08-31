@@ -706,7 +706,7 @@ class GeneralizedTime(IA5String):
         if not self._av:
             return u''
         try:
-            dt = datetime.datetime.strptime(self._av, r'%Y%m%d%H%M%SZ')
+            dt = datetime.datetime.strptime(self.av_u, r'%Y%m%d%H%M%SZ')
         except ValueError:
             result = IA5String.formValue(self)
         else:
@@ -1222,8 +1222,8 @@ class OctetString(Binary):
                 '</tr>'
             ) % (
                 i*self.bytes_split,
-                ':'.join(x.encode('hex').upper() for x in c),
-                self._app.form.utf2display(str(web2ldap.msbase.ascii_dump(c), 'ascii')),
+                ':'.join(c[j:j+1].hex().upper() for j in range(len(c))),
+                self._app.form.utf2display(web2ldap.msbase.ascii_dump(c), 'ascii'),
             )
             for i, c in enumerate(web2ldap.msbase.chunks(self._av, self.bytes_split))
         ]
