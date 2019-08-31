@@ -37,7 +37,7 @@ HTTP_ENV_VARS = {
     'SERVER_PORT',
 }
 
-class LogHelper(object):
+class LogHelper:
     """
     mix-in class for logging with a class-specific log prefix
     """

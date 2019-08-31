@@ -161,7 +161,7 @@ class CleanUpThread(threading.Thread):
         threading.Thread.join(self, timeout)
 
 
-class WebSession(object):
+class WebSession:
     """
     The session class which handles storing and retrieving of session data
     in a dictionary-like sessiondict object.

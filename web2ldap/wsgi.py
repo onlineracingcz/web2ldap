@@ -29,7 +29,7 @@ class W2lWSGIServer(wsgiref.simple_server.WSGIServer, socketserver.ThreadingMixI
     """
 
 
-class AppResponse(object):
+class AppResponse:
     """
     Application response class as file-like object
     """

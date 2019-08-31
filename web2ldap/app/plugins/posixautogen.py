@@ -33,7 +33,7 @@ syntax_registry.reg_at(
 )
 
 
-class AutogenNumber(object):
+class AutogenNumber:
     inputSize = 12
     minNewValue = 10000
     maxNewValue = 19999

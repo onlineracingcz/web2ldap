@@ -20,7 +20,7 @@ from . import escape_html
 from . import helper
 
 
-class Field(object):
+class Field:
     """
     Base class for all kind of single input fields.
 
