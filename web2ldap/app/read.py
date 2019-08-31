@@ -382,14 +382,15 @@ def w2l_read(app):
         ])
 
     # Determine how to get all attributes including the operational attributes
-
+    if not wanted_attrs:
+        if app.ls.supportsAllOpAttr:
+            wanted_attrs = ['*', '+']
+        else:
+            wanted_attrs = []
     # Read the entry's data
     search_result = app.ls.l.read_s(
         app.ldap_dn,
-        attrlist=encode_list(
-            wanted_attrs or {False:None, True:['*', '+']}[app.ls.supportsAllOpAttr],
-            encoding='ascii',
-        ),
+        attrlist=encode_list(wanted_attrs, encoding='ascii'),
         filterstr=filterstr.encode(app.ls.charset),
         cache_ttl=None if read_nocache else -1.0,
     )
@@ -420,7 +421,11 @@ def w2l_read(app):
 
     display_entry = DisplayEntry(app, app.dn, app.schema, entry, 'readSep', 1)
 
-    if len(wanted_attrs) == 1 and not wanted_attrs[0] in {'*', '+'}:
+    if (
+            wanted_attrs
+            and len(wanted_attrs) == 1
+            and not wanted_attrs[0] in {b'*', b'+'}
+        ):
 
         # Display a single binary attribute either with a registered
         # viewer or just by sending the data blob with appropriate MIME-type
@@ -453,7 +458,7 @@ def w2l_read(app):
             # Nice displaying of binary attribute with viewer class
             web2ldap.app.gui.top_section(
                 app,
-                'Attribute %s' % (app.form.utf2display(attr_type.decode('ascii'))),
+                'Attribute %s' % (app.form.utf2display(attr_type)),
                 web2ldap.app.gui.main_menu(app),
                 context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app),
             )
@@ -475,20 +480,17 @@ def w2l_read(app):
                 app.form.getInputValue(
                     'read_attrmimetype',
                     [attr_instance.getMimeType()],
-                )[0].encode('ascii'),
+                )[0],
                 app.form.accept_charset,
                 more_headers=[
                     (
                         'Content-Disposition',
-                        'inline; filename=%s' % app.form.getInputValue(
-                            'read_filename',
-                            ['web2ldap-export.%s' % (attr_instance.fileExt)]
-                        )[0],
+                        'inline; filename=web2ldap-export.%s' % (attr_instance.fileExt,)
                     ),
                 ]
             )
             # send attribute value
-            app.outf.write(entry[attr_type][read_attrindex])
+            app.outf.write_bytes(entry[attr_type][read_attrindex])
 
         return # end of single attribute display
 
@@ -520,7 +522,7 @@ def w2l_read(app):
                     ('scope', u'0'),
                     ('filterstr', u'(objectClass=*)'),
                     ('search_resnumber', u'0'),
-                    ('search_attrs', u','.join(map(str, wanted_attrs))),
+                    ('search_attrs', u','.join(map(str, wanted_attrs or []))),
                 ],
                 extrastr='\n'.join((
                     export_field.inputHTML(),
@@ -601,7 +603,10 @@ def w2l_read(app):
                 app.form.hiddenFieldHTML('read_output', read_output, u''),
                 ','.join([
                     app.form.utf2display(at, sp_entity='  ')
-                    for at in wanted_attrs or {False:['*'], True:['*', '+']}[app.ls.supportsAllOpAttr]
+                    for at in (
+                        wanted_attrs
+                        or {False:['*'], True:['*', '+']}[app.ls.supportsAllOpAttr]
+                    )
                 ])
             )
         )

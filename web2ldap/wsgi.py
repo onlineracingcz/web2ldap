@@ -72,9 +72,12 @@ class AppResponse:
         file-like method
         """
         assert isinstance(buf, str), TypeError('expected str for buf, but got %r', buf)
-        buf_bytes = self._uc_encode(buf, 'replace')[0]
-        self.lines.append(buf_bytes)
-        self.bytelen += len(buf_bytes)
+        self.write_bytes(self._uc_encode(buf, 'replace')[0])
+
+    def write_bytes(self, buf):
+        assert isinstance(buf, bytes), TypeError('expected bytes for buf, but got %r', buf)
+        self.lines.append(buf)
+        self.bytelen += len(buf)
 
     def close(self):
         """
