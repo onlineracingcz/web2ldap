@@ -51,6 +51,7 @@ import ldap0.ldapurl
 import ldap0.schema.models
 from ldap0.controls.deref import DereferenceControl
 from ldap0.dn import DNObj, is_dn
+from ldap0.base import encode_list
 
 import web2ldapcnf
 
@@ -1751,16 +1752,16 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             link_html,
         ))
 
-    def _search_root(self):
-        ldap_url_dn = self._app.ls.uc_decode(self.lu_obj.dn)[0]
+    def _search_root(self) -> bytes:
+        ldap_url_dn = self.lu_obj.dn
         if ldap_url_dn == '_':
-            result_dn = self._app.naming_context
+            result_dn = str(self._app.naming_context)
         elif ldap_url_dn == '.':
             result_dn = self._dn
         elif ldap_url_dn == '..':
             result_dn = str(self.dn.parent())
         elif ldap_url_dn.endswith(',_'):
-            result_dn = ','.join((ldap_url_dn[:-2], self._app.naming_context))
+            result_dn = ','.join((ldap_url_dn[:-2], (self._app.naming_context)))
         elif ldap_url_dn.endswith(',.'):
             result_dn = ','.join((ldap_url_dn[:-2], self._dn))
         elif ldap_url_dn.endswith(',..'):
@@ -1787,8 +1788,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             ldap_result = self._app.ls.l.search_s(
                 self._search_root(),
                 search_scope,
-                filterstr=self._filterstr(),
-                attrlist=search_attrs,
+                filterstr=self._filterstr().encode(self._app.ls.charset),
+                attrlist=encode_list(search_attrs, encoding='ascii'),
             )
         except (
                 ldap0.NO_SUCH_OBJECT,

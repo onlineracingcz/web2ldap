@@ -107,7 +107,8 @@ def w2l_rename(app):
     # No input yet => output an input form
     #--------------------------------------
 
-    old_rdn, old_superior = web2ldap.ldaputil.split_rdn(app.dn)
+    old_rdn = str(app.dn_obj.rdn())
+    old_superior = str(app.dn_obj.parent())
 
     app.form.field['rename_newrdn'].set_default(old_rdn)
 
@@ -123,11 +124,11 @@ def w2l_rename(app):
             sup_search_url.urlscheme = 'ldap'
             sup_search_url.filterstr = (
                 rename_newsupfilter or app.form.field['rename_newsupfilter'].default
-            ).encode(app.ls.charset)
+            )
             sup_search_url.dn = app.form.getInputValue(
                 'rename_searchroot',
                 [''],
-            )[0].encode(app.ls.charset)
+            )[0]
             sup_search_url.scope = int(
                 app.form.getInputValue('scope', [str(ldap0.SCOPE_SUBTREE)])[0]
             )
@@ -138,8 +139,8 @@ def w2l_rename(app):
         if sup_search_url.dn in {'_', '..', '.'}:
             rename_searchroot_default = None
         else:
-            rename_searchroot_default = sup_search_url.dn.decode(app.ls.charset)
-        rename_newsupfilter_default = sup_search_url.filterstr.decode(app.ls.charset)
+            rename_searchroot_default = sup_search_url.dn
+        rename_newsupfilter_default = sup_search_url.filterstr
         scope_default = str(sup_search_url.scope)
     else:
         rename_searchroot_default = None
