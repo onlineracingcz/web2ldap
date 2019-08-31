@@ -455,7 +455,7 @@ def w2l_passwd(app):
 
         password_attr_types_msg = 'Password-related attributes set: %s' % (', '.join(
             [
-                app.form.utf2display(attr_type.decode('ascii'))
+                app.form.utf2display(attr_type)
                 for _, attr_type, _ in passwd_modlist
             ]
         ))

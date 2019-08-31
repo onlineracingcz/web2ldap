@@ -969,11 +969,18 @@ class LDAPSession(object):
             else:
                 assertion_filter_tmpl = u'{filter_str}'
             assertion_filter_str = assertion_filter_tmpl.format(
-                filter_str=assertion_filter,
+                filter_str=assertion_filter.encode(self.charset),
                 dn_str=ldap0.filter.escape_str(dn),
             ).encode(self.charset)
             req_ctrls.append(AssertionControl(False, assertion_filter_str))
-        self.l.modify_s(dn_str, modlist, req_ctrls=req_ctrls)
+        self.l.modify_s(
+            dn_str,
+            [
+                (mod_type, mod_at.encode('ascii'), mod_avs)
+                for mod_type, mod_at, mod_avs in modlist
+            ],
+            req_ctrls=req_ctrls
+        )
         # end of LDAPSession.modify()
 
     def rename(self, dn, new_rdn, new_superior=None, delold=1):

@@ -69,14 +69,14 @@ def user_password_hash(password, scheme, salt=None):
         raise ValueError('Hashing scheme %r not supported.' % (scheme))
     if scheme == u'crypt':
         encoded_pw = crypt.crypt(
-            password,
-            random_string(PWD_UNIX_CRYPT_ALPHABET, 2)
-        )
+            password.decode('utf-8'),
+            random_string(PWD_UNIX_CRYPT_ALPHABET.decode('ascii'), 2)
+        ).encode('ascii')
     elif scheme in SCHEME2HASHLIBFUNC:
         salt = random_string(PWD_OCTETS_ALPHABET, 12)
         encoded_pw = base64.encodestring(
             SCHEME2HASHLIBFUNC[scheme](password+salt).digest()+salt
-        ).strip().replace('\n', '')
+        ).strip().replace(b'\n', b'')
     else:
         encoded_pw = password
-    return '{%s}%s' % (scheme.upper().encode('ascii'), encoded_pw)
+    return b'{%s}%s' % (scheme.upper().encode('ascii'), encoded_pw)
