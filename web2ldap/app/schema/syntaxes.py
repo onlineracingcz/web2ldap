@@ -24,6 +24,8 @@ import time
 import json
 import inspect
 import warnings
+from typing import List
+
 try:
     import defusedxml.ElementTree
 except ImportError:
@@ -66,7 +68,7 @@ from web2ldap.log import logger
 from web2ldap import cmp
 
 
-class SyntaxRegistry(object):
+class SyntaxRegistry:
     """
     syntax registry used to register plugin classes
     """
@@ -119,7 +121,7 @@ class SyntaxRegistry(object):
                 # A better approach for unique attribute type registration which
                 # allows overriding older registration is needed.
                 if a in self.at2syntax and oc_oid in self.at2syntax[a]:
-                    logger.warn(
+                    logger.warning(
                         (
                             'Registering attribute type %r with syntax %r'
                             ' overrides existing registration with syntax %r'
@@ -190,7 +192,7 @@ class SyntaxRegistry(object):
         for at in self.at2syntax:
             for oc in self.at2syntax[at]:
                 if self.at2syntax[at][oc] not in self.oid2syntax:
-                    logger.warn('No LDAPSyntax registered for (%r, %r)', at, oc)
+                    logger.warning('No LDAPSyntax registered for (%r, %r)', at, oc)
 
 
 ####################################################################
@@ -206,7 +208,7 @@ class LDAPSyntaxRegexNoMatch(LDAPSyntaxValueError):
     pass
 
 
-class LDAPSyntax(object):
+class LDAPSyntax:
     oid = ''
     desc = 'Any LDAP syntax'
     inputSize = 50
@@ -246,7 +248,7 @@ class LDAPSyntax(object):
     def dn(self):
         return DNObj.fromstring(self._dn)
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: str) -> bytes:
         """
         Transforms the HTML form input field values into LDAP string
         representations and returns raw binary string.
@@ -258,9 +260,9 @@ class LDAPSyntax(object):
         """
         for sani_func in self.simpleSanitizers:
             attrValue = sani_func(attrValue)
-        return attrValue
+        return self._app.ls.uc_encode(attrValue)[0]
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         """
         This method can be implemented to transmute attribute values and has
         to handle LDAP string representations (raw binary strings).
@@ -276,7 +278,17 @@ class LDAPSyntax(object):
         """
         return attrValues
 
-    def _regexValidate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
+        """
+        check the syntax of attrValue
+
+        Implementors can overload this method to apply arbitrary syntax checks.
+        """
+        return True
+
+    def validate(self, attrValue: bytes):
+        if not attrValue:
+            return
         if self.reObj and (self.reObj.match(attrValue.decode(self._app.ls.charset)) is None):
             raise LDAPSyntaxRegexNoMatch(
                 "Class %s: %r does not match pattern %r." % (
@@ -285,22 +297,15 @@ class LDAPSyntax(object):
                     self.reObj.pattern,
                 )
             )
-        return # _regexValidate()
-
-    def _validate(self, attrValue):
-        return True
-
-    def validate(self, attrValue):
-        if attrValue:
-            if not self._validate(attrValue):
-                raise LDAPSyntaxValueError(
-                    "Class %s: %r does not comply to syntax (attr type %r)." % (
-                        self.__class__.__name__,
-                        attrValue,
-                        self._at,
-                    )
+        if not self._validate(attrValue):
+            raise LDAPSyntaxValueError(
+                "Class %s: %r does not comply to syntax (attr type %r)." % (
+                    self.__class__.__name__,
+                    attrValue,
+                    self._at,
                 )
-            self._regexValidate(attrValue)
+            )
+        # end of validate()
 
     def valueButton(self, command, row, mode, link_text=None):
         """
@@ -337,7 +342,7 @@ class LDAPSyntax(object):
             mode, row, link_text
         )
 
-    def formValue(self):
+    def formValue(self) -> str:
         """
         Transform LDAP string representations to HTML form input field
         values. Returns Unicode string to be encoded with the browser's
@@ -368,10 +373,10 @@ class LDAPSyntax(object):
         input_field.set_default(self.formValue())
         return input_field
 
-    def getMimeType(self):
+    def getMimeType(self) -> str:
         return self.mimeType
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         if ldap0.ldapurl.is_ldapurl(self._av):
             displayer_class = LDAPUrl
         elif Uri.reObj.match(self._av) is not None:
@@ -404,7 +409,7 @@ class Binary(LDAPSyntax):
         f.mimeType = self.mimeType
         return f
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return '%d bytes | %s' % (
             len(self._av),
             self._app.anchor(
@@ -429,7 +434,7 @@ class Audio(Binary):
         res = sndhdr.test_au(attrValue, fileobj)
         return res is not None
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         mimetype = self.getMimeType()
         return """
             <embed
@@ -469,13 +474,7 @@ class DirectoryString(LDAPSyntax):
             return False
         return True
 
-    def sanitize(self, attrValue):
-        return LDAPSyntax.sanitize(
-            self,
-            self._app.ls.uc_encode(self._app.form.uc_decode(attrValue)[0])[0],
-        )
-
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return self.html_tmpl.format(
             av=self._app.form.utf2display(self.av_u)
         )
@@ -567,7 +566,7 @@ class DistinguishedName(DirectoryString):
             ))
         return r
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         r = [self._app.form.utf2display(self.av_u or u'- World -')]
         if commandbutton:
             r.extend(self._additional_links())
@@ -584,7 +583,7 @@ class AuthzDN(DistinguishedName):
     oid = 'AuthzDN-oid'
     desc = 'Authz Distinguished Name'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         result = DistinguishedName.display(self, valueindex, commandbutton)
         if commandbutton:
             simple_display_str = DistinguishedName.display(
@@ -620,7 +619,7 @@ class NameAndOptionalUID(DistinguishedName):
         dn, _ = self._split_dn_and_uid(self._app.ls.uc_decode(attrValue)[0])
         return is_dn(dn)
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         value = self._av.split('#')
         dn_str = self._app.display_dn(
             self.av_u,
@@ -765,9 +764,9 @@ class GeneralizedTime(IA5String):
                     break
         return result # sanitize()
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         try:
-            dt_utc = web2ldap.utctime.strptime(self._av)
+            dt_utc = web2ldap.utctime.strptime(self.av_u)
         except ValueError:
             return IA5String.display(self, valueindex, commandbutton)
         try:
@@ -822,7 +821,7 @@ class NullTerminatedDirectoryString(DirectoryString):
     def formValue(self):
         return self._app.ls.uc_decode((self._av or chr(0))[:-1])[0]
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return self._app.form.utf2display(
             self._app.ls.uc_decode((self._av or chr(0))[:-1])[0]
         )
@@ -972,7 +971,7 @@ class Uri(DirectoryString):
         str.strip,
     )
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         attr_value = self.av_u
         try:
             url, label = attr_value.split(u' ', 1)
@@ -1020,7 +1019,7 @@ class Image(Binary):
                 imgfile.seek(0)
                 im.save(imgfile, self.imageFormat)
             except Exception as err:
-                logger.warn(
+                logger.warning(
                     'Error converting image data (%d bytes) to %s: %r',
                     len(attrValue),
                     self.imageFormat,
@@ -1030,7 +1029,7 @@ class Image(Binary):
                 attrValue = imgfile.getvalue()
         return attrValue
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         maxwidth, maxheight = 100, 150
         width, height = None, None
         size_attr_html = ''
@@ -1122,7 +1121,7 @@ class OID(IA5String):
                 pass
         return attrValue
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             name, description, reference = OID_REG[self._av]
         except (KeyError, ValueError):
@@ -1176,7 +1175,7 @@ class LDAPUrl(Uri):
     def _command_ldap_url(self, ldap_url):
         return ldap_url
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             if commandbutton:
                 commandbuttonstr = web2ldap.app.gui.ldap_url_anchor(
@@ -1212,7 +1211,7 @@ class OctetString(Binary):
             raise LDAPSyntaxValueError('Illegal human-readable OctetString representation: %s' % e)
         return result_str
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         lines = [
             (
                 '<tr>'
@@ -1231,7 +1230,7 @@ class OctetString(Binary):
 
     def formValue(self):
         hex_av = (self._av or b'').hex().upper()
-        hex_range = range(0, len(hex_av), 2)        
+        hex_range = range(0, len(hex_av), 2)
         return str('\r\n'.join(
             web2ldap.msbase.chunks(
                 ':'.join([hex_av[i:i+2] for i in hex_range]),
@@ -1274,7 +1273,7 @@ class MultilineText(DirectoryString):
             u'\n', self.lineSep
         ).encode(self._app.ls.charset)
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         lines = [
             self._app.form.utf2display(l)
             for l in self._split_lines(self.av_u)
@@ -1303,7 +1302,7 @@ class PreformattedMultilineText(MultilineText):
     cols = 66
     tab_identiation = '&nbsp;&nbsp;&nbsp;&nbsp;'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         lines = [
             self._app.form.utf2display(l, self.tab_identiation)
             for l in self._split_lines(self.av_u)
@@ -1383,7 +1382,7 @@ class ObjectGUID(LDAPSyntax):
     desc = 'Object GUID'
     charset = 'ascii'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         objectguid_str = ''.join([
             '%02X' % ord(c)
             for c in self._av
@@ -1469,7 +1468,7 @@ class DateOfBirth(ISO8601Date):
             return False
         return self._age(birth_dt) >= 0
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         raw_date = ISO8601Date.display(self, valueindex, commandbutton)
         try:
             birth_dt = datetime.datetime.strptime(self._av, self.storageFormat)
@@ -1483,7 +1482,7 @@ class SecondsSinceEpoch(Integer):
     desc = 'Seconds since epoch (1970-01-01 00:00:00)'
     minValue = 0
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         int_str = Integer.display(self, valueindex, commandbutton)
         try:
             return '%s (%s)' % (
@@ -1499,7 +1498,7 @@ class DaysSinceEpoch(Integer):
     desc = 'Days since epoch (1970-01-01)'
     minValue = 0
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         int_str = Integer.display(self, valueindex, commandbutton)
         try:
             return '%s (%s)' % (
@@ -1544,7 +1543,7 @@ class Timespan(Integer):
             result = Integer.formValue(self)
         return result
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             result = self._app.form.utf2display('%s (%s)' % (
                 web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, int(self._av)),
@@ -1602,7 +1601,7 @@ class SelectList(DirectoryString):
         attr_value_dict = self._get_attr_value_dict()
         return self._app.ls.uc_decode(attrValue)[0] in attr_value_dict
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         attr_value_str = DirectoryString.display(self, valueindex, commandbutton)
         attr_value_dict = self._get_attr_value_dict()
         try:
@@ -1721,7 +1720,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             return False
         return self._search_ref(attrValue) is not None
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         if commandbutton and self.lu_obj.attrs:
             ref_result = self._search_ref(self._av)
             if ref_result:
@@ -1875,7 +1874,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
     def _validate(self, attrValue):
         return self._get_ref_entry(attrValue, attrlist=['1.1']) is not None
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         if commandbutton and self.lu_obj.attrs:
             ref_entry = self._get_ref_entry(self._av) or {}
             try:
@@ -1946,7 +1945,7 @@ class Boolean(SelectList, IA5String):
             return SelectList._validate(self, attrValue.upper())
         return SelectList._validate(self, attrValue)
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return IA5String.display(self, valueindex, commandbutton)
 
 
@@ -2028,7 +2027,7 @@ class BitArrayInteger(MultilineText, Integer):
             cols=max([len(desc) for desc, _ in self.flag_desc_table])+1
         )
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         attrValue_int = int(self._av)
         return (
             '%s<br>'
@@ -2095,7 +2094,7 @@ class DNSDomain(IA5String):
             result = u'!!!snipped because of UnicodeDecodeError!!!'
         return result
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         if self._av.decode('ascii') != self._av.decode('idna'):
             return '%s (%s)' % (
                 IA5String.display(self, valueindex, commandbutton),
@@ -2215,7 +2214,7 @@ class ASN1Object(Binary):
     oid = 'ASN1Object-oid'
     desc = 'BER encoded ASN.1 data'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         asn1obj = asn1.parse(self._av)
         return ''.join((
             '<code>',
@@ -2230,7 +2229,7 @@ class DumpASN1CfgOID(OID):
     oid = 'DumpASN1Cfg-oid'
     desc = "OID registered in Peter Gutmann's dumpasn1.cfg"
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         attrValue = self._av.encode('ascii')
         try:
             pisces_oid = asn1.OID(tuple(map(int, attrValue.split('.'))))
