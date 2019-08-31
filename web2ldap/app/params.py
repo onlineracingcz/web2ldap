@@ -80,7 +80,6 @@ def w2l_params(app):
         if not (control_enabled or ldapparam_all_controls or control_oid in app.ls.supportedControl):
             continue
         name, description, _ = OID_REG[control_oid]
-        control_oid_u = str(control_oid, 'ascii')
         control_table_rows.append(
             """
             <tr>
@@ -100,7 +99,7 @@ def w2l_params(app):
                                 False:'enable',
                                 True:'disable',
                             }[control_enabled],
-                            control_oid_u
+                            control_oid
                         ),
                     ],
                     title=u'%s %s' % (
@@ -111,7 +110,7 @@ def w2l_params(app):
                 {False:'<strike>', True:''}[control_oid in app.ls.supportedControl],
                 app.form.utf2display(name),
                 {False:'</strike>', True:''}[control_oid in app.ls.supportedControl],
-                app.form.utf2display(control_oid_u),
+                app.form.utf2display(control_oid),
                 app.form.utf2display(description),
             )
         )
