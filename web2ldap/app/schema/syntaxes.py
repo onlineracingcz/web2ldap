@@ -1123,7 +1123,7 @@ class OID(IA5String):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
-            name, description, reference = OID_REG[self._av]
+            name, description, reference = OID_REG[self.av_u]
         except (KeyError, ValueError):
             try:
                 se = self._schema.get_obj(
