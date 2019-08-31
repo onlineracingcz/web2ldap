@@ -38,7 +38,6 @@ def x509name2ldapdn(x509name, subschema=None):
             rdn_list.append((
                 type_name,
                 ava['value'].native,
-                0,
             ))
         dn_list.append(rdn_list)
     return str(ldap0.dn.DNObj(tuple(dn_list)))
