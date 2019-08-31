@@ -13,6 +13,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 import ldap0
+from ldap0.dn import DNObj
 
 import web2ldap.app.gui
 from web2ldap.app.gui import dn_anchor_hash
@@ -20,20 +21,20 @@ from web2ldap.app.gui import dn_anchor_hash
 
 # All attributes to be read for nodes
 DIT_ATTR_LIST = [
-    'objectClass',
-    'structuralObjectClass',
-    'displayName',
-    'description',
-    'hasSubordinates',
-    'subordinateCount',
-    'numSubordinates',
+    b'objectClass',
+    b'structuralObjectClass',
+    b'displayName',
+    b'description',
+    b'hasSubordinates',
+    b'subordinateCount',
+    b'numSubordinates',
     #  Siemens DirX
-    'numAllSubordinates',
+    b'numAllSubordinates',
     # Critical Path Directory Server
-    'countImmSubordinates',
-    'countTotSubordinates',
+    b'countImmSubordinates',
+    b'countTotSubordinates',
     # MS Active Directory
-    'msDS-Approx-Immed-Subordinates',
+    b'msDS-Approx-Immed-Subordinates',
 ]
 
 
@@ -64,19 +65,27 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
             del d['_sizelimit_']
         return size_limit
 
+    assert isinstance(anchor_dn, DNObj), ValueError(
+        'Expected anchor_dn to be DNObj, got %r' % (anchor_dn,),
+    )
+
     # Start node's HTML
     r = ['<dl>']
 
-    for dn, d in sorted(dit_dict.items()):
+    for dn, d in dit_dict.items():
+
+        assert isinstance(dn, DNObj), ValueError(
+            'Expected dn to be DNObj, got %r' % (dn,),
+        )
 
         # Handle special dict items
         size_limit = meta_results(d)
 
         # Generate anchor for this node
         if dn:
-            rdn, _ = split_rdn(dn)
+            rdn = dn.rdn()
         else:
-            rdn = u'Root DSE'
+            rdn = 'Root DSE'
 
         try:
             node_entry = entry_dict[dn]
@@ -115,11 +124,11 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
         try:
             display_name_list = [app.form.utf2display(node_entry['displayName'][0]), partial_str]
         except KeyError:
-            display_name_list = [app.form.utf2display(rdn), partial_str]
+            display_name_list = [app.form.utf2display(str(rdn)), partial_str]
         display_name = ''.join(display_name_list)
 
         title_msg = u'\r\n'.join(
-            (dn or u'Root DSE', node_entry.get('structuralObjectClass', [u''])[0]) + \
+            (str(dn) or u'Root DSE', node_entry.get('structuralObjectClass', [u''])[0]) + \
             tuple(node_entry.get('description', []))
         )
 
@@ -129,7 +138,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
         if has_subordinates:
             if dn == anchor_dn:
                 link_text = '&lsaquo;&lsaquo;'
-                next_dn = parent_dn(dn)
+                next_dn = dn.parent()
             else:
                 link_text = '&rsaquo;&rsaquo;'
                 next_dn = dn
@@ -137,8 +146,8 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
             r.append(
                 app.anchor(
                     'dit', link_text,
-                    [('dn', next_dn)],
-                    title=u'Browse from %s' % (next_dn),
+                    [('dn', str(next_dn))],
+                    title=u'Browse from %s' % (str(next_dn),),
                     anchor_id=dn_anchor_id,
                 )
             )
@@ -152,7 +161,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
         r.append(
             app.anchor(
                 'read', '&rsaquo;',
-                [('dn', dn)],
+                [('dn', str(dn))],
                 title=u'Read entry',
             )
         )
@@ -182,13 +191,13 @@ def w2l_dit(app):
     cut_off_levels = max(0, dn_levels-dit_max_levels)
 
     for i in range(1, dn_levels-cut_off_levels+1):
-        search_base = str(app.dn_obj.slice(dn_levels-cut_off_levels-i, None))
+        search_base = app.dn_obj.slice(dn_levels-cut_off_levels-i, None)
         dit_dict[search_base] = {}
         try:
             msg_id = app.ls.l.search(
                 search_base.encode(app.ls.charset),
                 ldap0.SCOPE_ONELEVEL,
-                '(objectClass=*)',
+                b'(objectClass=*)',
                 attrlist=DIT_ATTR_LIST,
                 timeout=app.cfg_param('dit_search_timelimit', 10),
                 sizelimit=app.cfg_param('dit_search_sizelimit', 50),
@@ -198,7 +207,7 @@ def w2l_dit(app):
                 if res.rtype == ldap0.RES_SEARCH_REFERENCE:
                     continue
                 for res_dn, res_entry in res.data:
-                    res_dn = res_dn.decode(app.ls.charset)
+                    res_dn = DNObj.fromstring(res_dn.decode(app.ls.charset))
                     entry_dict[res_dn] = decode_dict(res_entry, app.ls.charset)
                     dit_dict[search_base][res_dn] = {}
         except (
@@ -219,8 +228,9 @@ def w2l_dit(app):
     if root_dit_dict:
         outf_lines = dit_html(
             app,
-            app.dn,
-            root_dit_dict, entry_dict,
+            app.dn_obj,
+            root_dit_dict,
+            entry_dict,
             dit_max_levels,
         )
     else:

@@ -99,7 +99,7 @@ def read_template(app, config_key, form_desc=u'', tmpl_filename=None):
 
 
 def dn_anchor_hash(dn):
-    return str(md5(dn.strip().lower().encode('utf-8')).hexdigest())
+    return str(md5(dn.encode('utf-8')).hexdigest())
 
 
 def ts2repr(time_divisors, ts_sep, ts_value):
@@ -376,7 +376,7 @@ def main_menu(app):
                 'dit', 'Tree',
                 [('dn', app.dn)],
                 title=u'Display tree around %s' % (app.dn or u'Root DSE'),
-                anchor_id=dn_anchor_hash(app.dn)
+                anchor_id=dn_anchor_hash(app.dn_obj)
             ),
         )
 
