@@ -9,6 +9,7 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
+import cgi
 import codecs
 import sys
 import re
@@ -17,6 +18,7 @@ import uuid
 
 from . import escape_html
 from . import helper
+from ..log import logger
 
 
 class Field(object):
@@ -173,8 +175,9 @@ class Field(object):
         This method can be used to modify the user's value
         before storing it into self.value.
         """
-        assert isinstance(value, bytes), TypeError('Expected value to be bytes, was %r' % (value))
-        value = self._decodeValue(value)
+        assert isinstance(value, (str, bytes)), TypeError('Expected value to be str or bytes, was %r' % (value))
+        if isinstance(value, bytes):
+            value = self._decodeValue(value)
         # Length valid?
         self._validate_len(value)
         # Format valid?
@@ -570,7 +573,7 @@ class Select(Radio):
                     (self.ignoreCase and optionValue.lower() == default_value.lower())
                 )
             if optionTitle:
-                optionTitle_attr = ' title="%s"' % escape_html(optionTitle.encode(self.charset))
+                optionTitle_attr = ' title="%s"' % escape_html(optionTitle)
             else:
                 optionTitle_attr = ''
             res.append(
@@ -877,8 +880,6 @@ class Form:
         self.http_accept_language = helper.AcceptHeaderDict('HTTP_ACCEPT_LANGUAGE', env)
         self.accept_language = self.http_accept_language.keys()
         self.http_accept_encoding = helper.AcceptHeaderDict('HTTP_ACCEPT_ENCODING', env)
-        # Set the preferred character set
-        self.accept_charset = self.http_accept_charset.preferred()
         # Determine query string
         self.query_string = env.get('QUERY_STRING', '')
         # initialize Unicode codecs
@@ -887,6 +888,10 @@ class Form:
         for field in self.fields():
             self.add_field(field)
         return # Form.__init__()
+
+    @property
+    def accept_charset(self):
+        return self.http_accept_charset.preferred()
 
     def getContentType(self):
         """
@@ -966,7 +971,6 @@ class Form:
         pass
 
     def _set_charset(self):
-        self.accept_charset = 'utf-8'
         form_codec = codecs.lookup(self.accept_charset)
         self.uc_encode, self.uc_decode = form_codec[0], form_codec[1]
         return # _set_charset()
@@ -982,46 +986,37 @@ class Form:
 
         self.inf.close()
 
-        inputlist = query_string.split('&')
-
         contentLength = 0
 
-        unquote = urllib.parse.unquote
-        unquote_to_bytes = urllib.parse.unquote_to_bytes
+        for name, value in urllib.parse.parse_qsl(
+            query_string,
+            keep_blank_values=True,
+            strict_parsing=True,
+            encoding=self.accept_charset,
+            errors='strict',
+            max_num_fields=None
+        ):
 
-        # Loop over all name attributes declared
-        for param in inputlist:
+            logger.debug('%s._parse_url_encoded(): name = %r value = %r', name, value)
 
-            if param:
+            if name not in self.field:
+                raise InvalidFieldName(name)
 
-                # Einzelne Parametername/-daten-Paare auseinandernehmen
-                try:
-                    name, value = param.split('=', 1)
-                except ValueError:
-                    raise InvalidFormEncoding(param)
-                name = unquote(name).strip()
+            contentLength += len(value)
 
-                if name not in self.field:
-                    raise InvalidFieldName(name)
+            # Overall length of input data still valid?
+            if contentLength > maxContentLength:
+                raise ContentLengthExceeded(contentLength, maxContentLength)
 
-                value = unquote_to_bytes(value).strip()
-
-                contentLength += len(value)
-
-                # Overall length of input data still valid?
-                if contentLength > maxContentLength:
-                    raise ContentLengthExceeded(contentLength, maxContentLength)
-
-                # Input is stored in field instance
-                self.field[name].setValue(value)
-                # Add name of field to set of input keys
-                self.input_field_names.add(name)
+            # Input is stored in field instance
+            self.field[name].setValue(value)
+            # Add name of field to set of input keys
+            self.input_field_names.add(name)
 
         return #_parse_url_encoded()
 
     def _parse_mime_multipart(self, maxContentLength):
 
-        import cgi
         _, pdict = cgi.parse_header(self.env['CONTENT_TYPE'])
         parts = cgi.parse_multipart(self.inf, pdict)
 
