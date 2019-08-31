@@ -921,7 +921,9 @@ class Form:
         """
         if name in self.input_field_names:
             return self.field[name].value
-        return default
+        if name in self.field:
+            return default
+        raise KeyError('Invalid field name %r requested for %s' % (name, self.__class__.__name__))
 
     def allInputFields(self, fields=None, ignore_fields=None):
         """
