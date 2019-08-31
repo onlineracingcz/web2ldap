@@ -231,7 +231,7 @@ class SearchAttrs(Input):
     def __init__(self, name='search_attrs', text=u'Attributes to be read'):
         Input.__init__(self, name, text, 1000, 1, u'[@*+0-9.\\w,_;-]+')
 
-    def setValue(self, value):
+    def set_value(self, value):
         value = ','.join(
             filter(
                 None,
@@ -241,7 +241,7 @@ class SearchAttrs(Input):
                 )
             )
         )
-        Input.setValue(self, value)
+        Input.set_value(self, value)
 
 
 class Web2LDAPForm_searchform(Web2LDAPForm):

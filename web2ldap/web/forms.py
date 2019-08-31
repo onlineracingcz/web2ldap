@@ -18,7 +18,6 @@ import uuid
 
 from . import escape_html
 from . import helper
-from ..log import logger
 
 
 class Field(object):
@@ -168,7 +167,7 @@ class Field(object):
             value = value.decode('iso-8859-1')
         return value
 
-    def setValue(self, value):
+    def set_value(self, value):
         """
         Store the user's value into the field object.
 
@@ -722,18 +721,18 @@ class ContentLengthExceeded(FormException):
     Overall length of input data too large.
 
     Attributes:
-    contentLength         received content length
+    content_length         received content length
     maxContentLength      maximum valid content length
     """
 
-    def __init__(self, contentLength, maxContentLength):
+    def __init__(self, content_length, maxContentLength):
         FormException.__init__(self, ())
-        self.contentLength = contentLength
+        self.content_length = content_length
         self.maxContentLength = maxContentLength
 
     def __str__(self):
         return 'Input length of %d bytes exceeded the maximum of %d bytes.' % (
-            self.contentLength,
+            self.content_length,
             self.maxContentLength
         )
 
@@ -975,7 +974,7 @@ class Form:
         self.uc_encode, self.uc_decode = form_codec[0], form_codec[1]
         return # _set_charset()
 
-    def _parse_url_encoded(self, maxContentLength):
+    def _parse_url_encoded(self, max_content_length):
 
         if self.request_method == 'POST':
             query_string = self.uc_decode(
@@ -986,7 +985,7 @@ class Form:
 
         self.inf.close()
 
-        contentLength = 0
+        content_length = 0
 
         for name, value in urllib.parse.parse_qsl(
             query_string,
@@ -997,32 +996,30 @@ class Form:
             max_num_fields=None
         ):
 
-            logger.debug('%s._parse_url_encoded(): name = %r value = %r', name, value)
-
             if name not in self.field:
                 raise InvalidFieldName(name)
 
-            contentLength += len(value)
+            content_length += len(value)
 
             # Overall length of input data still valid?
-            if contentLength > maxContentLength:
-                raise ContentLengthExceeded(contentLength, maxContentLength)
+            if content_length > max_content_length:
+                raise ContentLengthExceeded(content_length, max_content_length)
 
             # Input is stored in field instance
-            self.field[name].setValue(value)
+            self.field[name].set_value(value)
             # Add name of field to set of input keys
             self.input_field_names.add(name)
 
         return #_parse_url_encoded()
 
-    def _parse_mime_multipart(self, maxContentLength):
+    def _parse_mime_multipart(self, max_content_length):
 
         _, pdict = cgi.parse_header(self.env['CONTENT_TYPE'])
         pdict['boundary'] = pdict['boundary'].encode('ascii')
         pdict['CONTENT-LENGTH'] = self.env['CONTENT_LENGTH'].encode('ascii')
         parts = cgi.parse_multipart(self.inf, pdict)
 
-        contentLength = 0
+        content_length = 0
 
         for name in parts.keys():
 
@@ -1031,13 +1028,13 @@ class Form:
 
             for value in parts[name]:
 
-                contentLength += len(value)
-                # Gesamtlaenge der Daten noch zulaessig?
-                if contentLength > maxContentLength:
-                    raise ContentLengthExceeded(contentLength, maxContentLength)
+                content_length += len(value)
+                # sum of all received input still valid?
+                if content_length > max_content_length:
+                    raise ContentLengthExceeded(content_length, max_content_length)
 
                 # Input is stored in field instance
-                self.field[name].setValue(value)
+                self.field[name].set_value(value)
                 # Add name of field to set of input keys
                 self.input_field_names.add(name)
 
