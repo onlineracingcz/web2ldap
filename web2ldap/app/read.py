@@ -108,15 +108,16 @@ class DisplayEntry(UserDict):
             return ''
         result = []
         syntax_se = syntax_registry.get_syntax(self.entry._s, nameoroid, self.soc)
-        for i in range(len(values)):
+        for i, value in enumerate(values):
             attr_instance = syntax_se(
                 self._app,
                 self.dn,
                 self.entry._s,
                 nameoroid,
-                values[i],
+                value,
                 self.entry,
             )
+            print('nameoroid', nameoroid, 'value', value)
             try:
                 attr_value_html = attr_instance.display(
                     valueindex=i,
@@ -129,7 +130,7 @@ class DisplayEntry(UserDict):
                     self.dn,
                     self.schema,
                     nameoroid,
-                    values[i],
+                    value,
                     self.entry,
                 )
                 attr_value_html = attr_instance.display(
@@ -137,7 +138,7 @@ class DisplayEntry(UserDict):
                     commandbutton=True,
                 )
             try:
-                attr_instance.validate(values[i])
+                attr_instance.validate(value)
             except web2ldap.app.schema.syntaxes.LDAPSyntaxValueError:
                 attr_value_html = '<s>%s</s>' % (attr_value_html)
                 self.invalid_attrs.add(nameoroid)
