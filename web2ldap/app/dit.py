@@ -243,10 +243,10 @@ def w2l_dit(app):
                     '<p>%s %s</p>' % (
                         app.anchor(
                             'dit', '&rsaquo;&rsaquo;',
-                            (('dn', naming_context),),
-                            title=u'Display tree beneath %s' % (naming_context),
+                            (('dn', str(naming_context)),),
+                            title=u'Display tree beneath %s' % (naming_context,),
                         ),
-                        app.form.utf2display(naming_context),
+                        app.form.utf2display(str(naming_context)),
                     )
                 )
 
