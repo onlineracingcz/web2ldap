@@ -21,6 +21,8 @@ UTC_TIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 def strptime(s):
     # Extract and validate time zone information
+    if isinstance(s, bytes):
+        s = s.decode('ascii')
     len_dt_str = len(s)
     if s[-1].upper() == 'Z':
         # assume UTC Time string
