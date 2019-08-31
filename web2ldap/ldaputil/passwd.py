@@ -79,4 +79,4 @@ def user_password_hash(password, scheme, salt=None):
         ).strip().replace('\n', '')
     else:
         encoded_pw = password
-    return '{%s}%s' % (scheme.upper(), encoded_pw)
+    return '{%s}%s' % (scheme.upper().encode('ascii'), encoded_pw)
