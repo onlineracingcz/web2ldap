@@ -104,7 +104,7 @@ def passwd_context_menu(app):
             # SunONE/Netscape/Fedora/389 Directory Server
             u'passwordRetryCount', u'accountUnlockTime',
         )
-        if app.schema.get_obj(AttributeType, attr_type.encode('ascii'), None) is not None
+        if app.schema.get_obj(AttributeType, attr_type, None) is not None
     ])
     result.append(
         app.anchor(
@@ -254,7 +254,7 @@ def w2l_passwd(app):
     passwd_action = app.form.getInputValue('passwd_action', [None])[0] or passwd_action_default
     passwd_who = app.form.getInputValue('passwd_who', [app.dn])[0]
 
-    user_entry = app.ls.l.read_s(passwd_who.encode(app.ls.charset), attrlist=['objectClass'])
+    user_entry = app.ls.l.read_s(passwd_who.encode(app.ls.charset), attrlist=[b'objectClass'])
     user_objectclasses = SchemaElementOIDSet(
         app.schema,
         ObjectClass,
@@ -393,7 +393,7 @@ def w2l_passwd(app):
             passwd_attr_type = 'userPassword'
             new_passwd_value = user_password_hash(
                 passwd_input.encode(app.ls.charset),
-                passwd_scheme.encode('ascii'),
+                passwd_scheme,
             )
             if old_password:
                 old_passwd_value = user_password_hash(old_password.encode(app.ls.charset), '')

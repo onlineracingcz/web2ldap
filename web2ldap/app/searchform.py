@@ -157,13 +157,7 @@ def SearchForm_adv(app):
         default_attr_options=app.cfg_param('search_attrs', [])
     )
 
-    mr_list = [u'']
-    mr_list.extend(
-        sorted([
-            mr.decode('ascii')
-            for mr in app.schema.name2oid[ldap0.schema.models.MatchingRule].keys()
-        ])
-    )
+    mr_list = [''] + sorted(app.schema.name2oid[ldap0.schema.models.MatchingRule].keys())
     # Create a select field instance for matching rule name
     search_mr_select = web2ldap.web.forms.Select(
         'search_mr', u'Matching rule used',

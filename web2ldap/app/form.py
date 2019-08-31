@@ -232,12 +232,12 @@ class SearchAttrs(Input):
         Input.__init__(self, name, text, 1000, 1, u'[@*+0-9.\\w,_;-]+')
 
     def setValue(self, value):
-        value = b','.join(
+        value = ','.join(
             filter(
                 None,
                 map(
-                    bytes.strip,
-                    value.replace(b' ', b',').split(b',')
+                    str.strip,
+                    value.replace(' ', ',').split(',')
                 )
             )
         )

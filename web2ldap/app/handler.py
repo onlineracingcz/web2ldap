@@ -839,7 +839,7 @@ class AppHandler(LogHelper):
 
             elif (
                     (who is not None and cred is not None) or
-                    login_mech.encode('ascii') in ldap0.sasl.SASL_NONINTERACTIVE_MECHS
+                    (login_mech is not None and login_mech.encode('ascii') in ldap0.sasl.SASL_NONINTERACTIVE_MECHS)
                 ):
                 self.dn = self.dn
                 # real bind operation

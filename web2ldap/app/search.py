@@ -617,7 +617,7 @@ def w2l_search(app):
             d = ldap0.cidict.CIDict()
             for result_dn in app.ls.namingContexts:
                 if result_dn:
-                    d[result_dn] = result_dn
+                    d[str(result_dn)] = str(result_dn)
             for r in result_dnlist:
                 result_dn = r[1][0]
                 if result_dn is not None and result_dn in d:

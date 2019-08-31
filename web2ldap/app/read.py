@@ -508,7 +508,7 @@ def w2l_read(app):
                 app,
                 vcard_link=not get_vcard_template(app, entry.get('objectClass', [])) is None,
                 dds_link='dynamicObject' in entry.get('objectClass', []),
-                entry_uuid=entry.get('entryUUID', [None])[0]
+                entry_uuid=entry['entryUUID'][0].decode(app.ls.charset) if 'entryUUID' in entry else None
             )
         )
 

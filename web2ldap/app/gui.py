@@ -21,6 +21,7 @@ import ldap0.ldapurl
 from ldap0.ldapurl import LDAPUrl
 import ldap0.filter
 from ldap0.dn import DNObj
+from ldap0.base import encode_list
 
 import web2ldapcnf
 
@@ -305,7 +306,10 @@ def display_authz_dn(app, who=None, entry=None):
             for oc in bound_as_templates.keys():
                 read_attrs.update(GrabKeys(bound_as_templates[oc]).keys)
             try:
-                entry = app.ls.l.read_s(who.encode(app.ls.charset), attrlist=list(read_attrs))
+                entry = app.ls.l.read_s(
+                    who.encode(app.ls.charset),
+                    attrlist=encode_list(read_attrs)
+                )
             except ldap0.LDAPError:
                 entry = None
         if entry:
@@ -524,18 +528,18 @@ def attrtype_select_field(
     Return web2ldap.web.forms.Select instance for choosing attribute type names
     """
     attr_options_dict = {}
-    for attr_type in (map(str, default_attr_options or []) or app.schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
+    for attr_type in list(map(str, default_attr_options or []) or app.schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
         attr_type_se = app.schema.get_obj(ldap0.schema.models.AttributeType, attr_type)
         if attr_type_se:
             if attr_type_se.names:
-                attr_type_name = attr_type_se.names[0].decode(app.ls.charset)
+                attr_type_name = attr_type_se.names[0]
             else:
-                attr_type_name = attr_type.decode('ascii')
+                attr_type_name = attr_type
             if attr_type_se.desc:
                 try:
-                    attr_type_desc = attr_type_se.desc.decode(app.ls.charset)
+                    attr_type_desc = attr_type_se.desc
                 except UnicodeDecodeError:
-                    attr_type_desc = repr(attr_type_se.desc).decode('ascii')
+                    attr_type_desc = repr(attr_type_se.desc)
             else:
                 attr_type_desc = None
         else:
