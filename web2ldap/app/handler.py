@@ -287,7 +287,7 @@ class AppHandler(LogHelper):
             title_attr,
             self.form.action_url(command, self.sid),
             '&amp;'.join([
-                '%s=%s' % (param_name, urllib.parse.quote(self.form.uc_encode(param_value)[0]))
+                '%s=%s' % (param_name, urllib.parse.quote(str(param_value)))
                 for param_name, param_value in form_parameters
             ]),
             anchor_id or '',
