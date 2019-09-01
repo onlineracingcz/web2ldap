@@ -74,7 +74,7 @@ class Web2LDAPForm(Form):
             lf_entity='\n'
         ):
         assert isinstance(value, str), \
-            TypeError('Argument value must be str, was %r' % (value))
+            TypeError('Argument value must be str, was %r' % (value,))
         value = value or u''
         return escape_html(value).replace('\n', lf_entity).replace('\t', tab_identiation).replace('  ', sp_entity)
 
