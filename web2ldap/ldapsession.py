@@ -1331,7 +1331,8 @@ class LDAPSession:
     def ldapUrl(self, dn, add_login=True):
         if not self.uri:
             return None
-        lu = ExtendedLDAPUrl(ldapUrl=self.uri, dn=dn)
+        lu = ExtendedLDAPUrl(ldapUrl=self.uri)
+        lu.dn = dn
         if self.startTLSOption:
             lu.x_startTLS = str(START_TLS_REQUIRED * (self.startTLSOption > 0))
         if add_login:
