@@ -17,6 +17,7 @@ from io import BytesIO
 import ldap0
 import ldap0.ldif
 import ldap0.schema
+from ldap0.dn import DNObj
 from ldap0.base import decode_list, encode_list
 from ldap0.schema.models import \
     AttributeType, \
@@ -797,15 +798,13 @@ def ObjectClassForm(
 
     def LDIFTemplateField(app, parent_dn):
         all_structural_oc, all_abstract_oc, all_auxiliary_oc = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
-        addform_entry_templates_keys = app.cfg_param('addform_entry_templates', {}).keys()
+        addform_entry_templates_keys = list(app.cfg_param('addform_entry_templates', {}).keys())
         addform_parent_attrs = app.cfg_param('addform_parent_attrs', [])
         addform_entry_templates_keys.sort()
         add_tmpl_dict = {}
         for template_name in addform_entry_templates_keys:
             ldif_dn, ldif_entry = ReadLDIFTemplate(app, template_name)
-            tmpl_parent_dn = web2ldap.ldaputil.parent_dn(
-                ldif_dn.decode(app.ls.charset)
-            ).decode(app.ls.charset) or parent_dn
+            tmpl_parent_dn = str(DNObj.fromstring(ldif_dn.decode(app.ls.charset)).parent()) or parent_dn
             # first check whether mandatory attributes in parent entry are readable
             if addform_parent_attrs:
                 try:
