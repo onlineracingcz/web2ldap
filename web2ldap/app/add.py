@@ -137,7 +137,7 @@ def w2l_add(app):
     try:
         rdn_list = [
             tuple(rdn_comp.split('=', 1))
-            for rdn_comp in ldap0.dn.explode_rdn(add_rdn.encode(app.ls.charset))
+            for rdn_comp in DNObj.fromstring(add_rdn)
         ]
     except ldap0.DECODING_ERROR:
         web2ldap.app.addmodifyform.w2l_addform(
