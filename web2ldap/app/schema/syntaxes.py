@@ -1857,7 +1857,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
             ref_entry = self._app.ls.l.read_s(
                 dn,
                 attrlist=attrlist or self.lu_obj.attrs,
-                filterstr=self._filterstr(),
+                filterstr=self._filterstr().encode(self._app.ls.charset),
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -1870,7 +1870,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
         return ref_entry
 
     def _validate(self, attrValue):
-        return self._get_ref_entry(attrValue, attrlist=['1.1']) is not None
+        return self._get_ref_entry(attrValue, attrlist=[b'1.1']) is not None
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         if commandbutton and self.lu_obj.attrs:
