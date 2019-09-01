@@ -33,8 +33,9 @@ def srv_lookup(dns_name, srv_prefix='_ldap._tcp'):
     """
     if not dns_name:
         return []
-    logger.debug('Query DNS for SRV RR %s.%s', srv_prefix, dns_name)
-    srv_result = resolver.query('%s.%s' % (srv_prefix, dns_name.encode('idna')), 'SRV')
+    query_name = ('%s.%s' % (srv_prefix, dns_name)).encode('idna').decode('ascii')
+    logger.debug('Query DNS for SRV RR %r', query_name)
+    srv_result = resolver.query(query_name, 'SRV')
     if not srv_result:
         return []
     srv_result_answers = [
@@ -48,6 +49,7 @@ def srv_lookup(dns_name, srv_prefix='_ldap._tcp'):
         #if res['typename'] == 'SRV'
     ]
     srv_result_answers.sort()
+    logger.debug('DNS result for SRV RR %r: %r', query_name, srv_result_answers)
     return srv_result_answers
 
 
