@@ -662,7 +662,7 @@ class AEGroupDN(DerefDynamicDNSelectList):
             'cn=<strong>{0}</strong>,{1}'.format(
                 self._app.form.utf2display(group_cn),
                 self._app.form.utf2display(str(self.dn.parent())),
-            ).encode()
+            )
         ]
         if commandbutton:
             r.extend(self._additional_links())
@@ -1076,7 +1076,7 @@ class AEEntryDNAEGroup(GroupEntryDN):
     ]
 
     def _additional_links(self):
-        aegroup_cn = self._entry['cn'][0]
+        aegroup_cn = self._entry['cn'][0].decode(self._app.ls.charset)
         ref_attrs = list(AEEntryDNAEGroup.ref_attrs)
         if aegroup_cn.endswith('zone-admins'):
             ref_attrs.extend([

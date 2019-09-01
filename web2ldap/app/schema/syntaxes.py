@@ -1898,8 +1898,8 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
             _, _, res_ctrl = self._app.ls.l.search_s(
                 self._dn.encode(self._app.ls.charset),
                 ldap0.SCOPE_BASE,
-                attrlist=['1.1'],
-                filterstr='(objectClass=*)',
+                attrlist=[b'1.1'],
+                filterstr=b'(objectClass=*)',
                 req_ctrls=[deref_crtl],
                 add_ctrls=1,
             )[0]
@@ -1911,7 +1911,7 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 ldap0.REFERRAL,
             ):
             return None
-        for ref_dn, ref_entry in res_ctrl[0].derefRes[self._at]:
+        for ref_dn, ref_entry in res_ctrl[0].derefRes[self._at.encode('ascii')]:
             if ref_dn == dn:
                 break
         else:
