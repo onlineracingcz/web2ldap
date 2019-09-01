@@ -14,6 +14,8 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import ldap0
 import ldap0.cidict
+from ldap0.base import encode_list
+from ldap0.dn import DNObj
 
 import web2ldap.app.core
 import web2ldap.app.gui
@@ -23,7 +25,7 @@ ACTION2MODTYPE = {
     'remove': ldap0.MOD_DELETE,
 }
 
-REQUESTED_GROUP_ATTRS = ['objectClass', 'cn', 'description']
+REQUESTED_GROUP_ATTRS = [b'objectClass', b'cn', b'description']
 
 
 def group_select_field(
@@ -41,7 +43,7 @@ def group_select_field(
         optgroup_dict = {None:[]}
         for dn in dn_list:
             try:
-                colgroup_dn = u','.join(explode_dn(dn)[optgroup_min_level:optgroup_max_level])
+                colgroup_dn = str(DNObj.fromstring(dn).slice(optgroup_min_level, optgroup_max_level))
             except (IndexError, ValueError):
                 colgroup_dn = None
             if colgroup_dn:
@@ -51,9 +53,7 @@ def group_select_field(
                     optgroup_dict[colgroup_dn] = [dn]
         optgroup_list = []
         try:
-            colgroup_memberdn = u','.join(
-                explode_dn(app.dn)[optgroup_min_level:optgroup_max_level]
-            )
+            colgroup_memberdn = str(app.dn_obj.slice(optgroup_min_level, optgroup_max_level))
         except (IndexError, ValueError):
             colgroup_memberdn = None
         else:
@@ -62,8 +62,8 @@ def group_select_field(
         colgroup_authzdn = None
         if app.ls.who is not None:
             try:
-                colgroup_authzdn = u','.join(
-                    explode_dn(app.ls.who)[optgroup_min_level:optgroup_max_level]
+                colgroup_authzdn = str(
+                    DNObj.fromstring(app.ls.who).slice(optgroup_min_level, optgroup_max_level)
                 )
             except (IndexError, ValueError, ldap0.DECODING_ERROR):
                 pass
@@ -133,7 +133,10 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         if not gad[1] is None
     ]
 
-    search_result = app.ls.l.read_s(app.ldap_dn, attrlist=all_membership_attrs)
+    search_result = app.ls.l.read_s(
+        app.ldap_dn,
+        attrlist=encode_list(all_membership_attrs, encoding='ascii'),
+    )
     if not search_result:
         raise web2ldap.app.core.ErrorExit(u'No search result when reading entry.')
 
@@ -150,10 +153,10 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             continue
         group_member_attrtype, user_entry_attrtype = groupadm_defs[oc][:2]
         if user_entry_attrtype is None:
-            user_entry_attrvalue = app.ldap_dn
+            user_entry_attrvalue = app.dn
         else:
             try:
-                user_entry_attrvalue = user_entry[user_entry_attrtype][0]
+                user_entry_attrvalue = user_entry[user_entry_attrtype][0].decode(app.ls.charset)
             except KeyError:
                 continue
         filter_components.append((
@@ -188,7 +191,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         msg_id = app.ls.l.search(
             group_search_root.encode(app.ls.charset),
             ldap0.SCOPE_SUBTREE,
-            all_group_filterstr,
+            all_group_filterstr.encode(app.ls.charset),
             attrlist=REQUESTED_GROUP_ATTRS,
         )
         for res in app.ls.l.results(msg_id):
@@ -200,8 +203,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     except (ldap0.SIZELIMIT_EXCEEDED, ldap0.TIMELIMIT_EXCEEDED):
         error_msg = 'Size or time limit exceeded while searching group entries!'
 
-    all_group_entries = all_groups_dict.keys()
-    all_group_entries.sort(key=str.lower)
+    all_group_entries = sorted(all_groups_dict.keys(), key=str.lower)
 
     #################################################################
     # Apply changes to group membership
@@ -317,7 +319,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         msg_id = app.ls.l.search(
             group_search_root.encode(app.ls.charset),
             ldap0.SCOPE_SUBTREE,
-            remove_group_filterstr,
+            remove_group_filterstr.encode(app.ls.charset),
             attrlist=REQUESTED_GROUP_ATTRS,
         )
         for res in app.ls.l.results(msg_id):
@@ -329,8 +331,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     except (ldap0.SIZELIMIT_EXCEEDED, ldap0.TIMELIMIT_EXCEEDED):
         error_msg = 'Size or time limit exceeded while searching group entries!'
 
-    remove_group_dns = remove_groups_dict.keys()
-    remove_group_dns.sort(key=str.lower)
+    remove_group_dns = sorted(remove_groups_dict.keys(), key=str.lower)
 
     all_groups_dict.update(remove_groups_dict)
 
@@ -368,7 +369,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         name='groupadm_searchroot'
     )
     group_search_root_field.charset = app.form.accept_charset
-    group_search_root_field.set_default(group_search_root)
+    group_search_root_field.set_default(str(group_search_root))
 
     if error_msg:
         app.outf.write('<p class="ErrorMessage">%s</p>' % (error_msg))
@@ -398,7 +399,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                 # form for changing group membership
                 app.begin_form('groupadm', 'POST'),
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
-                app.form.hiddenFieldHTML('groupadm_searchroot', group_search_root, u''),
+                app.form.hiddenFieldHTML('groupadm_searchroot', str(group_search_root), u''),
                 group_select_field(
                     app,
                     all_groups_dict,
