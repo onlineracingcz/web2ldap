@@ -115,10 +115,10 @@ class AEObjectUtil:
         return zone_entry
 
     def _get_zone_dn(self):
-        return self.dn.slice(None, -len(DNObj.fromstring(self._app.naming_context))-1).encode(self._app.ls.charset)
+        return self.dn.slice(None, -len(DNObj.fromstring(self._app.naming_context))-1)
 
     def _get_zone_name(self):
-        return self.dn[-len(DNObj.fromstring(self._app.naming_context))-1][1].encode(self._app.ls.charset)
+        return self.dn[-len(DNObj.fromstring(self._app.naming_context))-1][0][1]
 
     def _constrained_persons(
             self,
@@ -1844,7 +1844,10 @@ class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
         result = DirectoryString._validate(self, attrValue)
         if result and attrValue:
             zone_cn = self._get_zone_name()
-            result = zone_cn and (zone_cn == 'pub' or attrValue.startswith(zone_cn+u'-'))
+            result = (
+                zone_cn and
+                (zone_cn == 'pub' or attrValue.decode(self._app.ls.charset).startswith(zone_cn+u'-'))
+            )
         return result
 
     def formValue(self):
