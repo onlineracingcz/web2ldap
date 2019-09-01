@@ -480,7 +480,7 @@ def top_section(
         # Only output something meaningful if valid connection
         template_dict.update({
             'ldap_url': app.ls.ldapUrl(app.dn),
-            'ldap_uri': app.form.utf2display(str(app.ls.uri)),
+            'ldap_uri': app.form.utf2display(app.ls.uri),
             'description': escape_html(app.cfg_param('description', u'')),
             'dit_navi': ',\n'.join(dit_navigation(app)),
             'dn': app.form.utf2display(app.dn),
