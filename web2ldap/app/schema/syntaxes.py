@@ -55,11 +55,8 @@ from ldap0.base import encode_list
 
 import web2ldapcnf
 
-from web2ldap.pisces import asn1
-
 import web2ldap.web.forms
 import web2ldap.msbase
-import web2ldap.mspki.asn1helper
 import web2ldap.ldaputil
 import web2ldap.app.gui
 import web2ldap.utctime
@@ -1057,10 +1054,10 @@ class Image(Binary):
         attr_value_len = len(self._av)
         img_link = (
             '%s/read/%s'
-            '?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d&amp;read_attrmode=load'
+            '?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d'
         ) % (
             self._app.form.script_name, self._app.sid,
-            urllib.parse.quote(self._dn.encode(self._app.form.accept_charset)),
+            urllib.parse.quote(self._dn),
             urllib.parse.quote(self._at),
             valueindex,
         )
@@ -2216,14 +2213,8 @@ class ASN1Object(Binary):
     desc = 'BER encoded ASN.1 data'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        asn1obj = asn1.parse(self._av)
-        return ''.join((
-            '<code>',
-            self._app.form.utf2display(
-                str(asn1obj).decode('utf-8').replace('{', '\n{').replace('}', '}\n')
-            ).replace('  ', '&nbsp;&nbsp;').replace('\n', '<br>'),
-            '</code>'
-        ))
+        # TODO: implement this again based on pyasn1 or whatever
+        return Binary.display(self, valueindex=valueindex, commandbutton=commandbutton)
 
 
 class DumpASN1CfgOID(OID):
@@ -2231,17 +2222,8 @@ class DumpASN1CfgOID(OID):
     desc = "OID registered in Peter Gutmann's dumpasn1.cfg"
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        attrValue = self._av.encode('ascii')
-        try:
-            pisces_oid = asn1.OID(tuple(map(int, attrValue.split('.'))))
-            desc = web2ldap.mspki.asn1helper.GetOIDDescription(
-                pisces_oid,
-                web2ldap.mspki.asn1helper.oids,
-                includeoid=1
-            )
-        except ValueError:
-            return self._app.form.utf2display(self._av)
-        return desc
+        # TODO: implement this again
+        return OID.display(self, valueindex=valueindex, commandbutton=commandbutton)
 
 
 class AlgorithmOID(OID):

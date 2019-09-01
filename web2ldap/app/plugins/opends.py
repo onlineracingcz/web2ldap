@@ -19,7 +19,6 @@ from web2ldap.app.schema.syntaxes import \
 from web2ldap.app.plugins.x509 import Certificate
 from web2ldap.app.plugins.groups import MemberOf
 from web2ldap.app.plugins.quirks import NamingContexts
-from web2ldap.mspki.util import HexString
 from web2ldap.app.schema import no_humanreadable_attr
 
 
@@ -399,10 +398,7 @@ class OpenDSSyncHist(OctetString, DirectoryString):
             ':'.join((mod_attr_type, mod_number, mod_type)).decode(self._app.ls.charset)
         )
         if no_humanreadable_attr(self._schema, mod_attr_type):
-            mod_value_html = HexString(
-                mod_value,
-                delimiter=':', wrap=64, linesep='<br>\n'
-            )[:-1]
+            mod_value_html = mod_value.hex().upper()
         else:
             mod_value_html = self._app.form.utf2display(mod_value.decode(self._app.ls.charset))
         return ':<br>'.join((first_str, mod_value_html))

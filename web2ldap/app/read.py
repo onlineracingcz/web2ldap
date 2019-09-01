@@ -26,7 +26,6 @@ import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
 import web2ldap.app.schema
-import web2ldap.app.viewer
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.msbase import GrabKeys
 from web2ldap.app.schema.viewer import schema_anchor
@@ -328,7 +327,6 @@ def display_attribute_table(app, entry, attrs, comment):
                 [
                     ('dn', app.dn),
                     ('read_attr', attr_type_name),
-                    ('read_attrmode', u'load'),
                     ('read_attrmimetype', u'application/octet-stream'),
                     ('read_attrindex', u'0'),
                 ],
@@ -445,52 +443,27 @@ def w2l_read(app):
 
         # Send a single binary attribute with appropriate MIME-type
         read_attrindex = int(app.form.getInputValue('read_attrindex', [u'0'])[0])
-        # Determine if user wants to view or download the binary attribute value
-        read_attrmode = app.form.getInputValue('read_attrmode', ['view'])[0]
         syntax_se = syntax_registry.get_syntax(app.schema, attr_type, entry.get_structural_oc())
 
-        if (
-                (read_attrmode == 'view') and
-                hasattr(syntax_se, 'oid') and
-                syntax_se.oid in web2ldap.app.viewer.VIEWER_FUNC
-            ):
-
-            # Nice displaying of binary attribute with viewer class
-            web2ldap.app.gui.top_section(
-                app,
-                'Attribute %s' % (app.form.utf2display(attr_type)),
-                web2ldap.app.gui.main_menu(app),
-                context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app),
-            )
-            web2ldap.app.viewer.VIEWER_FUNC[syntax_se.oid](
-                app,
-                attr_type,
-                entry,
-                read_attrindex,
-            )
-            web2ldap.app.gui.footer(app)
-
-        else:
-
-            # We have to create an LDAPSyntax instance to be able to call its methods
-            attr_instance = syntax_se(app, app.dn, app.schema, attr_type, None, entry)
-            # Send HTTP header with appropriate MIME type
-            web2ldap.app.gui.Header(
-                app,
-                app.form.getInputValue(
-                    'read_attrmimetype',
-                    [attr_instance.getMimeType()],
-                )[0],
-                app.form.accept_charset,
-                more_headers=[
-                    (
-                        'Content-Disposition',
-                        'inline; filename=web2ldap-export.%s' % (attr_instance.fileExt,)
-                    ),
-                ]
-            )
-            # send attribute value
-            app.outf.write_bytes(entry[attr_type][read_attrindex])
+        # We have to create an LDAPSyntax instance to be able to call its methods
+        attr_instance = syntax_se(app, app.dn, app.schema, attr_type, None, entry)
+        # Send HTTP header with appropriate MIME type
+        web2ldap.app.gui.Header(
+            app,
+            app.form.getInputValue(
+                'read_attrmimetype',
+                [attr_instance.getMimeType()],
+            )[0],
+            app.form.accept_charset,
+            more_headers=[
+                (
+                    'Content-Disposition',
+                    'inline; filename=web2ldap-export.%s' % (attr_instance.fileExt,)
+                ),
+            ]
+        )
+        # send attribute value
+        app.outf.write_bytes(entry[attr_type][read_attrindex])
 
         return # end of single attribute display
 

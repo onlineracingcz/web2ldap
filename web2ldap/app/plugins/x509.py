@@ -98,20 +98,7 @@ class Certificate(Binary):
         return html
 
     def display(self, valueindex=0, commandbutton=False):
-        html = [
-            '%d bytes | %s' % (
-                len(self._av),
-                self._app.anchor(
-                    'read', 'View/Load',
-                    [
-                        ('dn', self._dn),
-                        ('read_attr', self._at),
-                        ('read_attrindex', str(valueindex)),
-                        ('read_attrmode', 'view'),
-                    ],
-                )
-            )
-        ]
+        html = ['%d bytes' % (len(self._av),)]
         try:
             x509 = asn1crypto.x509.Certificate.load(self._av)
         except ValueError:
@@ -169,18 +156,6 @@ class CertificateList(Binary):
         return attrValue
 
     def display(self, valueindex=0, commandbutton=False):
-        links_html = '%d bytes | %s' % (
-            len(self._av),
-            self._app.anchor(
-                'read', 'View/Load',
-                [
-                    ('dn', self._dn),
-                    ('read_attr', self._at),
-                    ('read_attrindex', str(valueindex)),
-                    ('read_attrmode', 'view'),
-                ],
-            )
-        )
         try:
             x509 = asn1crypto.crl.CertificateList.load(self._av)
         except ValueError:
@@ -191,7 +166,7 @@ class CertificateList(Binary):
                 crl_this_update=x509['tbs_cert_list']['this_update'].native,
                 crl_next_update=x509['tbs_cert_list']['next_update'].native,
             )
-        return ''.join((links_html, crl_html))
+        return ''.join(('%d bytes' % (len(self._av),), crl_html))
 
 
 class CertificatePair(ASN1Object):

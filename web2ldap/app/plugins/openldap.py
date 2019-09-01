@@ -15,7 +15,6 @@ from ldap0.controls import KNOWN_RESPONSE_CONTROLS
 import web2ldapcnf
 
 import web2ldap.app.gui
-from web2ldap.mspki.util import HexString
 from web2ldap.app.schema.syntaxes import \
     AuthzDN, \
     BindDN, \
@@ -335,10 +334,7 @@ class ReqMod(OctetString, DirectoryString):
             return '%s:%s<br>\n<code>\n%s\n</code>\n' % (
                 self._app.form.utf2display(mod_attr_type_u),
                 self._app.form.utf2display(mod_type_u),
-                HexString(
-                    mod_attr_value,
-                    delimiter=':', wrap=64, linesep='<br>\n'
-                )[:-1]
+                mod_attr_value.hex().upper(),
             )
         else:
             return DirectoryString.display(self, valueindex, commandbutton)

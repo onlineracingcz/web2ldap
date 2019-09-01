@@ -779,7 +779,6 @@ class Web2LDAPForm_read(Web2LDAPForm):
                 default=u'0',
             ),
             Input('read_attr', u'Read attribute', 255, 100, u'[\\w_;-]+'),
-            Select('read_attrmode', u'Read attribute', 1, options=(u'view', u'load')),
             Input('read_attrindex', u'Read attribute', 255, 1, u'[0-9]+'),
             Input('read_attrmimetype', u'MIME type', 255, 1, u'[\\w.-]+/[\\w.-]+'),
             Select(
