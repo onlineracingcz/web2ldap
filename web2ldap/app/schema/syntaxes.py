@@ -246,6 +246,14 @@ class LDAPSyntax:
     def dn(self):
         return DNObj.fromstring(self._dn)
 
+    @property
+    def av_u(self):
+        try:
+            return self._av_u
+        except AttributeError:
+            self._av_u = self._app.ls.uc_decode(self._av)[0]
+        return self._av_u
+
     def sanitize(self, attrValue: str) -> bytes:
         """
         Transforms the HTML form input field values into LDAP string
@@ -375,13 +383,13 @@ class LDAPSyntax:
         return self.mimeType
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        if ldap0.ldapurl.is_ldapurl(self._av):
+        if ldap0.ldapurl.is_ldapurl(self.av_u):
             displayer_class = LDAPUrl
-        elif Uri.reObj.match(self._av) is not None:
+        elif Uri.reObj.match(self.av_u) is not None:
             displayer_class = Uri
-        elif GeneralizedTime.reObj.match(self._av) is not None:
+        elif GeneralizedTime.reObj.match(self.av_u) is not None:
             displayer_class = GeneralizedTime
-        elif RFC822Address.reObj.match(self._av) is not None:
+        elif RFC822Address.reObj.match(self.av_u) is not None:
             displayer_class = RFC822Address
         else:
             displayer_class = DirectoryString
@@ -456,14 +464,6 @@ class DirectoryString(LDAPSyntax):
     oid = '1.3.6.1.4.1.1466.115.121.1.15'
     desc = 'Directory String'
     html_tmpl = '{av}'
-
-    @property
-    def av_u(self):
-        try:
-            return self._av_u
-        except AttributeError:
-            self._av_u = self._app.ls.uc_decode(self._av)[0]
-        return self._av_u
 
     def _validate(self, attrValue):
         try:
