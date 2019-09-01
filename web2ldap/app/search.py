@@ -425,7 +425,7 @@ def w2l_search(app):
     search_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, AttributeType, search_attrs)
     search_attrs = search_attr_set.names()
 
-    search_ldap_url = app.ls.ldapUrl(dn=search_root or app.naming_context)
+    search_ldap_url = app.ls.ldapUrl(dn=search_root or str(app.naming_context))
     search_ldap_url.filterstr = filterstr2
     search_ldap_url.scope = scope
     search_ldap_url.attrs = search_attrs
