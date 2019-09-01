@@ -47,7 +47,7 @@ def w2l_login(
         app,
         name='login_search_root',
     )
-    login_search_root_field.set_default(login_search_root)
+    login_search_root_field.set_default(str(login_search_root))
 
     login_template_str = web2ldap.app.gui.read_template(app, 'login_template', u'login form')
 
@@ -89,10 +89,13 @@ def w2l_login(
     else:
         scope_hidden_field = ''
 
-    filterstr = app.form.getInputValue(
-        'filterstr',
-        [app.ldap_url.filterstr or ''],
-    )[0]
+    if 'filterstr' in app.form.field:
+        filterstr = app.form.getInputValue(
+            'filterstr',
+            [app.ldap_url.filterstr or ''],
+        )[0]
+    else:
+        filterstr = app.ldap_url.filterstr or ''
     if filterstr:
         filterstr_hidden_field = app.form.hiddenFieldHTML('filterstr', filterstr, u'')
     else:
