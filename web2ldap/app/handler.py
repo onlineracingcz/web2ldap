@@ -240,7 +240,7 @@ class AppHandler(LogHelper):
             cfg_url = 'ldap://'
         return web2ldap.app.cnf.LDAP_DEF.get_param(
             cfg_url,
-            (self.naming_context or u'').encode('utf-8'),
+            self.naming_context or u'',
             param_key,
             default,
         )
