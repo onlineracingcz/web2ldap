@@ -22,6 +22,7 @@ from ldap0.ldapurl import LDAPUrl
 import ldap0.filter
 from ldap0.dn import DNObj
 from ldap0.base import encode_list
+from ldap0.res import SearchResultEntry
 
 import web2ldapcnf
 
@@ -639,7 +640,7 @@ def search_root_field(
             dn_select_list.update([
                 r.dn_s
                 for r in ldap_results
-                if ldap_dn is not None
+                if isinstance(r, SearchResultEntry)
             ])
     # Remove empty search base string because it will re-added with description
     if '' in dn_select_list:
