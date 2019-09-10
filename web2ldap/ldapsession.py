@@ -922,7 +922,7 @@ class LDAPSession:
             except (IndexError, ValueError):
                 pass
             else:
-                subschemasubentry.update(supplement_schema or {})
+                subschemasubentry.update(decode_entry_dict(supplement_schema, encoding=self.charset) or {})
         try:
             sub_schema = ldap0.schema.subentry.SubSchema(
                 subschemasubentry,
@@ -1063,8 +1063,8 @@ class LDAPSession:
         )
         search_root = search_root or self.rootDSE.get(
             'defaultNamingContext',
-            [''],
-        )[0] or u''
+            [b''],
+        )[0].decode(self.charset) or u''
         lu_obj = LDAPUrl(binddn_mapping)
         search_base =lu_obj.dn.format(user=ldap0.dn.escape_str(username))
         if search_base == u'_':
@@ -1111,7 +1111,7 @@ class LDAPSession:
             lu_obj.scope,
             search_filter,
         )
-        return str(DNObj.from_str(result[0][0].decode(self.charset)))
+        return result.dn_s
 
     def bind(
             self,
