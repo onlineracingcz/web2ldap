@@ -104,7 +104,7 @@ class DisplayEntry(UserDict):
         try:
             values = self.entry.__getitem__(nameoroid)
         except KeyError:
-            return b''
+            return ''
         result = []
         syntax_se = syntax_registry.get_syntax(self.entry._s, nameoroid, self.soc)
         for i, value in enumerate(values):
