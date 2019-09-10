@@ -512,7 +512,6 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
                 filterstr=self._filterstr(),
                 attrlist=self.lu_obj.attrs+['description'],
                 req_ctrls=srv_ctrls,
-                add_ctrls=1,
             )
             for dn, entry, controls in ldap_result:
                 if dn is None:
