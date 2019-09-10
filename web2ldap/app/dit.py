@@ -21,20 +21,20 @@ from web2ldap.app.gui import dn_anchor_hash
 
 # All attributes to be read for nodes
 DIT_ATTR_LIST = [
-    b'objectClass',
-    b'structuralObjectClass',
-    b'displayName',
-    b'description',
-    b'hasSubordinates',
-    b'subordinateCount',
-    b'numSubordinates',
+    'objectClass',
+    'structuralObjectClass',
+    'displayName',
+    'description',
+    'hasSubordinates',
+    'subordinateCount',
+    'numSubordinates',
     #  Siemens DirX
-    b'numAllSubordinates',
+    'numAllSubordinates',
     # Critical Path Directory Server
-    b'countImmSubordinates',
-    b'countTotSubordinates',
+    'countImmSubordinates',
+    'countTotSubordinates',
     # MS Active Directory
-    b'msDS-Approx-Immed-Subordinates',
+    'msDS-Approx-Immed-Subordinates',
 ]
 
 
@@ -92,15 +92,11 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
         except KeyError:
             # Try to read the missing entry
             try:
-                node_entry = decode_dict(
-                    app.ls.l.read_s(
-                        dn.encode(app.ls.charset),
-                        attrlist=DIT_ATTR_LIST,
-                    ) or {},
-                    app.ls.charset,
-                )
+                ldap_res = app.ls.l.read_s(str(dn), attrlist=DIT_ATTR_LIST)
             except ldap0.LDAPError:
                 node_entry = {}
+            else:
+                node_entry = {} if ldap_res is None else ldap_res.entry_s
 
         if size_limit:
             partial_str = '<strong>...</strong>'
@@ -195,21 +191,20 @@ def w2l_dit(app):
         dit_dict[search_base] = {}
         try:
             msg_id = app.ls.l.search(
-                search_base.encode(app.ls.charset),
+                str(search_base),
                 ldap0.SCOPE_ONELEVEL,
                 '(objectClass=*)',
                 attrlist=DIT_ATTR_LIST,
                 timeout=app.cfg_param('dit_search_timelimit', 10),
                 sizelimit=app.cfg_param('dit_search_sizelimit', 50),
             )
-            for res in app.ls.l.results(msg_id):
+            for ldap_result in app.ls.l.results(msg_id):
                 # FIX ME! Search continuations are ignored for now
-                if res.rtype == ldap0.RES_SEARCH_REFERENCE:
+                if ldap_result.rtype == ldap0.RES_SEARCH_REFERENCE:
                     continue
-                for res_dn, res_entry in res.data:
-                    res_dn = DNObj.from_str(res_dn.decode(app.ls.charset))
-                    entry_dict[res_dn] = decode_dict(res_entry, app.ls.charset)
-                    dit_dict[search_base][res_dn] = {}
+                for res in ldap_result.rdata:
+                    entry_dict[res.dn_o] = res.entry_s
+                    dit_dict[search_base][res.dn_o] = {}
         except (
                 ldap0.TIMEOUT,
                 ldap0.SIZELIMIT_EXCEEDED,
