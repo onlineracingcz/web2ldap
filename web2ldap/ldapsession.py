@@ -298,8 +298,8 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def simple_bind(self, who='', cred='', req_ctrls=None):
-        assert isinstance(who, str), TypeError("Type of argument 'who' must be str but was %r" % (who))
-        assert isinstance(cred, bytes), TypeError("Type of argument 'cred' must be bytes but was %r" % (cred))
+        assert isinstance(who, str), TypeError("Type of argument 'who' must be str but was %r" % (who,))
+        assert isinstance(cred, bytes), TypeError("Type of argument 'cred' must be bytes but was %r" % (cred,))
         self.flush_cache()
         return ReconnectLDAPObject.simple_bind(
             self,
@@ -399,9 +399,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             sizelimit=0,
         ):
         assert isinstance(base, str), \
-            TypeError("Type of 'base' must be str, was %r" % (base))
+            TypeError("Type of 'base' must be str, was %r" % (base,))
         assert isinstance(filterstr, str), \
-            TypeError("Type of 'filterstr' must be str, was %r" % (filterstr))
+            TypeError("Type of 'filterstr' must be str, was %r" % (filterstr,))
         if base not in self.last_search_bases:
             self.last_search_bases.append(base)
         return ReconnectLDAPObject.search(
@@ -901,7 +901,7 @@ class LDAPSession:
     def get_sub_schema(self, dn, default, supplement_schema_ldif, strict_check=True):
         """Retrieve parsed sub schema sub entry for current part of DIT"""
         assert isinstance(default, SubSchema), \
-            TypeError('Expected default to be instance of SubSchema, was %r' % (default))
+            TypeError('Expected default to be instance of SubSchema, was %r' % (default,))
         if dn is None or self.l is None:
             # not properly connected to LDAP server yet
             return default
