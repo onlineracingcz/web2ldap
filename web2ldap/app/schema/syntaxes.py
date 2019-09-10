@@ -52,6 +52,7 @@ import ldap0.schema.models
 from ldap0.controls.deref import DereferenceControl
 from ldap0.dn import DNObj, is_dn
 from ldap0.base import encode_list
+from ldap0.res import SearchResultEntry
 
 import web2ldapcnf
 
@@ -1684,8 +1685,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             ldap_result = self._app.ls.l.search_s(
                 self._search_root(),
                 self.lu_obj.scope,
-                search_filter.encode(self._app.ls.charset),
-                attrlist=encode_list(self.lu_obj.attrs, encoding='ascii'),
+                search_filter,
+                attrlist=self.lu_obj.attrs,
                 sizelimit=2,
             )
         except (
@@ -1699,9 +1700,9 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             return None
         # Filter out LDAP referrals
         ldap_result = [
-            (dn, entry)
-            for dn, entry in ldap_result
-            if dn is not None
+            (sre.dn_s, sre.entry_s)
+            for sre in ldap_result
+            if isinstance(sre, SearchResultEntry)
         ]
         if ldap_result and len(ldap_result) == 1:
             return ldap_result[0]
@@ -1748,7 +1749,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             link_html,
         ))
 
-    def _search_root(self) -> bytes:
+    def _search_root(self) -> str:
         ldap_url_dn = self.lu_obj.dn
         if ldap_url_dn == '_':
             result_dn = str(self._app.naming_context)
@@ -1766,7 +1767,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             result_dn = ldap_url_dn
         if result_dn.endswith(u','):
             result_dn = result_dn[:-1]
-        return self._app.ls.uc_encode(result_dn)[0]
+        return result_dn
         # end of _search_root()
 
     def _get_attr_value_dict(self):
@@ -1784,8 +1785,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             ldap_result = self._app.ls.l.search_s(
                 self._search_root(),
                 search_scope,
-                filterstr=self._filterstr().encode(self._app.ls.charset),
-                attrlist=encode_list(search_attrs, encoding='ascii'),
+                filterstr=self._filterstr(),
+                attrlist=search_attrs,
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -1822,29 +1823,29 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                 option_value_map, option_text_map = (None, self.lu_obj.attrs[0])
             elif len(self.lu_obj.attrs) >= 2:
                 option_value_map, option_text_map = self.lu_obj.attrs[:2]
-            for dn_r, entry_r in ldap_result:
-                # Check whether it's a real search result (ignore search continuations)
-                if not dn_r is None:
-                    entry_r[None] = [dn_r]
+            for sre in ldap_result:
+                # Check whether it's a real search result (skip search continuations)
+                if not isinstance(sre, SearchResultEntry):
+                    continue
+                sre.entry_s[None] = [sre.dn_s]
+                try:
+                    option_value = ''.join((
+                        self.valuePrefix,
+                        sre.entry_s[option_value_map][0],
+                        self.valueSuffix,
+                    ))
+                except KeyError:
+                    pass
+                else:
                     try:
-                        option_value = ''.join((
-                            self.valuePrefix,
-                            self._app.ls.uc_decode(entry_r[option_value_map][0])[0],
-                            self.valueSuffix,
-                        ))
+                        option_text = sre.entry_s[option_text_map][0]
                     except KeyError:
-                        pass
+                        option_text = option_value
+                    option_title = sre.entry_s.get('description', sre.entry_s.get('info', ['']))[0]
+                    if option_title:
+                        attr_value_dict[option_value] = (option_text, option_title)
                     else:
-                        try:
-                            option_text = self._app.ls.uc_decode(entry_r[option_text_map][0])[0]
-                        except KeyError:
-                            option_text = option_value
-                        option_title = entry_r.get('description', entry_r.get('info', ['']))[0]
-                        if option_title:
-                            option_title = self._app.ls.uc_decode(option_title)[0]
-                            attr_value_dict[option_value] = (option_text, option_title)
-                        else:
-                            attr_value_dict[option_value] = option_text
+                        attr_value_dict[option_value] = option_text
         return attr_value_dict # _get_attr_value_dict()
 
 
@@ -1894,13 +1895,12 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
     def _get_ref_entry(self, dn, attrlist=None):
         deref_crtl = DereferenceControl(True, {self._at: self.lu_obj.attrs})
         try:
-            _, _, res_ctrl = self._app.ls.l.search_s(
-                self._dn.encode(self._app.ls.charset),
+            ldap_result = self._app.ls.l.search_s(
+                self._dn,
                 ldap0.SCOPE_BASE,
                 filterstr='(objectClass=*)',
                 attrlist=['1.1'],
                 req_ctrls=[deref_crtl],
-                add_ctrls=1,
             )[0]
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -1910,7 +1910,7 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 ldap0.REFERRAL,
             ):
             return None
-        for ref_dn, ref_entry in res_ctrl[0].derefRes[self._at]:
+        for ref_dn, ref_entry in ldap_result.ctrls[0].derefRes[self._at]:
             if ref_dn == dn:
                 break
         else:
