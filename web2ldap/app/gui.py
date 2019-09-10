@@ -627,23 +627,23 @@ def search_root_field(
         # search for more search bases
         slu = ldap0.ldapurl.LDAPUrl(search_root_searchurl)
         try:
-            ldap_result = app.ls.l.search_s(
-                slu.dn.encode(app.ls.charset),
+            ldap_results = app.ls.l.search_s(
+                slu.dn,
                 slu.scope,
-                slu.filterstr.encode(app.ls.charset),
-                attrlist=[b'1.1']
+                slu.filterstr,
+                attrlist=['1.1']
             )
         except ldap0.LDAPError:
             pass
         else:
             dn_select_list.update([
-                app.ls.uc_decode(ldap_dn)[0]
-                for ldap_dn, _ in ldap_result
+                r.dn_s
+                for r in ldap_results
                 if ldap_dn is not None
             ])
     # Remove empty search base string because it will re-added with description
-    if u'' in dn_select_list:
-        dn_select_list.remove(u'')
+    if '' in dn_select_list:
+        dn_select_list.remove('')
     # Add root search base string with description
     dn_select_list.add((u'', u'- World -'))
     srf = web2ldap.web.forms.Select(
