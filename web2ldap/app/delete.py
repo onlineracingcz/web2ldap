@@ -15,6 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import time
 
 import ldap0
+from ldap0.res import SearchResultEntry
 
 import web2ldap.web.forms
 import web2ldap.ldaputil.asynch
@@ -134,64 +135,66 @@ class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
             searchScope,
             filterStr=filterStr,
             attrList=[
-                b'hasSubordinates',
-                b'subordinateCount',
-                b'numSubordinates',
-                b'numAllSubordinates',
-                b'msDS-Approx-Immed-Subordinates',
+                'hasSubordinates',
+                'subordinateCount',
+                'numSubordinates',
+                'numAllSubordinates',
+                'msDS-Approx-Immed-Subordinates',
             ],
         )
 
-    def _process_result(self, resultType, resultItem):
-        if resultType in self._entryResultTypes:
-            # Don't process search references
-            dn, entry = resultItem[0], ldap0.cidict.CIDict(resultItem[1])
+    def _process_result(self, resultItem):
+        # Don't process search references
+        if not isinstance(resultItem, SearchResultEntry):
+            return
+        dn, entry = resultItem.dn_s, resultItem.entry_s
+        try:
+            hasSubordinates = entry['hasSubordinates'][0].upper() == 'TRUE'
+        except KeyError:
+            # hasSubordinates not available => look at numeric subordinate counters
+            hasSubordinates = None
             try:
-                hasSubordinates = entry['hasSubordinates'][0].upper() == 'TRUE'
-            except KeyError:
-                # hasSubordinates not available => look at numeric subordinate counters
-                hasSubordinates = None
-                try:
-                    subordinateCount = int(
+                subordinateCount = int(
+                    entry.get(
+                        'subordinateCount',
                         entry.get(
-                            'subordinateCount',
+                            'numSubordinates',
                             entry.get(
-                                'numSubordinates',
-                                entry.get(
-                                    'numAllSubordinates',
-                                    entry['msDS-Approx-Immed-Subordinates'])))[0]
-                    )
-                except KeyError:
-                    subordinateCount = None
-            else:
+                                'numAllSubordinates',
+                                entry['msDS-Approx-Immed-Subordinates'])))[0]
+                )
+            except KeyError:
                 subordinateCount = None
-            if (
-                    not self.tree_delete_ctrl and
-                    (hasSubordinates or (subordinateCount or 0) > 0)
-                ):
-                self.nonLeafEntries.append(dn)
-            else:
-                try:
-                    self._l.delete_s(dn, req_ctrls=self.req_ctrls)
-                except ldap0.NO_SUCH_OBJECT:
-                    # Don't do anything if the entry is already gone except counting
-                    # these sub-optimal cases
-                    self.noSuchObjectCounter += 1
-                except ldap0.INSUFFICIENT_ACCESS:
-                    self.nonDeletableEntries.append(dn)
-                except ldap0.NOT_ALLOWED_ON_NONLEAF:
-                    if hasSubordinates is None and subordinateCount is None:
-                        self.nonLeafEntries.append(dn)
-                    # Next statements are kind of a safety net and should never be executed
-                    else:
-                        raise ValueError(
-                            'Non-leaf entry %r has hasSubordinates %r and subordinateCount %r' % (
-                                dn, hasSubordinates, subordinateCount,
-                            )
-                        )
+        else:
+            subordinateCount = None
+        if (
+                not self.tree_delete_ctrl and
+                (hasSubordinates or (subordinateCount or 0) > 0)
+            ):
+            self.nonLeafEntries.append(dn)
+        else:
+            try:
+                self._l.delete_s(dn, req_ctrls=self.req_ctrls)
+            except ldap0.NO_SUCH_OBJECT:
+                # Don't do anything if the entry is already gone except counting
+                # these sub-optimal cases
+                self.noSuchObjectCounter += 1
+            except ldap0.INSUFFICIENT_ACCESS:
+                self.nonDeletableEntries.append(dn)
+            except ldap0.NOT_ALLOWED_ON_NONLEAF:
+                if hasSubordinates is None and subordinateCount is None:
+                    self.nonLeafEntries.append(dn)
+                # Next statements are kind of a safety net and should never be executed
                 else:
-                    # The entry was correctly deleted
-                    self.deletedEntries += 1
+                    raise ValueError(
+                        'Non-leaf entry %r has hasSubordinates %r and subordinateCount %r' % (
+                            dn, hasSubordinates, subordinateCount,
+                        )
+                    )
+            else:
+                # The entry was correctly deleted
+                self.deletedEntries += 1
+        # end of _process_result()
 
 
 def delete_entries(
@@ -208,9 +211,7 @@ def delete_entries(
     """
     start_time = time.time()
     end_time = start_time + delete_timelimit
-    delete_filter = (
-        delete_filter or u'(objectClass=*)'
-    ).encode(app.ls.charset)
+    delete_filter = delete_filter or '(objectClass=*)'
     if scope == ldap0.SCOPE_SUBTREE and tree_delete_control:
         # Try to directly delete the whole subtree with the tree delete control
         app.ls.l.delete_s(dn, req_ctrls=delete_server_ctrls)
@@ -374,13 +375,13 @@ def w2l_delete(app):
     if delete_confirm is None:
         # First show delete confirmation and delete mode select form
         # Read the editable attribute values of entry
-        ldap_entry = app.ls.l.read_s(
-            app.ldap_dn,
+        ldap_res = app.ls.l.read_s(
+            app.dn,
             filterstr='(objectClass=*)',
-            attrlist=[a.encode(app.ls.charset) for a in delete_attr],
+            attrlist=delete_attr,
             cache_ttl=-1.0,
-        ) or {}
-        entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, ldap_entry)
+        )
+        entry = ldap0.schema.models.Entry(app.schema, app.dn, ldap_res.entry_as)
         if delete_attr:
             inner_form = del_attr_form(app, entry, delete_attr)
         elif delete_filter:
@@ -435,7 +436,7 @@ def w2l_delete(app):
         begin_time_stamp = time.time()
         deleted_entries_count, non_deletable_entries = delete_entries(
             app,
-            app.ldap_dn,
+            app.dn,
             scope,
             delete_ctrl_tree_delete,
             delete_server_ctrls,
@@ -495,7 +496,7 @@ def w2l_delete(app):
         # Delete a single whole entry
         #-----------------------------
 
-        app.ls.l.delete_s(app.ldap_dn)
+        app.ls.l.delete_s(app.dn)
         old_dn = app.dn
         app.dn = app.parent_dn
         app.simple_message(
