@@ -16,6 +16,7 @@ import ldap0
 import ldap0.cidict
 from ldap0.base import encode_list
 from ldap0.dn import DNObj
+from ldap0.res import SearchResultEntry
 
 import web2ldap.app.core
 import web2ldap.app.gui
@@ -25,7 +26,7 @@ ACTION2MODTYPE = {
     'remove': ldap0.MOD_DELETE,
 }
 
-REQUESTED_GROUP_ATTRS = [b'objectClass', b'cn', b'description']
+REQUESTED_GROUP_ATTRS = ['objectClass', 'cn', 'description']
 
 
 def group_select_field(
@@ -89,20 +90,18 @@ def group_select_field(
         if optgroup_dn:
             option_list.append('<optgroup label="%s">' % (app.form.utf2display(optgroup_dn)))
         for dn in sorted(optgroup_dict[optgroup_dn], key=str.lower):
-            option_text = app.form.utf2display(str(
+            option_text = app.form.utf2display(
                 groups_dict[dn].get(
                     'cn',
-                    [dn[:-len(group_search_root) or len(dn)].encode(app.ls.charset)]
+                    [dn[:-len(group_search_root) or len(dn)]]
                 )[0],
-                app.ls.charset
-            ))
-            option_title = app.form.utf2display(str(
+            )
+            option_title = app.form.utf2display(
                 groups_dict[dn].get(
                     'description',
-                    [dn[:-len(group_search_root)].encode(app.ls.charset)]
+                    [dn[:-len(group_search_root)]]
                 )[0],
-                app.ls.charset
-            ))
+            )
             option_list.append((
                 '<option value="%s" title="%s">%s</option>' % (
                     app.form.utf2display(dn),
@@ -133,14 +132,11 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         if not gad[1] is None
     ]
 
-    search_result = app.ls.l.read_s(
-        app.ldap_dn,
-        attrlist=encode_list(all_membership_attrs, encoding='ascii'),
-    )
+    search_result = app.ls.l.read_s(app.dn, attrlist=all_membership_attrs)
     if not search_result:
         raise web2ldap.app.core.ErrorExit(u'No search result when reading entry.')
 
-    user_entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, search_result)
+    user_entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
 
     # Extract form parameters
     group_search_root = app.form.getInputValue('groupadm_searchroot', [app.naming_context])[0]
@@ -189,15 +185,15 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
     try:
         msg_id = app.ls.l.search(
-            group_search_root.encode(app.ls.charset),
+            str(group_search_root),
             ldap0.SCOPE_SUBTREE,
-            all_group_filterstr.encode(app.ls.charset),
+            all_group_filterstr,
             attrlist=REQUESTED_GROUP_ATTRS,
         )
         for res in app.ls.l.results(msg_id):
-            for group_dn, group_entry in res.data:
-                if group_dn is not None:
-                    all_groups_dict[group_dn.decode(app.ls.charset)] = ldap0.cidict.CIDict(group_entry)
+            for sre in res.rdata:
+                if isinstance(sre, SearchResultEntry):
+                    all_groups_dict[sre.dn_s] = ldap0.cidict.CIDict(sre.entry_s)
     except ldap0.NO_SUCH_OBJECT:
         error_msg = 'No such object! Did you choose a valid search base?'
     except (ldap0.SIZELIMIT_EXCEEDED, ldap0.TIMELIMIT_EXCEEDED):
@@ -317,15 +313,15 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
     try:
         msg_id = app.ls.l.search(
-            group_search_root.encode(app.ls.charset),
+            str(group_search_root),
             ldap0.SCOPE_SUBTREE,
-            remove_group_filterstr.encode(app.ls.charset),
+            remove_group_filterstr,
             attrlist=REQUESTED_GROUP_ATTRS,
         )
         for res in app.ls.l.results(msg_id):
-            for group_dn, group_entry in res.data:
-                if group_dn is not None:
-                    remove_groups_dict[group_dn.decode(app.ls.charset)] = ldap0.cidict.CIDict(group_entry)
+            for sre in res.rdata:
+                if isinstance(sre, SearchResultEntry):
+                    remove_groups_dict[sre.dn_s] = ldap0.cidict.CIDict(sre.entry_s)
     except ldap0.NO_SUCH_OBJECT:
         error_msg = 'No such object! Did you choose a valid search base?'
     except (ldap0.SIZELIMIT_EXCEEDED, ldap0.TIMELIMIT_EXCEEDED):
