@@ -152,7 +152,7 @@ def schema_context_menu(app):
     else:
         if sub_schema_dn is not None:
             form_param_list = [
-                ('dn', sub_schema_dn.decode(app.ls.charset)),
+                ('dn', sub_schema_dn),
                 ('filterstr', u'(objectClass=subschema)'),
             ]
             for schema_attr in SCHEMA_ATTRS+['objectClass', 'cn']:
