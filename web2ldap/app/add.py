@@ -84,12 +84,12 @@ def w2l_add(app):
 
     if add_clonedn:
         entry, _ = web2ldap.app.addmodifyform.read_old_entry(app, add_clonedn, app.schema, None, {'*':'*'})
-        add_clonedn_obj = DNObj.fromstring(add_clonedn)
+        add_clonedn_obj = DNObj.from_str(add_clonedn)
         add_rdn = u'+'.join(['%s=' % (at) for at, _ in add_clonedn_obj[0]])
         add_basedn = str(add_clonedn_obj.parent()) or app.dn
     elif add_template:
         add_dn, entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(app, add_template)
-        add_dn_obj = DNObj.fromstring(add_dn.decode(app.ls.charset))
+        add_dn_obj = DNObj.from_str(add_dn.decode(app.ls.charset))
         add_rdn, add_basedn = str(add_dn_obj.rdn()), str(add_dn_obj.parent())
         add_basedn = add_basedn or app.dn
         entry = ldap0.schema.models.Entry(app.schema, add_basedn.encode(app.ls.charset), entry)
@@ -137,7 +137,7 @@ def w2l_add(app):
     try:
         rdn_list = [
             tuple(rdn_comp.split('=', 1))
-            for rdn_comp in DNObj.fromstring(add_rdn)
+            for rdn_comp in DNObj.from_str(add_rdn)
         ]
     except ldap0.DECODING_ERROR:
         web2ldap.app.addmodifyform.w2l_addform(
@@ -182,7 +182,7 @@ def w2l_add(app):
         raise web2ldap.app.core.ErrorExit(u'Cannot add entry without attribute values.')
 
     if app.dn:
-        new_dn = rdn + DNObj.fromstring(add_basedn)
+        new_dn = rdn + DNObj.from_str(add_basedn)
     else:
         # Makes it possible to add entries for a namingContext
         new_dn = rdn

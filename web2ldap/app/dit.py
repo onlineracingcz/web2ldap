@@ -197,7 +197,7 @@ def w2l_dit(app):
             msg_id = app.ls.l.search(
                 search_base.encode(app.ls.charset),
                 ldap0.SCOPE_ONELEVEL,
-                b'(objectClass=*)',
+                '(objectClass=*)',
                 attrlist=DIT_ATTR_LIST,
                 timeout=app.cfg_param('dit_search_timelimit', 10),
                 sizelimit=app.cfg_param('dit_search_sizelimit', 50),
@@ -207,7 +207,7 @@ def w2l_dit(app):
                 if res.rtype == ldap0.RES_SEARCH_REFERENCE:
                     continue
                 for res_dn, res_entry in res.data:
-                    res_dn = DNObj.fromstring(res_dn.decode(app.ls.charset))
+                    res_dn = DNObj.from_str(res_dn.decode(app.ls.charset))
                     entry_dict[res_dn] = decode_dict(res_entry, app.ls.charset)
                     dit_dict[search_base][res_dn] = {}
         except (

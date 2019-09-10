@@ -43,7 +43,7 @@ def group_select_field(
         optgroup_dict = {None:[]}
         for dn in dn_list:
             try:
-                colgroup_dn = str(DNObj.fromstring(dn).slice(optgroup_min_level, optgroup_max_level))
+                colgroup_dn = str(DNObj.from_str(dn).slice(optgroup_min_level, optgroup_max_level))
             except (IndexError, ValueError):
                 colgroup_dn = None
             if colgroup_dn:
@@ -63,7 +63,7 @@ def group_select_field(
         if app.ls.who is not None:
             try:
                 colgroup_authzdn = str(
-                    DNObj.fromstring(app.ls.who).slice(optgroup_min_level, optgroup_max_level)
+                    DNObj.from_str(app.ls.who).slice(optgroup_min_level, optgroup_max_level)
                 )
             except (IndexError, ValueError, ldap0.DECODING_ERROR):
                 pass

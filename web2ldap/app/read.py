@@ -84,7 +84,7 @@ class DisplayEntry(UserDict):
         self.schema = schema
         self._set_dn(dn)
         if isinstance(entry, dict):
-            self.entry = ldap0.schema.models.Entry(schema, dn.encode(app.ls.charset), entry)
+            self.entry = ldap0.schema.models.Entry(schema, dn, entry)
         elif isinstance(entry, ldap0.schema.models.Entry):
             self.entry = entry
         else:
@@ -104,7 +104,7 @@ class DisplayEntry(UserDict):
         try:
             values = self.entry.__getitem__(nameoroid)
         except KeyError:
-            return ''
+            return b''
         result = []
         syntax_se = syntax_registry.get_syntax(self.entry._s, nameoroid, self.soc)
         for i, value in enumerate(values):
@@ -150,8 +150,8 @@ class DisplayEntry(UserDict):
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
         entry_rdn_dict = ldap0.schema.models.Entry(
             self.schema,
-            dn.encode(self._app.ls.charset),
-            encode_entry_dict(DNObj.fromstring(dn).rdn_attrs()),
+            dn,
+            encode_entry_dict(DNObj.from_str(dn).rdn_attrs()),
         )
         for attr_type, attr_values in entry_rdn_dict.items():
             del entry_rdn_dict[attr_type]
@@ -387,24 +387,24 @@ def w2l_read(app):
             wanted_attrs = []
     # Read the entry's data
     search_result = app.ls.l.read_s(
-        app.ldap_dn,
-        attrlist=encode_list(wanted_attrs, encoding='ascii'),
-        filterstr=filterstr.encode(app.ls.charset),
+        app.dn,
+        attrlist=wanted_attrs,
+        filterstr=filterstr,
         cache_ttl=None if read_nocache else -1.0,
     )
 
     if not search_result:
         raise web2ldap.app.core.ErrorExit(u'Empty search result.')
 
-    entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, search_result)
+    entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
 
     requested_attrs = SchemaElementOIDSet(app.schema, AttributeType, app.cfg_param('requested_attrs', []))
     if not wanted_attrs and requested_attrs:
         try:
             search_result = app.ls.l.read_s(
-                app.ldap_dn,
-                attrlist=encode_list(requested_attrs.names(), encoding='ascii'),
-                filterstr=filterstr.encode(app.ls.charset),
+                app.dn,
+                filterstr=filterstr,
+                attrlist=requested_attrs.names(),
                 cache_ttl=None if read_nocache else -1.0,
             )
         except (
@@ -415,7 +415,7 @@ def w2l_read(app):
             pass
         else:
             if search_result:
-                entry.update(search_result)
+                entry.update(search_result.entry_as)
 
     display_entry = DisplayEntry(app, app.dn, app.schema, entry, 'readSep', 1)
 
@@ -470,7 +470,6 @@ def w2l_read(app):
     if read_output in {u'table', u'template'}:
 
         # Display the whole entry with all its attributes
-
         web2ldap.app.gui.top_section(
             app,
             '',

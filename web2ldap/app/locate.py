@@ -93,7 +93,7 @@ def w2l_locate(app):
         if ldap0.dn.is_dn(locate_name):
             # Use dc-style LDAP DN
             msg_html = 'Input is considered LDAP distinguished name.'
-            locate_domain = DNObj.fromstring(locate_name).domain(only_dc=False).decode('utf-8').encode('idna')
+            locate_domain = DNObj.from_str(locate_name).domain(only_dc=False).decode('utf-8').encode('idna')
             locate_name_type = LOCATE_NAME_DCDN
         elif u'@' in locate_name:
             # Use domain part of RFC822 mail address

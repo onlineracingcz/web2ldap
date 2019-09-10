@@ -181,26 +181,26 @@ ROOTDSE_ATTRS = (
 
 # Attributes to be read from user's entry
 USER_ENTRY_ATTRIBUTES = (
-    b'*',
-    b'uid',
-    b'uidNumber',
-    b'gidNumber',
-    b'cn',
-    b'displayName',
-    b'sAMAccountName',
-    b'userPrincipalName',
-    b'employeeNumber',
-    b'employeeID',
-    b'preferredLanguage',
-    b'objectClass',
-    b'pwdExpire',
-    b'pwdLastSet',
-    b'badPasswordTime',
-    b'badPwdCount',
-    b'lastLogin',
-    b'shadowLastChange',
-    b'sambaPwdLastSet',
-    b'memberOf',
+    '*',
+    'uid',
+    'uidNumber',
+    'gidNumber',
+    'cn',
+    'displayName',
+    'sAMAccountName',
+    'userPrincipalName',
+    'employeeNumber',
+    'employeeID',
+    'preferredLanguage',
+    'objectClass',
+    'pwdExpire',
+    'pwdLastSet',
+    'badPasswordTime',
+    'badPwdCount',
+    'lastLogin',
+    'shadowLastChange',
+    'sambaPwdLastSet',
+    'memberOf',
 )
 
 WHOAMI_FILTER_TMPL = (
@@ -297,7 +297,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def simple_bind(self, who='', cred='', req_ctrls=None):
-        assert isinstance(who, bytes), TypeError("Type of argument 'who' must be bytes but was %r" % (who))
+        assert isinstance(who, str), TypeError("Type of argument 'who' must be str but was %r" % (who))
         assert isinstance(cred, bytes), TypeError("Type of argument 'cred' must be bytes but was %r" % (cred))
         self.flush_cache()
         return ReconnectLDAPObject.simple_bind(
@@ -314,7 +314,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             req_ctrls=None,
             sasl_flags=ldap0.SASL_QUIET
         ):
-        assert isinstance(sasl_mech, bytes), TypeError("Type of argument 'sasl_mech' must be bytes but was %r" % (sasl_mech,))
+        assert isinstance(sasl_mech, str), TypeError("Type of argument 'sasl_mech' must be str but was %r" % (sasl_mech,))
         self.flush_cache()
         return ReconnectLDAPObject.sasl_interactive_bind_s(
             self,
@@ -390,17 +390,17 @@ class MyLDAPObject(ReconnectLDAPObject):
             self,
             base,
             scope,
-            filterstr=b'(objectClass=*)',
+            filterstr='(objectClass=*)',
             attrlist=None,
             attrsonly=0,
             req_ctrls=None,
             timeout=-1,
             sizelimit=0,
         ):
-        assert isinstance(base, bytes), \
-            TypeError("Type of 'base' must be bytes, was %r" % (base))
-        assert isinstance(filterstr, bytes), \
-            TypeError("Type of 'filterstr' must be bytes, was %r" % (filterstr))
+        assert isinstance(base, str), \
+            TypeError("Type of 'base' must be str, was %r" % (base))
+        assert isinstance(filterstr, str), \
+            TypeError("Type of 'filterstr' must be str, was %r" % (filterstr))
         if base not in self.last_search_bases:
             self.last_search_bases.append(base)
         return ReconnectLDAPObject.search(
@@ -473,11 +473,11 @@ class LDAPSession:
     Class for handling LDAP connection objects
     """
     subordinate_attrs = (
-        b'hasSubordinates',
-        b'subordinateCount',
-        b'numSubordinates',
-        b'numAllSubordinates',
-        b'msDS-Approx-Immed-Subordinates',
+        'hasSubordinates',
+        'subordinateCount',
+        'numSubordinates',
+        'numAllSubordinates',
+        'msDS-Approx-Immed-Subordinates',
     )
 
     def __init__(self, onBehalf, traceLevel, cache_ttl):
@@ -686,7 +686,7 @@ class LDAPSession:
                 'ds-private-naming-contexts',
             ):
             self.namingContexts.update([
-                DNObj.fromstring('' if val == b'\x00' else val.decode(self.charset))
+                DNObj.from_str('' if val == b'\x00' else val.decode(self.charset))
                 for val in self.rootDSE.get(rootdse_naming_attrtype.encode('ascii'), [])
             ])
         for attr_type in (
@@ -719,9 +719,7 @@ class LDAPSession:
         """Retrieve attributes from Root DSE"""
         self._reset_rootdse_attrs()
         try:
-            self.rootDSE = self.l.read_rootdse_s(
-                attrlist=encode_list(ROOTDSE_ATTRS, encoding='ascii')
-            ) or {}
+            ldap_res = self.l.read_rootdse_s(attrlist=ROOTDSE_ATTRS)
         except (
                 ldap0.CONFIDENTIALITY_REQUIRED,
                 ldap0.CONSTRAINT_VIOLATION,
@@ -739,6 +737,11 @@ class LDAPSession:
                 ldap0.UNAVAILABLE_CRITICAL_EXTENSION,
             ):
             self.rootDSE = {}
+        else:
+            if ldap_res is None:
+                self.rootDSE = {}
+            else:
+                self.rootDSE = ldap_res.entry_as
         self._update_rootdse_attrs()
         return # init_rootdse()
 
@@ -751,14 +754,14 @@ class LDAPSession:
         """
         if naming_contexts:
             naming_contexts = [
-                DNObj.fromstring(nc)
+                DNObj.from_str(nc)
                 for nc in naming_contexts or []
             ]
         else:
             naming_contexts = self.namingContexts
         if self.namingContexts is None and self.l is not None:
             self.init_rootdse()
-        return DNObj.fromstring(dn).match(naming_contexts)
+        return DNObj.from_str(dn).match(naming_contexts)
 
     def count(
             self,
@@ -801,17 +804,13 @@ class LDAPSession:
         # List of operational attributes suitable to determine non-leafs
         # First try to read operational attributes from entry itself
         # which might indicate whether there are subordinate entries
-        entry = self.l.read_s(
-            self.uc_encode(dn)[0],
-            b'(objectClass=*)',
-            self.subordinate_attrs,
-        )
+        entry = self.l.read_s(dn, '(objectClass=*)', self.subordinate_attrs)
         hasSubordinates = numSubordinates = numAllSubordinates = numSubordinates_attr = None
         if entry:
             for a in (
-                    b'subordinateCount',
-                    b'numSubordinates',
-                    b'msDS-Approx-Immed-Subordinates',
+                    'subordinateCount',
+                    'numSubordinates',
+                    'msDS-Approx-Immed-Subordinates',
                 ):
                 try:
                     numSubordinates = int(entry[a][0])
@@ -821,13 +820,13 @@ class LDAPSession:
                     numSubordinates_attr = a
                     break
             try:
-                numAllSubordinates = int(entry[b'numAllSubordinates'][0])
+                numAllSubordinates = int(entry['numAllSubordinates'][0])
             except KeyError:
                 if numSubordinates is not None:
                     ldap_result = self.l.search_s(
                         self.uc_encode(dn)[0],
                         ldap0.SCOPE_SUBTREE,
-                        b'(objectClass=*)',
+                        '(objectClass=*)',
                         attrlist=[numSubordinates_attr],
                         timeout=COUNT_TIMEOUT
                     )
@@ -835,7 +834,7 @@ class LDAPSession:
                     for _, ldap_entry in ldap_result:
                         numAllSubordinates += int(ldap_entry[numSubordinates_attr][0])
             try:
-                hasSubordinates = (entry[b'hasSubordinates'][0].upper() == b'TRUE')
+                hasSubordinates = (entry['hasSubordinates'][0].upper() == 'TRUE')
             except KeyError:
                 if numSubordinates is not None or numAllSubordinates is not None:
                     hasSubordinates = (numSubordinates or numAllSubordinates or 0) > 0
@@ -846,8 +845,8 @@ class LDAPSession:
             ldap_msgid = self.l.search(
                 self.uc_encode(dn)[0],
                 ldap0.SCOPE_ONELEVEL,
-                b'(objectClass=*)',
-                [b'1.1'],
+                '(objectClass=*)',
+                attrlist=['1.1'],
                 sizelimit=1
             )
 
@@ -856,7 +855,7 @@ class LDAPSession:
                 ldap_result = self.l.result(ldap_msgid, 0)
             self.l.abandon(ldap_msgid)
             hasSubordinates = bool(ldap_result)
-        if SearchNoOpControl.controlType in self.rootDSE.get(b'supportedControl', []):
+        if SearchNoOpControl.controlType in self.rootDSE.get('supportedControl', []):
             if not numSubordinates:
                 try:
                     numSubordinates, _ = self.l.noop_search(
@@ -886,12 +885,12 @@ class LDAPSession:
             return self._schema_dn_cache[dn]
         # Search the DN of sub schema sub entry
         try:
-            subschemasubentry_dn = self.l.search_subschemasubentry_s(self.uc_encode(dn)[0])
+            subschemasubentry_dn = self.l.search_subschemasubentry_s(dn)
         except ldap0.LDAPError:
             subschemasubentry_dn = None
         if subschemasubentry_dn is None:
             try:
-                subschemasubentry_dn = self.l.search_subschemasubentry_s(b'')
+                subschemasubentry_dn = self.l.search_subschemasubentry_s('')
             except ldap0.LDAPError:
                 subschemasubentry_dn = None
         # Store DN of sub schema sub entry in schema DN cache
@@ -916,7 +915,7 @@ class LDAPSession:
             # Read the sub schema sub entry
             subschemasubentry = self.l.read_subschemasubentry_s(
                 subschemasubentry_dn,
-                encode_list(SCHEMA_ATTRS, encoding='ascii'),
+                SCHEMA_ATTRS,
             )
         except ldap0.LDAPError:
             return default
@@ -935,7 +934,7 @@ class LDAPSession:
                 subschemasubentry.update(supplement_schema or {})
         try:
             sub_schema = ldap0.schema.subentry.SubSchema(
-                decode_entry_dict(subschemasubentry),
+                subschemasubentry,
                 subschemasubentry_dn,
                 check_uniqueness=strict_check,
             )
@@ -988,9 +987,9 @@ class LDAPSession:
         self.l.uncache(dn.encode(self.charset))
         if not new_superior is None:
             self.l.uncache(new_superior.encode(self.charset))
-        old_superior_dn = DNObj.fromstring(dn).parent()
+        old_superior_dn = DNObj.from_str(dn).parent()
         if new_superior is not None:
-            if old_superior_dn == DNObj.fromstring(new_superior):
+            if old_superior_dn == DNObj.from_str(new_superior):
                 new_superior_str = None
             else:
                 new_superior_str = self.uc_encode(new_superior)[0]
@@ -1029,13 +1028,13 @@ class LDAPSession:
     def get_audit_context(self, search_root_dn):
         if self.l is None:
             return None
-        search_root_bytes = search_root_dn.encode(self.charset)
-        if search_root_bytes in self._audit_context:
-            return self._audit_context[search_root_bytes]
+        search_root_s = str(search_root_dn)
+        if search_root_s in self._audit_context:
+            return self._audit_context[search_root_s]
         try:
             result = self.l.read_s(
-                search_root_bytes,
-                attrlist=[b'auditContext'],
+                search_root_s,
+                attrlist=['auditContext'],
             )
         except ldap0.LDAPError:
             audit_context_dn = None
@@ -1043,13 +1042,13 @@ class LDAPSession:
             if result:
                 try:
                     audit_context_dn = ldap0.cidict.CIDict(
-                        result
-                    )[b'auditContext'][0].decode(self.charset)
+                        result.entry_s
+                    )['auditContext'][0]
                 except KeyError:
                     audit_context_dn = None
             else:
                 audit_context_dn = None
-        self._audit_context[search_root_bytes] = audit_context_dn
+        self._audit_context[search_root_s] = audit_context_dn
         return audit_context_dn # get_audit_context()
 
     def get_bind_dn(self, username, search_root, binddn_mapping):
@@ -1061,7 +1060,7 @@ class LDAPSession:
             return u''
         elif ldap0.dn.is_dn(username):
             # already a bind-DN -> return it normalized
-            return str(DNObj.fromstring(username))
+            return str(DNObj.from_str(username))
         elif not binddn_mapping:
             # no bind-DN mapping URL -> just return username
             return username
@@ -1097,7 +1096,7 @@ class LDAPSession:
                 search_base.encode(self.charset),
                 lu_obj.scope,
                 search_filter.encode(self.charset),
-                attrlist=[b'1.1'],
+                attrlist=['1.1'],
                 sizelimit=2
             )
         except ldap0.SIZELIMIT_EXCEEDED as ldap_err:
@@ -1121,7 +1120,7 @@ class LDAPSession:
             lu_obj.scope,
             search_filter,
         )
-        return str(DNObj.fromstring(result[0][0].decode(self.charset)))
+        return str(DNObj.from_str(result[0][0].decode(self.charset)))
 
     def bind(
             self,
@@ -1144,7 +1143,7 @@ class LDAPSession:
             # Drop the bind call sent before stored in ReconnectLDAPObject's class attribute
             self.l._last_bind = None
             # Force reconnecting in ReconnectLDAPObject
-            self.l.reconnect(uri.encode('ascii'))
+            self.l.reconnect(uri)
         except ldap0.INAPPROPRIATE_AUTH:
             pass
         # Prepare extended controls attached to bind request
@@ -1169,7 +1168,7 @@ class LDAPSession:
             )
             if ldap0.SASL_AVAIL:
                 self.l.sasl_interactive_bind_s(
-                    sasl_mech.encode('ascii'),
+                    sasl_mech,
                     sasl_auth,
                     req_ctrls=bind_server_ctrls,
                 )
@@ -1212,7 +1211,7 @@ class LDAPSession:
 
         # Determine identity by sending LDAPv3 Who Am I? extended operation
         try:
-            whoami = self.l.whoami_s().decode(self.charset)
+            whoami = self.l.whoami_s()
         except ldap0.LDAPError:
             if who:
                 self.who = u'u:%s' % (who)
@@ -1249,14 +1248,19 @@ class LDAPSession:
         # Read the user's entry if self.who is a DN to get name and preferences
         if self.who and ldap0.dn.is_dn(self.who):
             try:
-                self.userEntry = self.l.read_s(
-                    self.who.encode(self.charset),
+                user_res = self.l.read_s(
+                    self.who,
                     attrlist=USER_ENTRY_ATTRIBUTES,
-                    filterstr=b'(objectClass=*)',
+                    filterstr='(objectClass=*)',
                     cache_ttl=-1.0,
                 ) or {}
             except (ldap0.LDAPError, IndexError):
                 self.userEntry = {}
+            else:
+                if user_res is None:
+                    self.userEntry = {}
+                else:
+                    self.userEntry = user_res.entry_as
         else:
             self.userEntry = {}
         return # bind()
@@ -1296,7 +1300,7 @@ class LDAPSession:
         possible_dit_structure_rules = {}.fromkeys((
             entry.get_possible_dit_structure_rules(ldap_dn) or []
         ))
-        parent_dn = str(DNObj.fromstring(dn).parent())
+        parent_dn = str(DNObj.from_str(dn).parent())
         administrative_roles = entry.get('administrativeRole', [])
         if 'subschemaAdminSpecificArea' in administrative_roles or not parent_dn:
             # If the current entry is a subschema administrative point all

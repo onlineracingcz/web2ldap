@@ -193,7 +193,7 @@ class AppHandler(LogHelper):
         assert ldap0.dn.is_dn(dn), ValueError(
             'Expected LDAP DN as dn, was %r' % (dn)
         )
-        self.dn_obj = DNObj.fromstring(dn)
+        self.dn_obj = DNObj.from_str(dn)
         if self.ls and self.ls.uri:
             self.dn_obj.charset = self.ls.charset
             self.schema = self.ls.get_sub_schema(

@@ -56,7 +56,7 @@ class AssociatedDomain(DNSDomain):
             return None
         d = dict([
             (
-                DNObj.fromstring(self._app.ls.uc_decode(dn)[0]),
+                DNObj.from_str(self._app.ls.uc_decode(dn)[0]),
                 self._app.ls.uc_decode(entry['associatedDomain'][0])[0]
             )
             for dn, entry in ldap_result

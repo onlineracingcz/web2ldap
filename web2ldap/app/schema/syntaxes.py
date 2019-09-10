@@ -244,7 +244,7 @@ class LDAPSyntax:
 
     @property
     def dn(self):
-        return DNObj.fromstring(self._dn)
+        return DNObj.from_str(self._dn)
 
     @property
     def av_u(self):
@@ -1685,8 +1685,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             ldap_result = self._app.ls.l.search_s(
                 self._search_root(),
                 self.lu_obj.scope,
-                search_filter,
-                attrlist=self.lu_obj.attrs,
+                search_filter.encode(self._app.ls.charset),
+                attrlist=encode_list(self.lu_obj.attrs, encoding='ascii'),
                 sizelimit=2,
             )
         except (
@@ -1898,8 +1898,8 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
             _, _, res_ctrl = self._app.ls.l.search_s(
                 self._dn.encode(self._app.ls.charset),
                 ldap0.SCOPE_BASE,
-                attrlist=[b'1.1'],
-                filterstr=b'(objectClass=*)',
+                filterstr='(objectClass=*)',
+                attrlist=['1.1'],
                 req_ctrls=[deref_crtl],
                 add_ctrls=1,
             )[0]
@@ -1911,7 +1911,7 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 ldap0.REFERRAL,
             ):
             return None
-        for ref_dn, ref_entry in res_ctrl[0].derefRes[self._at.encode('ascii')]:
+        for ref_dn, ref_entry in res_ctrl[0].derefRes[self._at]:
             if ref_dn == dn:
                 break
         else:

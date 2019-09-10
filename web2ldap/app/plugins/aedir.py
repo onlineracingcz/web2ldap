@@ -115,10 +115,10 @@ class AEObjectUtil:
         return zone_entry
 
     def _get_zone_dn(self):
-        return self.dn.slice(None, -len(DNObj.fromstring(self._app.naming_context))-1)
+        return self.dn.slice(None, -len(DNObj.from_str(self._app.naming_context))-1)
 
     def _get_zone_name(self):
-        return self.dn[-len(DNObj.fromstring(self._app.naming_context))-1][0][1]
+        return self.dn[-len(DNObj.from_str(self._app.naming_context))-1][0][1]
 
     def _constrained_persons(
             self,
@@ -165,7 +165,7 @@ class AEHomeDirectory(HomeDirectory):
             return True
         for prefix in self.homeDirectoryPrefixes:
             if attrValue.startswith(prefix):
-                uid = self._entry.get('uid', [''])[0]
+                uid = self._entry.get('uid', [b''])[0]
                 return attrValue.endswith(uid)
         return False
 

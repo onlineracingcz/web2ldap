@@ -441,7 +441,7 @@ def w2l_bulkmod(app):
 
                 # Apply the modrdn request
                 if bulkmod_newsuperior:
-                    old_rdn = str(DNObj.fromstring(ldap_dn_u).rdn())
+                    old_rdn = str(DNObj.from_str(ldap_dn_u).rdn())
                     try:
                         if bulkmod_cp:
                             new_ldap_dn = u','.join((

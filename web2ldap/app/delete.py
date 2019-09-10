@@ -376,8 +376,8 @@ def w2l_delete(app):
         # Read the editable attribute values of entry
         ldap_entry = app.ls.l.read_s(
             app.ldap_dn,
+            filterstr='(objectClass=*)',
             attrlist=[a.encode(app.ls.charset) for a in delete_attr],
-            filterstr=b'(objectClass=*)',
             cache_ttl=-1.0,
         ) or {}
         entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, ldap_entry)

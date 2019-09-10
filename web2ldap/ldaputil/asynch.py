@@ -12,7 +12,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 import ldap0
-from ldap0.base import LDAPResult
+from ldap0.res import LDAPResult
 import ldap0.ldif
 
 

@@ -306,12 +306,14 @@ def display_authz_dn(app, who=None, entry=None):
             for oc in bound_as_templates.keys():
                 read_attrs.update(GrabKeys(bound_as_templates[oc]).keys)
             try:
-                entry = app.ls.l.read_s(
+                user_res = app.ls.l.read_s(
                     who.encode(app.ls.charset),
                     attrlist=encode_list(read_attrs)
                 )
             except ldap0.LDAPError:
                 entry = None
+            else:
+                entry = user_res.entry_as
         if entry:
             display_entry = web2ldap.app.read.DisplayEntry(app, app.dn, app.schema, entry, 'readSep', True)
             user_structural_oc = display_entry.entry.get_structural_oc()
@@ -617,7 +619,7 @@ def search_root_field(
             dn = d
         if not dn:
             return ''
-        return str(reversed(DNObj.fromstring(dn))).lower()
+        return str(reversed(DNObj.from_str(dn))).lower()
 
     # add all known naming contexts
     dn_select_list = set(map(str, app.ls.namingContexts))
