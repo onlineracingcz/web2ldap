@@ -333,7 +333,7 @@ syntax_registry.reg_at(
 class SnmpTrapDescription(MultilineText):
     oid = 'SnmpTrapDescription-oid'
     desc = 'SNMP Trap Description'
-    lineSep = '\x00'
+    lineSep = b'\x00'
     cols = 30
 
 syntax_registry.reg_at(

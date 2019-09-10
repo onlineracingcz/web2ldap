@@ -27,7 +27,7 @@ from web2ldap.app.schema.syntaxes import \
 class DHCPConfigStatement(MultilineText):
     oid = 'DHCPConfigStatement-oid'
     desc = 'DHCP configuration statement'
-    lineSep = u''
+    lineSep = b''
 
     def display(self, valueindex=0, commandbutton=False):
         r = ['<code>%s</code>' % (

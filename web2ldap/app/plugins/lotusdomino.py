@@ -25,7 +25,7 @@ class DominoCertificate(MultilineText):
     oid = 'DominoCertificate-oid'
     desc = 'Domino certificate'
     reObj = re.compile('^([A-Z0-9]{8} [A-Z0-9]{8} [A-Z0-9]{8} [A-Z0-9]{8}[\x00]?)+[A-Z0-9 ]*$')
-    lineSep = '\x00'
+    lineSep = b'\x00'
     mimeType = 'text/plain'
     cols = 36
 

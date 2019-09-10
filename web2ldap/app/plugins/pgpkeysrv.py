@@ -28,7 +28,7 @@ class PgpKey(PreformattedMultilineText):
         '^-----BEGIN PGP PUBLIC KEY BLOCK-----[a-zA-Z0-9.: ()+/ =\n-]+-----END PGP PUBLIC KEY BLOCK-----$',
         re.S+re.M,
     )
-    lineSep = '\n'
+    lineSep = b'\n'
     mimeType = 'application/pgp-keys'
     cols = 64
 

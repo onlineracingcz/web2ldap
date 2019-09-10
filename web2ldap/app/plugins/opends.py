@@ -445,7 +445,7 @@ syntax_registry.reg_at(
 class ChangeLogChanges(MultilineText):
     oid = 'ChangeLogChanges-oid'
     desc = 'a set of changes to apply to an entry'
-    lineSep = '\n'
+    lineSep = b'\n'
     cols = 77
 
 syntax_registry.reg_at(

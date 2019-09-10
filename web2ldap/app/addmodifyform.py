@@ -141,6 +141,8 @@ def get_entry_input(app):
     # Stuff input field lists into raw dictionary
     for i, attr_type in enumerate(in_attrtype_list):
         attr_value = in_value_list[i]
+        if isinstance(attr_value, str):
+            attr_value = attr_value.encode(app.ls.charset)
         try:
             entry[attr_type].append(attr_value)
         except KeyError:
@@ -557,8 +559,8 @@ def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
             inputform_supentrytemplate_attrtypes.update(GrabKeys(inputform_supentrytemplate[oc]).keys)
         try:
             parent_search_result = app.ls.l.read_s(
-                parent_dn.encode(app.ls.charset),
-                attrlist=encode_list(inputform_supentrytemplate_attrtypes, encoding='ascii'),
+                parent_dn,
+                attrlist=inputform_supentrytemplate_attrtypes,
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -567,12 +569,12 @@ def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
             ):
             pass
         else:
-            if parent_search_result:
+            if parent_search_result is not None:
                 parent_entry = web2ldap.app.read.DisplayEntry(
                     app, parent_dn, app.schema,
-                    parent_search_result, 'readSep', 0
+                    parent_search_result.entry_as, 'readSep', 0
                 )
-                for oc in parent_search_result.get('objectClass', []):
+                for oc in parent_search_result.entry_s.get('objectClass', []):
                     try:
                         inputform_supentrytemplate[oc]
                     except KeyError:
@@ -1072,18 +1074,17 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
         read_attrs['ref'] = 'ref'
 
     # Read the editable attribute values of entry
-    try:
-        ldap_entry = app.ls.l.read_s(
-            dn.encode(app.ls.charset),
-            attrlist=encode_list(read_attrs.values(), encoding='ascii'),
-            filterstr=(assertion_filter or u'(objectClass=*)').encode(app.ls.charset),
-            cache_ttl=-1.0,
-            req_ctrls=server_ctrls or None,
-        )
-    except IndexError:
-        raise ldap0.NO_SUCH_OBJECT
+    ldap_res = app.ls.l.read_s(
+        dn,
+        attrlist=read_attrs.values(),
+        filterstr=assertion_filter or '(objectClass=*)',
+        cache_ttl=-1.0,
+        req_ctrls=server_ctrls or None,
+    )
+    if ldap_res is None:
+        raise ldap0.NO_SUCH_OBJECT('Empty search result.')
 
-    entry = ldap0.schema.models.Entry(sub_schema, dn.encode(app.ls.charset), ldap_entry)
+    entry = ldap0.schema.models.Entry(sub_schema, ldap_res.dn_s, ldap_res.entry_as)
 
     if write_attrs_method == WRITEABLE_ATTRS_NONE:
         # No method to determine writeable attributes was used

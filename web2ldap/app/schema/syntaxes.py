@@ -266,7 +266,7 @@ class LDAPSyntax:
         """
         for sani_func in self.simpleSanitizers:
             attrValue = sani_func(attrValue)
-        return self._app.ls.uc_encode(attrValue)[0]
+        return attrValue
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         """
@@ -1112,7 +1112,7 @@ class OID(IA5String):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         attrValue = attrValue.strip()
-        if attrValue.startswith('{') and attrValue.endswith('}'):
+        if attrValue.startswith(b'{') and attrValue.endswith(b'}'):
             try:
                 attrValue = web2ldap.ldaputil.ietf_oid_str(attrValue)
             except ValueError:
@@ -1253,7 +1253,7 @@ class MultilineText(DirectoryString):
     oid = 'MultilineText-oid'
     desc = 'Multiple lines of text'
     reObj = re.compile('^.*$', re.S+re.M)
-    lineSep = u'\r\n'
+    lineSep = b'\r\n'
     mimeType = 'text/plain'
     cols = 66
     minInputRows = 1  # minimum number of rows for input field
@@ -1266,9 +1266,9 @@ class MultilineText(DirectoryString):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         return attrValue.replace(
-            u'\r', u''
+            b'\r', u''
         ).replace(
-            u'\n', self.lineSep
+            b'\n', self.lineSep
         ).encode(self._app.ls.charset)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -1279,7 +1279,10 @@ class MultilineText(DirectoryString):
         return '<br>'.join(lines)
 
     def formValue(self) -> str:
-        splitted_lines = self._split_lines(self._app.ls.uc_decode(self._av or b'')[0])
+        splitted_lines = [
+            self._app.ls.uc_decode(line_b)[0]
+            for line_b in self._split_lines(self._av or b'')
+        ]
         return u'\r\n'.join(splitted_lines)
 
     def formField(self):
@@ -1311,7 +1314,7 @@ class PreformattedMultilineText(MultilineText):
 class PostalAddress(MultilineText):
     oid = '1.3.6.1.4.1.1466.115.121.1.41'
     desc = 'Postal Address'
-    lineSep = ' $ '
+    lineSep = b' $ '
     cols = 40
 
     def _split_lines(self, value):
@@ -1321,7 +1324,7 @@ class PostalAddress(MultilineText):
         ]
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue.replace('\r', '').replace('\n', self.lineSep)
+        return attrValue.replace(b'\r', b'').replace(b'\n', self.lineSep)
 
 
 class PrintableString(DirectoryString):
@@ -2164,7 +2167,7 @@ class OnOffFlag(SelectList):
 class JSONValue(PreformattedMultilineText):
     oid = 'JSONValue-oid'
     desc = 'JSON data'
-    lineSep = '\n'
+    lineSep = b'\n'
     mimeType = 'application/json'
 
     def _validate(self, attrValue: bytes) -> bool:
@@ -2194,7 +2197,7 @@ class JSONValue(PreformattedMultilineText):
 class XmlValue(PreformattedMultilineText):
     oid = 'XmlValue-oid'
     desc = 'XML data'
-    lineSep = '\n'
+    lineSep = b'\n'
     mimeType = 'text/xml'
 
     def _validate(self, attrValue: bytes) -> bool:
