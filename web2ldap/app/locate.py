@@ -121,7 +121,7 @@ def w2l_locate(app):
                     for label in dns_name.split('.')
                 ])
 
-                search_base = str(DNObj.fromdomain(dns_name))
+                search_base = str(DNObj.from_domain(dns_name))
                 if dns_name.endswith('de-mail-test.de') or dns_name.endswith('de-mail.de'):
                     search_base = ','.join((search_base, 'cn=de-mail'))
                     lu_extensions = LDAPUrlExtensions({
