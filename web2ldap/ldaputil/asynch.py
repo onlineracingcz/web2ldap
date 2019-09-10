@@ -12,34 +12,8 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 import ldap0
-from ldap0.res import LDAPResult
 import ldap0.ldif
-
-
-SEARCH_RESULT_TYPES = {
-    ldap0.RES_SEARCH_ENTRY,
-    ldap0.RES_SEARCH_RESULT,
-    ldap0.RES_SEARCH_REFERENCE,
-}
-
-ENTRY_RESULT_TYPES = {
-    ldap0.RES_SEARCH_ENTRY,
-    ldap0.RES_SEARCH_RESULT,
-}
-
-
-class WrongResultType(TypeError):
-
-    def __init__(self, received, expected):
-        self.received = received
-        self.expected = expected
-        TypeError.__init__(self)
-
-    def __str__(self):
-        return 'Received wrong result type %r (expected one of %r).' % (
-            self.received,
-            ', '.join(self.expected),
-        )
+from ldap0.res import SearchReference, SearchResultEntry
 
 
 class AsyncSearchHandler:
@@ -129,29 +103,21 @@ class AsyncSearchHandler:
         self.beginResultsDropped = 0
         self.endResultBreak = result_counter
         try:
-            result = LDAPResult(None, None, None, None)
-            while go_ahead:
-                while result.rtype is None and not result.data:
-                    result = self._l.result(self._msg_id, 0)
-                    if self._after_first:
-                        self.after_first()
-                        self._after_first = False
-                if not result.data:
-                    break
-                if result.rtype not in SEARCH_RESULT_TYPES:
-                    raise WrongResultType(result.rtype, SEARCH_RESULT_TYPES)
+            for result in self._l.results(self._msg_id):
+                if self._after_first:
+                    self.after_first()
+                    self._after_first = False
                 # Loop over list of search results
-                for result_item in result.data:
+                for result_item in result.rdata:
                     if result_counter < ignoreResultsNumber:
                         self.beginResultsDropped += 1
                     elif processResultsCount == 0 or result_counter < end_result_counter:
-                        self._process_result(result.rtype, result_item)
+                        self._process_result(result_item)
                     else:
                         go_ahead = False # break-out from while go_ahead
                         partial = True
                         break # break-out from this for-loop
                     result_counter = result_counter+1
-                result = LDAPResult(None, None, None, None)
                 self.endResultBreak = result_counter
         finally:
             if partial and self._msg_id is not None:
@@ -159,12 +125,10 @@ class AsyncSearchHandler:
         self.post_processing()
         return partial # process_results()
 
-    def _process_result(self, resultType, resultItem):
+    def _process_result(self, resultItem):
         """
         Process single entry
 
-        resultType
-            result type
         resultItem
             Single item of a result list
         """
@@ -184,8 +148,8 @@ class List(AsyncSearchHandler):
         AsyncSearchHandler.__init__(self, l)
         self.allResults = []
 
-    def _process_result(self, resultType, resultItem):
-        self.allResults.append((resultType, resultItem))
+    def _process_result(self, resultItem):
+        self.allResults.append(resultItem)
 
 
 class FileWriter(AsyncSearchHandler):
@@ -245,8 +209,6 @@ class LDIFWriter(FileWriter):
             footer,
         )
 
-    def _process_result(self, resultType, resultItem):
-        if resultType in ENTRY_RESULT_TYPES:
-            # Search continuations are ignored
-            dn, entry = resultItem
-            self._ldif_writer.unparse(dn, entry)
+    def _process_result(self, resultItem):
+        if isinstance(resultItem, SearchResultEntry):
+            self._ldif_writer.unparse(resultItem.dn_b, resultItem.entry_b)

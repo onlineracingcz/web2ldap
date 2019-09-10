@@ -25,6 +25,7 @@ import ldap0.schema.models
 from ldap0.controls.openldap import SearchNoOpControl
 from ldap0.schema.models import AttributeType
 from ldap0.base import decode_list
+from ldap0.res import SearchReference, SearchResultEntry
 
 import web2ldap.web.forms
 from web2ldap.web import escape_html
@@ -204,20 +205,21 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
         )
         self._csv_writer.writerow(self._attr_types)
 
-    def _process_result(self, resultType, resultItem):
-        if resultType in self._entryResultTypes:
-            entry = ldap0.schema.models.Entry(self._s, resultItem[0], resultItem[1])
-            csv_row_list = []
-            for attr_type in self._attr_types:
-                csv_col_value_list = []
-                for attr_value in entry.get(attr_type, ['']):
-                    try:
-                        csv_col_value = attr_value.decode(self._ldap_charset).encode(self._csv_charset)
-                    except UnicodeError:
-                        csv_col_value = attr_value.encode('base64').replace('\r', '').replace('\n', '')
-                    csv_col_value_list.append(csv_col_value)
-                csv_row_list.append('|'.join(csv_col_value_list))
-            self._csv_writer.writerow(csv_row_list)
+    def _process_result(self, resultItem):
+        if not isinstance(resultItem, SearchResultEntry):
+            return
+        entry = ldap0.schema.models.Entry(self._s, resultItem.dn_s, resultItem.entry_as)
+        csv_row_list = []
+        for attr_type in self._attr_types:
+            csv_col_value_list = []
+            for attr_value in entry.get(attr_type, ['']):
+                try:
+                    csv_col_value = attr_value.decode(self._ldap_charset).encode(self._csv_charset)
+                except UnicodeError:
+                    csv_col_value = attr_value.encode('base64').replace('\r', '').replace('\n', '')
+                csv_col_value_list.append(csv_col_value)
+            csv_row_list.append('|'.join(csv_col_value_list))
+        self._csv_writer.writerow(csv_row_list)
 
 
 class ExcelWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
@@ -253,22 +255,23 @@ class ExcelWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     def post_processing(self):
         self._workbook.save(self._f)
 
-    def _process_result(self, resultType, resultItem):
-        if resultType in self._entryResultTypes:
-            entry = ldap0.schema.models.Entry(self._s, resultItem[0], resultItem[1])
-            csv_row_list = []
-            for attr_type in self._attr_types:
-                csv_col_value_list = []
-                for attr_value in entry.get(attr_type, ['']):
-                    try:
-                        csv_col_value = attr_value.decode(self._ldap_charset)
-                    except UnicodeError:
-                        csv_col_value = attr_value.encode('base64').replace('\r', '').replace('\n', '').decode('ascii')
-                    csv_col_value_list.append(csv_col_value)
-                csv_row_list.append('\r\n'.join(csv_col_value_list))
-            for col in range(len(csv_row_list)):
-                self._worksheet.write(self._row_counter, col, csv_row_list[col])
-            self._row_counter += 1
+    def _process_result(self, resultItem):
+        if not isinstance(resultItem, SearchResultEntry):
+            return
+        entry = ldap0.schema.models.Entry(self._s, resultItem[0], resultItem[1])
+        csv_row_list = []
+        for attr_type in self._attr_types:
+            csv_col_value_list = []
+            for attr_value in entry.get(attr_type, ['']):
+                try:
+                    csv_col_value = attr_value.decode(self._ldap_charset)
+                except UnicodeError:
+                    csv_col_value = attr_value.encode('base64').replace('\r', '').replace('\n', '').decode('ascii')
+                csv_col_value_list.append(csv_col_value)
+            csv_row_list.append('\r\n'.join(csv_col_value_list))
+        for col in range(len(csv_row_list)):
+            self._worksheet.write(self._row_counter, col, csv_row_list[col])
+        self._row_counter += 1
 
 
 def w2l_search(app):
@@ -358,7 +361,7 @@ def w2l_search(app):
             attr_instance = syntax_registry.get_at(
                 app, app.dn, app.schema, search_attr[i], None, entry=None
             )
-            search_av_string = attr_instance.sanitize(search_av_string.encode(app.form.accept_charset))
+            search_av_string = attr_instance.sanitize(search_av_string)
         if search_mr[i]:
             search_mr_string = ':%s:' % (search_mr[i])
         else:
@@ -527,10 +530,10 @@ def w2l_search(app):
     try:
         # Start the search
         result_handler.start_search(
-            search_root.encode(app.ls.charset),
+            search_root,
             scope,
-            filterstr2.encode(app.ls.charset),
-            attrList=[a.encode(app.ls.charset) for a in read_attrs or []] or None,
+            filterstr2,
+            attrList=read_attrs or None,
             sizelimit=search_size_limit
         )
     except (
@@ -628,7 +631,7 @@ def w2l_search(app):
             ])
             resind = len(result_dnlist)
 
-        result_dnlist.sort()
+        result_dnlist.sort(key=lambda x: x.dn_s)
 
         ContextMenuList = [
             app.anchor(
@@ -839,8 +842,8 @@ def w2l_search(app):
             if search_resminindex == 0 and not partial_results:
                 mailtolist = set()
                 for r in result_dnlist:
-                    if r[0] in is_search_result:
-                        mailtolist.update(r[1][1].get('mail', r[1][1].get('rfc822Mailbox', [])))
+                    if isinstance(r, SearchResultEntry):
+                        mailtolist.update(r.entry_s.get('mail', r.entry_s.get('rfc822Mailbox', [])))
                 if mailtolist:
                     mailtolist = [urllib.parse.quote(m) for m in mailtolist]
                     app.outf.write('Mail to all <a href="mailto:%s?cc=%s">Cc:-ed</a> - <a href="mailto:?bcc=%s">Bcc:-ed</a>' % (
@@ -857,7 +860,7 @@ def w2l_search(app):
 
             for r in result_dnlist[0:resind]:
 
-                if r[0] in is_search_reference:
+                if isinstance(r, SearchReference):
 
                     # Display a search continuation (search reference)
                     entry = ldap0.cidict.CIDict({})
@@ -894,16 +897,15 @@ def w2l_search(app):
                                 title=u'Descend into tree following search continuation',
                             ))
 
-                elif r[0] in is_search_result:
+                if isinstance(r, SearchResultEntry):
 
                     # Display a search result with entry's data
-                    dn = r[1][0].decode(app.ls.charset)
-                    entry = ldap0.schema.models.Entry(app.schema, r[1][0], r[1][1])
+                    entry = ldap0.schema.models.Entry(app.schema, r.dn_s, r.entry_as)
 
                     if search_output == 'raw':
 
                         # Output DN
-                        result_dd_str = utf2display(dn)
+                        result_dd_str = utf2display(r.dn_s)
 
                     else:
 
@@ -928,7 +930,7 @@ def w2l_search(app):
                         if tableentry_attrs:
                             # Output entry with the help of pre-defined templates
                             tableentry = web2ldap.app.read.DisplayEntry(
-                                app, dn, app.schema, entry, 'searchSep', False
+                                app, r.dn_s, app.schema, entry, 'searchSep', False
                             )
                             tdlist = []
                             for oc in tdtemplate_oc:
@@ -940,7 +942,7 @@ def w2l_search(app):
 
                         else:
                             # Output DN
-                            result_dd_str = utf2display(dn)
+                            result_dd_str = utf2display(r.dn_s)
 
                     # Build the list for link table
                     command_table = []
@@ -949,7 +951,7 @@ def w2l_search(app):
                     command_table.append(
                         app.anchor(
                             'read', 'Read',
-                            [('dn', dn)],
+                            [('dn', r.dn_s)],
                         )
                     )
 
@@ -969,7 +971,7 @@ def w2l_search(app):
                     # If subordinates or unsure a [Down] link is added
                     if hasSubordinates and subordinateCountFlag > 0:
 
-                        down_title_list = [u'List direct subordinates of %s' % (dn)]
+                        down_title_list = [u'List direct subordinates of %s' % (r.dn_s)]
 
                         # Determine number of direct subordinates
                         numSubOrdinates = entry.get(
@@ -996,7 +998,7 @@ def w2l_search(app):
                         command_table.append(app.anchor(
                             'search', 'Down',
                             (
-                                ('dn', dn),
+                                ('dn', r.dn_s),
                                 ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
                                 ('searchform_mode', u'adv'),
                                 ('search_attr', u'objectClass'),

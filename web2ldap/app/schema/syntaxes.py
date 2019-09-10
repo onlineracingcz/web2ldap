@@ -226,7 +226,7 @@ class LDAPSyntax:
 
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         if not entry:
-            entry = ldap0.schema.models.Entry(schema, dn.encode(app.ls.charset), {})
+            entry = ldap0.schema.models.Entry(schema, dn, {})
         assert isinstance(dn, str), \
             TypeError("Argument 'dn' must be str, was %r" % (dn))
         assert isinstance(attrType, str) or attrType is None, \
@@ -1112,7 +1112,7 @@ class OID(IA5String):
 
     def sanitize(self, attrValue):
         attrValue = attrValue.strip()
-        if attrValue.startswith(b'{') and attrValue.endswith(b'}'):
+        if attrValue.startswith('{') and attrValue.endswith('}'):
             try:
                 attrValue = web2ldap.ldaputil.ietf_oid_str(attrValue)
             except ValueError:
