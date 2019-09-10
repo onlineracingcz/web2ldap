@@ -39,7 +39,7 @@ class AutogenNumber:
     maxNewValue = 19999
     object_class = 'posixAccount'
 
-    def formValue(self):
+    def formValue(self) -> str:
         if self.object_class.lower() not in set([oc.lower() for oc in self._entry['objectClass']]):
             return u''
         try:
@@ -87,7 +87,7 @@ class AutogenUIDNumber(UidNumber, AutogenNumber):
     maxNewValue = 19999
     object_class = 'posixAccount'
 
-    def formValue(self):
+    def formValue(self) -> str:
         form_value = UidNumber.formValue(self)
         if not form_value:
             form_value = AutogenNumber.formValue(self)
@@ -105,7 +105,7 @@ class AutogenGIDNumber(GidNumber, AutogenNumber):
     desc = 'numeric Unix-GID'
     object_class = 'posixGroup'
 
-    def formValue(self):
+    def formValue(self) -> str:
         form_value = GidNumber.formValue(self)
         if not form_value:
             form_value = AutogenNumber.formValue(self)

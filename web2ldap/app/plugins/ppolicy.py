@@ -43,7 +43,7 @@ class PwdAttribute(SelectList):
         u'2.5.4.35': u'userPassword',
     }
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         return (
             not attrValue or
             attrValue.lower() in {'2.5.4.35', 'userpassword'}
@@ -148,7 +148,7 @@ class PwdAccountLockedTime(GeneralizedTime):
         '000001010000Z': 'permanently locked',
     }
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         return attrValue in self.magic_values or GeneralizedTime._validate(self, attrValue)
 
     def display(self, valueindex=0, commandbutton=False):

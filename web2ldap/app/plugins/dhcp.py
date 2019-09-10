@@ -243,7 +243,7 @@ class DHCPHWAddress(MacAddress):
     maxLen = 26
     reObj = re.compile(r'^(ethernet|token-ring|fddi) ([0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}$')
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         attrValue = attrValue.strip()
         if len(attrValue) == 17:
             return 'ethernet %s' % attrValue
@@ -282,7 +282,7 @@ class DHCPRange(IA5String):
         net_mask = self._entry['dhcpNetMask'][0].strip()
         return ipaddress.ip_network(('%s/%s' % (cn, net_mask)).decode('ascii'), strict=False)
 
-    def formValue(self):
+    def formValue(self) -> str:
         form_value = IA5String.formValue(self)
         if not form_value:
             try:
@@ -292,10 +292,10 @@ class DHCPRange(IA5String):
                 pass
         return form_value
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         return attrValue.strip().replace('  ', ' ').replace('-', ' ').replace('..', ' ')
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         try:
             l, h = attrValue.split(' ', 1)
         except (IndexError, ValueError):

@@ -128,7 +128,7 @@ class SambaSID(IA5String):
             domain_sid = primary_group_sid.rsplit('-', 1)[0]
         return domain_sid
 
-    def formValue(self):
+    def formValue(self) -> str:
         ocs = self._entry.object_class_oid_set()
         result = IA5String.formValue(self)
         if result:

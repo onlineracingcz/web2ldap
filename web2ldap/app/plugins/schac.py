@@ -70,7 +70,7 @@ class SchacYearOfBirth(NumericString):
     input_pattern = '^[0-9]{4}$'
     reObj = re.compile(input_pattern)
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         try:
             birth_year = int(attrValue)
         except ValueError:

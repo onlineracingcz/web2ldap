@@ -110,7 +110,7 @@ class OlcRootDN(BindDN):
     desc = 'The rootdn in the database'
     default_rdn = u'cn=admin'
 
-    def formValue(self):
+    def formValue(self) -> str:
         form_value = BindDN.formValue(self)
         try:
             olc_suffix = self._entry['olcSuffix'][0].decode()
@@ -207,7 +207,7 @@ class OlcPPolicyDefault(DynamicDNSelectList, DistinguishedName):
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         DynamicDNSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         return DynamicDNSelectList._validate(self, attrValue)
 
 syntax_registry.reg_at(

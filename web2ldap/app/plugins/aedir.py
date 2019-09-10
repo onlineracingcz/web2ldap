@@ -160,7 +160,7 @@ class AEHomeDirectory(HomeDirectory):
     )
     homeDirectoryHidden = '-/-'
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         if attrValue == self.homeDirectoryHidden:
             return True
         for prefix in self.homeDirectoryPrefixes:
@@ -276,7 +276,7 @@ class AEGIDNumber(GidNumber):
         # return next ID from pool entry
         return [str(self._get_next_gid())] # formValue()
 
-    def formValue(self):
+    def formValue(self) -> str:
         return Integer.formValue(self)
 
     def formField(self):
@@ -297,8 +297,8 @@ syntax_registry.reg_at(
 class AEUid(IA5String):
     oid = 'AEUid-oid'
     simpleSanitizers = (
-        str.strip,
-        str.lower,
+        bytes.strip,
+        bytes.lower,
     )
 
 
@@ -316,8 +316,8 @@ class AEUserUid(AEUid):
     reobj = re.compile('^%s$' % (UID_LETTERS))
     genLen = 4
     simpleSanitizers = (
-        str.strip,
-        str.lower,
+        bytes.strip,
+        bytes.lower,
     )
 
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
@@ -343,7 +343,7 @@ class AEUserUid(AEUid):
         )
         # end of _gen_uid()
 
-    def formValue(self):
+    def formValue(self) -> str:
         form_value = IA5String.formValue(self)
         if not self._av:
             form_value = self._gen_uid().decode()
@@ -357,7 +357,7 @@ class AEUserUid(AEUid):
             default=self.formValue()
         )
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         return attrValue.strip().lower()
 
 syntax_registry.reg_at(
@@ -387,8 +387,8 @@ class AETicketId(IA5String):
     oid = 'AETicketId-oid'
     desc = 'AE-DIR: Ticket no. related to last change of entry'
     simpleSanitizers = (
-        str.upper,
-        str.strip,
+        bytes.upper,
+        bytes.strip,
     )
 
 syntax_registry.reg_at(
@@ -556,7 +556,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
             pass
         return attr_value_dict # _get_attr_value_dict()
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         if 'memberURL' in self._entry:
             # reduce to simple DN syntax check for dynamic groups
             return DistinguishedName._validate(self, attrValue)
@@ -609,7 +609,7 @@ class AEMemberUid(MemberUID):
             for dn in self._entry.get('member', [])
         ]
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         """
         Because AEMemberUid.transmute() always resets all attribute values it's
         ok to not validate values thoroughly
@@ -623,7 +623,7 @@ class AEMemberUid(MemberUID):
             return []
         return filter(None, self._member_uids_from_member())
 
-    def formValue(self):
+    def formValue(self) -> str:
         return u''
 
     def formField(self):
@@ -1319,7 +1319,7 @@ class AEPerson2(AEPerson):
     oid = 'AEPerson2-oid'
     sanitize_filter_tmpl = '(|(cn={av}*)(uniqueIdentifier={av})(employeeNumber={av})(displayName={av})(mail={av}))'
 
-    def formValue(self):
+    def formValue(self) -> str:
         form_value = DistinguishedName.formValue(self)
         if self._av:
             person_entry = self._get_ref_entry(self._av)
@@ -1419,7 +1419,7 @@ class AEDerefAttribute(DirectoryString):
             result = attrValues
         return result
 
-    def formValue(self):
+    def formValue(self) -> str:
         return u''
 
     def formField(self):
@@ -1457,8 +1457,8 @@ syntax_registry.reg_at(
 class AEMailLocalAddress(RFC822Address):
     oid = 'AEMailLocalAddress-oid'
     simpleSanitizers = (
-        str.strip,
-        str.lower,
+        bytes.strip,
+        bytes.lower,
     )
 
 syntax_registry.reg_at(
@@ -1492,12 +1492,12 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
     def _is_mail_account(self):
         return 'inetLocalMailRecipient' in self._entry['objectClass']
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         if self._is_mail_account():
             return SelectList._validate(self, attrValue)
         return AEPersonAttribute._validate(self, attrValue)
 
-    def formValue(self):
+    def formValue(self) -> str:
         if self._is_mail_account():
             return SelectList.formValue(self)
         return AEPersonAttribute.formValue(self)
@@ -1536,7 +1536,7 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
     input_fallback = True
     html_tmpl = RFC822Address.html_tmpl
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         if not RFC822Address._validate(self, attrValue):
             return False
         attr_value_dict = self._get_attr_value_dict()
@@ -1587,7 +1587,7 @@ class AEHostname(DNSDomain):
     desc = 'Canonical hostname / FQDN'
     host_lookup = 0
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         if not DNSDomain._validate(self, attrValue):
             return False
         if self.host_lookup:
@@ -1765,7 +1765,7 @@ class AECommonName(DirectoryString):
     desc = 'AE-DIR: common name of aeObject'
     maxValues = 1
     simpleSanitizers = (
-        str.strip,
+        bytes.strip,
     )
 
 
@@ -1773,8 +1773,8 @@ class AECommonNameAEZone(AECommonName):
     oid = 'AECommonNameAEZone-oid'
     desc = 'AE-DIR: common name of aeZone'
     simpleSanitizers = (
-        str.strip,
-        str.lower,
+        bytes.strip,
+        bytes.lower,
     )
 
 syntax_registry.reg_at(
@@ -1832,14 +1832,14 @@ class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
     reObj = re.compile(r'^[a-z0-9]+-[a-z0-9-]+$')
     special_names = ('zone-admins', 'zone-auditors')
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         return attrValue.strip()
 
     def transmute(self, attrValues):
         attrValues = [attrValues[0].lower()]
         return attrValues
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         result = DirectoryString._validate(self, attrValue)
         if result and attrValue:
             zone_cn = self._get_zone_name()
@@ -1849,7 +1849,7 @@ class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
             )
         return result
 
-    def formValue(self):
+    def formValue(self) -> str:
         result = DirectoryString.formValue(self)
         zone_cn = self._get_zone_name()
         if zone_cn:
@@ -1970,7 +1970,7 @@ class AENotAfter(NotAfter):
     oid = 'AENotAfter-oid'
     desc = 'AE-DIR: begin of validity period'
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         result = NotAfter._validate(self, attrValue)
         if result:
             ae_not_after = time.strptime(attrValue, r'%Y%m%d%H%M%SZ')
@@ -2002,7 +2002,7 @@ class AEStatus(SelectList, Integer):
         u'2': u'archived',
     }
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         result = SelectList._validate(self, attrValue)
         if not result or not attrValue:
             return result

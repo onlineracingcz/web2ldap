@@ -28,7 +28,7 @@ class AssociatedDomain(DNSDomain):
     oid = 'AssociatedDomain-oid'
     desc = 'Associated DNS domain name (see RFC 4524, section 2.1.)'
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         result = DNSDomain._validate(self, attrValue)
         ocs = self._entry.object_class_oid_set()
         if 'dNSDomain' in ocs or 'dNSDomain2' in ocs:
@@ -67,7 +67,7 @@ class AssociatedDomain(DNSDomain):
         return d[self.dn.match(d.keys())] or None
         # end of _parent_domain()
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         attrValue = DNSDomain.sanitize(self, attrValue)
         if not attrValue:
             parent_domain = (self._parent_domain() or u'').encode(self._app.ls.charset)
@@ -79,7 +79,7 @@ class AssociatedDomain(DNSDomain):
                 attrValue = DNSDomain.sanitize(self, '.'.join((dc_value, parent_domain)))
         return attrValue
 
-    def formValue(self):
+    def formValue(self) -> str:
         form_value = DNSDomain.formValue(self)
         parent_domain = self._parent_domain() or u''
         if not form_value:
@@ -341,7 +341,7 @@ class SSHFPRecord(IA5String):
         '2': 2*hashlib.sha256().digest_size,
     }
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         if not attrValue:
             return attrValue
         try:
@@ -353,7 +353,7 @@ class SSHFPRecord(IA5String):
             return attrValue
         return ' '.join((key_algo, fp_algo, fp_value))
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         try:
             key_algo, fp_algo, fp_value = filter(None, map(str.strip, attrValue.split(' ')))
         except ValueError:

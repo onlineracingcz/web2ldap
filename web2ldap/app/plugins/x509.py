@@ -73,7 +73,7 @@ class Certificate(Binary):
     <dd>{extn_value}</dd>
     """
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         if asn1crypto.pem.detect(attrValue):
             try:
                 _, _, attrValue = asn1crypto.pem.unarmor(attrValue, multiple=False)
@@ -147,7 +147,7 @@ class CertificateList(Binary):
       </dl>
       """
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         if asn1crypto.pem.detect(attrValue):
             try:
                 _, _, attrValue = asn1crypto.pem.unarmor(attrValue, multiple=False)

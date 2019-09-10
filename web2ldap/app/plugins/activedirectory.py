@@ -123,15 +123,15 @@ class ObjectSID(OctetString, IA5String):
         ])
         return ''.join(result_list)
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         return OctetString._validate(self, attrValue)
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         if not attrValue:
             return ''
         return self._sddl2sid(attrValue)
 
-    def formValue(self):
+    def formValue(self) -> str:
         if not self._av:
             return u''
         return self._sid2sddl(self._av).decode('ascii')
@@ -448,7 +448,7 @@ class LogonHours(OctetString):
         # For whatever reason the list has to be shifted one hour
         return hour_flags
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         if not attrValue:
             return ''
         attrValue = attrValue.replace('\r', '').replace('\n', '')
@@ -462,10 +462,10 @@ class LogonHours(OctetString):
         ]
         return ''.join(r)
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         return len(attrValue) == 21
 
-    def formValue(self):
+    def formValue(self) -> str:
         hour_flags = self._extract_hours(self._av)
         if hour_flags:
             day_bits = [
@@ -532,7 +532,7 @@ class CountryCode(PropertiesSelectList):
         web2ldapcnf.etc_dir, 'properties', 'attribute_select_countryCode.properties'
     )
     simpleSanitizers = (
-        str.strip,
+        bytes.strip,
     )
 
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
@@ -574,7 +574,7 @@ class DNWithOctetString(DistinguishedName):
     octetTag = 'B'
     stringCharset = 'ascii'
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         try:
             octet_tag, count, octet_string, dn = self._av.split(':')
         except ValueError:
@@ -627,7 +627,7 @@ class MsAdGUID(OctetString):
     oid = 'MsAdGUID-oid'
     desc = 'GUID in Active Directory'
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         try:
             object_guid_uuid = uuid.UUID(attrValue.replace(':', ''))
         except ValueError:
@@ -871,7 +871,7 @@ class MsDSReplAttributeMetaData(XmlValue):
     oid = 'MsDSReplAttributeMetaData-oid'
     editable = 0
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         return attrValue.endswith('\n\x00') and XmlValue._validate(self, attrValue[:-1])
 
 syntax_registry.reg_at(

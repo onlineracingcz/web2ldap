@@ -32,7 +32,7 @@ class GidNumber(DynamicValueSelectList, Integer):
     maxValue = 4294967295
     ldap_url = 'ldap:///_?gidNumber,cn?sub?(objectClass=posixGroup)'
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         return Integer._validate(self, attrValue)
 
     def display(self, valueindex=0, commandbutton=False):
@@ -90,7 +90,7 @@ class MemberUID(IA5String, DynamicValueSelectList):
         if self.ldap_url:
             DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         if self.ldap_url:
             return DynamicValueSelectList._validate(self, attrValue)
         return IA5String._validate(self, attrValue)

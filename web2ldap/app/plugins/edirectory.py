@@ -60,7 +60,7 @@ class OctetStringGUID(OctetString):
     oid = 'OctetStringGUID-oid'
     desc = 'GUID of eDirectory entries represented as 16 byte octet string'
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         return len(attrValue) == 16
 
     @staticmethod

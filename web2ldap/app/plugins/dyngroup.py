@@ -17,7 +17,7 @@ class MemberUrl(LDAPUrl):
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         LDAPUrl.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         try:
             ldap_url = ldap0.ldapurl.LDAPUrl(attrValue)
         except ValueError:

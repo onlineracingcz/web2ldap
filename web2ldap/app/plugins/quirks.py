@@ -20,7 +20,6 @@ from web2ldap.app.schema.syntaxes import \
     DomainComponent, \
     JPEGImage, \
     LDAPUrl, \
-    LDAPUrl, \
     OctetString, \
     OID, \
     PhotoG3Fax, \

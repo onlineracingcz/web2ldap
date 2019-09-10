@@ -41,7 +41,7 @@ class SshPublicKey(DirectoryString):
         'ssh-dss': 2048,
     }
 
-    def sanitize(self, attrValue):
+    def sanitize(self, attrValue: bytes) -> bytes:
         if attrValue:
             return DirectoryString.sanitize(
                 self, attrValue
@@ -83,7 +83,7 @@ class SshPublicKey(DirectoryString):
             pk_size = p.get_bits()
         return pk_size
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         valid = DirectoryString._validate(self, attrValue)
         if not valid:
             return False

@@ -55,7 +55,7 @@ class OtherPgpCertID(DynamicValueSelectList, PgpCertID):
     oid = 'OtherPgpCertID-oid'
     ldap_url = 'ldap:///_?pgpCertID,pgpCertID?sub?(objectClass=pgpKeyInfo)'
 
-    def _validate(self, attrValue):
+    def _validate(self, attrValue: bytes) -> bool:
         return PgpCertID._validate(self, attrValue)
 
 syntax_registry.reg_at(

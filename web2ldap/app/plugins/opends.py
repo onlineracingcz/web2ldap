@@ -414,7 +414,7 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
     oid = 'OpenDSdsCfgAlternatebindDn-oid'
     desc = 'OpenDS/OpenDJ alternative bind DN'
 
-    def formValue(self):
+    def formValue(self) -> str:
         if not self._av:
             return u''
         attr_value = self.av_u
