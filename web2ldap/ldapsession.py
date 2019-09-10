@@ -702,7 +702,7 @@ class LDAPSession:
                 attr_type,
                 frozenset(
                     decode_list(
-                        self.rootDSE.get(attr_type.encode('ascii'), []),
+                        self.rootDSE.get(attr_type, []),
                         encoding='ascii'
                     )
                 )
@@ -805,62 +805,52 @@ class LDAPSession:
         # List of operational attributes suitable to determine non-leafs
         # First try to read operational attributes from entry itself
         # which might indicate whether there are subordinate entries
-        entry = self.l.read_s(dn, '(objectClass=*)', self.subordinate_attrs)
         hasSubordinates = numSubordinates = numAllSubordinates = numSubordinates_attr = None
-        if entry:
+        sre = self.l.read_s(dn, '(objectClass=*)', self.subordinate_attrs)
+        if sre:
             for a in (
                     'subordinateCount',
                     'numSubordinates',
                     'msDS-Approx-Immed-Subordinates',
                 ):
-                try:
-                    numSubordinates = int(entry[a][0])
-                except KeyError:
-                    pass
-                else:
+                if a in sre.entry_s:
+                    numSubordinates = int(sre.entry_s[a][0])
                     numSubordinates_attr = a
                     break
             try:
-                numAllSubordinates = int(entry['numAllSubordinates'][0])
+                numAllSubordinates = int(sre.entry_s['numAllSubordinates'][0])
             except KeyError:
-                if numSubordinates is not None:
+                if numSubordinates_attr is not None:
                     ldap_result = self.l.search_s(
-                        self.uc_encode(dn)[0],
+                        dn,
                         ldap0.SCOPE_SUBTREE,
                         '(objectClass=*)',
                         attrlist=[numSubordinates_attr],
                         timeout=COUNT_TIMEOUT
                     )
                     numAllSubordinates = 0
-                    for _, ldap_entry in ldap_result:
-                        numAllSubordinates += int(ldap_entry[numSubordinates_attr][0])
+                    for sre2 in ldap_result:
+                        numAllSubordinates += int(sre2.entry_s.get(numSubordinates_attr, ['0'])[0])
             try:
-                hasSubordinates = (entry['hasSubordinates'][0].upper() == 'TRUE')
+                hasSubordinates = (sre.entry_s['hasSubordinates'][0].upper() == 'TRUE')
             except KeyError:
                 if numSubordinates is not None or numAllSubordinates is not None:
-                    hasSubordinates = (numSubordinates or numAllSubordinates or 0) > 0
-                else:
-                    hasSubordinates = None
+                    hasSubordinates = bool(numSubordinates or numAllSubordinates)
         if hasSubordinates is None:
             # Explicitly search for subordinate entries
-            ldap_msgid = self.l.search(
+            ldap_result = self.l.search_s(
                 self.uc_encode(dn)[0],
                 ldap0.SCOPE_ONELEVEL,
                 '(objectClass=*)',
                 attrlist=['1.1'],
                 sizelimit=1
             )
-
-            ldap_result = (None, None)
-            while ldap_result == (None, None):
-                ldap_result = self.l.result(ldap_msgid, 0)
-            self.l.abandon(ldap_msgid)
-            hasSubordinates = bool(ldap_result)
-        if SearchNoOpControl.controlType in self.rootDSE.get('supportedControl', []):
+            hasSubordinates = bool(ldap_result and ldap_result.rdata)
+        if SearchNoOpControl.controlType in self.supportedControl:
             if not numSubordinates:
                 try:
                     numSubordinates, _ = self.l.noop_search(
-                        self.uc_encode(dn)[0],
+                        dn,
                         ldap0.SCOPE_ONELEVEL,
                         timeout=COUNT_TIMEOUT,
                     )
@@ -869,7 +859,7 @@ class LDAPSession:
             if not numAllSubordinates:
                 try:
                     numAllSubordinates, _ = self.l.noop_search(
-                        self.uc_encode(dn)[0],
+                        dn,
                         ldap0.SCOPE_SUBTREE,
                         timeout=COUNT_TIMEOUT,
                     )
