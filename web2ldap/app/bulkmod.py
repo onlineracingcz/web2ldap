@@ -403,9 +403,9 @@ def w2l_bulkmod(app):
 
         # search the entries to be modified
         ldap_msgid = app.ls.l.search(
-            app.ldap_dn,
+            app.dn,
             scope,
-            bulkmod_filter.encode(app.ls.charset),
+            bulkmod_filter,
             attrlist=['*'] if bulkmod_cp else ['1.1'],
         )
 

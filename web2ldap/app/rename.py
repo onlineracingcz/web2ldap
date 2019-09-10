@@ -156,7 +156,7 @@ def w2l_rename(app):
     if app.schema.sed[ldap0.schema.models.NameForm]:
         # Determine if there are name forms defined for structural object class
         search_result = app.ls.l.read_s(
-            app.ldap_dn,
+            app.dn,
             attrlist=['objectClass', 'structuralObjectClass', 'governingStructureRule'],
         )
         if not search_result:
@@ -164,7 +164,7 @@ def w2l_rename(app):
                 u'Empty search result when reading entry to be renamed.'
             )
 
-        entry = ldap0.schema.models.Entry(app.schema, app.ldap_dn, search_result)
+        entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result)
 
         # Determine possible name forms for new RDN
         rdn_options = entry.get_rdn_templates()
@@ -176,7 +176,7 @@ def w2l_rename(app):
             )
         # Determine LDAP search filter for building a select list for new superior DN
         # based on governing structure rule
-        dit_structure_ruleids = entry.get_possible_dit_structure_rules(app.ldap_dn)
+        dit_structure_ruleids = entry.get_possible_dit_structure_rules(app.dn)
         for dit_structure_ruleid in dit_structure_ruleids:
             sup_structural_ruleids, sup_structural_oc = app.schema.get_superior_structural_oc_names(
                 dit_structure_ruleid

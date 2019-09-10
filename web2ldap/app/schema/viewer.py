@@ -146,7 +146,7 @@ def schema_context_menu(app):
     context_menu_list = []
     sub_schema_dn = None
     try:
-        sub_schema_dn = app.ls.l.search_subschemasubentry_s(app.ldap_dn)
+        sub_schema_dn = app.ls.l.search_subschemasubentry_s(app.dn)
     except ldap0.LDAPError:
         pass
     else:
