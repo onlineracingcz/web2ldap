@@ -631,7 +631,7 @@ def w2l_search(app):
             ])
             resind = len(result_dnlist)
 
-        result_dnlist.sort(key=lambda x: x.dn_s)
+#        result_dnlist.sort(key=lambda x: x.dn_s)
 
         ContextMenuList = [
             app.anchor(
@@ -865,7 +865,7 @@ def w2l_search(app):
                     # Display a search continuation (search reference)
                     entry = ldap0.cidict.CIDict({})
                     try:
-                        refUrl = ExtendedLDAPUrl(r[1][1][0].decode(app.ls.charset))
+                        refUrl = ExtendedLDAPUrl(r.ref_url_strings[0])
                     except ValueError:
                         command_table = []
                         result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (utf2display(str(r[1][1][0])))
@@ -897,7 +897,7 @@ def w2l_search(app):
                                 title=u'Descend into tree following search continuation',
                             ))
 
-                if isinstance(r, SearchResultEntry):
+                elif isinstance(r, SearchResultEntry):
 
                     # Display a search result with entry's data
                     entry = ldap0.schema.models.Entry(app.schema, r.dn_s, r.entry_as)
@@ -1009,7 +1009,7 @@ def w2l_search(app):
                         ))
 
                 else:
-                    raise ValueError('LDAP result of invalid type: %r' % (r[0]))
+                    raise ValueError('LDAP result of invalid type: %r' % (r,))
 
                 # write the search result table row
                 app.outf.write(
