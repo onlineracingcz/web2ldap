@@ -254,11 +254,11 @@ def w2l_passwd(app):
     passwd_action = app.form.getInputValue('passwd_action', [None])[0] or passwd_action_default
     passwd_who = app.form.getInputValue('passwd_who', [app.dn])[0]
 
-    user_entry = app.ls.l.read_s(passwd_who.encode(app.ls.charset), attrlist=[b'objectClass'])
+    user = app.ls.l.read_s(passwd_who, attrlist=['objectClass'])
     user_objectclasses = SchemaElementOIDSet(
         app.schema,
         ObjectClass,
-        user_entry.get('objectClass', []),
+        user.entry_s.get('objectClass', []),
     )
 
     if 'passwd_newpasswd' not in app.form.input_field_names:
@@ -326,7 +326,7 @@ def w2l_passwd(app):
 
         try:
             app.ls.l.passwd_s(
-                passwd_who.encode(app.ls.charset),
+                passwd_who,
                 (old_password or u'').encode(app.ls.charset) or None,
                 passwd_input.encode(app.ls.charset)
             )

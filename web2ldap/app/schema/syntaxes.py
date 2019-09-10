@@ -237,6 +237,7 @@ class LDAPSyntax:
             TypeError('entry must be ldaputil.schema.Entry, was %r' % (entry))
         self._at = attrType
         self._av = attrValue
+        self._av_u = None
         self._app = app
         self._schema = schema
         self._dn = dn
@@ -248,9 +249,7 @@ class LDAPSyntax:
 
     @property
     def av_u(self):
-        try:
-            return self._av_u
-        except AttributeError:
+        if (self._av is not None and self._av_u is None):
             self._av_u = self._app.ls.uc_decode(self._av)[0]
         return self._av_u
 
@@ -357,7 +356,7 @@ class LDAPSyntax:
         This is the inverse of LDAPSyntax.sanitize().
         """
         try:
-            result = self._app.ls.uc_decode(self._av or b'')[0]
+            result = self.av_u or ''
         except UnicodeDecodeError:
             result = u'!!!snipped because of UnicodeDecodeError!!!'
         return result

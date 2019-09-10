@@ -577,9 +577,9 @@ def w2l_search(app):
             if SearchNoOpControl.controlType in app.ls.supportedControl:
                 try:
                     num_all_search_results, num_all_search_continuations = app.ls.l.noop_search(
-                        search_root.encode(app.ls.charset),
+                        search_root,
                         scope,
-                        filterstr=filterstr2.encode(app.ls.charset),
+                        filterstr=filterstr2,
                         timeout=SEARCH_NOOP_TIMEOUT,
                     )
                     if num_all_search_results is not None and num_all_search_continuations is not None:

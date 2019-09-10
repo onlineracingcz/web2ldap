@@ -651,7 +651,7 @@ class AppHandler(LogHelper):
         else:
             error_desc = ldap_err.args[0]['desc'].decode(self.ls.charset)
             try:
-                error_info = ldap_err.args[0].get('info', '').decode(self.ls.charset)
+                error_info = ldap_err.args[0].get('info', '')
             except UnicodeDecodeError:
                 error_info = repr(ldap_err.args[0].get('info', ''))
             except (TypeError, IndexError):

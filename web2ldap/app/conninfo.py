@@ -144,7 +144,7 @@ def w2l_conninfo(app):
     monitored_info = None
     if 'monitorContext' in app.ls.rootDSE:
         # seems to be OpenLDAP's back-monitor
-        monitor_context_dn = app.ls.rootDSE['monitorContext'][0]
+        monitor_context_dn = app.ls.rootDSE['monitorContext'][0].decode(app.ls.charset)
         context_menu_list.append(
             app.anchor(
                 'read', 'Monitor',
@@ -154,8 +154,8 @@ def w2l_conninfo(app):
         try:
             monitored_info = app.ls.l.read_s(
                 monitor_context_dn,
-                attrlist=[b'monitoredInfo']
-            )[b'monitoredInfo'][0].decode(app.ls.charset)
+                attrlist=['monitoredInfo']
+            ).entry_s['monitoredInfo'][0]
         except (ldap0.LDAPError, KeyError):
             pass
         else:
@@ -254,7 +254,7 @@ def w2l_conninfo(app):
 
     for config_dn, txt in config_dn_list:
         try:
-            app.ls.l.read_s(config_dn.encode(app.ls.charset), attrlist=[b'1.1'])
+            app.ls.l.read_s(config_dn, attrlist=['1.1'])
         except ldap0.LDAPError:
             pass
         else:
@@ -301,7 +301,7 @@ def w2l_conninfo(app):
         who_html = 'anonymous'
 
     try:
-        whoami_result = '&quot;%s&quot;' % (app.form.utf2display(app.ls.l.whoami_s().decode(app.ls.charset)))
+        whoami_result = '&quot;%s&quot;' % (app.form.utf2display(app.ls.l.whoami_s()))
     except ldap0.LDAPError as ldap_err:
         whoami_result = '<strong>Failed:</strong> %s' % (app.ldap_error_msg(ldap_err))
 
@@ -343,7 +343,7 @@ def w2l_conninfo(app):
             time.time()-app.ls.connStartTime,
             app.ls.l._reconnects_done,
             app.form.utf2display(vendor_name),
-            app.form.utf2display(app.ls.rootDSE.get(b'vendorVersion', [b''])[0].decode(app.ls.charset)),
+            app.form.utf2display(app.ls.rootDSE.get('vendorVersion', [''])[0]),
             who_html,
             whoami_result,
             app.form.utf2display(sasl_mech),
@@ -354,7 +354,7 @@ def w2l_conninfo(app):
             app.form.utf2display(str(app.naming_context)),
             min(len(app.ls.l.last_search_bases), app.ls.l.last_search_bases.maxlen),
             '<br>'.join([
-                app.display_dn(search_base.decode(app.ls.charset), commandbutton=True)
+                app.display_dn(search_base, commandbutton=True)
                 for search_base in app.ls.l.last_search_bases
             ])
         )

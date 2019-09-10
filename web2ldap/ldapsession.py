@@ -26,6 +26,7 @@ import ldap0.filter
 import ldap0.dn
 from ldap0.base import decode_list, encode_list, decode_entry_dict
 from ldap0.dn import DNObj
+from ldap0.res import SearchResultEntry
 from ldap0.ldapurl import LDAPUrl
 from ldap0.ldapobject import ReconnectLDAPObject
 from ldap0.schema.models import DITStructureRule
@@ -325,7 +326,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def add(self, dn, modlist, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
         return ReconnectLDAPObject.add(
             self,
             dn,
@@ -334,8 +335,8 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def compare(self, dn, attr, value, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
-        assert isinstance(attr, bytes), TypeError("Type of argument 'attr' must be bytes but was %r" % attr)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
+        assert isinstance(attr, str), TypeError("Type of argument 'attr' must be str but was %r" % attr)
         assert isinstance(value, bytes), TypeError("Type of argument 'value' must be bytes but was %r" % value)
         return ReconnectLDAPObject.compare(
             self,
@@ -346,7 +347,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def delete(self, dn, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
         return ReconnectLDAPObject.delete(
             self,
             dn,
@@ -354,7 +355,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def modify(self, dn, modlist, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
         return ReconnectLDAPObject.modify(
             self,
             dn,
@@ -363,7 +364,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def passwd(self, user, oldpw, newpw, req_ctrls=None):
-        assert isinstance(user, bytes), TypeError("Type of argument 'user' must be bytes but was %r" % user)
+        assert isinstance(user, str), TypeError("Type of argument 'user' must be str but was %r" % user)
         assert oldpw is None or isinstance(oldpw, bytes), TypeError("Type of argument 'oldpw' must be None or bytes but was %r" % oldpw)
         assert isinstance(newpw, bytes), TypeError("Type of argument 'newpw' must be bytes but was %r" % newpw)
         return ReconnectLDAPObject.passwd(
@@ -375,8 +376,8 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def rename(self, dn, newrdn, newsuperior=None, delold=1, req_ctrls=None):
-        assert isinstance(dn, bytes), TypeError("Type of argument 'dn' must be bytes but was %r" % dn)
-        assert isinstance(newrdn, bytes), TypeError("Type of argument 'newrdn' must be bytes but was %r" % newrdn)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
+        assert isinstance(newrdn, str), TypeError("Type of argument 'newrdn' must be str but was %r" % newrdn)
         return ReconnectLDAPObject.rename(
             self,
             dn,
@@ -960,7 +961,7 @@ class LDAPSession:
         if not modlist:
             return
         req_ctrls = req_ctrls or []
-        dn_str = dn.encode(self.charset)
+        dn_str = str(dn)
         if AssertionControl.controlType in self.supportedControl and assertion_filter:
             if self.is_openldap:
                 # work-around for OpenLDAP ITS#6916
@@ -1093,9 +1094,9 @@ class LDAPSession:
         # Try to find a unique entry with binddn_mapping
         try:
             result = self.l.search_s(
-                search_base.encode(self.charset),
+                search_base,
                 lu_obj.scope,
-                search_filter.encode(self.charset),
+                search_filter,
                 attrlist=['1.1'],
                 sizelimit=2
             )
@@ -1106,7 +1107,7 @@ class LDAPSession:
             logger.warn('Searching user entry failed: %s', ldap_err)
             raise USERNAME_NOT_FOUND({'desc':'Login did not find a matching user entry.'})
         # Ignore search continuations in search result list
-        result = [r for r in result if r[0] is not None]
+        result = [r for r in result if isinstance(r, SearchResultEntry)]
         if not result:
             logger.warn('No result when searching user entry')
             raise USERNAME_NOT_FOUND({'desc':'Login did not find a matching user entry.'})
@@ -1195,8 +1196,8 @@ class LDAPSession:
             # Call simple bind
             try:
                 self.l.simple_bind_s(
-                    self.uc_encode(who or u'')[0],
-                    self.uc_encode(cred or u'')[0],
+                    who or u'',
+                    (cred or u'').encode(self.charset),
                     req_ctrls=bind_server_ctrls,
                 )
             except ldap0.INVALID_DN_SYNTAX:

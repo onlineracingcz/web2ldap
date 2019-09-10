@@ -306,10 +306,7 @@ def display_authz_dn(app, who=None, entry=None):
             for oc in bound_as_templates.keys():
                 read_attrs.update(GrabKeys(bound_as_templates[oc]).keys)
             try:
-                user_res = app.ls.l.read_s(
-                    who.encode(app.ls.charset),
-                    attrlist=encode_list(read_attrs)
-                )
+                user_res = app.ls.l.read_s(who, attrlist=read_attrs)
             except ldap0.LDAPError:
                 entry = None
             else:
