@@ -199,7 +199,7 @@ def w2l_add(app):
         # Some error in user's input => present input form to edit input values
         web2ldap.app.addmodifyform.w2l_addform(
             app,
-            add_rdn.decode(app.ls.charset), add_basedn.decode(app.ls.charset), entry,
+            add_rdn, add_basedn, entry,
             msg=app.ldap_error_msg(e),
         )
     else:
