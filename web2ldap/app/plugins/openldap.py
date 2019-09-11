@@ -4,6 +4,7 @@ web2ldap plugin classes for OpenLDAP
 """
 
 import re
+import binascii
 
 from pyasn1.codec.ber import decoder as ber_decoder
 
@@ -355,7 +356,7 @@ class ReqControls(IA5String):
     def display(self, valueindex=0, commandbutton=False):
         result_lines = [IA5String.display(self, valueindex, commandbutton)]
         # Eliminate X-ORDERED prefix
-        _, rest = self._av.strip().split('}{', 1)
+        _, rest = self.av_u.strip().split('}{', 1)
         # check whether it ends with }
         if rest.endswith('}'):
             result_lines.append('Extracted:')
@@ -373,7 +374,7 @@ class ReqControls(IA5String):
                 except KeyError:
                     ctrl_name = None
             if ctrl_name:
-                result_lines.append(self._app.form.utf2display(ctrl_name.decode('utf-8')))
+                result_lines.append(self._app.form.utf2display(ctrl_name))
             # Extract criticality
             try:
                 ctrl_criticality = {
@@ -385,7 +386,7 @@ class ReqControls(IA5String):
             result_lines.append('criticality %s' % str(ctrl_criticality).upper())
             # Extract controlValue
             try:
-                ctrl_value = ctrl_tokens[ctrl_tokens.index('controlValue')+1].upper()[1:-1].decode('hex')
+                ctrl_value = binascii.unhexlify(ctrl_tokens[ctrl_tokens.index('controlValue')+1].upper()[1:-1])
             except (KeyError, ValueError, IndexError):
                 pass
             else:
@@ -396,7 +397,7 @@ class ReqControls(IA5String):
                 result_lines.append(
                     'controlValue %s' % (
                         self._app.form.utf2display(
-                            repr(decoded_control_value).decode('ascii')
+                            repr(decoded_control_value)
                         ).replace('\n', '<br>')
                     )
                 )
