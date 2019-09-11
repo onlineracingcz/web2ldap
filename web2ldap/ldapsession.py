@@ -326,7 +326,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def add(self, dn, modlist, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
         return ReconnectLDAPObject.add(
             self,
             dn,
@@ -335,9 +335,9 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def compare(self, dn, attr, value, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
-        assert isinstance(attr, str), TypeError("Type of argument 'attr' must be str but was %r" % attr)
-        assert isinstance(value, bytes), TypeError("Type of argument 'value' must be bytes but was %r" % value)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
+        assert isinstance(attr, str), TypeError("Type of argument 'attr' must be str but was %r" % (attr,))
+        assert isinstance(value, bytes), TypeError("Type of argument 'value' must be bytes but was %r" % (value,))
         return ReconnectLDAPObject.compare(
             self,
             dn,
@@ -347,7 +347,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def delete(self, dn, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
         return ReconnectLDAPObject.delete(
             self,
             dn,
@@ -355,7 +355,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def modify(self, dn, modlist, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
         return ReconnectLDAPObject.modify(
             self,
             dn,
@@ -376,7 +376,7 @@ class MyLDAPObject(ReconnectLDAPObject):
         )
 
     def rename(self, dn, newrdn, newsuperior=None, delold=1, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % dn)
+        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
         assert isinstance(newrdn, str), TypeError("Type of argument 'newrdn' must be str but was %r" % newrdn)
         return ReconnectLDAPObject.rename(
             self,
