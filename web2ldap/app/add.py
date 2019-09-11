@@ -37,30 +37,6 @@ ADD_IGNORE_ATTR_TYPES = {
 }
 
 
-def ModlistTable(schema, modlist):
-    """
-    Return a string containing a HTML table showing attr type/value pairs
-    """
-    s = []
-    s.append('<table summary="Modify list">')
-    for attr_type, attr_value in modlist:
-        if web2ldap.app.schema.no_humanreadable_attr(schema, attr_type):
-            tablestr = '%s bytes of binary data' % (
-                ' + '.join([str(len(x)) for x in attr_value])
-            )
-        else:
-            tablestr = '<br>'.join([
-                escape_html(repr(v))
-                for v in attr_value
-            ])
-        s.append('<tr><td>%s</td><td>%s</td></tr>' % (
-            escape_html(attr_type),
-            tablestr,
-        ))
-    s.append('</table>')
-    return '\n'.join(s) # ModlistTable()
-
-
 def w2l_add(app):
 
     input_modrow = app.form.getInputValue('in_mr', ['.'])[0]
@@ -92,7 +68,7 @@ def w2l_add(app):
         add_dn_obj = DNObj.from_str(add_dn.decode(app.ls.charset))
         add_rdn, add_basedn = str(add_dn_obj.rdn()), str(add_dn_obj.parent())
         add_basedn = add_basedn or app.dn
-        entry = ldap0.schema.models.Entry(app.schema, add_basedn.encode(app.ls.charset), entry)
+        entry = ldap0.schema.models.Entry(app.schema, add_basedn, entry)
     else:
         entry, invalid_attrs = web2ldap.app.addmodifyform.get_entry_input(app)
         add_rdn = app.form.getInputValue('add_rdn', [''])[0]
@@ -130,15 +106,12 @@ def w2l_add(app):
 
     # Filter out empty values
     for attr_type, attr_values in entry.items():
-        entry[attr_type] = filter(None, attr_values)
+        entry[attr_type] = [av for av in attr_values if av]
 
     # If rdn does not contain a complete RDN try to determine
     # the attribute type for forming the RDN.
     try:
-        rdn_list = [
-            tuple(rdn_comp.split('=', 1))
-            for rdn_comp in DNObj.from_str(add_rdn)
-        ]
+        rdn_list = list(DNObj.from_str(add_rdn).rdn_attrs().items())
     except ldap0.DECODING_ERROR:
         web2ldap.app.addmodifyform.w2l_addform(
             app,
@@ -157,7 +130,7 @@ def w2l_add(app):
                 (not rdn_attr_value and len(entry[rdn_attr_type]) == 1) or
                 rdn_attr_value in entry[rdn_attr_type]
             ):
-            rdn_list[i] = rdn_attr_type, entry[rdn_attr_type][0]
+            rdn_list[i] = rdn_attr_type, entry[rdn_attr_type][0].decode(app.ls.charset)
         else:
             web2ldap.app.addmodifyform.w2l_addform(
                 app,
@@ -173,12 +146,13 @@ def w2l_add(app):
     rdn = DNObj((tuple(rdn_list),))
 
     # Generate list of modifications
-    modlist = ldap0.modlist.add_modlist(
-        dict(entry.items()),
-        ignore_attr_types=ADD_IGNORE_ATTR_TYPES,
-    )
+    add_entry = {
+        av: avs
+        for av, avs in entry.items()
+        if av not in ADD_IGNORE_ATTR_TYPES
+    }
 
-    if not modlist:
+    if not add_entry:
         raise web2ldap.app.core.ErrorExit(u'Cannot add entry without attribute values.')
 
     if app.dn:
@@ -195,8 +169,8 @@ def w2l_add(app):
     # Try to add the new entry
     try:
         add_result = app.ls.l.add_s(
-            new_dn.encode(app.ls.charset),
-            modlist,
+            str(new_dn),
+            add_entry,
             req_ctrls=add_req_ctrls
         )
     except ldap0.NO_SUCH_OBJECT as e:
@@ -236,8 +210,7 @@ def w2l_add(app):
             if c.controlType == PostReadControl.controlType
         ]
         if prec_ctrls:
-            new_dn = prec_ctrls[0].dn
-        new_dn_u = new_dn.decode(app.ls.charset)
+            new_dn = prec_ctrls[0].res.dn_s
         app.simple_message(
             'Added Entry',
             """
@@ -246,17 +219,14 @@ def w2l_add(app):
             <dl>
               <dt>Distinguished name:</dt>
               <dd>%s</dd>
-              <dt>Entry data:</dt>
-              <dd>%s</dd>
             </dl>
             """ % (
                 app.anchor(
                     'read', 'Read added entry',
-                    [('dn', new_dn_u)],
-                    title=u'Display added entry %s' % new_dn_u,
+                    [('dn', new_dn)],
+                    title=u'Display added entry %s' % new_dn,
                 ),
-                app.display_dn(new_dn_u, commandbutton=0),
-                ModlistTable(app.schema, modlist)
+                app.display_dn(new_dn, commandbutton=0),
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=[]

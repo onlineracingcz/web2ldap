@@ -844,7 +844,11 @@ def ObjectClassForm(
                 ObjectClass,
                 restricted_structural_oc
             )
-            entry = ldap0.schema.models.Entry(app.schema, ldif_dn, ldif_entry)
+            entry = ldap0.schema.models.Entry(
+                app.schema,
+                ldif_dn.decode(app.ls.charset),
+                {at.decode('ascii'): avs for at, avs in ldif_entry.items()}
+            )
             soc = entry.get_structural_oc()
             if soc and soc in restricted_structural_oc_set:
                 try:
