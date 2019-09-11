@@ -181,7 +181,7 @@ class Web2LDAPConfigDict(LogHelper):
             self.log(logging.ERROR, 'Unknown config parameter %r requested', param)
             raise ValueError('Unknown config parameter %r requested' % (param))
         uri = uri.lower()
-        naming_context = naming_context.lower()
+        naming_context = str(naming_context).lower()
         result = default
         for cfg_key in (
                 (uri, naming_context),
