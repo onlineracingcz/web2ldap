@@ -188,8 +188,6 @@ class AppHandler(LogHelper):
         """
         set current DN and related class attributes
         """
-        if isinstance(dn, bytes) and self.ls is not None:
-            dn = dn.decode(self.ls.charset)
         assert ldap0.dn.is_dn(dn), ValueError(
             'Expected LDAP DN as dn, was %r' % (dn)
         )
