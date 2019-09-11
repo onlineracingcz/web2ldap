@@ -35,8 +35,8 @@ ldap_uri_list = [
         u'Local LDAP server on port 1390',
     ),
     (
-        'ldapi://%2Frun%2Fslapd%2Fldapi',
-        u'Local LDAPI server (path /run/slapd/ldapi)',
+        'ldapi:///????x-saslmech=EXTERNAL',
+        u'Local LDAPI access with SASL-EXTERNAL',
     ),
     (
         (
