@@ -12,6 +12,7 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
+import binascii
 import sys
 import os
 import re
@@ -1202,10 +1203,11 @@ class OctetString(Binary):
     bytes_split = 16
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        attrValue = attrValue.translate(None, ': ,\r\n')
+        attrValue = attrValue.translate(None, b': ,\r\n')
         try:
-            result_str = attrValue.decode('hex')
-        except TypeError as e:
+            # FIX ME! This won't work with Python 3!
+            result_str = binascii.unhexlify(attrValue)
+        except binascii.Error as e:
             raise LDAPSyntaxValueError('Illegal human-readable OctetString representation: %s' % e)
         return result_str
 
@@ -1266,15 +1268,15 @@ class MultilineText(DirectoryString):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         return attrValue.replace(
-            b'\r', u''
+            b'\r', b''
         ).replace(
             b'\n', self.lineSep
-        ).encode(self._app.ls.charset)
+        )
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         lines = [
-            self._app.form.utf2display(l)
-            for l in self._split_lines(self.av_u)
+            self._app.form.utf2display(self._app.ls.uc_decode(line_b)[0])
+            for line_b in self._split_lines(self._av)
         ]
         return '<br>'.join(lines)
 
