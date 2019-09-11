@@ -116,7 +116,7 @@ def w2l_modify(app):
 
     # Filter out empty values
     for attr_type, attr_values in new_entry.items():
-        new_entry[attr_type] = filter(None, attr_values)
+        new_entry[attr_type] = [av for av in attr_values if av]
 
     # Set up a dictionary of all attribute types to be ignored
     ignore_attr_types = ldap0.schema.models.SchemaElementOIDSet(
