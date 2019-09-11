@@ -520,7 +520,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         for attr_type in self.entry.keys():
             attr_values = self.entry.__getitem__(attr_type)
             if not web2ldap.app.schema.no_userapp_attr(self.entry._s, attr_type):
-                ldap_entry[attr_type] = [
+                ldap_entry[attr_type.encode('ascii')] = [
                     attr_value
                     for attr_value in attr_values
                     if attr_value
