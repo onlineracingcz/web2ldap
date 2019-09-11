@@ -399,7 +399,7 @@ def w2l_search(app):
 
     search_lastmod = int(app.form.getInputValue('search_lastmod', [-1])[0])
     if search_lastmod > 0:
-        timestamp_str = str(time.strftime('%Y%m%d%H%M%S', time.gmtime(time.time()-search_lastmod)), 'ascii')
+        timestamp_str = time.strftime('%Y%m%d%H%M%S', time.gmtime(time.time()-search_lastmod))
         if '1.2.840.113556.1.2.2' in app.schema.sed[AttributeType] and \
            '1.2.840.113556.1.2.3' in app.schema.sed[AttributeType]:
             # Assume we're searching MS Active Directory
