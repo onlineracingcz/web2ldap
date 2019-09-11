@@ -235,10 +235,7 @@ class SearchAttrs(Input):
         value = ','.join(
             filter(
                 None,
-                map(
-                    str.strip,
-                    value.replace(' ', ',').split(',')
-                )
+                map(str.strip, value.replace(' ', ',').split(','))
             )
         )
         Input.set_value(self, value)
