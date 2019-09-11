@@ -867,7 +867,7 @@ class Integer(IA5String):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         try:
-            return str(int(attrValue))
+            return str(int(attrValue)).encode('ascii')
         except ValueError:
             return attrValue
 
