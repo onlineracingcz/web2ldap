@@ -185,7 +185,7 @@ class DisplayEntry(UserDict):
             if oc_obj is None or oc_obj.kind != 0:
                 object_class_oid_set.add(oc)
         template_oc = object_class_oid_set.intersection(read_template_dict.data.keys())
-        return template_oc.names(), read_template_dict
+        return template_oc.names, read_template_dict
         # get_html_templates()
 
     def template_output(self, cnf_key, display_duplicate_attrs=True):
@@ -370,7 +370,7 @@ def w2l_read(app):
         ldap0.schema.models.AttributeType,
         app.form.getInputValue('read_attr', app.ldap_url.attrs or []),
     )
-    wanted_attrs = wanted_attr_set.names()
+    wanted_attrs = wanted_attr_set.names
 
     # Specific attributes requested with form parameter search_attrs?
     search_attrs = app.form.getInputValue('search_attrs', [u''])[0]
@@ -404,7 +404,7 @@ def w2l_read(app):
             search_result = app.ls.l.read_s(
                 app.dn,
                 filterstr=filterstr,
-                attrlist=requested_attrs.names(),
+                attrlist=requested_attrs.names,
                 cache_ttl=None if read_nocache else -1.0,
             )
         except (

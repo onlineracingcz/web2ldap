@@ -426,7 +426,7 @@ def w2l_search(app):
     ]
 
     search_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, AttributeType, search_attrs)
-    search_attrs = search_attr_set.names()
+    search_attrs = search_attr_set.names
 
     search_ldap_url = app.ls.ldapUrl(dn=search_root or str(app.naming_context))
     search_ldap_url.filterstr = filterstr2
@@ -451,7 +451,7 @@ def w2l_search(app):
                 pass
             else:
                 read_attr_set.update(GrabKeys(print_template_str_dict[oc]).keys)
-        read_attrs = read_attr_set.names()
+        read_attrs = read_attr_set.names
         result_handler = PrintableHTMLWriter(app, search_root, app.schema, print_template_str_dict)
 
     elif search_output in {'table', 'raw'}:
@@ -478,7 +478,7 @@ def w2l_search(app):
             for oc in search_tdtemplate_keys:
                 read_attr_set.update(GrabKeys(search_tdtemplate[oc]).keys)
         read_attr_set.discard('entryDN')
-        read_attrs = read_attr_set.names()
+        read_attrs = read_attr_set.names
 
         # Create async search handler instance
         result_handler = web2ldap.ldaputil.asynch.List(app.ls.l)
@@ -914,7 +914,7 @@ def w2l_search(app):
                             ldap0.schema.models.ObjectClass,
                             decode_list(entry.get('objectClass', []), encoding='ascii'),
                         )
-                        tdtemplate_oc = oc_set.intersection(search_tdtemplate_keys).names()
+                        tdtemplate_oc = oc_set.intersection(search_tdtemplate_keys).names
                         tableentry_attrs = None
 
                         if tdtemplate_oc:
