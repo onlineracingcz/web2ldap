@@ -688,7 +688,7 @@ class LDAPSession:
             ):
             self.namingContexts.update([
                 DNObj.from_str('' if val == b'\x00' else val.decode(self.charset))
-                for val in self.rootDSE.get(rootdse_naming_attrtype.encode('ascii'), [])
+                for val in self.rootDSE.get(rootdse_naming_attrtype, [])
             ])
         for attr_type in (
                 'supportedLDAPVersion',
@@ -708,7 +708,7 @@ class LDAPSession:
                 )
             )
         for attr_type in ('vendorName', 'vendorVersion'):
-            setattr(self, attr_type, self.rootDSE.get(attr_type.encode('ascii'), [None])[0])
+            setattr(self, attr_type, self.rootDSE.get(attr_type, [None])[0])
         # determine whether server returns all operational attributes (RFC 3673)
         self.supportsAllOpAttr = (
             '1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures
