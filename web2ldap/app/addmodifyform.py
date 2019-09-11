@@ -811,7 +811,7 @@ def ObjectClassForm(
             if addform_parent_attrs:
                 try:
                     parent_result = app.ls.l.read_s(
-                        tmpl_parent_dn.encode(app.ls.charset),
+                        tmpl_parent_dn,
                         attrlist=addform_parent_attrs,
                     )
                 except (ldap0.NO_SUCH_OBJECT, ldap0.INSUFFICIENT_ACCESS):
@@ -820,8 +820,8 @@ def ObjectClassForm(
                     continue
                 parent_entry = ldap0.schema.models.Entry(
                     app.schema,
-                    tmpl_parent_dn.encode(app.ls.charset),
-                    parent_result,
+                    tmpl_parent_dn,
+                    parent_result.entry_as,
                 )
                 missing_parent_attrs = set([
                     attr_type

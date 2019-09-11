@@ -1261,11 +1261,10 @@ class LDAPSession:
         Determine the governing structure rule for the entry specified with dn
         in the subschema specified in argument schema
         """
-        ldap_dn = self.uc_encode(dn)[0]
         governing_structure_rule = None
         try:
             search_result = self.l.read_s(
-                ldap_dn,
+                dn,
                 attrlist=(
                     'objectClass',
                     'structuralObjectClass',
@@ -1279,7 +1278,7 @@ class LDAPSession:
             return None
         if not search_result:
             return None
-        entry = ldap0.schema.models.Entry(schema, ldap_dn, search_result)
+        entry = ldap0.schema.models.Entry(schema, dn, search_result.entry_as)
         try:
             # Try to directly read the governing structure rule ID
             # from operational attribute in entry
@@ -1289,7 +1288,7 @@ class LDAPSession:
         else:
             return governing_structure_rule
         possible_dit_structure_rules = {}.fromkeys((
-            entry.get_possible_dit_structure_rules(ldap_dn) or []
+            entry.get_possible_dit_structure_rules(dn) or []
         ))
         parent_dn = str(DNObj.from_str(dn).parent())
         administrative_roles = entry.get('administrativeRole', [])
@@ -1300,7 +1299,7 @@ class LDAPSession:
                 dit_structure_rule_obj = schema.get_obj(DITStructureRule, dit_structure_rule_id)
                 if dit_structure_rule_obj.sup:
                     del possible_dit_structure_rules[dit_structure_rule_id]
-        dit_structure_rules = possible_dit_structure_rules.keys()
+        dit_structure_rules = list(possible_dit_structure_rules.keys())
         if not dit_structure_rules:
             governing_structure_rule = None
         elif len(dit_structure_rules) == 1:
