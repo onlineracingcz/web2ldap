@@ -167,6 +167,8 @@ def get_entry_input(app):
             continue
         attr_values = []
         for in_value in in_values:
+            if not in_value:
+                continue
             attr_instance = syntax_registry.get_at(
                 app, app.dn, app.schema,
                 attr_type, None,
@@ -176,6 +178,13 @@ def get_entry_input(app):
                 attr_value = attr_instance.sanitize(in_value)
             except LDAPSyntaxValueError:
                 attr_value = in_value
+            assert isinstance(attr_value, (bytes, None)), TypeError(
+                'Expected %s.sanitize(%r) to return bytes or None, got %r' % (
+                    attr_instance.__class__.__name__,
+                    in_value,
+                    attr_value,
+                )
+            )
             attr_values.append(attr_value)
         entry[attr_type] = attr_values
 
@@ -207,8 +216,15 @@ def get_entry_input(app):
                 new_values = attr_instance.transmute(attr_values)
             except (KeyError, IndexError):
                 entry_changed = True
-                entry[attr_type] = ['']
+                entry[attr_type] = [b'']
             else:
+                assert not attr_values or isinstance(attr_values[0], bytes), TypeError(
+                    'Expected %s.transmute(%r) to return list of bytes, got %r' % (
+                        attr_instance.__class__.__name__,
+                        attr_values,
+                        new_values,
+                    )
+                )
                 entry_changed = entry_changed or (new_values != attr_values)
                 entry[attr_type] = new_values
 
@@ -232,9 +248,9 @@ def get_entry_input(app):
                     attr_instance.validate(attr_value)
                 except LDAPSyntaxValueError:
                     try:
-                        invalid_attrs[str(attr_type)].append(attr_index)
+                        invalid_attrs[attr_type].append(attr_index)
                     except KeyError:
-                        invalid_attrs[str(attr_type)] = [attr_index]
+                        invalid_attrs[attr_type] = [attr_index]
 
     return entry, invalid_attrs # get_entry_input()
 

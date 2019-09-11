@@ -468,8 +468,8 @@ class DirectoryString(LDAPSyntax):
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
-            _ = self._app.ls.uc_encode(self._app.ls.uc_decode(attrValue)[0])[0]
-        except UnicodeError:
+            self._app.ls.uc_decode(attrValue)
+        except UnicodeDecodeError:
             return False
         return True
 
@@ -655,36 +655,36 @@ class GeneralizedTime(IA5String):
     desc = 'Generalized Time'
     inputSize = 24
     maxLen = 24
-    reObj = re.compile(r'^([0-9]){12,14}((\.|,)[0-9]+)*(Z|(\+|-)[0-9]{4})$')
+    reObj = re.compile('^([0-9]){12,14}((\.|,)[0-9]+)*(Z|(\+|-)[0-9]{4})$')
     timeDefault = None
     notBefore = None
     notAfter = None
-    formValueFormat = r'%Y-%m-%dT%H:%M:%SZ'
+    formValueFormat = '%Y-%m-%dT%H:%M:%SZ'
     dtFormats = (
-        r'%Y%m%d%H%M%SZ',
-        r'%Y-%m-%dT%H:%M:%SZ',
-        r'%Y-%m-%dT%H:%MZ',
-        r'%Y-%m-%dT%H:%M:%S+00:00',
-        r'%Y-%m-%dT%H:%M:%S-00:00',
-        r'%Y-%m-%d %H:%M:%SZ',
-        r'%Y-%m-%d %H:%MZ',
-        r'%Y-%m-%d %H:%M',
-        r'%Y-%m-%d %H:%M:%S+00:00',
-        r'%Y-%m-%d %H:%M:%S-00:00',
-        r'%d.%m.%YT%H:%M:%SZ',
-        r'%d.%m.%YT%H:%MZ',
-        r'%d.%m.%YT%H:%M:%S+00:00',
-        r'%d.%m.%YT%H:%M:%S-00:00',
-        r'%d.%m.%Y %H:%M:%SZ',
-        r'%d.%m.%Y %H:%MZ',
-        r'%d.%m.%Y %H:%M',
-        r'%d.%m.%Y %H:%M:%S+00:00',
-        r'%d.%m.%Y %H:%M:%S-00:00',
+        '%Y%m%d%H%M%SZ',
+        '%Y-%m-%dT%H:%M:%SZ',
+        '%Y-%m-%dT%H:%MZ',
+        '%Y-%m-%dT%H:%M:%S+00:00',
+        '%Y-%m-%dT%H:%M:%S-00:00',
+        '%Y-%m-%d %H:%M:%SZ',
+        '%Y-%m-%d %H:%MZ',
+        '%Y-%m-%d %H:%M',
+        '%Y-%m-%d %H:%M:%S+00:00',
+        '%Y-%m-%d %H:%M:%S-00:00',
+        '%d.%m.%YT%H:%M:%SZ',
+        '%d.%m.%YT%H:%MZ',
+        '%d.%m.%YT%H:%M:%S+00:00',
+        '%d.%m.%YT%H:%M:%S-00:00',
+        '%d.%m.%Y %H:%M:%SZ',
+        '%d.%m.%Y %H:%MZ',
+        '%d.%m.%Y %H:%M',
+        '%d.%m.%Y %H:%M:%S+00:00',
+        '%d.%m.%Y %H:%M:%S-00:00',
     )
     acceptableDateformats = (
-        r'%Y-%m-%d',
-        r'%d.%m.%Y',
-        r'%m/%d/%Y',
+        '%Y-%m-%d',
+        '%d.%m.%Y',
+        '%m/%d/%Y',
     )
     dtDisplayFormat = (
         '<time datetime="%Y-%m-%dT%H:%M:%SZ">'
@@ -712,56 +712,60 @@ class GeneralizedTime(IA5String):
         return result
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        attrValue = attrValue.strip().upper()
+        av_u = self._app.ls.uc_decode(attrValue.strip().upper())[0]
         # Special cases first
-        if attrValue in ('N', 'NOW', '0'):
-            return datetime.datetime.strftime(datetime.datetime.utcnow(), r'%Y%m%d%H%M%SZ')
+        if av_u in {'N', 'NOW', '0'}:
+            return datetime.datetime.strftime(datetime.datetime.utcnow(), r'%Y%m%d%H%M%SZ').encode('ascii')
         # a single integer value is interpreted as seconds relative to now
         try:
-            float_val = float(attrValue)
+            float_val = float(av_u)
         except ValueError:
             pass
         else:
             return datetime.datetime.strftime(
                 datetime.datetime.utcnow()+datetime.timedelta(seconds=float_val),
                 r'%Y%m%d%H%M%SZ',
-            )
+            ).encode('ascii')
         if self.timeDefault:
             date_format = r'%Y%m%d'+self.timeDefault+'Z'
-            if attrValue in ('T', 'TODAY'):
+            if av_u in ('T', 'TODAY'):
                 return datetime.datetime.strftime(
                     datetime.datetime.utcnow(),
                     date_format,
-                )
-            elif attrValue in ('Y', 'YESTERDAY'):
+                ).encode('ascii')
+            elif av_u in ('Y', 'YESTERDAY'):
                 return datetime.datetime.strftime(
                     datetime.datetime.today()-datetime.timedelta(days=1),
                     date_format,
-                )
-            elif attrValue in ('T', 'TOMORROW'):
+                ).encode('ascii')
+            elif av_u in ('T', 'TOMORROW'):
                 return datetime.datetime.strftime(
                     datetime.datetime.today()+datetime.timedelta(days=1),
                     date_format,
-                )
+                ).encode('ascii')
         # Try to parse various datetime syntaxes
         for time_format in self.dtFormats:
             try:
-                dt = datetime.datetime.strptime(attrValue, time_format)
+                dt = datetime.datetime.strptime(av_u, time_format)
             except ValueError:
                 result = None
             else:
                 result = datetime.datetime.strftime(dt, r'%Y%m%d%H%M%SZ')
                 break
-        if result is None and self.timeDefault:
-            for time_format in self.acceptableDateformats or []:
-                try:
-                    dt = datetime.datetime.strptime(attrValue, time_format)
-                except ValueError:
-                    result = IA5String.sanitize(self, attrValue)
-                else:
-                    result = datetime.datetime.strftime(dt, r'%Y%m%d'+self.timeDefault+'Z')
-                    break
-        return result # sanitize()
+        if result is None:
+            if self.timeDefault:
+                for time_format in self.acceptableDateformats or []:
+                    try:
+                        dt = datetime.datetime.strptime(av_u, time_format)
+                    except ValueError:
+                        result = IA5String.sanitize(self, av_u)
+                    else:
+                        result = datetime.datetime.strftime(dt, r'%Y%m%d'+self.timeDefault+'Z')
+                        break
+            else:
+                return None
+        return result.encode('ascii')
+        # end of GeneralizedTime.sanitize()
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
@@ -1857,12 +1861,12 @@ class DynamicValueSelectList(SelectList, DirectoryString):
 class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
     oid = 'DynamicDNSelectList-oid'
 
-    def _get_ref_entry(self, dn, attrlist=None):
+    def _get_ref_entry(self, dn: str, attrlist=None) -> dict:
         try:
-            ref_entry = self._app.ls.l.read_s(
+            sre = self._app.ls.l.read_s(
                 dn,
                 attrlist=attrlist or self.lu_obj.attrs,
-                filterstr=self._filterstr().encode(self._app.ls.charset),
+                filterstr=self._filterstr(),
             )
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -1872,14 +1876,19 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
                 ldap0.REFERRAL,
             ):
             return None
-        return ref_entry
+        if sre is None:
+            return None
+        return sre.entry_s
 
     def _validate(self, attrValue: bytes) -> bool:
-        return self._get_ref_entry(attrValue, attrlist=[b'1.1']) is not None
+        return self._get_ref_entry(
+            self._app.ls.uc_decode(attrValue)[0],
+            attrlist=['1.1']
+        ) is not None
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         if commandbutton and self.lu_obj.attrs:
-            ref_entry = self._get_ref_entry(self._av) or {}
+            ref_entry = self._get_ref_entry(self.av_u) or {}
             try:
                 attr_value_desc = self._app.ls.uc_decode(ref_entry[self.lu_obj.attrs[0]][0])[0]
             except (KeyError, IndexError):
@@ -1897,7 +1906,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
 class DerefDynamicDNSelectList(DynamicDNSelectList):
     oid = 'DerefDynamicDNSelectList-oid'
 
-    def _get_ref_entry(self, dn, attrlist=None):
+    def _get_ref_entry(self, dn: str, attrlist=None) -> dict:
         deref_crtl = DereferenceControl(True, {self._at: self.lu_obj.attrs})
         try:
             ldap_result = self._app.ls.l.search_s(
@@ -1915,12 +1924,12 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 ldap0.REFERRAL,
             ):
             return None
-        for ref_dn, ref_entry in ldap_result.ctrls[0].derefRes[self._at]:
-            if ref_dn == dn:
-                break
-        else:
-            ref_entry = None
-        return ref_entry
+        if ldap_result is None:
+            return None
+        for ref in ldap_result.ctrls[0].derefRes[self._at]:
+            if ref.dn_s == dn:
+                return ref.entry_s
+        return None
 
     def _validate(self, attrValue: bytes) -> bool:
         return SelectList._validate(self, attrValue)
@@ -2284,15 +2293,16 @@ class ComposedAttribute(LDAPSyntax):
         first value of an attribute value list
         """
 
-        def __init__(self, entry=None):
+        def __init__(self, entry, encoding):
             dict.__init__(self)
+            self._encoding = encoding
             entry = entry or {}
             for key, val in entry.items():
                 self.__setitem__(key, val)
 
         def __setitem__(self, key, val):
             if val and val[0]:
-                dict.__setitem__(self, key, val[0])
+                dict.__setitem__(self, key, val[0].decode(self._encoding))
 
     def formValue(self) -> str:
         """
@@ -2306,16 +2316,16 @@ class ComposedAttribute(LDAPSyntax):
         always returns a list with a single value based on the first
         successfully applied compose template
         """
-        entry = self.SingleValueDict(self._entry)
+        entry = self.SingleValueDict(self._entry, encoding=self._app.ls.charset)
         for template in self.compose_templates:
             try:
-                attr_values = [template.format(**entry)]
+                attr_values = [template.format(**entry).encode(self._app.ls.charset)]
             except KeyError:
                 continue
             else:
                 break
         else:
-            attr_values = attrValues
+            return attrValues
         return attr_values
 
     def formField(self):

@@ -161,24 +161,26 @@ class AEHomeDirectory(HomeDirectory):
     homeDirectoryHidden = '-/-'
 
     def _validate(self, attrValue: bytes) -> bool:
+        av_u = self._app.ls.uc_decode(attrValue)[0]
         if attrValue == self.homeDirectoryHidden:
             return True
         for prefix in self.homeDirectoryPrefixes:
-            if attrValue.startswith(prefix):
-                uid = self._entry.get('uid', [b''])[0]
-                return attrValue.endswith(uid)
+            if av_u.startswith(prefix):
+                uid = self._app.ls.uc_decode(self._entry.get('uid', [b''])[0])[0]
+                return av_u.endswith(uid)
         return False
 
     def transmute(self, attrValues):
         if attrValues == [self.homeDirectoryHidden]:
             return attrValues
-        uid = self._entry.get('uid', [''])[0]
+        uid = self._app.ls.uc_decode(self._entry.get('uid', [''])[0])[0]
+        av_u = self._app.ls.uc_decode(attrValues[0])[0]
         for prefix in self.homeDirectoryPrefixes:
-            if attrValues[0].startswith(prefix):
+            if av_u.startswith(prefix):
                 break
         else:
             prefix = self.homeDirectoryPrefixes[0]
-        return ['/'.join((prefix, uid))]
+        return [self._app.ls.uc_encode('/'.join((prefix, uid)))[0]]
 
     def formField(self):
         input_field = HiddenInput(
@@ -1322,7 +1324,7 @@ class AEPerson2(AEPerson):
     def formValue(self) -> str:
         form_value = DistinguishedName.formValue(self)
         if self._av:
-            person_entry = self._get_ref_entry(self._av)
+            person_entry = self._get_ref_entry(self.av_u)
             if person_entry:
                 form_value = person_entry.get(
                     'displayName',
@@ -1391,8 +1393,8 @@ class AEDerefAttribute(DirectoryString):
 
     def _read_person_attr(self):
         try:
-            person_entry = self._app.ls.l.read_s(
-                self._entry[self.deref_attribute_type][0],
+            sre = self._app.ls.l.read_s(
+                self._entry[self.deref_attribute_type][0].decode(self._app.ls.charset),
                 attrlist=[self._at],
                 filterstr=self.deref_filter_tmpl.format(
                     deref_object_class=self.deref_object_class,
@@ -1400,13 +1402,10 @@ class AEDerefAttribute(DirectoryString):
                 ),
             )
         except ldap0.LDAPError:
-            result = None
-        else:
-            if person_entry:
-                result = person_entry[self._at][0].decode(self._app.ls.charset)
-            else:
-                result = None
-        return result
+            return None
+        if sre is None:
+            return None
+        return sre.entry_s[self._at][0]
 
     def transmute(self, attrValues):
         if self.deref_attribute_type in self._entry:
