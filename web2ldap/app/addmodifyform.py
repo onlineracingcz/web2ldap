@@ -296,7 +296,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
     def _reset_input_counters(self):
         self.attr_counter = 0
         self.row_counter = 0
-        return # _reset_input_counters()
+        # end of _reset_input_counters()
 
     def __getitem__(self, nameoroid):
         """
@@ -491,14 +491,14 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                 )
             )
         self._app.outf.write('</table>\n</fieldset>\n')
-        return # fieldset_table()
+        # end of fieldset_table()
 
     def table_input(self, attrs_dict_list):
         self._reset_input_counters()
         for attr_dict, fieldset_title in attrs_dict_list:
             if attr_dict:
                 self.fieldset_table(attr_dict, fieldset_title)
-        return # table_input()
+        # end of table_input()
 
     def template_output(self, cnf_key, display_duplicate_attrs=True):
         self._reset_input_counters()
@@ -553,7 +553,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                 text_ldifurlschemes=', '.join(web2ldapcnf.ldif_url_schemes)
             )
         )
-        return # ldif_input()
+        # end of ldif_input()
 
 
 def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
@@ -965,7 +965,7 @@ def ObjectClassForm(
         )
     )
     web2ldap.app.gui.footer(app)
-    return # ObjectClassForm()
+    # end of ObjectClassForm()
 
 
 def ReadLDIFTemplate(app, template_name):
@@ -1255,7 +1255,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
 
     app.outf.write('</form>')
     web2ldap.app.gui.footer(app)
-    return # w2l_addform()
+    # end of w2l_addform()
 
 
 def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
@@ -1379,4 +1379,4 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
     app.outf.write('</form>')
     web2ldap.app.gui.footer(app)
-    return # w2l_modifyform()
+    # end of w2l_modifyform()

@@ -64,7 +64,7 @@ class AsyncSearchHandler:
             sizelimit=sizelimit,
         )
         self._after_first = True
-        return # start_search()
+        # end of start_search()
 
     def pre_processing(self):
         """

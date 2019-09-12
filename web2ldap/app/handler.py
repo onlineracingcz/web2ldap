@@ -174,7 +174,7 @@ class AppHandler(LogHelper):
             self.ldap_url = ExtendedLDAPUrl(self.query_string)
             if not self.command:
                 self.command = SCOPE2COMMAND[self.ldap_url.scope]
-        return
+        # end of __init__()
 
     @property
     def dn(self):
@@ -363,7 +363,7 @@ class AppHandler(LogHelper):
             COMMAND_FUNCTION[self.command].__name__,
         )
         COMMAND_FUNCTION[self.command](self)
-        return # dispatch()
+        # end of dispatch()
 
     def path_info(self, env):
         """
@@ -415,7 +415,7 @@ class AppHandler(LogHelper):
         )
         self.outf.write(message)
         web2ldap.app.gui.footer(self)
-        return # simple_message()
+        # end of simple_message()
 
     def simple_msg(self, msg):
         """
@@ -456,7 +456,7 @@ class AppHandler(LogHelper):
                 link_text=link_text,
             )
         )
-        return # url_redirect()
+        # end of url_redirect()
 
     def _new_session(self):
         """
@@ -470,7 +470,7 @@ class AppHandler(LogHelper):
         )
         self.ls.cookie = self.form.set_cookie(str(id(self.ls)))
         session_store.save(self.sid, self.ls)
-        return # end of _get_session()
+        # end of _get_session()
 
     def _get_session(self):
         """
@@ -499,7 +499,7 @@ class AppHandler(LogHelper):
                 self.sid = session_store.rename(self.sid, self.env)
         else:
             self.ls = None
-        return # end of _get_session()
+        # end of _get_session()
 
     def _del_session(self):
         """
@@ -508,7 +508,7 @@ class AppHandler(LogHelper):
         session_store.delete(self.sid)
         del self.ls
         self.sid = self.ls = None
-        return # end of _del_session()
+        # end of _del_session()
 
     def _handle_delsid(self):
         """
@@ -527,7 +527,7 @@ class AppHandler(LogHelper):
             self.form.unset_cookie(old_ls.cookie)
         # Explicitly remove old session
         session_store.delete(del_sid)
-        return # end of _handle_delsid()
+        # end of _handle_delsid()
 
     def _get_ldapconn_params(self):
         """
@@ -1068,4 +1068,4 @@ class AppHandler(LogHelper):
             log_exception(self.env, error_ls)
             self.simple_msg(u'Unhandled error!')
 
-        return # run()
+        # end of run()

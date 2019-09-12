@@ -84,7 +84,7 @@ def log_exception(env, ls, debug=__debug__):
     del exc_type
     del exc_value
     del exc_trb
-    return # log_exception()
+    # end of log_exception()
 
 
 def init_logger():

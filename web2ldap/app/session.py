@@ -109,7 +109,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         else:
             if not self.remote_ip_sessions[remote_ip]:
                 del self.remote_ip_sessions[remote_ip]
-        return # _remove_ip_assoc()
+        # end of _remove_ip_assoc()
 
     def rename(self, old_sid, env):
         session_data = self.retrieveSession(old_sid, env)
@@ -142,7 +142,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
             pass
         else:
             self._remove_ip_assoc(sid, remote_ip)
-        return # delete()
+        # end of delete()
 
 
 class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
@@ -205,7 +205,7 @@ class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
             self._stop_event.wait(self._interval)
 
         self.log(logging.DEBUG, 'Exiting run()')
-        return # CleanUpThread.run()
+        # end of CleanUpThread.run()
 
 
 ########################################################################
