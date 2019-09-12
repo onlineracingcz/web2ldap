@@ -266,7 +266,7 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
         )
 
     try:
-        monitor_context_dn = app.ls.rootDSE['monitorContext'][0]
+        monitor_context_dn = app.ls.rootDSE['monitorContext'][0].decode(app.ls.charset)
     except KeyError:
         pass
     else:
@@ -668,8 +668,6 @@ def exception_message(app, h1_msg, error_msg):
       (Security note: Must already be quoted/escaped!)
     """
     top_section(app, 'Error', main_menu(app), context_menu_list=[])
-    if isinstance(error_msg, str):
-        error_msg = error_msg.encode(app.form.accept_charset)
     app.outf.write(
         """
         <h1>{heading}</h1>
@@ -678,7 +676,7 @@ def exception_message(app, h1_msg, error_msg):
         </p>
         """.format(
             heading=app.form.utf2display(h1_msg),
-            error_msg=error_msg.decode(app.ls.charset),
+            error_msg=error_msg,
         )
     )
     footer(app)
