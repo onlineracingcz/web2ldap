@@ -619,7 +619,7 @@ class NameAndOptionalUID(DistinguishedName):
         return is_dn(dn)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        value = self._av.split('#')
+        value = self.av_u.split('#')
         dn_str = self._app.display_dn(
             self.av_u,
             commandbutton=commandbutton,
@@ -627,7 +627,7 @@ class NameAndOptionalUID(DistinguishedName):
         if len(value) == 1 or not value[1]:
             return dn_str
         return web2ldapcnf.command_link_separator.join([
-            self._app.form.utf2display(self._app.ls.uc_decode(value[1])),
+            self._app.form.utf2display(value[1]),
             dn_str,
         ])
 
