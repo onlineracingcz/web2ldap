@@ -14,7 +14,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import ldap0
 import ldap0.cidict
-from ldap0.base import encode_list
 from ldap0.dn import DNObj
 from ldap0.res import SearchResultEntry
 

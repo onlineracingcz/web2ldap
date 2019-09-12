@@ -52,7 +52,6 @@ import ldap0.ldapurl
 import ldap0.schema.models
 from ldap0.controls.deref import DereferenceControl
 from ldap0.dn import DNObj, is_dn
-from ldap0.base import encode_list
 from ldap0.res import SearchResultEntry
 
 import web2ldapcnf

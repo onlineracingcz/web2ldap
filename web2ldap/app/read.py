@@ -18,7 +18,7 @@ import ldap0.schema
 from ldap0.cidict import CIDict
 from ldap0.schema.models import SchemaElementOIDSet, AttributeType
 from ldap0.schema.subentry import SubSchema
-from ldap0.base import encode_list, encode_entry_dict
+from ldap0.base import encode_entry_dict
 from ldap0.dn import DNObj
 
 import web2ldap.web.forms

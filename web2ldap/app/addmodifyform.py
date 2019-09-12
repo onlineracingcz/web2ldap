@@ -18,7 +18,7 @@ import ldap0
 import ldap0.ldif
 import ldap0.schema
 from ldap0.dn import DNObj
-from ldap0.base import decode_list, encode_list
+from ldap0.base import decode_list
 from ldap0.schema.models import \
     AttributeType, \
     ObjectClass, \

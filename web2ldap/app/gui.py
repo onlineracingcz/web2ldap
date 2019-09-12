@@ -21,7 +21,6 @@ import ldap0.ldapurl
 from ldap0.ldapurl import LDAPUrl
 import ldap0.filter
 from ldap0.dn import DNObj
-from ldap0.base import encode_list
 from ldap0.res import SearchResultEntry
 
 import web2ldapcnf

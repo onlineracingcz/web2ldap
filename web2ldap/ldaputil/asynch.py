@@ -13,7 +13,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import ldap0
 import ldap0.ldif
-from ldap0.res import SearchReference, SearchResultEntry
+from ldap0.res import SearchResultEntry
 
 
 class AsyncSearchHandler:

@@ -18,7 +18,6 @@ from ldap0.controls.readentry import PostReadControl
 from ldap0.dn import DNObj
 
 import web2ldap.web.forms
-from web2ldap.web import escape_html
 import web2ldap.app.cnf
 import web2ldap.app.core
 import web2ldap.app.gui

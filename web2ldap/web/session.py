@@ -15,8 +15,6 @@ import random
 import time
 import threading
 
-from .helper import get_remote_ip
-
 from ldap0.pw import random_string
 
 

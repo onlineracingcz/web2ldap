@@ -24,7 +24,7 @@ import ldap0.sasl
 import ldap0.cidict
 import ldap0.filter
 import ldap0.dn
-from ldap0.base import decode_list, encode_list, decode_entry_dict
+from ldap0.base import decode_list, decode_entry_dict
 from ldap0.dn import DNObj
 from ldap0.res import SearchResultEntry
 from ldap0.ldapurl import LDAPUrl
@@ -38,7 +38,6 @@ from ldap0.controls.readentry import PreReadControl, PostReadControl
 from ldap0.controls.ppolicy import PasswordPolicyControl
 from ldap0.controls.sessiontrack import SessionTrackingControl, SESSION_TRACKING_FORMAT_OID_USERNAME
 
-import web2ldap.ldaputil
 from web2ldap.log import logger
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 
