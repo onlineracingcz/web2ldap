@@ -120,7 +120,7 @@ class SshPublicKey(DirectoryString):
                 result.append(
                     '<dt>{0}:</dt><dd>{1}</dd>'.format(
                         hash_algo.upper(),
-                        ':'.join([b.encode('hex') for b in pk_fingerprint]),
+                        ':'.join([hex(b)[2:] for b in pk_fingerprint]),
                     )
                 )
             for hash_algo in ('sha1', 'sha256', 'sha512'):
