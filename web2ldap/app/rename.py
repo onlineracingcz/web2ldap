@@ -14,6 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import ldap0
 import ldap0.ldapurl
+import ldap0.filter
 
 import web2ldap.web.forms
 
@@ -164,7 +165,7 @@ def w2l_rename(app):
                 u'Empty search result when reading entry to be renamed.'
             )
 
-        entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result)
+        entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
 
         # Determine possible name forms for new RDN
         rdn_options = entry.get_rdn_templates()
@@ -184,10 +185,10 @@ def w2l_rename(app):
             if sup_structural_oc:
                 rename_newsupfilter_default = '(|%s)' % (
                     ''.join([
-                        '(objectClass=%s)' % (oc)
+                        '(objectClass=%s)' % (ldap0.filter.escape_str(oc))
                         for oc in sup_structural_oc
                     ])
-                ).decode(app.ls.charset)
+                )
                 dit_structure_rule_html = 'DIT structure rules:<br>%s' % (
                     '<br>'.join(
                         schema_anchors(
