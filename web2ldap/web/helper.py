@@ -80,7 +80,7 @@ class AcceptHeaderDict(collections.UserDict):
                     # Add to capability dictionary
                     if c:
                         self.data[c] = qvalue
-        return # AcceptHeaderDict.__init__()
+        # end of AcceptHeaderDict.__init__()
 
     def __getitem__(self, value):
         """
@@ -115,7 +115,7 @@ class AcceptCharsetDict(AcceptHeaderDict):
         AcceptHeaderDict.__init__(self, envKey, env, defaultValue)
         # Special treating of ISO-8859-1 charset to be compliant to RFC2616
         self.data['iso-8859-1'] = self.data.get('iso-8859-1', self.data.get('*', 1.0))
-        return # AcceptCharsetDict.__init__()
+        # end of AcceptCharsetDict.__init__()
 
     def preferred(self):
         """
