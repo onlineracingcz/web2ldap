@@ -115,14 +115,12 @@ class SyntaxRegistry:
         """
         register an attribute type (by OID) to explicitly use a certain LDAPSyntax class
         """
+        logger.debug('Register syntax OID %s for %r / %r', syntax_oid, attr_types, structural_oc_oids)
         assert isinstance(syntax_oid, str), ValueError(
             'Expected syntax_oid to be str, got %r' % (syntax_oid,)
         )
-        structural_oc_oids = filter(None, map(str.strip, structural_oc_oids or [])) or [None]
+        structural_oc_oids = list(filter(None, map(str.strip, structural_oc_oids or []))) or [None]
         for a in attr_types:
-            assert isinstance(a, str), ValueError(
-                'Expected attribute type in a to be str, got %r' % (a,)
-            )
             a = a.strip()
             for oc_oid in structural_oc_oids:
                 # FIX ME!
@@ -1478,7 +1476,10 @@ class DateOfBirth(ISO8601Date):
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
-            birth_dt = datetime.datetime.strptime(attrValue, self.storageFormat)
+            birth_dt = datetime.datetime.strptime(
+                self._app.ls.uc_decode(attrValue)[0],
+                self.storageFormat
+            )
         except ValueError:
             return False
         return self._age(birth_dt) >= 0
@@ -1486,7 +1487,7 @@ class DateOfBirth(ISO8601Date):
     def display(self, valueindex=0, commandbutton=False) -> str:
         raw_date = ISO8601Date.display(self, valueindex, commandbutton)
         try:
-            birth_dt = datetime.datetime.strptime(self._av, self.storageFormat)
+            birth_dt = datetime.datetime.strptime(self.av_u, self.storageFormat)
         except ValueError:
             return raw_date
         return '%s (%s years old)' % (raw_date, self._age(birth_dt))
