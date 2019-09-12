@@ -80,6 +80,9 @@ class SyntaxRegistry:
         """
         register a syntax classes for an OID
         """
+        assert isinstance(cls.oid, str), ValueError(
+            'Expected %s.oid to be str, got %r' % (cls.__name__, cls.oid,)
+        )
         logger.debug('Register syntax class %r with OID %r', cls.__name__, cls.oid)
         # FIX ME!
         # A better approach for unique syntax plugin class registration which
@@ -108,12 +111,18 @@ class SyntaxRegistry:
             if hasattr(cls, 'oid'):
                 self.reg_syntax(cls)
 
-    def reg_at(self, syntax_oid, attr_types, structural_oc_oids=None):
+    def reg_at(self, syntax_oid: str, attr_types, structural_oc_oids=None):
         """
         register an attribute type (by OID) to explicitly use a certain LDAPSyntax class
         """
+        assert isinstance(syntax_oid, str), ValueError(
+            'Expected syntax_oid to be str, got %r' % (syntax_oid,)
+        )
         structural_oc_oids = filter(None, map(str.strip, structural_oc_oids or [])) or [None]
         for a in attr_types:
+            assert isinstance(a, str), ValueError(
+                'Expected attribute type in a to be str, got %r' % (a,)
+            )
             a = a.strip()
             for oc_oid in structural_oc_oids:
                 # FIX ME!
@@ -131,10 +140,16 @@ class SyntaxRegistry:
                     )
                 self.at2syntax[a][oc_oid] = syntax_oid
 
-    def get_syntax(self, schema, attrtype_nameoroid, structural_oc=None):
+    def get_syntax(self, schema, attrtype_nameoroid, structural_oc):
         """
         returns LDAPSyntax class for given attribute type
         """
+        assert isinstance(attrtype_nameoroid, str), ValueError(
+            'Expected attrtype_nameoroid to be str, got %r' % (attrtype_nameoroid,)
+        )
+        assert structural_oc is None or isinstance(structural_oc, str), ValueError(
+            'Expected structural_oc to be str or None, got %r' % (structural_oc,)
+        )
         attrtype_oid = schema.get_oid(
             ldap0.schema.models.AttributeType,
             attrtype_nameoroid.strip(),
