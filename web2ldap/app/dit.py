@@ -255,4 +255,4 @@ def w2l_dit(app):
         context_menu_list=[]
     )
 
-    return
+    # end of w2l_dit()

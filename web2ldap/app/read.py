@@ -166,7 +166,7 @@ class DisplayEntry(UserDict):
     def _set_dn(self, dn):
         self.dn = dn
         self.rdn_dict = self._get_rdn_dict(dn)
-        return # _set_dn()
+        # end of _set_dn()
 
     def get_html_templates(self, cnf_key):
         read_template_dict = CIDict(self._app.cfg_param(cnf_key, {}))
@@ -186,7 +186,7 @@ class DisplayEntry(UserDict):
                 object_class_oid_set.add(oc)
         template_oc = object_class_oid_set.intersection(read_template_dict.data.keys())
         return template_oc.names, read_template_dict
-        # get_html_templates()
+        # end of get_html_templates()
 
     def template_output(self, cnf_key, display_duplicate_attrs=True):
         # Determine relevant HTML templates

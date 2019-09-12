@@ -246,7 +246,7 @@ def bulkmod_input_form(
         )
     )
     web2ldap.app.gui.footer(app)
-    return # bulkmod_input_form()
+    # end of bulkmod_input_form()
 
 
 def bulkmod_confirmation_form(
@@ -315,7 +315,7 @@ def bulkmod_confirmation_form(
         )
     )
     web2ldap.app.gui.footer(app)
-    return # bulkmod_confirmation_form()
+    # end of bulkmod_confirmation_form()
 
 
 def w2l_bulkmod(app):
@@ -538,3 +538,5 @@ def w2l_bulkmod(app):
     else:
 
         raise web2ldap.app.core.ErrorExit(u'Invalid bulk modification form data.')
+
+    # end of w2l_bulkmod()

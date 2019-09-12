@@ -161,4 +161,4 @@ def parse_fake_schema(ldap_def):
             continue
         # Store the pre-parsed schema in the configuration
         ldap_def.cfg_data[k]._schema = schema
-    return # end of parse_fake_schema()
+    # end of parse_fake_schema()

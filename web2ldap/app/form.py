@@ -88,7 +88,7 @@ class Web2LDAPForm(Form):
             cki[cookie_name] = ''
             cki[cookie_name]['max-age'] = 0
             self.next_cookie.update(cki)
-        return # unset_cookie()
+        # end of unset_cookie()
 
     def get_cookie_domain(self):
         if self.cookie_domain:
@@ -960,7 +960,7 @@ class ObjectClassSelect(Select):
         )
         self.setRegex(u'[\\w]+')
         self.maxLen = 200
-        return # end of ObjectClassSelect()
+        # end of ObjectClassSelect()
 
 
 class ExportFormatSelect(Select):

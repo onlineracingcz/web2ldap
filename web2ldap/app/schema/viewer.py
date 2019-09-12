@@ -138,7 +138,7 @@ def schema_tree_html(app, schema, se_class, se_tree, se_oid, level):
     else:
         app.outf.write('<dd></dd>')
     app.outf.write('</dl>')
-    return # end of schema_tree_html()
+    # end of schema_tree_html()
 
 
 def schema_context_menu(app):
@@ -216,7 +216,7 @@ class DisplaySchemaElement:
                         schema_anchors(self._app, class_attr_value_list, se_class)
                     )
                 self._app.outf.write('<dt>%s</dt>\n<dd>\n%s\n</dd>\n' % (text, value_output))
-        return # disp_details()
+        # end of disp_details()
 
     def display(self):
         ms_ad_schema_link = ''
@@ -380,7 +380,7 @@ class DisplayObjectClass(DisplaySchemaElement):
                 )
             )
         )
-        return # disp_details()
+        # end of disp_details()
 
 
 class DisplayAttributeType(DisplaySchemaElement):
@@ -547,7 +547,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                 self._app.form.utf2display(str(syntax_class.__name__)),
             ))
         self._app.outf.write('</table>\n</dd>\n')
-        return # disp_details()
+        # end of disp_details()
 
 
 class DisplayLDAPSyntax(DisplaySchemaElement):
@@ -595,7 +595,7 @@ class DisplayLDAPSyntax(DisplaySchemaElement):
         self._app.outf.write('<dt>Associated syntax class</dt>\n<dd>\n%s\n</dd>\n' % (
             '.'.join((syntax_class.__module__, syntax_class.__name__))
         ))
-        return # disp_details()
+        # end of disp_details()
 
 
 class DisplayMatchingRule(DisplaySchemaElement):
@@ -638,7 +638,7 @@ class DisplayMatchingRule(DisplaySchemaElement):
             self._app.outf.write('<dt>Referencing attribute types:</dt>\n<dd>\n%s\n</dd>\n' % (
                 ', '.join(schema_anchors(self._app, mr_used_by, AttributeType))
             ))
-        return # disp_details()
+        # end of disp_details()
 
 
 class DisplayMatchingRuleUse(DisplaySchemaElement):
@@ -717,7 +717,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
             self._app.outf.write('<dt>Subordinate DIT structure rules:</dt>\n<dd>\n%s\n</dd>\n' % (
                 ', '.join(schema_anchors(self._app, ditsr_rules_ref_list, DITStructureRule))
             ))
-        return # disp_details()
+        # end of disp_details()
 
 
 class DisplayNameForm(DisplaySchemaElement):
@@ -742,7 +742,7 @@ class DisplayNameForm(DisplaySchemaElement):
             self._app.outf.write('<dt>Referencing DIT structure rule:</dt>\n<dd>\n%s\n</dd>\n' % (
                 ', '.join(schema_anchors(self._app, ditsr_rules_ref_list, DITStructureRule))
             ))
-        return # disp_details()
+        # end of disp_details()
 
 
 SCHEMA_VIEWER_CLASS = {
@@ -816,7 +816,7 @@ def display_schema_elements(app, se_classes, se_list):
     else:
         app.outf.write(SCHEMA_VIEWER_USAGE)
     web2ldap.app.gui.footer(app)
-    return # end of display_schema_elements()
+    # end of display_schema_elements()
 
 
 def w2l_schema_viewer(app):

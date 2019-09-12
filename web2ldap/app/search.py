@@ -127,7 +127,6 @@ class PrintableHTMLWriter(web2ldap.ldaputil.asynch.List):
         self._dn = dn
         self._s = sub_schema
         self._p = print_template_str_dict
-        return # __init__()
 
     def process_results(self, ignoreResultsNumber=0, processResultsCount=0):
         web2ldap.ldaputil.asynch.List.process_results(self)
@@ -175,7 +174,7 @@ class PrintableHTMLWriter(web2ldap.ldaputil.asynch.List):
             self._app.outf.write('<tr>\n%s</tr>\n' % ('\n'.join(td_list)))
         self._app.outf.write('</table>\n')
         web2ldap.app.gui.footer(self._app)
-        return # process_results()
+        # end of process_results()
 
 
 class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):

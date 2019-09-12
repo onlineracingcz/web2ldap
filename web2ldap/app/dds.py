@@ -62,7 +62,7 @@ def dds_form(app, msg):
         )
     )
     web2ldap.app.gui.footer(app)
-    return # dds_form()
+    # end of dds_form()
 
 
 def w2l_dds(app):

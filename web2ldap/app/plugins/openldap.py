@@ -156,7 +156,6 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
 
     def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
         OlcMultilineText.__init__(self, app, dn, schema, attrType, attrValue, entry)
-        return # __init__()
 
     def display(self, valueindex=0, commandbutton=False):
         if not commandbutton or not self._av:

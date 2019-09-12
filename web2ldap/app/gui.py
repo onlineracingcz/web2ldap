@@ -475,7 +475,6 @@ def top_section(
     template_dict.update([(k, escape_html(str(v))) for k, v in app.env.items()])
 
     if app.ls is not None and app.ls.uri is not None:
-
         # Only output something meaningful if valid connection
         template_dict.update({
             'ldap_url': app.ls.ldapUrl(app.dn),
@@ -488,7 +487,7 @@ def top_section(
 
     app.outf.write(top_template_str.format(**template_dict))
 
-    return # top_section()
+    # end of top_section()
 
 
 def ldap_url_anchor(app, data):
@@ -571,7 +570,7 @@ def gen_headers(content_type, charset, more_headers=None):
     for h, v in web2ldapcnf.http_headers.items():
         headers.append((h, v))
     headers.extend(more_headers or [])
-    return headers # Header()
+    return headers # gen_headers()
 
 
 def Header(app, content_type, charset, more_headers=None):
@@ -683,4 +682,4 @@ def exception_message(app, h1_msg, error_msg):
         )
     )
     footer(app)
-    return # exception_message()
+    # end of exception_message()

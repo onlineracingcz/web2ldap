@@ -51,4 +51,4 @@ def w2l_urlredirect(app):
         )
     else:
         app.url_redirect(error_msg)
-    return # end of w2l_urlredirect()
+    # end of w2l_urlredirect()
