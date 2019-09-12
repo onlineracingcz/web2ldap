@@ -238,7 +238,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                             member_value = user_entry[user_entry_attrtype][0]
                         modlist.append((
                             ACTION2MODTYPE[action],
-                            group_member_attrtype,
+                            group_member_attrtype.encode('ascii'),
                             [member_value],
                         ))
                 # Finally try to apply group membership modification(s) to single group entry
