@@ -647,18 +647,23 @@ class AppHandler(LogHelper):
                 AD_LDAP49_ERROR_CODES.get(ad_error_code, u'unknown'),
             )
         else:
-            error_desc = ldap_err.args[0]['desc'].decode(self.ls.charset)
             try:
+                error_desc = ldap_err.args[0]['desc'].decode(self.ls.charset)
                 error_info = ldap_err.args[0].get('info', '')
             except UnicodeDecodeError:
-                error_info = repr(ldap_err.args[0].get('info', ''))
+                error_msg = str(ldap_err)
             except (TypeError, IndexError):
-                error_msg = str(ldap_err).decode(self.ls.charset)
-            error_msg = '{desc}: {info}'.format(
-                desc=error_desc,
-                info=error_info,
-            )
-            matched_dn = ldap_err.args[0].get('matched', b'').decode(self.ls.charset)
+                error_msg = str(ldap_err)
+            else:
+                error_msg = '{desc}: {info}'.format(
+                    desc=error_desc,
+                    info=error_info,
+                )
+
+            try:
+                matched_dn = ldap_err.args[0].get('matched', b'').decode(self.ls.charset)
+            except AttributeError:
+                matched_dn = None
         error_msg = error_msg.replace(u'\r', '').replace(u'\t', '')
         error_msg_html = self.form.utf2display(error_msg, lf_entity='<br>')
         # Add matchedDN to error message HTML if needed
