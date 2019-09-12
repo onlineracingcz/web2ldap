@@ -975,15 +975,15 @@ class LDAPSession:
 
     def rename(self, dn, new_rdn, new_superior=None, delold=1):
         """Rename an entry"""
-        self.l.uncache(dn.encode(self.charset))
+        self.l.uncache(dn)
         if not new_superior is None:
-            self.l.uncache(new_superior.encode(self.charset))
+            self.l.uncache(new_superior)
         old_superior_dn = DNObj.from_str(dn).parent()
         if new_superior is not None:
             if old_superior_dn == DNObj.from_str(new_superior):
                 new_superior_str = None
             else:
-                new_superior_str = self.uc_encode(new_superior)[0]
+                new_superior_str = new_superior
         rename_req_ctrls = []
         if PreReadControl.controlType in self.supportedControl:
             rename_req_ctrls.append(PreReadControl(criticality=False, attrList=['entryUUID']))
@@ -991,9 +991,9 @@ class LDAPSession:
             rename_req_ctrls.append(PostReadControl(criticality=False, attrList=['entryUUID']))
         rename_req_ctrls = rename_req_ctrls or None
         # Send ModRDNRequest
-        _, _, _, rename_resp_ctrls = self.l.rename_s(
-            self.uc_encode(dn)[0],
-            self.uc_encode(new_rdn)[0],
+        rename_result = self.l.rename_s(
+            dn,
+            new_rdn,
             new_superior_str,
             delold,
             req_ctrls=rename_req_ctrls
@@ -1001,14 +1001,14 @@ class LDAPSession:
         # Try to extract Read Entry controls from response
         prec_ctrls = dict([
             (c.controlType, c)
-            for c in rename_resp_ctrls or []
+            for c in rename_result.ctrls or []
             if c.controlType in (PreReadControl.controlType, PostReadControl.controlType)
         ])
         if prec_ctrls:
-            new_dn = self.uc_decode(prec_ctrls[PostReadControl.controlType].dn)[0]
+            new_dn = prec_ctrls[PostReadControl.controlType].res.dn_s
             try:
-                entry_uuid = self.uc_decode(prec_ctrls[PreReadControl.controlType].entry['entryUUID'][0])[0]
-            except (IndexError, KeyError):
+                entry_uuid = prec_ctrls[PostReadControl.controlType].res.entry_s['entryUUID'][0]
+            except KeyError:
                 entry_uuid = None
         else:
             new_dn = u','.join([new_rdn, new_superior or str(old_superior_dn)])
