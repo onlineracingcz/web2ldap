@@ -2072,7 +2072,7 @@ class UUID(IA5String):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         try:
-            return str(uuid.UUID(attrValue.replace(':', '')))
+            return str(uuid.UUID(attrValue.decode('ascii').replace(':', ''))).encode('ascii')
         except ValueError:
             return attrValue
 
