@@ -886,7 +886,7 @@ class Form:
         # add Field instances
         for field in self.fields():
             self.add_field(field)
-        return # Form.__init__()
+        # end of Form.__init__()
 
     @property
     def accept_charset(self):
@@ -912,7 +912,7 @@ class Form:
         """
         field.charset = self.accept_charset
         self.field[field.name] = field
-        return # Form.add_field()
+        # end of Form.add_field()
 
     def getInputValue(self, name, default=None):
         """
@@ -963,7 +963,7 @@ class Form:
                         escape_html(val.encode(field.charset)),
                     )
                 )
-        return # Form.hiddenInputFields()
+        # end of Form.hiddenInputFields()
 
     def _add_fields(self):
         """
@@ -974,7 +974,7 @@ class Form:
     def _set_charset(self):
         form_codec = codecs.lookup(self.accept_charset)
         self.uc_encode, self.uc_decode = form_codec[0], form_codec[1]
-        return # _set_charset()
+        # end of _set_charset()
 
     def _parse_url_encoded(self, max_content_length):
 
@@ -1012,7 +1012,7 @@ class Form:
             # Add name of field to set of input keys
             self.input_field_names.add(name)
 
-        return #_parse_url_encoded()
+        # end of _parse_url_encoded()
 
     def _parse_mime_multipart(self, max_content_length):
 
@@ -1040,7 +1040,7 @@ class Form:
                 # Add name of field to set of input keys
                 self.input_field_names.add(name)
 
-        return # _parse_mime_multipart()
+        # end of _parse_mime_multipart()
 
 
     def getInputFields(self):
@@ -1076,4 +1076,4 @@ class Form:
         if missing_params:
             raise ParamsMissing(missing_params)
 
-        return # Form.getInputFields()
+        # end of Form.getInputFields()
