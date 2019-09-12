@@ -49,7 +49,7 @@ import ipaddress
 
 import ldap0
 import ldap0.ldapurl
-import ldap0.schema.models
+from ldap0.schema.models import AttributeType, ObjectClass
 from ldap0.controls.deref import DereferenceControl
 from ldap0.dn import DNObj, is_dn
 from ldap0.res import SearchResultEntry
@@ -150,15 +150,9 @@ class SyntaxRegistry:
         assert structural_oc is None or isinstance(structural_oc, str), ValueError(
             'Expected structural_oc to be str or None, got %r' % (structural_oc,)
         )
-        attrtype_oid = schema.get_oid(
-            ldap0.schema.models.AttributeType,
-            attrtype_nameoroid.strip(),
-        )
+        attrtype_oid = schema.get_oid(AttributeType, attrtype_nameoroid)
         if structural_oc:
-            structural_oc_oid = schema.get_oid(
-                ldap0.schema.models.ObjectClass,
-                structural_oc.strip(),
-            )
+            structural_oc_oid = schema.get_oid(ObjectClass, structural_oc)
         else:
             structural_oc_oid = None
         syntax_oid = LDAPSyntax.oid
@@ -169,7 +163,7 @@ class SyntaxRegistry:
                 syntax_oid = self.at2syntax[attrtype_oid][None]
             except KeyError:
                 attrtype_se = schema.get_inheritedobj(
-                    ldap0.schema.models.AttributeType,
+                    AttributeType,
                     attrtype_oid,
                     ['syntax'],
                 )
@@ -347,7 +341,7 @@ class LDAPSyntax:
                 len(self._entry.get(self._at, [])) >= self.maxValues
             ):
             return ''
-        se = self._schema.get_obj(ldap0.schema.models.AttributeType, self._at)
+        se = self._schema.get_obj(AttributeType, self._at)
         if se and se.single_value:
             return ''
         return (
@@ -1144,14 +1138,14 @@ class OID(IA5String):
         except (KeyError, ValueError):
             try:
                 se = self._schema.get_obj(
-                    ldap0.schema.models.ObjectClass,
+                    ObjectClass,
                     self.av_u,
                     raise_keyerror=1,
                 )
             except KeyError:
                 try:
                     se = self._schema.get_obj(
-                        ldap0.schema.models.AttributeType,
+                        AttributeType,
                         self.av_u,
                         raise_keyerror=1,
                     )
@@ -1160,7 +1154,7 @@ class OID(IA5String):
                 return schema_anchor(
                     self._app,
                     self.av_u,
-                    ldap0.schema.models.AttributeType,
+                    AttributeType,
                     name_template=r'%s',
                     link_text='&raquo',
                 )
@@ -1173,7 +1167,7 @@ class OID(IA5String):
             return schema_anchor(
                 self._app,
                 self.av_u,
-                ldap0.schema.models.ObjectClass,
+                ObjectClass,
                 name_template=name_template,
                 link_text='&raquo',
             )
