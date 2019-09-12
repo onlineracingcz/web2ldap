@@ -104,10 +104,10 @@ def w2l_modify(app):
         )
         return
 
-    in_oldattrtypes = {}
-    for a in app.form.getInputValue('in_oldattrtypes', []):
-        attr_type = a.encode('ascii')
-        in_oldattrtypes[attr_type] = None
+    in_oldattrtypes = set([
+        a
+        for a in app.form.getInputValue('in_oldattrtypes', [])
+    ])
 
     try:
         old_entry, dummy = web2ldap.app.addmodifyform.read_old_entry(app, app.dn, app.schema, in_assertion)
@@ -148,10 +148,8 @@ def w2l_modify(app):
         if not syntax_class.editable:
             ignore_attr_types.add(attr_type)
 
-    try:
-        ignore_attr_types.remove('2.5.4.0')
-    except KeyError:
-        pass
+    ignore_attr_types.discard('2.5.4.0')
+    ignore_attr_types.discard('objectClass')
 
     # Create modlist containing deltas
     modlist = modify_modlist(
@@ -160,6 +158,7 @@ def w2l_modify(app):
         ignore_attr_types=ignore_attr_types,
         ignore_oldexistent=False,
     )
+
     # Binary values are always replaced
     new_entry_structural_oc = new_entry.get_structural_oc()
     for attr_type in new_entry.keys():
@@ -167,7 +166,7 @@ def w2l_modify(app):
         if (not syntax_class.editable) and \
            new_entry[attr_type] and \
            (not attr_type in old_entry or new_entry[attr_type] != old_entry[attr_type]):
-            modlist.append((ldap0.MOD_REPLACE, attr_type, new_entry[attr_type]))
+            modlist.append((ldap0.MOD_REPLACE, attr_type.encode('ascii'), new_entry[attr_type]))
 
     if not modlist:
         # nothing to be changed
