@@ -306,26 +306,26 @@ syntax_registry.reg_at(
 class ReqMod(OctetString, DirectoryString):
     oid = 'ReqMod-oid'
     desc = 'List of modifications/old values'
-    known_modtypes = {'+', '-', '=', '#', ''}
+    known_modtypes = {b'+', b'-', b'=', b'#', b''}
 
     def display(self, valueindex=0, commandbutton=False):
-        if self._av == ':':
+        if self._av == b':':
             # magic value used for fixing OpenLDAP ITS#6545
-            return self._av
+            return ':'
         try:
-            mod_attr_type, mod_attr_rest = self._av.split(':', 1)
-            mod_type = mod_attr_rest[0].strip()
+            mod_attr_type, mod_attr_rest = self._av.split(b':', 1)
+            mod_type = mod_attr_rest[0:1].strip()
         except (ValueError, IndexError):
             return OctetString.display(self, valueindex, commandbutton)
         if not mod_type in self.known_modtypes:
             return OctetString.display(self, valueindex, commandbutton)
         if len(mod_attr_rest) > 1:
             try:
-                mod_type, mod_attr_value = mod_attr_rest.split(' ', 1)
+                mod_type, mod_attr_value = mod_attr_rest.split(b' ', 1)
             except ValueError:
                 return OctetString.display(self, valueindex, commandbutton)
         else:
-            mod_attr_value = ''
+            mod_attr_value = b''
         mod_attr_type_u = mod_attr_type.decode(self._app.ls.charset)
         mod_type_u = mod_type.decode(self._app.ls.charset)
         try:
