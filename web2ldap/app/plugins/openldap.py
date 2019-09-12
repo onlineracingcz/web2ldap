@@ -392,7 +392,7 @@ class ReqControls(IA5String):
             else:
                 try:
                     decoded_control_value = ber_decoder.decode(ctrl_value)
-                except:
+                except Exception:
                     decoded_control_value = ctrl_value
                 result_lines.append(
                     'controlValue %s' % (

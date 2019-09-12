@@ -26,7 +26,7 @@ def w2l_urlredirect(app):
         # Check for valid target URL syntax
         try:
             tu = urllib.parse.urlparse(app.form.query_string)
-        except:
+        except Exception:
             redirect_ok = False
             error_msg = u'Rejected non-parseable redirect URL!'
         else:
