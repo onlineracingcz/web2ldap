@@ -511,7 +511,7 @@ class LDAPSession:
         self.sessionStartTime = time.time()
         self.connStartTime = None
         self._cache_ttl = cache_ttl
-        return # __init__()
+        # end of __init__()
 
     @property
     def relax_rules(self):
@@ -591,7 +591,7 @@ class LDAPSession:
                     raise
             else:
                 break
-        return # end of _initialize()
+        # end of _initialize()
 
     def open(
             self,
@@ -641,7 +641,7 @@ class LDAPSession:
             self.secureConn = 1
         self.connStartTime = time.time()
         self.init_rootdse()
-        return # open()
+        # end of open()
 
     def unbind(self):
         """Close LDAP connection object if necessary"""
@@ -655,7 +655,7 @@ class LDAPSession:
         self.uri = None # delete the LDAP connection URI
         # Flush old data from cache
         self.flush_cache()
-        return # unbind()
+        # end of unbind()
 
     def _reset_rootdse_attrs(self):
         """Forget all old RootDSE values"""
@@ -713,7 +713,7 @@ class LDAPSession:
             '1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures
             or self.is_openldap
         )
-        return # _update_rootdse_attrs()
+        # end of _update_rootdse_attrs()
 
     def init_rootdse(self):
         """Retrieve attributes from Root DSE"""
@@ -743,7 +743,7 @@ class LDAPSession:
             else:
                 self.rootDSE = ldap_res.entry_as
         self._update_rootdse_attrs()
-        return # init_rootdse()
+        # end of init_rootdse()
 
     def get_search_root(self, dn, naming_contexts=None):
         """
@@ -1253,7 +1253,7 @@ class LDAPSession:
                     self.userEntry = user_res.entry_as
         else:
             self.userEntry = {}
-        return # bind()
+        # end of bind()
 
     def get_governing_structure_rule(self, dn, schema):
         """
