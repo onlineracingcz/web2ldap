@@ -294,7 +294,7 @@ class AAAARecord(IPv6HostAddress):
     def display(self, valueindex=0, commandbutton=False):
         r = [IPv6HostAddress.display(self, valueindex, commandbutton)]
         if commandbutton:
-            ip_addr = self.addr_class(self._av.decode('ascii'))
+            ip_addr = self.addr_class(self.av_u)
             try:
                 ip_addr.reverse_dns
             except AttributeError:

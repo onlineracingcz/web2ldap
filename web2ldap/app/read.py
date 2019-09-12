@@ -437,7 +437,7 @@ def w2l_read(app):
             else:
                 raise web2ldap.app.core.ErrorExit(
                     u'Attribute <em>%s</em> not in entry.' % (
-                        app.form.utf2display(attr_type.decode('ascii'))
+                        app.form.utf2display(attr_type)
                     )
                 )
 

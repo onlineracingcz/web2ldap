@@ -32,7 +32,7 @@ class DominoCertificate(MultilineText):
     def display(self, valueindex=0, commandbutton=False):
         lines = [
             self._app.form.utf2display(l)
-            for l in self._split_lines(self._av.decode('ascii'))
+            for l in self._split_lines(self.av_u)
         ]
         return '<code>%s</code>' % '<br>'.join(lines)
 

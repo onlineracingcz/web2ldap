@@ -426,7 +426,7 @@ class ReqEntryUUID(UUID):
                     ('dn', self._dn),
                     (
                         'filterstr',
-                        u'(entryUUID=%s)' % (self._av.decode('ascii')),
+                        u'(entryUUID=%s)' % (self.av_u),
                     ),
                     (
                         'search_root',

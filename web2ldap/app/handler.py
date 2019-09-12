@@ -933,7 +933,7 @@ class AppHandler(LogHelper):
             log_exception(self.env, self.ls)
             failed_dn = self.dn
             if 'matched' in ldap_err.args[0]:
-                self.dn = ldap_err.args[0]['matched']
+                self.dn = ldap_err.args[0]['matched'].decode(self.ls.charset)
             exception_message(
                 self,
                 u'No such object',

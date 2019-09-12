@@ -1131,21 +1131,21 @@ class OID(IA5String):
             try:
                 se = self._schema.get_obj(
                     ldap0.schema.models.ObjectClass,
-                    self._av.decode('ascii'),
+                    self.av_u,
                     raise_keyerror=1,
                 )
             except KeyError:
                 try:
                     se = self._schema.get_obj(
                         ldap0.schema.models.AttributeType,
-                        self._av.decode('ascii'),
+                        self.av_u,
                         raise_keyerror=1,
                     )
                 except KeyError:
                     return IA5String.display(self, valueindex, commandbutton)
                 return schema_anchor(
                     self._app,
-                    self._av.decode('ascii'),
+                    self.av_u,
                     ldap0.schema.models.AttributeType,
                     name_template=r'%s',
                     link_text='&raquo',
@@ -1158,7 +1158,7 @@ class OID(IA5String):
             # objectClass attribute is displayed with different function
             return schema_anchor(
                 self._app,
-                self._av.decode('ascii'),
+                self.av_u,
                 ldap0.schema.models.ObjectClass,
                 name_template=name_template,
                 link_text='&raquo',
@@ -2106,7 +2106,7 @@ class DNSDomain(IA5String):
         return result
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        if self._av.decode('ascii') != self._av.decode('idna'):
+        if self.av_u != self._av.decode('idna'):
             return '%s (%s)' % (
                 IA5String.display(self, valueindex, commandbutton),
                 self._app.form.utf2display(self.formValue())
