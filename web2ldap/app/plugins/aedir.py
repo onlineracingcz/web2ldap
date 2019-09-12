@@ -658,11 +658,12 @@ class AEGroupDN(DerefDynamicDNSelectList):
     )
 
     def display(self, valueindex=0, commandbutton=False):
-        group_cn = self.dn[0][0][1]
+        group_dn = DNObj.from_str(self.av_u)
+        group_cn = group_dn[0][0][1]
         r = [
             'cn=<strong>{0}</strong>,{1}'.format(
                 self._app.form.utf2display(group_cn),
-                self._app.form.utf2display(str(self.dn.parent())),
+                self._app.form.utf2display(str(group_dn.parent())),
             )
         ]
         if commandbutton:
