@@ -212,7 +212,7 @@ class WebSession:
         self.session_id_len = sessionIDLength
         self.session_id_chars = sessionIDChars or SESSION_ID_CHARS
         self.session_id_re = re.compile('^[%s]+$' % (re.escape(self.session_id_chars)))
-        return # __init__()
+        # end of WebSession.__init__()
 
     def _validateSessionIdFormat(self, session_id):
         """
@@ -224,7 +224,7 @@ class WebSession:
                 self.session_id_re.match(session_id) is None
             ):
             raise BadSessionId(session_id)
-        return
+        # end of WebSession._validateSessionIdFormat()
 
     @staticmethod
     def _crosscheckSessionEnv(stored_env, env):
