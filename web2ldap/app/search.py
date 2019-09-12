@@ -615,18 +615,10 @@ def w2l_search(app):
 
         # HACK! Searching the root level the namingContexts is
         # appended if not already received in search result
-        if not search_root and scope == ldap0.SCOPE_ONELEVEL:
-            d = ldap0.cidict.CIDict()
-            for result_dn in app.ls.namingContexts:
-                if result_dn:
-                    d[str(result_dn)] = str(result_dn)
-            for r in result_dnlist:
-                result_dn = r[1][0]
-                if result_dn is not None and result_dn in d:
-                    del d[result_dn]
+        if not search_root and not result_dnlist and scope == ldap0.SCOPE_ONELEVEL:
             result_dnlist.extend([
-                (ldap0.RES_SEARCH_ENTRY, (result_dn.encode(app.ls.charset), {}))
-                for result_dn in d.values()
+                SearchResultEntry(result_dn.encode(app.ls.charset), {})
+                for result_dn in app.ls.namingContexts
             ])
             resind = len(result_dnlist)
 
