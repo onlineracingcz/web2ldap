@@ -97,9 +97,9 @@ class ObjectSID(OctetString, IA5String):
 
     @staticmethod
     def _sid2sddl(sid):
-        srl = ord(sid[0])
-        number_sub_id = ord(sid[1])
-        iav = struct.unpack('!Q', '\x00\x00'+sid[2:8])[0]
+        srl = sid[0]
+        number_sub_id = sid[1]
+        iav = struct.unpack('!Q', b'\x00\x00'+sid[2:8])[0]
         sub_ids = [
             struct.unpack('<I', sid[8+4*i:12+4*i])[0]
             for i in range(number_sub_id)
@@ -140,7 +140,7 @@ class ObjectSID(OctetString, IA5String):
         return IA5String.formField(self)
 
     def display(self, valueindex=0, commandbutton=False):
-        sddl_str = str(self._sid2sddl(self._av), 'ascii')
+        sddl_str = self._sid2sddl(self._av)
         return '%s<br>%s' % (
             self._app.form.utf2display(sddl_str),
             OctetString.display(self, valueindex, commandbutton),
@@ -576,31 +576,26 @@ class DNWithOctetString(DistinguishedName):
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
-            octet_tag, count, octet_string, dn = self._av.split(':')
+            octet_tag, count, octet_string, dn = self.av_u.split(':')
         except ValueError:
             return False
         try:
             count = int(count)
         except ValueError:
             return False
-        try:
-            octet_string.decode(self.stringCharset)
-        except UnicodeError:
-            return False
-        dn_u = self._app.ls.uc_decode(dn)[0]
-        return len(octet_string) == count and octet_tag.upper() == self.octetTag and is_dn(dn_u)
+        return len(octet_string) == count and octet_tag.upper() == self.octetTag and is_dn(dn)
 
     def display(self, valueindex=0, commandbutton=False):
         try:
-            octet_tag, count, octet_string, dn = self._av.split(':', 3)
+            octet_tag, count, octet_string, dn = self.av_u.split(':', 3)
         except ValueError:
             return self._app.form.utf2display(self.av_u)
         return ':'.join([
-            octet_tag,
-            count,
-            self._app.form.utf2display(self._app.ls.uc_decode(octet_string)[0]),
+            self._app.form.utf2display(octet_tag),
+            self._app.form.utf2display(count),
+            self._app.form.utf2display(octet_string),
             self._app.display_dn(
-                self._app.ls.uc_decode(dn)[0],
+                dn,
                 commandbutton=commandbutton,
             )
         ])
