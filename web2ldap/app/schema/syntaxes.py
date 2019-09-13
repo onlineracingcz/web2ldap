@@ -1433,15 +1433,15 @@ class Date(IA5String):
         return True
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        attrValue = attrValue.strip()
+        av_u = attrValue.strip().decode(self._app.ls.charset)
         result = attrValue
         for time_format in self.acceptableDateformats:
             try:
-                time_tuple = datetime.datetime.strptime(attrValue, time_format)
+                time_tuple = datetime.datetime.strptime(av_u, time_format)
             except ValueError:
                 pass
             else:
-                result = datetime.datetime.strftime(time_tuple, self.storageFormat)
+                result = datetime.datetime.strftime(time_tuple, self.storageFormat).encode('ascii')
                 break
         return result # sanitize()
 
@@ -1546,8 +1546,11 @@ class Timespan(Integer):
     def sanitize(self, attrValue: bytes) -> bytes:
         if attrValue:
             try:
-
-                result = str(web2ldap.app.gui.repr2ts(self.time_divisors, self.sep, attrValue))
+                result = web2ldap.app.gui.repr2ts(
+                    self.time_divisors,
+                    self.sep,
+                    attrValue.decode('ascii')
+                ).encode('ascii')
             except ValueError:
                 result = Integer.sanitize(self, attrValue)
         else:
@@ -2107,16 +2110,16 @@ class DNSDomain(IA5String):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         attrValue = IA5String.sanitize(self, attrValue)
-        return '.'.join([
+        return b'.'.join([
             dc.encode('idna')
-            for dc in attrValue.decode(self._app.form.accept_charset).split(u'.')
+            for dc in attrValue.decode(self._app.form.accept_charset).split('.')
         ])
 
     def formValue(self) -> str:
         try:
             result = u'.'.join([
                 dc.decode('idna')
-                for dc in (self._av or '').split('.')
+                for dc in (self._av or b'').split(b'.')
             ])
         except UnicodeDecodeError:
             result = u'!!!snipped because of UnicodeDecodeError!!!'
@@ -2144,12 +2147,10 @@ class RFC822Address(DNSDomain, IA5String):
         if not self._av:
             return IA5String.formValue(self)
         try:
-            localpart, domainpart = self._av.rsplit('@')
+            localpart, domainpart = self._av.rsplit(b'@')
         except ValueError:
             return IA5String.formValue(self)
-        dns_domain = DNSDomain(
-            self._app, self._dn, self._schema, None, domainpart,
-        )
+        dns_domain = DNSDomain(self._app, self._dn, self._schema, None, domainpart)
         return '@'.join((
             localpart.decode(self._app.ls.charset),
             dns_domain.formValue()
@@ -2157,11 +2158,11 @@ class RFC822Address(DNSDomain, IA5String):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         try:
-            localpart, domainpart = attrValue.rsplit('@')
+            localpart, domainpart = attrValue.rsplit(b'@')
         except ValueError:
             return attrValue
         else:
-            return '@'.join((
+            return b'@'.join((
                 localpart,
                 DNSDomain.sanitize(self, domainpart)
             ))

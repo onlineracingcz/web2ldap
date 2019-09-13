@@ -45,7 +45,7 @@ class SshPublicKey(DirectoryString):
         if attrValue:
             return DirectoryString.sanitize(
                 self, attrValue
-            ).strip().replace('\r', '').replace('\n', '')
+            ).strip().replace(b'\r', b'').replace(b'\n', b'')
         return attrValue
 
     def _extract_pk_params(self, attrValue):

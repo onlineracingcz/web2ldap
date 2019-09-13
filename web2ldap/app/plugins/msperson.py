@@ -103,7 +103,7 @@ class EuVATId(IA5String):
         return IA5String._validate(self, attrValue)
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue.upper().replace(' ', '')
+        return attrValue.upper().replace(b' ', b'')
 
 syntax_registry.reg_at(
     EuVATId.oid, [
