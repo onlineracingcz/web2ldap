@@ -2009,13 +2009,17 @@ class BitArrayInteger(MultilineText, Integer):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         try:
-            result = int(attrValue)
+            av_u = attrValue.decode('ascii')
+        except UnicodeDecodeError:
+            return attrValue
+        try:
+            result = int(av_u)
         except ValueError:
             result = 0
-            for row in attrValue.split(b'\n'):
+            for row in av_u.split('\n'):
                 row = row.strip()
                 try:
-                    flag_set, flag_desc = row[0], row[1:]
+                    flag_set, flag_desc = row[0:1], row[1:]
                 except IndexError:
                     pass
                 else:
@@ -2027,7 +2031,7 @@ class BitArrayInteger(MultilineText, Integer):
         return str(result).encode('ascii')
 
     def formValue(self) -> str:
-        attr_value_int = int(self._av or 0)
+        attr_value_int = int(self.av_u or 0)
         flag_lines = [
             ''.join((
                 self.true_false_desc[int((attr_value_int&flag_int) > 0)],
