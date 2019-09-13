@@ -176,11 +176,11 @@ class PwdChangedTime(GeneralizedTime):
         except ValueError:
             return gt_disp_html
         try:
-            pwd_policy_subentry_dn = self._entry['pwdPolicySubentry'][0]
+            pwd_policy_subentry_dn = self._entry['pwdPolicySubentry'][0].decode(self._app.ls.charset)
         except KeyError:
             return gt_disp_html
         try:
-            pwd_policy_entry = self._app.ls.l.read_s(
+            pwd_policy = self._app.ls.l.read_s(
                 pwd_policy_subentry_dn,
                 filterstr='(objectClass=pwdPolicy)',
                 attrlist=['pwdMaxAge', 'pwdExpireWarning'],
@@ -188,7 +188,7 @@ class PwdChangedTime(GeneralizedTime):
         except LDAPError:
             return gt_disp_html
         try:
-            pwd_max_age_secs = int(pwd_policy_entry['pwdMaxAge'][0])
+            pwd_max_age_secs = int(pwd_policy.entry_s['pwdMaxAge'][0])
         except KeyError:
             expire_msg = 'will never expire'
         except ValueError:
