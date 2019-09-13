@@ -1899,7 +1899,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
         if commandbutton and self.lu_obj.attrs:
             ref_entry = self._get_ref_entry(self.av_u) or {}
             try:
-                attr_value_desc = self._app.ls.uc_decode(ref_entry[self.lu_obj.attrs[0]][0])[0]
+                attr_value_desc = ref_entry[self.lu_obj.attrs[0]][0]
             except (KeyError, IndexError):
                 display_text = ''
             else:
