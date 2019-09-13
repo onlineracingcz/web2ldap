@@ -11,6 +11,7 @@ import hashlib
 import ldap0
 import ldap0.schema.models
 from ldap0.dn import DNObj
+from ldap0.res import SearchResultEntry
 
 import web2ldapcnf
 
@@ -37,7 +38,7 @@ class AssociatedDomain(DNSDomain):
             except KeyError:
                 pass
             else:
-                result = result and (attrValue == dc or attrValue.startswith(dc+'.'))
+                result = result and (attrValue == dc or attrValue.startswith(dc+b'.'))
         return result
 
     def _parent_domain(self):
@@ -47,7 +48,7 @@ class AssociatedDomain(DNSDomain):
         if not self._dn:
             return None
         ldap_result = self._app.ls.l.search_s(
-            self._app.ls.get_search_root(self._dn).encode(self._app.ls.charset),
+            str(self._app.ls.get_search_root(self._dn)),
             ldap0.SCOPE_SUBTREE,
             '(&(objectClass=dNSDomain)(|(sOARecord=*)(nSRecord=*))(associatedDomain=*))',
             attrlist=['associatedDomain'],
@@ -56,11 +57,11 @@ class AssociatedDomain(DNSDomain):
             return None
         d = dict([
             (
-                DNObj.from_str(self._app.ls.uc_decode(dn)[0]),
-                self._app.ls.uc_decode(entry['associatedDomain'][0])[0]
+                DNObj.from_str(r.dn_s),
+                r.entry_s['associatedDomain'][0]
             )
-            for dn, entry in ldap_result
-            if dn
+            for r in ldap_result
+            if isinstance(r, SearchResultEntry)
         ])
         if not d:
             return None
@@ -250,7 +251,7 @@ class ARecord(IPv4HostAddress):
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'associatedDomain'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', self._app.ls.uc_decode(ip_addr.reverse_pointer)[0]),
+                    ('search_string', ip_addr.reverse_pointer),
                 ),
                 title=u'Search PTR RR for this A address',
             ))
@@ -262,7 +263,7 @@ class ARecord(IPv4HostAddress):
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'ipHostNumber'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', self._app.ls.uc_decode(str(ip_addr))[0]),
+                        ('search_string', str(ip_addr)),
                     ),
                     title=u'Search IP host(s) for this A address',
                 ))
@@ -274,7 +275,7 @@ class ARecord(IPv4HostAddress):
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'dhcpStatements'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', u'fixed-address %s' % self._app.ls.uc_decode(str(ip_addr))[0]),
+                        ('search_string', u'fixed-address %s' % str(ip_addr)),
                     ),
                     title=u'Search DHCP host(s) for this A address',
                 ))
