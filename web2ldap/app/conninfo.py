@@ -326,13 +326,6 @@ def w2l_conninfo(app):
     except ValueError:
         sasl_ssf = u'option not available'
 
-    vendor_name = (
-        app.ls.vendorName
-        or monitored_info
-        or {True:'OpenLDAP', False:''}[app.ls.is_openldap]
-        or 'unknown'
-    )
-
     app.outf.write(
         CONNINFO_LDAP_TEMPLATE % (
             app.ls.uri.encode('ascii'),
@@ -342,8 +335,13 @@ def w2l_conninfo(app):
             web2ldap.utctime.strftimeiso8601(time.gmtime(app.ls.connStartTime)),
             time.time()-app.ls.connStartTime,
             app.ls.l._reconnects_done,
-            app.form.utf2display(vendor_name),
-            app.form.utf2display(app.ls.rootDSE.get('vendorVersion', [''])[0]),
+            app.form.utf2display(
+                app.ls.vendorName
+                or monitored_info
+                or {True:'OpenLDAP', False:''}[app.ls.is_openldap]
+                or 'unknown'
+            ),
+            app.form.utf2display(app.ls.vendorVersion or ''),
             who_html,
             whoami_result,
             app.form.utf2display(sasl_mech),

@@ -707,7 +707,10 @@ class LDAPSession:
                 )
             )
         for attr_type in ('vendorName', 'vendorVersion'):
-            setattr(self, attr_type, self.rootDSE.get(attr_type, [None])[0])
+            if attr_type in self.rootDSE:
+                setattr(self, attr_type, self.rootDSE[attr_type][0].decode(self.charset))
+            else:
+                setattr(self, attr_type, None)
         # determine whether server returns all operational attributes (RFC 3673)
         self.supportsAllOpAttr = (
             '1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures
