@@ -102,7 +102,7 @@ class ObjectSID(OctetString, IA5String):
     def sanitize(self, attrValue: bytes) -> bytes:
         if not attrValue:
             return ''
-        return sddl2sid(attrValue)
+        return sddl2sid(attrValue.decode('ascii'))
 
     def formValue(self) -> str:
         if not self._av:
@@ -596,7 +596,7 @@ class MsAdGUID(OctetString):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         try:
-            object_guid_uuid = uuid.UUID(attrValue.replace(':', ''))
+            object_guid_uuid = uuid.UUID(attrValue.decode('ascii').replace(':', ''))
         except ValueError:
             return OctetString.sanitize(self, attrValue)
         return object_guid_uuid.bytes

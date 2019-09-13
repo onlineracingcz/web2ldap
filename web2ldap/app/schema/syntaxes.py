@@ -2012,7 +2012,7 @@ class BitArrayInteger(MultilineText, Integer):
             result = int(attrValue)
         except ValueError:
             result = 0
-            for row in attrValue.split('\n'):
+            for row in attrValue.split(b'\n'):
                 row = row.strip()
                 try:
                     flag_set, flag_desc = row[0], row[1:]
@@ -2024,7 +2024,7 @@ class BitArrayInteger(MultilineText, Integer):
                             result = result|self.flag_desc2int[flag_desc]
                         except KeyError:
                             pass
-        return str(result)
+        return str(result).encode('ascii')
 
     def formValue(self) -> str:
         attr_value_int = int(self._av or 0)
