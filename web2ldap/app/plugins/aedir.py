@@ -2011,7 +2011,7 @@ class AEStatus(SelectList, Integer):
         ae_status = int(attrValue)
         current_time = time.gmtime(time.time())
         ae_not_before = time.strptime(
-            self._entry.get('aeNotBefore', [b'19700101000000Z'])[0].decode('ascii'),
+            (self._entry.get('aeNotBefore', []) or [b'19700101000000Z'])[0].decode('ascii'),
             '%Y%m%d%H%M%SZ',
         )
         try:
