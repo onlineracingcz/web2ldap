@@ -529,7 +529,7 @@ class DistinguishedName(DirectoryString):
                     'login',
                     'Bind as',
                     [
-                        ('ldapurl', str(ldap_url_obj).decode('ascii')),
+                        ('ldapurl', str(ldap_url_obj)),
                         ('dn', self._dn),
                         ('login_who', self.av_u),
                     ],
