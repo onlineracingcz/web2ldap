@@ -232,7 +232,7 @@ class LDAPSyntax:
     simpleSanitizers = tuple()
     showValueButton = True
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         if not entry:
             entry = ldap0.schema.models.Entry(schema, dn, {})
         assert isinstance(dn, str), \
@@ -372,7 +372,7 @@ class LDAPSyntax:
     def formFields(self):
         return (self.formField(),)
 
-    def formField(self):
+    def formField(self) -> str:
         input_field = web2ldap.web.forms.Input(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -413,7 +413,7 @@ class Binary(LDAPSyntax):
     desc = 'Binary'
     editable = 0
 
-    def formField(self):
+    def formField(self) -> str:
         f = web2ldap.web.forms.File(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -851,7 +851,7 @@ class Integer(IA5String):
     minValue = None
     maxValue = None
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
         if self.maxValue is not None:
             self.maxLen = len(str(self.maxValue))
@@ -883,7 +883,7 @@ class Integer(IA5String):
         except ValueError:
             return attrValue
 
-    def formField(self):
+    def formField(self) -> str:
         form_value = self.formValue()
         max_len = self._maxlen(form_value)
         return web2ldap.web.forms.Input(
@@ -1250,7 +1250,7 @@ class OctetString(Binary):
             )
         ))
 
-    def formField(self):
+    def formField(self) -> str:
         form_value = self.formValue()
         return web2ldap.web.forms.Textarea(
             self._at,
@@ -1298,7 +1298,7 @@ class MultilineText(DirectoryString):
         ]
         return u'\r\n'.join(splitted_lines)
 
-    def formField(self):
+    def formField(self) -> str:
         form_value = self.formValue()
         return web2ldap.web.forms.Textarea(
             self._at,
@@ -1647,7 +1647,7 @@ class SelectList(DirectoryString):
             attr_title=self._app.form.utf2display(attr_title or u'')
         )
 
-    def formField(self):
+    def formField(self) -> str:
         attr_value_dict = self._get_attr_value_dict()
         if self.input_fallback and \
            (not attr_value_dict or not filter(None, attr_value_dict.keys())):
@@ -1691,7 +1691,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
     valuePrefix = ''
     valueSuffix = ''
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         self.lu_obj = ldap0.ldapurl.LDAPUrl(self.ldap_url)
         self.minLen = len(self.valuePrefix)+len(self.valueSuffix)
         SelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
@@ -2002,7 +2002,7 @@ class BitArrayInteger(MultilineText, Integer):
         True:'+',
     }
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         Integer.__init__(self, app, dn, schema, attrType, attrValue, entry)
         self.flag_desc2int = dict(self.flag_desc_table)
         self.flag_int2desc = {
@@ -2046,7 +2046,7 @@ class BitArrayInteger(MultilineText, Integer):
         ]
         return u'\r\n'.join(flag_lines)
 
-    def formField(self):
+    def formField(self) -> str:
         form_value = self.formValue()
         return web2ldap.web.forms.Textarea(
             self._at,
@@ -2140,7 +2140,7 @@ class RFC822Address(DNSDomain, IA5String):
     reObj = re.compile(r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$')
     html_tmpl = '<a href="mailto:{av}">{av}</a>'
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
     def formValue(self) -> str:
@@ -2329,7 +2329,7 @@ class ComposedAttribute(LDAPSyntax):
         """
         return u''
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         """
         always returns a list with a single value based on the first
         successfully applied compose template
@@ -2346,7 +2346,7 @@ class ComposedAttribute(LDAPSyntax):
             return attrValues
         return attr_values
 
-    def formField(self):
+    def formField(self) -> str:
         """
         composed attributes must only have hidden input field
         """

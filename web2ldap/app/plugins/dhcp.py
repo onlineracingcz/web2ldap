@@ -29,7 +29,7 @@ class DHCPConfigStatement(MultilineText):
     desc = 'DHCP configuration statement'
     lineSep = b''
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         r = ['<code>%s</code>' % (
             MultilineText.display(self, valueindex, commandbutton)
         )]

@@ -35,7 +35,7 @@ class GidNumber(DynamicValueSelectList, Integer):
     def _validate(self, attrValue: bytes) -> bool:
         return Integer._validate(self, attrValue)
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         # Possibly display a link
         ocs = self._entry.object_class_oid_set()
         if 'posixAccount' in ocs or 'shadowAccount' in ocs:
@@ -66,7 +66,7 @@ class GidNumber(DynamicValueSelectList, Integer):
             ))
         return ' '.join(r)
 
-    def formField(self):
+    def formField(self) -> str:
         ocs = self._entry.object_class_oid_set()
         if 'posixAccount' in ocs or 'shadowAccount' in ocs:
             return DynamicValueSelectList.formField(self)
@@ -85,7 +85,7 @@ class MemberUID(IA5String, DynamicValueSelectList):
     ldap_url = None
     #ldap_url = 'ldap:///_?uid,cn?sub?(objectClass=posixAccount)'
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
         if self.ldap_url:
             DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
@@ -95,12 +95,12 @@ class MemberUID(IA5String, DynamicValueSelectList):
             return DynamicValueSelectList._validate(self, attrValue)
         return IA5String._validate(self, attrValue)
 
-    def formField(self):
+    def formField(self) -> str:
         if self.ldap_url:
             return DynamicValueSelectList.formField(self)
         return IA5String.formField(self)
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         r = [IA5String.display(self, valueindex, commandbutton=False)]
         if commandbutton:
             r.append(self._app.anchor(

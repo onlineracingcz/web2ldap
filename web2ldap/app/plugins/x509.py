@@ -97,7 +97,7 @@ class Certificate(Binary):
         html.append('</dl>')
         return html
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         html = ['%d bytes' % (len(self._av),)]
         try:
             x509 = asn1crypto.x509.Certificate.load(self._av)
@@ -155,7 +155,7 @@ class CertificateList(Binary):
                 pass
         return attrValue
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             x509 = asn1crypto.crl.CertificateList.load(self._av)
         except ValueError:

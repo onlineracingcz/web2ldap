@@ -72,7 +72,7 @@ class ObjectVersion(Integer, SelectList):
         u'14247': u'Exchange 2010 SP2',
     }
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return SelectList.display(self, valueindex, commandbutton)
 
 # Register certain attribute types for syntax classes
@@ -109,10 +109,10 @@ class ObjectSID(OctetString, IA5String):
             return u''
         return sid2sddl(self._av)
 
-    def formField(self):
+    def formField(self) -> str:
         return IA5String.formField(self)
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return '%s<br>%s' % (
             self._app.form.utf2display(sid2sddl(self._av)),
             OctetString.display(self, valueindex, commandbutton),
@@ -178,7 +178,7 @@ class OtherSID(ObjectSID):
         'S-1-5-32-556': 'BUILTIN_NETWORK_CONF_OPERATORS',
     }
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         sddl_str = sid2sddl(self._av)
         search_anchor = self.well_known_sids.get(sddl_str, '')
         if commandbutton and sddl_str not in self.well_known_sids:
@@ -448,7 +448,7 @@ class LogonHours(OctetString):
             day_bits = []
         return u'\r\n'.join(day_bits)
 
-    def formField(self):
+    def formField(self) -> str:
         form_value = self.formValue()
         return web2ldap.web.forms.Textarea(
             self._at,
@@ -461,7 +461,7 @@ class LogonHours(OctetString):
             cols=24,
         )
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         hour_flags = self._extract_hours(self._av)
         result_lines = [
             """<tr>
@@ -507,7 +507,7 @@ class CountryCode(PropertiesSelectList):
         bytes.strip,
     )
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         self.attr_value_dict[u'0'] = u'-/-'
         SelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
@@ -557,7 +557,7 @@ class DNWithOctetString(DistinguishedName):
             return False
         return len(octet_string) == count and octet_tag.upper() == self.octetTag and is_dn(dn)
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             octet_tag, count, octet_string, dn = self.av_u.split(':', 3)
         except ValueError:
@@ -601,7 +601,7 @@ class MsAdGUID(OctetString):
             return OctetString.sanitize(self, attrValue)
         return object_guid_uuid.bytes
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         object_guid_uuid = uuid.UUID(bytes=self._av)
         return '{%s}<br>%s' % (
             str(object_guid_uuid),
@@ -626,7 +626,7 @@ class Interval(MicrosoftLargeInteger):
     def _delta(attrValue):
         return (int(attrValue)-116444736000000000)/10000000
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         if self._av == '9223372036854775807':
             return '-1: unlimited/off'
         delta = self._delta(self._av)
@@ -642,7 +642,7 @@ class LockoutTime(Interval):
     oid = 'LockoutTime-oid'
     desc = 'Timestamp of password failure lockout'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         delta = self._delta(self._av)
         if delta == 0:
             return '%s (not locked)' % (MicrosoftLargeInteger.display(self, valueindex, commandbutton))
@@ -753,7 +753,7 @@ class ClassSchemaLDAPName(DynamicValueSelectList, OID):
     desc = 'lDAPDisplayName of the classSchema entry'
     ldap_url = 'ldap:///_?lDAPDisplayName,lDAPDisplayName?one?(objectClass=classSchema)'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return OID.display(self, valueindex, commandbutton)
 
 syntax_registry.reg_at(
@@ -771,7 +771,7 @@ class AttributeSchemaLDAPName(DynamicValueSelectList, OID):
     desc = 'lDAPDisplayName of the classSchema entry'
     ldap_url = 'ldap:///_?lDAPDisplayName,lDAPDisplayName?one?(objectClass=attributeSchema)'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return OID.display(self, valueindex, commandbutton)
 
 syntax_registry.reg_at(

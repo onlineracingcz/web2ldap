@@ -91,7 +91,7 @@ class AssociatedDomain(DNSDomain):
                 form_value = u'.'.join((dc_value, parent_domain))
         return form_value
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         r = [DNSDomain.display(self, valueindex, commandbutton)]
         if commandbutton:
             av = self.av_u.lower()
@@ -190,10 +190,10 @@ class ResourceRecord(DNSDomain, DynamicValueSelectList):
     desc = 'A resource record pointing to another DNS RR'
     ldap_url = 'ldap:///_?associatedDomain,associatedDomain?sub?(objectClass=domainRelatedObject)'
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return DynamicValueSelectList.display(self, valueindex, commandbutton)
 
 syntax_registry.reg_at(
@@ -239,7 +239,7 @@ class ARecord(IPv4HostAddress):
     oid = 'ARecord-oid'
     desc = 'A resource record pointing to IPv4 address'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         r = [IPv4HostAddress.display(self, valueindex, commandbutton)]
         if commandbutton:
             ip_addr = self.addr_class(self.av_u)
@@ -291,7 +291,7 @@ class AAAARecord(IPv6HostAddress):
     oid = 'AAAARecord-oid'
     desc = 'AAAA resource record pointing to IPv6 address'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         r = [IPv6HostAddress.display(self, valueindex, commandbutton)]
         if commandbutton:
             ip_addr = self.addr_class(self.av_u)
@@ -368,7 +368,7 @@ class SSHFPRecord(IA5String):
                 result = result and len(fp_value) == fp_algo_len
         return result
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         display_value = IA5String.display(self, valueindex, commandbutton)
         try:
             key_algo, fp_algo, _ = filter(None, map(str.strip, self._av.split(' ')))

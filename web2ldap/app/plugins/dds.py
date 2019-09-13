@@ -14,7 +14,7 @@ class EntryTTL(Timespan):
     oid = 'EntryTTL-oid'
     desc = 'Time-to-live of dynamic entry'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         expiration_time = time.time()+int(self._av)
         return '%s, expires %s' % (
             Timespan.display(self, valueindex, commandbutton),

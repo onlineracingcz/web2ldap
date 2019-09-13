@@ -143,7 +143,7 @@ class SshPublicKey(DirectoryString):
                 result.append('<dt>Key size:</dt><dd>%d</dd>' % (pk_size))
         return result
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         pk_type, pk_comment, pk_bin, pk_fingerprints = self._extract_pk_params(self._av)
         result = ['<dl>']
         result.extend(

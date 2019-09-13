@@ -145,7 +145,7 @@ syntax_registry.reg_at(
 class UserPassword(OctetString, DirectoryString):
     oid = 'UserPassword-oid'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             result = DirectoryString.display(self, valueindex, commandbutton)
         except UnicodeDecodeError:

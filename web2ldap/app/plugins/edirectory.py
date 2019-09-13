@@ -111,7 +111,7 @@ class OctetStringGUID(OctetString):
             s1[16:32],
         ))
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         if self._at == u'GUID':
             # GUID of an entry is displayed in several variants
             return """
@@ -168,7 +168,7 @@ class IndexDefinition(DollarSeparatedMultipleLines):
     oid = 'IndexDefinition-oid'
     desc = 'Index Definition'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             (
                 version,
@@ -218,7 +218,7 @@ class TaggedNameAndString(DirectoryString, OctetString):
     oid = '2.16.840.1.113719.1.1.5.1.15'
     desc = 'Tagged Name And String'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             ind2 = self._av.rindex('#')
             ind1 = self._av.rindex('#', 0, ind2-1)

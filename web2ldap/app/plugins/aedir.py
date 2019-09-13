@@ -182,7 +182,7 @@ class AEHomeDirectory(HomeDirectory):
             prefix = self.homeDirectoryPrefixes[0]
         return [self._app.ls.uc_encode('/'.join((prefix, uid)))[0]]
 
-    def formField(self):
+    def formField(self) -> str:
         input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -209,7 +209,7 @@ class AEUIDNumber(UidNumber):
     def transmute(self, attrValues):
         return self._entry.get('gidNumber', [''])
 
-    def formField(self):
+    def formField(self) -> str:
         input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -281,7 +281,7 @@ class AEGIDNumber(GidNumber):
     def formValue(self) -> str:
         return Integer.formValue(self)
 
-    def formField(self):
+    def formField(self) -> str:
         return Integer.formField(self)
 
 syntax_registry.reg_at(
@@ -322,7 +322,7 @@ class AEUserUid(AEUid):
         bytes.lower,
     )
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry=entry)
 
     def _gen_uid(self):
@@ -351,7 +351,7 @@ class AEUserUid(AEUid):
             form_value = self._gen_uid().decode()
         return form_value
 
-    def formField(self):
+    def formField(self) -> str:
         return HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -628,7 +628,7 @@ class AEMemberUid(MemberUID):
     def formValue(self) -> str:
         return u''
 
-    def formField(self):
+    def formField(self) -> str:
         input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -657,7 +657,7 @@ class AEGroupDN(DerefDynamicDNSelectList):
         ('memberOf', u'Members', None, u'Search all member entries of this user group'),
     )
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         group_dn = DNObj.from_str(self.av_u)
         group_cn = group_dn[0][0][1]
         r = [
@@ -1051,10 +1051,10 @@ syntax_registry.reg_at(
 class AEEntryDNAEMailGroup(GroupEntryDN):
     oid = 'AEEntryDNAEMailGroup-oid'
     desc = 'AE-DIR: entryDN of aeGroup entry'
-    ref_attrs = [
+    ref_attrs = (
         ('memberOf', u'Members', None, u'Search all member entries of this mail group'),
         ('aeVisibleGroups', u'Visible', None, u'Search all server/service groups (aeSrvGroup)\non which this mail group is visible'),
-    ]
+    )
 
 syntax_registry.reg_at(
     AEEntryDNAEMailGroup.oid, [
@@ -1069,13 +1069,13 @@ syntax_registry.reg_at(
 class AEEntryDNAEGroup(GroupEntryDN):
     oid = 'AEEntryDNAEGroup-oid'
     desc = 'AE-DIR: entryDN of aeGroup entry'
-    ref_attrs = [
+    ref_attrs = (
         ('memberOf', u'Members', None, u'Search all member entries of this user group'),
         ('aeLoginGroups', u'Login', None, u'Search all server/service groups (aeSrvGroup)\non which this user group has login right'),
         ('aeLogStoreGroups', u'View Logs', None, u'Search all server/service groups (aeSrvGroup)\non which this user group has log view right'),
         ('aeSetupGroups', u'Setup', None, u'Search all server/service groups (aeSrvGroup)\non which this user group has setup/installation rights'),
         ('aeVisibleGroups', u'Visible', None, u'Search all server/service groups (aeSrvGroup)\non which this user group is at least visible'),
-    ]
+    )
 
     def _additional_links(self):
         aegroup_cn = self._entry['cn'][0].decode(self._app.ls.charset)
@@ -1333,7 +1333,7 @@ class AEPerson2(AEPerson):
                 )[0].decode(self._app.form.accept_charset)
         return form_value
 
-    def formField(self):
+    def formField(self) -> str:
         return DistinguishedName.formField(self)
 
     def transmute(self, attrValues):
@@ -1422,7 +1422,7 @@ class AEDerefAttribute(DirectoryString):
     def formValue(self) -> str:
         return u''
 
-    def formField(self):
+    def formField(self) -> str:
         input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -1514,7 +1514,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
             attrValues = AEPersonAttribute.transmute(self, attrValues)
         return attrValues
 
-    def formField(self):
+    def formField(self) -> str:
         if self._is_mail_account():
             return SelectList.formField(self)
         return AEPersonAttribute.formField(self)
@@ -1726,7 +1726,7 @@ class AEUniqueIdentifier(DirectoryString):
             return [self.gen_template.format(timestamp=time.time())]
         return attrValues
 
-    def formField(self):
+    def formField(self) -> str:
         input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -1890,7 +1890,7 @@ syntax_registry.reg_at(
 class AECommonNameAETag(AEZonePrefixCommonName):
     oid = 'AECommonNameAETag-oid'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         display_value = AEZonePrefixCommonName.display(self, valueindex, commandbutton)
         if commandbutton:
             search_anchor = self._app.anchor(
@@ -2054,7 +2054,7 @@ class AEStatus(SelectList, Integer):
                         ae_status = ae_expiry_status
         return [str(ae_status).encode('ascii')]
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         if not commandbutton:
             return Integer.display(self, valueindex)
         return SelectList.display(self, valueindex, commandbutton)
@@ -2206,7 +2206,7 @@ class AERFC822MailMember(DynamicValueSelectList):
         ]
         return sorted(mail_addresses)
 
-    def formField(self):
+    def formField(self) -> str:
         input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -2252,7 +2252,7 @@ class AESudoHost(IA5String):
     def transmute(self, attrValues):
         return ['ALL']
 
-    def formField(self):
+    def formField(self) -> str:
         input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),

@@ -169,7 +169,7 @@ class OathSecret(OctetString):
     oid = 'OathSecret-oid'
     desc = 'OATH shared secret'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return '<br>'.join((
             self._app.form.utf2display(base64.b32encode(self._av).decode('ascii')),
             OctetString.display(self, valueindex, commandbutton),
@@ -187,7 +187,7 @@ class OathSecretTime(GeneralizedTime):
     desc = 'OATH secret change time'
     time_divisors = Timespan.time_divisors
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         ocs = self._entry.object_class_oid_set()
         gt_disp_html = GeneralizedTime.display(self, valueindex, commandbutton)
         if 'oathHOTPToken' in ocs:

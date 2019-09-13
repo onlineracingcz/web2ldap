@@ -138,7 +138,7 @@ class OlcMultilineText(MultilineText):
     cols = 90
     minInputRows = 3
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         return '<code>%s</code>' % MultilineText.display(self, valueindex, commandbutton)
 
 syntax_registry.reg_at(
@@ -154,10 +154,10 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
     desc = 'OpenLDAP syncrepl directive'
     minInputRows = 5
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         OlcMultilineText.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         if not commandbutton or not self._av:
             return OlcMultilineText.display(self, valueindex, commandbutton)
         srd = ldap0.openldap.SyncReplDesc(self._av)
@@ -204,7 +204,7 @@ class OlcPPolicyDefault(DynamicDNSelectList, DistinguishedName):
     desc = 'DN of a pwdPolicy object for uncustomized objects'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=pwdPolicy)'
 
-    def __init__(self, app, dn, schema, attrType, attrValue, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         DynamicDNSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
     def _validate(self, attrValue: bytes) -> bool:
@@ -251,7 +251,7 @@ class AuditContext(NamingContexts):
     oid = 'AuditContext'
     desc = 'OpenLDAP DN pointing to audit naming context'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         r = [DistinguishedName.display(self, valueindex, commandbutton)]
         if commandbutton:
             r.extend([
@@ -308,7 +308,7 @@ class ReqMod(OctetString, DirectoryString):
     desc = 'List of modifications/old values'
     known_modtypes = {b'+', b'-', b'=', b'#', b''}
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         if self._av == b':':
             # magic value used for fixing OpenLDAP ITS#6545
             return ':'
@@ -352,7 +352,7 @@ class ReqControls(IA5String):
     oid = '1.3.6.1.4.1.4203.666.11.5.3.1'
     desc = 'List of LDAPv3 extended controls sent along with a request'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         result_lines = [IA5String.display(self, valueindex, commandbutton)]
         # Eliminate X-ORDERED prefix
         _, rest = self.av_u.strip().split('}{', 1)
@@ -413,7 +413,7 @@ syntax_registry.reg_at(
 class ReqEntryUUID(UUID):
     oid = 'ReqEntryUUID-oid'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         display_value = UUID.display(self, valueindex, commandbutton)
         if not commandbutton:
             return display_value
@@ -446,7 +446,7 @@ syntax_registry.reg_at(
 class ReqSession(Integer):
     oid = 'ReqSession-oid'
 
-    def display(self, valueindex=0, commandbutton=False):
+    def display(self, valueindex=0, commandbutton=False) -> str:
         display_value = Integer.display(self, valueindex, commandbutton)
         if not commandbutton:
             return display_value
