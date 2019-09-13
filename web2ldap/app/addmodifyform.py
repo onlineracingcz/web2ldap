@@ -178,8 +178,8 @@ def get_entry_input(app):
                 attr_value = attr_instance.sanitize(in_value)
             except LDAPSyntaxValueError:
                 attr_value = in_value
-            assert attr_value is None or isinstance(attr_value, bytes), TypeError(
-                'Expected %s.sanitize(%r) to return bytes or None, got %r' % (
+            assert isinstance(attr_value, bytes), TypeError(
+                'Expected %s.sanitize(%r) to return bytes, got %r' % (
                     attr_instance.__class__.__name__,
                     in_value,
                     attr_value,
