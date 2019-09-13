@@ -1973,14 +1973,16 @@ class AENotAfter(NotAfter):
     def _validate(self, attrValue: bytes) -> bool:
         result = NotAfter._validate(self, attrValue)
         if result:
-            ae_not_after = time.strptime(attrValue, r'%Y%m%d%H%M%SZ')
+            ae_not_after = time.strptime(attrValue.decode('ascii'), '%Y%m%d%H%M%SZ')
             try:
                 ae_not_before = time.strptime(
-                    self._entry['aeNotBefore'][0],
-                    r'%Y%m%d%H%M%SZ',
+                    self._entry['aeNotBefore'][0].decode('ascii'),
+                    '%Y%m%d%H%M%SZ',
                 )
-            except (KeyError, ValueError):
+            except KeyError:
                 result = True
+            except (UnicodeDecodeError, ValueError):
+                result = False
             else:
                 result = (ae_not_before <= ae_not_after)
         return result
@@ -2009,15 +2011,12 @@ class AEStatus(SelectList, Integer):
         ae_status = int(attrValue)
         current_time = time.gmtime(time.time())
         ae_not_before = time.strptime(
-            self._entry.get('aeNotBefore', [''])[0] or '19700101000000Z',
-            r'%Y%m%d%H%M%SZ',
+            self._entry.get('aeNotBefore', [b'19700101000000Z'])[0].decode('ascii'),
+            '%Y%m%d%H%M%SZ',
         )
-        if 'aeNotAfter' in self._entry and self._entry['aeNotAfter'][0]:
-            ae_not_after = time.strptime(
-                self._entry['aeNotAfter'][0],
-                r'%Y%m%d%H%M%SZ',
-            )
-        else:
+        try:
+            ae_not_after = time.strptime(self._entry['aeNotAfter'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
+        except (KeyError, IndexError, ValueError):
             ae_not_after = current_time
         # see https://www.ae-dir.com/docs.html#schema-validity-period
         if current_time > ae_not_after:
@@ -2031,29 +2030,29 @@ class AEStatus(SelectList, Integer):
     def transmute(self, attrValues):
         if not attrValues or not attrValues[0]:
             return attrValues
-        ae_status = int(attrValues[0])
+        ae_status = int(attrValues[0].decode('ascii'))
         current_time = time.gmtime(time.time())
         try:
-            ae_not_before = time.strptime(self._entry['aeNotBefore'][0], r'%Y%m%d%H%M%SZ')
-        except (KeyError, ValueError):
-            pass
+            ae_not_before = time.strptime(self._entry['aeNotBefore'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
+        except (KeyError, IndexError, ValueError):
+            ae_not_before = None
         else:
             if ae_status == 0 and current_time < ae_not_before:
                 ae_status = -1
         try:
-            ae_not_after = time.strptime(self._entry['aeNotAfter'][0], r'%Y%m%d%H%M%SZ')
-        except (KeyError, ValueError):
-            pass
+            ae_not_after = time.strptime(self._entry['aeNotAfter'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
+        except (KeyError, IndexError, ValueError):
+            ae_not_after = None
         else:
             if current_time > ae_not_after:
                 try:
-                    ae_expiry_status = int(self._entry.get('aeExpiryStatus', ['1'])[0])
-                except ValueError:
+                    ae_expiry_status = int(self._entry.get('aeExpiryStatus', ['1'])[0].decode('ascii'))
+                except (KeyError, IndexError, ValueError):
                     pass
                 else:
                     if ae_status <= ae_expiry_status:
                         ae_status = ae_expiry_status
-        return [str(ae_status)]
+        return [str(ae_status).encode('ascii')]
 
     def display(self, valueindex=0, commandbutton=False):
         if not commandbutton:
