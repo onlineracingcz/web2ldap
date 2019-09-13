@@ -142,7 +142,7 @@ def get_entry_input(app):
     for i, attr_type in enumerate(in_attrtype_list):
         attr_value = in_value_list[i]
         if isinstance(attr_value, str):
-            attr_value = attr_value.encode(app.ls.charset)
+            attr_value = app.ls.uc_encode(attr_value)[0]
         try:
             entry[attr_type].append(attr_value)
         except KeyError:
@@ -1279,7 +1279,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
     if input_formtype == 'OC':
         # Output the web page with object class input form
-        ObjectClassForm(app, entry['objectClass'], entry.get_structural_oc())
+        ObjectClassForm(app, decode_list(entry['objectClass'], 'ascii'), entry.get_structural_oc())
         return
 
     existing_object_classes = decode_list(entry['objectClass'][:], encoding='ascii')
