@@ -2012,7 +2012,7 @@ class AEStatus(SelectList, Integer):
         current_time = time.gmtime(time.time())
         try:
             ae_not_before = time.strptime(self._entry['aeNotBefore'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
-        except ValueError:
+        except (KeyError, IndexError, ValueError, UnicodeDecodeError):
             ae_not_before = time.strptime('19700101000000Z', '%Y%m%d%H%M%SZ')
         try:
             ae_not_after = time.strptime(self._entry['aeNotAfter'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
