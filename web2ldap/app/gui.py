@@ -310,7 +310,10 @@ def display_authz_dn(app, who=None, entry=None):
             except ldap0.LDAPError:
                 entry = None
             else:
-                entry = user_res.entry_as
+                if user_res is None:
+                    entry = {}
+                else:
+                    entry = user_res.entry_as
         if entry:
             display_entry = web2ldap.app.read.DisplayEntry(app, app.dn, app.schema, entry, 'readSep', True)
             user_structural_oc = display_entry.entry.get_structural_oc()
