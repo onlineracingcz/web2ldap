@@ -2010,13 +2010,13 @@ class AEStatus(SelectList, Integer):
             return result
         ae_status = int(attrValue)
         current_time = time.gmtime(time.time())
-        ae_not_before = time.strptime(
-            (self._entry.get('aeNotBefore', []) or [b'19700101000000Z'])[0].decode('ascii'),
-            '%Y%m%d%H%M%SZ',
-        )
+        try:
+            ae_not_before = time.strptime(self._entry['aeNotBefore'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
+        except ValueError:
+            ae_not_before = time.strptime('19700101000000Z', '%Y%m%d%H%M%SZ')
         try:
             ae_not_after = time.strptime(self._entry['aeNotAfter'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
-        except (KeyError, IndexError, ValueError):
+        except (KeyError, IndexError, ValueError, UnicodeDecodeError):
             ae_not_after = current_time
         # see https://www.ae-dir.com/docs.html#schema-validity-period
         if current_time > ae_not_after:
