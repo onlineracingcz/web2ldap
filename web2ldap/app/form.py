@@ -449,6 +449,14 @@ class Web2LDAPForm_input(Web2LDAPForm):
                 ('.*', re.U|re.M|re.S)
             ),
             LDIFTextArea('in_ldif', u'LDIF data'),
+            Select(
+                'in_ocf', u'Object class form mode', 1,
+                options=[
+                    (u'tmpl', u'LDIF templates'),
+                    (u'exp', u'Object class selection')
+                ],
+                default=u'tmpl',
+            ),
         ])
         return res
 
@@ -468,14 +476,6 @@ class Web2LDAPForm_add(Web2LDAPForm_input):
                 u'.+',
             ),
             Input('add_basedn', u'Base DN of new entry', 1024, 1, u'.*', size=50),
-            Select(
-                'in_ocf', u'Object class form mode', 1,
-                options=[
-                    (u'tmpl', u'LDIF templates'),
-                    (u'exp', u'Object class selection')
-                ],
-                default=u'tmpl',
-            ),
         ])
         return res
 
