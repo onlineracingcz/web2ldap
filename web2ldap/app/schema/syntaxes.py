@@ -764,12 +764,14 @@ class GeneralizedTime(IA5String):
                     try:
                         dt = datetime.datetime.strptime(av_u, time_format)
                     except ValueError:
-                        result = IA5String.sanitize(self, av_u)
+                        result = None
                     else:
                         result = datetime.datetime.strftime(dt, r'%Y%m%d'+self.timeDefault+'Z')
                         break
             else:
                 result = av_u
+        if result is None:
+            return IA5String.sanitize(self, attrValue)
         return result.encode('ascii')
         # end of GeneralizedTime.sanitize()
 
