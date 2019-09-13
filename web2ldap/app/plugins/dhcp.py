@@ -35,11 +35,11 @@ class DHCPConfigStatement(MultilineText):
         )]
         if commandbutton:
             try:
-                dhcp_type, dhcp_value = self._av.split(' ', 1)
+                dhcp_type, dhcp_value = self.av_u.split(' ', 1)
             except ValueError:
-                dhcp_type, dhcp_value = self._av, ''
-            dhcp_type = self._app.ls.uc_decode(dhcp_type.lower().strip())[0]
-            dhcp_value = self._app.ls.uc_decode(dhcp_value.replace('"', '').strip())[0]
+                dhcp_type, dhcp_value = self.av_u, ''
+            dhcp_type = dhcp_type.lower().strip()
+            dhcp_value = dhcp_value.replace('"', '').strip()
             if dhcp_type == 'host-name':
                 host_name = dhcp_value.lower()
                 r.append(self._app.anchor(
@@ -80,7 +80,7 @@ class DHCPConfigStatement(MultilineText):
                     search_params.extend((
                         ('search_attr', u'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', self._app.ls.uc_decode(reverse_dns)[0]),
+                        ('search_string', reverse_dns),
                     ))
                 r.append(
                     self._app.anchor(
