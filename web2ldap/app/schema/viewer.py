@@ -76,7 +76,7 @@ def schema_anchor(
     """
     se = app.schema.get_obj(se_class, se_nameoroid, None)
     if se is None:
-        return name_template % (app.form.utf2display(se_nameoroid.decode('ascii')))
+        return name_template % (app.form.utf2display(se_nameoroid))
     anchor = app.anchor(
         'oid', link_text or schema_link_text(se, app.form.accept_charset),
         [
