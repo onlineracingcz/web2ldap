@@ -9,6 +9,7 @@ import struct
 import uuid
 
 from ldap0.dn import is_dn
+from ldap0.msad import sid2sddl, sddl2sid
 
 import web2ldapcnf
 
@@ -95,54 +96,25 @@ class ObjectSID(OctetString, IA5String):
           [32 bits]
     """
 
-    @staticmethod
-    def _sid2sddl(sid):
-        srl = sid[0]
-        number_sub_id = sid[1]
-        iav = struct.unpack('!Q', b'\x00\x00'+sid[2:8])[0]
-        sub_ids = [
-            struct.unpack('<I', sid[8+4*i:12+4*i])[0]
-            for i in range(number_sub_id)
-        ]
-        return 'S-%d-%d-%s' % (
-            srl,
-            iav,
-            '-'.join([str(s) for s in sub_ids]),
-        )
-
-    @staticmethod
-    def _sddl2sid(sddl):
-        sid_components = sddl.split('-')
-        srl_byte = chr(int(sid_components[1]))
-        number_sub_id_byte = chr(len(sid_components)-3)
-        iav_buf = struct.pack('!Q', int(sid_components[2]))[2:]
-        result_list = [srl_byte, number_sub_id_byte, iav_buf]
-        result_list.extend([
-            struct.pack('<I', int(s))
-            for s in sid_components[3:]
-        ])
-        return ''.join(result_list)
-
     def _validate(self, attrValue: bytes) -> bool:
         return OctetString._validate(self, attrValue)
 
     def sanitize(self, attrValue: bytes) -> bytes:
         if not attrValue:
             return ''
-        return self._sddl2sid(attrValue)
+        return sddl2sid(attrValue)
 
     def formValue(self) -> str:
         if not self._av:
             return u''
-        return self._sid2sddl(self._av).decode('ascii')
+        return sid2sddl(self._av)
 
     def formField(self):
         return IA5String.formField(self)
 
     def display(self, valueindex=0, commandbutton=False):
-        sddl_str = self._sid2sddl(self._av)
         return '%s<br>%s' % (
-            self._app.form.utf2display(sddl_str),
+            self._app.form.utf2display(sid2sddl(self._av)),
             OctetString.display(self, valueindex, commandbutton),
         )
 
@@ -207,7 +179,7 @@ class OtherSID(ObjectSID):
     }
 
     def display(self, valueindex=0, commandbutton=False):
-        sddl_str = str(self._sid2sddl(self._av), 'ascii')
+        sddl_str = sid2sddl(self._av)
         search_anchor = self.well_known_sids.get(sddl_str, '')
         if commandbutton and sddl_str not in self.well_known_sids:
             search_anchor = self._app.anchor(
@@ -867,7 +839,7 @@ class MsDSReplAttributeMetaData(XmlValue):
     editable = 0
 
     def _validate(self, attrValue: bytes) -> bool:
-        return attrValue.endswith('\n\x00') and XmlValue._validate(self, attrValue[:-1])
+        return attrValue.endswith(b'\n\x00') and XmlValue._validate(self, attrValue[:-1])
 
 syntax_registry.reg_at(
     MsDSReplAttributeMetaData.oid, [

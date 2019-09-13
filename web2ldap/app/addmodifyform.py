@@ -1114,7 +1114,8 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
         # Determine writeable attributes from attribute 'allowedAttributesEffective'
         try:
             writeable_attr_oids = ldap0.schema.models.SchemaElementOIDSet(
-                sub_schema, AttributeType, entry['allowedAttributesEffective']
+                sub_schema, AttributeType,
+                [av.decode('ascii') for av in ldap_res.entry_as.get('allowedAttributesEffective', [])]
             )
         except KeyError:
             writeable_attr_oids = set([])
@@ -1304,7 +1305,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         in_wrtattroids_values = app.form.hiddenFieldHTML('in_wrtattroids', u'nonePseudoValue;x-web2ldap-None', u'')
     else:
         in_wrtattroids_values = ''.join([
-            app.form.hiddenFieldHTML('in_wrtattroids', at_name.decode('ascii'), u'')
+            app.form.hiddenFieldHTML('in_wrtattroids', at_name, u'')
             for at_name in writeable_attr_oids or []
         ])
 

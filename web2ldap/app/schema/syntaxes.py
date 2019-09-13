@@ -1284,11 +1284,10 @@ class MultilineText(DirectoryString):
         )
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        lines = [
+        return '<br>'.join([
             self._app.form.utf2display(self._app.ls.uc_decode(line_b)[0])
             for line_b in self._split_lines(self._av)
-        ]
-        return '<br>'.join(lines)
+        ])
 
     def formValue(self) -> str:
         splitted_lines = [
@@ -1317,8 +1316,11 @@ class PreformattedMultilineText(MultilineText):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         lines = [
-            self._app.form.utf2display(l, self.tab_identiation)
-            for l in self._split_lines(self.av_u)
+            self._app.form.utf2display(
+                self._app.ls.uc_decode(line_b)[0],
+                self.tab_identiation,
+            )
+            for line_b in self._split_lines(self._av)
         ]
         return '<code>%s</code>' % '<br>'.join(lines)
 
@@ -1776,7 +1778,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         elif ldap_url_dn == '..':
             result_dn = str(self.dn.parent())
         elif ldap_url_dn.endswith(',_'):
-            result_dn = ','.join((ldap_url_dn[:-2], (self._app.naming_context)))
+            result_dn = ','.join((ldap_url_dn[:-2], str(self._app.naming_context)))
         elif ldap_url_dn.endswith(',.'):
             result_dn = ','.join((ldap_url_dn[:-2], self._dn))
         elif ldap_url_dn.endswith(',..'):
