@@ -174,10 +174,7 @@ def get_entry_input(app):
                 attr_type, None,
                 entry=entry,
             )
-            try:
-                attr_value = attr_instance.sanitize(in_value)
-            except LDAPSyntaxValueError:
-                attr_value = in_value
+            attr_value = attr_instance.sanitize(in_value)
             assert isinstance(attr_value, bytes), TypeError(
                 'Expected %s.sanitize(%r) to return bytes, got %r' % (
                     attr_instance.__class__.__name__,
@@ -212,21 +209,16 @@ def get_entry_input(app):
                 attr_type, None,
                 entry=entry,
             )
-            try:
-                new_values = attr_instance.transmute(attr_values)
-            except (KeyError, IndexError):
-                entry_changed = True
-                entry[attr_type] = [b'']
-            else:
-                assert not attr_values or isinstance(attr_values[0], bytes), TypeError(
-                    'Expected %s.transmute(%r) to return list of bytes, got %r' % (
-                        attr_instance.__class__.__name__,
-                        attr_values,
-                        new_values,
-                    )
+            new_values = attr_instance.transmute(attr_values)
+            assert not attr_values or isinstance(attr_values[0], bytes), TypeError(
+                'Expected %s.transmute(%r) to return list of bytes, got %r' % (
+                    attr_instance.__class__.__name__,
+                    attr_values,
+                    new_values,
                 )
-                entry_changed = entry_changed or (new_values != attr_values)
-                entry[attr_type] = new_values
+            )
+            entry_changed = entry_changed or (new_values != attr_values)
+            entry[attr_type] = new_values
 
     invalid_attrs = {}
 
