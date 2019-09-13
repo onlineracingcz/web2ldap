@@ -1650,7 +1650,7 @@ class SelectList(DirectoryString):
     def formField(self) -> str:
         attr_value_dict = self._get_attr_value_dict()
         if self.input_fallback and \
-           (not attr_value_dict or not filter(None, attr_value_dict.keys())):
+           (not attr_value_dict or not list(filter(None, attr_value_dict.keys()))):
             return DirectoryString.formField(self)
         field = web2ldap.web.forms.Select(
             self._at,

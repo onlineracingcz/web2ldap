@@ -132,7 +132,7 @@ class AEObjectUtil:
         """
         person_filter_parts = [person_filter]
         for deref_attr_type in deref_attrs:
-            deref_attr_values = filter(None, entry.get(deref_attr_type, []))
+            deref_attr_values = list(filter(None, entry.get(deref_attr_type, [])))
             if deref_attr_values:
                 person_filter_parts.append(
                     compose_filter(
@@ -474,7 +474,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
     deref_person_attrs = ('aeDept', 'aeLocation')
 
     def _zone_filter(self):
-        member_zones = filter(None, self._entry.get('aeMemberZone', []))
+        member_zones = list(filter(None, self._entry.get('aeMemberZone', [])))
         if member_zones:
             member_zone_filter = compose_filter(
                 '|',
@@ -487,7 +487,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
     def _deref_person_attrset(self):
         result = {}
         for attr_type in self.deref_person_attrs:
-            if attr_type in self._entry and filter(None, self._entry[attr_type]):
+            if attr_type in self._entry and list(filter(None, self._entry[attr_type])):
                 result[attr_type] = set(self._entry[attr_type])
         return result
 
@@ -607,7 +607,7 @@ class AEMemberUid(MemberUID):
 
     def _member_uids_from_member(self):
         return [
-            dn[4:].split(',')[0]
+            dn[4:].split(b',')[0]
             for dn in self._entry.get('member', [])
         ]
 
@@ -623,7 +623,7 @@ class AEMemberUid(MemberUID):
             return []
         if int(self._entry['aeStatus'][0]) == 2:
             return []
-        return filter(None, self._member_uids_from_member())
+        return list(filter(None, self._member_uids_from_member()))
 
     def formValue(self) -> str:
         return u''
@@ -1303,7 +1303,7 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectUtil):
         ]
         zone_entry = self._zone_entry(attrlist=self.deref_attrs) or {}
         for deref_attr_type in self.deref_attrs:
-            deref_attr_values = filter(None, zone_entry.get(deref_attr_type, []))
+            deref_attr_values = list(filter(None, zone_entry.get(deref_attr_type, [])))
             if deref_attr_values:
                 filter_components.append(
                     compose_filter(
@@ -1505,7 +1505,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
     def transmute(self, attrValues):
         if self._is_mail_account():
             # make sure only non-empty strings are in attribute value list
-            if not filter(None, map(str.strip, attrValues)):
+            if not list(filter(None, map(str.strip, attrValues))):
                 try:
                     attrValues = [self._entry['mailLocalAddress'][0]]
                 except KeyError:

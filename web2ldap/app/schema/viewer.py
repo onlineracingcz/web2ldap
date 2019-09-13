@@ -773,7 +773,7 @@ def oid_input_form(app, oid=None):
 
 def display_schema_elements(app, se_classes, se_list):
     se_list = se_list or []
-    se_classes = filter(None, se_classes or []) or SCHEMA_CLASS_MAPPING.values()
+    se_classes = tuple(filter(None, se_classes or []) or SCHEMA_CLASS_MAPPING.values())
 
     web2ldap.app.gui.top_section(
         app,
