@@ -43,9 +43,7 @@ def w2l_urlredirect(app):
     if redirect_ok:
         # URL redirecting has absolutely nothing to do with rest
         app.url_redirect(
-            u'Redirecting to %s...' % (
-                app.form.query_string.decode(app.form.accept_charset)
-            ),
+            u'Redirecting to %s...' % (app.form.query_string),
             refresh_time=0,
             target_url=app.form.query_string,
         )
