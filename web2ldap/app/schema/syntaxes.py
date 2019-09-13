@@ -769,7 +769,7 @@ class GeneralizedTime(IA5String):
                         result = datetime.datetime.strftime(dt, r'%Y%m%d'+self.timeDefault+'Z')
                         break
             else:
-                return None
+                result = av_u
         return result.encode('ascii')
         # end of GeneralizedTime.sanitize()
 
