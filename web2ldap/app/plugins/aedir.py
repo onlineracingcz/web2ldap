@@ -115,41 +115,11 @@ class AEObjectUtil:
             zone = {}
         return zone.entry_as
 
-    def _get_zone_dn(self):
-        return self.dn.slice(None, -len(DNObj.from_str(self._app.naming_context))-1)
+    def _get_zone_dn(self) -> str:
+        return str(self.dn.slice(None, -len(DNObj.from_str(self._app.naming_context))-1))
 
-    def _get_zone_name(self):
+    def _get_zone_name(self) -> str:
         return self.dn[-len(DNObj.from_str(self._app.naming_context))-1][0][1]
-
-    def _constrained_persons(
-            self,
-            entry,
-            deref_attrs,
-            person_filter='(objectClass=aePerson)(aeStatus=0)',
-            person_attrs=None
-        ):
-        """
-        return additional aePerson filter based on derefing `deref_attrs'
-        """
-        person_filter_parts = [person_filter]
-        for deref_attr_type in deref_attrs:
-            deref_attr_values = list(filter(None, entry.get(deref_attr_type, [])))
-            if deref_attr_values:
-                person_filter_parts.append(
-                    compose_filter(
-                        '|',
-                        map_filter_parts(deref_attr_type, deref_attr_values),
-                    )
-                )
-        if not person_filter_parts:
-            return []
-        ldap_result = self._app.ls.l.search_s(
-            self._search_root(),
-            ldap0.SCOPE_SUBTREE,
-            '(&{0})'.format(''.join(person_filter_parts)),
-            attrlist=person_attrs or ['1.1'],
-        )
-        return ldap_result
 
 
 class AEHomeDirectory(HomeDirectory):
@@ -448,9 +418,9 @@ class AENwDevice(DerefDynamicDNSelectList):
         (None, u'Siblings', None, u'Search sibling network devices'),
     )
 
-    def _search_root(self):
+    def _search_root(self) -> str:
         if self._dn.startswith('host='):
-            return self._app.ls.uc_encode(self._dn)[0]
+            return self._dn
         return DerefDynamicDNSelectList._search_root(self)
 
     def _filterstr(self):
