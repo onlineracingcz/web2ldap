@@ -1595,7 +1595,7 @@ class SelectList(DirectoryString):
 
     def _get_attr_value_dict(self):
         # Enable empty value in any case
-        attr_value_dict = {u'': u'-/-'}
+        attr_value_dict = {'': '-/-'}
         attr_value_dict.update(self.attr_value_dict)
         return attr_value_dict
 
@@ -1635,7 +1635,7 @@ class SelectList(DirectoryString):
         attr_value_str = DirectoryString.display(self, valueindex, commandbutton)
         attr_value_dict = self._get_attr_value_dict()
         try:
-            attr_value_desc = attr_value_dict[self._av]
+            attr_value_desc = attr_value_dict[self.av_u]
         except KeyError:
             return attr_value_str
         try:
@@ -2374,48 +2374,48 @@ class LDAPv3ResultCode(SelectList):
     oid = 'LDAPResultCode-oid'
     desc = 'LDAPv3 declaration of resultCode in (see RFC 4511)'
     attr_value_dict = {
-        u'0': u'success',
-        u'1': u'operationsError',
-        u'2': u'protocolError',
-        u'3': u'timeLimitExceeded',
-        u'4': u'sizeLimitExceeded',
-        u'5': u'compareFalse',
-        u'6': u'compareTrue',
-        u'7': u'authMethodNotSupported',
-        u'8': u'strongerAuthRequired',
-        u'9': u'reserved',
-        u'10': u'referral',
-        u'11': u'adminLimitExceeded',
-        u'12': u'unavailableCriticalExtension',
-        u'13': u'confidentialityRequired',
-        u'14': u'saslBindInProgress',
-        u'16': u'noSuchAttribute',
-        u'17': u'undefinedAttributeType',
-        u'18': u'inappropriateMatching',
-        u'19': u'constraintViolation',
-        u'20': u'attributeOrValueExists',
-        u'21': u'invalidAttributeSyntax',
-        u'32': u'noSuchObject',
-        u'33': u'aliasProblem',
-        u'34': u'invalidDNSyntax',
-        u'35': u'reserved for undefined isLeaf',
-        u'36': u'aliasDereferencingProblem',
-        u'48': u'inappropriateAuthentication',
-        u'49': u'invalidCredentials',
-        u'50': u'insufficientAccessRights',
-        u'51': u'busy',
-        u'52': u'unavailable',
-        u'53': u'unwillingToPerform',
-        u'54': u'loopDetect',
-        u'64': u'namingViolation',
-        u'65': u'objectClassViolation',
-        u'66': u'notAllowedOnNonLeaf',
-        u'67': u'notAllowedOnRDN',
-        u'68': u'entryAlreadyExists',
-        u'69': u'objectClassModsProhibited',
-        u'70': u'reserved for CLDAP',
-        u'71': u'affectsMultipleDSAs',
-        u'80': u'other',
+        '0': 'success',
+        '1': 'operationsError',
+        '2': 'protocolError',
+        '3': 'timeLimitExceeded',
+        '4': 'sizeLimitExceeded',
+        '5': 'compareFalse',
+        '6': 'compareTrue',
+        '7': 'authMethodNotSupported',
+        '8': 'strongerAuthRequired',
+        '9': 'reserved',
+        '10': 'referral',
+        '11': 'adminLimitExceeded',
+        '12': 'unavailableCriticalExtension',
+        '13': 'confidentialityRequired',
+        '14': 'saslBindInProgress',
+        '16': 'noSuchAttribute',
+        '17': 'undefinedAttributeType',
+        '18': 'inappropriateMatching',
+        '19': 'constraintViolation',
+        '20': 'attributeOrValueExists',
+        '21': 'invalidAttributeSyntax',
+        '32': 'noSuchObject',
+        '33': 'aliasProblem',
+        '34': 'invalidDNSyntax',
+        '35': 'reserved for undefined isLeaf',
+        '36': 'aliasDereferencingProblem',
+        '48': 'inappropriateAuthentication',
+        '49': 'invalidCredentials',
+        '50': 'insufficientAccessRights',
+        '51': 'busy',
+        '52': 'unavailable',
+        '53': 'unwillingToPerform',
+        '54': 'loopDetect',
+        '64': 'namingViolation',
+        '65': 'objectClassViolation',
+        '66': 'notAllowedOnNonLeaf',
+        '67': 'notAllowedOnRDN',
+        '68': 'entryAlreadyExists',
+        '69': 'objectClassModsProhibited',
+        '70': 'reserved for CLDAP',
+        '71': 'affectsMultipleDSAs',
+        '80': 'other',
     }
 
 
