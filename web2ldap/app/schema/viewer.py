@@ -201,7 +201,7 @@ class DisplaySchemaElement:
             if class_attr_value is None:
                 continue
             else:
-                if isinstance(class_attr_value, tuple) or isinstance(class_attr_value, list):
+                if isinstance(class_attr_value, (tuple, list)):
                     class_attr_value_list = list(class_attr_value)
                     class_attr_value_list.sort(key=str.lower)
                 else:
