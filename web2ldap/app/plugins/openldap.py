@@ -258,7 +258,7 @@ class AuditContext(NamingContexts):
                 self._app.anchor(
                     'searchform', 'Search',
                     [
-                        ('dn', self._av),
+                        ('dn', self.av_u),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
                     title=u'Go to search form for audit log',
@@ -266,7 +266,7 @@ class AuditContext(NamingContexts):
                 self._app.anchor(
                     'search', 'List all',
                     [
-                        ('dn', self._av),
+                        ('dn', self.av_u),
                         ('filterstr', u'(objectClass=auditObject)'),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
@@ -275,7 +275,7 @@ class AuditContext(NamingContexts):
                 self._app.anchor(
                     'search', 'List writes',
                     [
-                        ('dn', self._av),
+                        ('dn', self.av_u),
                         ('filterstr', u'(objectClass=auditWriteObject)'),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
