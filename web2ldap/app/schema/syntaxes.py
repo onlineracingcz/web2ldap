@@ -1768,7 +1768,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                     if commandbutton:
                         link_html = self._app.anchor(
                             'read', '&raquo;',
-                            [('dn', self._app.ls.uc_decode(ref_dn)[0])],
+                            [('dn', ref_dn)],
                         )
                     else:
                         link_html = ''
