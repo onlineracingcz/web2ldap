@@ -258,7 +258,7 @@ class ExcelWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     def _process_result(self, resultItem):
         if not isinstance(resultItem, SearchResultEntry):
             return
-        entry = ldap0.schema.models.Entry(self._s, resultItem[0], resultItem[1])
+        entry = ldap0.schema.models.Entry(self._s, resultItem.dn_s, resultItem.entry_as)
         csv_row_list = []
         for attr_type in self._attr_types:
             csv_col_value_list = []
@@ -266,7 +266,7 @@ class ExcelWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
                 try:
                     csv_col_value = attr_value.decode(self._ldap_charset)
                 except UnicodeError:
-                    csv_col_value = attr_value.encode('base64').replace('\r', '').replace('\n', '').decode('ascii')
+                    csv_col_value = binascii.b2a_base64(attr_value).decode('ascii').replace('\r', '').replace('\n', '')
                 csv_col_value_list.append(csv_col_value)
             csv_row_list.append('\r\n'.join(csv_col_value_list))
         for col in range(len(csv_row_list)):
