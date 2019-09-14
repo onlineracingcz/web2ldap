@@ -9,6 +9,7 @@ web2ldap plugin classes for
 import re
 import time
 import socket
+from typing import List
 
 # from ldap0 package
 import ldap0
@@ -102,17 +103,17 @@ class AEObjectUtil:
     def _zone_entry(self, attrlist=None):
         zone_dn = 'cn={0},{1}'.format(
             self._get_zone_name(),
-            self._app.naming_context.encode(self._app.ls.charset),
+            self._app.naming_context,
         )
         try:
-            zone_entry = self._app.ls.l.read_s(
+            zone = self._app.ls.l.read_s(
                 zone_dn,
                 attrlist=attrlist,
                 filterstr='(objectClass=aeZone)',
             ) or {}
         except ldap0.LDAPError:
-            zone_entry = {}
-        return zone_entry
+            zone = {}
+        return zone.entry_as
 
     def _get_zone_dn(self):
         return self.dn.slice(None, -len(DNObj.from_str(self._app.naming_context))-1)
@@ -170,14 +171,20 @@ class AEHomeDirectory(HomeDirectory):
                 return av_u.endswith(uid)
         return False
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if attrValues == [self.homeDirectoryHidden]:
             return attrValues
-        uid = self._app.ls.uc_decode(self._entry.get('uid', [''])[0])[0]
-        av_u = self._app.ls.uc_decode(attrValues[0])[0]
-        for prefix in self.homeDirectoryPrefixes:
-            if av_u.startswith(prefix):
-                break
+        if 'uid' in self._entry:
+            uid = self._app.ls.uc_decode(self._entry['uid'][0])[0]
+        else:
+            uid = ''
+        if attrValues:
+            av_u = self._app.ls.uc_decode(attrValues[0])[0]
+            for prefix in self.homeDirectoryPrefixes:
+                if av_u.startswith(prefix):
+                    break
+            else:
+                prefix = self.homeDirectoryPrefixes[0]
         else:
             prefix = self.homeDirectoryPrefixes[0]
         return [self._app.ls.uc_encode('/'.join((prefix, uid)))[0]]
@@ -206,7 +213,7 @@ class AEUIDNumber(UidNumber):
     oid = 'AEUIDNumber-oid'
     desc = 'numeric Unix-UID'
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         return self._entry.get('gidNumber', [''])
 
     def formField(self) -> str:
@@ -237,32 +244,32 @@ class AEGIDNumber(GidNumber):
     maxNewValue = 49999
     id_pool_dn = None
 
-    def _get_id_pool_dn(self):
+    def _get_id_pool_dn(self) -> str:
         """
         determine which ID pool entry to use
         """
-        return self.id_pool_dn or self._app.naming_context.encode(self._app.ls.charset)
+        return self.id_pool_dn or str(self._app.naming_context)
 
-    def _get_next_gid(self):
+    def _get_next_gid(self) -> int:
         """
         consumes next ID by sending MOD_INCREMENT modify operation with
         pre-read entry control
         """
         prc = PreReadControl(criticality=True, attrList=[self._at])
-        _, _, _, resp_ctrls = self._app.ls.l.modify_s(
+        ldap_result = self._app.ls.l.modify_s(
             self._get_id_pool_dn(),
-            [(ldap0.MOD_INCREMENT, self._at, '1')],
+            [(ldap0.MOD_INCREMENT, self.at_b, [b'1'])],
             req_ctrls=[prc],
         )
-        return int(resp_ctrls[0].entry[self._at][0])
+        return int(ldap_result.ctrls[0].res.entry_s[self._at][0])
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if attrValues and attrValues[0]:
             return attrValues
         # first try to re-read gidNumber from existing entry
         try:
             ldap_result = self._app.ls.l.read_s(
-                self._dn.encode(self._app.ls.charset),
+                self._dn,
                 attrlist=[self._at],
                 filterstr='({0}=*)'.format(self._at),
             )
@@ -274,9 +281,9 @@ class AEGIDNumber(GidNumber):
             pass
         else:
             if ldap_result:
-                return ldap_result[self._at]
+                return ldap_result.entry_s[self._at]
         # return next ID from pool entry
-        return [str(self._get_next_gid())] # formValue()
+        return [str(self._get_next_gid()).encode('ascii')]
 
     def formValue(self) -> str:
         return Integer.formValue(self)
@@ -332,7 +339,7 @@ class AEUserUid(AEUid):
             uid_candidate = random_string(alphabet=self.UID_LETTERS, length=self.genLen)
             # check whether UID candidate already exists
             uid_result = self._app.ls.l.search_s(
-                self._app.naming_context.encode(self._app.ls.charset),
+                str(self._app.naming_context),
                 ldap0.SCOPE_SUBTREE,
                 '(uid=%s)' % (ldap0.filter.escape_str(uid_candidate)),
                 attrlist=['1.1'],
@@ -348,7 +355,7 @@ class AEUserUid(AEUid):
     def formValue(self) -> str:
         form_value = IA5String.formValue(self)
         if not self._av:
-            form_value = self._gen_uid().decode()
+            form_value = self._gen_uid()
         return form_value
 
     def formField(self) -> str:
@@ -449,7 +456,7 @@ class AENwDevice(DerefDynamicDNSelectList):
     def _filterstr(self):
         orig_filter = DerefDynamicDNSelectList._filterstr(self)
         try:
-            dev_name = self._entry['cn'][0]
+            dev_name = self._app.ls.uc_decode(self._entry['cn'][0])[0]
         except (KeyError, IndexError):
             result_filter = orig_filter
         else:
@@ -474,7 +481,11 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
     deref_person_attrs = ('aeDept', 'aeLocation')
 
     def _zone_filter(self):
-        member_zones = list(filter(None, self._entry.get('aeMemberZone', [])))
+        member_zones = [
+            self._app.ls.uc_decode(mezo)[0]
+            for mezo in self._entry.get('aeMemberZone', [])
+            if mezo
+        ]
         if member_zones:
             member_zone_filter = compose_filter(
                 '|',
@@ -564,7 +575,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
             return DistinguishedName._validate(self, attrValue)
         return SelectList._validate(self, attrValue)
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if int(self._entry['aeStatus'][0]) == 2:
             return []
         return DerefDynamicDNSelectList.transmute(self, attrValues)
@@ -618,7 +629,7 @@ class AEMemberUid(MemberUID):
         """
         return IA5String._validate(self, attrValue)
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if 'member' not in self._entry:
             return []
         if int(self._entry['aeStatus'][0]) == 2:
@@ -800,7 +811,7 @@ class AEVisibleGroups(AEDisplayNameGroups):
         'aeDisplayNameGroups',
     )
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         attrValues = set(attrValues)
         for attr_type in self.always_add_groups:
             attrValues.update(self._entry.get(attr_type, []))
@@ -870,7 +881,7 @@ class AEProxyFor(AESameZoneObject, AEObjectUtil):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
-            self._dn.encode(self._app.ls.charset),
+            self._dn,
         )
 
 syntax_registry.reg_at(
@@ -1303,7 +1314,11 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectUtil):
         ]
         zone_entry = self._zone_entry(attrlist=self.deref_attrs) or {}
         for deref_attr_type in self.deref_attrs:
-            deref_attr_values = list(filter(None, zone_entry.get(deref_attr_type, [])))
+            deref_attr_values = [
+                self._app.ls.uc_decode(z)[0]
+                for z in zone_entry.get(deref_attr_type, [])
+                if z
+            ]
             if deref_attr_values:
                 filter_components.append(
                     compose_filter(
@@ -1336,7 +1351,7 @@ class AEPerson2(AEPerson):
     def formField(self) -> str:
         return DistinguishedName.formField(self)
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if not attrValues or not attrValues[0]:
             return attrValues
         sanitize_filter = '(&{0}{1})'.format(
@@ -1408,7 +1423,7 @@ class AEDerefAttribute(DirectoryString):
             return None
         return sre.entry_s[self._at][0]
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if self.deref_attribute_type in self._entry:
             ae_person_attribute = self._read_person_attr()
             if ae_person_attribute is not None:
@@ -1502,7 +1517,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
             return SelectList.formValue(self)
         return AEPersonAttribute.formValue(self)
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if self._is_mail_account():
             # make sure only non-empty strings are in attribute value list
             if not list(filter(None, map(str.strip, attrValues))):
@@ -1604,7 +1619,7 @@ class AEHostname(DNSDomain):
                     return reverse_hostname == attrValue
         return True
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         result = []
         for attr_value in attrValues:
             attr_value.lower().strip()
@@ -1721,7 +1736,7 @@ class AEUniqueIdentifier(DirectoryString):
     maxValues = 1
     gen_template = 'web2ldap-{timestamp}'
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if not attrValues or not attrValues[0].strip():
             return [self.gen_template.format(timestamp=time.time())]
         return attrValues
@@ -1808,7 +1823,7 @@ class AECommonNameAEHost(AECommonName):
     host_begin_item = 0
     host_end_item = None
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if self.derive_from_host:
             return list(set([
                 '.'.join(av.strip().lower().split('.')[self.host_begin_item:self.host_end_item])
@@ -1835,7 +1850,7 @@ class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
     def sanitize(self, attrValue: bytes) -> bytes:
         return attrValue.strip()
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         attrValues = [attrValues[0].lower()]
         return attrValues
 
@@ -2027,7 +2042,7 @@ class AEStatus(SelectList, Integer):
             result = ae_not_before <= current_time <= ae_not_after
         return result
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if not attrValues or not attrValues[0]:
             return attrValues
         ae_status = int(attrValues[0].decode('ascii'))
@@ -2185,7 +2200,7 @@ class AERFC822MailMember(DynamicValueSelectList):
     html_tmpl = RFC822Address.html_tmpl
     showValueButton = False
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if 'member' not in self._entry:
             return []
         if int(self._entry['aeStatus'][0]) == 2:
@@ -2249,7 +2264,7 @@ class AESudoHost(IA5String):
     maxValues = 1
     reobj = re.compile('^ALL$')
 
-    def transmute(self, attrValues):
+    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         return ['ALL']
 
     def formField(self) -> str:
