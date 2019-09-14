@@ -162,6 +162,7 @@ class FileWriter(AsyncSearchHandler):
     f
       File object instance where the LDIF data is written to
     """
+    encoding = 'utf-8'
 
     def __init__(self, l, f, header='', footer=''):
         AsyncSearchHandler.__init__(self, l)
@@ -174,14 +175,14 @@ class FileWriter(AsyncSearchHandler):
         The header is written to output after starting search but
         before receiving and processing results.
         """
-        self._f.write(self.header)
+        self._f.write(self.header.encode(self.encoding))
 
     def post_processing(self):
         """
         The footer is written to output after receiving and
         processing results.
         """
-        self._f.write(self.footer)
+        self._f.write(self.footer.encode(self.encoding))
 
 
 class LDIFWriter(FileWriter):

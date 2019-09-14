@@ -29,6 +29,18 @@ class W2lWSGIServer(wsgiref.simple_server.WSGIServer, socketserver.ThreadingMixI
     """
 
 
+class WSGIBytesWrapper:
+
+    def __init__(self, outf):
+        self._outf = outf
+
+    def set_headers(self, headers):
+        self._outf.set_headers(headers)
+
+    def write(self, buf):
+        self._outf.write_bytes(buf)
+
+
 class AppResponse:
     """
     Application response class as file-like object
@@ -38,6 +50,7 @@ class AppResponse:
         self.bytelen = 0
         self.lines = []
         self.headers = []
+        self.reset()
 
     def reset(self):
         """

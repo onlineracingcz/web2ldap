@@ -43,6 +43,7 @@ from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.app.searchform import SEARCH_OPT_ATTR_EXISTS, SEARCH_OPT_ATTR_NOT_EXISTS
 from web2ldap.ldapsession import LDAPLimitErrors
 from web2ldap.msbase import CaseinsensitiveStringKeyDict
+from web2ldap.wsgi import WSGIBytesWrapper
 
 import web2ldap.__about__
 
@@ -183,14 +184,13 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     """
     _entryResultTypes = is_search_result
 
-    def __init__(self, l, f, sub_schema, attr_types, ldap_charset='utf-8', csv_charset='utf-8'):
+    def __init__(self, l, f, sub_schema, attr_types, ldap_charset='utf-8'):
         web2ldap.ldaputil.asynch.AsyncSearchHandler.__init__(self, l)
         self._output_file = f
         self._csv_writer = csv.writer(f, dialect='excel-semicolon')
         self._s = sub_schema
         self._attr_types = attr_types
         self._ldap_charset = ldap_charset
-        self._csv_charset = csv_charset
 
     def after_first(self):
         self._output_file.set_headers(
@@ -211,9 +211,9 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
         csv_row_list = []
         for attr_type in self._attr_types:
             csv_col_value_list = []
-            for attr_value in entry.get(attr_type, ['']):
+            for attr_value in entry.get(attr_type, [b'']):
                 try:
-                    csv_col_value = attr_value.decode(self._ldap_charset).encode(self._csv_charset)
+                    csv_col_value = attr_value.decode(self._ldap_charset)
                 except UnicodeError:
                     csv_col_value = attr_value.encode('base64').replace('\r', '').replace('\n', '')
                 csv_col_value_list.append(csv_col_value)
@@ -261,7 +261,7 @@ class ExcelWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
         csv_row_list = []
         for attr_type in self._attr_types:
             csv_col_value_list = []
-            for attr_value in entry.get(attr_type, ['']):
+            for attr_value in entry.get(attr_type, [b'']):
                 try:
                     csv_col_value = attr_value.decode(self._ldap_charset)
                 except UnicodeError:
@@ -416,7 +416,7 @@ def w2l_search(app):
     requested_attrs = app.cfg_param('requested_attrs', [])
 
     search_attrs = [
-        a.strip().encode('ascii')
+        a.strip()
         for a in app.form.getInputValue(
             'search_attrs',
             [u','.join(app.ldap_url.attrs or [])]
@@ -489,7 +489,7 @@ def w2l_search(app):
             or {False:('*',), True:('*', '+')}[app.ls.supportsAllOpAttr and search_opattrs]+requested_attrs
             or None
         )
-        result_handler = LDIFWriter(app.ls.l, app.outf)
+        result_handler = LDIFWriter(app.ls.l, WSGIBytesWrapper(app.outf))
         if search_output == 'ldif1':
             result_handler.header = LDIF1_HEADER % (
                 web2ldap.__about__.__version__,
@@ -509,17 +509,17 @@ def w2l_search(app):
                 searchform_mode = u'adv'
             web2ldap.app.searchform.w2l_searchform(
                 app,
-                Msg='Attributes to be read have to be explicitly defined for table-structured data export!',
+                Msg='For table-structured export you have to define the attributes to be read!',
                 filterstr=filterstr,
                 scope=scope,
                 search_root=search_root,
                 searchform_mode=searchform_mode,
             )
             return
-        result_handler = {
-            'csv':CSVWriter,
-            'excel':ExcelWriter
-        }[search_output](app.ls.l, app.outf, app.schema, read_attrs)
+        if search_output == 'csv':
+            result_handler = CSVWriter(app.ls.l, app.outf, app.schema, read_attrs, ldap_charset=app.ls.charset)
+        elif search_output == 'excel':
+            result_handler = ExcelWriter(app.ls.l, WSGIBytesWrapper(app.outf), app.schema, read_attrs, ldap_charset=app.ls.charset)
 
     if search_resnumber:
         search_size_limit = search_resminindex+search_resnumber
