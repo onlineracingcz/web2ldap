@@ -28,14 +28,12 @@ class InvalidSessionInstance(web2ldap.web.session.SessionException):
     """
     Exception raised in case of invalid session
     """
-    pass
 
 
 class WrongSessionCookie(web2ldap.web.session.SessionException):
     """
     Exception raised in case of invalid cookie
     """
-    pass
 
 
 class Session(web2ldap.web.session.WebSession, LogHelper):
