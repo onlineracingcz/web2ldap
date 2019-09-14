@@ -15,6 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import time
 import csv
 import urllib.parse
+import binascii
 
 import xlwt
 
@@ -215,7 +216,7 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
                 try:
                     csv_col_value = attr_value.decode(self._ldap_charset)
                 except UnicodeError:
-                    csv_col_value = attr_value.encode('base64').replace('\r', '').replace('\n', '')
+                    csv_col_value = binascii.b2a_base64(attr_value).decode('ascii').replace('\r', '').replace('\n', '')
                 csv_col_value_list.append(csv_col_value)
             csv_row_list.append('|'.join(csv_col_value_list))
         self._csv_writer.writerow(csv_row_list)
