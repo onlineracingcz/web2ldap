@@ -109,7 +109,7 @@ class Field:
             return pattern, 0
         raise TypeError('Expected pattern to be None, str or tuple, got %r' % (pattern,))
 
-    def setRegex(self, pattern):
+    def setRegex(self, pattern: str):
         """
         Set the regex pattern for validating this field.
 
@@ -148,7 +148,7 @@ class Field:
             if rm is None:
                 raise InvalidValueFormat(
                     self.name,
-                    self.text.encode(self.charset),
+                    self.text,
                     value.encode(self.charset)
                 )
 
@@ -230,7 +230,7 @@ class Textarea(Field):
         self.cols = cols
         Field.__init__(self, name, text, maxLen, maxValues, None, required, default, accesskey)
 
-    def setRegex(self, pattern):
+    def setRegex(self, pattern: str):
         """
         Like Field.setRegex() but pattern options re.S and re.M are
         automatically added.
@@ -339,6 +339,22 @@ class HiddenInput(Input):
 
 
 class BytesInput(Input):
+
+    def setRegex(self, pattern: str):
+        """
+        Set the bytes regex pattern for validating this field.
+        """
+        patternstring, patternoptions = self._regex_with_options(pattern)
+        if patternstring is None:
+            # Regex checking is completely switched off
+            self._re = None
+        else:
+            # This is a binary input field
+            patternoptions = patternoptions
+            self._re = re.compile(
+                '%s$' % patternstring.encode('iso-8859-1'), # this encoding is a 1:1 byte mapping
+                patternoptions,
+            )
 
     def _decodeValue(self, value):
         return value
@@ -793,8 +809,8 @@ class InvalidValueFormat(FormException):
         self.value = value
 
     def __str__(self):
-        return 'Input value "%s" for field %s (%s) has invalid format.' % (
-            self.value, self.text, self.name
+        return 'Invalid input value %r for field %s (%s)' % (
+            self.value, self.name, self.text
         )
 
 

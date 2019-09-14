@@ -446,7 +446,7 @@ class Web2LDAPForm_input(Web2LDAPForm):
                 'in_av', u'Attribute Value',
                 web2ldapcnf.input_maxfieldlen,
                 web2ldapcnf.input_maxattrs,
-                ('.*', re.U|re.M|re.S)
+                None
             ),
             LDIFTextArea('in_ldif', u'LDIF data'),
             Select(
@@ -597,7 +597,7 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
                 'bulkmod_av', u'Attribute Value',
                 web2ldapcnf.input_maxfieldlen,
                 web2ldapcnf.input_maxattrs,
-                ('.*', re.U|re.M|re.S),
+                None,
                 size=30,
             ),
             DistinguishedNameInput('bulkmod_newsuperior', u'New superior DN'),
