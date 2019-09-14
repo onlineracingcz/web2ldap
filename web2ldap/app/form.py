@@ -621,7 +621,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
             )
         ]
         delete_ctrl_options.append((web2ldap.ldapsession.CONTROL_TREEDELETE, u'Tree Deletion'))
-        res.extend([        
+        res.extend([
             Select(
                 'delete_confirm', u'Confirmation',
                 1,
@@ -653,7 +653,7 @@ class Web2LDAPForm_rename(Web2LDAPForm):
 
     def fields(self):
         res = Web2LDAPForm.fields(self)
-        res.extend([        
+        res.extend([
             Input(
                 'rename_newrdn',
                 u'New RDN',
@@ -762,7 +762,7 @@ class Web2LDAPForm_read(Web2LDAPForm):
 
     def fields(self):
         res = Web2LDAPForm.fields(self)
-        res.extend([        
+        res.extend([
             Input(
                 'filterstr',
                 u'Search filter string when reading single entry',
@@ -796,21 +796,21 @@ class Web2LDAPForm_groupadm(Web2LDAPForm):
     def fields(self):
         res = Web2LDAPForm.fields(self)
         res.extend([
-          DistinguishedNameInput('groupadm_searchroot', u'Group search root'),
-          Input('groupadm_name', u'Group name', 100, 1, u'.*', size=30),
-          DistinguishedNameInput('groupadm_add', u'Add to group', 300),
-          DistinguishedNameInput('groupadm_remove', u'Remove from group', 300),
-          Select(
-              'groupadm_view',
-              u'Group list view',
-              1,
-              options=(
-                  ('0', 'none of the'),
-                  ('1', 'only member'),
-                  ('2', 'all'),
-              ),
-              default=u'1',
-          ),
+            DistinguishedNameInput('groupadm_searchroot', u'Group search root'),
+            Input('groupadm_name', u'Group name', 100, 1, u'.*', size=30),
+            DistinguishedNameInput('groupadm_add', u'Add to group', 300),
+            DistinguishedNameInput('groupadm_remove', u'Remove from group', 300),
+            Select(
+                'groupadm_view',
+                u'Group list view',
+                1,
+                options=(
+                    ('0', 'none of the'),
+                    ('1', 'only member'),
+                    ('2', 'all'),
+                ),
+                default=u'1',
+            ),
         ])
         return res
 
@@ -1015,8 +1015,8 @@ class InclOpAttrsCheckbox(Checkbox):
             self,
             'search_opattrs',
             u'Request operational attributes',
-            1, 
-            default=default, 
+            1,
+            default=default,
             checked=checked
         )
 

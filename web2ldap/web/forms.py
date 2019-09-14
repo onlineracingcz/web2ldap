@@ -1006,13 +1006,13 @@ class Form:
         content_length = 0
 
         for name, value in urllib.parse.parse_qsl(
-            query_string,
-            keep_blank_values=True,
-            strict_parsing=True,
-            encoding=self.accept_charset,
-            errors='strict',
-            max_num_fields=None
-        ):
+                query_string,
+                keep_blank_values=True,
+                strict_parsing=True,
+                encoding=self.accept_charset,
+                errors='strict',
+                max_num_fields=None
+            ):
 
             if name not in self.field:
                 raise InvalidFieldName(name)
