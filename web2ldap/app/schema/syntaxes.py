@@ -244,6 +244,7 @@ class LDAPSyntax:
         assert entry is None or isinstance(entry, ldap0.schema.models.Entry), \
             TypeError('entry must be ldaputil.schema.Entry, was %r' % (entry))
         self._at = attrType
+        self._at_b = None
         self._av = attrValue
         self._av_u = None
         self._app = app
@@ -254,6 +255,12 @@ class LDAPSyntax:
     @property
     def dn(self):
         return DNObj.from_str(self._dn)
+
+    @property
+    def at_b(self):
+        if (self._at is not None and self._at_b is None):
+            self._at_b = self._app.ls.uc_encode(self._at)[0]
+        return self._at_b
 
     @property
     def av_u(self):
@@ -1699,7 +1706,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
     def _filterstr(self):
         return self.lu_obj.filterstr or '(objectClass=*)'
 
-    def _search_ref(self, attrValue):
+    def _search_ref(self, attrValue: str):
         attr_value = attrValue[len(self.valuePrefix):-len(self.valueSuffix) or None]
         search_filter = '(&%s(%s=%s))' % (
             self._filterstr(),
@@ -1734,22 +1741,23 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         return None
 
     def _validate(self, attrValue: bytes) -> bool:
+        av_u = self._app.ls.uc_decode(attrValue)[0]
         if (
-                not attrValue.startswith(self.valuePrefix) or
-                not attrValue.endswith(self.valueSuffix) or
-                len(attrValue) < self.minLen or
-                (self.maxLen is not None and len(attrValue) > self.maxLen)
+                not av_u.startswith(self.valuePrefix) or
+                not av_u.endswith(self.valueSuffix) or
+                len(av_u) < self.minLen or
+                (self.maxLen is not None and len(av_u) > self.maxLen)
             ):
             return False
-        return self._search_ref(attrValue) is not None
+        return self._search_ref(av_u) is not None
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         if commandbutton and self.lu_obj.attrs:
-            ref_result = self._search_ref(self._av)
+            ref_result = self._search_ref(self.av_u)
             if ref_result:
                 ref_dn, ref_entry = ref_result
                 try:
-                    attr_value_desc = self._app.ls.uc_decode(ref_entry[self.lu_obj.attrs[1]][0])[0]
+                    attr_value_desc = ref_entry[self.lu_obj.attrs[1]][0]
                 except (KeyError, IndexError):
                     display_text, link_html = '', ''
                 else:
