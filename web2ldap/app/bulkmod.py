@@ -86,7 +86,7 @@ def input_modlist(app, bulkmod_at, bulkmod_op, bulkmod_av):
         if not mod_op_str:
             continue
         mod_op = int(mod_op_str)
-        mod_type = bulkmod_at[i].encode(app.ls.charset)
+        mod_type = bulkmod_at[i]
         if not mod_type:
             continue
 
@@ -94,7 +94,7 @@ def input_modlist(app, bulkmod_at, bulkmod_op, bulkmod_av):
             app, u'', app.schema, mod_type, None, entry=None,
         )
         try:
-            mod_val = attr_instance.sanitize(bulkmod_av[i] or '')
+            mod_val = attr_instance.sanitize((bulkmod_av[i] or '').encode(app.ls.charset))
         except LDAPSyntaxValueError:
             mod_val = ''
             input_errors.add(i)
@@ -119,7 +119,7 @@ def input_modlist(app, bulkmod_at, bulkmod_op, bulkmod_av):
             mod_vals = mod_dict[(mod_op, mod_type)]
             if mod_op == ldap0.MOD_DELETE and None in mod_vals:
                 mod_vals = None
-            mod_list.append((mod_op, mod_type, mod_vals))
+            mod_list.append((mod_op, mod_type.encode('ascii'), mod_vals))
         for i, m in enumerate(mod_list):
             if m[2] is not None:
                 mod_list[i] = (m[0], m[1], list(m[2]))
@@ -181,7 +181,7 @@ def bulkmod_input_form(
             i, i,
             bulkmod_attr_select.inputHTML(default=bulkmod_at[i]),
             app.form.field['bulkmod_op'].inputHTML(default=bulkmod_op[i]),
-            app.form.field['bulkmod_av'].inputHTML(default=bulkmod_av[i].decode(app.ls.charset)),
+            app.form.field['bulkmod_av'].inputHTML(default=bulkmod_av[i]),
             (i in input_errors)*'&larr; Input error!'
         )
         for i in range(len(bulkmod_at))
@@ -335,7 +335,7 @@ def w2l_bulkmod(app):
 
     bulkmod_filter = app.form.getInputValue(
         'filterstr',
-        [(app.ldap_url.filterstr or '').decode(app.ls.charset)]
+        [(app.ldap_url.filterstr or '')]
     )[0] or u'(objectClass=*)'
     bulkmod_newsuperior = app.form.getInputValue('bulkmod_newsuperior', [u''])[0]
 
@@ -414,46 +414,44 @@ def w2l_bulkmod(app):
         # not collect the DNs of the entries to be modified from search results
         for res in app.ls.l.results(ldap_msgid):
 
-            for ldap_dn, ldap_entry in res.data:
+            # Real entry?
+            if res.rtype == ldap0.RES_SEARCH_REFERENCE:
+                # ignore search continuations
+                continue
 
-                # Real entry?
-                if ldap_dn is None:
-                    # this is likely a search continuation (referral)
-                    continue
-
-                ldap_dn_u = ldap_dn.decode(app.ls.charset)
+            for rdat in res.rdata:
 
                 # Apply the modify request
                 if bulk_mod_list:
                     try:
-                        app.ls.l.modify_s(ldap_dn, bulk_mod_list, req_ctrls=bulkmod_server_ctrls)
+                        app.ls.l.modify_s(rdat.dn_s, bulk_mod_list, req_ctrls=bulkmod_server_ctrls)
                     except ldap0.LDAPError as e:
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
-                                app.form.utf2display(ldap_dn_u),
-                                app.form.utf2display(str(e).decode(app.ls.charset)),
+                                app.form.utf2display(rdat.dn_s),
+                                app.ldap_error_msg(e),
                             )
                         )
                     else:
                         result_ldif_html.append(modlist_ldif(
-                            ldap_dn_u, app.form, bulk_mod_list
+                            rdat.dn_s, app.form, bulk_mod_list
                         ))
 
                 # Apply the modrdn request
                 if bulkmod_newsuperior:
-                    old_rdn = str(DNObj.from_str(ldap_dn_u).rdn())
+                    old_rdn = str(DNObj.from_str(rdat.dn_s).rdn())
                     try:
                         if bulkmod_cp:
                             new_ldap_dn = u','.join((
                                 old_rdn,
                                 bulkmod_newsuperior,
-                            )).encode(app.ls.charset)
-                            if not ldap_entry:
+                            ))
+                            if not rdat.entry_b:
                                 raise ldap0.NO_SUCH_OBJECT
-                            app.ls.l.add_s(new_ldap_dn, ldap_entry)
+                            app.ls.l.add_s(new_ldap_dn, rdat.entry_as)
                         else:
                             app.ls.rename(
-                                ldap_dn_u,
+                                rdat.dn_s,
                                 old_rdn,
                                 new_superior=bulkmod_newsuperior,
                                 delold=app.cfg_param('bulkmod_delold', 0),
@@ -461,15 +459,15 @@ def w2l_bulkmod(app):
                     except ldap0.LDAPError as e:
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
-                                app.form.utf2display(ldap_dn_u),
-                                app.form.utf2display(str(e).decode(app.ls.charset)),
+                                app.form.utf2display(rdat.dn_s),
+                                app.form.utf2display(str(e)),
                             )
                         )
                     else:
                         result_ldif_html.append(
                             '<p>%s %s beneath %s</p>' % (
                                 {False:'Moved', True:'Copied'}[bulkmod_cp],
-                                app.form.utf2display(ldap_dn_u),
+                                app.form.utf2display(rdat.dn_s),
                                 app.form.utf2display(bulkmod_newsuperior),
                             )
                         )
