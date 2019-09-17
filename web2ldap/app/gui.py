@@ -529,20 +529,14 @@ def attrtype_select_field(
     Return web2ldap.web.forms.Select instance for choosing attribute type names
     """
     attr_options_dict = {}
-    for attr_type in list(map(str, default_attr_options or []) or app.schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
+    for attr_type in default_attr_options or list(app.schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
         attr_type_se = app.schema.get_obj(ldap0.schema.models.AttributeType, attr_type)
         if attr_type_se:
             if attr_type_se.names:
                 attr_type_name = attr_type_se.names[0]
             else:
                 attr_type_name = attr_type
-            if attr_type_se.desc:
-                try:
-                    attr_type_desc = attr_type_se.desc
-                except UnicodeDecodeError:
-                    attr_type_desc = repr(attr_type_se.desc)
-            else:
-                attr_type_desc = None
+            attr_type_desc = attr_type_se.desc
         else:
             attr_type_name = attr_type
             attr_type_desc = None
