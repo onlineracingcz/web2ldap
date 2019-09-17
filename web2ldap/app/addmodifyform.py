@@ -167,8 +167,6 @@ def get_entry_input(app):
             continue
         attr_values = []
         for in_value in in_values:
-            if not in_value:
-                continue
             attr_instance = syntax_registry.get_at(
                 app, app.dn, app.schema,
                 attr_type, None,
