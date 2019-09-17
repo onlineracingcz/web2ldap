@@ -774,28 +774,29 @@ class LDAPSession:
             timeout=COUNT_TIMEOUT,
             sizelimit=0,
         ):
-        if SearchNoOpControl.controlType in self.rootDSE.get('supportedControl', []):
+        if SearchNoOpControl.controlType in self.supportedControl:
             num_entries, num_referrals = self.l.noop_search(
-                self.uc_encode(dn)[0],
+                dn,
                 search_scope,
-                self.uc_encode(search_filter)[0],
+                search_filter,
                 timeout=timeout,
             )
         else:
             msg_id = self.l.search(
-                self.uc_encode(dn)[0],
+                dn,
                 search_scope,
-                self.uc_encode(search_filter)[0],
+                search_filter,
                 attrlist=['1.1'],
                 timeout=timeout,
                 sizelimit=sizelimit,
             )
             count_dict = {
-                ldap0.RES_SEARCH_ENTRY:0,
-                ldap0.RES_SEARCH_REFERENCE:0,
+                ldap0.RES_SEARCH_ENTRY: 0,
+                ldap0.RES_SEARCH_REFERENCE: 0,
+                ldap0.RES_SEARCH_RESULT: 0,
             }
-            for res_type, res_data, _, _ in self.l.results(msg_id):
-                count_dict[res_type] += len(res_data)
+            for res in self.l.results(msg_id):
+                count_dict[res.rtype] += len(res.rdata)
             num_entries = count_dict[ldap0.RES_SEARCH_ENTRY]
             num_referrals = count_dict[ldap0.RES_SEARCH_REFERENCE]
         return num_entries, num_referrals
