@@ -388,7 +388,7 @@ class AppHandler(LogHelper):
 
     def display_dn(self, dn, commandbutton=False):
         """Display a DN as LDAP URL with or without button"""
-        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
+        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn,))
         dn_str = self.form.utf2display(dn or u'- World -')
         if commandbutton:
             command_buttons = [

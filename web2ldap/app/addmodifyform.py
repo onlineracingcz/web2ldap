@@ -628,8 +628,8 @@ def ObjectClassForm(
                 not app.ls.is_openldap
             ):
             try:
-                parent_entry = app.ls.l.read_s(
-                    parent_dn.encode(app.ls.charset),
+                parent = app.ls.l.read_s(
+                    parent_dn,
                     attrlist=['allowedChildClasses', 'allowedChildClassesEffective'],
                 )
             except (
@@ -639,9 +639,9 @@ def ObjectClassForm(
                 ):
                 pass
             else:
-                if parent_entry:
+                if parent:
                     try:
-                        allowed_child_classes = parent_entry['allowedChildClasses']
+                        allowed_child_classes = parent.entry_s['allowedChildClasses']
                     except KeyError:
                         dit_structure_rule_html = ''
                     else:

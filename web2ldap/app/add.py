@@ -222,10 +222,10 @@ def w2l_add(app):
             """ % (
                 app.anchor(
                     'read', 'Read added entry',
-                    [('dn', new_dn)],
-                    title=u'Display added entry %s' % new_dn,
+                    [('dn', str(new_dn))],
+                    title=u'Display added entry %s' % (new_dn,),
                 ),
-                app.display_dn(new_dn, commandbutton=0),
+                app.display_dn(str(new_dn), commandbutton=0),
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
             context_menu_list=[]
