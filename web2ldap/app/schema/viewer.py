@@ -223,7 +223,7 @@ class DisplaySchemaElement:
         if 'schemaNamingContext' in self._app.ls.rootDSE:
             try:
                 result = self._app.ls.l.search_s(
-                    self._app.ls.rootDSE['schemaNamingContext'][0],
+                    self._app.ls.rootDSE['schemaNamingContext'][0].decode(self._app.ls.charset),
                     ldap0.SCOPE_SUBTREE,
                     (
                         '(|'
@@ -240,7 +240,7 @@ class DisplaySchemaElement:
                 pass
             else:
                 if result:
-                    ad_schema_dn, ad_schema_entry = result[0]
+                    ad_schema_dn, ad_schema_entry = result[0].dn_s, result[0].entry_s
                     ms_ad_schema_link = '<dt>Schema Definition Entry (MS AD)</dt>\n<dd>\n%s\n</dd>\n' % (
                         self._app.anchor(
                             'read', ad_schema_entry['cn'][0],
