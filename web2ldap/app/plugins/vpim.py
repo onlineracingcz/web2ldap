@@ -14,8 +14,8 @@ syntax_registry.reg_at(
 
 
 class VPIMExtendedAbsenceStatus(SelectList):
-    oid = 'VPIMExtendedAbsenceStatus-oid'
-    desc = ''
+    oid: str = 'VPIMExtendedAbsenceStatus-oid'
+    desc: str = ''
 
     attr_value_dict = {
         u'': u'',
@@ -32,8 +32,8 @@ syntax_registry.reg_at(
 
 
 class VPIMSupportedUABehaviors(SelectList):
-    oid = 'VPIMSupportedUABehaviors-oid'
-    desc = ''
+    oid: str = 'VPIMSupportedUABehaviors-oid'
+    desc: str = ''
 
     attr_value_dict = {
         u'':'',
@@ -50,8 +50,8 @@ syntax_registry.reg_at(
 
 
 class VPIMSupportedAudioMediaTypes(SelectList):
-    oid = 'VPIMSupportedAudioMediaTypes-oid'
-    desc = 'Audio Media Types'
+    oid: str = 'VPIMSupportedAudioMediaTypes-oid'
+    desc: str = 'Audio Media Types'
 
     attr_value_dict = {
         u'audio/basic': u'audio/basic',

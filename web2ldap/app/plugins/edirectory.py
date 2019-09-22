@@ -37,28 +37,28 @@ from web2ldap.app.plugins.x509 import Certificate, CertificateList
 
 
 class TaggedData(OctetString):
-    oid = '2.16.840.1.113719.1.1.5.1.12'
-    desc = 'Tagged Data'
+    oid: str = '2.16.840.1.113719.1.1.5.1.12'
+    desc: str = 'Tagged Data'
 
 
 class OctetList(OctetString):
-    oid = '2.16.840.1.113719.1.1.5.1.13'
-    desc = 'Octet List'
+    oid: str = '2.16.840.1.113719.1.1.5.1.13'
+    desc: str = 'Octet List'
 
 
 class TaggedString(DirectoryString):
-    oid = '2.16.840.1.113719.1.1.5.1.14'
-    desc = 'Tagged String'
+    oid: str = '2.16.840.1.113719.1.1.5.1.14'
+    desc: str = 'Tagged String'
 
 
 class DollarSeparatedMultipleLines(PostalAddress):
-    oid = '2.16.840.1.113719.1.1.5.1.6'
-    desc = '$-separated string'
+    oid: str = '2.16.840.1.113719.1.1.5.1.6'
+    desc: str = '$-separated string'
 
 
 class OctetStringGUID(OctetString):
-    oid = 'OctetStringGUID-oid'
-    desc = 'GUID of eDirectory entries represented as 16 byte octet string'
+    oid: str = 'OctetStringGUID-oid'
+    desc: str = 'GUID of eDirectory entries represented as 16 byte octet string'
 
     def _validate(self, attrValue: bytes) -> bool:
         return len(attrValue) == 16
@@ -165,8 +165,8 @@ class IndexDefinition(DollarSeparatedMultipleLines):
     Value State: 1-added from server
     NDS Attribute Name
     """
-    oid = 'IndexDefinition-oid'
-    desc = 'Index Definition'
+    oid: str = 'IndexDefinition-oid'
+    desc: str = 'Index Definition'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
@@ -215,8 +215,8 @@ syntax_registry.reg_at(
 
 
 class TaggedNameAndString(DirectoryString, OctetString):
-    oid = '2.16.840.1.113719.1.1.5.1.15'
-    desc = 'Tagged Name And String'
+    oid: str = '2.16.840.1.113719.1.1.5.1.15'
+    desc: str = 'Tagged Name And String'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
@@ -247,40 +247,40 @@ class TaggedNameAndString(DirectoryString, OctetString):
 
 
 class NDSReplicaPointer(OctetString):
-    oid = '2.16.840.1.113719.1.1.5.1.16'
-    desc = 'NDS Replica Pointer'
+    oid: str = '2.16.840.1.113719.1.1.5.1.16'
+    desc: str = 'NDS Replica Pointer'
 
 
 class NDSACL(DirectoryString):
-    oid = '2.16.840.1.113719.1.1.5.1.17'
-    desc = 'NDS ACL'
+    oid: str = '2.16.840.1.113719.1.1.5.1.17'
+    desc: str = 'NDS ACL'
 
 
 class NDSTimestamp(PrintableString):
-    oid = '2.16.840.1.113719.1.1.5.1.19'
-    desc = 'NDS Timestamp'
+    oid: str = '2.16.840.1.113719.1.1.5.1.19'
+    desc: str = 'NDS Timestamp'
 
 
 class Counter(Integer):
-    oid = '2.16.840.1.113719.1.1.5.1.22'
-    desc = 'Counter (NDS)'
+    oid: str = '2.16.840.1.113719.1.1.5.1.22'
+    desc: str = 'Counter (NDS)'
 
 
 class TaggedName(DirectoryString):
-    oid = '2.16.840.1.113719.1.1.5.1.23'
-    desc = 'Tagged Name'
+    oid: str = '2.16.840.1.113719.1.1.5.1.23'
+    desc: str = 'Tagged Name'
 
 
 class TypedName(DirectoryString):
-    oid = '2.16.840.1.113719.1.1.5.1.25'
-    desc = 'Typed Name'
+    oid: str = '2.16.840.1.113719.1.1.5.1.25'
+    desc: str = 'Typed Name'
 
 
 class EntryFlags(BitArrayInteger):
     """
     See
     """
-    oid = 'EntryFlags-oid'
+    oid: str = 'EntryFlags-oid'
     flag_desc_table = (
         (u'DS_ALIAS_ENTRY', 0x0001),
         (u'DS_PARTITION_ROOT', 0x0002),
@@ -309,7 +309,7 @@ class NspmConfigurationOptions(BitArrayInteger):
     """
     See http://ldapwiki.willeke.com/wiki/UniversalPasswordSecretBits
     """
-    oid = 'NspmConfigurationOptions-oid'
+    oid: str = 'NspmConfigurationOptions-oid'
     flag_desc_table = (
         (u'On set password request the NDS password hash will be removed by SPM', 0x01),
         (u'On set password request the NDS password hash will not be set by SPM', 0x02),
@@ -331,8 +331,8 @@ syntax_registry.reg_at(
 
 
 class SnmpTrapDescription(MultilineText):
-    oid = 'SnmpTrapDescription-oid'
-    desc = 'SNMP Trap Description'
+    oid: str = 'SnmpTrapDescription-oid'
+    desc: str = 'SNMP Trap Description'
     lineSep = b'\x00'
     cols = 30
 
@@ -344,8 +344,8 @@ syntax_registry.reg_at(
 
 
 class SASVendorSupport(PreformattedMultilineText):
-    oid = 'SASVendorSupport-oid'
-    desc = 'SAS Vendor Support'
+    oid: str = 'SASVendorSupport-oid'
+    desc: str = 'SAS Vendor Support'
     cols = 50
 
 syntax_registry.reg_at(
@@ -356,8 +356,8 @@ syntax_registry.reg_at(
 
 
 class NspmPasswordPolicyDN(DynamicDNSelectList):
-    oid = 'NspmPasswordPolicyDN-oid'
-    desc = 'DN of the nspmPasswordPolicy entry'
+    oid: str = 'NspmPasswordPolicyDN-oid'
+    desc: str = 'DN of the nspmPasswordPolicy entry'
     ldap_url = 'ldap:///cn=Password Policies,cn=Security?cn?sub?(objectClass=nspmPasswordPolicy)'
 
 syntax_registry.reg_at(
@@ -367,8 +367,8 @@ syntax_registry.reg_at(
 )
 
 class DirXMLDriverStartOption(SelectList):
-    oid = 'DirXML-DriverStartOption-oid'
-    desc = 'Start option for a DirXML driver'
+    oid: str = 'DirXML-DriverStartOption-oid'
+    desc: str = 'Start option for a DirXML driver'
     attr_value_dict = {
         u'0': u'disabled',
         u'1': u'manual',
@@ -383,8 +383,8 @@ syntax_registry.reg_at(
 
 
 class DirXMLState(SelectList):
-    oid = 'DirXML-State-DriverStartOption-oid'
-    desc = 'Current state of a DirXML driver'
+    oid: str = 'DirXML-State-DriverStartOption-oid'
+    desc: str = 'Current state of a DirXML driver'
     attr_value_dict = {
         u'0': u'stopped',
         u'1': u'starting',

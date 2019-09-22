@@ -7,12 +7,12 @@ from web2ldap.app.schema.syntaxes import GSER, SelectList, syntax_registry
 
 
 class SubtreeSpecification(GSER):
-    oid = '1.3.6.1.4.1.1466.115.121.1.45'
-    desc = 'SubtreeSpecification'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.45'
+    desc: str = 'SubtreeSpecification'
 
 
 class AdministrativeRole(SelectList):
-    oid = 'AdministrativeRole-oid'
+    oid: str = 'AdministrativeRole-oid'
     desc = (
         'RFC 3672: indicate that the associated administrative'
         ' area is concerned with one or more administrative roles'

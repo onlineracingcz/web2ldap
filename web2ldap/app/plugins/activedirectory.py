@@ -39,8 +39,8 @@ from web2ldap.app.schema.syntaxes import \
 
 
 class ObjectCategory(DynamicDNSelectList, DistinguishedName):
-    oid = 'ObjectCategory-oid'
-    desc = 'DN of the class entry'
+    oid: str = 'ObjectCategory-oid'
+    desc: str = 'DN of the class entry'
     ldap_url = 'ldap:///CN=Schema,CN=Configuration,_?cn?one?(objectClass=classSchema)'
     ref_attrs = (
         (None, u'Same category', None, None),
@@ -55,8 +55,8 @@ syntax_registry.reg_at(
 
 
 class ObjectVersion(Integer, SelectList):
-    oid = 'ObjectVersion-oid'
-    desc = 'Object version in MS AD (see [MS-ADTS])'
+    oid: str = 'ObjectVersion-oid'
+    desc: str = 'Object version in MS AD (see [MS-ADTS])'
     attr_value_dict = {
         u'13': u'Windows 2000 Server operating system',
         u'30': u'Windows Server 2003 operating system or Windows Server 2008 (AD LDS)',
@@ -84,8 +84,8 @@ syntax_registry.reg_at(
 
 
 class ObjectSID(OctetString, IA5String):
-    oid = 'ObjectSID-oid'
-    desc = 'Base class for Windows Security Identifiers'
+    oid: str = 'ObjectSID-oid'
+    desc: str = 'Base class for Windows Security Identifiers'
     """
     SID anatomy:
     Byte Position
@@ -127,9 +127,9 @@ syntax_registry.reg_at(
 
 
 class OtherSID(ObjectSID):
-    oid = 'OtherSID-oid'
-    desc = 'SID in MS AD which points to another object'
-    editable = 0
+    oid: str = 'OtherSID-oid'
+    desc: str = 'SID in MS AD which points to another object'
+    editable: bool = False
     well_known_sids = {
         # see also http://msdn.microsoft.com/en-us/library/aa379649(VS.85).aspx
         'S-1-0-0': 'NULL',
@@ -211,8 +211,8 @@ syntax_registry.reg_at(
 
 
 class SAMAccountName(DirectoryString):
-    oid = 'SAMAccountName-oid'
-    desc = 'SAM-Account-Name in MS AD'
+    oid: str = 'SAMAccountName-oid'
+    desc: str = 'SAM-Account-Name in MS AD'
     maxLen = 20
 
 # Register certain attribute types for syntax classes
@@ -227,8 +227,8 @@ class SAMAccountType(SelectList):
     """
     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/adschema/adschema/a_samaccounttype.asp
     """
-    oid = 'SAMAccountType-oid'
-    desc = 'SAM-Account-Type in MS AD'
+    oid: str = 'SAMAccountType-oid'
+    desc: str = 'SAM-Account-Type in MS AD'
     attr_value_dict = {
         u'268435456': u'SAM_GROUP_OBJECT',
         u'268435457': u'SAM_NON_SECURITY_GROUP_OBJECT',
@@ -254,8 +254,8 @@ class GroupType(BitArrayInteger):
     """
     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/adschema/adschema/a_samaccounttype.asp
     """
-    oid = 'GroupType-oid'
-    desc = 'Group-Type in MS AD'
+    oid: str = 'GroupType-oid'
+    desc: str = 'Group-Type in MS AD'
     flag_desc_table = (
         (u'Group created by system', 0x00000001),
         (u'Group with global scope', 0x00000002),
@@ -274,8 +274,8 @@ syntax_registry.reg_at(
 
 
 class DomainRID(SelectList):
-    oid = 'DomainRID-oid'
-    desc = 'Domain RID in MS AD'
+    oid: str = 'DomainRID-oid'
+    desc: str = 'Domain RID in MS AD'
     attr_value_dict = {
         u'9': u'DOMAIN_RID_LOGON',
         u'500': u'DOMAIN_RID_ADMINISTRATOR',
@@ -304,7 +304,7 @@ class UserAccountControl(BitArrayInteger):
     See knowledge base article 305144:
     http://support.microsoft.com/default.aspx?scid=kb;en-us;Q305144
     """
-    oid = 'UserAccountControl-oid'
+    oid: str = 'UserAccountControl-oid'
     flag_desc_table = (
         (u'SCRIPT', 0x0001),
         (u'ACCOUNTDISABLE', 0x0002),
@@ -345,7 +345,7 @@ class SystemFlags(BitArrayInteger):
     and
     http://msdn2.microsoft.com/en-us/library/aa772297.aspx
     """
-    oid = 'SystemFlags-oid'
+    oid: str = 'SystemFlags-oid'
     flag_desc_table = (
         (u'ADS_SYSTEMFLAG_DISALLOW_DELETE', 0x80000000),
         (u'ADS_SYSTEMFLAG_CONFIG_ALLOW_RENAME', 0x40000000),
@@ -380,7 +380,7 @@ class SearchFlags(BitArrayInteger):
     32 (0x00000020)   Supported beginning with Windows Server 2003. Create a tuple index for the attribute. This will improve searches where the wildcard appears at the front of the search string. For example, (sn=*mith).
     64 (0x00000040)   Supported beginning with ADAM. Creates an index to greatly help VLV performance on arbitrary attributes.
     """
-    oid = 'SearchFlags-oid'
+    oid: str = 'SearchFlags-oid'
     flag_desc_table = (
         (u'Indexed', 0x0001),
         (u'Indexed in each container', 0x0002),
@@ -404,8 +404,8 @@ syntax_registry.reg_at(
 
 
 class LogonHours(OctetString):
-    oid = 'LogonHours-oid'
-    desc = 'Logon hours'
+    oid: str = 'LogonHours-oid'
+    desc: str = 'Logon hours'
     dayofweek = ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat')
 
     @staticmethod
@@ -498,8 +498,8 @@ syntax_registry.reg_at(
 
 
 class CountryCode(PropertiesSelectList):
-    oid = 'CountryCode-oid'
-    desc = 'Numerical country code'
+    oid: str = 'CountryCode-oid'
+    desc: str = 'Numerical country code'
     properties_pathname = os.path.join(
         web2ldapcnf.etc_dir, 'properties', 'attribute_select_countryCode.properties'
     )
@@ -523,7 +523,7 @@ class InstanceType(BitArrayInteger):
     """
     http://msdn.microsoft.com/library/en-us/adschema/adschema/a_instancetype.asp
     """
-    oid = 'InstanceType-oid'
+    oid: str = 'InstanceType-oid'
     flag_desc_table = (
         (u'The head of naming context.', 0x00000001),
         (u'This replica is not instantiated.', 0x00000002),
@@ -541,8 +541,8 @@ syntax_registry.reg_at(
 
 
 class DNWithOctetString(DistinguishedName):
-    oid = '1.2.840.113556.1.4.903'
-    desc = 'DNWithOctetString'
+    oid: str = '1.2.840.113556.1.4.903'
+    desc: str = 'DNWithOctetString'
     octetTag = 'B'
     stringCharset = 'ascii'
 
@@ -574,25 +574,25 @@ class DNWithOctetString(DistinguishedName):
 
 
 class DNWithString(DNWithOctetString):
-    oid = '1.2.840.113556.1.4.904'
-    desc = 'DNWithString'
+    oid: str = '1.2.840.113556.1.4.904'
+    desc: str = 'DNWithString'
     octetTag = 'S'
     stringCharset = 'utf-8'
 
 
 class MicrosoftLargeInteger(Integer):
-    oid = '1.2.840.113556.1.4.906'
-    desc = 'Integer guaranteed to support 64 bit numbers'
+    oid: str = '1.2.840.113556.1.4.906'
+    desc: str = 'Integer guaranteed to support 64 bit numbers'
 
 
 class ObjectSecurityDescriptor(OctetString):
-    oid = '1.2.840.113556.1.4.907'
-    desc = 'Object-Security-Descriptor'
+    oid: str = '1.2.840.113556.1.4.907'
+    desc: str = 'Object-Security-Descriptor'
 
 
 class MsAdGUID(OctetString):
-    oid = 'MsAdGUID-oid'
-    desc = 'GUID in Active Directory'
+    oid: str = 'MsAdGUID-oid'
+    desc: str = 'GUID in Active Directory'
 
     def sanitize(self, attrValue: bytes) -> bytes:
         try:
@@ -619,8 +619,8 @@ syntax_registry.reg_at(
 
 
 class Interval(MicrosoftLargeInteger):
-    oid = 'Interval-oid'
-    desc = 'Large integer with timestamp expressed as 100 nanoseconds since 1601-01-01 00:00'
+    oid: str = 'Interval-oid'
+    desc: str = 'Large integer with timestamp expressed as 100 nanoseconds since 1601-01-01 00:00'
 
     @staticmethod
     def _delta(attrValue):
@@ -639,8 +639,8 @@ class Interval(MicrosoftLargeInteger):
 
 
 class LockoutTime(Interval):
-    oid = 'LockoutTime-oid'
-    desc = 'Timestamp of password failure lockout'
+    oid: str = 'LockoutTime-oid'
+    desc: str = 'Timestamp of password failure lockout'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         delta = self._delta(self._av)
@@ -661,8 +661,8 @@ syntax_registry.reg_at(
 
 
 class DomainFunctionality(SelectList):
-    oid = 'DomainFunctionality-oid'
-    desc = 'Functional level of domain/forest'
+    oid: str = 'DomainFunctionality-oid'
+    desc: str = 'Functional level of domain/forest'
 
     attr_value_dict = {
         u'': u'',
@@ -683,8 +683,8 @@ syntax_registry.reg_at(
 
 
 class DomainControllerFunctionality(SelectList):
-    oid = 'DomainControllerFunctionality-oid'
-    desc = 'Functional level of domain controller'
+    oid: str = 'DomainControllerFunctionality-oid'
+    desc: str = 'Functional level of domain controller'
 
     attr_value_dict = {
         u'': u'',
@@ -717,8 +717,8 @@ syntax_registry.reg_at(
 
 
 class ServerStatus(SelectList):
-    oid = 'ServerStatus-oid'
-    desc = 'Specifies whether the server is enabled or disabled.'
+    oid: str = 'ServerStatus-oid'
+    desc: str = 'Specifies whether the server is enabled or disabled.'
     attr_value_dict = {
         u'': u'',
         u'1': u'enabled',
@@ -733,8 +733,8 @@ syntax_registry.reg_at(
 
 
 class ObjectClassCategory(SelectList):
-    oid = 'ObjectClassCategory-oid'
-    desc = 'Category for object class'
+    oid: str = 'ObjectClassCategory-oid'
+    desc: str = 'Category for object class'
     attr_value_dict = {
         u'1': u'STRUCTURAL',
         u'2': u'ABSTRACT',
@@ -749,8 +749,8 @@ syntax_registry.reg_at(
 
 
 class ClassSchemaLDAPName(DynamicValueSelectList, OID):
-    oid = 'ClassSchema-oid'
-    desc = 'lDAPDisplayName of the classSchema entry'
+    oid: str = 'ClassSchema-oid'
+    desc: str = 'lDAPDisplayName of the classSchema entry'
     ldap_url = 'ldap:///_?lDAPDisplayName,lDAPDisplayName?one?(objectClass=classSchema)'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -767,8 +767,8 @@ syntax_registry.reg_at(
 
 
 class AttributeSchemaLDAPName(DynamicValueSelectList, OID):
-    oid = 'AttributeSchema-oid'
-    desc = 'lDAPDisplayName of the classSchema entry'
+    oid: str = 'AttributeSchema-oid'
+    desc: str = 'lDAPDisplayName of the classSchema entry'
     ldap_url = 'ldap:///_?lDAPDisplayName,lDAPDisplayName?one?(objectClass=attributeSchema)'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -788,7 +788,7 @@ class PwdProperties(BitArrayInteger):
     """
     http://msdn.microsoft.com/en-us/library/ms679431(VS.85).aspx
     """
-    oid = 'PwdProperties-oid'
+    oid: str = 'PwdProperties-oid'
     flag_desc_table = (
         (u'DOMAIN_PASSWORD_COMPLEX', 1),
         (u'DOMAIN_PASSWORD_NO_ANON_CHANGE', 2),
@@ -806,7 +806,7 @@ syntax_registry.reg_at(
 
 
 class MsDSSupportedEncryptionTypes(BitArrayInteger):
-    oid = 'MsDSSupportedEncryptionTypes-oid'
+    oid: str = 'MsDSSupportedEncryptionTypes-oid'
     flag_desc_table = (
         (u'KERB_ENCTYPE_DES_CBC_CRC', 0x00000001),
         (u'KERB_ENCTYPE_DES_CBC_MD5', 0x00000002),
@@ -823,8 +823,8 @@ syntax_registry.reg_at(
 
 
 class ShowInAddressBook(DynamicDNSelectList):
-    oid = 'ShowInAddressBook-oid'
-    desc = 'DN of the addressbook container entry'
+    oid: str = 'ShowInAddressBook-oid'
+    desc: str = 'DN of the addressbook container entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=addressBookContainer)'
 
 syntax_registry.reg_at(
@@ -835,8 +835,8 @@ syntax_registry.reg_at(
 
 
 class MsDSReplAttributeMetaData(XmlValue):
-    oid = 'MsDSReplAttributeMetaData-oid'
-    editable = 0
+    oid: str = 'MsDSReplAttributeMetaData-oid'
+    editable: bool = False
 
     def _validate(self, attrValue: bytes) -> bool:
         return attrValue.endswith(b'\n\x00') and XmlValue._validate(self, attrValue[:-1])
@@ -849,8 +849,8 @@ syntax_registry.reg_at(
 
 
 class MsSFU30NisDomain(DynamicValueSelectList):
-    oid = 'MsSFU30NisDomain-oid'
-    desc = 'Name of NIS domain controlled by MS SFU'
+    oid: str = 'MsSFU30NisDomain-oid'
+    desc: str = 'Name of NIS domain controlled by MS SFU'
     ldap_url = 'ldap:///_?cn,cn?sub?(objectClass=msSFU30DomainInfo)'
 
 syntax_registry.reg_at(

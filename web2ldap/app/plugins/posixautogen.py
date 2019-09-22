@@ -12,8 +12,8 @@ from web2ldap.app.plugins.nis import syntax_registry, UidNumber, GidNumber, IA5S
 
 
 class HomeDirectory(IA5String):
-    oid = 'HomeDirectory-oid'
-    desc = 'Path of Unix home directory of the user'
+    oid: str = 'HomeDirectory-oid'
+    desc: str = 'Path of Unix home directory of the user'
     homeDirectoryTemplate = '/home/{uid}'
 
     def transmute(self, attrValues):
@@ -81,8 +81,8 @@ class AutogenNumber:
 
 
 class AutogenUIDNumber(UidNumber, AutogenNumber):
-    oid = 'AutogenUIDNumber-oid'
-    desc = 'numeric Unix-UID'
+    oid: str = 'AutogenUIDNumber-oid'
+    desc: str = 'numeric Unix-UID'
     minNewValue = 10000
     maxNewValue = 19999
     object_class = 'posixAccount'
@@ -101,8 +101,8 @@ syntax_registry.reg_at(
 
 
 class AutogenGIDNumber(GidNumber, AutogenNumber):
-    oid = 'AutogenGIDNumber-oid'
-    desc = 'numeric Unix-GID'
+    oid: str = 'AutogenGIDNumber-oid'
+    desc: str = 'numeric Unix-GID'
     object_class = 'posixGroup'
 
     def formValue(self) -> str:

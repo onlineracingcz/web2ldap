@@ -36,8 +36,8 @@ syntax_registry.reg_at(
 
 
 class OathOTPLength(SelectList):
-    oid = 'OathOTPLength-oid'
-    desc = 'number of OTP digits'
+    oid: str = 'OathOTPLength-oid'
+    desc: str = 'number of OTP digits'
     attr_value_dict = {
         u'6': u'6',
         u'8': u'8',
@@ -51,8 +51,8 @@ syntax_registry.reg_at(
 
 
 class OathHOTPParams(DynamicDNSelectList):
-    oid = 'OathHOTPParams-oid'
-    desc = 'DN of the oathHOTPParams entry'
+    oid: str = 'OathHOTPParams-oid'
+    desc: str = 'DN of the oathHOTPParams entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=oathHOTPParams)'
     ref_attrs = (
         (None, u'Same params', None, None),
@@ -66,7 +66,7 @@ syntax_registry.reg_at(
 
 
 class OathResultCode(LDAPv3ResultCode):
-    oid = 'OathResultCode-oid'
+    oid: str = 'OathResultCode-oid'
 
 syntax_registry.reg_at(
     OathResultCode.oid, [
@@ -77,8 +77,8 @@ syntax_registry.reg_at(
 
 
 class OathHOTPToken(DynamicDNSelectList):
-    oid = 'OathHOTPToken-oid'
-    desc = 'DN of the oathHOTPToken entry'
+    oid: str = 'OathHOTPToken-oid'
+    desc: str = 'DN of the oathHOTPToken entry'
     ldap_url = 'ldap:///_?oathTokenSerialNumber?sub?(objectClass=oathHOTPToken)'
     ref_attrs = (
         (None, u'Users', None, None),
@@ -92,8 +92,8 @@ syntax_registry.reg_at(
 
 
 class OathTOTPParams(DynamicDNSelectList):
-    oid = 'OathTOTPParams-oid'
-    desc = 'DN of the oathTOTPParams entry'
+    oid: str = 'OathTOTPParams-oid'
+    desc: str = 'DN of the oathTOTPParams entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=oathTOTPParams)'
     ref_attrs = (
         (None, u'Same params', None, None),
@@ -107,8 +107,8 @@ syntax_registry.reg_at(
 
 
 class OathTOTPToken(DynamicDNSelectList):
-    oid = 'OathTOTPToken-oid'
-    desc = 'DN of the oathTOTPToken entry'
+    oid: str = 'OathTOTPToken-oid'
+    desc: str = 'DN of the oathTOTPToken entry'
     ldap_url = 'ldap:///_?oathTokenSerialNumber?sub?(objectClass=oathTOTPToken)'
     ref_attrs = (
         (None, u'Users', None, None),
@@ -125,8 +125,8 @@ class OathTokenIdentifier(DirectoryString):
     """
     see http://openauthentication.org/specification/tokenSpecs
     """
-    oid = 'OathTokenIdentifier-oid'
-    desc = 'Globally unique token identifier'
+    oid: str = 'OathTokenIdentifier-oid'
+    desc: str = 'Globally unique token identifier'
     maxLen = 12
     reObj = re.compile(r'^[a-zA-Z0-9]{12}$')
 
@@ -138,8 +138,8 @@ syntax_registry.reg_at(
 
 
 class OathInitPwAlphabet(DirectoryString):
-    oid = 'OathInitPwAlphabet-oid'
-    desc = 'Alphabet used to generate init passwords'
+    oid: str = 'OathInitPwAlphabet-oid'
+    desc: str = 'Alphabet used to generate init passwords'
 
     def sanitize(self, attrValue: bytes) -> bytes:
         return ''.join([
@@ -166,8 +166,8 @@ syntax_registry.reg_at(
 
 
 class OathSecret(OctetString):
-    oid = 'OathSecret-oid'
-    desc = 'OATH shared secret'
+    oid: str = 'OathSecret-oid'
+    desc: str = 'OATH shared secret'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return '<br>'.join((
@@ -183,8 +183,8 @@ syntax_registry.reg_at(
 
 
 class OathSecretTime(GeneralizedTime):
-    oid = 'OathSecretTime-oid'
-    desc = 'OATH secret change time'
+    oid: str = 'OathSecretTime-oid'
+    desc: str = 'OATH secret change time'
     time_divisors = Timespan.time_divisors
 
     def display(self, valueindex=0, commandbutton=False) -> str:

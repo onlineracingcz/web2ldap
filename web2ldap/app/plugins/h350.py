@@ -7,8 +7,8 @@ from web2ldap.app.schema.syntaxes import Uri, LDAPUrl, syntax_registry
 
 
 class CommURI(LDAPUrl):
-    oid = 'CommURI-oid'
-    desc = 'Labeled URI format to point to the distinguished name of the commUniqueId'
+    oid: str = 'CommURI-oid'
+    desc: str = 'Labeled URI format to point to the distinguished name of the commUniqueId'
 
 syntax_registry.reg_at(
     CommURI.oid, [

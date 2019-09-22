@@ -26,8 +26,8 @@ from web2ldap.app.schema.syntaxes import \
 
 
 class AssociatedDomain(DNSDomain):
-    oid = 'AssociatedDomain-oid'
-    desc = 'Associated DNS domain name (see RFC 4524, section 2.1.)'
+    oid: str = 'AssociatedDomain-oid'
+    desc: str = 'Associated DNS domain name (see RFC 4524, section 2.1.)'
 
     def _validate(self, attrValue: bytes) -> bool:
         result = DNSDomain._validate(self, attrValue)
@@ -187,8 +187,8 @@ syntax_registry.reg_at(
 
 
 class ResourceRecord(DNSDomain, DynamicValueSelectList):
-    oid = 'ResourceRecord-oid'
-    desc = 'A resource record pointing to another DNS RR'
+    oid: str = 'ResourceRecord-oid'
+    desc: str = 'A resource record pointing to another DNS RR'
     ldap_url = 'ldap:///_?associatedDomain,associatedDomain?sub?(objectClass=domainRelatedObject)'
 
     def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
@@ -206,8 +206,8 @@ syntax_registry.reg_at(
 
 
 class CNAMERecord(ResourceRecord):
-    oid = 'CNAMERecord-oid'
-    desc = 'A resource record used as alias (CNAME)'
+    oid: str = 'CNAMERecord-oid'
+    desc: str = 'A resource record used as alias (CNAME)'
     maxValues = 1 # It's illegal to have multiple CNAME RR values
 
 syntax_registry.reg_at(
@@ -218,8 +218,8 @@ syntax_registry.reg_at(
 
 
 class MXRecord(ResourceRecord):
-    oid = 'MXRecord-oid'
-    desc = 'A resource record pointing to a mail exchanger (MX)'
+    oid: str = 'MXRecord-oid'
+    desc: str = 'A resource record pointing to a mail exchanger (MX)'
     reObj = re.compile(r'^[0-9]+[ ]+[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$')
 
     def _search_ref(self, attrValue: str):
@@ -237,8 +237,8 @@ syntax_registry.reg_at(
 
 
 class ARecord(IPv4HostAddress):
-    oid = 'ARecord-oid'
-    desc = 'A resource record pointing to IPv4 address'
+    oid: str = 'ARecord-oid'
+    desc: str = 'A resource record pointing to IPv4 address'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         r = [IPv4HostAddress.display(self, valueindex, commandbutton)]
@@ -289,8 +289,8 @@ syntax_registry.reg_at(
 
 
 class AAAARecord(IPv6HostAddress):
-    oid = 'AAAARecord-oid'
-    desc = 'AAAA resource record pointing to IPv6 address'
+    oid: str = 'AAAARecord-oid'
+    desc: str = 'AAAA resource record pointing to IPv6 address'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         r = [IPv6HostAddress.display(self, valueindex, commandbutton)]
@@ -322,8 +322,8 @@ syntax_registry.reg_at(
 
 
 class SSHFPRecord(IA5String):
-    oid = 'SSHFPRecord-oid'
-    desc = 'A resource record with SSH fingerprint (SSHFP)'
+    oid: str = 'SSHFPRecord-oid'
+    desc: str = 'A resource record with SSH fingerprint (SSHFP)'
     reObj = re.compile('^[0-4]? [0-2]? [0-9a-fA-F]+$')
     key_algo_dict = {
         '0': 'reserved',

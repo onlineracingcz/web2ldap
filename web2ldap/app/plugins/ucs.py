@@ -16,8 +16,8 @@ from web2ldap.app.plugins.msperson import DateOfBirth
 
 
 class UniventionPolicyReference(DynamicDNSelectList):
-    oid = 'UniventionPolicyReference-oid'
-    desc = 'DN of the univentionPolicy entry'
+    oid: str = 'UniventionPolicyReference-oid'
+    desc: str = 'DN of the univentionPolicy entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=univentionPolicy)'
 
 syntax_registry.reg_at(
@@ -42,8 +42,8 @@ syntax_registry.reg_at(
 
 
 class UniventionLDAPACLData(Binary, MultilineText):
-    oid = 'UniventionLDAPACLData-oid'
-    desc = 'bzip2-ed LDAP ACL data in Univention'
+    oid: str = 'UniventionLDAPACLData-oid'
+    desc: str = 'bzip2-ed LDAP ACL data in Univention'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         attr_value = bz2.decompress(self._av)

@@ -25,8 +25,8 @@ from web2ldap.app.schema.syntaxes import \
 
 
 class DHCPConfigStatement(MultilineText):
-    oid = 'DHCPConfigStatement-oid'
-    desc = 'DHCP configuration statement'
+    oid: str = 'DHCPConfigStatement-oid'
+    desc: str = 'DHCP configuration statement'
     lineSep = b''
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -101,8 +101,8 @@ syntax_registry.reg_at(
 
 
 class DHCPServerDN(DynamicDNSelectList):
-    oid = 'DHCPServerDN-oid'
-    desc = 'DN of DHCP server entry'
+    oid: str = 'DHCPServerDN-oid'
+    desc: str = 'DN of DHCP server entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpServer)'
 
 syntax_registry.reg_at(
@@ -115,8 +115,8 @@ syntax_registry.reg_at(
 
 
 class DHCPOptionsDN(DynamicDNSelectList):
-    oid = 'DHCPOptionsDN-oid'
-    desc = 'DN of DHCP option object'
+    oid: str = 'DHCPOptionsDN-oid'
+    desc: str = 'DN of DHCP option object'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpOptions)'
 
 syntax_registry.reg_at(
@@ -127,8 +127,8 @@ syntax_registry.reg_at(
 
 
 class DHCPHostDN(DynamicDNSelectList):
-    oid = 'DHCPHostDN-oid'
-    desc = 'DN of DHCP host object'
+    oid: str = 'DHCPHostDN-oid'
+    desc: str = 'DN of DHCP host object'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpHost)'
 
 syntax_registry.reg_at(
@@ -141,8 +141,8 @@ syntax_registry.reg_at(
 
 
 class DHCPPoolDN(DynamicDNSelectList):
-    oid = 'DHCPPoolDN-oid'
-    desc = 'DN of DHCP pool object'
+    oid: str = 'DHCPPoolDN-oid'
+    desc: str = 'DN of DHCP pool object'
     ldap_url = 'ldap:///_??sub?(objectClass=dhcpPool)'
 
 syntax_registry.reg_at(
@@ -153,8 +153,8 @@ syntax_registry.reg_at(
 
 
 class DHCPGroupDN(DynamicDNSelectList):
-    oid = 'DHCPGroupDN-oid'
-    desc = 'DN of DHCP group object'
+    oid: str = 'DHCPGroupDN-oid'
+    desc: str = 'DN of DHCP group object'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpGroup)'
 
 syntax_registry.reg_at(
@@ -165,8 +165,8 @@ syntax_registry.reg_at(
 
 
 class DHCPSubnetDN(DynamicDNSelectList):
-    oid = 'DHCPSubnetDN-oid'
-    desc = 'DN of DHCP subnet object'
+    oid: str = 'DHCPSubnetDN-oid'
+    desc: str = 'DN of DHCP subnet object'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpSubnet)'
 
 syntax_registry.reg_at(
@@ -177,8 +177,8 @@ syntax_registry.reg_at(
 
 
 class DHCPLeasesDN(DynamicDNSelectList):
-    oid = 'DHCPLeasesDN-oid'
-    desc = 'DN of DHCP leases object'
+    oid: str = 'DHCPLeasesDN-oid'
+    desc: str = 'DN of DHCP leases object'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpLeases)'
 
 syntax_registry.reg_at(
@@ -190,8 +190,8 @@ syntax_registry.reg_at(
 
 
 class DHCPClassesDN(DynamicDNSelectList):
-    oid = 'DHCPClassesDN-oid'
-    desc = 'DN of DHCP classes object'
+    oid: str = 'DHCPClassesDN-oid'
+    desc: str = 'DN of DHCP classes object'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpClass)'
 
 syntax_registry.reg_at(
@@ -202,8 +202,8 @@ syntax_registry.reg_at(
 
 
 class DHCPSubclassesDN(DynamicDNSelectList):
-    oid = 'DHCPSubclassesDN-oid'
-    desc = 'DN of DHCP Subclasses object'
+    oid: str = 'DHCPSubclassesDN-oid'
+    desc: str = 'DN of DHCP Subclasses object'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpSubclass)'
 
 syntax_registry.reg_at(
@@ -214,8 +214,8 @@ syntax_registry.reg_at(
 
 
 class DHCPSharedNetworkDN(DynamicDNSelectList):
-    oid = 'DHCPSharedNetworkDN-oid'
-    desc = 'DN of DHCP shared network object'
+    oid: str = 'DHCPSharedNetworkDN-oid'
+    desc: str = 'DN of DHCP shared network object'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpSharedNetwork)'
 
 syntax_registry.reg_at(
@@ -226,8 +226,8 @@ syntax_registry.reg_at(
 
 
 class DHCPServiceDN(DynamicDNSelectList):
-    oid = 'DHCPServiceDN-oid'
-    desc = 'DN of DHCP service object'
+    oid: str = 'DHCPServiceDN-oid'
+    desc: str = 'DN of DHCP service object'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=dhcpService)'
 
 syntax_registry.reg_at(
@@ -238,8 +238,8 @@ syntax_registry.reg_at(
 
 
 class DHCPHWAddress(MacAddress):
-    oid = 'DHCPHWAddress-oid'
-    desc = 'Network classifier and MAC address'
+    oid: str = 'DHCPHWAddress-oid'
+    desc: str = 'Network classifier and MAC address'
     maxLen = 26
     reObj = re.compile(r'^(ethernet|token-ring|fddi) ([0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}$')
 
@@ -257,8 +257,8 @@ syntax_registry.reg_at(
 
 
 class DHCPNetMask(Integer):
-    oid = 'DHCPNetMask-oid'
-    desc = 'Network address mask bits'
+    oid: str = 'DHCPNetMask-oid'
+    desc: str = 'Network address mask bits'
     maxValue = 0
     maxValue = 32
     inputSize = 15
@@ -274,8 +274,8 @@ syntax_registry.reg_at(
 
 
 class DHCPRange(IA5String):
-    oid = 'DHCPRange-oid'
-    desc = 'Network address range'
+    oid: str = 'DHCPRange-oid'
+    desc: str = 'Network address range'
 
     def _get_ipnetwork(self):
         cn = self._entry['cn'][0].strip()
@@ -323,8 +323,8 @@ syntax_registry.reg_at(
 
 
 class DHCPAddressState(SelectList):
-    oid = 'DHCPAddressState-oid'
-    desc = 'DHCP address state'
+    oid: str = 'DHCPAddressState-oid'
+    desc: str = 'DHCP address state'
 
     attr_value_dict = {
         u'': u'',
@@ -352,7 +352,7 @@ class DHCPDnsStatus(BitArrayInteger):
     3 (P): Server is controlling PTR RR on behalf of the client
     4-15 : Must be zero
     """
-    oid = 'DHCPDnsStatus-oid'
+    oid: str = 'DHCPDnsStatus-oid'
     flag_desc_table = (
         (u'(C): name to address (such as A RR) update successfully completed', 0x0001),
         (u'(A): Server is controlling A RR on behalf of the client', 0x0002),

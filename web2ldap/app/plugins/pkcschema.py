@@ -31,7 +31,7 @@ syntax_registry.reg_at(
 
 
 class PkcX509Issuer(DistinguishedName):
-    oid = 'PkcX509Issuer-oid'
+    oid: str = 'PkcX509Issuer-oid'
 
     def _additional_links(self):
         return [
@@ -58,8 +58,8 @@ syntax_registry.reg_at(
 
 
 class X509KeyUsage(SelectList):
-    oid = 'X509KeyUsage-oid'
-    desc = 'Key usage extension'
+    oid: str = 'X509KeyUsage-oid'
+    desc: str = 'Key usage extension'
     attr_value_dict = {
         u'digitalSignature': u'digitalSignature',
         u'nonRepudiation': u'nonRepudiation',

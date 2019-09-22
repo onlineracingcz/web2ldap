@@ -16,7 +16,7 @@ syntax_registry.reg_at(
 
 
 class UUIDReference(DynamicValueSelectList, UUID):
-    oid = 'UUIDReference-oid'
+    oid: str = 'UUIDReference-oid'
     ldap_url = 'ldap:///_?apple-generateduid,entryDN?sub?(apple-generateduid=*)'
 
     def display(self, valueindex=0, commandbutton=False) -> str:

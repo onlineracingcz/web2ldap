@@ -25,7 +25,7 @@ import time
 import json
 import inspect
 import warnings
-from typing import List
+from typing import List, Optional
 
 try:
     import defusedxml.ElementTree
@@ -53,6 +53,7 @@ from ldap0.schema.models import AttributeType, ObjectClass
 from ldap0.controls.deref import DereferenceControl
 from ldap0.dn import DNObj, is_dn
 from ldap0.res import SearchResultEntry
+from ldap0.schema.subentry import SubSchema
 
 import web2ldapcnf
 
@@ -215,14 +216,14 @@ class LDAPSyntaxRegexNoMatch(LDAPSyntaxValueError):
 
 
 class LDAPSyntax:
-    oid = ''
-    desc = 'Any LDAP syntax'
-    inputSize = 50
-    maxLen = web2ldapcnf.input_maxfieldlen
-    maxValues = web2ldapcnf.input_maxattrs
-    mimeType = 'application/octet-stream'
-    fileExt = 'bin'
-    editable = 1
+    oid: str = ''
+    desc: str = 'Any LDAP syntax'
+    inputSize: int = 50
+    maxLen: int = web2ldapcnf.input_maxfieldlen
+    maxValues: int = web2ldapcnf.input_maxattrs
+    mimeType: str = 'application/octet-stream'
+    fileExt: str = 'bin'
+    editable: bool = True
     reObj = None
     input_pattern = None
     searchSep = '<br>'
@@ -232,7 +233,15 @@ class LDAPSyntax:
     simpleSanitizers = tuple()
     showValueButton = True
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
+    def __init__(
+            self,
+            app,
+            dn: Optional[str],
+            schema: SubSchema,
+            attrType: Optional[str],
+            attrValue: Optional[bytes],
+            entry=None,
+        ):
         if not entry:
             entry = ldap0.schema.models.Entry(schema, dn, {})
         assert isinstance(dn, str), \
@@ -416,9 +425,9 @@ class LDAPSyntax:
 
 
 class Binary(LDAPSyntax):
-    oid = '1.3.6.1.4.1.1466.115.121.1.5'
-    desc = 'Binary'
-    editable = 0
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.5'
+    desc: str = 'Binary'
+    editable: bool = False
 
     def formField(self) -> str:
         f = web2ldap.web.forms.File(
@@ -444,10 +453,10 @@ class Binary(LDAPSyntax):
 
 
 class Audio(Binary):
-    oid = '1.3.6.1.4.1.1466.115.121.1.4'
-    desc = 'Audio'
-    mimeType = 'audio/basic'
-    fileExt = 'au'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.4'
+    desc: str = 'Audio'
+    mimeType: str = 'audio/basic'
+    fileExt: str = 'au'
 
     def _validate(self, attrValue: bytes) -> bool:
         fileobj = BytesIO(attrValue)
@@ -475,8 +484,8 @@ class Audio(Binary):
 
 
 class DirectoryString(LDAPSyntax):
-    oid = '1.3.6.1.4.1.1466.115.121.1.15'
-    desc = 'Directory String'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.15'
+    desc: str = 'Directory String'
     html_tmpl = '{av}'
 
     def _validate(self, attrValue: bytes) -> bool:
@@ -493,8 +502,8 @@ class DirectoryString(LDAPSyntax):
 
 
 class DistinguishedName(DirectoryString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.12'
-    desc = 'Distinguished Name'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.12'
+    desc: str = 'Distinguished Name'
     isBindDN = False
     hasSubordinates = False
     noSubordinateAttrs = set(map(
@@ -586,14 +595,14 @@ class DistinguishedName(DirectoryString):
 
 
 class BindDN(DistinguishedName):
-    oid = 'BindDN-oid'
-    desc = 'A Distinguished Name used to bind to a directory'
+    oid: str = 'BindDN-oid'
+    desc: str = 'A Distinguished Name used to bind to a directory'
     isBindDN = True
 
 
 class AuthzDN(DistinguishedName):
-    oid = 'AuthzDN-oid'
-    desc = 'Authz Distinguished Name'
+    oid: str = 'AuthzDN-oid'
+    desc: str = 'Authz Distinguished Name'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         result = DistinguishedName.display(self, valueindex, commandbutton)
@@ -613,8 +622,8 @@ class AuthzDN(DistinguishedName):
 
 
 class NameAndOptionalUID(DistinguishedName):
-    oid = '1.3.6.1.4.1.1466.115.121.1.34'
-    desc = 'Name And Optional UID'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.34'
+    desc: str = 'Name And Optional UID'
 
     def _split_dn_and_uid(self, val):
         try:
@@ -646,14 +655,14 @@ class NameAndOptionalUID(DistinguishedName):
 
 
 class BitString(DirectoryString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.6'
-    desc = 'Bit String'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.6'
+    desc: str = 'Bit String'
     reObj = re.compile("^'[01]+'B$")
 
 
 class IA5String(DirectoryString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.26'
-    desc = 'IA5 String'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.26'
+    desc: str = 'IA5 String'
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
@@ -664,10 +673,10 @@ class IA5String(DirectoryString):
 
 
 class GeneralizedTime(IA5String):
-    oid = '1.3.6.1.4.1.1466.115.121.1.24'
-    desc = 'Generalized Time'
-    inputSize = 24
-    maxLen = 24
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.24'
+    desc: str = 'Generalized Time'
+    inputSize: int = 24
+    maxLen: int = 24
     reObj = re.compile('^([0-9]){12,14}((\.|,)[0-9]+)*(Z|(\+|-)[0-9]{4})$')
     timeDefault = None
     notBefore = None
@@ -810,25 +819,25 @@ class GeneralizedTime(IA5String):
 
 
 class NotBefore(GeneralizedTime):
-    oid = 'NotBefore-oid'
-    desc = 'A not-before timestamp by default starting at 00:00:00'
+    oid: str = 'NotBefore-oid'
+    desc: str = 'A not-before timestamp by default starting at 00:00:00'
     timeDefault = '000000'
 
 
 class NotAfter(GeneralizedTime):
-    oid = 'NotAfter-oid'
-    desc = 'A not-after timestamp by default ending at 23:59:59'
+    oid: str = 'NotAfter-oid'
+    desc: str = 'A not-after timestamp by default ending at 23:59:59'
     timeDefault = '235959'
 
 
 class UTCTime(GeneralizedTime):
-    oid = '1.3.6.1.4.1.1466.115.121.1.53'
-    desc = 'UTC Time'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.53'
+    desc: str = 'UTC Time'
 
 
 class NullTerminatedDirectoryString(DirectoryString):
-    oid = 'NullTerminatedDirectoryString-oid'
-    desc = 'Directory String terminated by null-byte'
+    oid: str = 'NullTerminatedDirectoryString-oid'
+    desc: str = 'Directory String terminated by null-byte'
 
     def sanitize(self, attrValue: bytes) -> bytes:
         return attrValue+chr(0)
@@ -846,15 +855,15 @@ class NullTerminatedDirectoryString(DirectoryString):
 
 
 class OtherMailbox(DirectoryString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.39'
-    desc = 'Other Mailbox'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.39'
+    desc: str = 'Other Mailbox'
     charset = 'ascii'
 
 
 class Integer(IA5String):
-    oid = '1.3.6.1.4.1.1466.115.121.1.27'
-    desc = 'Integer'
-    inputSize = 12
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.27'
+    desc: str = 'Integer'
+    inputSize: int = 12
     minValue = None
     maxValue = None
 
@@ -905,8 +914,8 @@ class Integer(IA5String):
 
 
 class IPHostAddress(IA5String):
-    oid = 'IPHostAddress-oid'
-    desc = 'string representation of IPv4 or IPv6 address'
+    oid: str = 'IPHostAddress-oid'
+    desc: str = 'string representation of IPv4 or IPv6 address'
     # Class in module ipaddr which parses address/network values
     addr_class = None
     simpleSanitizers = (
@@ -922,20 +931,20 @@ class IPHostAddress(IA5String):
 
 
 class IPv4HostAddress(IPHostAddress):
-    oid = 'IPv4HostAddress-oid'
-    desc = 'string representation of IPv4 address'
+    oid: str = 'IPv4HostAddress-oid'
+    desc: str = 'string representation of IPv4 address'
     addr_class = ipaddress.IPv4Address
 
 
 class IPv6HostAddress(IPHostAddress):
-    oid = 'IPv6HostAddress-oid'
-    desc = 'string representation of IPv6 address'
+    oid: str = 'IPv6HostAddress-oid'
+    desc: str = 'string representation of IPv6 address'
     addr_class = ipaddress.IPv6Address
 
 
 class IPNetworkAddress(IPHostAddress):
-    oid = 'IPNetworkAddress-oid'
-    desc = 'string representation of IPv4 or IPv6 network address/mask'
+    oid: str = 'IPNetworkAddress-oid'
+    desc: str = 'string representation of IPv4 or IPv6 network address/mask'
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
@@ -946,29 +955,29 @@ class IPNetworkAddress(IPHostAddress):
 
 
 class IPv4NetworkAddress(IPNetworkAddress):
-    oid = 'IPv4NetworkAddress-oid'
-    desc = 'string representation of IPv4 network address/mask'
+    oid: str = 'IPv4NetworkAddress-oid'
+    desc: str = 'string representation of IPv4 network address/mask'
     addr_class = ipaddress.IPv4Network
 
 
 class IPv6NetworkAddress(IPNetworkAddress):
-    oid = 'IPv6NetworkAddress-oid'
-    desc = 'string representation of IPv6 network address/mask'
+    oid: str = 'IPv6NetworkAddress-oid'
+    desc: str = 'string representation of IPv6 network address/mask'
     addr_class = ipaddress.IPv6Network
 
 
 class IPServicePortNumber(Integer):
-    oid = 'IPServicePortNumber-oid'
-    desc = 'Port number for an UDP- or TCP-based service'
+    oid: str = 'IPServicePortNumber-oid'
+    desc: str = 'Port number for an UDP- or TCP-based service'
     minValue = 0
     maxValue = 65535
 
 
 class MacAddress(IA5String):
-    oid = 'MacAddress-oid'
-    desc = 'MAC address in hex-colon notation'
-    minLen = 17
-    maxLen = 17
+    oid: str = 'MacAddress-oid'
+    desc: str = 'MAC address in hex-colon notation'
+    minLen: int = 17
+    maxLen: int = 17
     reObj = re.compile(r'^([0-9a-f]{2}\:){5}[0-9a-f]{2}$')
 
     def sanitize(self, attrValue: bytes) -> bytes:
@@ -982,8 +991,8 @@ class Uri(DirectoryString):
     """
     see RFC 2079
     """
-    oid = 'Uri-OID'
-    desc = 'URI'
+    oid: str = 'Uri-OID'
+    desc: str = 'URI'
     reObj = re.compile(r'^(ftp|http|https|news|snews|ldap|ldaps|mailto):(|//)[^ ]*')
     simpleSanitizers = (
         bytes.strip,
@@ -1019,10 +1028,10 @@ class Uri(DirectoryString):
 
 
 class Image(Binary):
-    oid = 'Image-OID'
-    desc = 'Image base class'
-    mimeType = 'application/octet-stream'
-    fileExt = 'bin'
+    oid: str = 'Image-OID'
+    desc: str = 'Image base class'
+    mimeType: str = 'application/octet-stream'
+    fileExt: str = 'bin'
     imageFormat = None
     inline_maxlen = 630 # max. number of bytes to use data: URI instead of external URL
 
@@ -1102,26 +1111,26 @@ class Image(Binary):
 
 
 class JPEGImage(Image):
-    oid = '1.3.6.1.4.1.1466.115.121.1.28'
-    desc = 'JPEG image'
-    mimeType = 'image/jpeg'
-    fileExt = 'jpg'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.28'
+    desc: str = 'JPEG image'
+    mimeType: str = 'image/jpeg'
+    fileExt: str = 'jpg'
     imageFormat = 'JPEG'
 
 
 class PhotoG3Fax(Binary):
-    oid = '1.3.6.1.4.1.1466.115.121.1.23'
-    desc = 'Photo (G3 fax)'
-    mimeType = 'image/g3fax'
-    fileExt = 'tif'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.23'
+    desc: str = 'Photo (G3 fax)'
+    mimeType: str = 'image/g3fax'
+    fileExt: str = 'tif'
 
 
 # late import of schema_anchor()
 from web2ldap.app.schema.viewer import schema_anchor
 
 class OID(IA5String):
-    oid = '1.3.6.1.4.1.1466.115.121.1.38'
-    desc = 'OID'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.38'
+    desc: str = 'OID'
     reObj = re.compile(r'^([a-zA-Z]+[a-zA-Z0-9;-]*|[0-2]?\.([0-9]+\.)*[0-9]+)$')
 
     def valueButton(self, command, row, mode, link_text=None):
@@ -1187,8 +1196,8 @@ class OID(IA5String):
 
 
 class LDAPUrl(Uri):
-    oid = 'LDAPUrl-oid'
-    desc = 'LDAP URL'
+    oid: str = 'LDAPUrl-oid'
+    desc: str = 'LDAP URL'
 
     def _command_ldap_url(self, ldap_url):
         return ldap_url
@@ -1214,9 +1223,9 @@ class LDAPUrl(Uri):
 
 
 class OctetString(Binary):
-    oid = '1.3.6.1.4.1.1466.115.121.1.40'
-    desc = 'Octet String'
-    editable = 1
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.40'
+    desc: str = 'Octet String'
+    editable: bool = True
     minInputRows = 1  # minimum number of rows for input field
     maxInputRows = 15 # maximum number of rows for in input field
     bytes_split = 16
@@ -1271,11 +1280,11 @@ class OctetString(Binary):
 
 
 class MultilineText(DirectoryString):
-    oid = 'MultilineText-oid'
-    desc = 'Multiple lines of text'
+    oid: str = 'MultilineText-oid'
+    desc: str = 'Multiple lines of text'
     reObj = re.compile('^.*$', re.S+re.M)
     lineSep = b'\r\n'
-    mimeType = 'text/plain'
+    mimeType: str = 'text/plain'
     cols = 66
     minInputRows = 1  # minimum number of rows for input field
     maxInputRows = 30 # maximum number of rows for in input field
@@ -1319,7 +1328,7 @@ class MultilineText(DirectoryString):
 
 
 class PreformattedMultilineText(MultilineText):
-    oid = 'PreformattedMultilineText-oid'
+    oid: str = 'PreformattedMultilineText-oid'
     cols = 66
     tab_identiation = '&nbsp;&nbsp;&nbsp;&nbsp;'
 
@@ -1335,8 +1344,8 @@ class PreformattedMultilineText(MultilineText):
 
 
 class PostalAddress(MultilineText):
-    oid = '1.3.6.1.4.1.1466.115.121.1.41'
-    desc = 'Postal Address'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.41'
+    desc: str = 'Postal Address'
     lineSep = b' $ '
     cols = 40
 
@@ -1351,37 +1360,37 @@ class PostalAddress(MultilineText):
 
 
 class PrintableString(DirectoryString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.44'
-    desc = 'Printable String'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.44'
+    desc: str = 'Printable String'
     reObj = re.compile("^[a-zA-Z0-9'()+,.=/:? -]*$")
     charset = 'ascii'
 
 
 class NumericString(PrintableString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.36'
-    desc = 'Numeric String'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.36'
+    desc: str = 'Numeric String'
     reObj = re.compile('^[ 0-9]+$')
 
 
 class EnhancedGuide(PrintableString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.21'
-    desc = 'Enhanced Search Guide'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.21'
+    desc: str = 'Enhanced Search Guide'
 
 
 class Guide(EnhancedGuide):
-    oid = '1.3.6.1.4.1.1466.115.121.1.25'
-    desc = 'Search Guide'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.25'
+    desc: str = 'Search Guide'
 
 
 class TelephoneNumber(PrintableString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.50'
-    desc = 'Telephone Number'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.50'
+    desc: str = 'Telephone Number'
     reObj = re.compile('^[0-9+x(). /-]+$')
 
 
 class FacsimileTelephoneNumber(TelephoneNumber):
-    oid = '1.3.6.1.4.1.1466.115.121.1.22'
-    desc = 'Facsimile Number'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.22'
+    desc: str = 'Facsimile Number'
     reObj = re.compile(
         r'^[0-9+x(). /-]+'
         r'(\$'
@@ -1391,19 +1400,19 @@ class FacsimileTelephoneNumber(TelephoneNumber):
 
 
 class TelexNumber(PrintableString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.52'
-    desc = 'Telex Number'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.52'
+    desc: str = 'Telex Number'
     reObj = re.compile("^[a-zA-Z0-9'()+,.=/:?$ -]*$")
 
 
 class TeletexTerminalIdentifier(PrintableString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.51'
-    desc = 'Teletex Terminal Identifier'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.51'
+    desc: str = 'Teletex Terminal Identifier'
 
 
 class ObjectGUID(LDAPSyntax):
-    oid = 'ObjectGUID-oid'
-    desc = 'Object GUID'
+    oid: str = 'ObjectGUID-oid'
+    desc: str = 'Object GUID'
     charset = 'ascii'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -1422,9 +1431,9 @@ class ObjectGUID(LDAPSyntax):
 
 
 class Date(IA5String):
-    oid = 'Date-oid'
-    desc = 'Date in syntax specified by class attribute storageFormat'
-    maxLen = 10
+    oid: str = 'Date-oid'
+    desc: str = 'Date in syntax specified by class attribute storageFormat'
+    maxLen: int = 10
     storageFormat = '%Y-%m-%d'
     acceptableDateformats = (
         '%Y-%m-%d',
@@ -1454,22 +1463,22 @@ class Date(IA5String):
 
 
 class NumstringDate(Date):
-    oid = 'NumstringDate-oid'
-    desc = 'Date in syntax YYYYMMDD'
+    oid: str = 'NumstringDate-oid'
+    desc: str = 'Date in syntax YYYYMMDD'
     reObj = re.compile('^[0-9]{4}[0-1][0-9][0-3][0-9]$')
     storageFormat = '%Y%m%d'
 
 
 class ISO8601Date(Date):
-    oid = 'ISO8601Date-oid'
-    desc = 'Date in syntax YYYY-MM-DD, see ISO 8601'
+    oid: str = 'ISO8601Date-oid'
+    desc: str = 'Date in syntax YYYY-MM-DD, see ISO 8601'
     reObj = re.compile('^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$')
     storageFormat = '%Y-%m-%d'
 
 
 class DateOfBirth(ISO8601Date):
-    oid = 'DateOfBirth-oid'
-    desc = 'Date of birth: syntax YYYY-MM-DD, see ISO 8601'
+    oid: str = 'DateOfBirth-oid'
+    desc: str = 'Date of birth: syntax YYYY-MM-DD, see ISO 8601'
 
     @staticmethod
     def _age(birth_dt):
@@ -1505,8 +1514,8 @@ class DateOfBirth(ISO8601Date):
 
 
 class SecondsSinceEpoch(Integer):
-    oid = 'SecondsSinceEpoch-oid'
-    desc = 'Seconds since epoch (1970-01-01 00:00:00)'
+    oid: str = 'SecondsSinceEpoch-oid'
+    desc: str = 'Seconds since epoch (1970-01-01 00:00:00)'
     minValue = 0
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -1521,8 +1530,8 @@ class SecondsSinceEpoch(Integer):
 
 
 class DaysSinceEpoch(Integer):
-    oid = 'DaysSinceEpoch-oid'
-    desc = 'Days since epoch (1970-01-01)'
+    oid: str = 'DaysSinceEpoch-oid'
+    desc: str = 'Days since epoch (1970-01-01)'
     minValue = 0
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -1537,9 +1546,9 @@ class DaysSinceEpoch(Integer):
 
 
 class Timespan(Integer):
-    oid = 'Timespan-oid'
-    desc = 'Time span in seconds'
-    inputSize = LDAPSyntax.inputSize
+    oid: str = 'Timespan-oid'
+    desc: str = 'Time span in seconds'
+    inputSize: int = LDAPSyntax.inputSize
     minValue = 0
     time_divisors = (
         (u'weeks', 604800),
@@ -1589,7 +1598,7 @@ class SelectList(DirectoryString):
     Base class for dictionary based select lists which
     should not be used directly
     """
-    oid = 'SelectList-oid'
+    oid: str = 'SelectList-oid'
     attr_value_dict = {}  # Mapping attribute value to attribute description
     input_fallback = True # Fallback to normal input field if attr_value_dict is empty
 
@@ -1672,7 +1681,7 @@ class SelectList(DirectoryString):
 
 
 class PropertiesSelectList(SelectList):
-    oid = 'PropertiesSelectList-oid'
+    oid: str = 'PropertiesSelectList-oid'
     properties_pathname = None
     properties_charset = 'utf-8'
     properties_delimiter = u'='
@@ -1693,7 +1702,7 @@ class PropertiesSelectList(SelectList):
 
 
 class DynamicValueSelectList(SelectList, DirectoryString):
-    oid = 'DynamicValueSelectList-oid'
+    oid: str = 'DynamicValueSelectList-oid'
     ldap_url = None
     valuePrefix = ''
     valueSuffix = ''
@@ -1883,7 +1892,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
 
 
 class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
-    oid = 'DynamicDNSelectList-oid'
+    oid: str = 'DynamicDNSelectList-oid'
 
     def _get_ref_entry(self, dn: str, attrlist=None) -> dict:
         try:
@@ -1928,7 +1937,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
 
 
 class DerefDynamicDNSelectList(DynamicDNSelectList):
-    oid = 'DerefDynamicDNSelectList-oid'
+    oid: str = 'DerefDynamicDNSelectList-oid'
 
     def _get_ref_entry(self, dn: str, attrlist=None) -> dict:
         deref_crtl = DereferenceControl(True, {self._at: self.lu_obj.attrs})
@@ -1960,8 +1969,8 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
 
 
 class Boolean(SelectList, IA5String):
-    oid = '1.3.6.1.4.1.1466.115.121.1.7'
-    desc = 'Boolean'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.7'
+    desc: str = 'Boolean'
     attr_value_dict = {
         u'TRUE': u'TRUE',
         u'FALSE': u'FALSE',
@@ -1985,8 +1994,8 @@ class Boolean(SelectList, IA5String):
 
 
 class CountryString(PropertiesSelectList):
-    oid = '1.3.6.1.4.1.1466.115.121.1.11'
-    desc = 'Two letter country string as listed in ISO 3166-2'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.11'
+    desc: str = 'Two letter country string as listed in ISO 3166-2'
     properties_pathname = os.path.join(
         web2ldapcnf.etc_dir, 'properties', 'attribute_select_c.properties'
     )
@@ -1996,14 +2005,14 @@ class CountryString(PropertiesSelectList):
 
 
 class DeliveryMethod(PrintableString):
-    oid = '1.3.6.1.4.1.1466.115.121.1.14'
-    desc = 'Delivery Method'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.14'
+    desc: str = 'Delivery Method'
     pdm = '(any|mhs|physical|telex|teletex|g3fax|g4fax|ia5|videotex|telephone)'
     reObj = re.compile('^%s[ $]*%s$' % (pdm, pdm))
 
 
 class BitArrayInteger(MultilineText, Integer):
-    oid = 'BitArrayInteger-oid'
+    oid: str = 'BitArrayInteger-oid'
     flag_desc_table = tuple()
     true_false_desc = {
         False:'-',
@@ -2088,13 +2097,13 @@ class BitArrayInteger(MultilineText, Integer):
 
 
 class GSER(DirectoryString):
-    oid = 'GSER-oid'
-    desc = 'GSER syntax (see RFC 3641)'
+    oid: str = 'GSER-oid'
+    desc: str = 'GSER syntax (see RFC 3641)'
 
 
 class UUID(IA5String):
-    oid = '1.3.6.1.1.16.1'
-    desc = 'UUID'
+    oid: str = '1.3.6.1.1.16.1'
+    desc: str = 'UUID'
     reObj = re.compile(
         '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
     )
@@ -2107,10 +2116,10 @@ class UUID(IA5String):
 
 
 class DNSDomain(IA5String):
-    oid = 'DNSDomain-oid'
-    desc = 'DNS domain name (see RFC 1035)'
+    oid: str = 'DNSDomain-oid'
+    desc: str = 'DNS domain name (see RFC 1035)'
     reObj = re.compile(r'^(\*|[a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)*$')
-    maxLen = min(255, IA5String.maxLen) # (see https://tools.ietf.org/html/rfc2181#section-11)
+    maxLen: int = min(255, IA5String.maxLen) # (see https://tools.ietf.org/html/rfc2181#section-11)
     simpleSanitizers = (
         bytes.lower,
         bytes.strip,
@@ -2143,8 +2152,8 @@ class DNSDomain(IA5String):
 
 
 class RFC822Address(DNSDomain, IA5String):
-    oid = 'RFC822Address-oid'
-    desc = 'RFC 822 mail address'
+    oid: str = 'RFC822Address-oid'
+    desc: str = 'RFC 822 mail address'
     reObj = re.compile(r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$')
     html_tmpl = '<a href="mailto:{av}">{av}</a>'
 
@@ -2177,15 +2186,15 @@ class RFC822Address(DNSDomain, IA5String):
 
 
 class DomainComponent(DNSDomain):
-    oid = 'DomainComponent-oid'
-    desc = 'DNS domain name component'
+    oid: str = 'DomainComponent-oid'
+    desc: str = 'DNS domain name component'
     reObj = re.compile(r'^(\*|[a-zA-Z0-9_-]+)$')
-    maxLen = min(63, DNSDomain.maxLen) # (see https://tools.ietf.org/html/rfc2181#section-11)
+    maxLen: int = min(63, DNSDomain.maxLen) # (see https://tools.ietf.org/html/rfc2181#section-11)
 
 
 class YesNoIntegerFlag(SelectList):
-    oid = 'YesNoIntegerFlag-oid'
-    desc = '0 means no, 1 means yes'
+    oid: str = 'YesNoIntegerFlag-oid'
+    desc: str = '0 means no, 1 means yes'
     attr_value_dict = {
         u'0': u'no',
         u'1': u'yes',
@@ -2193,8 +2202,8 @@ class YesNoIntegerFlag(SelectList):
 
 
 class OnOffFlag(SelectList):
-    oid = 'OnOffFlag-oid'
-    desc = 'Only values "on" or "off" are allowed'
+    oid: str = 'OnOffFlag-oid'
+    desc: str = 'Only values "on" or "off" are allowed'
     attr_value_dict = {
         u'on': u'on',
         u'off': u'off',
@@ -2202,10 +2211,10 @@ class OnOffFlag(SelectList):
 
 
 class JSONValue(PreformattedMultilineText):
-    oid = 'JSONValue-oid'
-    desc = 'JSON data'
+    oid: str = 'JSONValue-oid'
+    desc: str = 'JSON data'
     lineSep = b'\n'
-    mimeType = 'application/json'
+    mimeType: str = 'application/json'
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
@@ -2232,10 +2241,10 @@ class JSONValue(PreformattedMultilineText):
 
 
 class XmlValue(PreformattedMultilineText):
-    oid = 'XmlValue-oid'
-    desc = 'XML data'
+    oid: str = 'XmlValue-oid'
+    desc: str = 'XML data'
     lineSep = b'\n'
-    mimeType = 'text/xml'
+    mimeType: str = 'text/xml'
 
     def _validate(self, attrValue: bytes) -> bool:
         if defusedxml is None:
@@ -2248,8 +2257,8 @@ class XmlValue(PreformattedMultilineText):
 
 
 class ASN1Object(Binary):
-    oid = 'ASN1Object-oid'
-    desc = 'BER encoded ASN.1 data'
+    oid: str = 'ASN1Object-oid'
+    desc: str = 'BER encoded ASN.1 data'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         # TODO: implement this again based on pyasn1 or whatever
@@ -2257,8 +2266,8 @@ class ASN1Object(Binary):
 
 
 class DumpASN1CfgOID(OID):
-    oid = 'DumpASN1Cfg-oid'
-    desc = "OID registered in Peter Gutmann's dumpasn1.cfg"
+    oid: str = 'DumpASN1Cfg-oid'
+    desc: str = "OID registered in Peter Gutmann's dumpasn1.cfg"
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         # TODO: implement this again
@@ -2269,12 +2278,12 @@ class AlgorithmOID(OID):
     """
     This base-class class is used for OIDs of cryptographic algorithms
     """
-    oid = 'AlgorithmOID-oid'
+    oid: str = 'AlgorithmOID-oid'
 
 
 class HashAlgorithmOID(SelectList, AlgorithmOID):
-    oid = 'HashAlgorithmOID-oid'
-    desc = 'values from https://www.iana.org/assignments/hash-function-text-names/'
+    oid: str = 'HashAlgorithmOID-oid'
+    desc: str = 'values from https://www.iana.org/assignments/hash-function-text-names/'
     attr_value_dict = {
         u'1.2.840.113549.2.2': u'md2',         # [RFC3279]
         u'1.2.840.113549.2.5': u'md5',         # [RFC3279]
@@ -2287,8 +2296,8 @@ class HashAlgorithmOID(SelectList, AlgorithmOID):
 
 
 class HMACAlgorithmOID(SelectList, AlgorithmOID):
-    oid = 'HMACAlgorithmOID-oid'
-    desc = 'values from RFC 8018'
+    oid: str = 'HMACAlgorithmOID-oid'
+    desc: str = 'values from RFC 8018'
     attr_value_dict = {
         # from RFC 8018
         u'1.2.840.113549.2.7': u'hmacWithSHA1',
@@ -2310,7 +2319,7 @@ class ComposedAttribute(LDAPSyntax):
     Obviously this only works for single-valued attributes,
     more precisely only the "first" attribute value is used.
     """
-    oid = 'ComposedDirectoryString-oid'
+    oid: str = 'ComposedDirectoryString-oid'
     compose_templates = ()
 
     class SingleValueDict(dict):
@@ -2371,8 +2380,8 @@ class ComposedAttribute(LDAPSyntax):
 
 
 class LDAPv3ResultCode(SelectList):
-    oid = 'LDAPResultCode-oid'
-    desc = 'LDAPv3 declaration of resultCode in (see RFC 4511)'
+    oid: str = 'LDAPResultCode-oid'
+    desc: str = 'LDAPv3 declaration of resultCode in (see RFC 4511)'
     attr_value_dict = {
         '0': 'success',
         '1': 'operationsError',

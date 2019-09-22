@@ -45,8 +45,8 @@ syntax_registry.reg_at(
 
 
 class SambaAcctFlags(IA5String):
-    oid = 'SambaAcctFlags-oid'
-    desc = 'Samba 3 account flags'
+    oid: str = 'SambaAcctFlags-oid'
+    desc: str = 'Samba 3 account flags'
     input_pattern = r'^\[[NDHTUMWSLXI ]{0,16}\]$'
     reObj = re.compile(input_pattern)
     flags_dict = {
@@ -83,8 +83,8 @@ syntax_registry.reg_at(
 
 
 class SambaSID(IA5String):
-    oid = 'SambaSID-oid'
-    desc = 'Samba SID (SDDL syntax)'
+    oid: str = 'SambaSID-oid'
+    desc: str = 'Samba SID (SDDL syntax)'
     input_pattern = r'^S(-[0-9]+)+$'
     reObj = re.compile(input_pattern)
 
@@ -160,8 +160,8 @@ syntax_registry.reg_at(
 
 
 class SambaForceLogoff(SelectList):
-    oid = 'SambaForceLogoff-oid'
-    desc = 'Disconnect Users outside logon hours (default: -1 => off, 0 => on)'
+    oid: str = 'SambaForceLogoff-oid'
+    desc: str = 'Disconnect Users outside logon hours (default: -1 => off, 0 => on)'
     attr_value_dict = {
         u'': u'',
         u'0': u'on',
@@ -175,8 +175,8 @@ syntax_registry.reg_at(
 )
 
 class SambaLogonToChgPwd(SelectList):
-    oid = 'SambaLogonToChgPwd-oid'
-    desc = 'Force Users to logon for password change (default: 0 => off, 2 => on)'
+    oid: str = 'SambaLogonToChgPwd-oid'
+    desc: str = 'Force Users to logon for password change (default: 0 => off, 2 => on)'
     attr_value_dict = {
         u'': u'',
         u'0': u'off',
@@ -190,8 +190,8 @@ syntax_registry.reg_at(
 )
 
 class SambaGroupType(SelectList):
-    oid = 'SambaGroupType-oid'
-    desc = 'Samba group type'
+    oid: str = 'SambaGroupType-oid'
+    desc: str = 'Samba group type'
     attr_value_dict = {
         u'': u'',
         u'2': u'Domain Group',
@@ -207,8 +207,8 @@ syntax_registry.reg_at(
 
 
 class ReferencedSID(DynamicValueSelectList):
-    oid = 'ReferencedSID-oid'
-    desc = 'SID which points to another object'
+    oid: str = 'ReferencedSID-oid'
+    desc: str = 'SID which points to another object'
     ldap_url = 'ldap:///_?sambaSID,cn?sub?'
 
 syntax_registry.reg_at(
@@ -219,8 +219,8 @@ syntax_registry.reg_at(
 
 
 class SambaGroupSID(DynamicValueSelectList):
-    oid = 'SambaGroupSID-oid'
-    desc = 'SID which points to Samba group object'
+    oid: str = 'SambaGroupSID-oid'
+    desc: str = 'SID which points to Samba group object'
     ldap_url = 'ldap:///_?sambaSID,cn?sub?(objectClass=sambaGroupMapping)'
 
 syntax_registry.reg_at(
@@ -231,8 +231,8 @@ syntax_registry.reg_at(
 
 
 class SambaDomainName(DynamicValueSelectList):
-    oid = 'SambaDomainName-oid'
-    desc = 'Name of Samba domain'
+    oid: str = 'SambaDomainName-oid'
+    desc: str = 'Name of Samba domain'
     ldap_url = 'ldap:///_?sambaDomainName,sambaDomainName?sub?(objectClass=sambaDomain)'
 
 syntax_registry.reg_at(
@@ -253,8 +253,8 @@ syntax_registry.reg_at(
 
 
 class SambaHomeDrive(SelectList):
-    oid = 'SambaHomeDrive-oid'
-    desc = 'Samba home drive letter'
+    oid: str = 'SambaHomeDrive-oid'
+    desc: str = 'Samba home drive letter'
     attr_value_dict = dict([
         (driveletter, driveletter)
         for driveletter in [

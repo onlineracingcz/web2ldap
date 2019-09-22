@@ -23,8 +23,8 @@ except ImportError:
 
 
 class Gender(PropertiesSelectList):
-    oid = 'Gender-oid'
-    desc = 'Representation of human sex (see ISO 5218)'
+    oid: str = 'Gender-oid'
+    desc: str = 'Representation of human sex (see ISO 5218)'
     properties_pathname = os.path.join(
         web2ldapcnf.etc_dir, 'properties', 'attribute_select_gender.properties'
     )
@@ -49,8 +49,8 @@ class LabeledBICandIBAN(DirectoryString):
     https://de.wikipedia.org/wiki/International_Bank_Account_Number
     http://www.pruefziffernberechnung.de/I/IBAN.shtml
     """
-    oid = 'LabeledBICandIBAN-oid'
-    desc = 'International bank account number (IBAN) syntax (see ISO 13616:1997)'
+    oid: str = 'LabeledBICandIBAN-oid'
+    desc: str = 'International bank account number (IBAN) syntax (see ISO 13616:1997)'
 
 syntax_registry.reg_at(
     LabeledBICandIBAN.oid, [
@@ -65,8 +65,8 @@ class EuVATId(IA5String):
     http://www.bzst.de/DE/Steuern_International/USt_Identifikationsnummer/Merkblaetter/Aufbau_USt_IdNr.pdf
     https://de.wikipedia.org/wiki/Umsatzsteuer-Identifikationsnummer
     """
-    oid = 'EuVATId-oid'
-    desc = 'Value Added Tax Ident Number of organizations within European Union'
+    oid: str = 'EuVATId-oid'
+    desc: str = 'Value Added Tax Ident Number of organizations within European Union'
     reObj = re.compile(
         r'^((AT)?U[0-9]{8}|' +
         r'(BE)?[0-9]{10}|' +

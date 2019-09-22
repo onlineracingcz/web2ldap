@@ -30,8 +30,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgPasswordPolicy(DynamicDNSelectList):
-    oid = 'OpenDSCfgPasswordPolicy-oid'
-    desc = 'DN of the ds-cfg-password-policy entry'
+    oid: str = 'OpenDSCfgPasswordPolicy-oid'
+    desc: str = 'DN of the ds-cfg-password-policy entry'
     ldap_url = 'ldap:///cn=Password Policies,cn=config?cn?one?(objectClass=ds-cfg-password-policy)'
 
 syntax_registry.reg_at(
@@ -43,8 +43,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgPasswordStorageScheme(DynamicDNSelectList):
-    oid = 'OpenDSCfgPasswordStorageScheme-oid'
-    desc = 'DN of the ds-cfg-password-storage-scheme entry'
+    oid: str = 'OpenDSCfgPasswordStorageScheme-oid'
+    desc: str = 'DN of the ds-cfg-password-storage-scheme entry'
     ldap_url = 'ldap:///cn=Password Storage Schemes,cn=config?cn?one?(objectClass=ds-cfg-password-storage-scheme)'
 
 syntax_registry.reg_at(
@@ -54,8 +54,8 @@ syntax_registry.reg_at(
 )
 
 class OpenDSCfgPasswordGenerator(DynamicDNSelectList):
-    oid = 'OpenDSCfgPasswordGenerator-oid'
-    desc = 'DN of the ds-cfg-password-generator entry'
+    oid: str = 'OpenDSCfgPasswordGenerator-oid'
+    desc: str = 'DN of the ds-cfg-password-generator entry'
     ldap_url = 'ldap:///cn=Password Generators,cn=config?cn?one?(objectClass=ds-cfg-password-generator)'
 
 syntax_registry.reg_at(
@@ -66,8 +66,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgIdentityMapper(DynamicDNSelectList):
-    oid = 'OpenDSCfgIdentityMapper-oid'
-    desc = 'DN of the ds-cfg-identity-mapper entry'
+    oid: str = 'OpenDSCfgIdentityMapper-oid'
+    desc: str = 'DN of the ds-cfg-identity-mapper entry'
     ldap_url = 'ldap:///cn=Identity Mappers,cn=config?cn?one?(objectClass=ds-cfg-identity-mapper)'
 
 syntax_registry.reg_at(
@@ -79,8 +79,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgCertificateMapper(DynamicDNSelectList):
-    oid = 'OpenDSCfgCertificateMapper-oid'
-    desc = 'DN of the ds-cfg-certificate-mapper entry'
+    oid: str = 'OpenDSCfgCertificateMapper-oid'
+    desc: str = 'DN of the ds-cfg-certificate-mapper entry'
     ldap_url = 'ldap:///cn=Certificate Mappers,cn=config?cn?one?(objectClass=ds-cfg-certificate-mapper)'
 
 syntax_registry.reg_at(
@@ -91,8 +91,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgKeyManagerProvider(DynamicDNSelectList):
-    oid = 'OpenDSCfgKeyManagerProvider-oid'
-    desc = 'DN of the ds-cfg-key-manager-provider entry'
+    oid: str = 'OpenDSCfgKeyManagerProvider-oid'
+    desc: str = 'DN of the ds-cfg-key-manager-provider entry'
     ldap_url = 'ldap:///cn=Key Manager Providers,cn=config?cn?one?(objectClass=ds-cfg-key-manager-provider)'
 
 syntax_registry.reg_at(
@@ -103,8 +103,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgTrustManagerProvider(DynamicDNSelectList):
-    oid = 'OpenDSCfgTrustManagerProvider-oid'
-    desc = 'DN of the ds-cfg-trust-manager-provider entry'
+    oid: str = 'OpenDSCfgTrustManagerProvider-oid'
+    desc: str = 'DN of the ds-cfg-trust-manager-provider entry'
     ldap_url = 'ldap:///cn=Trust Manager Providers,cn=config?cn?one?(objectClass=ds-cfg-trust-manager-provider)'
 
 syntax_registry.reg_at(
@@ -115,8 +115,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgSSLClientAuthPolicy(SelectList):
-    oid = 'OpenDSCfgSSLClientAuthPolicy-oid'
-    desc = 'Specifies the policy regarding client SSL certificates'
+    oid: str = 'OpenDSCfgSSLClientAuthPolicy-oid'
+    desc: str = 'Specifies the policy regarding client SSL certificates'
     attr_value_dict = {
         u'disabled': u'Client certificate is not requested',
         u'optional': u'Client certificate is requested but not required',
@@ -131,8 +131,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgSNMPSecurityLevel(SelectList):
-    oid = 'OpenDSCfgSNMPSecurityLevel-oid'
-    desc = 'Specifies the policy regarding client SSL certificates'
+    oid: str = 'OpenDSCfgSNMPSecurityLevel-oid'
+    desc: str = 'Specifies the policy regarding client SSL certificates'
     attr_value_dict = {
         u'authnopriv': u'Authentication activated with no privacy.',
         u'authpriv': u'Authentication with privacy activated.',
@@ -147,8 +147,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgInvalidSchemaBehaviour(SelectList):
-    oid = 'OpenDSCfgInvalidSchemaBehaviour-oid'
-    desc = 'Specifies how OpenDS behaves in case of schema errors'
+    oid: str = 'OpenDSCfgInvalidSchemaBehaviour-oid'
+    desc: str = 'Specifies how OpenDS behaves in case of schema errors'
     attr_value_dict = {
         u'reject': u'reject',
         u'default': u'default',
@@ -165,8 +165,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgEtimeResolution(SelectList):
-    oid = 'OpenDSCfgEtimeResolution-oid'
-    desc = 'Specifies the resolution to use for operation elapsed processing time (etime) measurements.'
+    oid: str = 'OpenDSCfgEtimeResolution-oid'
+    desc: str = 'Specifies the resolution to use for operation elapsed processing time (etime) measurements.'
     attr_value_dict = {
         u'milliseconds': u'milliseconds',
         u'nanoseconds': u'nanoseconds',
@@ -180,8 +180,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgWritabilityMode(SelectList):
-    oid = 'OpenDSCfgWritabilityMode-oid'
-    desc = 'Specifies the kinds of write operations the Directory Server can process.'
+    oid: str = 'OpenDSCfgWritabilityMode-oid'
+    desc: str = 'Specifies the kinds of write operations the Directory Server can process.'
     attr_value_dict = {
         u'disabled': u'all write operations are rejected',
         u'enabled': u'all write operations are processed',
@@ -196,8 +196,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgCertificateValidationPolicy(SelectList):
-    oid = 'OpenDSCfgCertificateValidationPolicy-oid'
-    desc = 'Specifies the way client certs are checked in user entry.'
+    oid: str = 'OpenDSCfgCertificateValidationPolicy-oid'
+    desc: str = 'Specifies the way client certs are checked in user entry.'
     attr_value_dict = {
         u'always': u"Always require matching peer certificate in user's entry",
         u'ifpresent': u"Require one matching certificate if attribute exists in user's entry",
@@ -212,8 +212,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgAccountStatusNotificationType(SelectList):
-    oid = 'OpenDSCfgAccountStatusNotificationType-oid'
-    desc = 'Specifies when the generate a notification about account status'
+    oid: str = 'OpenDSCfgAccountStatusNotificationType-oid'
+    desc: str = 'Specifies when the generate a notification about account status'
     attr_value_dict = {
         u'account-disabled': u'User account has been disabled by an administrator',
         u'account-enabled': u'User account has been enabled by an administrator',
@@ -237,8 +237,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgSslProtocol(SelectList):
-    oid = 'OpenDSCfgSslProtocol-oid'
-    desc = 'Specifies the SSL/TLS protocols supported.'
+    oid: str = 'OpenDSCfgSslProtocol-oid'
+    desc: str = 'Specifies the SSL/TLS protocols supported.'
     attr_value_dict = {
         u'SSL':    u'any version of SSL',
         u'SSLv2':  u'SSL version 2 or higher',
@@ -256,8 +256,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgSslCipherSuite(SelectList):
-    oid = 'OpenDSCfgSslCipherSuite-oid'
-    desc = 'Specifies the used cipher suites.'
+    oid: str = 'OpenDSCfgSslCipherSuite-oid'
+    desc: str = 'Specifies the used cipher suites.'
     attr_value_dict = {
         u'SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA': u'SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA',
         u'SSL_DHE_DSS_EXPORT1024_WITH_RC4_56_SHA': u'SSL_DHE_DSS_EXPORT1024_WITH_RC4_56_SHA',
@@ -327,8 +327,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgPrivilege(SelectList):
-    oid = 'OpenDSCfgPrivilege-oid'
-    desc = 'Specifies the name of a privilege that should not be evaluated by the server.'
+    oid: str = 'OpenDSCfgPrivilege-oid'
+    desc: str = 'Specifies the name of a privilege that should not be evaluated by the server.'
     attr_value_dict = {
         u'backend-backup': u'Request backup tasks',
         u'backend-restore': u'Request restore tasks',
@@ -367,8 +367,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSCfgTimeInterval(DirectoryString):
-    oid = 'OpenDSCfgTimeInterval-oid'
-    desc = 'A time interval consisting of integer value and time unit'
+    oid: str = 'OpenDSCfgTimeInterval-oid'
+    desc: str = 'A time interval consisting of integer value and time unit'
     reObj = re.compile('^[0-9]+ (seconds|minutes|hours|days)$')
 
 syntax_registry.reg_at(
@@ -386,8 +386,8 @@ syntax_registry.reg_at(
 )
 
 class OpenDSSyncHist(OctetString, DirectoryString):
-    oid = 'OpenDSSyncHist-oid'
-    desc = 'List of modifications'
+    oid: str = 'OpenDSSyncHist-oid'
+    desc: str = 'List of modifications'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
@@ -411,8 +411,8 @@ syntax_registry.reg_at(
 
 
 class OpenDSdsCfgAlternatebindDn(BindDN):
-    oid = 'OpenDSdsCfgAlternatebindDn-oid'
-    desc = 'OpenDS/OpenDJ alternative bind DN'
+    oid: str = 'OpenDSdsCfgAlternatebindDn-oid'
+    desc: str = 'OpenDS/OpenDJ alternative bind DN'
 
     def formValue(self) -> str:
         if not self._av:
@@ -443,8 +443,8 @@ syntax_registry.reg_at(
 #------------------------
 
 class ChangeLogChanges(MultilineText):
-    oid = 'ChangeLogChanges-oid'
-    desc = 'a set of changes to apply to an entry'
+    oid: str = 'ChangeLogChanges-oid'
+    desc: str = 'a set of changes to apply to an entry'
     lineSep = b'\n'
     cols = 77
 

@@ -21,8 +21,8 @@ from web2ldap import cmp
 
 
 class PwdCheckQuality(SelectList):
-    oid = 'PwdCheckQuality-oid'
-    desc = 'Password quality checking enforced'
+    oid: str = 'PwdCheckQuality-oid'
+    desc: str = 'Password quality checking enforced'
     attr_value_dict = {
         u'0': u'quality checking not be enforced',
         u'1': u'quality checking enforced, accepting un-checkable passwords',
@@ -37,8 +37,8 @@ syntax_registry.reg_at(
 
 
 class PwdAttribute(SelectList):
-    oid = 'PwdAttribute-oid'
-    desc = 'Password attribute'
+    oid: str = 'PwdAttribute-oid'
+    desc: str = 'Password attribute'
     attr_value_dict = {
         u'2.5.4.35': u'userPassword',
     }
@@ -57,8 +57,8 @@ syntax_registry.reg_at(
 
 
 class PwdPolicySubentry(DynamicDNSelectList):
-    oid = 'PwdPolicySubentry-oid'
-    desc = 'DN of the pwdPolicy entry to be used for a certain entry'
+    oid: str = 'PwdPolicySubentry-oid'
+    desc: str = 'DN of the pwdPolicy entry to be used for a certain entry'
     ldap_url = 'ldap:///_??sub?(|(objectClass=pwdPolicy)(objectClass=ds-cfg-password-policy))'
 
 syntax_registry.reg_at(
@@ -69,8 +69,8 @@ syntax_registry.reg_at(
 
 
 class PwdMaxAge(Timespan):
-    oid = 'PwdMaxAge-oid'
-    desc = 'pwdPolicy entry: Maximum age of user password'
+    oid: str = 'PwdMaxAge-oid'
+    desc: str = 'pwdPolicy entry: Maximum age of user password'
     link_text = 'Search expired'
     title_text = u'Search for entries with this password policy and expired password'
 
@@ -116,8 +116,8 @@ syntax_registry.reg_at(
 
 
 class PwdExpireWarning(PwdMaxAge):
-    oid = 'PwdExpireWarning-oid'
-    desc = 'pwdPolicy entry: Password warning period'
+    oid: str = 'PwdExpireWarning-oid'
+    desc: str = 'pwdPolicy entry: Password warning period'
     link_text = 'Search soon to expire'
     title_text = u'Search for entries with this password policy and soon to expire password'
 
@@ -142,8 +142,8 @@ syntax_registry.reg_at(
 
 
 class PwdAccountLockedTime(GeneralizedTime):
-    oid = 'PwdAccountLockedTime-oid'
-    desc = 'user entry: time that the account was locked'
+    oid: str = 'PwdAccountLockedTime-oid'
+    desc: str = 'user entry: time that the account was locked'
     magic_values = {
         '000001010000Z': 'permanently locked',
     }
@@ -165,8 +165,8 @@ syntax_registry.reg_at(
 
 
 class PwdChangedTime(GeneralizedTime):
-    oid = 'PwdChangedTime-oid'
-    desc = 'user entry: Last password change time'
+    oid: str = 'PwdChangedTime-oid'
+    desc: str = 'user entry: Last password change time'
     time_divisors = Timespan.time_divisors
 
     def display(self, valueindex=0, commandbutton=False) -> str:

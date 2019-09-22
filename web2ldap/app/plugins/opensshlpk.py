@@ -24,8 +24,8 @@ PARAMIKO_KEYCLASS = {
 
 
 class SshPublicKey(DirectoryString):
-    oid = 'SshPublicKey-oid'
-    desc = 'SSH public key of a user'
+    oid: str = 'SshPublicKey-oid'
+    desc: str = 'SSH public key of a user'
     input_pattern = (
         '(^|.* )'
         '(ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521|ssh-ed25519)'

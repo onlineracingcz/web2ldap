@@ -22,8 +22,8 @@ syntax_registry.reg_at(
 
 
 class DominoCertificate(MultilineText):
-    oid = 'DominoCertificate-oid'
-    desc = 'Domino certificate'
+    oid: str = 'DominoCertificate-oid'
+    desc: str = 'Domino certificate'
     reObj = re.compile('^([A-Z0-9]{8} [A-Z0-9]{8} [A-Z0-9]{8} [A-Z0-9]{8}[\x00]?)+[A-Z0-9 ]*$')
     lineSep = b'\x00'
     mimeType = 'text/plain'
@@ -46,8 +46,8 @@ syntax_registry.reg_at(
 
 
 class CheckPassword(SelectList):
-    oid = 'CheckPassword-oid'
-    desc = ''
+    oid: str = 'CheckPassword-oid'
+    desc: str = ''
     attr_value_dict = {
         u'0': u'Do not check password',
         u'1': u'Check password',
@@ -62,8 +62,8 @@ syntax_registry.reg_at(
 
 
 class MailServer(DynamicDNSelectList):
-    oid = 'MailServer-oid'
-    desc = 'DN of mail server entry'
+    oid: str = 'MailServer-oid'
+    desc: str = 'DN of mail server entry'
     ldap_url = 'ldap:///?displayname?sub?(objectClass=dominoServer)'
 
 syntax_registry.reg_at(

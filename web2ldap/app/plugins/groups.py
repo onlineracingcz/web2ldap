@@ -6,8 +6,8 @@ from web2ldap.app.schema.syntaxes import DistinguishedName, syntax_registry
 
 
 class Member(DistinguishedName):
-    oid = 'Member-oid'
-    desc = 'member attribute in a group entry'
+    oid: str = 'Member-oid'
+    desc: str = 'member attribute in a group entry'
 
 syntax_registry.reg_at(
     Member.oid, [
@@ -17,8 +17,8 @@ syntax_registry.reg_at(
 
 
 class MemberOf(DistinguishedName):
-    oid = 'MemberOf-oid'
-    desc = 'memberOf attribute in a group member entry'
+    oid: str = 'MemberOf-oid'
+    desc: str = 'memberOf attribute in a group member entry'
     ref_attrs = (
         (None, u'Group members', None, u'Search all members of this group'),
     )
@@ -31,8 +31,8 @@ syntax_registry.reg_at(
 
 
 class GroupEntryDN(DistinguishedName):
-    oid = 'GroupEntryDN-oid'
-    desc = 'entryDN attribute in a group entry'
+    oid: str = 'GroupEntryDN-oid'
+    desc: str = 'entryDN attribute in a group entry'
     ref_attrs = (
         ('memberOf', u'Group members', None, u'Search all members of this group'),
     )

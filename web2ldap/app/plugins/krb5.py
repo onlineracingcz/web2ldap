@@ -49,7 +49,7 @@ class Krb5KDCFlagsSyntax(BitArrayInteger):
     --        user-to-user(12),       -- may use user-to-user auth
     --        immutable(13)           -- may not be deleted
     """
-    oid = '1.3.6.1.4.1.5322.10.0.1'
+    oid: str = '1.3.6.1.4.1.5322.10.0.1'
     flag_desc_table = (
         (u'initial', 0x0001),
         (u'forwardable', 0x0002),
@@ -88,7 +88,7 @@ syntax_registry.reg_at(
 
 
 class KrbTicketFlags(BitArrayInteger):
-    oid = 'KrbTicketFlags-oid'
+    oid: str = 'KrbTicketFlags-oid'
     flag_desc_table = (
         (u'DISALLOW_POSTDATED', 0x00000001),
         (u'DISALLOW_FORWARDABLE', 0x00000002),
@@ -111,8 +111,8 @@ syntax_registry.reg_at(
 )
 
 class KrbSearchScope(SelectList):
-    oid = 'KrbSearchScope-oid'
-    desc = 'Kerberos search scope'
+    oid: str = 'KrbSearchScope-oid'
+    desc: str = 'Kerberos search scope'
     attr_value_dict = {
         u'1': u'ONE_LEVEL',
         u'2': u'SUB_TREE',
@@ -126,8 +126,8 @@ syntax_registry.reg_at(
 
 
 class KrbPrincipalType(SelectList):
-    oid = 'KrbPrincipalType-oid'
-    desc = 'Kerberos V Principal Type (see RFC 4120, section 6.2)'
+    oid: str = 'KrbPrincipalType-oid'
+    desc: str = 'Kerberos V Principal Type (see RFC 4120, section 6.2)'
     attr_value_dict = {
         u'0': u'NT-UNKNOWN',        # Name type not known
         u'1': u'NT-PRINCIPAL',      # Just the name of the principal as in DCE, or for users
@@ -148,8 +148,8 @@ syntax_registry.reg_at(
 
 
 class KrbTicketPolicyReference(DynamicDNSelectList):
-    oid = 'KrbTicketPolicyReference-oid'
-    desc = 'DN of a Kerberos V ticket policy entry'
+    oid: str = 'KrbTicketPolicyReference-oid'
+    desc: str = 'DN of a Kerberos V ticket policy entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=krbTicketPolicy)'
 
 syntax_registry.reg_at(
@@ -160,8 +160,8 @@ syntax_registry.reg_at(
 
 
 class KrbPwdPolicyReference(DynamicDNSelectList):
-    oid = 'KrbPwdPolicyReference-oid'
-    desc = 'DN of a Kerberos V password policy entry'
+    oid: str = 'KrbPwdPolicyReference-oid'
+    desc: str = 'DN of a Kerberos V password policy entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=krbPwdPolicy)'
 
 syntax_registry.reg_at(

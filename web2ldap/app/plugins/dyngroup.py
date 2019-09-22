@@ -10,8 +10,8 @@ from web2ldap.app.schema.syntaxes import LDAPUrl, syntax_registry
 
 
 class MemberUrl(LDAPUrl):
-    oid = 'MemberUrl-oid'
-    desc = 'LDAP URL describing search parameters used to lookup group members'
+    oid: str = 'MemberUrl-oid'
+    desc: str = 'LDAP URL describing search parameters used to lookup group members'
     ldap_url = None
 
     def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):

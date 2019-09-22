@@ -123,7 +123,7 @@ class AEObjectUtil:
 
 
 class AEHomeDirectory(HomeDirectory):
-    oid = 'AEHomeDirectory-oid'
+    oid: str = 'AEHomeDirectory-oid'
     # all valid directory prefixes for attribute 'homeDirectory'
     # but without trailing slash
     homeDirectoryPrefixes = (
@@ -180,8 +180,8 @@ syntax_registry.reg_at(
 
 
 class AEUIDNumber(UidNumber):
-    oid = 'AEUIDNumber-oid'
-    desc = 'numeric Unix-UID'
+    oid: str = 'AEUIDNumber-oid'
+    desc: str = 'numeric Unix-UID'
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         return self._entry.get('gidNumber', [''])
@@ -208,8 +208,8 @@ syntax_registry.reg_at(
 
 
 class AEGIDNumber(GidNumber):
-    oid = 'AEGIDNumber-oid'
-    desc = 'numeric Unix-GID'
+    oid: str = 'AEGIDNumber-oid'
+    desc: str = 'numeric Unix-GID'
     minNewValue = 30000
     maxNewValue = 49999
     id_pool_dn = None
@@ -274,7 +274,7 @@ syntax_registry.reg_at(
 
 
 class AEUid(IA5String):
-    oid = 'AEUid-oid'
+    oid: str = 'AEUid-oid'
     simpleSanitizers = (
         bytes.strip,
         bytes.lower,
@@ -285,12 +285,12 @@ class AEUserUid(AEUid):
     """
     Class for auto-generating values for aeUser -> uid
     """
-    oid = 'AEUserUid-oid'
-    desc = 'AE-DIR: User name'
+    oid: str = 'AEUserUid-oid'
+    desc: str = 'AE-DIR: User name'
     maxValues = 1
-    minLen = 4
-    maxLen = 4
-    maxCollisionChecks = 15
+    minLen: int = 4
+    maxLen: int = 4
+    maxCollisionChecks: int = 15
     UID_LETTERS = 'abcdefghijklmnopqrstuvwxyz'
     reobj = re.compile('^%s$' % (UID_LETTERS))
     genLen = 4
@@ -350,7 +350,7 @@ syntax_registry.reg_at(
 
 
 class AEServiceUid(AEUid):
-    oid = 'AEServiceUid-oid'
+    oid: str = 'AEServiceUid-oid'
 
 syntax_registry.reg_at(
     AEServiceUid.oid, [
@@ -363,8 +363,8 @@ syntax_registry.reg_at(
 
 
 class AETicketId(IA5String):
-    oid = 'AETicketId-oid'
-    desc = 'AE-DIR: Ticket no. related to last change of entry'
+    oid: str = 'AETicketId-oid'
+    desc: str = 'AE-DIR: Ticket no. related to last change of entry'
     simpleSanitizers = (
         bytes.upper,
         bytes.strip,
@@ -378,8 +378,8 @@ syntax_registry.reg_at(
 
 
 class AEZoneDN(DerefDynamicDNSelectList):
-    oid = 'AEZoneDN-oid'
-    desc = 'AE-DIR: Zone'
+    oid: str = 'AEZoneDN-oid'
+    desc: str = 'AE-DIR: Zone'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeZone)(aeStatus=0))'
     ref_attrs = (
@@ -394,8 +394,8 @@ syntax_registry.reg_at(
 
 
 class AEHost(DerefDynamicDNSelectList):
-    oid = 'AEHost-oid'
-    desc = 'AE-DIR: Host'
+    oid: str = 'AEHost-oid'
+    desc: str = 'AE-DIR: Host'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?host?sub?(&(objectClass=aeHost)(aeStatus=0))'
     ref_attrs = (
@@ -410,8 +410,8 @@ syntax_registry.reg_at(
 
 
 class AENwDevice(DerefDynamicDNSelectList):
-    oid = 'AENwDevice-oid'
-    desc = 'AE-DIR: network interface'
+    oid: str = 'AENwDevice-oid'
+    desc: str = 'AE-DIR: network interface'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///..?cn?sub?(&(objectClass=aeNwDevice)(aeStatus=0))'
     ref_attrs = (
@@ -441,8 +441,8 @@ syntax_registry.reg_at(
 
 
 class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
-    oid = 'AEGroupMember-oid'
-    desc = 'AE-DIR: Member of a group'
+    oid: str = 'AEGroupMember-oid'
+    desc: str = 'AE-DIR: Member of a group'
     input_fallback = False # no fallback to normal input field
     ldap_url = (
         'ldap:///_?displayName?sub?'
@@ -561,8 +561,8 @@ syntax_registry.reg_at(
 
 
 class AEMailGroupMember(AEGroupMember):
-    oid = 'AEMailGroupMember-oid'
-    desc = 'AE-DIR: Member of a mail group'
+    oid: str = 'AEMailGroupMember-oid'
+    desc: str = 'AE-DIR: Member of a mail group'
     input_fallback = False # no fallback to normal input field
     ldap_url = (
         'ldap:///_?displayName?sub?'
@@ -580,8 +580,8 @@ syntax_registry.reg_at(
 
 
 class AEMemberUid(MemberUID):
-    oid = 'AEMemberUid-oid'
-    desc = 'AE-DIR: username (uid) of member of a group'
+    oid: str = 'AEMemberUid-oid'
+    desc: str = 'AE-DIR: username (uid) of member of a group'
     ldap_url = None
     showValueButton = False
     reobj = AEUserUid.reobj
@@ -630,8 +630,8 @@ syntax_registry.reg_at(
 
 
 class AEGroupDN(DerefDynamicDNSelectList):
-    oid = 'AEGroupDN-oid'
-    desc = 'AE-DIR: DN of user group entry'
+    oid: str = 'AEGroupDN-oid'
+    desc: str = 'AE-DIR: DN of user group entry'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_??sub?(&(|(objectClass=aeGroup)(objectClass=aeMailGroup))(aeStatus=0))'
     ref_attrs = (
@@ -664,8 +664,8 @@ syntax_registry.reg_at(
 
 
 class AEZoneAdminGroupDN(AEGroupDN):
-    oid = 'AEZoneAdminGroupDN-oid'
-    desc = 'AE-DIR: DN of zone admin group entry'
+    oid: str = 'AEZoneAdminGroupDN-oid'
+    desc: str = 'AE-DIR: DN of zone admin group entry'
     ldap_url = (
       'ldap:///_??sub?'
       '(&'
@@ -690,8 +690,8 @@ syntax_registry.reg_at(
 
 
 class AEZoneAuditorGroupDN(AEGroupDN):
-    oid = 'AEZoneAuditorGroupDN-oid'
-    desc = 'AE-DIR: DN of zone auditor group entry'
+    oid: str = 'AEZoneAuditorGroupDN-oid'
+    desc: str = 'AE-DIR: DN of zone auditor group entry'
     ldap_url = (
       'ldap:///_??sub?'
       '(&'
@@ -718,8 +718,8 @@ syntax_registry.reg_at(
 
 
 class AESrvGroupRightsGroupDN(AEGroupDN):
-    oid = 'AESrvGroupRightsGroupDN-oid'
-    desc = 'AE-DIR: DN of user group entry'
+    oid: str = 'AESrvGroupRightsGroupDN-oid'
+    desc: str = 'AE-DIR: DN of user group entry'
     ldap_url = (
       'ldap:///_??sub?'
       '(&'
@@ -746,8 +746,8 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameGroups(AESrvGroupRightsGroupDN):
-    oid = 'AEDisplayNameGroups-oid'
-    desc = 'AE-DIR: DN of visible user group entry'
+    oid: str = 'AEDisplayNameGroups-oid'
+    desc: str = 'AE-DIR: DN of visible user group entry'
     ldap_url = (
       'ldap:///_??sub?'
       '(&'
@@ -774,8 +774,8 @@ syntax_registry.reg_at(
 
 
 class AEVisibleGroups(AEDisplayNameGroups):
-    oid = 'AEVisibleGroups-oid'
-    desc = 'AE-DIR: DN of visible user group entry'
+    oid: str = 'AEVisibleGroups-oid'
+    desc: str = 'AE-DIR: DN of visible user group entry'
     always_add_groups = (
         'aeLoginGroups',
         'aeDisplayNameGroups',
@@ -795,8 +795,8 @@ syntax_registry.reg_at(
 
 
 class AESameZoneObject(DerefDynamicDNSelectList, AEObjectUtil):
-    oid = 'AESameZoneObject-oid'
-    desc = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
+    oid: str = 'AESameZoneObject-oid'
+    desc: str = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeObject)(aeStatus=0))'
 
@@ -805,8 +805,8 @@ class AESameZoneObject(DerefDynamicDNSelectList, AEObjectUtil):
 
 
 class AESrvGroup(AESameZoneObject):
-    oid = 'AESrvGroup-oid'
-    desc = 'AE-DIR: DN of referenced aeSrvGroup entry'
+    oid: str = 'AESrvGroup-oid'
+    desc: str = 'AE-DIR: DN of referenced aeSrvGroup entry'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
 
     def _filterstr(self):
@@ -824,8 +824,8 @@ syntax_registry.reg_at(
 
 
 class AERequires(DerefDynamicDNSelectList):
-    oid = 'AERequires-oid'
-    desc = 'AE-DIR: DN of required aeSrvGroup'
+    oid: str = 'AERequires-oid'
+    desc: str = 'AE-DIR: DN of required aeSrvGroup'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0))'
     ref_attrs = (
         (
@@ -843,8 +843,8 @@ syntax_registry.reg_at(
 
 
 class AEProxyFor(AESameZoneObject, AEObjectUtil):
-    oid = 'AEProxyFor-oid'
-    desc = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
+    oid: str = 'AEProxyFor-oid'
+    desc: str = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
 
     def _filterstr(self):
@@ -862,8 +862,8 @@ syntax_registry.reg_at(
 
 
 class AETag(DynamicValueSelectList):
-    oid = 'AETag-oid'
-    desc = 'AE-DIR: cn of referenced aeTag entry'
+    oid: str = 'AETag-oid'
+    desc: str = 'AE-DIR: cn of referenced aeTag entry'
     ldap_url = 'ldap:///_?cn,cn?sub?(&(objectClass=aeTag)(aeStatus=0))'
 
 syntax_registry.reg_at(
@@ -874,8 +874,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEPerson(DistinguishedName):
-    oid = 'AEEntryDNAEPerson-oid'
-    desc = 'AE-DIR: entryDN of aePerson entry'
+    oid: str = 'AEEntryDNAEPerson-oid'
+    desc: str = 'AE-DIR: entryDN of aePerson entry'
     ref_attrs = (
         ('manager', u'Manages', None, u'Search all entries managed by this person'),
         (
@@ -899,8 +899,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEUser(DistinguishedName):
-    oid = 'AEEntryDNAEUser-oid'
-    desc = 'AE-DIR: entryDN of aeUser entry'
+    oid: str = 'AEEntryDNAEUser-oid'
+    desc: str = 'AE-DIR: entryDN of aeUser entry'
 
     def _additional_links(self):
         r = DistinguishedName._additional_links(self)
@@ -932,8 +932,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEHost(DistinguishedName):
-    oid = 'AEEntryDNAEHost-oid'
-    desc = 'AE-DIR: entryDN of aeUser entry'
+    oid: str = 'AEEntryDNAEHost-oid'
+    desc: str = 'AE-DIR: entryDN of aeUser entry'
     ref_attrs = (
         ('aeHost', u'Services', None, u'Search all services running on this host'),
     )
@@ -981,8 +981,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEZone(DistinguishedName):
-    oid = 'AEEntryDNAEZone-oid'
-    desc = 'AE-DIR: entryDN of aeZone entry'
+    oid: str = 'AEEntryDNAEZone-oid'
+    desc: str = 'AE-DIR: entryDN of aeZone entry'
 
     def _additional_links(self):
         r = DistinguishedName._additional_links(self)
@@ -1030,8 +1030,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEMailGroup(GroupEntryDN):
-    oid = 'AEEntryDNAEMailGroup-oid'
-    desc = 'AE-DIR: entryDN of aeGroup entry'
+    oid: str = 'AEEntryDNAEMailGroup-oid'
+    desc: str = 'AE-DIR: entryDN of aeGroup entry'
     ref_attrs = (
         ('memberOf', u'Members', None, u'Search all member entries of this mail group'),
         ('aeVisibleGroups', u'Visible', None, u'Search all server/service groups (aeSrvGroup)\non which this mail group is visible'),
@@ -1048,8 +1048,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEGroup(GroupEntryDN):
-    oid = 'AEEntryDNAEGroup-oid'
-    desc = 'AE-DIR: entryDN of aeGroup entry'
+    oid: str = 'AEEntryDNAEGroup-oid'
+    desc: str = 'AE-DIR: entryDN of aeGroup entry'
     ref_attrs = (
         ('memberOf', u'Members', None, u'Search all member entries of this user group'),
         ('aeLoginGroups', u'Login', None, u'Search all server/service groups (aeSrvGroup)\non which this user group has login right'),
@@ -1106,8 +1106,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAESrvGroup(DistinguishedName):
-    oid = 'AEEntryDNAESrvGroup-oid'
-    desc = 'AE-DIR: entryDN'
+    oid: str = 'AEEntryDNAESrvGroup-oid'
+    desc: str = 'AE-DIR: entryDN'
     ref_attrs = (
         ('aeProxyFor', u'Proxy', None, u'Search access gateway/proxy group for this server group'),
         (
@@ -1151,8 +1151,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNSudoRule(DistinguishedName):
-    oid = 'AEEntryDNSudoRule-oid'
-    desc = 'AE-DIR: entryDN'
+    oid: str = 'AEEntryDNSudoRule-oid'
+    desc: str = 'AE-DIR: entryDN'
     ref_attrs = (
         ('aeVisibleSudoers', u'Used on', None, u'Search all server groups (aeSrvGroup entries) referencing this SUDO rule'),
     )
@@ -1168,8 +1168,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAELocation(DistinguishedName):
-    oid = 'AEEntryDNAELocation-oid'
-    desc = 'AE-DIR: entryDN of aeLocation entry'
+    oid: str = 'AEEntryDNAELocation-oid'
+    desc: str = 'AE-DIR: entryDN of aeLocation entry'
     ref_attrs = (
         ('aeLocation', u'Persons', None, 'aePerson', u'Search all persons assigned to this location.'),
         ('aeLocation', u'Zones', None, 'aeZone', u'Search all location-based zones associated with this location.'),
@@ -1187,8 +1187,8 @@ syntax_registry.reg_at(
 
 
 class AELocation(DerefDynamicDNSelectList):
-    oid = 'AELocation-oid'
-    desc = 'AE-DIR: DN of location entry'
+    oid: str = 'AELocation-oid'
+    desc: str = 'AE-DIR: DN of location entry'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aeLocation)(aeStatus=0))'
     ref_attrs = AEEntryDNAELocation.ref_attrs
@@ -1201,8 +1201,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEDept(DistinguishedName):
-    oid = 'AEEntryDNAEDept-oid'
-    desc = 'AE-DIR: entryDN of aePerson entry'
+    oid: str = 'AEEntryDNAEDept-oid'
+    desc: str = 'AE-DIR: entryDN of aePerson entry'
     ref_attrs = (
         ('aeDept', u'Persons', None, 'aePerson', u'Search all persons assigned to this department.'),
         ('aeDept', u'Zones', None, 'aeZone', u'Search all team-related zones associated with this department.'),
@@ -1220,8 +1220,8 @@ syntax_registry.reg_at(
 
 
 class AEDept(DerefDynamicDNSelectList):
-    oid = 'AEDept-oid'
-    desc = 'AE-DIR: DN of department entry'
+    oid: str = 'AEDept-oid'
+    desc: str = 'AE-DIR: DN of department entry'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aeDept)(aeStatus=0))'
     ref_attrs = AEEntryDNAEDept.ref_attrs
@@ -1234,8 +1234,8 @@ syntax_registry.reg_at(
 
 
 class AEOwner(DerefDynamicDNSelectList):
-    oid = 'AEOwner-oid'
-    desc = 'AE-DIR: DN of owner entry'
+    oid: str = 'AEOwner-oid'
+    desc: str = 'AE-DIR: DN of owner entry'
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
     ref_attrs = (
         ('aeOwner', u'Devices', None, 'aeDevice', u'Search all devices (aeDevice entries) assigned to same owner.'),
@@ -1249,8 +1249,8 @@ syntax_registry.reg_at(
 
 
 class AEPerson(DerefDynamicDNSelectList, AEObjectUtil):
-    oid = 'AEPerson-oid'
-    desc = 'AE-DIR: DN of person entry'
+    oid: str = 'AEPerson-oid'
+    desc: str = 'AE-DIR: DN of person entry'
     ldap_url = 'ldap:///_?displayName?sub?(objectClass=aePerson)'
     ref_attrs = (
         ('aePerson', u'Users', None, 'aeUser', u'Search all personal AE-DIR user accounts (aeUser entries) of this person.'),
@@ -1304,7 +1304,7 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectUtil):
 
 
 class AEPerson2(AEPerson):
-    oid = 'AEPerson2-oid'
+    oid: str = 'AEPerson2-oid'
     sanitize_filter_tmpl = '(|(cn={av}*)(uniqueIdentifier={av})(employeeNumber={av})(displayName={av})(mail={av}))'
 
     def formValue(self) -> str:
@@ -1354,8 +1354,8 @@ syntax_registry.reg_at(
 
 
 class AEManager(DerefDynamicDNSelectList):
-    oid = 'AEManager-oid'
-    desc = 'AE-DIR: Manager responsible for a person/department'
+    oid: str = 'AEManager-oid'
+    desc: str = 'AE-DIR: Manager responsible for a person/department'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
 
@@ -1371,7 +1371,7 @@ syntax_registry.reg_at(
 
 
 class AEDerefAttribute(DirectoryString):
-    oid = 'AEDerefAttribute-oid'
+    oid: str = 'AEDerefAttribute-oid'
     maxValues = 1
     deref_object_class = None
     deref_attribute_type = None
@@ -1419,14 +1419,14 @@ class AEDerefAttribute(DirectoryString):
 
 
 class AEPersonAttribute(AEDerefAttribute):
-    oid = 'AEPersonAttribute-oid'
+    oid: str = 'AEPersonAttribute-oid'
     maxValues = 1
     deref_object_class = 'aePerson'
     deref_attribute_type = 'aePerson'
 
 
 class AEUserNames(AEPersonAttribute, DirectoryString):
-    oid = 'AEUserNames-oid'
+    oid: str = 'AEUserNames-oid'
 
 syntax_registry.reg_at(
     AEUserNames.oid, [
@@ -1440,7 +1440,7 @@ syntax_registry.reg_at(
 
 
 class AEMailLocalAddress(RFC822Address):
-    oid = 'AEMailLocalAddress-oid'
+    oid: str = 'AEMailLocalAddress-oid'
     simpleSanitizers = (
         bytes.strip,
         bytes.lower,
@@ -1458,7 +1458,7 @@ syntax_registry.reg_at(
 
 
 class AEUserMailaddress(AEPersonAttribute, SelectList):
-    oid = 'AEUserMailaddress-oid'
+    oid: str = 'AEUserMailaddress-oid'
     html_tmpl = RFC822Address.html_tmpl
     maxValues = 1
     input_fallback = False
@@ -1515,7 +1515,7 @@ syntax_registry.reg_at(
 
 
 class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
-    oid = 'AEPersonMailaddress-oid'
+    oid: str = 'AEPersonMailaddress-oid'
     maxValues = 1
     ldap_url = 'ldap:///_?mail,mail?sub?'
     input_fallback = True
@@ -1551,7 +1551,7 @@ syntax_registry.reg_at(
 
 
 class AEDeptAttribute(AEDerefAttribute, DirectoryString):
-    oid = 'AEDeptAttribute-oid'
+    oid: str = 'AEDeptAttribute-oid'
     maxValues = 1
     deref_object_class = 'aeDept'
     deref_attribute_type = 'aeDept'
@@ -1568,8 +1568,8 @@ syntax_registry.reg_at(
 
 
 class AEHostname(DNSDomain):
-    oid = 'AEHostname-oid'
-    desc = 'Canonical hostname / FQDN'
+    oid: str = 'AEHostname-oid'
+    desc: str = 'Canonical hostname / FQDN'
     host_lookup = 0
 
     def _validate(self, attrValue: bytes) -> bool:
@@ -1615,8 +1615,8 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameUser(ComposedAttribute, DirectoryString):
-    oid = 'AEDisplayNameUser-oid'
-    desc = 'Attribute displayName in object class aeUser'
+    oid: str = 'AEDisplayNameUser-oid'
+    desc: str = 'Attribute displayName in object class aeUser'
     compose_templates = (
         '{givenName} {sn} ({uid}/{uidNumber})',
         '{givenName} {sn} ({uid})',
@@ -1631,8 +1631,8 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameContact(ComposedAttribute, DirectoryString):
-    oid = 'AEDisplayNameContact-oid'
-    desc = 'Attribute displayName in object class aeContact'
+    oid: str = 'AEDisplayNameContact-oid'
+    desc: str = 'Attribute displayName in object class aeContact'
     compose_templates = (
         '{cn} <{mail}>',
         '{cn}',
@@ -1647,8 +1647,8 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameDept(ComposedAttribute, DirectoryString):
-    oid = 'AEDisplayNameDept-oid'
-    desc = 'Attribute displayName in object class aeDept'
+    oid: str = 'AEDisplayNameDept-oid'
+    desc: str = 'Attribute displayName in object class aeDept'
     compose_templates = (
         '{ou} ({departmentNumber})',
         '{ou}',
@@ -1664,8 +1664,8 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameLocation(ComposedAttribute, DirectoryString):
-    oid = 'AEDisplayNameLocation-oid'
-    desc = 'Attribute displayName in object class aeLocation'
+    oid: str = 'AEDisplayNameLocation-oid'
+    desc: str = 'Attribute displayName in object class aeLocation'
     compose_templates = (
         '{cn}: {l}, {street}',
         '{cn}: {l}',
@@ -1683,8 +1683,8 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNamePerson(DisplayNameInetOrgPerson):
-    oid = 'AEDisplayNamePerson-oid'
-    desc = 'Attribute displayName in object class aePerson'
+    oid: str = 'AEDisplayNamePerson-oid'
+    desc: str = 'Attribute displayName in object class aePerson'
     # do not stuff confidential employeeNumber herein!
     compose_templates = (
         '{givenName} {sn} / {ou}',
@@ -1702,7 +1702,7 @@ syntax_registry.reg_at(
 
 
 class AEUniqueIdentifier(DirectoryString):
-    oid = 'AEUniqueIdentifier-oid'
+    oid: str = 'AEUniqueIdentifier-oid'
     maxValues = 1
     gen_template = 'web2ldap-{timestamp}'
 
@@ -1732,7 +1732,7 @@ syntax_registry.reg_at(
 
 
 class AEDepartmentNumber(DirectoryString):
-    oid = 'AEDepartmentNumber-oid'
+    oid: str = 'AEDepartmentNumber-oid'
     maxValues = 1
 
 syntax_registry.reg_at(
@@ -1746,8 +1746,8 @@ syntax_registry.reg_at(
 
 
 class AECommonName(DirectoryString):
-    oid = 'AECommonName-oid'
-    desc = 'AE-DIR: common name of aeObject'
+    oid: str = 'AECommonName-oid'
+    desc: str = 'AE-DIR: common name of aeObject'
     maxValues = 1
     simpleSanitizers = (
         bytes.strip,
@@ -1755,8 +1755,8 @@ class AECommonName(DirectoryString):
 
 
 class AECommonNameAEZone(AECommonName):
-    oid = 'AECommonNameAEZone-oid'
-    desc = 'AE-DIR: common name of aeZone'
+    oid: str = 'AECommonNameAEZone-oid'
+    desc: str = 'AE-DIR: common name of aeZone'
     simpleSanitizers = (
         bytes.strip,
         bytes.lower,
@@ -1773,8 +1773,8 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAELocation(AECommonName):
-    oid = 'AECommonNameAELocation-oid'
-    desc = 'AE-DIR: common name of aeLocation'
+    oid: str = 'AECommonNameAELocation-oid'
+    desc: str = 'AE-DIR: common name of aeLocation'
 
 syntax_registry.reg_at(
     AECommonNameAELocation.oid, [
@@ -1787,8 +1787,8 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAEHost(AECommonName):
-    oid = 'AECommonNameAEHost-oid'
-    desc = 'Canonical hostname'
+    oid: str = 'AECommonNameAEHost-oid'
+    desc: str = 'Canonical hostname'
     derive_from_host = True
     host_begin_item = 0
     host_end_item = None
@@ -1812,8 +1812,8 @@ syntax_registry.reg_at(
 
 
 class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
-    oid = 'AEZonePrefixCommonName-oid'
-    desc = 'AE-DIR: Attribute values have to be prefixed with zone name'
+    oid: str = 'AEZonePrefixCommonName-oid'
+    desc: str = 'AE-DIR: Attribute values have to be prefixed with zone name'
     reObj = re.compile(r'^[a-z0-9]+-[a-z0-9-]+$')
     special_names = ('zone-admins', 'zone-auditors')
 
@@ -1846,7 +1846,7 @@ class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
 
 
 class AECommonNameAEGroup(AEZonePrefixCommonName):
-    oid = 'AECommonNameAEGroup-oid'
+    oid: str = 'AECommonNameAEGroup-oid'
 
 syntax_registry.reg_at(
     AECommonNameAEGroup.oid, [
@@ -1860,7 +1860,7 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAESrvGroup(AEZonePrefixCommonName):
-    oid = 'AECommonNameAESrvGroup-oid'
+    oid: str = 'AECommonNameAESrvGroup-oid'
 
 syntax_registry.reg_at(
     AECommonNameAESrvGroup.oid, [
@@ -1873,7 +1873,7 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAETag(AEZonePrefixCommonName):
-    oid = 'AECommonNameAETag-oid'
+    oid: str = 'AECommonNameAETag-oid'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         display_value = AEZonePrefixCommonName.display(self, valueindex, commandbutton)
@@ -1905,7 +1905,7 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAESudoRule(AEZonePrefixCommonName):
-    oid = 'AECommonNameAESudoRule-oid'
+    oid: str = 'AECommonNameAESudoRule-oid'
 
 syntax_registry.reg_at(
     AECommonNameAESudoRule.oid, [
@@ -1928,8 +1928,8 @@ syntax_registry.reg_at(
 
 
 class AESudoRuleDN(DerefDynamicDNSelectList):
-    oid = 'AESudoRuleDN-oid'
-    desc = 'AE-DIR: DN(s) of visible SUDO rules'
+    oid: str = 'AESudoRuleDN-oid'
+    desc: str = 'AE-DIR: DN(s) of visible SUDO rules'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSudoRule)(aeStatus=0))'
 
@@ -1941,8 +1941,8 @@ syntax_registry.reg_at(
 
 
 class AENotBefore(NotBefore):
-    oid = 'AENotBefore-oid'
-    desc = 'AE-DIR: begin of validity period'
+    oid: str = 'AENotBefore-oid'
+    desc: str = 'AE-DIR: begin of validity period'
 
 syntax_registry.reg_at(
     AENotBefore.oid, [
@@ -1952,8 +1952,8 @@ syntax_registry.reg_at(
 
 
 class AENotAfter(NotAfter):
-    oid = 'AENotAfter-oid'
-    desc = 'AE-DIR: begin of validity period'
+    oid: str = 'AENotAfter-oid'
+    desc: str = 'AE-DIR: begin of validity period'
 
     def _validate(self, attrValue: bytes) -> bool:
         result = NotAfter._validate(self, attrValue)
@@ -1980,8 +1980,8 @@ syntax_registry.reg_at(
 
 
 class AEStatus(SelectList, Integer):
-    oid = 'AEStatus-oid'
-    desc = 'AE-DIR: Status of object'
+    oid: str = 'AEStatus-oid'
+    desc: str = 'AE-DIR: Status of object'
     attr_value_dict = {
         u'-1': u'requested',
         u'0': u'active',
@@ -2052,8 +2052,8 @@ syntax_registry.reg_at(
 
 
 class AEExpiryStatus(SelectList):
-    oid = 'AEExpiryStatus-oid'
-    desc = 'AE-DIR: Expiry status of object'
+    oid: str = 'AEExpiryStatus-oid'
+    desc: str = 'AE-DIR: Expiry status of object'
     attr_value_dict = {
         u'-/-': u'',
         u'1': u'deactivated',
@@ -2068,8 +2068,8 @@ syntax_registry.reg_at(
 
 
 class AESudoUser(web2ldap.app.plugins.sudoers.SudoUserGroup):
-    oid = 'AESudoUser-oid'
-    desc = 'AE-DIR: sudoUser'
+    oid: str = 'AESudoUser-oid'
+    desc: str = 'AE-DIR: sudoUser'
     ldap_url = (
         'ldap:///_?cn,cn?sub?'
         '(&'
@@ -2098,8 +2098,8 @@ syntax_registry.reg_at(
 
 
 class AEServiceSshPublicKey(SshPublicKey):
-    oid = 'AEServiceSshPublicKey-oid'
-    desc = 'AE-DIR: aeService:sshPublicKey'
+    oid: str = 'AEServiceSshPublicKey-oid'
+    desc: str = 'AE-DIR: aeService:sshPublicKey'
 
 syntax_registry.reg_at(
     AEServiceSshPublicKey.oid, [
@@ -2112,8 +2112,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEAuthcToken(DistinguishedName):
-    oid = 'AEEntryDNAEAuthcToken-oid'
-    desc = 'AE-DIR: entryDN of aeAuthcToken entry'
+    oid: str = 'AEEntryDNAEAuthcToken-oid'
+    desc: str = 'AE-DIR: entryDN of aeAuthcToken entry'
     ref_attrs = (
         ('oathToken', u'Users', None, 'aeUser', u'Search all personal user accounts using this OATH token.'),
     )
@@ -2129,8 +2129,8 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEPolicy(DistinguishedName):
-    oid = 'AEEntryDNAEPolicy-oid'
-    desc = 'AE-DIR: entryDN of aePolicy entry'
+    oid: str = 'AEEntryDNAEPolicy-oid'
+    desc: str = 'AE-DIR: entryDN of aePolicy entry'
     ref_attrs = (
         ('pwdPolicySubentry', u'Users', None, 'aeUser', u'Search all personal user accounts restricted by this password policy.'),
         ('pwdPolicySubentry', u'Services', None, 'aeService', u'Search all service accounts restricted by this password policy.'),
@@ -2150,8 +2150,8 @@ syntax_registry.reg_at(
 
 
 class AEUserSshPublicKey(SshPublicKey):
-    oid = 'AEUserSshPublicKey-oid'
-    desc = 'AE-DIR: aeUser:sshPublicKey'
+    oid: str = 'AEUserSshPublicKey-oid'
+    desc: str = 'AE-DIR: aeUser:sshPublicKey'
 
 syntax_registry.reg_at(
     AEUserSshPublicKey.oid, [
@@ -2164,8 +2164,8 @@ syntax_registry.reg_at(
 
 
 class AERFC822MailMember(DynamicValueSelectList):
-    oid = 'AERFC822MailMember-oid'
-    desc = 'AE-DIR: rfc822MailMember'
+    oid: str = 'AERFC822MailMember-oid'
+    desc: str = 'AE-DIR: rfc822MailMember'
     ldap_url = 'ldap:///_?mail,displayName?sub?(&(|(objectClass=inetLocalMailRecipient)(objectClass=aeContact))(mail=*)(aeStatus=0))'
     html_tmpl = RFC822Address.html_tmpl
     showValueButton = False
@@ -2212,8 +2212,8 @@ syntax_registry.reg_at(
 
 
 class AEPwdPolicy(web2ldap.app.plugins.ppolicy.PwdPolicySubentry):
-    oid = 'AEPwdPolicy-oid'
-    desc = 'AE-DIR: pwdPolicySubentry'
+    oid: str = 'AEPwdPolicy-oid'
+    desc: str = 'AE-DIR: pwdPolicySubentry'
     ldap_url = 'ldap:///_??sub?(&(objectClass=aePolicy)(objectClass=pwdPolicy)(aeStatus=0))'
 
 syntax_registry.reg_at(
@@ -2229,8 +2229,8 @@ syntax_registry.reg_at(
 
 
 class AESudoHost(IA5String):
-    oid = 'AESudoHost-oid'
-    desc = 'AE-DIR: sudoHost'
+    oid: str = 'AESudoHost-oid'
+    desc: str = 'AE-DIR: sudoHost'
     maxValues = 1
     reobj = re.compile('^ALL$')
 
@@ -2258,8 +2258,8 @@ syntax_registry.reg_at(
 
 
 class AELoginShell(Shell):
-    oid = 'AELoginShell-oid'
-    desc = 'AE-DIR: Login shell for POSIX users'
+    oid: str = 'AELoginShell-oid'
+    desc: str = 'AE-DIR: Login shell for POSIX users'
     attr_value_dict = {
         u'/bin/bash': u'/bin/bash',
         u'/bin/true': u'/bin/true',
@@ -2278,8 +2278,8 @@ syntax_registry.reg_at(
 
 
 class AEOathHOTPToken(OathHOTPToken):
-    oid = 'AEOathHOTPToken-oid'
-    desc = 'DN of the associated oathHOTPToken entry in aeUser entry'
+    oid: str = 'AEOathHOTPToken-oid'
+    desc: str = 'DN of the associated oathHOTPToken entry in aeUser entry'
     ref_attrs = (
         (None, u'Users', None, None),
     )
@@ -2304,8 +2304,8 @@ syntax_registry.reg_at(
 # see sshd(AUTHORIZED_KEYS FILE FORMAT
 # and the -O option in ssh-keygen(1)
 class AESSHPermissions(SelectList):
-    oid = 'AESSHPermissions-oid'
-    desc = 'AE-DIR: Status of object'
+    oid: str = 'AESSHPermissions-oid'
+    desc: str = 'AE-DIR: Status of object'
     attr_value_dict = {
         u'pty': u'PTY allocation',
         u'X11-forwarding': u'X11 forwarding',
@@ -2322,8 +2322,8 @@ syntax_registry.reg_at(
 
 
 class AERemoteHostAEHost(DynamicValueSelectList):
-    oid = 'AERemoteHostAEHost-oid'
-    desc = 'AE-DIR: aeRemoteHost in aeHost entry'
+    oid: str = 'AERemoteHostAEHost-oid'
+    desc: str = 'AE-DIR: aeRemoteHost in aeHost entry'
     ldap_url = 'ldap:///.?ipHostNumber,aeFqdn?one?(&(objectClass=aeNwDevice)(aeStatus=0))'
     input_fallback = True # fallback to normal input field
 
@@ -2336,8 +2336,8 @@ syntax_registry.reg_at(
 
 
 class AEDescriptionAENwDevice(ComposedAttribute):
-    oid = 'AEDescriptionAENwDevice-oid'
-    desc = 'Attribute description in object class  aeNwDevice'
+    oid: str = 'AEDescriptionAENwDevice-oid'
+    desc: str = 'Attribute description in object class  aeNwDevice'
     compose_templates = (
         '{cn}: {aeFqdn} {ipHostNumber})',
         '{cn}: {ipHostNumber})',

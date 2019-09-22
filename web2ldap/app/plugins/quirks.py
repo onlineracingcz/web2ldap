@@ -143,7 +143,7 @@ syntax_registry.reg_at(
 
 
 class UserPassword(OctetString, DirectoryString):
-    oid = 'UserPassword-oid'
+    oid: str = 'UserPassword-oid'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
@@ -160,8 +160,8 @@ syntax_registry.reg_at(
 
 
 class NamingContexts(DistinguishedName):
-    oid = 'NamingContexts-oid'
-    desc = 'Naming contexts in rootDSE'
+    oid: str = 'NamingContexts-oid'
+    desc: str = 'Naming contexts in rootDSE'
     ldap_url = 'ldap:///cn=cn=config?olcSuffix?one?(objectClass=olcDatabaseConfig)'
 
     def _config_link(self):
@@ -260,8 +260,8 @@ syntax_registry.reg_at(
 
 
 class AltServer(LDAPUrl):
-    oid = 'AltServer-oid'
-    desc = 'LDAP URIs of alternative server(s)'
+    oid: str = 'AltServer-oid'
+    desc: str = 'LDAP URIs of alternative server(s)'
 
     def _command_ldap_url(self, ldap_url):
         ldap_url_obj = ldap0.ldapurl.LDAPUrl(ldapUrl=ldap_url)

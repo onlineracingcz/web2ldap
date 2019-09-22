@@ -10,8 +10,8 @@ class AuthorizedService(SelectList):
     """
     See https://www.iana.org/assignments/gssapi-service-names/gssapi-service-names.xhtml
     """
-    oid = 'AuthorizedService-oid'
-    desc = 'IANA GSS-API authorized service name'
+    oid: str = 'AuthorizedService-oid'
+    desc: str = 'IANA GSS-API authorized service name'
 
     attr_value_dict = {
         u'': u'',

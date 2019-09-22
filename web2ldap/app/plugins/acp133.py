@@ -14,8 +14,8 @@ from web2ldap.app.schema.syntaxes import SelectList, DynamicDNSelectList, syntax
 
 
 class AddressListDN(DynamicDNSelectList):
-    oid = 'AddressListDN-oid'
-    desc = 'DN which points to address list entry '
+    oid: str = 'AddressListDN-oid'
+    desc: str = 'DN which points to address list entry '
     ldap_url = 'ldap:///_?cn?sub?(objectClass=addressList)'
 
 syntax_registry.reg_at(
@@ -27,8 +27,8 @@ syntax_registry.reg_at(
 
 
 class LMF(SelectList):
-    oid = 'LMF-oid'
-    desc = 'Language and Media Format (see section 3.59 of draft-dally-acp133-and-ldap-01)'
+    oid: str = 'LMF-oid'
+    desc: str = 'Language and Media Format (see section 3.59 of draft-dally-acp133-and-ldap-01)'
     attr_value_dict = {
         u'T': u'tape',
         u'A': u'ASCII',
@@ -43,8 +43,8 @@ syntax_registry.reg_at(
 
 
 class TRC(SelectList):
-    oid = 'TRC-oid'
-    desc = 'Transmission Release Code (see section 3.126 of draft-dally-acp133-and-ldap-01)'
+    oid: str = 'TRC-oid'
+    desc: str = 'Transmission Release Code (see section 3.126 of draft-dally-acp133-and-ldap-01)'
     attr_value_dict = {
         u'A': u'Australia',
         u'B': u'British Commonwealth less Canada, Australia, and New Zealand',
@@ -66,8 +66,8 @@ syntax_registry.reg_at(
 #---------------------------------------------------------------------------
 
 class ACPLegacyFormat(SelectList):
-    oid = '2.16.840.1.101.2.2.2.17'
-    desc = 'aCPLegacyFormat syntax (see section 6.1 of draft-dally-acp133-and-ldap-01)'
+    oid: str = '2.16.840.1.101.2.2.2.17'
+    desc: str = 'aCPLegacyFormat syntax (see section 6.1 of draft-dally-acp133-and-ldap-01)'
     attr_value_dict = {
         u'0': u'JANAP128',
         u'1': u'ACP126',
@@ -106,8 +106,8 @@ class ACPLegacyFormat(SelectList):
 
 
 class ACPPreferredDelivery(SelectList):
-    oid = '2.16.840.1.101.2.2.2.6'
-    desc = 'aCPPreferredDelivery syntax (see section 6.2 of draft-dally-acp133-and-ldap-01)'
+    oid: str = '2.16.840.1.101.2.2.2.6'
+    desc: str = 'aCPPreferredDelivery syntax (see section 6.2 of draft-dally-acp133-and-ldap-01)'
     attr_value_dict = {
         u'0': u'SMTP',
         u'1': u'ACP 127',
@@ -116,8 +116,8 @@ class ACPPreferredDelivery(SelectList):
 
 
 class AddressListType(SelectList):
-    oid = '2.16.840.1.101.2.2.2.8'
-    desc = 'addressListType syntax (see section 6.6 of draft-dally-acp133-and-ldap-01)'
+    oid: str = '2.16.840.1.101.2.2.2.8'
+    desc: str = 'addressListType syntax (see section 6.6 of draft-dally-acp133-and-ldap-01)'
     attr_value_dict = {
         u'0': u'AIG',
         u'1': u'TYPE',
@@ -127,8 +127,8 @@ class AddressListType(SelectList):
 
 
 class Classification(SelectList):
-    oid = '2.16.840.1.101.2.2.2.4'
-    desc = 'Classification syntax (see section 6.8 of draft-dally-acp133-and-ldap-01)'
+    oid: str = '2.16.840.1.101.2.2.2.4'
+    desc: str = 'Classification syntax (see section 6.8 of draft-dally-acp133-and-ldap-01)'
     attr_value_dict = {
         u'0': u'unmarked',
         u'1': u'unclassified',
@@ -140,8 +140,8 @@ class Classification(SelectList):
 
 
 class Community(SelectList):
-    oid = '2.16.840.1.101.2.2.2.5'
-    desc = 'Community syntax (see section 6.9 of draft-dally-acp133-and-ldap-01)'
+    oid: str = '2.16.840.1.101.2.2.2.5'
+    desc: str = 'Community syntax (see section 6.9 of draft-dally-acp133-and-ldap-01)'
     attr_value_dict = {
         u'0': u'GENSER',
         u'1': u'SI',

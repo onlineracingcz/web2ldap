@@ -20,14 +20,14 @@ from web2ldap.app.schema.syntaxes import \
 
 
 class RFC2307BootParameter(IA5String):
-    oid = '1.3.6.1.1.1.0.1'
-    desc = 'RFC2307 Boot Parameter'
+    oid: str = '1.3.6.1.1.1.0.1'
+    desc: str = 'RFC2307 Boot Parameter'
     reObj = None # just a stub, should be made stricter
 
 
 class GidNumber(DynamicValueSelectList, Integer):
-    oid = 'GidNumber-oid'
-    desc = 'RFC2307: An integer uniquely identifying a group in an administrative domain'
+    oid: str = 'GidNumber-oid'
+    desc: str = 'RFC2307: An integer uniquely identifying a group in an administrative domain'
     minValue = 0
     maxValue = 4294967295
     ldap_url = 'ldap:///_?gidNumber,cn?sub?(objectClass=posixGroup)'
@@ -80,8 +80,8 @@ syntax_registry.reg_at(
 
 
 class MemberUID(IA5String, DynamicValueSelectList):
-    oid = 'MemberUID-oid'
-    desc = 'RFC2307 numerical UID of group member(s)'
+    oid: str = 'MemberUID-oid'
+    desc: str = 'RFC2307 numerical UID of group member(s)'
     ldap_url = None
     #ldap_url = 'ldap:///_?uid,cn?sub?(objectClass=posixAccount)'
 
@@ -126,14 +126,14 @@ syntax_registry.reg_at(
 
 
 class RFC2307NISNetgroupTriple(IA5String):
-    oid = '1.3.6.1.1.1.0.0'
-    desc = 'RFC2307 NIS Netgroup Triple'
+    oid: str = '1.3.6.1.1.1.0.0'
+    desc: str = 'RFC2307 NIS Netgroup Triple'
     reObj = re.compile(r'^\([a-z0-9.-]*,[a-z0-9.-]*,[a-z0-9.-]*\)$')
 
 
 class UidNumber(Integer):
-    oid = 'UidNumber-oid'
-    desc = 'Numerical user ID for Posix systems'
+    oid: str = 'UidNumber-oid'
+    desc: str = 'Numerical user ID for Posix systems'
     minValue = 0
     maxValue = 4294967295
 
@@ -145,8 +145,8 @@ syntax_registry.reg_at(
 
 
 class Shell(SelectList):
-    oid = 'Shell-oid'
-    desc = 'Shell for user of Posix systems'
+    oid: str = 'Shell-oid'
+    desc: str = 'Shell for user of Posix systems'
     attr_value_dict = {
         u'/bin/sh': u'Standard shell /bin/sh',
         u'/bin/bash': u'Bourne-Again SHell /bin/bash',
@@ -173,8 +173,8 @@ syntax_registry.reg_at(
 
 
 class IpServiceProtocol(SelectList):
-    oid = 'IpServiceProtocol-oid'
-    desc = 'RFC 2307: IP service protocol'
+    oid: str = 'IpServiceProtocol-oid'
+    desc: str = 'RFC 2307: IP service protocol'
 
     attr_value_dict = {
         u'tcp': u'tcp',

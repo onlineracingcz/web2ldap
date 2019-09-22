@@ -7,8 +7,8 @@ from web2ldap.app.schema.syntaxes import DynamicValueSelectList, syntax_registry
 
 
 class DebianSupplementaryGid(DynamicValueSelectList):
-    oid = 'DebianSupplementaryGid-oid'
-    desc = 'Debian: sudoUser'
+    oid: str = 'DebianSupplementaryGid-oid'
+    desc: str = 'Debian: sudoUser'
     ldap_url = 'ldap:///_?gid,gid?sub?(objectClass=debianGroup)'
 
 syntax_registry.reg_at(

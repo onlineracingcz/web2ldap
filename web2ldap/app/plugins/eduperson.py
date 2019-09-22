@@ -11,8 +11,8 @@ from web2ldap.app.schema.syntaxes import IA5String, SelectList, DynamicDNSelectL
 
 
 class EduPersonAffiliation(SelectList):
-    oid = 'EduPersonAffiliation-oid'
-    desc = 'Affiliation (see eduPerson)'
+    oid: str = 'EduPersonAffiliation-oid'
+    desc: str = 'Affiliation (see eduPerson)'
 
     attr_value_dict = {
         u'': u'',
@@ -35,8 +35,8 @@ syntax_registry.reg_at(
 
 
 class EduPersonScopedAffiliation(IA5String):
-    oid = 'EduPersonScopedAffiliation-oid'
-    desc = 'Scoped affiliation (see eduPerson)'
+    oid: str = 'EduPersonScopedAffiliation-oid'
+    desc: str = 'Scoped affiliation (see eduPerson)'
     reObj = re.compile('^(faculty|student|staff|alum|member|affiliate|employee|library-walk-in)@[a-zA-Z0-9.-]+$')
 
 syntax_registry.reg_at(
@@ -47,8 +47,8 @@ syntax_registry.reg_at(
 
 
 class EduPersonOrgUnitDN(DynamicDNSelectList):
-    oid = 'EduPersonOrgUnitDN-oid'
-    desc = 'DN of associated organizational unit entry (see eduPerson)'
+    oid: str = 'EduPersonOrgUnitDN-oid'
+    desc: str = 'DN of associated organizational unit entry (see eduPerson)'
     ldap_url = 'ldap:///_??sub?(objectClass=organizationalUnit)'
 
 syntax_registry.reg_at(
@@ -60,8 +60,8 @@ syntax_registry.reg_at(
 
 
 class EduPersonOrgDN(DynamicDNSelectList):
-    oid = 'EduPersonOrgDN-oid'
-    desc = 'DN of associated organization entry (see eduPerson)'
+    oid: str = 'EduPersonOrgDN-oid'
+    desc: str = 'DN of associated organization entry (see eduPerson)'
     ldap_url = 'ldap:///_??sub?(objectClass=organization)'
 
 syntax_registry.reg_at(

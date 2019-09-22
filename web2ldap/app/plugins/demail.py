@@ -11,8 +11,8 @@ from web2ldap.app.schema.syntaxes import PropertiesSelectList, syntax_registry
 
 
 class DemailMaxAuthLevel(PropertiesSelectList):
-    oid = 'DemailMaxAuthLevel-oid'
-    desc = 'Maximum authentication level of person/user in DE-Mail'
+    oid: str = 'DemailMaxAuthLevel-oid'
+    desc: str = 'Maximum authentication level of person/user in DE-Mail'
     properties_pathname = os.path.join(
         web2ldapcnf.etc_dir, 'properties', 'attribute_select_demailMaxAuthLevel.properties'
     )

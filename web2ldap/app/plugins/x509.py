@@ -45,15 +45,15 @@ def x509name2ldapdn(x509name, subschema=None):
 
 
 class AttributeCertificate(Binary):
-    oid = '1.3.6.1.4.1.4203.666.11.10.2.1'
-    desc = 'X.509 Attribute Certificate'
+    oid: str = '1.3.6.1.4.1.4203.666.11.10.2.1'
+    desc: str = 'X.509 Attribute Certificate'
     mimeType = 'application/pkix-attr-cert'
     fileExt = 'cer'
 
 
 class Certificate(Binary):
-    oid = '1.3.6.1.4.1.1466.115.121.1.8'
-    desc = 'X.509 Certificate'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.8'
+    desc: str = 'X.509 Certificate'
     mimeType = 'application/pkix-cert'
     fileExt = 'cer'
     cert_display_template = """
@@ -123,8 +123,8 @@ class Certificate(Binary):
 
 
 class CACertificate(Certificate):
-    oid = 'CACertificate-oid'
-    desc = 'X.509 CA Certificate'
+    oid: str = 'CACertificate-oid'
+    desc: str = 'X.509 CA Certificate'
     mimeType = 'application/x-x509-ca-cert'
 
     def getMimeType(self):
@@ -132,8 +132,8 @@ class CACertificate(Certificate):
 
 
 class CertificateList(Binary):
-    oid = '1.3.6.1.4.1.1466.115.121.1.9'
-    desc = 'Certificate Revocation List'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.9'
+    desc: str = 'Certificate Revocation List'
     mimeType = 'application/pkix-crl'
     fileExt = 'crl'
     crl_display_template = """
@@ -170,50 +170,50 @@ class CertificateList(Binary):
 
 
 class CertificatePair(ASN1Object):
-    oid = '1.3.6.1.4.1.1466.115.121.1.10'
-    desc = 'X.509 Certificate Pair'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.10'
+    desc: str = 'X.509 Certificate Pair'
     mimeType = 'application/pkix-cert'
     fileExt = 'cer'
 
 
 class SupportedAlgorithm(ASN1Object):
-    oid = '1.3.6.1.4.1.1466.115.121.1.49'
-    desc = 'X.509 Supported Algorithm'
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.49'
+    desc: str = 'X.509 Supported Algorithm'
 
 
 class X509CertificateExactAssertion(GSER):
-    oid = '1.3.6.1.1.15.1'
-    desc = 'X.509 Certificate Exact Assertion'
+    oid: str = '1.3.6.1.1.15.1'
+    desc: str = 'X.509 Certificate Exact Assertion'
 
 
 class X509CertificateAssertion(GSER):
-    oid = '1.3.6.1.1.15.2'
-    desc = 'X.509 Certificate Assertion'
+    oid: str = '1.3.6.1.1.15.2'
+    desc: str = 'X.509 Certificate Assertion'
 
 
 class X509CertificatePairExactAssertion(GSER):
-    oid = '1.3.6.1.1.15.3'
-    desc = 'X.509 Certificate Pair Exact Assertion'
+    oid: str = '1.3.6.1.1.15.3'
+    desc: str = 'X.509 Certificate Pair Exact Assertion'
 
 
 class X509CertificatePairAssertion(GSER):
-    oid = '1.3.6.1.1.15.4'
-    desc = 'X.509 Certificate Pair Assertion'
+    oid: str = '1.3.6.1.1.15.4'
+    desc: str = 'X.509 Certificate Pair Assertion'
 
 
 class X509CertificateListExactAssertion(GSER):
-    oid = '1.3.6.1.1.15.5'
-    desc = 'X.509 Certificate List Exact Assertion'
+    oid: str = '1.3.6.1.1.15.5'
+    desc: str = 'X.509 Certificate List Exact Assertion'
 
 
 class X509CertificateListAssertion(GSER):
-    oid = '1.3.6.1.1.15.6'
-    desc = 'X.509 Certificate List Assertion'
+    oid: str = '1.3.6.1.1.15.6'
+    desc: str = 'X.509 Certificate List Assertion'
 
 
 class X509AlgorithmIdentifier(GSER):
-    oid = '1.3.6.1.1.15.7'
-    desc = 'X.509 Algorithm Identifier'
+    oid: str = '1.3.6.1.1.15.7'
+    desc: str = 'X.509 Algorithm Identifier'
 
 
 # Hard-coded registration of some attribute types

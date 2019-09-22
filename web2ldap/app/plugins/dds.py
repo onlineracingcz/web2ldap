@@ -11,8 +11,8 @@ from web2ldap.app.schema.syntaxes import Timespan, DistinguishedName, syntax_reg
 
 
 class EntryTTL(Timespan):
-    oid = 'EntryTTL-oid'
-    desc = 'Time-to-live of dynamic entry'
+    oid: str = 'EntryTTL-oid'
+    desc: str = 'Time-to-live of dynamic entry'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         expiration_time = time.time()+int(self._av)
@@ -29,8 +29,8 @@ syntax_registry.reg_at(
 
 
 class DynamicSubtrees(DistinguishedName):
-    oid = 'DynamicSubtrees-oid'
-    desc = 'Subtrees with dynamic entries'
+    oid: str = 'DynamicSubtrees-oid'
+    desc: str = 'Subtrees with dynamic entries'
 
     def _additional_links(self):
         r = DistinguishedName._additional_links(self)

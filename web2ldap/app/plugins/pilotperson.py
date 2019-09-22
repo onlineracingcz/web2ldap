@@ -9,8 +9,8 @@ from web2ldap.app.schema.syntaxes import SelectList, syntax_registry
 
 
 class MailPreferenceOption(SelectList):
-    oid = 'MailPreferenceOption-oid'
-    desc = 'RFC1274: mail preference option syntax'
+    oid: str = 'MailPreferenceOption-oid'
+    desc: str = 'RFC1274: mail preference option syntax'
 
     attr_value_dict = {
         u'': u'',

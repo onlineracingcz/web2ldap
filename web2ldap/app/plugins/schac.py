@@ -33,8 +33,8 @@ syntax_registry.reg_at(
 )
 
 class SchacMotherTongue(IA5String):
-    oid = 'SchacMotherTongue-oid'
-    desc = 'Language tag of the language a person learns first (see RFC 3066).'
+    oid: str = 'SchacMotherTongue-oid'
+    desc: str = 'Language tag of the language a person learns first (see RFC 3066).'
     reObj = re.compile('^[a-zA-Z]{2,8}(-[a-zA-Z0-9]{2,8})*$')
 
 syntax_registry.reg_at(
@@ -52,8 +52,8 @@ syntax_registry.reg_at(
 
 
 class SchacDateOfBirth(DateOfBirth):
-    oid = 'SchacDateOfBirth-oid'
-    desc = 'Date of birth: syntax YYYYMMDD'
+    oid: str = 'SchacDateOfBirth-oid'
+    desc: str = 'Date of birth: syntax YYYYMMDD'
     storageFormat = '%Y%m%d'
 
 syntax_registry.reg_at(
@@ -64,8 +64,8 @@ syntax_registry.reg_at(
 
 
 class SchacYearOfBirth(NumericString):
-    oid = 'SchacYearOfBirth-oid'
-    desc = 'Year of birth: syntax YYYY'
+    oid: str = 'SchacYearOfBirth-oid'
+    desc: str = 'Year of birth: syntax YYYY'
     maxLen = 4
     input_pattern = '^[0-9]{4}$'
     reObj = re.compile(input_pattern)
@@ -85,8 +85,8 @@ syntax_registry.reg_at(
 
 
 class SchacUrn(DirectoryString):
-    oid = 'SchacUrn-oid'
-    desc = 'Generic URN for SCHAC'
+    oid: str = 'SchacUrn-oid'
+    desc: str = 'Generic URN for SCHAC'
     input_pattern = '^urn:mace:terena.org:schac:.+$'
     reObj = re.compile(input_pattern)
 

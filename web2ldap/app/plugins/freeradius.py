@@ -7,8 +7,8 @@ from web2ldap.app.schema.syntaxes import DynamicDNSelectList, syntax_registry
 
 
 class RadiusProfileDN(DynamicDNSelectList):
-    oid = 'RadiusProfileDN-oid'
-    desc = 'DN of a radius profile entry with real data'
+    oid: str = 'RadiusProfileDN-oid'
+    desc: str = 'DN of a radius profile entry with real data'
     ldap_url = 'ldap:///_??sub?(&(objectClass=radiusprofile)(!(radiusProfileDn=*)))'
 
 syntax_registry.reg_at(

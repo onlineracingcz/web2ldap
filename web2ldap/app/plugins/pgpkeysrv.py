@@ -22,8 +22,8 @@ syntax_registry.reg_at(
 
 
 class PgpKey(PreformattedMultilineText):
-    oid = 'PgpKey-oid'
-    desc = 'PGP key'
+    oid: str = 'PgpKey-oid'
+    desc: str = 'PGP key'
     reObj = re.compile(
         '^-----BEGIN PGP PUBLIC KEY BLOCK-----[a-zA-Z0-9.: ()+/ =\n-]+-----END PGP PUBLIC KEY BLOCK-----$',
         re.S+re.M,
@@ -40,8 +40,8 @@ syntax_registry.reg_at(
 
 
 class PgpCertID(DirectoryString):
-    oid = 'PgpCertID-oid'
-    desc = 'PGP Cert ID'
+    oid: str = 'PgpCertID-oid'
+    desc: str = 'PGP Cert ID'
     reObj = re.compile('^[a-fA-F0-9]{16}$')
 
 syntax_registry.reg_at(
@@ -52,7 +52,7 @@ syntax_registry.reg_at(
 
 
 class OtherPgpCertID(DynamicValueSelectList, PgpCertID):
-    oid = 'OtherPgpCertID-oid'
+    oid: str = 'OtherPgpCertID-oid'
     ldap_url = 'ldap:///_?pgpCertID,pgpCertID?sub?(objectClass=pgpKeyInfo)'
 
     def _validate(self, attrValue: bytes) -> bool:

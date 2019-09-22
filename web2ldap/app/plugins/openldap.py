@@ -42,19 +42,19 @@ from web2ldap.app.plugins.quirks import NamingContexts
 
 # see https://www.openldap.org/faq/data/cache/1145.html
 class CSNSid(IA5String):
-    oid = '1.3.6.1.4.1.4203.666.11.2.4'
-    desc = 'change sequence number SID (CSN SID)'
-    minLen = 3
-    maxLen = 3
+    oid: str = '1.3.6.1.4.1.4203.666.11.2.4'
+    desc: str = 'change sequence number SID (CSN SID)'
+    minLen: int = 3
+    maxLen: int = 3
     reObj = re.compile('^[a-fA-F0-9]{3}$')
 
 
 # see https://www.openldap.org/faq/data/cache/1145.html
 class CSN(IA5String):
-    oid = '1.3.6.1.4.1.4203.666.11.2.1'
-    desc = 'change sequence number (CSN)'
-    minLen = 40
-    maxLen = 40
+    oid: str = '1.3.6.1.4.1.4203.666.11.2.1'
+    desc: str = 'change sequence number (CSN)'
+    minLen: int = 40
+    maxLen: int = 40
     reObj = re.compile('^[0-9]{14}\\.[0-9]{6}Z#[a-fA-F0-9]{6}#[a-fA-F0-9]{3}#[a-fA-F0-9]{6}$')
 
 syntax_registry.reg_at(
@@ -79,8 +79,8 @@ syntax_registry.reg_at(
 
 
 class OlcDbIndex(DirectoryString):
-    oid = 'OlcDbIndex-oid'
-    desc = 'OpenLDAP indexing directive'
+    oid: str = 'OlcDbIndex-oid'
+    desc: str = 'OpenLDAP indexing directive'
     reObj = re.compile("^[a-zA-Z]?[a-zA-Z0-9.,;-]* (pres|eq|sub)(,(pres|eq|sub))*$")
 
 syntax_registry.reg_at(
@@ -91,8 +91,8 @@ syntax_registry.reg_at(
 
 
 class OlcSubordinate(SelectList):
-    oid = 'OlcSubordinate-oid'
-    desc = 'Indicates whether backend is subordinate'
+    oid: str = 'OlcSubordinate-oid'
+    desc: str = 'Indicates whether backend is subordinate'
     attr_value_dict = {
         u'': u'-/- (FALSE)',
         u'TRUE': u'TRUE',
@@ -107,8 +107,8 @@ syntax_registry.reg_at(
 
 
 class OlcRootDN(BindDN):
-    oid = 'OlcRootDN-oid'
-    desc = 'The rootdn in the database'
+    oid: str = 'OlcRootDN-oid'
+    desc: str = 'The rootdn in the database'
     default_rdn = u'cn=admin'
 
     def formValue(self) -> str:
@@ -133,8 +133,8 @@ syntax_registry.reg_at(
 
 
 class OlcMultilineText(MultilineText):
-    oid = 'OlcMultilineText-oid'
-    desc = 'OpenLDAP multiline configuration strings'
+    oid: str = 'OlcMultilineText-oid'
+    desc: str = 'OpenLDAP multiline configuration strings'
     cols = 90
     minInputRows = 3
 
@@ -150,8 +150,8 @@ syntax_registry.reg_at(
 )
 
 class OlcSyncRepl(OlcMultilineText, LDAPUrl):
-    oid = 'OlcSyncRepl-oid'
-    desc = 'OpenLDAP syncrepl directive'
+    oid: str = 'OlcSyncRepl-oid'
+    desc: str = 'OpenLDAP syncrepl directive'
     minInputRows = 5
 
     def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
@@ -177,8 +177,8 @@ syntax_registry.reg_at(
 
 
 class OlmSeeAlso(DynamicDNSelectList):
-    oid = 'OlmSeeAlso-oid'
-    desc = 'DN of a overlase or database object in back-monitor'
+    oid: str = 'OlmSeeAlso-oid'
+    desc: str = 'DN of a overlase or database object in back-monitor'
     ldap_url = (
         'ldap:///_?monitoredInfo?sub?'
         '(&'
@@ -200,8 +200,8 @@ syntax_registry.reg_at(
 
 
 class OlcPPolicyDefault(DynamicDNSelectList, DistinguishedName):
-    oid = 'OlcPPolicyDefault-oid'
-    desc = 'DN of a pwdPolicy object for uncustomized objects'
+    oid: str = 'OlcPPolicyDefault-oid'
+    desc: str = 'DN of a pwdPolicy object for uncustomized objects'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=pwdPolicy)'
 
     def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
@@ -218,8 +218,8 @@ syntax_registry.reg_at(
 
 
 class OlcMemberOfDangling(SelectList):
-    oid = 'OlcMemberOfDangling-oid'
-    desc = 'Behavior in case of dangling references during modification'
+    oid: str = 'OlcMemberOfDangling-oid'
+    desc: str = 'Behavior in case of dangling references during modification'
     attr_value_dict = {
         u'': u'-/-',
         u'ignore': u'ignore',
@@ -248,8 +248,8 @@ syntax_registry.reg_at(
 
 
 class AuditContext(NamingContexts):
-    oid = 'AuditContext'
-    desc = 'OpenLDAP DN pointing to audit naming context'
+    oid: str = 'AuditContext'
+    desc: str = 'OpenLDAP DN pointing to audit naming context'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         r = [DistinguishedName.display(self, valueindex, commandbutton)]
@@ -294,7 +294,7 @@ syntax_registry.reg_at(
 
 
 class ReqResult(LDAPv3ResultCode):
-    oid = 'ReqResult-oid'
+    oid: str = 'ReqResult-oid'
 
 syntax_registry.reg_at(
     ReqResult.oid, [
@@ -304,8 +304,8 @@ syntax_registry.reg_at(
 
 
 class ReqMod(OctetString, DirectoryString):
-    oid = 'ReqMod-oid'
-    desc = 'List of modifications/old values'
+    oid: str = 'ReqMod-oid'
+    desc: str = 'List of modifications/old values'
     known_modtypes = {b'+', b'-', b'=', b'#', b''}
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -349,8 +349,8 @@ syntax_registry.reg_at(
 
 
 class ReqControls(IA5String):
-    oid = '1.3.6.1.4.1.4203.666.11.5.3.1'
-    desc = 'List of LDAPv3 extended controls sent along with a request'
+    oid: str = '1.3.6.1.4.1.4203.666.11.5.3.1'
+    desc: str = 'List of LDAPv3 extended controls sent along with a request'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         result_lines = [IA5String.display(self, valueindex, commandbutton)]
@@ -411,7 +411,7 @@ syntax_registry.reg_at(
 
 
 class ReqEntryUUID(UUID):
-    oid = 'ReqEntryUUID-oid'
+    oid: str = 'ReqEntryUUID-oid'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         display_value = UUID.display(self, valueindex, commandbutton)
@@ -444,7 +444,7 @@ syntax_registry.reg_at(
 
 
 class ReqSession(Integer):
-    oid = 'ReqSession-oid'
+    oid: str = 'ReqSession-oid'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         display_value = Integer.display(self, valueindex, commandbutton)
@@ -479,8 +479,8 @@ syntax_registry.reg_at(
 
 
 class Authz(DirectoryString):
-    oid = '1.3.6.1.4.1.4203.666.2.7'
-    desc = 'OpenLDAP authz'
+    oid: str = '1.3.6.1.4.1.4203.666.2.7'
+    desc: str = 'OpenLDAP authz'
 
 
 syntax_registry.reg_at(
@@ -494,13 +494,13 @@ syntax_registry.reg_at(
 
 
 class OpenLDAPACI(DirectoryString):
-    oid = '1.3.6.1.4.1.4203.666.2.1'
-    desc = 'OpenLDAP ACI'
+    oid: str = '1.3.6.1.4.1.4203.666.2.1'
+    desc: str = 'OpenLDAP ACI'
 
 
 class OpenLDAPSpecialBackendSuffix(NamingContexts):
-    oid = 'OpenLDAPSpecialBackendSuffix-oid'
-    desc = 'OpenLDAP special backend suffix'
+    oid: str = 'OpenLDAPSpecialBackendSuffix-oid'
+    desc: str = 'OpenLDAP special backend suffix'
 
     def _config_link(self):
         attr_type_u = self._at[:-7]
