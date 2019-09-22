@@ -225,7 +225,7 @@ class LDAPSyntax:
     fileExt: str = 'bin'
     editable: bool = True
     reObj = None
-    input_pattern = None
+    input_pattern: Optional[str] = None
     searchSep = '<br>'
     readSep = '<br>'
     fieldSep = '<br>'
@@ -1560,17 +1560,16 @@ class Timespan(Integer):
     sep = u','
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        if attrValue:
-            try:
-                result = web2ldap.app.gui.repr2ts(
-                    self.time_divisors,
-                    self.sep,
-                    attrValue.decode('ascii')
-                ).encode('ascii')
-            except ValueError:
-                result = Integer.sanitize(self, attrValue)
-        else:
-            result = attrValue
+        if not attrValue:
+            return attrValue
+        try:
+            result = web2ldap.app.gui.repr2ts(
+                self.time_divisors,
+                self.sep,
+                attrValue.decode('ascii')
+            ).encode('ascii')
+        except ValueError:
+            result = Integer.sanitize(self, attrValue)
         return result
 
     def formValue(self) -> str:
@@ -1585,7 +1584,7 @@ class Timespan(Integer):
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             result = self._app.form.utf2display('%s (%s)' % (
-                web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, int(self._av)),
+                web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, self.av_u),
                 Integer.display(self, valueindex, commandbutton)
             ))
         except ValueError:

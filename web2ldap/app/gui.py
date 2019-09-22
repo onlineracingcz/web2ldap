@@ -102,7 +102,7 @@ def dn_anchor_hash(dn):
     return str(md5(dn.encode('utf-8')).hexdigest())
 
 
-def ts2repr(time_divisors, ts_sep, ts_value):
+def ts2repr(time_divisors, ts_sep, ts_value: str) -> str:
     rest = int(ts_value)
     result = []
     for desc, divisor in time_divisors:
@@ -127,7 +127,7 @@ def repr2ts(time_divisors, ts_sep, value):
             raise ValueError
         else:
             del time_divisors_dict[desc]
-    return result
+    return str(result)
 
 
 def command_div(

@@ -127,7 +127,7 @@ class OathTokenIdentifier(DirectoryString):
     """
     oid: str = 'OathTokenIdentifier-oid'
     desc: str = 'Globally unique token identifier'
-    maxLen = 12
+    maxLen: str = 12
     reObj = re.compile(r'^[a-zA-Z0-9]{12}$')
 
 syntax_registry.reg_at(

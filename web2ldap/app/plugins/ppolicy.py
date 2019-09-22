@@ -76,13 +76,13 @@ class PwdMaxAge(Timespan):
 
     @staticmethod
     def _search_timestamp(diff_secs):
-        return time.strftime('%Y%m%d%H%M%SZ', time.gmtime(time.time()-diff_secs)).decode('ascii')
+        return time.strftime('%Y%m%d%H%M%SZ', time.gmtime(time.time()-diff_secs))
 
     def _timespan_search_params(self):
         return (
             ('search_attr', 'pwdChangedTime'),
             ('search_option', web2ldap.app.searchform.SEARCH_OPT_LE_THAN),
-            ('search_string', self._search_timestamp(int(self._av.strip()))),
+            ('search_string', self._search_timestamp(int(self.av_u.strip()))),
         )
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -122,8 +122,8 @@ class PwdExpireWarning(PwdMaxAge):
     title_text = u'Search for entries with this password policy and soon to expire password'
 
     def _timespan_search_params(self):
-        pwd_expire_warning = int(self._av.strip())
-        pwd_max_age = int(self._entry['pwdMaxAge'][0].strip())
+        pwd_expire_warning = int(self.av_u.strip())
+        pwd_max_age = int(self._entry['pwdMaxAge'][0].decode('ascii').strip())
         warn_timestamp = pwd_max_age-pwd_expire_warning
         return (
             ('search_attr', 'pwdChangedTime'),

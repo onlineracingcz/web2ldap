@@ -213,7 +213,7 @@ syntax_registry.reg_at(
 class SAMAccountName(DirectoryString):
     oid: str = 'SAMAccountName-oid'
     desc: str = 'SAM-Account-Name in MS AD'
-    maxLen = 20
+    maxLen: int = 20
 
 # Register certain attribute types for syntax classes
 syntax_registry.reg_at(

@@ -172,6 +172,9 @@ def get_entry_input(app):
                 attr_type, None,
                 entry=entry,
             )
+            assert isinstance(in_value, bytes), TypeError(
+                'Expected in_value to be bytes, got %r' % (in_value,)
+            )
             attr_value = attr_instance.sanitize(in_value)
             assert isinstance(attr_value, bytes), TypeError(
                 'Expected %s.sanitize(%r) to return bytes, got %r' % (

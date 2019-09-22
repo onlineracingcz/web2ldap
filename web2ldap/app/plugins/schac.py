@@ -66,8 +66,8 @@ syntax_registry.reg_at(
 class SchacYearOfBirth(NumericString):
     oid: str = 'SchacYearOfBirth-oid'
     desc: str = 'Year of birth: syntax YYYY'
-    maxLen = 4
-    input_pattern = '^[0-9]{4}$'
+    maxLen: str = 4
+    input_pattern: str = '^[0-9]{4}$'
     reObj = re.compile(input_pattern)
 
     def _validate(self, attrValue: bytes) -> bool:
@@ -87,7 +87,7 @@ syntax_registry.reg_at(
 class SchacUrn(DirectoryString):
     oid: str = 'SchacUrn-oid'
     desc: str = 'Generic URN for SCHAC'
-    input_pattern = '^urn:mace:terena.org:schac:.+$'
+    input_pattern: str = '^urn:mace:terena.org:schac:.+$'
     reObj = re.compile(input_pattern)
 
 syntax_registry.reg_at(

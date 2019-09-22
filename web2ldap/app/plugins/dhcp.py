@@ -240,7 +240,7 @@ syntax_registry.reg_at(
 class DHCPHWAddress(MacAddress):
     oid: str = 'DHCPHWAddress-oid'
     desc: str = 'Network classifier and MAC address'
-    maxLen = 26
+    maxLen: str = 26
     reObj = re.compile(r'^(ethernet|token-ring|fddi) ([0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}$')
 
     def sanitize(self, attrValue: bytes) -> bytes:
