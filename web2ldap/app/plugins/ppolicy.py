@@ -46,7 +46,7 @@ class PwdAttribute(SelectList):
     def _validate(self, attrValue: bytes) -> bool:
         return (
             not attrValue or
-            attrValue.lower() in {'2.5.4.35', 'userpassword'}
+            attrValue.lower() in {b'2.5.4.35', b'userpassword'}
         )
 
 syntax_registry.reg_at(
