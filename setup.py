@@ -48,7 +48,6 @@ setup(
     install_requires=[
         'setuptools',
         'ldap0>=0.6.0',
-        'ipaddress',
         'asn1crypto',
         'xlwt',
         'dnspython',
