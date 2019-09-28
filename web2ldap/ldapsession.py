@@ -672,7 +672,7 @@ class LDAPSession:
 
     @property
     def is_openldap(self):
-        return 'OpenLDAProotDSE' in self.rootDSE.get('objectClass', [])
+        return b'OpenLDAProotDSE' in self.rootDSE.get('objectClass', [])
 
     def _update_rootdse_attrs(self):
         """
@@ -965,7 +965,7 @@ class LDAPSession:
                 filter_str=assertion_filter,
                 dn_str=ldap0.filter.escape_str(dn),
             )
-            req_ctrls.append(AssertionControl(False, assertion_filter_str))
+            req_ctrls.append(AssertionControl(self.is_openldap, assertion_filter_str))
         self.l.modify_s(
             dn_str,
             [
