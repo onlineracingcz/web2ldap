@@ -190,9 +190,9 @@ def w2l_modify(app):
         )
     except ldap0.ASSERTION_FAILED:
         raise web2ldap.app.core.ErrorExit(
-            u'Assertion failed'
-            u'=> Entry was removed or modified in between!'
-            u'You have to edit it again.'
+            'Assertion failed '
+            '=> Entry was removed or modified in between! '
+            'You have to edit it again.'
         )
     except (
             ldap0.CONSTRAINT_VIOLATION,
