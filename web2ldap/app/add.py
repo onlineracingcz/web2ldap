@@ -133,10 +133,10 @@ def w2l_add(app):
         else:
             web2ldap.app.addmodifyform.w2l_addform(
                 app,
-                add_rdn.decode(app.ls.charset),
+                add_rdn,
                 add_basedn, entry,
                 msg='Attribute <var>%s</var> required for RDN not in entry data.' % (
-                    app.form.utf2display(rdn_attr_type.decode('ascii'))
+                    app.form.utf2display(rdn_attr_type)
                 ),
             )
             return
