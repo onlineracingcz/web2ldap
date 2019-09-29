@@ -77,7 +77,7 @@ class AssociatedDomain(DNSDomain):
             except (KeyError, IndexError):
                 pass
             else:
-                attrValue = DNSDomain.sanitize(self, '.'.join((dc_value, parent_domain)))
+                attrValue = DNSDomain.sanitize(self, b'.'.join((dc_value, parent_domain)))
         return attrValue
 
     def formValue(self) -> str:
