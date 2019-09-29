@@ -113,7 +113,7 @@ class AEObjectUtil:
             ) or {}
         except ldap0.LDAPError:
             zone = {}
-        return zone.entry_as
+        return zone.entry_s
 
     def _get_zone_dn(self) -> str:
         return str(self.dn.slice(None, -len(DNObj.from_str(self._app.naming_context))-1))
@@ -1285,7 +1285,7 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectUtil):
         zone_entry = self._zone_entry(attrlist=self.deref_attrs) or {}
         for deref_attr_type in self.deref_attrs:
             deref_attr_values = [
-                self._app.ls.uc_decode(z)[0]
+                z
                 for z in zone_entry.get(deref_attr_type, [])
                 if z
             ]
