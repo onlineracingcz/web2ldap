@@ -201,15 +201,15 @@ class OathSecretTime(GeneralizedTime):
         except ValueError:
             return gt_disp_html
         try:
-            oath_params_dn = self._entry[oath_params_dn_attr][0]
+            oath_params_dn = self._entry[oath_params_dn_attr][0].decode(self._app.ls.charset)
         except KeyError:
             return gt_disp_html
         try:
-            oath_params_entry = self._app.ls.l.read_s(oath_params_dn, attrlist=['oathSecretMaxAge'])
+            oath_params = self._app.ls.l.read_s(oath_params_dn, attrlist=['oathSecretMaxAge'])
         except LDAPError:
             return gt_disp_html
         try:
-            oath_secret_max_age_secs = int(oath_params_entry['oathSecretMaxAge'][0])
+            oath_secret_max_age_secs = int(oath_params.entry_s['oathSecretMaxAge'][0])
         except KeyError:
             expire_msg = 'will never expire'
         except ValueError:
