@@ -2229,14 +2229,22 @@ class JSONValue(PreformattedMultilineText):
             return PreformattedMultilineText._split_lines(self, value)
         return PreformattedMultilineText._split_lines(
             self,
-            self._app.ls.uc_decode(
-                json.dumps(
-                    obj,
-                    indent=4,
-                    separators=(',', ': ')
-                )
-            )[0]
+            json.dumps(
+                obj,
+                indent=4,
+                separators=(',', ': ')
+            ).encode('utf-8')
         )
+
+    def sanitize(self, attrValue: bytes) -> bytes:
+        try:
+            obj = json.loads(attrValue)
+        except ValueError:
+            return PreformattedMultilineText.sanitize(self, attrValue)
+        return json.dumps(
+            obj,
+            separators=(',', ':')
+        ).encode('utf-8')
 
 
 class XmlValue(PreformattedMultilineText):
