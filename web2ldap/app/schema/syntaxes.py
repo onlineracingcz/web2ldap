@@ -1574,7 +1574,7 @@ class Timespan(Integer):
 
     def formValue(self) -> str:
         if not self._av:
-            return self._av
+            return ''
         try:
             result = web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, int(self._av))
         except ValueError:
