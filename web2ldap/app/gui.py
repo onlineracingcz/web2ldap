@@ -504,7 +504,7 @@ def ldap_url_anchor(app, data):
         return app.anchor(
             command_func,
             'Connect and %s' % (command_func),
-            (('ldapurl', str(l).decode('ascii')),)
+            (('ldapurl', str(l)),)
         )
     command_text = {True:'Read', False:'Search'}[l.scope == ldap0.SCOPE_BASE]
     return app.anchor(

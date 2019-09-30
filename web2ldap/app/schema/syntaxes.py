@@ -1207,7 +1207,7 @@ class LDAPUrl(Uri):
             if commandbutton:
                 commandbuttonstr = web2ldap.app.gui.ldap_url_anchor(
                     self._app,
-                    self._command_ldap_url(self._av),
+                    self._command_ldap_url(self.av_u),
                 )
             else:
                 commandbuttonstr = ''
