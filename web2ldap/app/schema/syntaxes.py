@@ -1538,7 +1538,7 @@ class DaysSinceEpoch(Integer):
         int_str = Integer.display(self, valueindex, commandbutton)
         try:
             return '%s (%s)' % (
-                strftimeiso8601(time.gmtime(float(self._av)*86400)).encode('ascii'),
+                strftimeiso8601(time.gmtime(float(self._av)*86400)),
                 int_str,
             )
         except ValueError:
