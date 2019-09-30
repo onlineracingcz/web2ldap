@@ -326,20 +326,20 @@ class SSHFPRecord(IA5String):
     desc: str = 'A resource record with SSH fingerprint (SSHFP)'
     reObj = re.compile('^[0-4]? [0-2]? [0-9a-fA-F]+$')
     key_algo_dict = {
-        '0': 'reserved',
-        '1': 'RSA',
-        '2': 'DSA',
-        '3': 'ECDSA',
-        '4': 'ED25519',
+        b'0': 'reserved',
+        b'1': 'RSA',
+        b'2': 'DSA',
+        b'3': 'ECDSA',
+        b'4': 'ED25519',
     }
     fp_algo_dict = {
-        '0': 'reserved',
-        '1': 'SHA-1',
-        '2': 'SHA-256',
+        b'0': 'reserved',
+        b'1': 'SHA-1',
+        b'2': 'SHA-256',
     }
     fp_algo_len = {
-        '1': 2*hashlib.sha1().digest_size,
-        '2': 2*hashlib.sha256().digest_size,
+        b'1': 2*hashlib.sha1().digest_size,
+        b'2': 2*hashlib.sha256().digest_size,
     }
 
     def sanitize(self, attrValue: bytes) -> bytes:
@@ -347,16 +347,16 @@ class SSHFPRecord(IA5String):
             return attrValue
         try:
             key_algo, fp_algo, fp_value = [
-                i.encode('ascii')
-                for i in filter(None, map(str.strip, attrValue.lower().split(' ')))
+                i
+                for i in filter(None, map(bytes.strip, attrValue.lower().split(b' ')))
             ]
         except ValueError:
             return attrValue
-        return ' '.join((key_algo, fp_algo, fp_value))
+        return b' '.join((key_algo, fp_algo, fp_value))
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
-            key_algo, fp_algo, fp_value = tuple(filter(None, map(str.strip, attrValue.split(' '))))
+            key_algo, fp_algo, fp_value = tuple(filter(None, map(bytes.strip, attrValue.split(b' '))))
         except ValueError:
             return False
         else:
@@ -372,7 +372,7 @@ class SSHFPRecord(IA5String):
     def display(self, valueindex=0, commandbutton=False) -> str:
         display_value = IA5String.display(self, valueindex, commandbutton)
         try:
-            key_algo, fp_algo, _ = tuple(filter(None, map(str.strip, self._av.split(' '))))
+            key_algo, fp_algo, _ = tuple(filter(None, map(bytes.strip, self._av.split(b' '))))
         except ValueError:
             r = display_value
         else:
