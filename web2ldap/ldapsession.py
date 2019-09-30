@@ -431,6 +431,9 @@ class LDAPSessionException(ldap0.LDAPError):
 
 
 class PasswordPolicyException(LDAPSessionException):
+    """
+    Base exception class for all password policy errors
+    """
 
     def __init__(self, who=None, desc=None):
         self.who = who
@@ -440,11 +443,16 @@ class PasswordPolicyException(LDAPSessionException):
         return self.desc
 
 
-class PWD_CHANGE_AFTER_RESET(PasswordPolicyException):
-    pass
+class PasswordChangeAfterReset(PasswordPolicyException):
+    """
+    Exception raised in case the user must change password after reset
+    """
 
 
-class INVALID_SIMPLE_BIND_DN(ldap0.INVALID_DN_SYNTAX):
+class InvalidSimpleBindDN(ldap0.INVALID_DN_SYNTAX):
+    """
+    Exception raised in case the bind DN was not valid
+    """
 
     def __init__(self, who=None, desc=None):
         self.who = who
@@ -454,14 +462,14 @@ class INVALID_SIMPLE_BIND_DN(ldap0.INVALID_DN_SYNTAX):
         return ': '.join((self.desc, self.who))
 
 
-class USERNAME_NOT_FOUND(LDAPSessionException):
+class UsernameNotFound(LDAPSessionException):
     """
     Simple exception class raised when get_bind_dn() does not
     find any entry matching search
     """
 
 
-class USERNAME_NOT_UNIQUE(LDAPSessionException):
+class UsernameNotUnique(LDAPSessionException):
     """
     Simple exception class raised when get_bind_dn() does not
     find more than one entry matching search
@@ -1095,26 +1103,26 @@ class LDAPSession:
             )
         except ldap0.SIZELIMIT_EXCEEDED as ldap_err:
             logger.warn('Searching user entry failed: %s', ldap_err)
-            raise USERNAME_NOT_UNIQUE({'desc':'More than one matching user entries.'})
+            raise UsernameNotUnique({'desc':'More than one matching user entries.'})
         except ldap0.NO_SUCH_OBJECT as ldap_err:
             logger.warn('Searching user entry failed: %s', ldap_err)
-            raise USERNAME_NOT_FOUND({'desc':'Login did not find a matching user entry.'})
+            raise UsernameNotFound({'desc':'Login did not find a matching user entry.'})
         # Ignore search continuations in search result list
         result = [r for r in result if isinstance(r, SearchResultEntry)]
         if not result:
             logger.warn('No result when searching user entry')
-            raise USERNAME_NOT_FOUND({'desc':'Login did not find a matching user entry.'})
+            raise UsernameNotFound({'desc':'Login did not find a matching user entry.'})
         elif len(result) != 1:
             logger.warn('More than one matching user entries: %r', result)
-            raise USERNAME_NOT_UNIQUE({'desc':'More than one matching user entries.'})
+            raise UsernameNotUnique({'desc':'More than one matching user entries.'})
         logger.debug(
             'Found user entry %r with base = %r / scope = %d / filter = %r',
-            result[0][0],
+            result[0].dn_b,
             search_base,
             lu_obj.scope,
             search_filter,
         )
-        return result.dn_s
+        return result[0].dn_s
 
     def bind(
             self,
@@ -1195,7 +1203,7 @@ class LDAPSession:
                 )
             except ldap0.INVALID_DN_SYNTAX:
                 self.who = None
-                raise INVALID_SIMPLE_BIND_DN(who)
+                raise InvalidSimpleBindDN(who)
             except ldap0.LDAPError as ldap_err:
                 # Explicitly fall back to anonymous bind before re-raising exception
                 self.who = None
@@ -1236,7 +1244,7 @@ class LDAPSession:
             # Search for a user entry which matches the username known so far
             try:
                 self.who = self.get_bind_dn(who, loginSearchRoot, whoami_filtertemplate)
-            except (ldap0.LDAPError, USERNAME_NOT_FOUND, USERNAME_NOT_UNIQUE):
+            except (ldap0.LDAPError, UsernameNotFound, UsernameNotUnique):
                 pass
 
         # Read the user's entry if self.who is a DN to get name and preferences

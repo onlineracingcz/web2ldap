@@ -957,7 +957,7 @@ class AppHandler(LogHelper):
                 ldap0.INSUFFICIENT_ACCESS,
                 ldap0.STRONG_AUTH_REQUIRED,
                 ldap0.INAPPROPRIATE_AUTH,
-                web2ldap.ldapsession.USERNAME_NOT_FOUND,
+                web2ldap.ldapsession.UsernameNotFound,
             ) as err:
             web2ldap.app.login.w2l_login(
                 self,
@@ -976,8 +976,8 @@ class AppHandler(LogHelper):
             )
 
         except (
-                web2ldap.ldapsession.INVALID_SIMPLE_BIND_DN,
-                web2ldap.ldapsession.USERNAME_NOT_UNIQUE,
+                web2ldap.ldapsession.InvalidSimpleBindDN,
+                web2ldap.ldapsession.UsernameNotUnique,
             ) as err:
             web2ldap.app.login.w2l_login(
                 self,
