@@ -417,16 +417,14 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
     def formValue(self) -> str:
         if not self._av:
             return u''
-        attr_value = self.av_u
         try:
-            dn_obj = DNObj(attr_value.decode(self._app.charset))
+            dn_obj = DNObj(self.av_u)
         except ldap0.DECODING_ERROR:
             return BindDN.formValue(self)
         new_rdn = DNObj(tuple([
             (
                 rdn_attr,
                 rdn_value[0] or self._entry.get(rdn_attr, [u''])[0],
-                0
             )
             for rdn_attr, rdn_value in dn_obj.rdn_attrs().items()
         ]))
