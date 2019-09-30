@@ -422,17 +422,17 @@ class LogonHours(OctetString):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         if not attrValue:
-            return ''
-        attrValue = attrValue.replace('\r', '').replace('\n', '')
+            return b''
+        attrValue = attrValue.replace(b'\r', b'').replace(b'\n', b'')
         hour_flags = [
-            int(attrValue[i] == 'X')<<i%8
+            int(attrValue[i] == b'X')<<i%8
             for i in range(len(attrValue))
         ]
         r = [
             chr(sum(hour_flags[i*8:(i+1)*8]))
             for i in range(21)
         ]
-        return ''.join(r)
+        return b''.join(r)
 
     def _validate(self, attrValue: bytes) -> bool:
         return len(attrValue) == 21
