@@ -109,7 +109,7 @@ class SambaSID(IA5String):
             if len(ldap_result) != 1:
                 return None
             try:
-                _, domain_entry = ldap_result[0]
+                _, domain_entry = ldap_result[0].entry_as
             except (KeyError, IndexError):
                 return None
             return domain_entry
