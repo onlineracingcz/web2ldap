@@ -20,31 +20,34 @@ class DefaultDict(defaultdict):
     Dictionary which returns a default value for non-existent keys.
     """
 
-    def __init__(self, d=None, default=None):
+    def __init__(self, data=None, default=None):
         defaultdict.__init__(self, default=default)
         self.__default__ = default
-        d = d or {}
-        for k, v in d.items():
-            self.__setitem__(k, v)
+        data = data or {}
+        for key, val in data.items():
+            self.__setitem__(key, val)
 
     def __missing__(self, key):
         return self.__default__
 
 
 class Str1stValueDict(DefaultDict):
+    """
+    Dicitionary class which always returns first item of value sequence
+    """
 
-    def __setitem__(self, k, v):
-        DefaultDict.__setitem__(self, k, v[0])
+    def __setitem__(self, key, val):
+        DefaultDict.__setitem__(self, key, val[0])
 
 
 class GrabKeys:
     """
-    Class for grabbing the string-formatting keys out of a string
+    Class for grabbing the dict keys out of a C-style formatter string
     """
 
-    def __init__(self, s):
-        self.keys = set([])
-        s % self
+    def __init__(self, fmt: str):
+        self.keys = set()
+        _ = fmt % self
 
     def __call__(self):
         return self.keys
@@ -71,6 +74,10 @@ class CaseinsensitiveStringKeyDict(DefaultDict):
 
 
 def chunks(l, s):
+    """
+    generator returns which returns chunks of items in :l:
+    of length :s:
+    """
     q, r = divmod(len(l), s)
     for i in range(q):
         yield l[i*s:(i+1)*s]
@@ -78,12 +85,15 @@ def chunks(l, s):
         yield l[q*s:]
 
 
-def ascii_dump(buf):
+def ascii_dump(buf: bytes, repl: str = '.') -> str:
+    """
+    Converts bytes in :buf: to str with non-ASCII chars replaced by :repl:.
+    """
     assert isinstance(buf, bytes), ValueError('Expected buf to be bytes, got %r' % (buf,))
     r = []
     for b in buf:
         if ord(' ') <= b <= ord('~'):
             r.append(chr(b))
         else:
-            r.append('.')
+            r.append(repl)
     return ''.join(r)
