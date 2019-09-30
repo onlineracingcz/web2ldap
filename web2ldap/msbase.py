@@ -15,18 +15,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 from collections import defaultdict
 
 
-def union(a, b):
-    """
-    Return union of two lists a, b.
-    """
-    temp = {}
-    for elt in a:
-        temp[elt.lower()] = elt
-    for elt in b:
-        temp[elt.lower()] = elt
-    return temp.values()
-
-
 class DefaultDict(defaultdict):
     """
     Dictionary which returns a default value for non-existent keys.
@@ -39,7 +27,7 @@ class DefaultDict(defaultdict):
         for k, v in d.items():
             self.__setitem__(k, v)
 
-    def __missing__(self,key):
+    def __missing__(self, key):
         return self.__default__
 
 
@@ -54,7 +42,7 @@ class GrabKeys:
     Class for grabbing the string-formatting keys out of a string
     """
 
-    def __init__(self,s):
+    def __init__(self, s):
         self.keys = set([])
         s % self
 
@@ -71,18 +59,18 @@ class CaseinsensitiveStringKeyDict(DefaultDict):
     Dictionary class for case-insensitive string-keyed dictionaries
     """
 
-    def __init__(self,default_dict=None,default=None):
-        DefaultDict.__init__(self,default=default)
+    def __init__(self, default_dict=None, default=None):
+        DefaultDict.__init__(self, default=default)
         self.update(default_dict or {})
 
-    def __setitem__(self,key,value):
-        DefaultDict.__setitem__(self,key.lower(),value)
+    def __setitem__(self, key, value):
+        DefaultDict.__setitem__(self, key.lower(), value)
 
-    def __getitem__(self,key):
-        return DefaultDict.__getitem__(self,key.lower())
+    def __getitem__(self, key):
+        return DefaultDict.__getitem__(self, key.lower())
 
 
-def chunks(l,s):
+def chunks(l, s):
     q, r = divmod(len(l), s)
     for i in range(q):
         yield l[i*s:(i+1)*s]
