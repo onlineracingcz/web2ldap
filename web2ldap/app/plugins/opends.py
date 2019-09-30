@@ -225,8 +225,8 @@ class OpenDSCfgAccountStatusNotificationType(SelectList):
         u'account-unlocked': u'User account has been unlocked by an administrator',
         u'password-changed': u'User changes his/her own password',
         u'password-expired': u'User authentication has failed because the password has expired',
-        u'password-expiring':u"Password expiration warning is encountered for user's password for the first time.",
-        u'password-reset':u"User's password was reset by an administrator.",
+        u'password-expiring': u"Password expiration warning is encountered for user's password for the first time.",
+        u'password-reset': u"User's password was reset by an administrator.",
     }
 
 syntax_registry.reg_at(
