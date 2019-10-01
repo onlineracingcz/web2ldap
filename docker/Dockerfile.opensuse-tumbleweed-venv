@@ -10,7 +10,7 @@ RUN zypper --non-interactive install --no-confirm --no-recommends ca-certificate
 RUN zypper --non-interactive install --no-confirm --no-recommends python3 python3-virtualenv python3-setuptools
 
 # install web2ldap in virtual env
-RUN python3 -m venv --no-site-packages /opt/web2ldap
+RUN python3 -m venv /opt/web2ldap
 RUN /opt/web2ldap/bin/pip3 install --no-cache-dir --upgrade-strategy=only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap
 
 # Override web2ldap's config module files
