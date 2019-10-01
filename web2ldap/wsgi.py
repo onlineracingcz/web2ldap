@@ -13,7 +13,6 @@ import wsgiref.simple_server
 
 import web2ldap.app.core
 from web2ldap.log import logger
-import web2ldap.app.handler
 import web2ldapcnf
 
 
@@ -97,6 +96,9 @@ class AppResponse:
         file-like method
         """
         del self.lines
+
+
+import web2ldap.app.handler
 
 
 def application(environ, start_response):
