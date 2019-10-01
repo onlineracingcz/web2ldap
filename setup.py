@@ -27,6 +27,13 @@ data_files=sorted([
 sys.path.insert(0, os.path.join(BASEDIR, 'web2ldap'))
 import __about__
 
+if (
+        sys.version_info.major < 3
+        or (sys.version_info.major == 3 and sys.version_info.minor < 6)
+    ):
+    print('web2ldap {} requires Python 3.6 or newer!'.format(__about__.__version__))
+    sys.exit(99)
+
 setup(
     name=PYPI_NAME,
     license=__about__.__license__,
