@@ -595,8 +595,7 @@ class LDAPSession:
                 if uri_list:
                     # Try next host
                     continue
-                else:
-                    raise
+                raise
             else:
                 break
         # end of _initialize()

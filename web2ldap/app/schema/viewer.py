@@ -200,22 +200,21 @@ class DisplaySchemaElement:
             class_attr_value = self.sei.__dict__.get(class_attr, None)
             if class_attr_value is None:
                 continue
+            if isinstance(class_attr_value, (tuple, list)):
+                class_attr_value_list = list(class_attr_value)
+                class_attr_value_list.sort(key=str.lower)
             else:
-                if isinstance(class_attr_value, (tuple, list)):
-                    class_attr_value_list = list(class_attr_value)
-                    class_attr_value_list.sort(key=str.lower)
-                else:
-                    class_attr_value_list = [class_attr_value]
-                if se_class is None:
-                    value_output = ', '.join([
-                        self._app.form.utf2display(v, sp_entity=' ', lf_entity='<br>')
-                        for v in class_attr_value_list
-                    ])
-                else:
-                    value_output = ', '.join(
-                        schema_anchors(self._app, class_attr_value_list, se_class)
-                    )
-                self._app.outf.write('<dt>%s</dt>\n<dd>\n%s\n</dd>\n' % (text, value_output))
+                class_attr_value_list = [class_attr_value]
+            if se_class is None:
+                value_output = ', '.join([
+                    self._app.form.utf2display(v, sp_entity=' ', lf_entity='<br>')
+                    for v in class_attr_value_list
+                ])
+            else:
+                value_output = ', '.join(
+                    schema_anchors(self._app, class_attr_value_list, se_class)
+                )
+            self._app.outf.write('<dt>%s</dt>\n<dd>\n%s\n</dd>\n' % (text, value_output))
         # end of disp_details()
 
     def display(self):
