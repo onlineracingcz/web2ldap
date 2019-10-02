@@ -29,7 +29,7 @@
 <pre class="cli">
 export SUSE_RELEASE="$(lsb_release -d |cut -d ' ' -f2)"
 zypper add --no-recommends ca-certificates-mozilla
-zypper addrepo --refresh https://download.opensuse.org/repositories/home:/stroeder:/AE-DIR/openSUSE_${SUSE_RELEASE}/
+zypper addrepo --refresh https://download.opensuse.org/repositories/home:/stroeder:/AE-DIR:/py3/openSUSE_${SUSE_RELEASE}/home:stroeder:AE-DIR:py3.repo
 </pre>
 
 <p>Install:</p>
