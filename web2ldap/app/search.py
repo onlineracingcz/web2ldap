@@ -184,6 +184,7 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     Class for writing a stream LDAP search results to a CSV file
     """
     _entryResultTypes = is_search_result
+    _formular_prefixes = frozenset('@+-=|%')
 
     def __init__(self, l, f, sub_schema, attr_types, ldap_charset='utf-8'):
         web2ldap.ldaputil.asynch.AsyncSearchHandler.__init__(self, l)
@@ -217,7 +218,10 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
                     csv_col_value = attr_value.decode(self._ldap_charset)
                 except UnicodeError:
                     csv_col_value = binascii.b2a_base64(attr_value).decode('ascii').replace('\r', '').replace('\n', '')
-                csv_col_value_list.append(csv_col_value)
+                if csv_col_value[0] in self._formular_prefixes:
+                    csv_col_value_list.append("'"+csv_col_value)
+                else:
+                    csv_col_value_list.append(csv_col_value)
             csv_row_list.append('|'.join(csv_col_value_list))
         self._csv_writer.writerow(csv_row_list)
 
