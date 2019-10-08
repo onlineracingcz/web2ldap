@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.3",
+         "state": "testing",
+         "scope": "minor fix",
+         "changes": "Mitigate CSV injection attacks, code-cleaning",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.3.tar.gz",
+         "published": "2019-10-08T13:00:00+00:00"
+      },
+      {
          "version": "1.5.2",
          "state": "testing",
          "scope": "major feature",
