@@ -646,7 +646,7 @@ class LockoutTime(Interval):
         delta = self._delta(self._av)
         if delta == 0:
             return '%s (not locked)' % (MicrosoftLargeInteger.display(self, valueindex, commandbutton))
-        elif delta < 0:
+        if delta < 0:
             return MicrosoftLargeInteger.display(self, valueindex, commandbutton)
         return '%s (locked since %s)' % (
             MicrosoftLargeInteger.display(self, valueindex, commandbutton),

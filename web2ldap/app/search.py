@@ -388,7 +388,7 @@ def w2l_search(app):
             scope=scope
         )
         return
-    elif len(search_filter) == 1:
+    if len(search_filter) == 1:
         filterstr = search_filter[0]
     elif len(search_filter) > 1:
         filterstr = search_mode % (u''.join(search_filter))

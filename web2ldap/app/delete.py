@@ -216,50 +216,49 @@ def delete_entries(
         # Try to directly delete the whole subtree with the tree delete control
         app.ls.l.delete_s(dn, req_ctrls=delete_server_ctrls)
         return (1, set())
+    leafs_deleter = DeleteLeafs(app.ls.l, tree_delete_control, delete_server_ctrls)
+    deleted_entries_count = 0
+    non_leaf_entries = set()
+    non_deletable_entries = set()
+    while time.time() <= end_time:
+        try:
+            leafs_deleter.start_search(dn, scope, filterStr=delete_filter)
+            leafs_deleter.process_results()
+        except ldap0.NO_SUCH_OBJECT:
+            break
+        except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
+            deleted_entries_count += leafs_deleter.deletedEntries
+            non_leaf_entries.update(leafs_deleter.nonLeafEntries)
+            non_deletable_entries.update(leafs_deleter.nonDeletableEntries)
+        else:
+            deleted_entries_count += leafs_deleter.deletedEntries
+            non_leaf_entries.update(leafs_deleter.nonLeafEntries)
+            non_deletable_entries.update(leafs_deleter.nonDeletableEntries)
+            break
     else:
-        leafs_deleter = DeleteLeafs(app.ls.l, tree_delete_control, delete_server_ctrls)
-        deleted_entries_count = 0
-        non_leaf_entries = set()
-        non_deletable_entries = set()
-        while time.time() <= end_time:
-            try:
-                leafs_deleter.start_search(dn, scope, filterStr=delete_filter)
-                leafs_deleter.process_results()
-            except ldap0.NO_SUCH_OBJECT:
-                break
-            except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
-                deleted_entries_count += leafs_deleter.deletedEntries
-                non_leaf_entries.update(leafs_deleter.nonLeafEntries)
-                non_deletable_entries.update(leafs_deleter.nonDeletableEntries)
-            else:
-                deleted_entries_count += leafs_deleter.deletedEntries
-                non_leaf_entries.update(leafs_deleter.nonLeafEntries)
-                non_deletable_entries.update(leafs_deleter.nonDeletableEntries)
-                break
+        non_deletable_entries.update(non_leaf_entries)
+    while non_leaf_entries and time.time() <= end_time:
+        dn = non_leaf_entries.pop()
+        if dn in non_deletable_entries:
+            continue
+        try:
+            leafs_deleter.start_search(dn, ldap0.SCOPE_SUBTREE, filterStr=delete_filter)
+            leafs_deleter.process_results()
+        except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
+            deleted_entries_count += leafs_deleter.deletedEntries
+            non_leaf_entries.add(dn)
+            non_leaf_entries.update(leafs_deleter.nonLeafEntries)
         else:
-            non_deletable_entries.update(non_leaf_entries)
-        while non_leaf_entries and time.time() <= end_time:
-            dn = non_leaf_entries.pop()
-            if dn in non_deletable_entries:
+            deleted_entries_count += leafs_deleter.deletedEntries
+            if leafs_deleter.deletedEntries == 0:
+                non_deletable_entries.add(dn)
                 continue
-            try:
-                leafs_deleter.start_search(dn, ldap0.SCOPE_SUBTREE, filterStr=delete_filter)
-                leafs_deleter.process_results()
-            except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
-                deleted_entries_count += leafs_deleter.deletedEntries
-                non_leaf_entries.add(dn)
-                non_leaf_entries.update(leafs_deleter.nonLeafEntries)
-            else:
-                deleted_entries_count += leafs_deleter.deletedEntries
-                if leafs_deleter.deletedEntries == 0:
-                    non_deletable_entries.add(dn)
-                    continue
-                non_leaf_entries.update(leafs_deleter.nonLeafEntries)
-            if time.time() > end_time:
-                non_deletable_entries.update(non_leaf_entries)
-                break
-        else:
+            non_leaf_entries.update(leafs_deleter.nonLeafEntries)
+        if time.time() > end_time:
             non_deletable_entries.update(non_leaf_entries)
+            break
+    else:
+        non_deletable_entries.update(non_leaf_entries)
     return deleted_entries_count, non_deletable_entries
     # end of delete_entries()
 

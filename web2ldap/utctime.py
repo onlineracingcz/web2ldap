@@ -34,7 +34,7 @@ def strptime(s):
             # without century in the year
             dt = datetime.datetime.strptime(s, r'%y%m%d%H%M%SZ')
             return dt
-        elif len_dt_str > 16:
+        if len_dt_str > 16:
             # probably fractions in seconds part
             s = s[:-1]
             tz_offset = datetime.timedelta(0)

@@ -755,12 +755,12 @@ class GeneralizedTime(IA5String):
                     datetime.datetime.utcnow(),
                     date_format,
                 ).encode('ascii')
-            elif av_u in ('Y', 'YESTERDAY'):
+            if av_u in ('Y', 'YESTERDAY'):
                 return datetime.datetime.strftime(
                     datetime.datetime.today()-datetime.timedelta(days=1),
                     date_format,
                 ).encode('ascii')
-            elif av_u in ('T', 'TOMORROW'):
+            if av_u in ('T', 'TOMORROW'):
                 return datetime.datetime.strftime(
                     datetime.datetime.today()+datetime.timedelta(days=1),
                     date_format,
@@ -1014,7 +1014,7 @@ class Uri(DirectoryString):
                 self._app.form.utf2display(label),
                 self._app.form.utf2display(display_url),
             )
-        elif url.lower().find('javascript:') >= 0:
+        if url.lower().find('javascript:') >= 0:
             return '<code>%s</code>' % (
                 DirectoryString.display(self, valueindex=False, commandbutton=False)
             )

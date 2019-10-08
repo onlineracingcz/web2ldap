@@ -909,7 +909,7 @@ class LDAPSession:
         if subschemasubentry_dn is None:
             # No sub schema sub entry found => return default schema
             return default
-        elif subschemasubentry_dn in self._schema_cache:
+        if subschemasubentry_dn in self._schema_cache:
             # Return parsed schema from cache
             return self._schema_cache[subschemasubentry_dn]
         try:
@@ -1059,10 +1059,10 @@ class LDAPSession:
         if not username:
             # seems to be anonymous bind
             return u''
-        elif ldap0.dn.is_dn(username):
+        if ldap0.dn.is_dn(username):
             # already a bind-DN -> return it normalized
             return str(DNObj.from_str(username))
-        elif not binddn_mapping:
+        if not binddn_mapping:
             # no bind-DN mapping URL -> just return username
             return username
         logger.debug(

@@ -909,7 +909,7 @@ def w2l_schema_viewer(app):
             context_menu_list=schema_context_menu(app)
         )
         return
-    elif len(se_list) > 1:
+    if len(se_list) > 1:
         # Display a list of schema elements to choose from
         display_schema_elements(app, None, se_list)
         return

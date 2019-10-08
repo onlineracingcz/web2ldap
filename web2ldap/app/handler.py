@@ -762,7 +762,7 @@ class AppHandler(LogHelper):
                         error_msg='No host specified.'
                     )
                     return
-                elif len(init_uri_list) == 1:
+                if len(init_uri_list) == 1:
                     init_uri = init_uri_list[0]
                 else:
                     # more than one possible servers => let user choose one
@@ -839,7 +839,7 @@ class AppHandler(LogHelper):
                 )
                 return
 
-            elif (
+            if (
                     (who is not None and cred is not None) or
                     (login_mech is not None and login_mech.encode('ascii') in ldap0.sasl.SASL_NONINTERACTIVE_MECHS)
                 ):

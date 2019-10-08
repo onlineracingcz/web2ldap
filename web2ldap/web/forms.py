@@ -103,9 +103,9 @@ class Field:
         """
         if pattern is None:
             return None, 0
-        elif isinstance(pattern, tuple):
+        if isinstance(pattern, tuple):
             return pattern
-        elif isinstance(pattern, str):
+        if isinstance(pattern, str):
             return pattern, 0
         raise TypeError('Expected pattern to be None, str or tuple, got %r' % (pattern,))
 
