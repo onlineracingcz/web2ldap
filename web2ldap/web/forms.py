@@ -174,7 +174,9 @@ class Field:
         This method can be used to modify the user's value
         before storing it into self.value.
         """
-        assert isinstance(value, (str, bytes)), TypeError('Expected value to be str or bytes, was %r' % (value))
+        assert isinstance(value, (str, bytes)), TypeError(
+            'Expected value to be str or bytes, was %r' % (value,)
+        )
         if isinstance(value, bytes):
             value = self._decodeValue(value)
         # Length valid?
