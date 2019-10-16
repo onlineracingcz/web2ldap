@@ -1040,8 +1040,8 @@ def w2l_search(app):
                         app.form.hiddenFieldHTML('search_resnumber', u'0', u''),
                         app.form.hiddenFieldHTML('search_attrs', u','.join(search_attrs), u''),
                     )),
-                    export_field.inputHTML(),
-                    web2ldap.app.form.InclOpAttrsCheckbox().inputHTML(),
+                    export_field.input_html(),
+                    web2ldap.app.form.InclOpAttrsCheckbox().input_html(),
                 )
             )
 

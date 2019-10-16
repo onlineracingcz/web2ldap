@@ -426,9 +426,9 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             # form for searching group entries
             app.begin_form('groupadm', 'GET'),
             app.form.hiddenFieldHTML('dn', app.dn, u''),
-            group_search_root_field.inputHTML(title='Search root for searching group entries'),
-            app.form.field['groupadm_name'].inputHTML(),
-            app.form.field['groupadm_view'].inputHTML(
+            group_search_root_field.input_html(title='Search root for searching group entries'),
+            app.form.field['groupadm_name'].input_html(),
+            app.form.field['groupadm_view'].input_html(
                 title='Group entries list',
                 default=str(groupadm_view),
             ),

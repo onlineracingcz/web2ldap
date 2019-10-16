@@ -220,15 +220,15 @@ def w2l_rename(app):
         rename_template_str.format(
             form_begin=app.begin_form('rename', 'POST'),
             field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
-            field_rename_newrdn=app.form.field['rename_newrdn'].inputHTML(),
-            field_rename_new_superior=rename_new_superior_field.inputHTML(),
+            field_rename_newrdn=app.form.field['rename_newrdn'].input_html(),
+            field_rename_new_superior=rename_new_superior_field.input_html(),
             text_name_forms=name_forms_text,
-            field_rename_supsearchurl=rename_supsearchurl_field.inputHTML(),
+            field_rename_supsearchurl=rename_supsearchurl_field.input_html(),
             value_rename_newsupfilter=app.form.utf2display(rename_newsupfilter_default),
-            field_rename_search_root=rename_search_root_field.inputHTML(
+            field_rename_search_root=rename_search_root_field.input_html(
                 default=rename_searchroot_default,
             ),
-            field_scope=app.form.field['scope'].inputHTML(default=scope_default),
+            field_scope=app.form.field['scope'].input_html(default=scope_default),
             text_dit_structure_rule=dit_structure_rule_html,
         )
     )

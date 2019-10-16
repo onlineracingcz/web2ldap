@@ -761,8 +761,8 @@ def oid_input_form(app, oid=None):
         'oid',
         u'OID or descriptive name of schema element',
         default=oid
-    ).inputHTML(oid)
-    oid_class_select_html = app.form.field['oid_class'].inputHTML('')
+    ).input_html(oid)
+    oid_class_select_html = app.form.field['oid_class'].input_html('')
     return app.form_html(
         'oid', 'Search', 'GET',
         [('dn', app.dn)],

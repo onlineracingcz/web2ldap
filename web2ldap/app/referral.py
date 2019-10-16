@@ -93,11 +93,11 @@ def w2l_chasereferral(app, ref_exc):
         name='login_search_root',
     )
     login_fields = login_template_str.format(
-        field_login_mech=app.form.field['login_mech'].inputHTML(),
+        field_login_mech=app.form.field['login_mech'].input_html(),
         value_ldap_who=app.form.utf2display(app.ls.who),
         value_ldap_mapping=app.form.utf2display(app.binddn_mapping),
-        field_login_search_root=login_search_root_field.inputHTML(),
-        field_login_authzid_prefix=app.form.field['login_authzid_prefix'].inputHTML(),
+        field_login_search_root=login_search_root_field.input_html(),
+        field_login_authzid_prefix=app.form.field['login_authzid_prefix'].input_html(),
         value_submit='Chase Referral',
         value_currenttime=time.strftime(r'%Y%m%d%H%M%SZ', time.gmtime()),
     )
@@ -117,7 +117,7 @@ def w2l_chasereferral(app, ref_exc):
             login_fields,
         )
     )
-    app.form.hiddenInputFields(
+    app.form.hidden_fields(
         app.outf,
         ignore_fields={'sid', 'host', 'dn', 'who', 'cred', 'login_search_root'},
     )

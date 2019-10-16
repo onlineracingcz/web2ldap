@@ -179,9 +179,9 @@ def bulkmod_input_form(
         </tr>
         """ % (
             i, i,
-            bulkmod_attr_select.inputHTML(default=bulkmod_at[i]),
-            app.form.field['bulkmod_op'].inputHTML(default=bulkmod_op[i]),
-            app.form.field['bulkmod_av'].inputHTML(default=bulkmod_av[i]),
+            bulkmod_attr_select.input_html(default=bulkmod_at[i]),
+            app.form.field['bulkmod_op'].input_html(default=bulkmod_op[i]),
+            app.form.field['bulkmod_av'].input_html(default=bulkmod_av[i]),
             (i in input_errors)*'&larr; Input error!'
         )
         for i in range(len(bulkmod_at))
@@ -229,7 +229,7 @@ def bulkmod_input_form(
         """.format(
             text_msg=Msg,
             form_begin=app.begin_form('bulkmod', 'POST'),
-            field_bulkmod_ctrl=app.form.field['bulkmod_ctrl'].inputHTML(default=app.form.field['bulkmod_ctrl'].value),
+            field_bulkmod_ctrl=app.form.field['bulkmod_ctrl'].input_html(default=app.form.field['bulkmod_ctrl'].value),
             input_fields=input_fields,
             field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, app.dn),
             field_hidden_filterstr=app.form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
@@ -238,11 +238,11 @@ def bulkmod_input_form(
                 str(scope),
                 str(ldap0.ldapurl.SEARCH_SCOPE_STR[scope]),
             ),
-            field_bulkmod_newsuperior=app.form.field['bulkmod_newsuperior'].inputHTML(
+            field_bulkmod_newsuperior=app.form.field['bulkmod_newsuperior'].input_html(
                 default=bulkmod_newsuperior,
                 title=u'New superior DN where all entries are moved beneath',
             ),
-            field_bulkmod_cp=app.form.field['bulkmod_cp'].inputHTML(checked=bulkmod_cp),
+            field_bulkmod_cp=app.form.field['bulkmod_cp'].input_html(checked=bulkmod_cp),
         )
     )
     web2ldap.app.gui.footer(app)

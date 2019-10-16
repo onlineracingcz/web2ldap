@@ -57,8 +57,8 @@ def dds_form(app, msg):
             form_begin=app.begin_form('dds', 'POST'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
             text_dn=app.display_dn(app.dn),
-            field_dds_renewttlnum=app.form.field['dds_renewttlnum'].inputHTML(),
-            field_dds_renewttlfac=app.form.field['dds_renewttlfac'].inputHTML(),
+            field_dds_renewttlnum=app.form.field['dds_renewttlnum'].input_html(),
+            field_dds_renewttlfac=app.form.field['dds_renewttlfac'].input_html(),
         )
     )
     web2ldap.app.gui.footer(app)

@@ -229,9 +229,9 @@ def passwd_form(
         disable_syncnthash_end={False:'', True:'-->'}[not (show_clientside_pw_fields and nthash_available)],
         disable_settimesync_start={False:'', True:'<!--'}[own_pwd_change or not show_clientside_pw_fields],
         disable_settimesync_end={False:'', True:'-->'}[own_pwd_change or not show_clientside_pw_fields],
-        form_field_passwd_scheme=app.form.field['passwd_scheme'].inputHTML(),
-        form_field_passwd_ntpasswordsync=app.form.field['passwd_ntpasswordsync'].inputHTML(),
-        form_field_passwd_settimesync=app.form.field['passwd_settimesync'].inputHTML(checked=(not own_pwd_change)),
+        form_field_passwd_scheme=app.form.field['passwd_scheme'].input_html(),
+        form_field_passwd_ntpasswordsync=app.form.field['passwd_ntpasswordsync'].input_html(),
+        form_field_passwd_settimesync=app.form.field['passwd_settimesync'].input_html(checked=(not own_pwd_change)),
     ))
 
     web2ldap.app.gui.footer(app)

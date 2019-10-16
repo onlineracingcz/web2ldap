@@ -72,11 +72,11 @@ def w2l_login(
     login_mech = app.form.getInputValue('login_mech', [login_default_mech] or u'')[0]
 
     login_fields = login_template_str.format(
-        field_login_mech=app.form.field['login_mech'].inputHTML(default=login_mech),
+        field_login_mech=app.form.field['login_mech'].input_html(default=login_mech),
         value_ldap_who=app.form.utf2display(who or u''),
         value_ldap_mapping=app.form.utf2display(app.binddn_mapping),
-        field_login_search_root=login_search_root_field.inputHTML(),
-        field_login_authzid_prefix=app.form.field['login_authzid_prefix'].inputHTML(),
+        field_login_search_root=login_search_root_field.input_html(),
+        field_login_authzid_prefix=app.form.field['login_authzid_prefix'].input_html(),
         value_submit={False:'Login', True:'Retry w/login'}[relogin],
         value_currenttime=time.strftime(r'%Y%m%d%H%M%SZ', time.gmtime()),
     )

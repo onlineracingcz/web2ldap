@@ -53,7 +53,7 @@ class Field:
         required
             flag which marks field as mandantory input field
         accesskey
-            key for accessing this field to be displayed by method inputHTML()
+            key for accessing this field to be displayed by method input_html()
         pattern
             regex pattern of valid values either as string
             or tuple (pattern,options)
@@ -65,7 +65,6 @@ class Field:
         self.maxValues = maxValues
         self.required = required
         self.accesskey = accesskey
-        self.inputHTMLTemplate = r'%s'
         # Charset is the preferred character set of the browser.
         # This is set by Form.add() the something meaningful.
         self._charset = 'utf-8'
@@ -242,18 +241,16 @@ class Textarea(Field):
         patternoptions = patternoptions | re.M | re.S
         Field.setRegex(self, (patternstring, patternoptions))
 
-    def inputHTML(self, default=None, id_value=None, title=None):
+    def input_html(self, default=None, id_value=None, title=None):
         """Returns string with HTML input field."""
-        return self.inputHTMLTemplate % (
-            '<textarea %stitle="%s" name="%s" %s rows="%d" cols="%d">%s</textarea>' % (
-                self.id_attr(id_value),
-                self.titleHTML(title),
-                self.name,
-                self._accesskey_attr(),
-                self.rows,
-                self.cols,
-                self._default_html(default),
-            )
+        return '<textarea %stitle="%s" name="%s" %s rows="%d" cols="%d">%s</textarea>' % (
+            self.id_attr(id_value),
+            self.titleHTML(title),
+            self.name,
+            self._accesskey_attr(),
+            self.rows,
+            self.cols,
+            self._default_html(default),
         )
 
 
@@ -279,7 +276,7 @@ class Input(Field):
         self.size = size or maxLen
         Field.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accesskey)
 
-    def inputHTML(self, default=None, id_value=None, title=None):
+    def input_html(self, default=None, id_value=None, title=None):
         if self.input_type is not None:
             type_attr = ' type="%s"' % (escape_html(self.input_type))
         else:
@@ -288,18 +285,16 @@ class Input(Field):
             pattern_attr = ' pattern="%s"' % (escape_html(self._re.pattern))
         else:
             pattern_attr = ''
-        return self.inputHTMLTemplate % (
-            '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d"%s%s value="%s">' % (
-                self.id_attr(id_value),
-                self.titleHTML(title),
-                self.name,
-                self._accesskey_attr(),
-                self.maxLen,
-                self.size,
-                type_attr,
-                pattern_attr,
-                self._default_html(default),
-            )
+        return '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d"%s%s value="%s">' % (
+            self.id_attr(id_value),
+            self.titleHTML(title),
+            self.name,
+            self._accesskey_attr(),
+            self.maxLen,
+            self.size,
+            type_attr,
+            pattern_attr,
+            self._default_html(default),
         )
 
 
@@ -322,21 +317,19 @@ class HiddenInput(Input):
         ):
         Input.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accesskey)
 
-    def inputHTML(self, default=None, id_value=None, title=None, show=0):
+    def input_html(self, default=None, id_value=None, title=None, show=0):
         default_html = self._default_html(default)
         if show:
             default_str = default_html
         else:
             default_str = ''
-        return self.inputHTMLTemplate % (
-            '<input type="hidden" %stitle="%s" name="%s" %s  value="%s">%s' % (
-                self.id_attr(id_value),
-                self.titleHTML(title),
-                self.name,
-                self._accesskey_attr(),
-                default_html,
-                default_str
-            )
+        return '<input type="hidden" %stitle="%s" name="%s" %s  value="%s">%s' % (
+            self.id_attr(id_value),
+            self.titleHTML(title),
+            self.name,
+            self._accesskey_attr(),
+            default_html,
+            default_str
         )
 
 
@@ -379,15 +372,13 @@ class File(Input):
         """
         return value
 
-    def inputHTML(self, default=None, id_value=None, title=None, mimeType=None):
-        return self.inputHTMLTemplate % (
-            '<input type="file" %stitle="%s" name="%s" %s accept="%s">' % (
-                self.id_attr(id_value),
-                self.titleHTML(title),
-                self.name,
-                self._accesskey_attr(),
-                mimeType or self.mimeType
-            )
+    def input_html(self, default=None, id_value=None, title=None, mimeType=None):
+        return '<input type="file" %stitle="%s" name="%s" %s accept="%s">' % (
+            self.id_attr(id_value),
+            self.titleHTML(title),
+            self.name,
+            self._accesskey_attr(),
+            mimeType or self.mimeType
         )
 
 
@@ -456,7 +447,7 @@ class Radio(Field):
             self.maxLen = max(map(len, self.optionValues.keys()))
         self.options = list(options)
 
-    def inputHTML(self, default=None, id_value=None, title=None):
+    def input_html(self, default=None, id_value=None, title=None):
         s = []
         default_value = self._defaultValue(default)
         for i in self.options:
@@ -485,7 +476,7 @@ class Radio(Field):
                     optionText.encode(self.charset)
                 )
             )
-        return self.inputHTMLTemplate % '\n'.join(s)
+        return '\n'.join(s)
 
     def set_default(self, default):
         """
@@ -562,7 +553,7 @@ class Select(Radio):
             return self.default or set()
         return self.default
 
-    def inputHTML(self, default=None, id_value=None, title=None):
+    def input_html(self, default=None, id_value=None, title=None):
         res = ['<select %stitle="%s" name="%s" %s  size="%d" %s>' % (
             self.id_attr(id_value),
             self.titleHTML(title),
@@ -602,7 +593,7 @@ class Select(Radio):
                 )
             )
         res.append('</select>')
-        return self.inputHTMLTemplate % '\n'.join(res)
+        return '\n'.join(res)
 
 
 class DataList(Input, Select):
@@ -635,24 +626,22 @@ class DataList(Input, Select):
         self.setOptions(options)
         self.set_default(default)
 
-    def inputHTML(self, default=None, id_value=None, title=None):
+    def input_html(self, default=None, id_value=None, title=None):
         datalist_id = str(uuid.uuid4())
         s = [
-            self.inputHTMLTemplate % (
-                '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d" value="%s" list="%s">' % (
-                    self.id_attr(id_value),
-                    self.titleHTML(title),
-                    self.name,
-                    self._accesskey_attr(),
-                    self.maxLen,
-                    self.size,
-                    self._default_html(default),
-                    datalist_id,
-                )
+            '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d" value="%s" list="%s">' % (
+                self.id_attr(id_value),
+                self.titleHTML(title),
+                self.name,
+                self._accesskey_attr(),
+                self.maxLen,
+                self.size,
+                self._default_html(default),
+                datalist_id,
             )
         ]
         s.append(
-            Select.inputHTML(
+            Select.input_html(
                 self,
                 default=default,
                 id_value=datalist_id,
@@ -686,18 +675,16 @@ class Checkbox(Field):
         self.checked = checked
         Field.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accesskey)
 
-    def inputHTML(self, default=None, id_value=None, title=None, checked=None):
+    def input_html(self, default=None, id_value=None, title=None, checked=None):
         if checked is None:
             checked = self.checked
-        return self.inputHTMLTemplate % (
-            '<input type="checkbox" %stitle="%s" name="%s" %s value="%s"%s>' % (
-                self.id_attr(id_value),
-                self.titleHTML(title),
-                self.name,
-                self._accesskey_attr(),
-                self._default_html(default),
-                ' checked'*(checked),
-            )
+        return '<input type="checkbox" %stitle="%s" name="%s" %s value="%s"%s>' % (
+            self.id_attr(id_value),
+            self.titleHTML(title),
+            self.name,
+            self._accesskey_attr(),
+            self._default_html(default),
+            ' checked'*(checked),
         )
 
 
@@ -960,7 +947,7 @@ class Form:
                 result.append((f.name, val))
         return result # allInputFields()
 
-    def hiddenInputFields(self, outf=sys.stdout, ignore_fields=None):
+    def hidden_fields(self, outf=sys.stdout, ignore_fields=None):
         """
         Output all parameters as hidden fields.
 
@@ -981,13 +968,12 @@ class Form:
                         escape_html(val.encode(field.charset)),
                     )
                 )
-        # end of Form.hiddenInputFields()
+        # end of Form.hidden_fields()
 
     def _add_fields(self):
         """
         can be overwritten to add Field instances to the form
         """
-        pass
 
     def _set_charset(self):
         form_codec = codecs.lookup(self.accept_charset)

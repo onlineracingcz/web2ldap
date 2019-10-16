@@ -394,7 +394,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                         ),
 
                         web2ldap.app.gui.HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
-                        input_field.inputHTML(
+                        input_field.input_html(
                             id_value=u'_'.join((
                                 u'inputattr', attr_type_name, str(attr_index)
                             )).encode(self._app.form.accept_charset),
@@ -735,22 +735,22 @@ def ObjectClassForm(
         )
         if existing_misc_oc:
             misc_select_field_th = '<th><label for="add_misc_oc">Misc.<label></th>'
-            misc_select_field_td = '<td>%s</td>' % (misc_select_field.inputHTML(id_value='add_misc_oc'))
+            misc_select_field_td = '<td>%s</td>' % (misc_select_field.input_html(id_value='add_misc_oc'))
         else:
             misc_select_field_th = ''
             misc_select_field_td = ''
 
         input_currentformtype = app.form.getInputValue('in_oft', ['Template'])[0]
 
-        add_structural_oc_html = structural_select_field.inputHTML(
+        add_structural_oc_html = structural_select_field.input_html(
             id_value='add_structural_oc',
             title='Structural object classes to be added',
         )
-        add_auxiliary_oc_html = auxiliary_select_field.inputHTML(
+        add_auxiliary_oc_html = auxiliary_select_field.input_html(
             id_value='add_auxiliary_oc',
             title='Auxiliary object classes to be added',
         )
-        add_abstract_oc_html = abstract_select_field.inputHTML(
+        add_abstract_oc_html = abstract_select_field.input_html(
             id_value='add_abstract_oc',
             title='Abstract object classes to be added',
         )
@@ -780,7 +780,7 @@ def ObjectClassForm(
           </table>
         %s
         """ % (
-            app.form.field['in_ft'].inputHTML(default=input_currentformtype),
+            app.form.field['in_ft'].input_html(default=input_currentformtype),
             misc_select_field_th,
             add_structural_oc_html,
             add_auxiliary_oc_html,
@@ -1226,7 +1226,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
     app.outf.write(
         '%s\n<p>RDN: %s</p>\n%s' % (
             app.form.hiddenFieldHTML('add_basedn', add_basedn, u''),
-            rdn_input_field.inputHTML(),
+            rdn_input_field.input_html(),
             app.form.hiddenFieldHTML('in_ocf', u'exp', u''),
         )
     )

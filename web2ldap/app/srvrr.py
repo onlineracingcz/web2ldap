@@ -69,13 +69,13 @@ def w2l_chasesrvrecord(app, host_list):
             app.begin_form(app.command, 'POST'),
             app.form.hiddenFieldHTML('dn', app.dn, u''),
             app.form.utf2display(app.dn),
-            host_select_field.inputHTML(),
+            host_select_field.input_html(),
             '', '', '', ''
             '',
             'Change host',
         )
     )
-    app.form.hiddenInputFields(
+    app.form.hidden_fields(
         app.outf,
         ignore_fields={'ldapurl', 'host', 'dn', 'who', 'cred'},
     )

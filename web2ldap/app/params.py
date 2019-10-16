@@ -137,11 +137,11 @@ def w2l_params(app):
         """ % (
             app.form_html(
                 'read', 'Go to', 'GET', [],
-                extrastr=app.form.field['dn'].inputHTML(),
+                extrastr=app.form.field['dn'].input_html(),
             ),
             app.form_html(
                 'params', 'Set alias deref', 'GET', [],
-                extrastr=app.form.field['ldap_deref'].inputHTML(default=str(app.ls.l.deref)),
+                extrastr=app.form.field['ldap_deref'].input_html(default=str(app.ls.l.deref)),
             ),
             app.anchor(
                 'params',

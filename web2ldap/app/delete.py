@@ -294,7 +294,7 @@ def del_subtree_form(app, scope):
         text_dn=app.display_dn(app.dn),
         text_num_sub_ordinates=numSubordinates_html,
         text_num_all_sub_ordinates=numAllSubordinates_html,
-        field_delete_scope=delete_scope_field.inputHTML(),
+        field_delete_scope=delete_scope_field.input_html(),
         value_delete_ctrl_oid=web2ldap.ldapsession.CONTROL_TREEDELETE,
         value_delete_ctrl_checked=' checked'*int(
             web2ldap.ldapsession.CONTROL_TREEDELETE in app.ls.supportedControl and \
@@ -398,7 +398,7 @@ def w2l_delete(app):
             DELETE_FORM_TEMPLATE.format(
                 form_begin=app.begin_form('delete', 'POST'),
                 inner_form=inner_form,
-                field_delete_ctrl=app.form.field['delete_ctrl'].inputHTML(default=delete_ctrl_oids),
+                field_delete_ctrl=app.form.field['delete_ctrl'].input_html(default=delete_ctrl_oids),
                 field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
             )
         )

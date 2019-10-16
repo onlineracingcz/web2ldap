@@ -492,9 +492,9 @@ def w2l_read(app):
                     ('search_attrs', u','.join(map(str, wanted_attrs or []))),
                 ],
                 extrastr='\n'.join((
-                    export_field.inputHTML(),
+                    export_field.input_html(),
                     'Incl. op. attrs.:',
-                    web2ldap.app.form.InclOpAttrsCheckbox().inputHTML(),
+                    web2ldap.app.form.InclOpAttrsCheckbox().input_html(),
                 )),
                 target='web2ldapexport',
             ),

@@ -40,7 +40,7 @@ def w2l_connect(app, h1_msg='Connect', error_msg=''):
             options=web2ldapcnf.hosts.ldap_uri_list,
         )
         uri_select_field.charset = 'utf-8'
-        uri_select_field_html = uri_select_field.inputHTML(
+        uri_select_field_html = uri_select_field.input_html(
             title=u'List of pre-configured directories to connect to',
         )
     else:
