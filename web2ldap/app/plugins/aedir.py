@@ -2351,5 +2351,32 @@ syntax_registry.reg_at(
 )
 
 
+class AEChildClasses(SelectList):
+    oid = 'AEChildClasses-oid'
+    desc = 'AE-DIR: Structural object classes allowed to be added in child entries'
+    attr_value_dict = {
+        '-/-': '',
+        'aeAuthcToken': 'Authentication Token (aeAuthcToken)',
+        'aeContact': 'Contact (aeContact)',
+        'aeDept': 'Department (aeDept)',
+        'aeLocation': 'Location (aeLocation)',
+        'aeMailGroup': 'Mail Group (aeMailGroup)',
+        'aePerson': 'Person (aePerson)',
+        'aePolicy': 'Policy (aePolicy)',
+        'aeService': 'Service/tool Account (aeService)',
+        'aeSrvGroup': 'Service Group (aeSrvGroup)',
+        'aeSudoRule': 'Sudoers Rule (sudoRole)',
+        'aeUser': 'User account (aeUser)',
+        'aeGroup': 'User group (aeGroup)',
+        'aeTag': 'Tag (aeTag)',
+    }
+
+syntax_registry.reg_at(
+    AEChildClasses.oid, [
+        AE_OID_PREFIX+'.4.49', # aeChildClasses
+    ]
+)
+
+
 # Register all syntax classes in this module
 syntax_registry.reg_syntaxes(__name__)
