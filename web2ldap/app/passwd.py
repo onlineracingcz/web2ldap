@@ -311,10 +311,10 @@ def w2l_passwd(app):
     if passwd_forcechange:
         # draft-behera-password-policy
         if '1.3.6.1.4.1.42.2.27.8.1.22' in app.schema.sed[AttributeType]:
-            passwd_modlist.append((ldap0.MOD_REPLACE, 'pwdReset', 'TRUE'))
+            passwd_modlist.append((ldap0.MOD_REPLACE, b'pwdReset', 'TRUE'))
         # MS AD
         elif '1.2.840.113556.1.4.96' in app.schema.sed[AttributeType]:
-            passwd_modlist.append((ldap0.MOD_REPLACE, 'pwdLastSet', '0'))
+            passwd_modlist.append((ldap0.MOD_REPLACE, b'pwdLastSet', '0'))
 
     if not passwd_action:
         raise web2ldap.app.core.ErrorExit(u'No password action chosen.')
@@ -373,7 +373,7 @@ def w2l_passwd(app):
                     # Ensure supplemental class is not already in set of object classes
                     if aux_class in user_objectclasses:
                         continue
-                    passwd_modlist.append((ldap0.MOD_ADD, 'objectClass', [aux_class]))
+                    passwd_modlist.append((ldap0.MOD_ADD, b'objectClass', [aux_class]))
                     break
                 except KeyError:
                     pass
@@ -383,14 +383,14 @@ def w2l_passwd(app):
         # Set "standard" password of LDAP entry
         if '1.2.840.113556.1.4.90' in all_attrs:
             # Active Directory's password attribute unicodePwd
-            passwd_attr_type = 'unicodePwd'
+            passwd_attr_type = b'unicodePwd'
             new_passwd_value = unicode_pwd(password=passwd_input)
             passwd_scheme = ''
             if old_password:
                 old_passwd_value = unicode_pwd(old_password)
         else:
             # Assume standard password attribute userPassword
-            passwd_attr_type = 'userPassword'
+            passwd_attr_type = b'userPassword'
             new_passwd_value = user_password_hash(
                 passwd_input.encode(app.ls.charset),
                 passwd_scheme,
@@ -428,8 +428,8 @@ def w2l_passwd(app):
             passwd_modlist.append(
                 (
                     ldap0.MOD_REPLACE,
-                    'shadowLastChange',
-                    str(int(pwd_change_timestamp/86400)),
+                    b'shadowLastChange',
+                    str(int(pwd_change_timestamp/86400)).encode(app.ls.charset),
                 )
             )
 
@@ -440,22 +440,22 @@ def w2l_passwd(app):
             passwd_modlist.append(
                 (
                     ldap0.MOD_REPLACE,
-                    'sambaNTPassword',
-                    ntlm_password_hash(passwd_input),
+                    b'sambaNTPassword',
+                    [ntlm_password_hash(passwd_input.encode(app.ls.charset))],
                 )
             )
             if passwd_settimesync and '1.3.6.1.4.1.7165.2.1.27' in all_attrs:
                 passwd_modlist.append(
                     (
                         ldap0.MOD_REPLACE,
-                        'sambaPwdLastSet',
-                        str(int(pwd_change_timestamp)),
+                        b'sambaPwdLastSet',
+                        [str(int(pwd_change_timestamp)).encode(app.ls.charset)],
                     )
                 )
 
         password_attr_types_msg = 'Password-related attributes set: %s' % (', '.join(
             [
-                app.form.utf2display(attr_type)
+                app.form.utf2display(attr_type.decode('ascii'))
                 for _, attr_type, _ in passwd_modlist
             ]
         ))
