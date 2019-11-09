@@ -45,6 +45,10 @@ from web2ldap.web.forms import \
     InvalidValueFormat
 
 
+# Work around https://bugs.python.org/issue29613
+http.cookies.Morsel._reserved['samesite'] = 'SameSite'
+
+
 class Web2LDAPForm(Form):
     """
     Form sub-class for a web2ldap use-case
@@ -111,6 +115,7 @@ class Web2LDAPForm(Form):
         cki[cookie_name]['domain'] = self.get_cookie_domain()
         cki[cookie_name]['max-age'] = str(self.cookie_max_age)
         cki[cookie_name]['httponly'] = None
+        cki[cookie_name]['samesite'] = 'Strict'
         if self.env.get('HTTPS', None) == 'on':
             cki[cookie_name]['secure'] = None
         self.next_cookie.update(cki)
