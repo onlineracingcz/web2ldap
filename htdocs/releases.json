@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.5",
+         "state": "testing",
+         "scope": "minor fix",
+         "changes": "Fixed regressions setting value-less cookie flags, added strict SameSite cookie policy.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.5.tar.gz",
+         "published": "2019-11-09T18:00:00+00:00"
+      },
+      {
          "version": "1.5.4",
          "state": "testing",
          "scope": "minor fix",
