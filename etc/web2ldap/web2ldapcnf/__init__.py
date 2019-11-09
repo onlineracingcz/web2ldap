@@ -135,6 +135,7 @@ http_headers = {
     'Referrer-Policy': 'no-referrer',
     # Content Security Policy
     'Content-Security-Policy': ' '.join((
+        "base-uri 'none';",
         "child-src 'none';",
         "connect-src 'none';",
         "default-src 'none';",
