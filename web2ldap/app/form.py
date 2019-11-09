@@ -114,10 +114,10 @@ class Web2LDAPForm(Form):
         cki[cookie_name]['path'] = self.script_name
         cki[cookie_name]['domain'] = self.get_cookie_domain()
         cki[cookie_name]['max-age'] = str(self.cookie_max_age)
-        cki[cookie_name]['httponly'] = None
+        cki[cookie_name]['httponly'] = True
         cki[cookie_name]['samesite'] = 'Strict'
         if self.env.get('HTTPS', None) == 'on':
-            cki[cookie_name]['secure'] = None
+            cki[cookie_name]['secure'] = True
         self.next_cookie.update(cki)
         return cki # set_cookie()
 
