@@ -143,6 +143,8 @@ http_headers = {
         "frame-ancestors 'none';",
         "frame-src 'none';",
         "img-src 'self' data:;",
+        "media-src 'none';",
+        "object-src 'none';",
         "script-src 'none';",
         "style-src 'self';",
         #"report-uri https://logger.example.com/csp-error-handler",
