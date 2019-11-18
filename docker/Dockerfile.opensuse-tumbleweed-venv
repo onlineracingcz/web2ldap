@@ -7,7 +7,7 @@ RUN zypper --non-interactive dup --auto-agree-with-licenses --no-allow-vendor-ch
 # install packages from openSUSE standard repo
 RUN zypper --non-interactive install --no-confirm --no-recommends ca-certificates ca-certificates-mozilla
 # Python3 and some modules
-RUN zypper --non-interactive install --no-confirm --no-recommends python3 python3-virtualenv python3-setuptools
+RUN zypper --non-interactive install --no-confirm --no-recommends python3 python3-setuptools
 
 # install web2ldap in virtual env
 RUN python3 -m venv /opt/web2ldap
