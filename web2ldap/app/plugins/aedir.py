@@ -1475,7 +1475,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
         return attr_value_dict
 
     def _is_mail_account(self):
-        return 'inetLocalMailRecipient' in self._entry['objectClass']
+        return b'inetLocalMailRecipient' in self._entry['objectClass']
 
     def _validate(self, attrValue: bytes) -> bool:
         if self._is_mail_account():
@@ -1490,7 +1490,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if self._is_mail_account():
             # make sure only non-empty strings are in attribute value list
-            if not list(filter(None, map(str.strip, attrValues))):
+            if not list(filter(None, map(bytes.strip, attrValues))):
                 try:
                     attrValues = [self._entry['mailLocalAddress'][0]]
                 except KeyError:
@@ -1525,7 +1525,7 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
         if not RFC822Address._validate(self, attrValue):
             return False
         attr_value_dict = self._get_attr_value_dict()
-        if not attr_value_dict or attr_value_dict.keys() == [u'']:
+        if not attr_value_dict or attr_value_dict.keys() == ['']:
             return True
         return DynamicValueSelectList._validate(self, attrValue)
 
@@ -1538,7 +1538,7 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
             '(aePerson=%s)'
             '(mailLocalAddress=*)'
           ')'
-        ) % self._app.ls.uc_encode(self._dn)[0]
+        ) % ldap0.filter.escape_str(self._dn)
 
 syntax_registry.reg_at(
     AEPersonMailaddress.oid, [
