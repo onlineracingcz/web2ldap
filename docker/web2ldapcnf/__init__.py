@@ -135,6 +135,7 @@ http_headers = {
     'Referrer-Policy': 'no-referrer',
     # Content Security Policy
     'Content-Security-Policy': ' '.join((
+        "base-uri 'none';",
         "child-src 'none';",
         "connect-src 'none';",
         "default-src 'none';",
@@ -143,6 +144,8 @@ http_headers = {
         "frame-ancestors 'none';",
         "frame-src 'none';",
         "img-src 'self' data:;",
+        "media-src 'none';",
+        "object-src 'none';",
         "script-src 'none';",
         "style-src 'self';",
         #"report-uri https://logger.example.com/csp-error-handler",
