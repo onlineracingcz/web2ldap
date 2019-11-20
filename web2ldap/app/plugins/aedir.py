@@ -1399,7 +1399,7 @@ class AEDerefAttribute(DirectoryString):
             if ae_person_attribute is not None:
                 result = [ae_person_attribute.encode(self._app.ls.charset)]
             else:
-                raise KeyError
+                result = []
         else:
             result = attrValues
         return result
@@ -2289,7 +2289,9 @@ class AEOathHOTPToken(OathHOTPToken):
         if 'aePerson' in self._entry:
             return '(&{0}(aeOwner={1}))'.format(
                 OathHOTPToken._filterstr(self),
-                self._entry['aePerson'][0],
+                ldap0.filter.escape_str(
+                    self._entry['aePerson'][0].decode(self._app.form.accept_charset)
+                ),
             )
         return OathHOTPToken._filterstr(self)
 
