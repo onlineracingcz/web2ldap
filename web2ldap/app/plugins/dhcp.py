@@ -246,7 +246,7 @@ class DHCPHWAddress(MacAddress):
     def sanitize(self, attrValue: bytes) -> bytes:
         attrValue = attrValue.strip()
         if len(attrValue) == 17:
-            return 'ethernet %s' % attrValue
+            return b'ethernet %s' % attrValue
         return attrValue
 
 syntax_registry.reg_at(
