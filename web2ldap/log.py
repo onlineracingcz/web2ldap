@@ -16,6 +16,7 @@ import os
 import sys
 import logging
 import pprint
+import collections
 
 import web2ldap.__about__
 
@@ -37,6 +38,9 @@ HTTP_ENV_VARS = {
     'SERVER_PORT',
 }
 
+EXC_TYPE_COUNTER = collections.defaultdict(lambda: 0)
+
+
 class LogHelper:
     """
     mix-in class for logging with a class-specific log prefix
@@ -56,10 +60,13 @@ def log_exception(env, ls, debug=__debug__):
     """
     # Get exception instance and traceback info
     exc_type, exc_value, exc_trb = sys.exc_info()
+    global EXC_TYPE_COUNTER
+    EXC_TYPE_COUNTER[exc_type] += 1
     logentry = [
         '------------------- Unhandled error -------------------',
-        'web2ldap version: %s' % web2ldap.__about__.__version__,
-        'LDAPSession instance: %r' % (ls),
+        'web2ldap %s' % (web2ldap.__about__.__version__,),
+        '%s raised %d times' % (exc_type, EXC_TYPE_COUNTER[exc_type]),
+        'LDAPSession instance: %r' % (ls,),
         '%s.%s: %s' % (exc_type.__module__, exc_type.__name__, exc_value),
     ]
     if debug and ls is not None:

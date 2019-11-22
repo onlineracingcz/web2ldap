@@ -25,6 +25,8 @@ import web2ldap.app.gui
 from web2ldap.app.session import session_store, cleanUpThread
 from web2ldap.utctime import strftimeiso8601
 from ..ldapsession import LDAPSession
+from ..log import EXC_TYPE_COUNTER
+
 
 MONITOR_TEMPLATE = """
 <h1>Monitor</h1>
@@ -107,6 +109,12 @@ MONITOR_TEMPLATE = """
 <table>
   <tr><th>Remote IP</th><th>Count</th><th>Rate</th></tr>
   {text_remoteiphitlist}
+</table>
+
+<h3>Unhandled exceptions:</h3>
+<table>
+  <tr><th>Exception</th><th>Count</th><th>Rate</th></tr>
+  {text_exc_counters}
 </table>
 
 <h2>Active sessions</h2>
@@ -197,6 +205,16 @@ def w2l_monitor(app):
                     float(count/uptime),
                 )
                 for ip, count in session_store.remote_ip_counter.most_common()
+            ]
+        ),
+        text_exc_counters='\n'.join(
+            [
+                '<tr><td>%s</td><td>%d</td><td>%0.4f</td></tr>' % (
+                    app.form.utf2display(str(exc_type)),
+                    exc_ctr,
+                    float(exc_ctr/uptime),
+                )
+                for exc_type, exc_ctr in EXC_TYPE_COUNTER.items()
             ]
         ),
     )
