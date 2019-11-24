@@ -202,6 +202,13 @@ access_allowed = {
         u'::1',
         u'fe00::0',
     ],
+    # access to <base-URL>/metrics
+    u'metrics': [
+        # local host-only access
+        u'127.0.0.0/255.0.0.0',
+        u'::1',
+        u'fe00::0',
+    ],
     # access to <base-URL>/locate
     u'locate': [
         # public access
