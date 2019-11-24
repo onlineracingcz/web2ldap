@@ -65,6 +65,7 @@ import web2ldap.app.urlredirect
 import web2ldap.app.bulkmod
 import web2ldap.app.srvrr
 import web2ldap.app.schema.viewer
+import web2ldap.app.metrics
 from web2ldap.app.gui import exception_message
 from web2ldap.app.form import Web2LDAPForm
 from web2ldap.app.session import session_store
@@ -129,8 +130,8 @@ COMMAND_FUNCTION = {
     'oid': web2ldap.app.schema.viewer.w2l_schema_viewer,
 }
 
-if web2ldap.app.monitor.METRICS_AVAIL:
-    COMMAND_FUNCTION['metrics'] = web2ldap.app.monitor.w2l_metrics
+if web2ldap.app.metrics.METRICS_AVAIL:
+    COMMAND_FUNCTION['metrics'] = web2ldap.app.metrics.w2l_metrics
 
 COMMAND_COUNT = {
     cmd: 0

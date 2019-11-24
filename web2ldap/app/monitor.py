@@ -28,16 +28,7 @@ from web2ldap.utctime import strftimeiso8601
 from ..ldapsession import LDAPSession
 from ..log import logger, EXC_TYPE_COUNTER
 from .core import STARTUP_TIME
-
-
-try:
-    import prometheus_client
-except ImportError:
-    METRICS_AVAIL = False
-    logger.info('prometheus_client not installed => disable metrics!')
-else:
-    METRICS_AVAIL = True
-    METRICS_CONTENT_TYPE, METRICS_CHARSET = prometheus_client.CONTENT_TYPE_LATEST.split('; charset=')
+from .metrics import METRICS_AVAIL
 
 
 MONITOR_TEMPLATE = """
@@ -302,18 +293,3 @@ def w2l_monitor(app):
         app.outf.write('No active sessions.\n')
 
     web2ldap.app.gui.footer(app)
-
-
-def w2l_metrics(app):
-    """
-    Prometheus Python Client - Custom Collector
-
-    https://github.com/prometheus/client_python/blob/master/README.md#custom-collectors
-    """
-    app.outf.set_headers(
-        web2ldap.app.gui.gen_headers(
-            content_type=METRICS_CONTENT_TYPE,
-            charset=METRICS_CHARSET,
-        )
-    )
-    app.outf.write_bytes(prometheus_client.generate_latest())
