@@ -132,6 +132,11 @@ COMMAND_FUNCTION = {
 if web2ldap.app.monitor.METRICS_AVAIL:
     COMMAND_FUNCTION['metrics'] = web2ldap.app.monitor.w2l_metrics
 
+COMMAND_COUNT = {
+    cmd: 0
+    for cmd in COMMAND_FUNCTION
+}
+
 
 syntax_registry.check()
 
@@ -684,6 +689,9 @@ class AppHandler(LogHelper):
         Really process the request
         """
         self.log(logging.DEBUG, 'Entering .run()')
+
+        # count command
+        COMMAND_COUNT[self.command] += 1
 
         # check for valid command
         if self.command not in COMMAND_FUNCTION:

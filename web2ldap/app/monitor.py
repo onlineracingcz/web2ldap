@@ -22,6 +22,7 @@ import web2ldapcnf
 
 import web2ldap.__about__
 import web2ldap.app.gui
+import web2ldap.app.handler
 from web2ldap.app.session import session_store, cleanUpThread
 from web2ldap.utctime import strftimeiso8601
 from ..ldapsession import LDAPSession
@@ -122,6 +123,12 @@ MONITOR_TEMPLATE = """
 <table>
   <tr><th>Remote IP</th><th>Count</th></tr>
   {text_remoteiphitlist}
+</table>
+
+<h3>Command URLs:</h3>
+<table>
+  <tr><th>URL</th><th>Count</th></tr>
+  {text_cmd_counters}
 </table>
 
 <h3>Unhandled exceptions:</h3>
@@ -230,6 +237,15 @@ def w2l_monitor(app):
                     count,
                 )
                 for ip, count in session_store.remote_ip_counter.most_common()
+            ]
+        ),
+        text_cmd_counters='\n'.join(
+            [
+                '<tr><td>%s</td><td>%d</td></tr>' % (
+                    app.form.utf2display(cmd),
+                    ctr,
+                )
+                for cmd, ctr in sorted(web2ldap.app.handler.COMMAND_COUNT.items())
             ]
         ),
         text_exc_counters='\n'.join(
