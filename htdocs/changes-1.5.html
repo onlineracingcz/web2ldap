@@ -12,13 +12,17 @@
     Fixed <var>str/bytes</var> regression in plugin class for <var>dhcpHWAddress</var>.
   </li>
   <li>
-    Counters for exception types of all unhandled exception are maintained
-    and displayed on monitor page.
-  </li>
-  <li>
-    Added metrics endpoint automatically available if module package
-    <a href="https://github.com/prometheus/client_python">prometheus_client</a>
-    is installed.
+    Added monitoring features:
+    <ul>
+      <li>
+        Added counters for exception types of all unhandled exceptions.
+      </li>
+      <li>
+        Added metrics endpoint automatically available if module package
+        <a href="https://github.com/prometheus/client_python">prometheus_client</a>
+        is installed.
+      </li>
+    </ul>
   </li>
 </ul>
 
