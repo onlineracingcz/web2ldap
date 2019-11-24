@@ -190,7 +190,7 @@ def w2l_monitor(app):
     )
 
     monitor_tmpl_vars = dict(
-        text_metricsurl=METRICS_AVAIL*'<p><a href="metrics">Metrics endpoint</a></p>',
+        text_metricsurl=METRICS_AVAIL*app.anchor('metrics', 'Metrics endpoint', []),
         text_version=web2ldap.__about__.__version__,
         text_sysfqdn=socket.getfqdn(),
         int_pid=os.getpid(),
