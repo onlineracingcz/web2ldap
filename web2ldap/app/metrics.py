@@ -37,9 +37,11 @@ if METRICS_AVAIL:
     import web2ldap.app.handler
 
     class CounterProxy(prometheus_client.Counter):
+
         def set(self, value):
             """Set counter to the given value."""
             self._value.set(float(value))
+
 
     METRICS_CONTENT_TYPE, METRICS_CHARSET = prometheus_client.CONTENT_TYPE_LATEST.split('; charset=')
     # initialize metrics
@@ -56,11 +58,11 @@ if METRICS_AVAIL:
     METRIC_SESSION_MAX.set(session_store.max_concurrent_sessions)
     METRIC_SESSION_COUNTER = CounterProxy('web2ldap_sessions_total', 'Number of sessions since startup')
     METRIC_SESSION_REMOVED = CounterProxy('web2ldap_sessions_removed', 'Number of sessions removed by clean-up thread')
-#    METRIC_CMD_COUNT = CounterProxy(
-#        'web2ldap_cmd_count',
-#        'Counters for command URLs',
-#        list(web2ldap.app.handler.COMMAND_COUNT.keys()),
-#    )
+    METRIC_CMD_COUNT = CounterProxy(
+        'web2ldap_cmd_count',
+        'Counters for command URLs',
+        ['cmd'],
+    )
     METRIC_SESSIONS = prometheus_client.Gauge('web2ldap_sessions_current', 'Number of current sessions', ['state'])
 
 
@@ -73,8 +75,8 @@ def w2l_metrics(app):
     METRIC_SESSION_COUNTER.set(session_store.sessionCounter)
     METRIC_SESSION_REMOVED.set(cleanUpThread.removed_sessions)
 
-#    for cmd, cmd_ctr in web2ldap.app.handler.COMMAND_COUNT.items():
-#        METRIC_CMD_COUNT.labels(cmd=cmd).set(cmd_ctr)
+    for cmd, cmd_ctr in web2ldap.app.handler.COMMAND_COUNT.items():
+        METRIC_CMD_COUNT.labels(cmd=cmd).set(cmd_ctr)
 
     real_session_count = 0
     fresh_session_count = 0
