@@ -36,6 +36,7 @@ except ImportError:
     logger.info('prometheus_client not installed => disable metrics!')
 else:
     METRICS_AVAIL = True
+    METRICS_CONTENT_TYPE, METRICS_CHARSET = prometheus_client.CONTENT_TYPE_LATEST.split('; charset=')
 
 
 MONITOR_TEMPLATE = """
@@ -293,11 +294,10 @@ def w2l_metrics(app):
 
     https://github.com/prometheus/client_python/blob/master/README.md#custom-collectors
     """
-#    prometheus_client.REGISTRY.register(W2LCollector())
     app.outf.set_headers(
         web2ldap.app.gui.gen_headers(
-            content_type='text/plain',
-            charset='utf-8',
+            content_type=METRICS_CONTENT_TYPE,
+            charset=METRICS_CHARSET,
         )
     )
     app.outf.write_bytes(prometheus_client.generate_latest())
