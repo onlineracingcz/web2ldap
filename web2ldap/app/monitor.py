@@ -26,6 +26,7 @@ from web2ldap.app.session import session_store, cleanUpThread
 from web2ldap.utctime import strftimeiso8601
 from ..ldapsession import LDAPSession
 from ..log import EXC_TYPE_COUNTER
+from .core import STARTUP_TIME
 
 
 MONITOR_TEMPLATE = """
@@ -107,13 +108,13 @@ MONITOR_TEMPLATE = """
 
 <h3>{int_numremoteipaddrs:d} remote IPs seen:</h3>
 <table>
-  <tr><th>Remote IP</th><th>Count</th><th>Rate</th></tr>
+  <tr><th>Remote IP</th><th>Count</th></tr>
   {text_remoteiphitlist}
 </table>
 
 <h3>Unhandled exceptions:</h3>
 <table>
-  <tr><th>Exception</th><th>Count</th><th>Rate</th></tr>
+  <tr><th>Exception</th><th>Count</th></tr>
   {text_exc_counters}
 </table>
 
@@ -149,9 +150,7 @@ def w2l_monitor(app):
     List several general gateway stats
     """
 
-    from .core import STARTUP_TIME
-
-    uptime = (time.time() - STARTUP_TIME) / 60
+    uptime = (time.time() - STARTUP_TIME)
 
     posix_uid = os.getuid()
     try:
@@ -175,7 +174,7 @@ def w2l_monitor(app):
         int_uid=posix_uid,
         text_currenttime=strftimeiso8601(time.gmtime(time.time())),
         text_startuptime=strftimeiso8601(time.gmtime(STARTUP_TIME)),
-        text_uptime='%02d:%02d' % (int(uptime//60), int(uptime%60)),
+        text_uptime='%02d:%02d' % (int(uptime//3600), int(uptime//60%60)),
         int_numthreads=threading.activeCount(),
         text_threadlist='\n'.join(
             [
@@ -199,20 +198,18 @@ def w2l_monitor(app):
         int_numremoteipaddrs=len(session_store.remote_ip_counter),
         text_remoteiphitlist='\n'.join(
             [
-                '<tr><td>%s</td><td>%d</td><td>%0.4f</td></tr>' % (
+                '<tr><td>%s</td><td>%d</td></tr>' % (
                     app.form.utf2display((ip or '-')),
                     count,
-                    float(count/uptime),
                 )
                 for ip, count in session_store.remote_ip_counter.most_common()
             ]
         ),
         text_exc_counters='\n'.join(
             [
-                '<tr><td>%s</td><td>%d</td><td>%0.4f</td></tr>' % (
+                '<tr><td>%s</td><td>%d</td></tr>' % (
                     app.form.utf2display(str(exc_type)),
                     exc_ctr,
-                    float(exc_ctr/uptime),
                 )
                 for exc_type, exc_ctr in EXC_TYPE_COUNTER.items()
             ]
