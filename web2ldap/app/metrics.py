@@ -12,11 +12,13 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-import os
-import time
-import socket
 import threading
 
+import web2ldap.__about__
+from web2ldap.app.session import session_store, cleanUpThread
+from ..ldapsession import LDAPSession
+import web2ldap.app.gui
+import web2ldap.app.handler
 from ..log import logger, EXC_TYPE_COUNTER
 
 try:
@@ -29,12 +31,6 @@ else:
 
 
 if METRICS_AVAIL:
-    import web2ldapcnf
-    import web2ldap.__about__
-    from web2ldap.app.session import session_store, cleanUpThread
-    from ..ldapsession import LDAPSession
-    import web2ldap.app.gui
-    import web2ldap.app.handler
 
     class CounterProxy(prometheus_client.Counter):
 
@@ -64,6 +60,7 @@ if METRICS_AVAIL:
         ['cmd'],
     )
     METRIC_SESSIONS = prometheus_client.Gauge('web2ldap_sessions_current', 'Number of current sessions', ['state'])
+    METRIC_THREADS = prometheus_client.Gauge('web2ldap_threads', 'Number of current threads')
 
 
 def w2l_metrics(app):
@@ -74,6 +71,7 @@ def w2l_metrics(app):
     """
     METRIC_SESSION_COUNTER.set(session_store.sessionCounter)
     METRIC_SESSION_REMOVED.set(cleanUpThread.removed_sessions)
+    METRIC_THREADS.set(threading.activeCount())
 
     for cmd, cmd_ctr in web2ldap.app.handler.COMMAND_COUNT.items():
         METRIC_CMD_COUNT.labels(cmd=cmd).set(cmd_ctr)
