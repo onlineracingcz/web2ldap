@@ -129,6 +129,9 @@ COMMAND_FUNCTION = {
     'oid': web2ldap.app.schema.viewer.w2l_schema_viewer,
 }
 
+if web2ldap.app.monitor.METRICS_AVAIL:
+    COMMAND_FUNCTION['metrics'] = web2ldap.app.monitor.w2l_metrics
+
 
 syntax_registry.check()
 
@@ -713,7 +716,7 @@ class AppHandler(LogHelper):
                 raise ErrorExit(u'Access denied.')
 
             # Handle simple early-exit commands
-            if self.command in {'', 'urlredirect', 'monitor', 'locate'}:
+            if self.command in {'', 'urlredirect', 'monitor', 'locate', 'metrics'}:
                 COMMAND_FUNCTION[self.command](self)
                 return
 

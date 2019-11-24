@@ -25,14 +25,25 @@ import web2ldap.app.gui
 from web2ldap.app.session import session_store, cleanUpThread
 from web2ldap.utctime import strftimeiso8601
 from ..ldapsession import LDAPSession
-from ..log import EXC_TYPE_COUNTER
+from ..log import logger, EXC_TYPE_COUNTER
 from .core import STARTUP_TIME
+
+
+try:
+    import prometheus_client
+except ImportError:
+    METRICS_AVAIL = False
+    logger.info('prometheus_client not installed => disable metrics!')
+else:
+    METRICS_AVAIL = True
 
 
 MONITOR_TEMPLATE = """
 <h1>Monitor</h1>
 
 <h2>System information</h2>
+
+{text_metricsurl}
 
 <table summary="System information">
   <tr>
@@ -145,18 +156,32 @@ MONITOR_SESSIONS_JUST_CREATED_TMPL = """
 """
 
 
+def get_uptime() -> float:
+    """
+    returns seconds since start
+    """
+    return time.time() - STARTUP_TIME
+
+
+def get_user_info() -> tuple:
+    """
+    returns tuple of numeric POSIX-ID and accompanying user name (if found)
+    """
+    uid = os.getuid()
+    try:
+        username = pwd.getpwuid(uid).pw_name
+    except KeyError:
+        username = None
+    return (uid, username)
+
+
 def w2l_monitor(app):
     """
     List several general gateway stats
     """
 
-    uptime = (time.time() - STARTUP_TIME)
-
-    posix_uid = os.getuid()
-    try:
-        posix_username = pwd.getpwuid(posix_uid).pw_name
-    except KeyError:
-        posix_username = '-/-'
+    uptime = get_uptime()
+    posix_uid, posix_username = get_user_info()
 
     web2ldap.app.gui.top_section(
         app,
@@ -166,11 +191,12 @@ def w2l_monitor(app):
     )
 
     monitor_tmpl_vars = dict(
+        text_metricsurl=METRICS_AVAIL*'<p><a href="metrics">Metrics endpoint</a></p>',
         text_version=web2ldap.__about__.__version__,
         text_sysfqdn=socket.getfqdn(),
         int_pid=os.getpid(),
         int_ppid=os.getppid(),
-        text_username=app.form.utf2display(posix_username),
+        text_username=app.form.utf2display(posix_username or '-/-'),
         int_uid=posix_uid,
         text_currenttime=strftimeiso8601(time.gmtime(time.time())),
         text_startuptime=strftimeiso8601(time.gmtime(STARTUP_TIME)),
@@ -259,3 +285,19 @@ def w2l_monitor(app):
         app.outf.write('No active sessions.\n')
 
     web2ldap.app.gui.footer(app)
+
+
+def w2l_metrics(app):
+    """
+    Prometheus Python Client - Custom Collector
+
+    https://github.com/prometheus/client_python/blob/master/README.md#custom-collectors
+    """
+#    prometheus_client.REGISTRY.register(W2LCollector())
+    app.outf.set_headers(
+        web2ldap.app.gui.gen_headers(
+            content_type='text/plain',
+            charset='utf-8',
+        )
+    )
+    app.outf.write_bytes(prometheus_client.generate_latest())

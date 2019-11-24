@@ -63,6 +63,7 @@ setup(
     extras_require = {
         'image':  ["Pillow"],
         'xml':  ['defusedxml'],
+        'metrics':  ['prometheus_client'],
     },
     zip_safe=False,
     entry_points={
