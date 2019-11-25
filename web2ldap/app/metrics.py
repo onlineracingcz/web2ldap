@@ -23,6 +23,7 @@ from ..log import logger, EXC_TYPE_COUNTER
 
 try:
     import prometheus_client
+    import prometheus_client.platform_collector
 except ImportError:
     METRICS_AVAIL = False
     logger.info('prometheus_client not installed => disable metrics!')
@@ -41,7 +42,7 @@ if METRICS_AVAIL:
 
     METRICS_CONTENT_TYPE, METRICS_CHARSET = prometheus_client.CONTENT_TYPE_LATEST.split('; charset=')
     # initialize metrics
-    prometheus_client.ProcessCollector(namespace='web2ldap')
+    prometheus_client.platform_collector.PLATFORM_COLLECTOR._namespace = 'web2ldap'
     METRIC_VERSION = prometheus_client.Info('web2ldap_version', 'web2ldap version')
     METRIC_VERSION.info(
         {
