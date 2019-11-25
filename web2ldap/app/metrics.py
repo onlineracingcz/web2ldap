@@ -54,6 +54,7 @@ if METRICS_AVAIL:
     METRIC_SESSION_MAX.set(session_store.max_concurrent_sessions)
     METRIC_SESSION_COUNTER = CounterProxy('web2ldap_sessions_total', 'Number of sessions since startup')
     METRIC_SESSION_REMOVED = CounterProxy('web2ldap_sessions_removed', 'Number of sessions removed by clean-up thread')
+    METRIC_EXCEPTIONS = CounterProxy('web2ldap_exceptions', 'Number of unhandled exceptions logged', ['type'])
     METRIC_CMD_COUNT = CounterProxy(
         'web2ldap_cmd_count',
         'Counters for command URLs',
@@ -72,6 +73,9 @@ def w2l_metrics(app):
     METRIC_SESSION_COUNTER.set(session_store.sessionCounter)
     METRIC_SESSION_REMOVED.set(cleanUpThread.removed_sessions)
     METRIC_THREADS.set(threading.activeCount())
+
+    for exc_class_name, exc_ctr in EXC_TYPE_COUNTER.items():
+        METRIC_EXCEPTIONS.labels(type=exc_class_name).set(exc_ctr)
 
     for cmd, cmd_ctr in web2ldap.app.handler.COMMAND_COUNT.items():
         METRIC_CMD_COUNT.labels(cmd=cmd).set(cmd_ctr)

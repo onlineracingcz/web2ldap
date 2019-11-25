@@ -61,11 +61,12 @@ def log_exception(env, ls, debug=__debug__):
     # Get exception instance and traceback info
     exc_type, exc_value, exc_trb = sys.exc_info()
     global EXC_TYPE_COUNTER
-    EXC_TYPE_COUNTER[exc_type] += 1
+    exc_key = '%s.%s' % (exc_type.__module__, exc_type.__name__)
+    EXC_TYPE_COUNTER[exc_key] += 1
     logentry = [
         '------------------- Unhandled error -------------------',
         'web2ldap %s' % (web2ldap.__about__.__version__,),
-        '%s raised %d times' % (exc_type, EXC_TYPE_COUNTER[exc_type]),
+        '%s raised %d times' % (exc_type, EXC_TYPE_COUNTER[exc_key]),
         'LDAPSession instance: %r' % (ls,),
         '%s.%s: %s' % (exc_type.__module__, exc_type.__name__, exc_value),
     ]
