@@ -198,7 +198,7 @@ def get_entry_input(app):
             entry.update(in_ldif[0][1])
 
     # Transmuting whole attribute value lists into final LDAP string
-    # representation which may be an interative result
+    # representation which may be an interactive result
     iteration_count = 7
     entry_changed = True
     while entry_changed and iteration_count:

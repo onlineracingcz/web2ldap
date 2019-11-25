@@ -198,7 +198,7 @@ OPENLDAP_ACCESSLOG_CONFIG = Web2LDAPConfig(
         ),
         'auditAbandon':(
             '<strong>%(reqType)s</strong> %(reqStart)s session %(reqSession)s<br>'
-            '&rArr; %(reqResult)s: %(reqMessage)s<br>Abandonded %(reqId)s by %(reqAuthzID)s'
+            '&rArr; %(reqResult)s: %(reqMessage)s<br>Abandoned %(reqId)s by %(reqAuthzID)s'
         ),
     },
     searchform_template={

@@ -83,7 +83,7 @@ syntax_registry.reg_at(
 
 #-----------------------------------------------------------------
 # Schema specific for MIT Kerberos
-# see draft-rajasekaran-kerberos-schema (Beware! It's errornous!)
+# see draft-rajasekaran-kerberos-schema (Beware! It's erroneous!)
 #-----------------------------------------------------------------
 
 

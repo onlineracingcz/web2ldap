@@ -2,7 +2,7 @@
 """
 Special syntax and attribute type registrations for enforcing
 standard-compliant behaviour even if current subschema of
-a server is errornous or could not be retrieved.
+a server is erroneous or could not be retrieved.
 """
 
 import ldap0.ldapurl

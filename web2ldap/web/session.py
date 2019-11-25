@@ -183,7 +183,7 @@ class WebSession:
             Amount of time (secs) after which a session
             expires and the session data is silently deleted.
             A InvalidSessionId exception is raised in this case if
-            the application trys to access the session ID again.
+            the application tries to access the session ID again.
         crossCheckVars
             List of keys of variables cross-checked for each
             retrieval of session data in retrieveSession(). If None

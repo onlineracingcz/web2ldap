@@ -1754,7 +1754,7 @@ OID_LIST = (
     (
         "1.3.18.0.2.10.25",
         u"Modify groups only control",
-        u"Attached to a delete or modify DN request to cause the server to do only the group referential integrity processing for the delete or rename request without doing the actual delete or rename of the entry itself. The entry named in the delete or modfiy DN request does not need to exist on the server.",
+        u"Attached to a delete or modify DN request to cause the server to do only the group referential integrity processing for the delete or rename request without doing the actual delete or rename of the entry itself. The entry named in the delete or modify DN request does not need to exist on the server.",
         u"IBM Directory Server"),
     (
         "1.3.18.0.2.10.27",
