@@ -24,5 +24,3 @@ git push --tags
 # build source distribution and push to PyPI
 # (release defined in setup.cfg)
 python3 setup.py release
-
-mv -iv dist/web2ldap* $HOME/Proj/releases/web2ldap/
