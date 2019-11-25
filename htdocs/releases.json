@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.13",
+         "state": "testing",
+         "scope": "minor feature",
+         "changes": "Fixed misspellings in texts. More small improvements for monitoring/metrics.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.13.tar.gz",
+         "published": "2019-11-25T15:00:00+00:00"
+      },
+      {
          "version": "1.5.12",
          "state": "testing",
          "scope": "minor feature",
