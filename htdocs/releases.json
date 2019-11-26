@@ -7,9 +7,17 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.5.15",
+         "version": "1.5.16",
          "state": "testing",
          "scope": "minor feature",
+         "changes": "Added new global configuration option web2ldapcnf.log_error_details.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.16.tar.gz",
+         "published": "2019-11-26T06:30:00+00:00"
+      },
+      {
+         "version": "1.5.15",
+         "state": "testing",
+         "scope": "minor fix",
          "changes": "Fixed misspellings in texts.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.15.tar.gz",
          "published": "2019-11-25T15:30:00+00:00"
