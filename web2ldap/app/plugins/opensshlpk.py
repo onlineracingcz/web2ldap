@@ -62,7 +62,7 @@ class SshPublicKey(DirectoryString):
                 for hash_algo in self.hash_algorithms
             ])
         except Exception as err:
-            logger.warn('Error decoding SSH public key: %s', err)
+            logger.warning('Error decoding SSH public key: %s', err)
             pk_bin, pk_fingerprints = None, None
         return pk_type, pk_comment, pk_bin, pk_fingerprints
 

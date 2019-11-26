@@ -70,7 +70,7 @@ def dc_dn_lookup(dn):
             resolver.NXDOMAIN,
             socket.error,
         ) as dns_err:
-        logger.warn('Error looking up SRV RR for %s: %s', dns_domain, dns_err)
+        logger.warning('Error looking up SRV RR for %s: %s', dns_domain, dns_err)
         return []
     logger.debug('dns_result = %r', dns_result)
     return [

@@ -2873,7 +2873,7 @@ def build_reg():
         assert isinstance(desc, str), TypeError("Wrong type for 'description' for OID %r" % (oid))
         assert isinstance(ref, str), TypeError("Wrong type for 'reference' for OID %r" % (oid))
         if oid in OID_REG:
-            logger.warn(
+            logger.warning(
                 'Double OID %r in web2ldap.ldaputil.oidreg.OID_LIST: %r vs. %r',
                 oid,
                 name,

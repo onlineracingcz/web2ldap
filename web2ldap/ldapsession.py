@@ -1101,18 +1101,18 @@ class LDAPSession:
                 sizelimit=2
             )
         except ldap0.SIZELIMIT_EXCEEDED as ldap_err:
-            logger.warn('Searching user entry failed: %s', ldap_err)
+            logger.warning('Searching user entry failed: %s', ldap_err)
             raise UsernameNotUnique({'desc':'More than one matching user entries.'})
         except ldap0.NO_SUCH_OBJECT as ldap_err:
-            logger.warn('Searching user entry failed: %s', ldap_err)
+            logger.warning('Searching user entry failed: %s', ldap_err)
             raise UsernameNotFound({'desc':'Login did not find a matching user entry.'})
         # Ignore search continuations in search result list
         result = [r for r in result if isinstance(r, SearchResultEntry)]
         if not result:
-            logger.warn('No result when searching user entry')
+            logger.warning('No result when searching user entry')
             raise UsernameNotFound({'desc':'Login did not find a matching user entry.'})
         elif len(result) != 1:
-            logger.warn('More than one matching user entries: %r', result)
+            logger.warning('More than one matching user entries: %r', result)
             raise UsernameNotUnique({'desc':'More than one matching user entries.'})
         logger.debug(
             'Found user entry %r with base = %r / scope = %d / filter = %r',
