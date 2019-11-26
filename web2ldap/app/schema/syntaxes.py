@@ -677,7 +677,7 @@ class GeneralizedTime(IA5String):
     desc: str = 'Generalized Time'
     inputSize: int = 24
     maxLen: int = 24
-    reObj = re.compile('^([0-9]){12,14}((\.|,)[0-9]+)*(Z|(\+|-)[0-9]{4})$')
+    reObj = re.compile(r'^([0-9]){12,14}((\.|,)[0-9]+)*(Z|(\+|-)[0-9]{4})$')
     timeDefault = None
     notBefore = None
     notAfter = None
