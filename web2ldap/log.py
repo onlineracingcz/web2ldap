@@ -53,7 +53,7 @@ class LogHelper:
         logger.log(level, ' '.join((self._log_prefix(), msg)), *args, **kwargs)
 
 
-def log_exception(env, ls, debug=__debug__):
+def log_exception(env, ls, debug):
     """
     Write an exception with environment vars, LDAP connection data
     and Python traceback to error log

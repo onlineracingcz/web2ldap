@@ -913,7 +913,7 @@ class AppHandler(LogHelper):
                 session_store.save(self.sid, self.ls)
 
         except web2ldap.web.forms.FormException as form_error:
-            log_exception(self.env, self.ls)
+            log_exception(self.env, self.ls, web2ldapcnf.log_error_details)
             exception_message(
                 self,
                 u'Error parsing form',
@@ -947,7 +947,7 @@ class AppHandler(LogHelper):
                 return
 
             # Normal error handling
-            log_exception(self.env, self.ls)
+            log_exception(self.env, self.ls, web2ldapcnf.log_error_details)
             failed_dn = self.dn
             if 'matched' in ldap_err.args[0]:
                 self.dn = ldap_err.args[0]['matched'].decode(self.ls.charset)
@@ -1037,7 +1037,7 @@ class AppHandler(LogHelper):
                 IOError,
                 UnicodeError,
             ) as err:
-            log_exception(self.env, self.ls)
+            log_exception(self.env, self.ls, web2ldapcnf.log_error_details)
             exception_message(
                 self,
                 u'Unhandled %s' % err.__class__.__name__,
@@ -1045,7 +1045,7 @@ class AppHandler(LogHelper):
             )
 
         except ldap0.LDAPError as ldap_err:
-            log_exception(self.env, self.ls)
+            log_exception(self.env, self.ls, web2ldapcnf.log_error_details)
             exception_message(
                 self,
                 u'Unhandled %s' % ldap_err.__class__.__name__,
@@ -1074,7 +1074,7 @@ class AppHandler(LogHelper):
             self.simple_msg(u'Too many web sessions! Try later...')
 
         except web2ldap.web.session.SessionException:
-            log_exception(self.env, self.ls)
+            log_exception(self.env, self.ls, web2ldapcnf.log_error_details)
             self.url_redirect(u'Session handling error.')
 
         except Exception:
@@ -1082,7 +1082,7 @@ class AppHandler(LogHelper):
                 error_ls = self.ls
             else:
                 error_ls = None
-            log_exception(self.env, error_ls)
+            log_exception(self.env, error_ls, web2ldapcnf.log_error_details)
             self.simple_msg(u'Unhandled error!')
 
         # end of run()

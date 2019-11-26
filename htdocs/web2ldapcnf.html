@@ -48,6 +48,7 @@
   [<a href="#ldap_trace_level">ldap_trace_level</a>]
   [<a href="#ldif_maxbytes">ldif_maxbytes</a>]
   [<a href="#ldif_url_schemes">ldif_url_schemes</a>]
+  [<a href="#log_error_details">log_error_details</a>]
   [<a href="#max_searchparams">max_searchparams</a>]
   [<a href="#redirect_template">redirect_template</a>]
   [<a href="#search_attrs">search_attrs</a>]
@@ -172,6 +173,19 @@
   </dd>
 
 </dl>
+
+<h1>Logging options</h1>
+<dl>
+
+  <dt id="log_error_details">log_error_details</dt>
+  <dd>
+    If set to <var>True</var> exceptions are logged with details of LDAP
+    connection and HTTP request. The default is the value of Python variable
+    <a href="https://docs.python.org/3/library/constants.html#__debug__">__debug__</a>.
+  </dd>
+
+</dl>
+
 
 <h1>HTML and HTTP options</h1>
 <dl>

@@ -70,6 +70,13 @@ redirect_template = os.path.join(templates_dir, 'redirect.html')
 command_link_separator = ' &bull; '
 
 #---------------------------------------------------------------------------
+# Logging options
+#---------------------------------------------------------------------------
+
+# Log exceptions with details of LDAP connection and HTTP request
+log_error_details = __debug__
+
+#---------------------------------------------------------------------------
 # Global security options
 #---------------------------------------------------------------------------
 
