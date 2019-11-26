@@ -21,5 +21,6 @@ export PYTHONDONTWRITEBYTECODE
 
 # Convert warnings to exceptions
 PYTHONWARNINGS=error
+export PYTHONWARNINGS
 
 /usr/sbin/uwsgi --strict --ini "${WEB2LDAP_HOME}/etc/uwsgi/uwsgi-http1760-web2ldap.ini"

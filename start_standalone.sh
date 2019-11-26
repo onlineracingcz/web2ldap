@@ -21,6 +21,7 @@ export PYTHONDONTWRITEBYTECODE
 
 # Convert warnings to exceptions
 PYTHONWARNINGS=error
+export PYTHONWARNINGS
 
 python3 -R -tt "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
 #coverage-3 run "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
