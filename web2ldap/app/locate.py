@@ -112,17 +112,17 @@ def w2l_locate(app):
 
             for dns_index in range(len(dns_list), 0, -1):
 
-                dns_name = '.'.join([
+                dns_name = b'.'.join([
                     label.encode('idna')
                     for label in dns_list[-dns_index:]
                 ])
                 dns_name_u = '.'.join([
                     label.decode('idna')
-                    for label in dns_name.split('.')
+                    for label in dns_name.split(b'.')
                 ])
 
-                search_base = str(DNObj.from_domain(dns_name))
-                if dns_name.endswith('de-mail-test.de') or dns_name.endswith('de-mail.de'):
+                search_base = str(DNObj.from_domain(dns_name_u))
+                if dns_name.endswith(b'de-mail-test.de') or dns_name.endswith(b'de-mail.de'):
                     search_base = ','.join((search_base, 'cn=de-mail'))
                     lu_extensions = LDAPUrlExtensions({
                         'x-saslmech':LDAPUrlExtension(
@@ -238,7 +238,7 @@ def w2l_locate(app):
                 host_addresses = []
                 # Search for well known aliases of LDAP servers under dns_name
                 for alias in LDAP_HOSTNAME_ALIASES:
-                    alias_name = '.'.join([alias, dns_name])
+                    alias_name = '.'.join([alias, dns_name_u])
                     try:
                         host_address = socket.gethostbyname(alias_name)
                     except socket.error:
