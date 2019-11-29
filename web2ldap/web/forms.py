@@ -991,6 +991,9 @@ class Form:
 
         self.inf.close()
 
+        if not query_string:
+            return
+
         content_length = 0
 
         for name, value in urllib.parse.parse_qsl(
