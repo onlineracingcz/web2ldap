@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.18",
+         "state": "testing",
+         "scope": "minor fix",
+         "changes": "Fixed regressions in Æ-DIR plugin module.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.18.tar.gz",
+         "published": "2019-11-29T15:00:00+00:00"
+      },
+      {
          "version": "1.5.17",
          "state": "testing",
          "scope": "minor fix",
