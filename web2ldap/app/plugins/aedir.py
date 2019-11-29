@@ -19,6 +19,7 @@ from ldap0.controls.readentry import PreReadControl
 from ldap0.controls.deref import DereferenceControl
 from ldap0.filter import compose_filter, map_filter_parts
 from ldap0.dn import DNObj
+from ldap0.res import SearchResultEntry
 
 import web2ldapcnf
 
@@ -496,14 +497,16 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
                 attrlist=self.lu_obj.attrs+['description'],
                 req_ctrls=srv_ctrls,
             )
-            for dn, entry, controls in ldap_result:
-                if dn is None:
+            for ldap_res in ldap_result:
+                if not isinstance(ldap_res, SearchResultEntry):
                     # ignore search continuations
                     continue
                 # process dn and entry
-                if controls:
-                    deref_control = controls[0]
-                    _, deref_entry = deref_control.derefRes['aePerson'][0]
+                if ldap_res.ctrls:
+                    deref_control = ldap_res.ctrls[0]
+                    print('deref_control.derefRes =', repr(deref_control.derefRes))
+                    deref_entry = deref_control.derefRes['aePerson'][0].entry_s
+                    print('deref_entry =', repr(deref_entry))
                 elif deref_person_attrset:
                     # if we have constrained attributes, no deref response control
                     # means constraint not valid
@@ -515,17 +518,15 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
                        deref_entry[attr_type][0] not in attr_values:
                         valid = False
                 if valid:
-                    option_value = self._app.ls.uc_decode(dn)[0]
+                    option_value = ldap_res.dn_s
                     try:
-                        option_text = self._app.ls.uc_decode(entry['displayName'][0])[0]
+                        option_text = ldap_res.entry_s['displayName'][0]
                     except KeyError:
                         option_text = option_value
                     try:
-                        entry_desc = entry['description'][0]
+                        option_title = ldap_res.entry_s['description'][0]
                     except KeyError:
                         option_title = option_value
-                    else:
-                        option_title = self._app.ls.uc_decode(entry_desc)[0]
                     attr_value_dict[option_value] = (option_text, option_title)
         except (
                 ldap0.NO_SUCH_OBJECT,

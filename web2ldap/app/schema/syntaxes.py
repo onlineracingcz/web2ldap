@@ -1956,7 +1956,7 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 ldap0.REFERRAL,
             ):
             return None
-        if ldap_result is None:
+        if ldap_result is None or not ldap_result.ctrls:
             return None
         for ref in ldap_result.ctrls[0].derefRes[self._at]:
             if ref.dn_s == dn:
