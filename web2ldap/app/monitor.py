@@ -206,7 +206,7 @@ def w2l_monitor(app):
                 '<li>%s</li>' % ''.join(
                     [
                         app.form.utf2display(str(repr(t))),
-                        ', alive'*t.isAlive(),
+                        ', alive'*t.is_alive(),
                         ', daemon'*t.isDaemon(),
                     ]
                 )
