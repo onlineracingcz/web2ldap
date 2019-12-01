@@ -23,5 +23,13 @@ export PYTHONDONTWRITEBYTECODE
 PYTHONWARNINGS=error
 export PYTHONWARNINGS
 
+# Python will print threading debug info
+PYTHONTHREADDEBUG=1
+export PYTHONTHREADDEBUG
+
+# Python will dump objects and reference counts still alive after shutting down the interpreter.
+PYTHONDUMPREFS=1
+export PYTHONDUMPREFS
+
 python3 -R -tt "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
 #coverage-3 run "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
