@@ -21,7 +21,7 @@ import collections
 import web2ldap.__about__
 
 
-LOG_LEVEL = os.environ.get('LOG_LEVEL', logging.INFO)
+LOG_LEVEL = os.environ.get('LOG_LEVEL', '').upper() or logging.INFO
 
 LOG_FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 
