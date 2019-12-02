@@ -354,6 +354,8 @@ class OpenDSCfgPrivilege(SelectList):
         'subentry-write': 'Perform write ops on LDAP subentries',
         'unindexed-search': 'Request unindexed searches',
         'update-schema': 'Change server schema',
+        'changelog-read': 'Read change log backend',
+        'monitor-read': 'Read monitoring backend',
     }
 
 
