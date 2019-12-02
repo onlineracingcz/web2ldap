@@ -9,8 +9,6 @@ https://www.web2ldap.de/usability.html
 (c) 1998-2019 by Michael Stroeder <michael@stroeder.com>
 """
 
-from __future__ import absolute_import
-
 # Leave these import lines alone
 import os
 import ldap0

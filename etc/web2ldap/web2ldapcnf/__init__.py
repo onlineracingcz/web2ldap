@@ -8,8 +8,6 @@ https://www.web2ldap.de/web2ldapcnf.html
 (c) 1998-2019 by Michael Stroeder <michael@stroeder.com>
 """
 
-from __future__ import absolute_import
-
 import os
 
 from web2ldap.log import logger

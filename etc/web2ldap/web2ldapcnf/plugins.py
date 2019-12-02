@@ -8,8 +8,6 @@ Some features might be too special so consider this file to be subject
 of local configuration and tweak it to your needs.
 """
 
-from __future__ import absolute_import
-
 import re
 
 #---------------------------------------------------------------------------
