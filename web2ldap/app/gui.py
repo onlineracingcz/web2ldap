@@ -510,8 +510,8 @@ def ldap_url_anchor(app, data):
     return app.anchor(
         command_func, command_text,
         [
-            ('dn', l.dn.decode(app.form.accept_charset)),
-            ('filterstr', (l.filterstr or '(objectClass=*)').decode(app.form.accept_charset)),
+            ('dn', l.dn),
+            ('filterstr', (l.filterstr or '(objectClass=*)')),
             ('scope', str(l.scope or ldap0.SCOPE_SUBTREE)),
         ],
     )
