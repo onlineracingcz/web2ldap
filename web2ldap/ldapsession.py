@@ -1254,7 +1254,7 @@ class LDAPSession:
                     attrlist=USER_ENTRY_ATTRIBUTES,
                     filterstr='(objectClass=*)',
                     cache_ttl=-1.0,
-                ) or {}
+                )
             except (ldap0.LDAPError, IndexError):
                 self.userEntry = {}
             else:
