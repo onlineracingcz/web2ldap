@@ -2857,6 +2857,13 @@ OID_LIST = (
         u"OTP token synchronization request control",
         u"FreeIPA"),
 
+    # OpenDJ/OpenAM
+    (
+        "1.3.6.1.4.1.36733.2.1.5.1",
+        u"TransactionID request control",
+        u"",
+        u"OpenDJ/OpenAM"),
+
 )
 
 
