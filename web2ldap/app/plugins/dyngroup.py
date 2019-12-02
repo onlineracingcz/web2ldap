@@ -19,10 +19,10 @@ class MemberUrl(LDAPUrl):
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
-            ldap_url = ldap0.ldapurl.LDAPUrl(attrValue)
+            ldap_url = ldap0.ldapurl.LDAPUrl(attrValue.decode(self._app.ls.charset))
         except ValueError:
             return False
-        search_base = ldap_url.dn.decode(self._app.ls.charset)
+        search_base = ldap_url.dn
         if not is_dn(search_base) or ldap_url.hostport:
             return False
         try:
