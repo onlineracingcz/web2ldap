@@ -964,8 +964,8 @@ class Form:
             for val in field.value:
                 outf.write(
                     '<input type="hidden" name="%s" value="%s">\n\r' % (
-                        field.name.encode(field.charset),
-                        escape_html(val.encode(field.charset)),
+                        field.name,
+                        escape_html(val),
                     )
                 )
         # end of Form.hidden_fields()
