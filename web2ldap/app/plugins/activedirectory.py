@@ -101,7 +101,7 @@ class ObjectSID(OctetString, IA5String):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         if not attrValue:
-            return ''
+            return b''
         return sddl2sid(attrValue.decode('ascii'))
 
     def formValue(self) -> str:
@@ -627,15 +627,15 @@ class Interval(MicrosoftLargeInteger):
         return (int(attrValue)-116444736000000000)/10000000
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        if self._av == '9223372036854775807':
+        if self.av_u == '9223372036854775807':
             return '-1: unlimited/off'
-        delta = self._delta(self._av)
+        delta = self._delta(self.av_u)
         if delta >= 0:
             return '%s (%s)' % (
                 MicrosoftLargeInteger.display(self, valueindex, commandbutton),
                 self._app.form.utf2display(str(strftimeiso8601(time.gmtime(delta)))),
             )
-        return self._av
+        return self.av_u
 
 
 class LockoutTime(Interval):
