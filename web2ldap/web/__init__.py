@@ -10,7 +10,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 
-def escape_html(val):
+def escape_html(val: str) -> str:
     """
     Escape all characters with a special meaning in HTML
     to appropriate character tags
