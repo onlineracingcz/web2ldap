@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.20",
+         "state": "testing",
+         "scope": "minor fix",
+         "changes": "Fixed various minor regressions espically for accessing MS AD.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.20.tar.gz",
+         "published": "2019-12-04T22:00:00+00:00"
+      },
+      {
          "version": "1.5.19",
          "state": "testing",
          "scope": "minor fix",
