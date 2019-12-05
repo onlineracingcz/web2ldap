@@ -544,11 +544,10 @@ class DNWithOctetString(DistinguishedName):
     oid: str = '1.2.840.113556.1.4.903'
     desc: str = 'DNWithOctetString'
     octetTag = 'B'
-    stringCharset = 'ascii'
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
-            octet_tag, count, octet_string, dn = self.av_u.split(':')
+            octet_tag, count, octet_string, dn = self._app.ls.uc_decode(attrValue)[0].split(':')
         except ValueError:
             return False
         try:
@@ -559,7 +558,7 @@ class DNWithOctetString(DistinguishedName):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
-            octet_tag, count, octet_string, dn = self.av_u.split(':', 3)
+            octet_tag, count, octet_string, dn = self.av_u.split(':')
         except ValueError:
             return self._app.form.utf2display(self.av_u)
         return ':'.join([
@@ -577,7 +576,6 @@ class DNWithString(DNWithOctetString):
     oid: str = '1.2.840.113556.1.4.904'
     desc: str = 'DNWithString'
     octetTag = 'S'
-    stringCharset = 'utf-8'
 
 
 class MicrosoftLargeInteger(Integer):
