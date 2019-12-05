@@ -303,7 +303,6 @@ def display_attribute_table(app, entry, attrs, comment):
                     '(%d of %d values)' % (read_tablemaxcount, attr_value_count),
                     app.form.allInputFields(
                         fields=[
-                            ('dn', app.dn),
                             ('read_expandattr', attr_type_name),
                         ],
                     ),
