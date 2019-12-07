@@ -12,7 +12,7 @@
          "scope": "minor fix",
          "changes": "Fixed various minor regressions.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.22.tar.gz",
-         "published": "2019-12-xxT22:00:00+00:00"
+         "published": "2019-12-07T22:00:00+00:00"
       },
       {
          "version": "1.5.21",
