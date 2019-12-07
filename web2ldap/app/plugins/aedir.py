@@ -185,7 +185,7 @@ class AEUIDNumber(UidNumber):
     desc: str = 'numeric Unix-UID'
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
-        return self._entry.get('gidNumber', [''])
+        return self._entry.get('gidNumber', [b''])
 
     def formField(self) -> str:
         input_field = HiddenInput(
@@ -1304,49 +1304,6 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectUtil):
         return filter_str
 
 
-class AEPerson2(AEPerson):
-    oid: str = 'AEPerson2-oid'
-    sanitize_filter_tmpl = '(|(cn={av}*)(uniqueIdentifier={av})(employeeNumber={av})(displayName={av})(mail={av}))'
-
-    def formValue(self) -> str:
-        form_value = DistinguishedName.formValue(self)
-        if self._av:
-            person_entry = self._get_ref_entry(self.av_u)
-            if person_entry:
-                form_value = person_entry.get(
-                    'displayName',
-                    [form_value],
-                )[0].decode(self._app.form.accept_charset)
-        return form_value
-
-    def formField(self) -> str:
-        return DistinguishedName.formField(self)
-
-    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
-        if not attrValues or not attrValues[0]:
-            return attrValues
-        sanitize_filter = '(&{0}{1})'.format(
-            self._filterstr(),
-            self.sanitize_filter_tmpl.format(av=ldap0.filter.escape_str(attrValues[0])),
-        )
-        try:
-            ldap_result = self._app.ls.l.search_s(
-                self._search_root(),
-                ldap0.SCOPE_SUBTREE,
-                sanitize_filter,
-                attrlist=self.lu_obj.attrs,
-            )
-        except (
-                ldap0.NO_SUCH_OBJECT,
-                ldap0.INSUFFICIENT_ACCESS,
-                ldap0.SIZELIMIT_EXCEEDED,
-                ldap0.TIMELIMIT_EXCEEDED,
-            ):
-            return attrValues
-        if ldap_result and len(ldap_result) == 1:
-            return [ldap_result[0][0]]
-        return attrValues
-
 syntax_registry.reg_at(
     AEPerson.oid, [
         AE_OID_PREFIX+'.4.16', # aePerson
@@ -1797,7 +1754,7 @@ class AECommonNameAEHost(AECommonName):
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if self.derive_from_host:
             return list(set([
-                '.'.join(av.strip().lower().split('.')[self.host_begin_item:self.host_end_item])
+                b'.'.join(av.strip().lower().split(b'.')[self.host_begin_item:self.host_end_item])
                 for av in self._entry['host']
             ]))
         return attrValues
