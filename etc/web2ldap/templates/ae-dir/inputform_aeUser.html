@@ -57,14 +57,6 @@
       <td>Tag(s) (aeTag):</td>
       <td>%(aeTag)s</td>
     </tr>
-    <tr>
-      <td>SSH public key(s) (sshPublicKey):</td>
-      <td>%(sshPublicKey)s</td>
-    </tr>
-    <tr>
-      <td>SSH key permissions (aeSSHPermissions)</td>
-      <td>%(aeSSHPermissions)s</td>
-    </tr>
     <tr title="IP address(es) from where to expect logins">
       <td>Remote login hosts (aeRemoteHost):</td>
       <td>%(aeRemoteHost)s</td>
@@ -76,6 +68,23 @@
   </table>
 
 </fieldset>
+
+<fieldset>
+  <legend>SSH authorized key(s) and options</legend>
+
+  <table>
+    <tr>
+      <td>SSH public key(s) (sshPublicKey):</td>
+      <td>%(sshPublicKey)s</td>
+    </tr>
+    <tr>
+      <td>SSH key permissions (aeSSHPermissions)</td>
+      <td>%(aeSSHPermissions)s</td>
+    </tr>
+  </table>
+
+</fieldset>
+
 
 <!--hidden input fields for auto-generated values-->
 %(sn)s

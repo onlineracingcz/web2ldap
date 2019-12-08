@@ -63,6 +63,18 @@
     <td>%(authTimestamp)s</td>
   </tr>
   <tr>
+    <td>Member in group(s) (memberOf):</td>
+    <td>%(memberOf)s</td>
+  </tr>
+  <tr title="IP address(es) from where to expect logins">
+    <td>Remote login hosts (aeRemoteHost):</td>
+    <td>%(aeRemoteHost)s</td>
+  </tr>
+</table>
+
+<h2>Password information</h2>
+<table>
+  <tr>
     <td>Password change time (pwdChangedTime):</td>
     <td>%(pwdChangedTime)s</td>
   </tr>
@@ -70,10 +82,10 @@
     <td>Password policy (pwdPolicySubentry):</td>
     <td>%(pwdPolicySubentry)s</td>
   </tr>
-  <tr>
-    <td>Member in group(s) (memberOf):</td>
-    <td>%(memberOf)s</td>
-  </tr>
+</table>
+
+<h2>SSH authorized key(s) and options</h2>
+<table>
   <tr>
     <td>SSH public key(s) (sshPublicKey):</td>
     <td>%(sshPublicKey)s</td>
@@ -81,9 +93,5 @@
   <tr>
     <td>SSH key permissions (aeSSHPermissions)</td>
     <td>%(aeSSHPermissions)s</td>
-  </tr>
-  <tr title="IP address(es) from where to expect logins">
-    <td>Remote login hosts (aeRemoteHost):</td>
-    <td>%(aeRemoteHost)s</td>
   </tr>
 </table>
