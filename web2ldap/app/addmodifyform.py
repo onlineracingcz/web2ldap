@@ -804,7 +804,8 @@ def ObjectClassForm(
             'modify': 'You may change the object class(es) for the entry.',
         }[app.command]
         Msg = '<p class="WarningMessage">%s</p>' % (Msg)
-        return Msg, add_template_field_html # ExpertOCFields()
+        return Msg, add_template_field_html
+        # end of ExpertOCFields()
 
 
     def LDIFTemplateField(app, parent_dn):
