@@ -65,7 +65,10 @@ class AssociatedDomain(DNSDomain):
         ])
         if not d:
             return None
-        return d[self.dn.match(d.keys())] or None
+        matched_dn = self.dn.match(d.keys())
+        if not matched_dn:
+            return None
+        return d.get(matched_dn, None)
         # end of _parent_domain()
 
     def sanitize(self, attrValue: bytes) -> bytes:
