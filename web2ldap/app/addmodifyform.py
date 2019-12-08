@@ -1156,7 +1156,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
 
     if input_formtype == 'OC' or not entry:
         # Output the web page with object class input form
-        ObjectClassForm(app, entry.get('objectClass', []), None)
+        ObjectClassForm(app, decode_list(entry.get('objectClass', []), 'ascii'), None)
         return
 
     input_form_entry = InputFormEntry(app, app.dn, app.schema, entry, None, invalid_attrs=invalid_attrs)
