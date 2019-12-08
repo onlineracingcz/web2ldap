@@ -328,7 +328,7 @@ def w2l_conninfo(app):
 
     app.outf.write(
         CONNINFO_LDAP_TEMPLATE % (
-            app.ls.uri.encode('ascii'),
+            app.ls.uri,
             protocol_version,
             app.ls.charset.upper(),
             {False:'not secured', True:'secured'}[app.ls.secureConn],
