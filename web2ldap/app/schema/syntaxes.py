@@ -1174,11 +1174,14 @@ class OID(IA5String):
                     name_template=r'%s',
                     link_text='&raquo',
                 )
-            name_template = {
-                0: r'%s <em>STRUCTURAL</em>',
-                1: r'%s <em>ABSTRACT</em>',
-                2: r'%s <em>AUXILIARY</em>'
-            }[se.kind]
+            if self._at.lower() == 'structuralobjectclass':
+                name_template = r'%s'
+            else:
+                name_template = {
+                    0: r'%s (STRUCTURAL)',
+                    1: r'%s (ABSTRACT)',
+                    2: r'%s (AUXILIARY)'
+                }[se.kind]
             # objectClass attribute is displayed with different function
             return schema_anchor(
                 self._app,
