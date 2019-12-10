@@ -24,6 +24,7 @@ import web2ldap.ldaputil
 import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
+from web2ldap.log import logger
 
 
 DELETE_SUBTREE_FORM_TMPL = """
@@ -171,29 +172,31 @@ class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
                 not self.tree_delete_ctrl and
                 (hasSubordinates or (subordinateCount or 0) > 0)
             ):
+            logger.debug('Skipping deletion of non-leaf entry %r', dn)
             self.nonLeafEntries.append(dn)
-        else:
-            try:
-                self._l.delete_s(dn, req_ctrls=self.req_ctrls)
-            except ldap0.NO_SUCH_OBJECT:
-                # Don't do anything if the entry is already gone except counting
-                # these sub-optimal cases
-                self.noSuchObjectCounter += 1
-            except ldap0.INSUFFICIENT_ACCESS:
-                self.nonDeletableEntries.append(dn)
-            except ldap0.NOT_ALLOWED_ON_NONLEAF:
-                if hasSubordinates is None and subordinateCount is None:
-                    self.nonLeafEntries.append(dn)
-                # Next statements are kind of a safety net and should never be executed
-                else:
-                    raise ValueError(
-                        'Non-leaf entry %r has hasSubordinates %r and subordinateCount %r' % (
-                            dn, hasSubordinates, subordinateCount,
-                        )
-                    )
+            return
+        logger.debug('Deleting entry %r', dn)
+        try:
+            self._l.delete_s(dn, req_ctrls=self.req_ctrls)
+        except ldap0.NO_SUCH_OBJECT:
+            # Don't do anything if the entry is already gone except counting
+            # these sub-optimal cases
+            self.noSuchObjectCounter += 1
+        except ldap0.INSUFFICIENT_ACCESS:
+            self.nonDeletableEntries.append(dn)
+        except ldap0.NOT_ALLOWED_ON_NONLEAF:
+            if hasSubordinates is None and subordinateCount is None:
+                self.nonLeafEntries.append(dn)
+            # Next statements are kind of a safety net and should never be executed
             else:
-                # The entry was correctly deleted
-                self.deletedEntries += 1
+                raise ValueError(
+                    'Non-leaf entry %r has hasSubordinates %r and subordinateCount %r' % (
+                        dn, hasSubordinates, subordinateCount,
+                    )
+                )
+        else:
+            # The entry was correctly deleted
+            self.deletedEntries += 1
         # end of _process_result()
 
 
