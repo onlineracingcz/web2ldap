@@ -1917,6 +1917,12 @@ class AENotAfter(NotAfter):
         result = NotAfter._validate(self, attrValue)
         if result:
             ae_not_after = time.strptime(attrValue.decode('ascii'), '%Y%m%d%H%M%SZ')
+            if (
+                'aeNotBefore' not in self._entry
+                or not self._entry['aeNotBefore']
+                or not self._entry['aeNotBefore'][0]
+                ):
+                return True
             try:
                 ae_not_before = time.strptime(
                     self._entry['aeNotBefore'][0].decode('ascii'),
