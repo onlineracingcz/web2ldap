@@ -9,10 +9,10 @@
       {
          "version": "1.5.25",
          "state": "testing",
-         "scope": "minor fix",
-         "changes": "Fixed various minor regressions.",
+         "scope": "minor feature",
+         "changes": "Removed context menu when displaying input form for modify, delete or rename.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.25.tar.gz",
-         "published": "2019-12-xxT20:00:00+00:00"
+         "published": "2019-12-14T12:00:00+00:00"
       },
       {
          "version": "1.5.24",
