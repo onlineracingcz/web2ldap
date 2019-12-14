@@ -115,7 +115,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         self.save(new_sid, session_data)
         web2ldap.web.session.WebSession.delete(self, old_sid)
         # Set new remote IP associations
-        remote_ip = self._remote_ip(env)
+        remote_ip = get_remote_ip(env)
         self.session_ip_addr[new_sid] = remote_ip
         # Remove old remote IP associations
         self._remove_ip_assoc(old_sid, remote_ip)
