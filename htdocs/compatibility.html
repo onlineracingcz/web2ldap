@@ -67,6 +67,17 @@ unless it is listed in the <a href="#negative_list">negative list</a>.
   </tr>
 
   <tr>
+    <td><a href="http://directory.fedoraproject.org/">389 also known as Fedora Directory Server</a></td>
+    <td>recent</td>
+    <td>
+      Seems to work but has subschema bugs with non-unique NAMEs and/or
+      OIDs which requires to set
+      <a href="web2ldapcnf_hosts.html#schema_strictcheck">schema_strictcheck=False</a>.
+    </td>
+    <td>Tested occasionally, accessible in <a href="demo.html">online demo</a>.</td>
+  </tr>
+
+  <tr>
     <td>CA eTrust Directory</td>
     <td>8.1 and 12.0</td>
     <td>
@@ -83,9 +94,7 @@ unless it is listed in the <a href="#negative_list">negative list</a>.
       Ships with broken schema (non-unique OIDs) but
       recent web2ldap versions have work-arounds for this.
     </td>
-    <td>
-      Recently used for testing.
-    </td>
+    <td>Not tested for a while.</td>
   </tr>
 
   <tr>
@@ -93,17 +102,6 @@ unless it is listed in the <a href="#negative_list">negative list</a>.
     <td>4.x</td>
     <td>Used to work just fine but not tested for a while.</td>
     <td>Historic</td>
-  </tr>
-
-  <tr>
-    <td><a href="http://directory.fedoraproject.org/">389 also known as Fedora Directory Server</a></td>
-    <td>recent</td>
-    <td>
-      Seems to work but has subschema bugs with non-unique NAMEs and/or
-      OIDs which requires to set
-      <a href="web2ldapcnf_hosts.html#schema_strictcheck">schema_strictcheck=False</a>.
-    </td>
-    <td>Tested rather rarely</td>
   </tr>
 
   <tr>
