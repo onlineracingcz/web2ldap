@@ -213,7 +213,7 @@ def w2l_rename(app):
         app,
         'Rename Entry',
         web2ldap.app.gui.main_menu(app),
-        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
+        context_menu_list=[],
     )
 
     app.outf.write(

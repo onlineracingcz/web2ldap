@@ -395,7 +395,7 @@ def w2l_delete(app):
             app,
             'Delete entry?',
             web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
+            context_menu_list=[],
         )
         app.outf.write(
             DELETE_FORM_TEMPLATE.format(
@@ -459,7 +459,7 @@ def w2l_delete(app):
                 len(non_deletable_entries),
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
+            context_menu_list=[],
         )
 
     elif scope == ldap0.SCOPE_BASE and delete_attr:
@@ -507,5 +507,5 @@ def w2l_delete(app):
                 app.display_dn(old_dn)
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
+            context_menu_list=[],
         )
