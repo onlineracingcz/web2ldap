@@ -99,7 +99,10 @@ def ae_validity_filter(secs=None):
     )
 
 
-class AEObjectUtil:
+class AEObjectMixIn:
+    """
+    utility mix-in class
+    """
 
     def _zone_entry(self, attrlist=None):
         zone_dn = 'cn={0},{1}'.format(
@@ -441,7 +444,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEGroupMember(DerefDynamicDNSelectList, AEObjectUtil):
+class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
     oid: str = 'AEGroupMember-oid'
     desc: str = 'AE-DIR: Member of a group'
     input_fallback = False # no fallback to normal input field
@@ -795,7 +798,7 @@ syntax_registry.reg_at(
 )
 
 
-class AESameZoneObject(DerefDynamicDNSelectList, AEObjectUtil):
+class AESameZoneObject(DerefDynamicDNSelectList, AEObjectMixIn):
     oid: str = 'AESameZoneObject-oid'
     desc: str = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
     input_fallback = False # no fallback to normal input field
@@ -843,7 +846,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEProxyFor(AESameZoneObject, AEObjectUtil):
+class AEProxyFor(AESameZoneObject, AEObjectMixIn):
     oid: str = 'AEProxyFor-oid'
     desc: str = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
@@ -1249,7 +1252,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEPerson(DerefDynamicDNSelectList, AEObjectUtil):
+class AEPerson(DerefDynamicDNSelectList, AEObjectMixIn):
     oid: str = 'AEPerson-oid'
     desc: str = 'AE-DIR: DN of person entry'
     ldap_url = 'ldap:///_?displayName?sub?(objectClass=aePerson)'
@@ -1769,7 +1772,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEZonePrefixCommonName(AECommonName, AEObjectUtil):
+class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
     oid: str = 'AEZonePrefixCommonName-oid'
     desc: str = 'AE-DIR: Attribute values have to be prefixed with zone name'
     reObj = re.compile(r'^[a-z0-9]+-[a-z0-9-]+$')

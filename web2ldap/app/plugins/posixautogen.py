@@ -33,7 +33,7 @@ syntax_registry.reg_at(
 )
 
 
-class AutogenNumber:
+class AutogenNumberMixIn:
     inputSize = 12
     minNewValue = 10000
     maxNewValue = 19999
@@ -79,7 +79,7 @@ class AutogenNumber:
         return str(idnumber)
 
 
-class AutogenUIDNumber(UidNumber, AutogenNumber):
+class AutogenUIDNumber(UidNumber, AutogenNumberMixIn):
     oid: str = 'AutogenUIDNumber-oid'
     desc: str = 'numeric Unix-UID'
     minNewValue = 10000
@@ -89,7 +89,7 @@ class AutogenUIDNumber(UidNumber, AutogenNumber):
     def formValue(self) -> str:
         form_value = UidNumber.formValue(self)
         if not form_value:
-            form_value = AutogenNumber.formValue(self)
+            form_value = AutogenNumberMixIn.formValue(self)
         return form_value # formValue()
 
 syntax_registry.reg_at(
@@ -99,7 +99,7 @@ syntax_registry.reg_at(
 )
 
 
-class AutogenGIDNumber(GidNumber, AutogenNumber):
+class AutogenGIDNumber(GidNumber, AutogenNumberMixIn):
     oid: str = 'AutogenGIDNumber-oid'
     desc: str = 'numeric Unix-GID'
     object_class = 'posixGroup'
@@ -107,7 +107,7 @@ class AutogenGIDNumber(GidNumber, AutogenNumber):
     def formValue(self) -> str:
         form_value = GidNumber.formValue(self)
         if not form_value:
-            form_value = AutogenNumber.formValue(self)
+            form_value = AutogenNumberMixIn.formValue(self)
         return form_value # formValue()
 
 syntax_registry.reg_at(
