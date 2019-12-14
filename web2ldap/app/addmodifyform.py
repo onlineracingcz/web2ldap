@@ -927,13 +927,12 @@ def ObjectClassForm(
     else:
         Msg, add_template_field_html = ExpertOCFields(app, parent_dn)
 
+    context_menu_list = []
     if app.command == 'add':
-        context_menu_list = [
+        context_menu_list.extend([
             app.anchor('add', 'Templates', [('dn', app.dn), ('in_ocf', 'tmpl')]),
             app.anchor('add', 'Expert', [('dn', app.dn), ('in_ocf', 'exp')]),
-        ]
-    else:
-        context_menu_list = web2ldap.app.gui.ContextMenuSingleEntry(app)
+        ])
 
     web2ldap.app.gui.top_section(
         app,
@@ -1329,7 +1328,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         app,
         H1_MSG[app.command],
         web2ldap.app.gui.main_menu(app),
-        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
+        context_menu_list=[]
     )
 
     app.outf.write(
