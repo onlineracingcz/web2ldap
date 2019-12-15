@@ -1212,3 +1212,26 @@ for ad_uri, ad_desc in [
     ldap_def[ad_uri] = MSAD_CONFIG.clone(
         description=u'MS AD %s' % (ad_desc),
     )
+
+
+ldap_def['ldaps://ae-dir-suse-p1.vnet1.local'] = ldap_def['ldaps://demo.ae-dir.com/ou=ae-dir'].clone(
+    tls_options={
+        ldap0.OPT_X_TLS_CACERTFILE: '/home/michael/Proj/ae-dir/ansible-example-site/files/my-ae-dir-testca-2017-06.pem',
+    },
+)
+for aedir_host in (
+    'ae-dir-centos-c1.vnet1.local',
+    'ae-dir-centos-c2.vnet1.local',
+    'ae-dir-centos-p1.vnet1.local',
+    'ae-dir-centos-p2.vnet1.local',
+    'ae-dir-deb-c1.vnet1.local',
+    'ae-dir-deb-c2.vnet1.local',
+    'ae-dir-deb-p1.vnet1.local',
+    'ae-dir-deb-p2.vnet1.local',
+    'ae-dir-suse-c1.vnet1.local',
+    'ae-dir-suse-c2.vnet1.local',
+    'ae-dir-suse-p1.vnet1.local',
+    'ae-dir-suse-p2.vnet1.local',
+):
+    ldap_def['ldap://{0}'.format(aedir_host)] = ldap_def['ldaps://ae-dir-suse-p1.vnet1.local']
+    ldap_def['ldaps://{0}'.format(aedir_host)] = ldap_def['ldaps://ae-dir-suse-p1.vnet1.local']
