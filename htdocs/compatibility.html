@@ -14,7 +14,6 @@ unless it is listed in the <a href="#negative_list">negative list</a>.
 [<a href="#web_browsers">Web browsers</a>]
 [<a href="#os">Operating systems</a>]
 [<a href="#web_servers">Web servers</a>]
-[<a href="#pki_products">PKI products</a>]
 </p>
 
 <h1 id="ldap_servers">LDAP Servers</h1>
@@ -289,23 +288,12 @@ unless it is listed in the <a href="#negative_list">negative list</a>.
 
   <dt>Linux</dt>
   <dd>
-    Please do not use outdated RPM packages...
-  </dd>
-
-  <dt>Windows 32</dt>
-  <dd>
-    Successfully tested.
+    Please do not use outdated OS packages.
   </dd>
 
   <dt>FreeBSD</dt>
   <dd>
-    There is even a FreeBSD port of web2ldap.
-  </dd>
-
-  <dt>Solaris 8, 9 and 10</dt>
-  <dd>
-    You can grab some of the packages needed from
-    <a href="http://www.sunfreeware.com/">www.sunfreeware.com</a>.
+    There is a FreeBSD port of web2ldap but outdated.
   </dd>
 
 </dl>
@@ -334,62 +322,6 @@ unless it is listed in the <a href="#negative_list">negative list</a>.
   <dt><a href="http://www.nginx.org">nginx</a></dt>
   <dd>
     ***TO-DO: Update for WSGI***
-  </dd>
-
-</dl>
-
-<h1 id="pki_products">PKI products</h1>
-
-<dl>
-
-  <dt>Entrust Authority</dt>
-  <dd>
-    Works fine with directory structure and content written by
-    Entrust Authority6.0 (tested with Siemens DirX and CP InJoin).
-    Displays encryption certificate in attribute <var>userCertificate</var>
-    just fine. The Entrust specific attributes (e.g. roaming profiles) can be
-    downloaded as binary data.
-  </dd>
-
-</dl>
-
-<h1 id="negative_list">Negative List</h1>
-<p>
-  Unfortunately web2ldap is known not to work with the following
-  misbehaving software or the software is ancient and thus could not be tested
-  with recent web2ldap releases for years:
-</p>
-
-<dl>
-
-  <dt>Netmeeting</dt>
-  <dd>
-    Many <em>Netmeeting</em> directory servers (most times DNS alias
-    starting with ILS) contain invalid NUL-terminated strings in some
-    rootDSE attributes. This can't be worked around easily without
-    breaking LDAP implementation.<br>
-    I also did not find a ILS server which allows non-exact searching
-    or any other useful stuff for general LDAP use.
-  </dd>
-
-  <dt>Netscape Communicator 4.x</dt>
-  <dd>
-    Chokes on rendering modern CSS rules. CSS files shipped with
-    web2ldap distribution likely does not work with this anymore.
-    Anyway you should not use this ancient browser anymore. If you still
-    have to use it consider writing your own simple CSS file.
-  </dd>
-
-  <dt><a href="https://www.openldap.org">OpenLDAP 1.x</a></dt>
-  <dd>
-    Open Source implementation of LDAPv<strong>2</strong> which is
-    not supported anymore.
-  </dd>
-
-  <dt>Lotus Domino LDAP R4.5x and 4.6x</dt>
-  <dd>
-    Sometimes behaviour of this LDAP server was very weird making it
-    almost unusable. LDAPv2 if I remember correctly. Not tested since years.
   </dd>
 
 </dl>
