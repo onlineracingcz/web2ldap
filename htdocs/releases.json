@@ -10,9 +10,9 @@
          "version": "1.5.26",
          "state": "testing",
          "scope": "minor fix",
-         "changes": "Fixed various minor regressions.",
+         "changes": "Fixed minor regressions when regenerating session-IDs in paranoid mode.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.26.tar.gz",
-         "published": "2019-12-xxT20:00:00+00:00"
+         "published": "2019-12-15T20:00:00+00:00"
       },
       {
          "version": "1.5.25",
