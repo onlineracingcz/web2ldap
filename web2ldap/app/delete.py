@@ -469,7 +469,7 @@ def w2l_delete(app):
         ##########################################################
 
         mod_list = [
-            (ldap0.MOD_DELETE, attr_type, None)
+            (ldap0.MOD_DELETE, attr_type.encode('ascii'), None)
             for attr_type in delete_attr
         ]
         app.ls.modify(app.dn, mod_list, req_ctrls=delete_server_ctrls)
