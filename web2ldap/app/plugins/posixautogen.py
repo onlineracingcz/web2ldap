@@ -14,16 +14,21 @@ from web2ldap.app.plugins.nis import syntax_registry, UidNumber, GidNumber, IA5S
 class HomeDirectory(IA5String):
     oid: str = 'HomeDirectory-oid'
     desc: str = 'Path of Unix home directory of the user'
+    uid_attr = 'uid'
     homeDirectoryTemplate = '/home/{uid}'
 
     def transmute(self, attrValues):
+        if self.uid_attr not in self._entry:
+            return attrValues
         if (
                 not attrValues or
                 not attrValues[0] or
-                attrValues[0] == self.homeDirectoryTemplate.format(**{'uid':''})
+                attrValues[0] == self.homeDirectoryTemplate.format(**{self.uid_attr:''})
             ):
-            e = Str1stValueDict(self._entry, '')
-            attrValues = [self.homeDirectoryTemplate.format(**e)]
+            fmt_dict = {self.uid_attr:self._entry[self.uid_attr][0].decode(self._app.ls.charset)}
+            attrValues = [
+                self.homeDirectoryTemplate.format(**fmt_dict).encode(self._app.ls.charset)
+            ]
         return attrValues
 
 syntax_registry.reg_at(
