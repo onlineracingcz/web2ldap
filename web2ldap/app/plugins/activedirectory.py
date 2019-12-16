@@ -414,10 +414,8 @@ class LogonHours(OctetString):
             return []
         hour_flags = []
         for eight_hours in value:
-            eight_hours_int = ord(eight_hours)
             for i in range(8):
-                hour_flags.append({0:'-', 1:'X'}[(eight_hours_int>>i)&1])
-        # For whatever reason the list has to be shifted one hour
+                hour_flags.append({0:'-', 1:'X'}[(eight_hours>>i)&1])
         return hour_flags
 
     def sanitize(self, attrValue: bytes) -> bytes:
@@ -425,14 +423,14 @@ class LogonHours(OctetString):
             return b''
         attrValue = attrValue.replace(b'\r', b'').replace(b'\n', b'')
         hour_flags = [
-            int(attrValue[i] == b'X')<<i%8
+            int(attrValue[i:i+1] == b'X')<<i%8
             for i in range(len(attrValue))
         ]
         r = [
-            chr(sum(hour_flags[i*8:(i+1)*8]))
+            sum(hour_flags[i*8:(i+1)*8])
             for i in range(21)
         ]
-        return b''.join(r)
+        return bytes(r)
 
     def _validate(self, attrValue: bytes) -> bool:
         return len(attrValue) == 21
@@ -446,17 +444,16 @@ class LogonHours(OctetString):
             ]
         else:
             day_bits = []
-        return u'\r\n'.join(day_bits)
+        return '\r\n'.join(day_bits)
 
     def formField(self) -> str:
-        form_value = self.formValue()
         return web2ldap.web.forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen,
             1,
             None,
-            default=form_value,
+            default=self.formValue(),
             rows=7,
             cols=24,
         )
