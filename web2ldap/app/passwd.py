@@ -384,7 +384,7 @@ def w2l_passwd(app):
         if '1.2.840.113556.1.4.90' in all_attrs:
             # Active Directory's password attribute unicodePwd
             passwd_attr_type = b'unicodePwd'
-            new_passwd_value = unicode_pwd(password=passwd_input)
+            new_passwd_value = unicode_pwd(password=passwd_input.encode('utf-8'))
             passwd_scheme = ''
             if old_password:
                 old_passwd_value = unicode_pwd(old_password)
