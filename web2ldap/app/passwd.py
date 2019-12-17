@@ -373,7 +373,7 @@ def w2l_passwd(app):
                     # Ensure supplemental class is not already in set of object classes
                     if aux_class in user_objectclasses:
                         continue
-                    passwd_modlist.append((ldap0.MOD_ADD, b'objectClass', [aux_class]))
+                    passwd_modlist.append((ldap0.MOD_ADD, b'objectClass', [aux_class.encode('ascii')]))
                     break
                 except KeyError:
                     pass
