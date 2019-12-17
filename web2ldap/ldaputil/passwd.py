@@ -74,7 +74,7 @@ def user_password_hash(password, scheme, salt=None):
         ).encode('ascii')
     elif scheme in SCHEME2HASHLIBFUNC:
         salt = random_string(PWD_OCTETS_ALPHABET, 12)
-        encoded_pw = base64.encodestring(
+        encoded_pw = base64.encodebytes(
             SCHEME2HASHLIBFUNC[scheme](password+salt).digest()+salt
         ).strip().replace(b'\n', b'')
     else:
