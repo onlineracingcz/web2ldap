@@ -1239,7 +1239,7 @@ class LDAPSession:
         # Try to look up the user entry's DN in case self.who is still not a DN
         if whoami_filtertemplate and \
            (self.who is None or not ldap0.dn.is_dn(self.who)):
-            if self.sasl_auth and sasl_mech in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
+            if self.sasl_auth and sasl_mech.encode('ascii') in ldap0.sasl.SASL_NONINTERACTIVE_MECHS:
                 # For SASL mechs EXTERNAL and GSSAPI the user did not enter a SASL username
                 # => try to determine it through OpenLDAP's libldap
                 # Ask libldap for SASL username for later LDAP search

@@ -17,6 +17,11 @@
     SASL option <var>OPT_X_SASL_USERNAME</var> is displayed in
     connection info if available.
   </li>
+  <li>
+    Fixed str/bytes regression when checking for non-interactive SASL mechs
+    which also fixes determining the DN of the bound entity when using
+    SASL/GSSAPI with MS AD.
+  </li>
 </ul>
 
 <h1 id="r1.5.32">1.5.32</h1>
