@@ -7,7 +7,7 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.5.31",
+         "version": "1.5.32",
          "state": "testing",
          "scope": "minor fix",
          "changes": "Fixed various minor regressions.",

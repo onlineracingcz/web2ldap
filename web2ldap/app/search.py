@@ -218,7 +218,7 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
                     csv_col_value = attr_value.decode(self._ldap_charset)
                 except UnicodeError:
                     csv_col_value = binascii.b2a_base64(attr_value).decode('ascii').replace('\r', '').replace('\n', '')
-                if csv_col_value[0] in self._formular_prefixes:
+                if csv_col_value and csv_col_value[0] in self._formular_prefixes:
                     csv_col_value_list.append("'"+csv_col_value)
                 else:
                     csv_col_value_list.append(csv_col_value)
