@@ -772,8 +772,11 @@ class LDAPSession:
         if self.namingContexts is None and self.l is not None:
             self.init_rootdse()
         if not naming_contexts or naming_contexts == {DNObj(())}:
-            return ''
-        return DNObj.from_str(dn).match(naming_contexts)
+            matched_dn = ''
+        else:
+            matched_dn = DNObj.from_str(dn).match(naming_contexts)
+        return matched_dn
+        # end of get_search_root()
 
     def count(
             self,
