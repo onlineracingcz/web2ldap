@@ -114,10 +114,15 @@ class AEObjectMixIn:
                 zone_dn,
                 attrlist=attrlist,
                 filterstr='(objectClass=aeZone)',
-            ) or {}
+            )
         except ldap0.LDAPError:
-            zone = {}
-        return zone.entry_s
+            res = {}
+        else:
+            if zone is None:
+                res = {}
+            else:
+                res = zone.entry_s
+        return res
 
     def _get_zone_dn(self) -> str:
         return str(self.dn.slice(None, -len(DNObj.from_str(self._app.naming_context))-1))
@@ -1286,7 +1291,7 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectMixIn):
             self._status_filter(),
             #ae_validity_filter(),
         ]
-        zone_entry = self._zone_entry(attrlist=self.deref_attrs) or {}
+        zone_entry = self._zone_entry(attrlist=self.deref_attrs)
         for deref_attr_type in self.deref_attrs:
             deref_attr_values = [
                 z
