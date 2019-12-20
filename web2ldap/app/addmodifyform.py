@@ -1113,7 +1113,8 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
         except KeyError:
             writeable_attr_oids = set([])
         else:
-            del entry['allowedAttributesEffective']
+            if 'allowedAttributesEffective' in entry:
+                del entry['allowedAttributesEffective']
 
     elif write_attrs_method == WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS:
         # Try to determine writeable attributes from attribute 'aclRights'
