@@ -62,6 +62,10 @@ CONNINFO_LDAP_TEMPLATE = """
     <td>%s</td>
   </tr>
   <tr>
+    <td>SASL user name:</td>
+    <td>%s</td>
+  </tr>
+  <tr>
     <td>SASL SSF info:</td>
     <td>%s</td>
   </tr>
@@ -320,6 +324,13 @@ def w2l_conninfo(app):
         sasl_auth_info = 'SASL not used'
 
     try:
+        sasl_user_name = app.ls.l.get_option(ldap0.OPT_X_SASL_USERNAME).decode(app.ls.charset)
+    except ldap0.LDAPError as ldap_err:
+        sasl_user_name = 'error reading option: %s' % (app.ldap_error_msg(ldap_err))
+    except ValueError:
+        sasl_user_name = ''
+
+    try:
         sasl_ssf = str(app.ls.l.get_option(ldap0.OPT_X_SASL_SSF))
     except ldap0.LDAPError as ldap_err:
         sasl_ssf = u'error reading option: %s' % (app.ldap_error_msg(ldap_err))
@@ -346,6 +357,7 @@ def w2l_conninfo(app):
             whoami_result,
             app.form.utf2display(sasl_mech),
             sasl_auth_info,
+            sasl_user_name,
             app.form.utf2display(sasl_ssf),
             app.form.utf2display(app.dn or u'- World -'),
             app.form.utf2display(app.parent_dn if app.parent_dn is not None else u''),
