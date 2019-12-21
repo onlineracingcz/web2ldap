@@ -20,6 +20,7 @@ from ldap0.controls.deref import DereferenceControl
 from ldap0.filter import compose_filter, map_filter_parts
 from ldap0.dn import DNObj
 from ldap0.res import SearchResultEntry
+from ldap0.base import decode_list
 
 import web2ldapcnf
 
@@ -2149,7 +2150,10 @@ class AERFC822MailMember(DynamicValueSelectList):
             return []
         entrydn_filter = compose_filter(
             '|',
-            map_filter_parts('entryDN', self._entry['member']),
+            map_filter_parts(
+                'entryDN',
+                decode_list(self._entry['member'], encoding=self._app.ls.charset),
+            ),
         )
         ldap_result = self._app.ls.l.search_s(
             self._search_root(),
@@ -2157,10 +2161,9 @@ class AERFC822MailMember(DynamicValueSelectList):
             entrydn_filter,
             attrlist=['mail'],
         )
-        mail_addresses = [
-            entry['mail'][0]
-            for _, entry in ldap_result
-        ]
+        mail_addresses = []
+        for res in ldap_result or []:
+            mail_addresses.extend(res.entry_as['mail'])
         return sorted(mail_addresses)
 
     def formField(self) -> str:
