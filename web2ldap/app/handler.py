@@ -840,8 +840,7 @@ class AppHandler(LogHelper):
             if (
                     who is not None and
                     cred is None and
-                    login_mech is not None and
-                    login_mech.encode('ascii') not in ldap0.sasl.SASL_NONINTERACTIVE_MECHS
+                    (login_mech or '').encode('ascii') not in ldap0.sasl.SASL_NONINTERACTIVE_MECHS
                 ):
                 # first ask for password in a login form
                 web2ldap.app.login.w2l_login(
