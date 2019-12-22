@@ -981,9 +981,9 @@ class MacAddress(IA5String):
     reObj = re.compile(r'^([0-9a-f]{2}\:){5}[0-9a-f]{2}$')
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        attr_value = attrValue.translate(None, '.-: ').lower().strip()
+        attr_value = attrValue.translate(None, b'.-: ').lower().strip()
         if len(attr_value) == 12:
-            return ':'.join([attr_value[i*2:i*2+2] for i in range(6)])
+            return b':'.join([attr_value[i*2:i*2+2] for i in range(6)])
         return attrValue
 
 
