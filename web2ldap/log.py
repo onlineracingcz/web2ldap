@@ -53,7 +53,7 @@ class LogHelper:
         logger.log(level, ' '.join((self._log_prefix(), msg)), *args, **kwargs)
 
 
-def log_exception(env, ls, debug):
+def log_exception(env, ls, dn, debug):
     """
     Write an exception with environment vars, LDAP connection data
     and Python traceback to error log
@@ -64,10 +64,11 @@ def log_exception(env, ls, debug):
     exc_key = '%s.%s' % (exc_type.__module__, exc_type.__name__)
     EXC_TYPE_COUNTER[exc_key] += 1
     logentry = [
-        '------------------- Unhandled error -------------------',
+        '--------------------------- Unhandled error ---------------------------',
         'web2ldap %s' % (web2ldap.__about__.__version__,),
         '%s raised %d times' % (exc_type, EXC_TYPE_COUNTER[exc_key]),
         'LDAPSession instance: %r' % (ls,),
+        'DN: %s' % (dn,),
         '%s.%s: %s' % (exc_type.__module__, exc_type.__name__, exc_value),
     ]
     if debug and ls is not None:
