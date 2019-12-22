@@ -2316,8 +2316,8 @@ class AEDescriptionAENwDevice(ComposedAttribute):
     oid: str = 'AEDescriptionAENwDevice-oid'
     desc: str = 'Attribute description in object class  aeNwDevice'
     compose_templates = (
-        '{cn}: {aeFqdn} {ipHostNumber})',
-        '{cn}: {ipHostNumber})',
+        '{cn}: {aeFqdn} / {ipHostNumber}',
+        '{cn}: {ipHostNumber}',
     )
 
 syntax_registry.reg_at(
