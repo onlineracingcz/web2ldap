@@ -7,36 +7,12 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.5.36",
+         "version": "1.5.37",
          "state": "testing",
          "scope": "minor fix",
-         "changes": "Fixed minor regressions.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.36.tar.gz",
-         "published": "2019-12-22T21:00:00+00:00"
-      },
-      {
-         "version": "1.5.35",
-         "state": "testing",
-         "scope": "minor fix",
-         "changes": "Fixed various minor regressions.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.35.tar.gz",
-         "published": "2019-12-21T18:00:00+00:00"
-      },
-      {
-         "version": "1.5.33",
-         "state": "testing",
-         "scope": "minor fix",
-         "changes": "Fixed various minor regressions.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.33.tar.gz",
-         "published": "2019-12-20T23:00:00+00:00"
-      },
-      {
-         "version": "1.5.32",
-         "state": "testing",
-         "scope": "minor fix",
-         "changes": "Fixed various minor regressions.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.31.tar.gz",
-         "published": "2019-12-20T15:00:00+00:00"
+         "changes": "Fixed various minor regressions, especially in MS AD and Æ-DIR plugin modules.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.37.tar.gz",
+         "published": "2019-12-23T14:00:00+00:00"
       },
       {
          "version": "1.5.29",
