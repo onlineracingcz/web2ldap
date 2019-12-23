@@ -1492,7 +1492,13 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
         if not RFC822Address._validate(self, attrValue):
             return False
         attr_value_dict = self._get_attr_value_dict()
-        if not attr_value_dict or attr_value_dict.keys() == ['']:
+        if (
+            not attr_value_dict
+            or (
+                    len(attr_value_dict) == 1
+                    and tuple(attr_value_dict.keys()) == ('',)
+                )
+            ):
             return True
         return DynamicValueSelectList._validate(self, attrValue)
 
