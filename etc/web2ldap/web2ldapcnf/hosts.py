@@ -1112,47 +1112,6 @@ ldap_def = {
         schema_strictcheck=False,
     ),
 
-    # This meant as an more complex example section
-    # Adjust the settings to reflect your local LDAP installation
-    'ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de': Web2LDAPConfig(
-        description=u'My Address Book',
-        session_track_control=True,
-        # LDIF file used to extended the server's schema
-        #schema_supplement=os.path.join(etc_dir, 'stroeder-dit-structure.ldif'),
-        searchform_search_root_url=u'ldap:///dc=stroeder,dc=de??sub?(&(|(ou=Private)(ou:dn:=Bizness)(ou:dn:=Kultur))(|(objectClass=msOrganization)(objectClass=organizationalUnit))(hasSubordinates=TRUE)(|(organizationalStatus=0)(!(organizationalStatus=*))))',
-        search_attrs=(
-            'authTimestamp', 'createTimestamp', 'creatorsName', 'modifiersName', 'modifyTimestamp',
-            'cn', 'mail', 'sn', 'givenName', 'personalTitle', 'businessTitle', 'gender',
-            'o', 'ou', 'departmentNumber', 'employeeNumber',
-            'telephoneNumber', 'homePhone', 'mobile',
-            'c', 'st', 'l', 'streetAddress', 'roomNumber', 'postalCode',
-            'uid', 'uidNumber', 'description',
-            'objectClass', 'organizationalStatus',
-            'entryDN', 'entryUUID',
-            # DNS
-            'dc', 'associatedDomain', 'mXRecord', 'aRecord', 'aAAARecord', 'pTRRecord', 'nSRecord', 'sOARecord',
-            # groups
-            'member', 'memberOf',
-            # DHCP
-            'dhcpHWAddress', 'dhcpOption', 'dhcpStatements',
-        ),
-        addform_entry_templates={
-            u'stroeder.com Person':os.path.join(templates_dir, 'add_msperson.ldif'),
-            u'stroeder.com Organization':os.path.join(templates_dir, 'add_msorganization.ldif'),
-            u'User':os.path.join(templates_dir, 'add_user.ldif'),
-            u'Organizational unit (OU)':os.path.join(templates_dir, 'add_orgunit.ldif'),
-            u'Group':os.path.join(templates_dir, 'add_group.ldif'),
-            u'Posix user account':os.path.join(templates_dir, 'add_user.ldif'),
-            u'DNS sub-domain':os.path.join(templates_dir, 'add_dnsdomain2.ldif'),
-            u'DNS zone (SOA)':os.path.join(templates_dir, 'add_dnsdomain2_soa.ldif'),
-            u'DHCP host':os.path.join(templates_dir, 'dhcp', 'add_dhcpHost.ldif'),
-            u'DHCP server':os.path.join(templates_dir, 'dhcp', 'add_dhcpServer.ldif'),
-            u'DHCP service':os.path.join(templates_dir, 'dhcp', 'add_dhcpService.ldif'),
-            u'DHCP subnet':os.path.join(templates_dir, 'dhcp', 'add_dhcpSubnet.ldif'),
-            u'X.509 CA':os.path.join(templates_dir, 'add_pkica.ldif'),
-        },
-    ),
-
     # Example for OpenLDAP's accesslog database
     'ldap:///cn=accesslog': OPENLDAP_ACCESSLOG_CONFIG,
 
@@ -1187,7 +1146,7 @@ ldap_def = {
 # You can apply sections defined above to other configuration keys
 #---------------------------------------------------------------------------
 
-# another cloned config for setting specific LDAPS parameters for AE-DIR demo server
+# another cloned config for setting specific LDAPS parameters for public AE-DIR demo server
 ldap_def['ldaps://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com/ou=ae-dir'].clone(
     tls_options={
         ldap0.OPT_X_TLS_CACERTFILE: os.path.join(etc_dir, 'tls', 'cacerts', 'DST_Root_CA_X3.pem'),
@@ -1198,17 +1157,81 @@ ldap_def['ldap://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com'].clone(
     starttls=2,
 )
 
-# simply register some configs with additional keys
-ldap_def['ldap:///dc=stroeder,dc=local'] = ldap_def['ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de']
-ldap_def['ldap:///dc=stroeder,dc=de'] = ldap_def['ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de']
+# This meant as an more complex example section
+# Adjust the settings to reflect your local LDAP installation
+ldap_def['ldap:///dc=stroeder,dc=de'] = \
+ldap_def['ldap:///dc=stroeder,dc=local'] = \
+ldap_def['ldapi://%2Ftmp%2Fopenldap-socket/dc=stroeder,dc=de'] = Web2LDAPConfig(
+    description=u'My Address Book',
+    session_track_control=True,
+    searchform_search_root_url=(
+        'ldap:///dc=stroeder,dc=de??sub?'
+        '(&'
+        '(|(objectClass=organization)(objectClass=organizationalUnit)(&(objectClass=dNSDomain)(sOARecord=*)))'
+        ')'
+    ),
+    search_attrs=(
+        'authTimestamp', 'createTimestamp', 'creatorsName', 'modifiersName', 'modifyTimestamp',
+        'cn', 'mail', 'sn', 'givenName', 'personalTitle', 'businessTitle', 'gender',
+        'o', 'ou', 'departmentNumber', 'employeeNumber',
+        'telephoneNumber', 'homePhone', 'mobile',
+        'c', 'st', 'l', 'streetAddress', 'roomNumber', 'postalCode',
+        'uid', 'uidNumber', 'description',
+        'objectClass', 'organizationalStatus',
+        'entryDN', 'entryUUID',
+        # DNS
+        'dc', 'associatedDomain', 'mXRecord', 'aRecord', 'aAAARecord', 'pTRRecord', 'nSRecord', 'sOARecord',
+        # groups
+        'member', 'memberOf',
+        # DHCP
+        'dhcpHWAddress', 'dhcpOption', 'dhcpStatements',
+    ),
+    addform_entry_templates={
+        u'stroeder.com Person':os.path.join(templates_dir, 'add_msperson.ldif'),
+        u'stroeder.com Organization':os.path.join(templates_dir, 'add_msorganization.ldif'),
+        u'User':os.path.join(templates_dir, 'add_user.ldif'),
+        u'Organizational unit (OU)':os.path.join(templates_dir, 'add_orgunit.ldif'),
+        u'Group':os.path.join(templates_dir, 'add_group.ldif'),
+        u'Posix user account':os.path.join(templates_dir, 'add_user.ldif'),
+        u'DNS sub-domain':os.path.join(templates_dir, 'add_dnsdomain2.ldif'),
+        u'DNS zone (SOA)':os.path.join(templates_dir, 'add_dnsdomain2_soa.ldif'),
+        u'DHCP host':os.path.join(templates_dir, 'dhcp', 'add_dhcpHost.ldif'),
+        u'DHCP server':os.path.join(templates_dir, 'dhcp', 'add_dhcpServer.ldif'),
+        u'DHCP service':os.path.join(templates_dir, 'dhcp', 'add_dhcpService.ldif'),
+        u'DHCP subnet':os.path.join(templates_dir, 'dhcp', 'add_dhcpSubnet.ldif'),
+        u'X.509 CA':os.path.join(templates_dir, 'add_pkica.ldif'),
+    },
+)
 
-# set MS AD configuration for all AD LDAP URIs
-for ad_uri, ad_desc in [
-        ('ldap:///DC=adt1,DC=example,DC=com', u'adt1.example.com'),
-        ('ldap:///CN=Configuration,DC=adt1,DC=example,DC=com', u'adt1.example.com'),
-        ('ldap:///DC=adt2,DC=example,DC=com', u'adt2.example.com'),
-        ('ldap:///CN=Configuration,DC=adt2,DC=example,DC=com', u'adt2.example.com'),
-    ]:
-    ldap_def[ad_uri] = MSAD_CONFIG.clone(
-        description=u'MS AD %s' % (ad_desc),
+
+# set MS AD configuration presets for all AD LDAP URIs
+from ldap0.dn import DNObj
+from ldap0.ldapurl import LDAPUrl
+
+AD_DOMAINS = (
+    'adt1.example.com',
+)
+
+for ad_domain in AD_DOMAINS:
+    ad_dn = DNObj.from_domain(ad_domain)
+    ad_url = str(
+        LDAPUrl(
+            urlscheme='ldap',
+            dn=str(ad_dn),
+        )
     )
+    ldap_def[ad_url] = MSAD_CONFIG.clone(
+        description='AD domain %s' % (ad_domain),
+    )
+    for ad_sub_dn in (
+            'CN=Configuration',
+            'CN=Schema,CN=Configuration',
+            'DC=DomainDnsZones',
+            'DC=ForestDnsZones',
+        ):
+        ldap_def[str(
+            LDAPUrl(
+                urlscheme='ldap',
+                dn=str(DNObj.from_str(ad_sub_dn)+ad_dn),
+            )
+        )] = ldap_def[ad_url]
