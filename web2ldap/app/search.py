@@ -132,31 +132,31 @@ class PrintableHTMLWriter(web2ldap.ldaputil.asynch.List):
 
     def process_results(self, ignoreResultsNumber=0, processResultsCount=0):
         web2ldap.ldaputil.asynch.List.process_results(self)
-        self.allResults.sort()
+        #self.allResults.sort()
         # This should speed up things
         utf2display = self._app.form.utf2display
         print_cols = self._app.cfg_param('print_cols', '4')
         table = []
         for r in self.allResults:
-            if r[0] in is_search_result:
-                entry = r[1][1]
-                objectclasses = entry.get('objectclass', entry.get('objectClass', []))
-                template_oc = list(
-                    set(
-                        [o.lower() for o in objectclasses]
-                    ).intersection(
-                        [s.lower() for s in self._p.keys()]
-                    )
+            if not isinstance(r, SearchResultEntry):
+                continue
+            objectclasses = r.entry_s.get('objectclass', r.entry_s.get('objectClass', []))
+            template_oc = list(
+                set(
+                    [o.lower() for o in objectclasses]
+                ).intersection(
+                    [s.lower() for s in self._p.keys()]
                 )
-                if template_oc:
-                    tableentry = CaseinsensitiveStringKeyDict(default='')
-                    attr_list = entry.keys()
-                    for attr in attr_list:
-                        tableentry[attr] = ', '.join([
-                            utf2display(attr_value.decode(self._app.ls.charset))
-                            for attr_value in entry[attr]
-                        ])
-                    table.append(self._p[template_oc[0]] % (tableentry))
+            )
+            if template_oc:
+                tableentry = CaseinsensitiveStringKeyDict(default='')
+                attr_list = r.entry_s.keys()
+                for attr in attr_list:
+                    tableentry[attr] = ', '.join([
+                        utf2display(attr_value)
+                        for attr_value in r.entry_s[attr]
+                    ])
+                table.append(self._p[template_oc[0]] % (tableentry))
         # Output search results as pretty-printable table without buttons
         web2ldap.app.gui.top_section(self._app, 'Printable Search Results', [])
         self._app.outf.write(
