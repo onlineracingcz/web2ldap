@@ -2216,7 +2216,7 @@ class AESudoHost(IA5String):
     reobj = re.compile('^ALL$')
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
-        return ['ALL']
+        return [b'ALL']
 
     def formField(self) -> str:
         input_field = HiddenInput(
