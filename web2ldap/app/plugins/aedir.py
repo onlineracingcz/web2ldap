@@ -261,7 +261,7 @@ class AEGIDNumber(GidNumber):
             pass
         else:
             if ldap_result:
-                return ldap_result.entry_s[self._at]
+                return ldap_result.entry_as[self._at]
         # return next ID from pool entry
         return [str(self._get_next_gid()).encode('ascii')]
 
