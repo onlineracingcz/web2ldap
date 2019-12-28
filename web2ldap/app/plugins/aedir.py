@@ -1681,7 +1681,7 @@ class AEUniqueIdentifier(DirectoryString):
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if not attrValues or not attrValues[0].strip():
-            return [self.gen_template.format(timestamp=time.time())]
+            return [self.gen_template.format(timestamp=time.time()).encode(self._app.ls.charset)]
         return attrValues
 
     def formField(self) -> str:
