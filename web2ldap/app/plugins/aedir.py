@@ -1573,7 +1573,7 @@ class AEHostname(DNSDomain):
                 except (socket.gaierror, socket.herror):
                     pass
                 else:
-                    attr_value = reverse_hostname
+                    attr_value = reverse_hostname.encode(self._app.ls.charset)
             result.append(attr_value)
         return attrValues
 
