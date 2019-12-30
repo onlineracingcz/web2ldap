@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.40",
+         "state": "testing",
+         "scope": "minor fix",
+         "changes": "",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.40.tar.gz",
+         "published": "2019-12-30T20:00:00+00:00"
+      },
+      {
          "version": "1.5.39",
          "state": "testing",
          "scope": "minor fix",
