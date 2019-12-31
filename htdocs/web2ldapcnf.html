@@ -205,6 +205,8 @@
   You should think about these parameters a little bit longer...
 </p>
 
+<dl>
+
   <dt id="access_allowed">access_allowed</dt>
   <dd>
     Dictionary which defines for each URL command a list of accepted
@@ -224,7 +226,12 @@
     </samp>
   </dd>
 
-<dl>
+  <dt id="good_redirect_targets">good_redirect_targets</dt>
+  <dd>
+    Set of unsuspicious target URLs accept by redirector even
+    without a session.
+  </dd>
+
   <dt id="session_limit">session_limit</dt>
   <dd>
     Maximum number of currently persistent web sessions.
@@ -254,12 +261,6 @@
     Note: <var>REMOTE_ADDR</var> and <var>REMOTE_HOST</var> might not be
     constant if the client accesses web2ldap through a network of web proxy
     siblings.
-  </dd>
-
-  <dt id="good_redirect_targets">good_redirect_targets</dt>
-  <dd>
-    Set of unsuspicious target URLs accept by redirector even
-    without a session.
   </dd>
 
 </dl>
