@@ -116,10 +116,6 @@ session_checkvars = (
     'SSL_CLIENT_M_SERIAL', 'SSL_CLIENT_CERT_SERIAL',
     # HTTP_ACCEPT_ENCODING disabled because of Google Chrome
     #'HTTP_ACCEPT_ENCODING',
-    # SSL session ID if running on SSL server capable
-    # of reusing SSL sessions (needs server configuration)
-    # not usable with newer TLS implementations though
-    #'SSL_SESSION_ID',
 )
 
 # Static dict of HTTP headers to be always sent to the browser
