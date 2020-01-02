@@ -17,6 +17,7 @@ import socket
 import time
 import urllib.parse
 import logging
+from collections import defaultdict
 
 from ipaddress import ip_address, ip_network
 
@@ -28,7 +29,7 @@ from ldap0.err import PasswordPolicyException, PasswordPolicyExpirationWarning
 import web2ldapcnf
 import web2ldapcnf.hosts
 
-COMMAND_COUNT = {}
+COMMAND_COUNT = defaultdict(lambda: 0)
 
 import web2ldap.web.forms
 import web2ldap.web.helper
@@ -134,11 +135,6 @@ COMMAND_FUNCTION = {
 
 if web2ldap.app.metrics.METRICS_AVAIL:
     COMMAND_FUNCTION['metrics'] = web2ldap.app.metrics.w2l_metrics
-
-COMMAND_COUNT.update({
-    cmd or 'connect': 0
-    for cmd in COMMAND_FUNCTION
-})
 
 
 syntax_registry.check()
@@ -693,15 +689,15 @@ class AppHandler(LogHelper):
         """
         self.log(logging.DEBUG, 'Entering .run()')
 
-        # count command
-        COMMAND_COUNT[self.command or 'connect'] += 1
-
         # check for valid command
         if self.command not in COMMAND_FUNCTION:
 
             self.log(logging.WARN, 'Received invalid command %r', self.command)
             self.url_redirect(u'Invalid web2ldap command')
             return
+
+        # count command
+        COMMAND_COUNT[self.command or 'connect'] += 1
 
         # initialize Form instance
         self.form = FORM_CLASS.get(self.command, Web2LDAPForm)(self.inf, self.env)
