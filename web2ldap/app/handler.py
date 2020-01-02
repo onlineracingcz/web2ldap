@@ -28,6 +28,8 @@ from ldap0.err import PasswordPolicyException, PasswordPolicyExpirationWarning
 import web2ldapcnf
 import web2ldapcnf.hosts
 
+COMMAND_COUNT = {}
+
 import web2ldap.web.forms
 import web2ldap.web.helper
 import web2ldap.web.session
@@ -133,10 +135,10 @@ COMMAND_FUNCTION = {
 if web2ldap.app.metrics.METRICS_AVAIL:
     COMMAND_FUNCTION['metrics'] = web2ldap.app.metrics.w2l_metrics
 
-COMMAND_COUNT = {
+COMMAND_COUNT.update({
     cmd or 'connect': 0
     for cmd in COMMAND_FUNCTION
-}
+})
 
 
 syntax_registry.check()

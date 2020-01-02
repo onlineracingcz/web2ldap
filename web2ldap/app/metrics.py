@@ -22,8 +22,7 @@ import web2ldap.app.handler
 from ..log import logger, EXC_TYPE_COUNTER
 
 try:
-    import prometheus_client
-    import prometheus_client.platform_collector
+    import prometheus_client.core
 except ImportError:
     METRICS_AVAIL = False
     logger.info('prometheus_client not installed => disable metrics!')
@@ -33,70 +32,92 @@ else:
 
 if METRICS_AVAIL:
 
-    class CounterProxy(prometheus_client.Counter):
+    from prometheus_client import REGISTRY
+    from prometheus_client.metrics_core import CounterMetricFamily, GaugeMetricFamily, InfoMetricFamily
+    from prometheus_client.openmetrics.exposition import generate_latest
 
-        def set(self, value):
-            """Set counter to the given value."""
-            self._value.set(float(value))
+    from web2ldap.app.handler import COMMAND_COUNT
+
+    class MetricsCollector:
+        """
+        Prometheus Python Client - Custom Collector
+
+        https://github.com/prometheus/client_python/blob/master/README.md#custom-collectors
+        """
+
+        def _session_counts(self):
+            real_session_count = 0
+            fresh_session_count = 0
+            for k, i in session_store.sessiondict.items():
+                if not k.startswith('__'):
+                    if isinstance(i[1], LDAPSession) and i[1].uri:
+                        real_session_count += 1
+                    else:
+                        fresh_session_count += 1
+            sessions = GaugeMetricFamily(
+                'web2ldap_sessions',
+                'Number of sessions',
+                labels=('type',),
+            )
+            sessions.add_metric(('active',), real_session_count)
+            sessions.add_metric(('req',), fresh_session_count)
+            sessions.add_metric(('max',), session_store.max_concurrent_sessions)
+            sessions.add_metric(('total',), session_store.sessionCounter)
+            sessions.add_metric(('removed',), cleanUpThread.removed_sessions)
+            return sessions
+
+        def _error_counts(self):
+            excs = CounterMetricFamily(
+                'web2ldap_error',
+                'Number of unhandled exceptions',
+                labels=('type',),
+            )
+            for exc_class_name, exc_ctr in EXC_TYPE_COUNTER.items():
+                excs.add_metric((exc_class_name,), exc_ctr)
+            return excs
+
+        def _cmd_counts(self):
+            cmds = CounterMetricFamily(
+                'web2ldap_cmd',
+                'Counters for command URLs',
+                labels=('cmd',),
+            )
+            for cmd, cmd_ctr in COMMAND_COUNT.items():
+                cmds.add_metric((cmd,), cmd_ctr)
+            return cmds
+
+        def collect(self):
+            info = InfoMetricFamily('web2ldap', 'web2ldap installation information')
+            info.add_metric(
+                [],
+                {
+                    'version': web2ldap.__about__.__version__,
+                    'major': str(web2ldap.__about__.__version_info__.major),
+                    'minor': str(web2ldap.__about__.__version_info__.minor),
+                    'patchlevel': str(web2ldap.__about__.__version_info__.micro),
+                },
+            )
+            yield info
+            yield self._session_counts()
+            yield self._error_counts()
+            yield self._cmd_counts()
+            yield GaugeMetricFamily('web2ldap_threads', 'Number of current threads', threading.activeCount())
+            # end of MetricsCollector.collect()
 
 
     METRICS_CONTENT_TYPE, METRICS_CHARSET = prometheus_client.CONTENT_TYPE_LATEST.split('; charset=')
-    # initialize custom metrics
-    METRIC_VERSION = prometheus_client.Info('web2ldap', 'web2ldap installation information')
-    METRIC_VERSION.info(
-        {
-            'version': web2ldap.__about__.__version__,
-            'major': str(web2ldap.__about__.__version_info__.major),
-            'minor': str(web2ldap.__about__.__version_info__.minor),
-            'patchlevel': str(web2ldap.__about__.__version_info__.micro),
-        },
-    )
-    METRIC_SESSION_MAX = prometheus_client.Gauge('web2ldap_sessions_max', 'Maximum number of concurrent sessions allowed')
-    METRIC_SESSION_MAX.set(session_store.max_concurrent_sessions)
-    METRIC_SESSION_COUNTER = CounterProxy('web2ldap_sessions_total', 'Number of sessions since startup')
-    METRIC_SESSION_REMOVED = CounterProxy('web2ldap_sessions_removed', 'Number of sessions removed by clean-up thread')
-    METRIC_EXCEPTIONS = CounterProxy('web2ldap_exceptions', 'Number of unhandled exceptions logged', ['type'])
-    METRIC_CMD_COUNT = CounterProxy(
-        'web2ldap_cmd_count',
-        'Counters for command URLs',
-        ['cmd'],
-    )
-    METRIC_SESSIONS = prometheus_client.Gauge('web2ldap_sessions_current', 'Number of current sessions', ['state'])
-    METRIC_THREADS = prometheus_client.Gauge('web2ldap_threads', 'Number of current threads')
+
+    REGISTRY.register(MetricsCollector())
 
 
 def w2l_metrics(app):
     """
-    Prometheus Python Client - Custom Collector
-
-    https://github.com/prometheus/client_python/blob/master/README.md#custom-collectors
+    Send metrics to client
     """
-    METRIC_SESSION_COUNTER.set(session_store.sessionCounter)
-    METRIC_SESSION_REMOVED.set(cleanUpThread.removed_sessions)
-    METRIC_THREADS.set(threading.activeCount())
-
-    for exc_class_name, exc_ctr in EXC_TYPE_COUNTER.items():
-        METRIC_EXCEPTIONS.labels(type=exc_class_name).set(exc_ctr)
-
-    for cmd, cmd_ctr in web2ldap.app.handler.COMMAND_COUNT.items():
-        METRIC_CMD_COUNT.labels(cmd=cmd).set(cmd_ctr)
-
-    real_session_count = 0
-    fresh_session_count = 0
-    for k, i in session_store.sessiondict.items():
-        if not k.startswith('__'):
-            if isinstance(i[1], LDAPSession) and i[1].uri:
-                real_session_count += 1
-            else:
-                fresh_session_count += 1
-    METRIC_SESSIONS.labels(state='active').set(real_session_count)
-    METRIC_SESSIONS.labels(state='req').set(fresh_session_count)
-
-    # now send back response
     app.outf.set_headers(
         web2ldap.app.gui.gen_headers(
             content_type=METRICS_CONTENT_TYPE,
             charset=METRICS_CHARSET,
         )
     )
-    app.outf.write_bytes(prometheus_client.generate_latest())
+    app.outf.write_bytes(generate_latest(REGISTRY))
