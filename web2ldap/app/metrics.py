@@ -42,13 +42,13 @@ if METRICS_AVAIL:
 
     METRICS_CONTENT_TYPE, METRICS_CHARSET = prometheus_client.CONTENT_TYPE_LATEST.split('; charset=')
     # initialize custom metrics
-    METRIC_VERSION = prometheus_client.Info('web2ldap_version', 'web2ldap version')
+    METRIC_VERSION = prometheus_client.Info('web2ldap_info', 'web2ldap installation information')
     METRIC_VERSION.info(
         {
-            'combined': web2ldap.__about__.__version__,
+            'version': web2ldap.__about__.__version__,
             'major': str(web2ldap.__about__.__version_info__.major),
             'minor': str(web2ldap.__about__.__version_info__.minor),
-            'micro': str(web2ldap.__about__.__version_info__.micro),
+            'patchlevel': str(web2ldap.__about__.__version_info__.micro),
         },
     )
     METRIC_SESSION_MAX = prometheus_client.Gauge('web2ldap_sessions_max', 'Maximum number of concurrent sessions allowed')
