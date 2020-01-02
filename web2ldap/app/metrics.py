@@ -45,6 +45,28 @@ if METRICS_AVAIL:
         https://github.com/prometheus/client_python/blob/master/README.md#custom-collectors
         """
 
+        def _info(self):
+            info = GaugeMetricFamily(
+                'web2ldap_info',
+                'web2ldap installation information',
+                labels=(
+                    'version',
+                    'major',
+                    'minor',
+                    'patchlevel',
+                ),
+            )
+            info.add_metric(
+                (
+                    web2ldap.__about__.__version__,
+                    str(web2ldap.__about__.__version_info__.major),
+                    str(web2ldap.__about__.__version_info__.minor),
+                    str(web2ldap.__about__.__version_info__.micro),
+                ),
+                1,
+            )
+            return info
+
         def _session_counts(self):
             real_session_count = 0
             fresh_session_count = 0
@@ -87,17 +109,7 @@ if METRICS_AVAIL:
             return cmds
 
         def collect(self):
-            info = InfoMetricFamily('web2ldap', 'web2ldap installation information')
-            info.add_metric(
-                [],
-                {
-                    'version': web2ldap.__about__.__version__,
-                    'major': str(web2ldap.__about__.__version_info__.major),
-                    'minor': str(web2ldap.__about__.__version_info__.minor),
-                    'patchlevel': str(web2ldap.__about__.__version_info__.micro),
-                },
-            )
-            yield info
+            yield self._info()
             yield self._session_counts()
             yield self._error_counts()
             yield self._cmd_counts()
