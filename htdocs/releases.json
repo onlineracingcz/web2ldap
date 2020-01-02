@@ -9,10 +9,10 @@
       {
          "version": "1.5.41",
          "state": "testing",
-         "scope": "minor fix",
-         "changes": "Docs updates.",
+         "scope": "minor feature",
+         "changes": "Docs updates, re-factored metrics.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.41.tar.gz",
-         "published": "2020-01-xxT20:00:00+00:00"
+         "published": "2020-01-02T23:00:00+00:00"
       },
       {
          "version": "1.5.40",
