@@ -42,7 +42,7 @@ if METRICS_AVAIL:
 
     METRICS_CONTENT_TYPE, METRICS_CHARSET = prometheus_client.CONTENT_TYPE_LATEST.split('; charset=')
     # initialize custom metrics
-    METRIC_VERSION = prometheus_client.Info('web2ldap_info', 'web2ldap installation information')
+    METRIC_VERSION = prometheus_client.Info('web2ldap', 'web2ldap installation information')
     METRIC_VERSION.info(
         {
             'version': web2ldap.__about__.__version__,
