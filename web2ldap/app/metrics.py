@@ -69,7 +69,7 @@ if METRICS_AVAIL:
 
         def _session_counters(self):
             sess_count = CounterMetricFamily(
-                'web2ldap_session_count',
+                'web2ldap_sessions',
                 'Session counters',
                 labels=('type',),
             )
