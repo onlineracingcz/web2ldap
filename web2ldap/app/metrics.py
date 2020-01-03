@@ -16,9 +16,10 @@ import threading
 
 import web2ldap.__about__
 from web2ldap.app.session import session_store, cleanUpThread
-from ..ldapsession import LDAPSession
 import web2ldap.app.gui
 import web2ldap.app.handler
+from web2ldap.app.handler import COMMAND_COUNT
+from ..ldapsession import LDAPSession
 from ..log import logger, EXC_TYPE_COUNTER
 
 try:
@@ -33,10 +34,9 @@ else:
 if METRICS_AVAIL:
 
     from prometheus_client import REGISTRY
-    from prometheus_client.metrics_core import CounterMetricFamily, GaugeMetricFamily, InfoMetricFamily
+    from prometheus_client.metrics_core import CounterMetricFamily, GaugeMetricFamily
     from prometheus_client.openmetrics.exposition import generate_latest
 
-    from web2ldap.app.handler import COMMAND_COUNT
 
     class MetricsCollector:
         """
@@ -67,26 +67,35 @@ if METRICS_AVAIL:
             )
             return info
 
-        def _session_counts(self):
-            real_session_count = 0
-            fresh_session_count = 0
+        def _session_counters(self):
+            sess_count = CounterMetricFamily(
+                'web2ldap_session_count',
+                'Session counters',
+                labels=('type',),
+            )
+            sess_count.add_metric(('all',), session_store.sessionCounter)
+            sess_count.add_metric(('removed',), cleanUpThread.removed_sessions)
+            return sess_count
+
+        def _session_gauges(self):
+            active_sessions_count = 0
+            req_sessions_count = 0
             for k, i in session_store.sessiondict.items():
                 if not k.startswith('__'):
                     if isinstance(i[1], LDAPSession) and i[1].uri:
-                        real_session_count += 1
+                        active_sessions_count += 1
                     else:
-                        fresh_session_count += 1
-            sessions = GaugeMetricFamily(
+                        req_sessions_count += 1
+            sess_gauge = GaugeMetricFamily(
                 'web2ldap_sessions',
                 'Number of sessions',
                 labels=('type',),
             )
-            sessions.add_metric(('active',), real_session_count)
-            sessions.add_metric(('req',), fresh_session_count)
-            sessions.add_metric(('max',), session_store.max_concurrent_sessions)
-            sessions.add_metric(('total',), session_store.sessionCounter)
-            sessions.add_metric(('removed',), cleanUpThread.removed_sessions)
-            return sessions
+            sess_gauge.add_metric(('active',), active_sessions_count)
+            sess_gauge.add_metric(('limit',), session_store.maxSessionCount)
+            sess_gauge.add_metric(('req',), req_sessions_count)
+            sess_gauge.add_metric(('max',), session_store.max_concurrent_sessions)
+            return sess_gauge
 
         def _error_counts(self):
             excs = CounterMetricFamily(
@@ -109,15 +118,25 @@ if METRICS_AVAIL:
             return cmds
 
         def collect(self):
+            """
+            yield all the metric instances
+            """
             yield self._info()
-            yield self._session_counts()
+            yield self._session_counters()
+            yield self._session_gauges()
             yield self._error_counts()
             yield self._cmd_counts()
-            yield GaugeMetricFamily('web2ldap_threads', 'Number of current threads', threading.activeCount())
+            yield GaugeMetricFamily(
+                'web2ldap_threads',
+                'Number of current threads',
+                threading.activeCount(),
+            )
             # end of MetricsCollector.collect()
 
 
-    METRICS_CONTENT_TYPE, METRICS_CHARSET = prometheus_client.CONTENT_TYPE_LATEST.split('; charset=')
+    METRICS_CONTENT_TYPE, METRICS_CHARSET = prometheus_client.CONTENT_TYPE_LATEST.split(
+        '; charset='
+    )
 
     REGISTRY.register(MetricsCollector())
 
