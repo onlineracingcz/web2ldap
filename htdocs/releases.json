@@ -11,7 +11,7 @@
          "state": "testing",
          "scope": "minor feature",
          "changes": "Re-factored metrics.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.44.tar.gz",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.45.tar.gz",
          "published": "2020-01-03T16:00:00+00:00"
       },
       {
