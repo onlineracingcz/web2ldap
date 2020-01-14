@@ -1266,7 +1266,7 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectMixIn):
         ('aePerson', u'Users', None, 'aeUser', u'Search all personal AE-DIR user accounts (aeUser entries) of this person.'),
     )
     ae_status_map = {
-        -1: (0,),
+        -1: (-1, 0),
         0: (0,),
         1: (0, 1, 2),
         2: (0, 1, 2),
@@ -1342,7 +1342,7 @@ class AEDerefAttribute(DirectoryString):
     maxValues = 1
     deref_object_class = None
     deref_attribute_type = None
-    deref_filter_tmpl = '(&(objectClass={deref_object_class})(aeStatus=0)({attribute_type}=*))'
+    deref_filter_tmpl = '(&(objectClass={deref_object_class})(aeStatus<=0)({attribute_type}=*))'
 
     def _read_person_attr(self):
         try:
