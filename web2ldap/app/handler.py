@@ -815,6 +815,12 @@ class AppHandler(LogHelper):
                 # to give the exception handler a good chance
                 session_store.save(self.sid, self.ls)
 
+            # from here the code assumes that there is a valid LDAPSession instance
+            if self.ls is None:
+                # probably somebody entered invalid URL => exit here
+                self.url_redirect('No valid session!')
+                return
+
             if self.ls.uri is None:
                 session_store.delete(self.sid)
                 self.sid = None

@@ -7,12 +7,20 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.47",
+         "state": "testing",
+         "scope": "minor fix",
+         "changes": "Abort handling request in case of invalid session to avoid exceptions logged.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.47.tar.gz",
+         "published": "2020-01-16T16:00:00+00:00"
+      },
+      {
          "version": "1.5.46",
          "state": "testing",
          "scope": "minor feature",
          "changes": "Small enhancements for Æ-DIR.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.46.tar.gz",
-         "published": "2020-01-xxT16:00:00+00:00"
+         "published": "2020-01-04T16:00:00+00:00"
       },
       {
          "version": "1.5.45",
