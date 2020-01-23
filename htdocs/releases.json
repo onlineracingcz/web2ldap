@@ -10,7 +10,7 @@
          "version": "1.5.48",
          "state": "testing",
          "scope": "minor fix",
-         "changes": "Abort handling request in case of invalid session to avoid exceptions logged.",
+         "changes": "Fixed HTML templates for Æ-DIR object class aeDept which fixes a KeyError exception raised.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.48.tar.gz",
          "published": "2020-01-22T13:00:00+00:00"
       },
