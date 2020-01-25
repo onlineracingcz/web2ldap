@@ -9,10 +9,10 @@
       {
          "version": "1.5.49",
          "state": "testing",
-         "scope": "minor fix",
-         "changes": ".",
+         "scope": "minor feature",
+         "changes": "Two minor enhancements in user interface.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.49.tar.gz",
-         "published": "2020-01-xxT13:00:00+00:00"
+         "published": "2020-01-25T13:00:00+00:00"
       },
       {
          "version": "1.5.48",
