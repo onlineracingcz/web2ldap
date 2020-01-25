@@ -1237,8 +1237,10 @@ class OctetString(Binary):
         attrValue = attrValue.translate(None, b': ,\r\n')
         try:
             result_str = binascii.unhexlify(attrValue)
-        except binascii.Error as e:
-            raise LDAPSyntaxValueError('Illegal human-readable OctetString representation: %s' % e)
+        except binascii.Error as err:
+            raise LDAPSyntaxValueError(
+                'Illegal human-readable OctetString representation: %s' % (err,)
+            )
         return result_str
 
     def display(self, valueindex=0, commandbutton=False) -> str:
