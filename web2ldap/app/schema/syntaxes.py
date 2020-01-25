@@ -1236,7 +1236,6 @@ class OctetString(Binary):
     def sanitize(self, attrValue: bytes) -> bytes:
         attrValue = attrValue.translate(None, b': ,\r\n')
         try:
-            # FIX ME! This won't work with Python 3!
             result_str = binascii.unhexlify(attrValue)
         except binascii.Error as e:
             raise LDAPSyntaxValueError('Illegal human-readable OctetString representation: %s' % e)
