@@ -337,7 +337,7 @@ def main_menu(app):
 
     if app.ls is not None and app.ls.uri is not None:
 
-        if app.dn:
+        if app.dn and app.dn_obj != app.naming_context:
             cl.append(
                 app.anchor(
                     'search', 'Up',
