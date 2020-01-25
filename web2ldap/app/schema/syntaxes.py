@@ -1236,12 +1236,10 @@ class OctetString(Binary):
     def sanitize(self, attrValue: bytes) -> bytes:
         attrValue = attrValue.translate(None, b': ,\r\n')
         try:
-            result_str = binascii.unhexlify(attrValue)
+            res = binascii.unhexlify(attrValue)
         except binascii.Error as err:
-            raise LDAPSyntaxValueError(
-                'Illegal human-readable OctetString representation: %s' % (err,)
-            )
-        return result_str
+            res = attrValue
+        return res
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         lines = [
