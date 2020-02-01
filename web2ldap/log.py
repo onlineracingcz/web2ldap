@@ -100,12 +100,18 @@ def init_logger():
     """
     Create logger instance
     """
-    logging.basicConfig(
-        level=LOG_LEVEL,
-        format=LOG_FORMAT,
-        datefmt=LOG_DATEFMT,
-    )
-    return logging.getLogger()
+    if 'LOG_CONFIG' in os.environ:
+        from logging.config import fileConfig
+        fileConfig(os.environ['LOG_CONFIG'])
+    else:
+        logging.basicConfig(
+            level=LOG_LEVEL,
+            format=LOG_FORMAT,
+            datefmt=LOG_DATEFMT,
+        )
+    _logger = logging.getLogger(os.environ.get('LOG_QUALNAME', None))
+    _logger.name = 'web2ldap'
+    return _logger
 
 
 global logger
