@@ -397,7 +397,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                         input_field.input_html(
                             id_value=u'_'.join((
                                 u'inputattr', attr_type_name, str(attr_index)
-                            )).encode(self._app.form.accept_charset),
+                            )),
                             title=attr_title
                         ),
                         attr_inst.valueButton(self._app.command, self.row_counter, '+'),

@@ -23,7 +23,7 @@ class HomeDirectory(IA5String):
         if (
                 not attrValues or
                 not attrValues[0] or
-                attrValues[0] == self.homeDirectoryTemplate.format(**{self.uid_attr:''})
+                attrValues[0].decode(self._app.ls.charset) == self.homeDirectoryTemplate.format(**{self.uid_attr:''})
             ):
             fmt_dict = {self.uid_attr:self._entry[self.uid_attr][0].decode(self._app.ls.charset)}
             attrValues = [

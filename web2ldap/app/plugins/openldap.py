@@ -429,7 +429,7 @@ class ReqEntryUUID(UUID):
                     ),
                     (
                         'search_root',
-                        self._app.ls.get_search_root(self._app.ls.uc_decode(self._entry['reqDN'][0])[0]),
+                        str(self._app.ls.get_search_root(self._app.ls.uc_decode(self._entry['reqDN'][0])[0])),
                     ),
                 ),
                 title=u'Search entry by UUID',
@@ -456,7 +456,7 @@ class ReqSession(Integer):
                 'search', '&raquo;',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._app.naming_context),
+                    ('search_root', str(self._app.naming_context)),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'reqSession'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),

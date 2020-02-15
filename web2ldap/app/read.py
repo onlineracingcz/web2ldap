@@ -51,7 +51,7 @@ class VCardEntry(UserDict):
 def get_vcard_template(app, object_classes):
     template_dict = CIDict(app.cfg_param('vcard_template', {}))
     current_oc_set = set([
-        s.lower()
+        s.lower().decode('ascii')
         for s in object_classes
     ])
     template_oc = list(current_oc_set.intersection(template_dict.data.keys()))

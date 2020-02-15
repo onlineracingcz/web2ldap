@@ -139,7 +139,7 @@ class AEHomeDirectory(HomeDirectory):
     homeDirectoryPrefixes = (
         '/home',
     )
-    homeDirectoryHidden = '-/-'
+    homeDirectoryHidden = b'-/-'
 
     def _validate(self, attrValue: bytes) -> bool:
         av_u = self._app.ls.uc_decode(attrValue)[0]
@@ -959,7 +959,7 @@ class AEEntryDNAEHost(DistinguishedName):
                 'search', 'Siblings',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._app.naming_context),
+                    ('search_root', str(self._app.naming_context)),
                     ('searchform_mode', u'exp'),
                     (
                         'filterstr',
@@ -1095,7 +1095,7 @@ class AEEntryDNAEGroup(GroupEntryDN):
             'search', 'SUDO rules',
             (
                 ('dn', self._dn),
-                ('search_root', self._app.naming_context),
+                ('search_root', str(self._app.naming_context)),
                 ('searchform_mode', u'adv'),
                 ('search_attr', u'sudoUser'),
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
@@ -1133,7 +1133,7 @@ class AEEntryDNAESrvGroup(DistinguishedName):
                 'search', 'All members',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._app.naming_context),
+                    ('search_root', str(self._app.naming_context)),
                     ('searchform_mode', u'exp'),
                     (
                         'filterstr',
@@ -1855,7 +1855,7 @@ class AECommonNameAETag(AEZonePrefixCommonName):
                 'searchform', '&raquo;',
                 (
                     ('dn', self._dn),
-                    ('search_root', self._app.naming_context),
+                    ('search_root', str(self._app.naming_context)),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'aeTag'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
