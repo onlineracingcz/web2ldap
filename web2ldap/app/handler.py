@@ -287,7 +287,6 @@ class AppHandler(LogHelper):
             title_attr = ' title="%s"' % (self.form.utf2display(title).replace(' ', '&nbsp;'))
         if anchor_id:
             anchor_id = '#%s' % (self.form.utf2display(anchor_id))
-        print('*** form_parameters =', form_parameters)
         res = '<a class="CL"%s%s href="%s?%s%s">%s</a>' % (
             target_attr,
             title_attr,
