@@ -10,9 +10,9 @@
          "version": "1.5.52",
          "state": "testing",
          "scope": "minor fix",
-         "changes": "Fixed some non-fatal str/bytes comparisons.",
+         "changes": "Fixed some non-fatal str/bytes comparisons. Added MANIFEST.in.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.52.tar.gz",
-         "published": "2020-02-16T18:00:00+00:00"
+         "published": "2020-02-16T17:00:00+00:00"
       },
       {
          "version": "1.5.51",
