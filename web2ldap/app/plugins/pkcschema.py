@@ -38,7 +38,7 @@ class PkcX509Issuer(DistinguishedName):
             self._app.anchor(
                 'search', 'Issuer',
                 [
-                    ('dn', self._app.naming_context),
+                    ('dn', str(self._app.naming_context)),
                     (
                         'filterstr',
                         u'(&(objectClass=x509caCertificate)(x509subject=%s))' % (

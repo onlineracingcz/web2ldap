@@ -45,7 +45,7 @@ class DHCPConfigStatement(MultilineText):
                 r.append(self._app.anchor(
                     'search', 'DNS RR',
                     (
-                        ('dn', self._app.naming_context),
+                        ('dn', str(self._app.naming_context)),
                         ('searchform_mode', u'adv'),
                         ('search_mode', u'(|%s)'),
                         ('search_attr', u'dc'),
@@ -62,7 +62,7 @@ class DHCPConfigStatement(MultilineText):
                 ))
             elif dhcp_type == 'fixed-address':
                 search_params = [
-                    ('dn', self._app.naming_context),
+                    ('dn', str(self._app.naming_context)),
                     ('searchform_mode', u'adv'),
                     ('search_mode', u'(|%s)'),
                     ('search_attr', u'aRecord'),
