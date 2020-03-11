@@ -153,7 +153,7 @@ class DisplayEntry(UserDict):
             dn,
             encode_entry_dict(DNObj.from_str(dn).rdn_attrs()),
         )
-        for attr_type, attr_values in entry_rdn_dict.items():
+        for attr_type, attr_values in list(entry_rdn_dict.items()):
             del entry_rdn_dict[attr_type]
             d = ldap0.cidict.CIDict()
             for attr_value in attr_values:
