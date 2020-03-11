@@ -9,8 +9,8 @@ RUN zypper --non-interactive install --no-confirm --no-recommends ca-certificate
 # Python3 and some modules
 RUN zypper --non-interactive install --no-confirm --no-recommends python3 python3-virtualenv python3-setuptools python3-asn1crypto python3-xlwt python3-paramiko python3-bcrypt python3-pyasn1-modules python3-dnspython
 
-# add AE-DIR repo
-RUN zypper --non-interactive addrepo --enable --refresh https://download.opensuse.org/repositories/home:/stroeder:/AE-DIR/openSUSE_Tumbleweed/home:stroeder:AE-DIR.repo
+# add repo home:stroeder:iam
+RUN zypper --non-interactive addrepo --enable --refresh https://download.opensuse.org/repositories/home:/stroeder:/iam/openSUSE_Tumbleweed/home:stroeder:iam.repo
 # refresh repo cache
 RUN zypper --non-interactive --gpg-auto-import-keys refresh
 # install non-standard Python modules
