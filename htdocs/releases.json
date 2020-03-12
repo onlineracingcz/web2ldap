@@ -10,7 +10,7 @@
          "version": "1.5.55",
          "state": "stable",
          "scope": "minor fix",
-         "changes": "",
+         "changes": "Added web2ldap.wsgi wrapper script, improved mod_wsgi sample config, updated docs.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.55.tar.gz",
          "published": "2020-03-12T10:00:00+00:00"
       },
