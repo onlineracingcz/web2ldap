@@ -1239,7 +1239,7 @@ OID_LIST = (
         u"What Failed? Control",
         u"",
         u"draft-masarati-ldap-whatfailed"),
-    # see https://www.openldap.org/its/index.cgi?findid=6598
+    # see https://bugs.openldap.org/show_bug.cgi?id=6598
     (
         "1.3.6.1.4.1.4203.666.5.18",
         u"No-Op Search Control",
