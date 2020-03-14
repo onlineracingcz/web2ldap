@@ -23,7 +23,7 @@ __version_info__ = VersionInfo(
 __version__ = '.'.join(str(val) for val in __version_info__)
 __author__ = u'Michael Stroeder'
 __mail__ = u'michael@stroeder.com'
-__copyright__ = u'(C) 2017-2019 by Michael Ströder <michael@stroeder.com>'
+__copyright__ = u'(C) 2017-2020 by Michael Ströder <michael@stroeder.com>'
 __license__ = 'Apache-2.0'
 
 __all__ = [
