@@ -297,7 +297,7 @@ class DHCPRange(IA5String):
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
-            l, h = attrValue.split(' ', 1)
+            l, h = attrValue.split(b' ', 1)
         except (IndexError, ValueError):
             return False
         try:
