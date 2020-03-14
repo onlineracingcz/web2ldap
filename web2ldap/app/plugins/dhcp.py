@@ -293,7 +293,7 @@ class DHCPRange(IA5String):
         return form_value
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue.strip().replace('  ', ' ').replace('-', ' ').replace('..', ' ')
+        return attrValue.strip().replace(b'  ', b' ').replace(b'-', b' ').replace(b'..', b' ')
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
