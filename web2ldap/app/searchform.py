@@ -282,7 +282,8 @@ def w2l_searchform(
         app.cfg_param('searchoptions_template', None),
         app.form.accept_language
     )
-    searchoptions_template_str = open(searchoptions_template_filename, 'r').read()
+    with open(searchoptions_template_filename, 'r') as template_file:
+        searchoptions_template_str = template_file.read()
 
     web2ldap.app.gui.top_section(
         app,

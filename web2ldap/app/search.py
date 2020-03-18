@@ -450,7 +450,8 @@ def w2l_search(app):
         print_template_str_dict = CaseinsensitiveStringKeyDict()
         for oc in print_template_filenames_dict.keys():
             try:
-                print_template_str_dict[oc] = open(print_template_filenames_dict[oc], 'r').read()
+                with open(print_template_filenames_dict[oc], 'r') as template_file:
+                    print_template_str_dict[oc] = template_file.read()
             except IOError:
                 pass
             else:
