@@ -163,21 +163,21 @@ def run_standalone():
         host_arg = sys.argv[1]
     else:
         raise ValueError('Command-line arguments must be: [host] port')
-    httpd = wsgiref.simple_server.make_server(
+    with wsgiref.simple_server.make_server(
         host_arg,
         port_arg,
         application,
         server_class=W2lWSGIServer,
         handler_class=W2lWSGIRequestHandler,
-    )
-    host, port = httpd.socket.getsockname()
-    logger.info('Serving http://%s:%s/web2ldap', host, port)
-    try:
-        # Serve until process is killed
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        pass
-    logger.info('Stopping service http://%s:%s/web2ldap', host, port)
+    ) as httpd:
+        host, port = httpd.socket.getsockname()
+        logger.info('Serving http://%s:%s/web2ldap', host, port)
+        try:
+            # Serve until process is killed
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            pass
+    logger.info('Stopped service http://%s:%s/web2ldap', host, port)
     # Stop clean-up thread
     web2ldap.app.session.cleanUpThread.enabled = 0
     # end of run_standalone()
