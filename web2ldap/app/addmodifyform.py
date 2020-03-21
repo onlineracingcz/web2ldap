@@ -968,19 +968,24 @@ def ReadLDIFTemplate(app, template_name):
         raise web2ldap.app.core.ErrorExit(u'LDIF template key &quot;%s&quot; not known.' % (template_name_html))
     ldif_file_name = addform_entry_templates[template_name]
     try:
-        ldif_file = open(ldif_file_name, 'rb')
-    except IOError:
-        raise web2ldap.app.core.ErrorExit(u'I/O error opening LDIF template for &quot;%s&quot;.' % (template_name_html))
-    try:
-        dn, entry = list(ldap0.ldif.LDIFParser(
-            ldif_file,
-            ignored_attr_types=[],
-            process_url_schemes=web2ldapcnf.ldif_url_schemes
-        ).parse(max_entries=1))[0]
-    except (IOError, ValueError):
-        raise web2ldap.app.core.ErrorExit(u'Value error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
-    except Exception:
-        raise web2ldap.app.core.ErrorExit(u'Other error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
+        ldif_file = None
+        try:
+            ldif_file = open(ldif_file_name, 'rb')
+        except IOError:
+            raise web2ldap.app.core.ErrorExit(u'I/O error opening LDIF template for &quot;%s&quot;.' % (template_name_html))
+        try:
+            dn, entry = list(ldap0.ldif.LDIFParser(
+                ldif_file,
+                ignored_attr_types=[],
+                process_url_schemes=web2ldapcnf.ldif_url_schemes
+            ).parse(max_entries=1))[0]
+        except (IOError, ValueError):
+            raise web2ldap.app.core.ErrorExit(u'Value error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
+        except Exception:
+            raise web2ldap.app.core.ErrorExit(u'Other error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
+    finally:
+        if ldif_file is not None:
+            ldif_file.close()
     return dn, entry # ReadLDIFTemplate()
 
 
