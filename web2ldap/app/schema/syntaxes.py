@@ -465,22 +465,19 @@ class Audio(Binary):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         mimetype = self.getMimeType()
-        return """
-            <embed
-              type="%s"
-              autostart="false"
-              src="%s/read/%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d"
-            >
-            %d bytes of audio data (%s)
-            """ % (
-                mimetype,
-                self._app.form.script_name, self._app.sid,
-                urllib.parse.quote(self._dn.encode(self._app.form.accept_charset)),
-                urllib.parse.quote(self._at),
-                valueindex,
-                len(self._av),
-                mimetype
-            )
+        return (
+            '<embed type="%s" autostart="false" '
+            'src="%s/read/%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d">'
+            '%d bytes of audio data (%s)'
+        ) % (
+            mimetype,
+            self._app.form.script_name, self._app.sid,
+            urllib.parse.quote(self._dn.encode(self._app.form.accept_charset)),
+            urllib.parse.quote(self._at),
+            valueindex,
+            len(self._av),
+            mimetype
+        )
 
 
 class DirectoryString(LDAPSyntax):
@@ -749,7 +746,7 @@ class GeneralizedTime(IA5String):
                 r'%Y%m%d%H%M%SZ',
             ).encode('ascii')
         if self.timeDefault:
-            date_format = r'%Y%m%d'+self.timeDefault+'Z'
+            date_format = r'%Y%m%d' + self.timeDefault + 'Z'
             if av_u in ('T', 'TODAY'):
                 return datetime.datetime.strftime(
                     datetime.datetime.utcnow(),
@@ -803,7 +800,7 @@ class GeneralizedTime(IA5String):
         if not commandbutton:
             return dt_utc_str
         current_time = datetime.datetime.utcnow()
-        time_span = (current_time-dt_utc).total_seconds()
+        time_span = (current_time - dt_utc).total_seconds()
         return '{dt_utc} ({av})<br>{timespan_disp} {timespan_comment}'.format(
             dt_utc=dt_utc_str,
             av=self._app.form.utf2display(self.av_u),
@@ -840,7 +837,7 @@ class NullTerminatedDirectoryString(DirectoryString):
     desc: str = 'Directory String terminated by null-byte'
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue+chr(0)
+        return attrValue + chr(0)
 
     def _validate(self, attrValue: bytes) -> bool:
         return attrValue.endswith(chr(0))
@@ -927,7 +924,7 @@ class IPHostAddress(IA5String):
             addr = ipaddress.ip_address(attrValue.decode('ascii'))
         except Exception:
             return False
-        return self.addr_class == None or isinstance(addr, self.addr_class)
+        return self.addr_class is None or isinstance(addr, self.addr_class)
 
 
 class IPv4HostAddress(IPHostAddress):
@@ -1033,7 +1030,7 @@ class Image(Binary):
     mimeType: str = 'application/octet-stream'
     fileExt: str = 'bin'
     imageFormat = None
-    inline_maxlen = 630 # max. number of bytes to use data: URI instead of external URL
+    inline_maxlen = 630  # max. number of bytes to use data: URI instead of external URL
 
     def _validate(self, attrValue: bytes) -> bool:
         return imghdr.what(None, attrValue) == self.imageFormat.lower()
@@ -1127,6 +1124,7 @@ class PhotoG3Fax(Binary):
 
 # late import of schema_anchor()
 from web2ldap.app.schema.viewer import schema_anchor
+
 
 class OID(IA5String):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.38'
@@ -1237,7 +1235,7 @@ class OctetString(Binary):
         attrValue = attrValue.translate(None, b': ,\r\n')
         try:
             res = binascii.unhexlify(attrValue)
-        except binascii.Error as err:
+        except binascii.Error:
             res = attrValue
         return res
 
@@ -1288,8 +1286,8 @@ class MultilineText(DirectoryString):
     lineSep = b'\r\n'
     mimeType: str = 'text/plain'
     cols = 66
-    minInputRows = 1  # minimum number of rows for input field
-    maxInputRows = 30 # maximum number of rows for in input field
+    minInputRows = 1   # minimum number of rows for input field
+    maxInputRows = 30  # maximum number of rows for in input field
 
     def _split_lines(self, value):
         if self.lineSep:
@@ -1600,8 +1598,8 @@ class SelectList(DirectoryString):
     should not be used directly
     """
     oid: str = 'SelectList-oid'
-    attr_value_dict = {}  # Mapping attribute value to attribute description
-    input_fallback = True # Fallback to normal input field if attr_value_dict is empty
+    attr_value_dict = {}   # Mapping attribute value to attribute description
+    input_fallback = True  # Fallback to normal input field if attr_value_dict is empty
 
     def _get_attr_value_dict(self):
         # Enable empty value in any case
@@ -1623,7 +1621,7 @@ class SelectList(DirectoryString):
                 except KeyError:
                     pass
         # Add the current attribute value if needed
-        if not form_value in d:
+        if form_value not in d:
             d[form_value] = form_value
         # Finally return the sorted option list
         result = []
@@ -1699,7 +1697,8 @@ class PropertiesSelectList(SelectList):
                 if line and not line.startswith('#'):
                     key, value = line.split(self.properties_delimiter, 1)
                     attr_value_dict[key.strip()] = value.strip()
-        return attr_value_dict # _get_attr_value_dict()
+        return attr_value_dict
+        # end of _get_attr_value_dict()
 
 
 class DynamicValueSelectList(SelectList, DirectoryString):
@@ -1844,8 +1843,9 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         if search_scope == ldap0.SCOPE_BASE:
             # When reading a single entry we build the map from a single multi-valued attribute
             dn_r, entry_r = ldap_result[0]
-            assert len(self.lu_obj.attrs or []) == 1, \
-                ValueError("attrlist in ldap_url must be of length 1 if scope is base")
+            assert len(self.lu_obj.attrs or []) == 1, ValueError(
+                'attrlist in ldap_url must be of length 1 if scope is base, got %r' % (self.lu_obj.attrs,)
+            )
             list_attr = self.lu_obj.attrs[0]
             attr_values_u = [
                 ''.join((
@@ -1889,7 +1889,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                         attr_value_dict[option_value] = (option_text, option_title)
                     else:
                         attr_value_dict[option_value] = option_text
-        return attr_value_dict # _get_attr_value_dict()
+        return attr_value_dict
+        # end of _get_attr_value_dict()
 
 
 class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
@@ -2016,8 +2017,8 @@ class BitArrayInteger(MultilineText, Integer):
     oid: str = 'BitArrayInteger-oid'
     flag_desc_table = tuple()
     true_false_desc = {
-        False:'-',
-        True:'+',
+        False: '-',
+        True: '+',
     }
 
     def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
@@ -2048,7 +2049,7 @@ class BitArrayInteger(MultilineText, Integer):
                 else:
                     if flag_set == '+':
                         try:
-                            result = result|self.flag_desc2int[flag_desc]
+                            result = result | self.flag_desc2int[flag_desc]
                         except KeyError:
                             pass
         return str(result).encode('ascii')
@@ -2057,7 +2058,7 @@ class BitArrayInteger(MultilineText, Integer):
         attr_value_int = int(self.av_u or 0)
         flag_lines = [
             ''.join((
-                self.true_false_desc[int((attr_value_int&flag_int) > 0)],
+                self.true_false_desc[int((attr_value_int & flag_int) > 0)],
                 flag_desc
             ))
             for flag_desc, flag_int in self.flag_desc_table
@@ -2077,7 +2078,7 @@ class BitArrayInteger(MultilineText, Integer):
         )
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        attrValue_int = int(self._av)
+        av_i = int(self._av)
         return (
             '%s<br>'
             '<table summary="Flags">'
@@ -2090,7 +2091,7 @@ class BitArrayInteger(MultilineText, Integer):
                 '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
                     self._app.form.utf2display(desc),
                     hex(flag_value),
-                    {False:'-', True:'on'}[int((attrValue_int & flag_value) > 0)]
+                    {False: '-', True: 'on'}[(av_i & flag_value) > 0]
                 )
                 for desc, flag_value in self.flag_desc_table
             ])
@@ -2120,7 +2121,7 @@ class DNSDomain(IA5String):
     oid: str = 'DNSDomain-oid'
     desc: str = 'DNS domain name (see RFC 1035)'
     reObj = re.compile(r'^(\*|[a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)*$')
-    maxLen: int = min(255, IA5String.maxLen) # (see https://tools.ietf.org/html/rfc2181#section-11)
+    maxLen: int = min(255, IA5String.maxLen)  # (see https://tools.ietf.org/html/rfc2181#section-11)
     simpleSanitizers = (
         bytes.lower,
         bytes.strip,
@@ -2190,7 +2191,7 @@ class DomainComponent(DNSDomain):
     oid: str = 'DomainComponent-oid'
     desc: str = 'DNS domain name component'
     reObj = re.compile(r'^(\*|[a-zA-Z0-9_-]+)$')
-    maxLen: int = min(63, DNSDomain.maxLen) # (see https://tools.ietf.org/html/rfc2181#section-11)
+    maxLen: int = min(63, DNSDomain.maxLen)  # (see https://tools.ietf.org/html/rfc2181#section-11)
 
 
 class YesNoIntegerFlag(SelectList):
@@ -2294,13 +2295,13 @@ class HashAlgorithmOID(SelectList, AlgorithmOID):
     oid: str = 'HashAlgorithmOID-oid'
     desc: str = 'values from https://www.iana.org/assignments/hash-function-text-names/'
     attr_value_dict = {
-        u'1.2.840.113549.2.2': u'md2',         # [RFC3279]
-        u'1.2.840.113549.2.5': u'md5',         # [RFC3279]
-        u'1.3.14.3.2.26': u'sha-1',            # [RFC3279]
-        u'2.16.840.1.101.3.4.2.4': u'sha-224', # [RFC4055]
-        u'2.16.840.1.101.3.4.2.1': u'sha-256', # [RFC4055]
-        u'2.16.840.1.101.3.4.2.2': u'sha-384', # [RFC4055]
-        u'2.16.840.1.101.3.4.2.3': u'sha-512', # [RFC4055]
+        u'1.2.840.113549.2.2': u'md2',          # [RFC3279]
+        u'1.2.840.113549.2.5': u'md5',          # [RFC3279]
+        u'1.3.14.3.2.26': u'sha-1',             # [RFC3279]
+        u'2.16.840.1.101.3.4.2.4': u'sha-224',  # [RFC4055]
+        u'2.16.840.1.101.3.4.2.1': u'sha-256',  # [RFC4055]
+        u'2.16.840.1.101.3.4.2.2': u'sha-384',  # [RFC4055]
+        u'2.16.840.1.101.3.4.2.3': u'sha-512',  # [RFC4055]
     }
 
 
