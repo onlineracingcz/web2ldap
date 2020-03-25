@@ -60,9 +60,9 @@ setup(
         'paramiko',
     ],
     extras_require={
-        'image':["Pillow"],
-        'xml':['defusedxml'],
-        'metrics':['prometheus_client>=0.7.1'],
+        'image': ["Pillow"],
+        'xml': ['defusedxml'],
+        'metrics': ['prometheus_client>=0.7.1'],
     },
     zip_safe=False,
     entry_points={
