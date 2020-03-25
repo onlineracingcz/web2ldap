@@ -6,14 +6,13 @@ package/install web2ldap
 
 import sys
 import os
-import glob
 from setuptools import setup, find_packages
 
 PYPI_NAME = 'web2ldap'
 
 BASEDIR = os.path.dirname(os.path.realpath(__file__))
 
-data_files=sorted([
+DATA_FILES = sorted([
     (
         root_dir[len(BASEDIR)+1:],
         [
@@ -51,7 +50,7 @@ setup(
     test_suite='tests',
     python_requires='>=3.6.*',
     include_package_data=True,
-    data_files=data_files,
+    data_files=DATA_FILES,
     install_requires=[
         'setuptools',
         'ldap0>=0.6.6',
@@ -60,18 +59,18 @@ setup(
         'dnspython',
         'paramiko',
     ],
-    extras_require = {
-        'image':  ["Pillow"],
-        'xml':  ['defusedxml'],
-        'metrics':  ['prometheus_client>=0.7.1'],
+    extras_require={
+        'image':["Pillow"],
+        'xml':['defusedxml'],
+        'metrics':['prometheus_client>=0.7.1'],
     },
     zip_safe=False,
     entry_points={
-        'console_scripts': [
+        'console_scripts':[
             'web2ldap=web2ldap.wsgi:run_standalone',
             'web2ldap.wsgi=web2ldap.wsgi:application',
         ],
-        'web2ldap_data': [
+        'web2ldap_data':[
             'templates=web2ldapcnf.templates:get_templates_path',
             'properties=web2ldapcnf.templates:get_properties_path',
             'schema=web2ldapcnf.templates:get_schema_path',
