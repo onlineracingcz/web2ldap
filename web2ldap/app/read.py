@@ -43,9 +43,9 @@ class VCardEntry(UserDict):
 
     def __getitem__(self, nameoroid):
         if web2ldap.app.schema.no_humanreadable_attr(self._app.schema, nameoroid):
-            return ''
-        value = self._entry.get(nameoroid, [''])[0]
-        return value.decode(self._app.ls.charset).encode(self._out_charset)
+            raise KeyError('Not human-readable attribute %r not usable in vCard' % (nameoroid,))
+        value = self._entry.__getitem__(nameoroid)[0]
+        return value.decode(self._app.ls.charset)
 
 
 def get_vcard_template(app, object_classes):
@@ -61,17 +61,15 @@ def get_vcard_template(app, object_classes):
 
 
 def generate_vcard(template_str, vcard_entry):
-    template_lines_new = []
-    for l in template_str.split('\n'):
-        attr_types = GrabKeys(l).keys
-        if attr_types:
-            for attr_type in attr_types:
-                if attr_type in vcard_entry:
-                    template_lines_new.append(l.strip())
-                    break
+    res = []
+    for line in template_str.decode('utf-8').split('\n'):
+        try:
+            res_line = line % vcard_entry
+        except KeyError:
+            pass
         else:
-            template_lines_new.append(l.strip())
-    return '\r\n'.join(template_lines_new) % vcard_entry
+            res.append(res_line.strip())
+    return '\r\n'.join(res)
 
 
 class DisplayEntry(UserDict):
@@ -613,7 +611,7 @@ def w2l_read(app):
             more_headers=[
                 (
                     'Content-Disposition',
-                    'inline; filename=%s.vcf' % (vcard_filename.encode(app.form.accept_charset))
+                    'inline; filename={0}.vcf'.format(vcard_filename)
                 ),
             ],
         )
