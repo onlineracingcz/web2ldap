@@ -7,7 +7,7 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.5.59",
+         "version": "1.5.60",
          "state": "stable",
          "scope": "minor fix",
          "changes": "Fixed vCard export",
