@@ -105,6 +105,14 @@ class AEObjectMixIn:
     utility mix-in class
     """
 
+    @property
+    def ae_status(self):
+        try:
+            ae_status = int(self._entry['aeStatus'][0])
+        except (KeyError, ValueError, IndexError):
+            ae_status = None
+        return ae_status
+
     def _zone_entry(self, attrlist=None):
         zone_dn = 'cn={0},{1}'.format(
             self._get_zone_name(),
@@ -556,7 +564,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
         return SelectList._validate(self, attrValue)
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
-        if int(self._entry['aeStatus'][0]) == 2:
+        if self.ae_status == 2:
             return []
         return DerefDynamicDNSelectList.transmute(self, attrValues)
 
@@ -589,7 +597,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEMemberUid(MemberUID):
+class AEMemberUid(MemberUID, AEObjectMixIn):
     oid: str = 'AEMemberUid-oid'
     desc: str = 'AE-DIR: username (uid) of member of a group'
     ldap_url = None
@@ -612,7 +620,7 @@ class AEMemberUid(MemberUID):
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if 'member' not in self._entry:
             return []
-        if int(self._entry['aeStatus'][0]) == 2:
+        if self.ae_status == 2:
             return []
         return list(filter(None, self._member_uids_from_member()))
 
@@ -1274,10 +1282,7 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectMixIn):
     deref_attrs = ('aeDept', 'aeLocation')
 
     def _status_filter(self):
-        try:
-            ae_status = int(self._entry['aeStatus'][0])
-        except (KeyError, ValueError, IndexError):
-            ae_status = 0
+        ae_status = self.ae_status or 0
         return compose_filter(
             '|',
             map_filter_parts(
@@ -1311,6 +1316,11 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectMixIn):
             filter_components.append('(mail=*)')
         filter_str = '(&{})'.format(''.join(filter_components))
         return filter_str
+
+    def _validate(self, attrValue: bytes) -> bool:
+        if self.ae_status == 2:
+            return True
+        return DerefDynamicDNSelectList._validate(self, attrValue)
 
 
 syntax_registry.reg_at(
@@ -1788,7 +1798,10 @@ class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
     oid: str = 'AEZonePrefixCommonName-oid'
     desc: str = 'AE-DIR: Attribute values have to be prefixed with zone name'
     reObj = re.compile(r'^[a-z0-9]+-[a-z0-9-]+$')
-    special_names = ('zone-admins', 'zone-auditors')
+    special_names = {
+        'zone-admins',
+        'zone-auditors',
+    }
 
     def sanitize(self, attrValue: bytes) -> bytes:
         return attrValue.strip()
@@ -1813,7 +1826,7 @@ class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
         if zone_cn:
             if not self._av:
                 result = zone_cn+u'-'
-            elif self._av in self.special_names:
+            elif self._av_u in self.special_names:
                 result = '-'.join((zone_cn, self.av_u))
         return result # formValue()
 
@@ -2142,7 +2155,7 @@ syntax_registry.reg_at(
 )
 
 
-class AERFC822MailMember(DynamicValueSelectList):
+class AERFC822MailMember(DynamicValueSelectList, AEObjectMixIn):
     oid: str = 'AERFC822MailMember-oid'
     desc: str = 'AE-DIR: rfc822MailMember'
     ldap_url = 'ldap:///_?mail,displayName?sub?(&(|(objectClass=inetLocalMailRecipient)(objectClass=aeContact))(mail=*)(aeStatus=0))'
@@ -2152,7 +2165,7 @@ class AERFC822MailMember(DynamicValueSelectList):
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if 'member' not in self._entry:
             return []
-        if int(self._entry['aeStatus'][0]) == 2:
+        if self.ae_status == 2:
             return []
         entrydn_filter = compose_filter(
             '|',
