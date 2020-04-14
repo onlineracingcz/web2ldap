@@ -55,7 +55,11 @@ def check_inst():
         logger.error('Unsupported Python version: sys.version_info= %r', sys.version_info)
         raise SystemExit('Unsupported Python version!')
 
-    if sys.platform == 'linux':
+    try:
+        platform.libc_ver
+    except AttributeError:
+        pass
+    else:
         logger.debug('platform.libc_ver()= %r', platform.libc_ver())
 
     logger.debug('*** sysconfig.get_paths() ***\n%s', pformat(sysconfig.get_paths()))
