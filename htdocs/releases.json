@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.62",
+         "state": "stable",
+         "scope": "minor fix",
+         "changes": "Fixed displaying platform information during start.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.62.tar.gz",
+         "published": "2020-04-14T23:30:00+00:00"
+      },
+      {
          "version": "1.5.61",
          "state": "stable",
          "scope": "minor fix",
