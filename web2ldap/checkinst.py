@@ -48,6 +48,7 @@ def check_inst():
     logger.debug('sys.maxunicode = %r (%s)', sys.maxunicode, hex(sys.maxunicode))
     logger.debug('sys.platform= %r', sys.platform)
     logger.debug('platform.platform()= %r', platform.platform())
+    logger.debug('platform.uname()= %r', platform.uname())
     logger.debug('os.name= %r', os.name)
     logger.debug('socket.has_ipv6= %r', socket.has_ipv6)
 
