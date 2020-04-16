@@ -15,8 +15,9 @@ https://www.apache.org/licenses/LICENSE-2.0
 import base64
 import hashlib
 import crypt
+import secrets
 
-from ldap0.pw import random_string, PWD_OCTETS_ALPHABET, PWD_UNIX_CRYPT_ALPHABET
+from ldap0.pw import random_string, PWD_UNIX_CRYPT_ALPHABET
 
 AVAIL_USERPASSWORD_SCHEMES = {
     u'crypt': u'Unix crypt(3)',
@@ -73,7 +74,7 @@ def user_password_hash(password, scheme, salt=None):
             random_string(PWD_UNIX_CRYPT_ALPHABET.decode('ascii'), 2)
         ).encode('ascii')
     elif scheme in SCHEME2HASHLIBFUNC:
-        salt = random_string(PWD_OCTETS_ALPHABET, 12)
+        salt = secrets.token_bytes(12)
         encoded_pw = base64.encodebytes(
             SCHEME2HASHLIBFUNC[scheme](password+salt).digest()+salt
         ).strip().replace(b'\n', b'')
