@@ -11,7 +11,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import string
 import re
-import random
 import time
 import threading
 
@@ -366,7 +365,3 @@ class WebSession:
                         self.delete(session_id)
                         result += 1
         return result
-
-
-# Initialization
-random.seed()
