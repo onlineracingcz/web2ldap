@@ -10,9 +10,9 @@
          "version": "1.5.63",
          "state": "stable",
          "scope": "minor fix",
-         "changes": "Fixed displaying platform information during start.",
+         "changes": "Use module secrets for generating random strings.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.63.tar.gz",
-         "published": "2020-04-xxT23:30:00+00:00"
+         "published": "2020-04-17T14:00:00+00:00"
       },
       {
          "version": "1.5.62",
