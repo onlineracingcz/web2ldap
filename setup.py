@@ -53,7 +53,7 @@ setup(
     data_files=DATA_FILES,
     install_requires=[
         'setuptools',
-        'ldap0>=0.6.6',
+        'ldap0>=1.0.1',
         'asn1crypto',
         'xlwt',
         'dnspython',
