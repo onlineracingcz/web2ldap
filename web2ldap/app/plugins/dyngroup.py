@@ -10,6 +10,10 @@ from web2ldap.app.schema.syntaxes import LDAPUrl, syntax_registry
 
 
 class MemberUrl(LDAPUrl):
+    """
+    Plugin class for attribute memberUrl which contains an LDAP URI
+    specifying the group members.
+    """
     oid: str = 'MemberUrl-oid'
     desc: str = 'LDAP URL describing search parameters used to lookup group members'
     ldap_url = None
@@ -18,6 +22,11 @@ class MemberUrl(LDAPUrl):
         LDAPUrl.__init__(self, app, dn, schema, attrType, attrValue, entry)
 
     def _validate(self, attrValue: bytes) -> bool:
+        """
+        Checks validity of membership LDAP URL.
+        False if hostport part is non-empty, the search base is not a valid DN,
+        or the base search to search base failed.
+        """
         try:
             ldap_url = ldap0.ldapurl.LDAPUrl(attrValue.decode(self._app.ls.charset))
         except ValueError:
