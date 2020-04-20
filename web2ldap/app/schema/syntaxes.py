@@ -971,6 +971,9 @@ class IPServicePortNumber(Integer):
 
 
 class MacAddress(IA5String):
+    """
+    Plugin class for IEEEE MAC addresses of network devices
+    """
     oid: str = 'MacAddress-oid'
     desc: str = 'MAC address in hex-colon notation'
     minLen: int = 17
@@ -986,7 +989,7 @@ class MacAddress(IA5String):
 
 class Uri(DirectoryString):
     """
-    see RFC 2079
+    Plugin class for Uniform Resource Identifiers (URIs, see RFC 2079)
     """
     oid: str = 'Uri-OID'
     desc: str = 'URI'
@@ -1025,6 +1028,9 @@ class Uri(DirectoryString):
 
 
 class Image(Binary):
+    """
+    Plugin base class for attributes containing image data.
+    """
     oid: str = 'Image-OID'
     desc: str = 'Image base class'
     mimeType: str = 'application/octet-stream'
@@ -1108,6 +1114,10 @@ class Image(Binary):
 
 
 class JPEGImage(Image):
+    """
+    Plugin class for LDAP syntax 'JPEG'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.17)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.28'
     desc: str = 'JPEG image'
     mimeType: str = 'image/jpeg'
@@ -1116,6 +1126,10 @@ class JPEGImage(Image):
 
 
 class PhotoG3Fax(Binary):
+    """
+    Plugin class for LDAP syntax 'Fax'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.12)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.23'
     desc: str = 'Photo (G3 fax)'
     mimeType: str = 'image/g3fax'
@@ -1127,6 +1141,10 @@ from web2ldap.app.schema.viewer import schema_anchor
 
 
 class OID(IA5String):
+    """
+    Plugin class for LDAP syntax 'OID'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.26)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.38'
     desc: str = 'OID'
     reObj = re.compile(r'^([a-zA-Z]+[a-zA-Z0-9;-]*|[0-2]?\.([0-9]+\.)*[0-9]+)$')
@@ -1197,6 +1215,9 @@ class OID(IA5String):
 
 
 class LDAPUrl(Uri):
+    """
+    Plugin class for attributes containing LDAP URLs
+    """
     oid: str = 'LDAPUrl-oid'
     desc: str = 'LDAP URL'
 
@@ -1224,6 +1245,10 @@ class LDAPUrl(Uri):
 
 
 class OctetString(Binary):
+    """
+    Plugin class for LDAP syntax 'Octet String'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.25)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.40'
     desc: str = 'Octet String'
     editable: bool = True
@@ -1280,6 +1305,9 @@ class OctetString(Binary):
 
 
 class MultilineText(DirectoryString):
+    """
+    Plugin base class for multi-line text.
+    """
     oid: str = 'MultilineText-oid'
     desc: str = 'Multiple lines of text'
     reObj = re.compile('^.*$', re.S+re.M)
@@ -1328,6 +1356,10 @@ class MultilineText(DirectoryString):
 
 
 class PreformattedMultilineText(MultilineText):
+    """
+    Plugin base class for multi-line text displayed with mono-spaced font,
+    e.g. program code, XML, JSON etc.
+    """
     oid: str = 'PreformattedMultilineText-oid'
     cols = 66
     tab_identiation = '&nbsp;&nbsp;&nbsp;&nbsp;'
@@ -1344,6 +1376,10 @@ class PreformattedMultilineText(MultilineText):
 
 
 class PostalAddress(MultilineText):
+    """
+    Plugin class for LDAP syntax 'Postal Address'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.28)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.41'
     desc: str = 'Postal Address'
     lineSep = b' $ '
@@ -1360,6 +1396,10 @@ class PostalAddress(MultilineText):
 
 
 class PrintableString(DirectoryString):
+    """
+    Plugin class for LDAP syntax 'Printable String'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.29)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.44'
     desc: str = 'Printable String'
     reObj = re.compile("^[a-zA-Z0-9'()+,.=/:? -]*$")
@@ -1367,28 +1407,48 @@ class PrintableString(DirectoryString):
 
 
 class NumericString(PrintableString):
+    """
+    Plugin class for LDAP syntax 'Numeric String'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.23)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.36'
     desc: str = 'Numeric String'
     reObj = re.compile('^[ 0-9]+$')
 
 
 class EnhancedGuide(PrintableString):
+    """
+    Plugin class for LDAP syntax 'Enhanced Guide'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.10)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.21'
     desc: str = 'Enhanced Search Guide'
 
 
 class Guide(EnhancedGuide):
+    """
+    Plugin class for LDAP syntax 'Search Guide'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.14)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.25'
     desc: str = 'Search Guide'
 
 
 class TelephoneNumber(PrintableString):
+    """
+    Plugin class for LDAP syntax ''
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.31)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.50'
     desc: str = 'Telephone Number'
     reObj = re.compile('^[0-9+x(). /-]+$')
 
 
 class FacsimileTelephoneNumber(TelephoneNumber):
+    """
+    Plugin class for LDAP syntax 'Facsimile Telephone Number'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.11)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.22'
     desc: str = 'Facsimile Number'
     reObj = re.compile(
@@ -1400,12 +1460,20 @@ class FacsimileTelephoneNumber(TelephoneNumber):
 
 
 class TelexNumber(PrintableString):
+    """
+    Plugin class for LDAP syntax 'Telex Number'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.33)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.52'
     desc: str = 'Telex Number'
     reObj = re.compile("^[a-zA-Z0-9'()+,.=/:?$ -]*$")
 
 
 class TeletexTerminalIdentifier(PrintableString):
+    """
+    Plugin class for LDAP syntax 'Teletex Terminal Identifier'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.32)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.51'
     desc: str = 'Teletex Terminal Identifier'
 
@@ -1431,6 +1499,9 @@ class ObjectGUID(LDAPSyntax):
 
 
 class Date(IA5String):
+    """
+    Plugin base class for a date without(!) time component.
+    """
     oid: str = 'Date-oid'
     desc: str = 'Date in syntax specified by class attribute storageFormat'
     maxLen: int = 10
@@ -1463,6 +1534,10 @@ class Date(IA5String):
 
 
 class NumstringDate(Date):
+    """
+    Plugin class for a date using syntax YYYYMMDD typically
+    using LDAP syntax Numstring.
+    """
     oid: str = 'NumstringDate-oid'
     desc: str = 'Date in syntax YYYYMMDD'
     reObj = re.compile('^[0-9]{4}[0-1][0-9][0-3][0-9]$')
@@ -1470,15 +1545,23 @@ class NumstringDate(Date):
 
 
 class ISO8601Date(Date):
+    """
+    Plugin class for a date using syntax YYYY-MM-DD (see ISO 8601).
+    """
     oid: str = 'ISO8601Date-oid'
-    desc: str = 'Date in syntax YYYY-MM-DD, see ISO 8601'
+    desc: str = 'Date in syntax YYYY-MM-DD (see ISO 8601)'
     reObj = re.compile('^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$')
     storageFormat = '%Y-%m-%d'
 
 
 class DateOfBirth(ISO8601Date):
+    """
+    Plugin class for date of birth syntax YYYY-MM-DD (see ISO 8601).
+
+    Displays the age based at current time.
+    """
     oid: str = 'DateOfBirth-oid'
-    desc: str = 'Date of birth: syntax YYYY-MM-DD, see ISO 8601'
+    desc: str = 'Date of birth: syntax YYYY-MM-DD (see ISO 8601)'
 
     @staticmethod
     def _age(birth_dt):
@@ -1514,6 +1597,9 @@ class DateOfBirth(ISO8601Date):
 
 
 class SecondsSinceEpoch(Integer):
+    """
+    Plugin class for seconds since epoch (1970-01-01 00:00:00).
+    """
     oid: str = 'SecondsSinceEpoch-oid'
     desc: str = 'Seconds since epoch (1970-01-01 00:00:00)'
     minValue = 0
@@ -1530,6 +1616,9 @@ class SecondsSinceEpoch(Integer):
 
 
 class DaysSinceEpoch(Integer):
+    """
+    Plugin class for days since epoch (1970-01-01).
+    """
     oid: str = 'DaysSinceEpoch-oid'
     desc: str = 'Days since epoch (1970-01-01)'
     minValue = 0
@@ -1680,6 +1769,10 @@ class SelectList(DirectoryString):
 
 
 class PropertiesSelectList(SelectList):
+    """
+    Plugin base class for attribute value select lists of LDAP syntax DirectoryString
+    constructed and validated by reading a properties file.
+    """
     oid: str = 'PropertiesSelectList-oid'
     properties_pathname = None
     properties_charset = 'utf-8'
@@ -1702,6 +1795,10 @@ class PropertiesSelectList(SelectList):
 
 
 class DynamicValueSelectList(SelectList, DirectoryString):
+    """
+    Plugin base class for attribute value select lists of LDAP syntax DirectoryString
+    constructed and validated by internal LDAP search.
+    """
     oid: str = 'DynamicValueSelectList-oid'
     ldap_url = None
     valuePrefix = ''
@@ -1894,6 +1991,10 @@ class DynamicValueSelectList(SelectList, DirectoryString):
 
 
 class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
+    """
+    Plugin base class for attribute value select lists of LDAP syntax DN
+    constructed and validated by internal LDAP search.
+    """
     oid: str = 'DynamicDNSelectList-oid'
 
     def _get_ref_entry(self, dn: str, attrlist=None) -> dict:
@@ -1939,6 +2040,12 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
 
 
 class DerefDynamicDNSelectList(DynamicDNSelectList):
+    """
+    Plugin base class for attribute value select lists of LDAP syntax DN
+    constructed and validated by internal LDAP search.
+
+    Same as DynamicDNSelectList except that Dereference extended control is used.
+    """
     oid: str = 'DerefDynamicDNSelectList-oid'
 
     def _get_ref_entry(self, dn: str, attrlist=None) -> dict:
@@ -1971,6 +2078,10 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
 
 
 class Boolean(SelectList, IA5String):
+    """
+    Plugin class for LDAP syntax 'Boolean'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.3)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.7'
     desc: str = 'Boolean'
     attr_value_dict = {
@@ -1996,6 +2107,10 @@ class Boolean(SelectList, IA5String):
 
 
 class CountryString(PropertiesSelectList):
+    """
+    Plugin class for LDAP syntax 'Country String'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.4)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.11'
     desc: str = 'Two letter country string as listed in ISO 3166-2'
     properties_pathname = os.path.join(
@@ -2007,6 +2122,10 @@ class CountryString(PropertiesSelectList):
 
 
 class DeliveryMethod(PrintableString):
+    """
+    Plugin class for LDAP syntax 'Delivery Method'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.5)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.14'
     desc: str = 'Delivery Method'
     pdm = '(any|mhs|physical|telex|teletex|g3fax|g4fax|ia5|videotex|telephone)'
@@ -2014,6 +2133,10 @@ class DeliveryMethod(PrintableString):
 
 
 class BitArrayInteger(MultilineText, Integer):
+    """
+    Plugin class for attributes with Integer syntax where the integer
+    value is interpreted as binary flags
+    """
     oid: str = 'BitArrayInteger-oid'
     flag_desc_table = tuple()
     true_false_desc = {
@@ -2099,11 +2222,17 @@ class BitArrayInteger(MultilineText, Integer):
 
 
 class GSER(DirectoryString):
+    """
+    Generic String Encoding Rules (GSER) for ASN.1 Types (see RFC 3641)
+    """
     oid: str = 'GSER-oid'
     desc: str = 'GSER syntax (see RFC 3641)'
 
 
 class UUID(IA5String):
+    """
+    Plugin class for Universally Unique IDentifier (UUID), see RFC 4122
+    """
     oid: str = '1.3.6.1.1.16.1'
     desc: str = 'UUID'
     reObj = re.compile(
@@ -2118,6 +2247,9 @@ class UUID(IA5String):
 
 
 class DNSDomain(IA5String):
+    """
+    Plugin class for fully-qualified DNS domain names
+    """
     oid: str = 'DNSDomain-oid'
     desc: str = 'DNS domain name (see RFC 1035)'
     reObj = re.compile(r'^(\*|[a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)*$')
@@ -2154,6 +2286,9 @@ class DNSDomain(IA5String):
 
 
 class RFC822Address(DNSDomain, IA5String):
+    """
+    Plugin class for RFC 822 addresses
+    """
     oid: str = 'RFC822Address-oid'
     desc: str = 'RFC 822 mail address'
     reObj = re.compile(r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$')
@@ -2188,13 +2323,20 @@ class RFC822Address(DNSDomain, IA5String):
 
 
 class DomainComponent(DNSDomain):
+    """
+    Plugin class for a single DNS label
+    (see https://tools.ietf.org/html/rfc2181#section-11)
+    """
     oid: str = 'DomainComponent-oid'
     desc: str = 'DNS domain name component'
     reObj = re.compile(r'^(\*|[a-zA-Z0-9_-]+)$')
-    maxLen: int = min(63, DNSDomain.maxLen)  # (see https://tools.ietf.org/html/rfc2181#section-11)
+    maxLen: int = min(63, DNSDomain.maxLen)
 
 
 class YesNoIntegerFlag(SelectList):
+    """
+    Plugin class for flag attribute with value "yes" or "no"
+    """
     oid: str = 'YesNoIntegerFlag-oid'
     desc: str = '0 means no, 1 means yes'
     attr_value_dict = {
@@ -2204,6 +2346,9 @@ class YesNoIntegerFlag(SelectList):
 
 
 class OnOffFlag(SelectList):
+    """
+    Plugin class for flag attribute with value "on" or "off"
+    """
     oid: str = 'OnOffFlag-oid'
     desc: str = 'Only values "on" or "off" are allowed'
     attr_value_dict = {
@@ -2213,6 +2358,9 @@ class OnOffFlag(SelectList):
 
 
 class JSONValue(PreformattedMultilineText):
+    """
+    Plugin class used for JSON data (see RFC 8259)
+    """
     oid: str = 'JSONValue-oid'
     desc: str = 'JSON data'
     lineSep = b'\n'
@@ -2251,6 +2399,9 @@ class JSONValue(PreformattedMultilineText):
 
 
 class XmlValue(PreformattedMultilineText):
+    """
+    Plugin class used for XML data
+    """
     oid: str = 'XmlValue-oid'
     desc: str = 'XML data'
     lineSep = b'\n'
@@ -2267,8 +2418,11 @@ class XmlValue(PreformattedMultilineText):
 
 
 class ASN1Object(Binary):
+    """
+    Plugin class used for BER-encoded ASN.1 data
+    """
     oid: str = 'ASN1Object-oid'
-    desc: str = 'BER encoded ASN.1 data'
+    desc: str = 'BER-encoded ASN.1 data'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         # TODO: implement this again based on pyasn1 or whatever
@@ -2276,6 +2430,10 @@ class ASN1Object(Binary):
 
 
 class DumpASN1CfgOID(OID):
+    """
+    Base-class class used for OIDs described in file dumpasn1.cfg
+    curated by Peter Gutmann.
+    """
     oid: str = 'DumpASN1Cfg-oid'
     desc: str = "OID registered in Peter Gutmann's dumpasn1.cfg"
 
@@ -2292,6 +2450,10 @@ class AlgorithmOID(OID):
 
 
 class HashAlgorithmOID(SelectList, AlgorithmOID):
+    """
+    Plugin class for selection of OIDs for hash algorithms
+    (see https://www.iana.org/assignments/hash-function-text-names/).
+    """
     oid: str = 'HashAlgorithmOID-oid'
     desc: str = 'values from https://www.iana.org/assignments/hash-function-text-names/'
     attr_value_dict = {
@@ -2306,6 +2468,9 @@ class HashAlgorithmOID(SelectList, AlgorithmOID):
 
 
 class HMACAlgorithmOID(SelectList, AlgorithmOID):
+    """
+    Plugin class for selection of OIDs for HMAC algorithms (see RFC 8018).
+    """
     oid: str = 'HMACAlgorithmOID-oid'
     desc: str = 'values from RFC 8018'
     attr_value_dict = {
@@ -2390,6 +2555,10 @@ class ComposedAttribute(LDAPSyntax):
 
 
 class LDAPv3ResultCode(SelectList):
+    """
+    Plugin base class for attributes with Integer syntax
+    constrained to valid LDAP result code.
+    """
     oid: str = 'LDAPResultCode-oid'
     desc: str = 'LDAPv3 declaration of resultCode in (see RFC 4511)'
     attr_value_dict = {
