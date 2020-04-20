@@ -1081,7 +1081,7 @@ class LDAPSession:
             [b''],
         )[0].decode(self.charset) or u''
         lu_obj = LDAPUrl(binddn_mapping)
-        search_base =lu_obj.dn.format(user=ldap0.dn.escape_str(username))
+        search_base = lu_obj.dn.format(user=ldap0.dn.escape_str(username))
         if search_base == u'_':
             search_base = str(search_root)
         elif search_base.endswith(u',_'):
