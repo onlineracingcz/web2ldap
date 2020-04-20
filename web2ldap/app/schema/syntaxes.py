@@ -208,14 +208,21 @@ class SyntaxRegistry:
 
 
 class LDAPSyntaxValueError(ValueError):
-    pass
+    """
+    Exception raised in case a syntax check failed
+    """
 
 
 class LDAPSyntaxRegexNoMatch(LDAPSyntaxValueError):
-    pass
+    """
+    Exception raised in case a regex pattern check failed
+    """
 
 
 class LDAPSyntax:
+    """
+    Base class for all LDAP syntax and attribute value plugin classes
+    """
     oid: str = ''
     desc: str = 'Any LDAP syntax'
     inputSize: int = 50
@@ -425,6 +432,9 @@ class LDAPSyntax:
 
 
 class Binary(LDAPSyntax):
+    """
+    Plugin class for LDAP syntax 'Binary' (see RFC 2252)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.5'
     desc: str = 'Binary'
     editable: bool = False
@@ -453,6 +463,9 @@ class Binary(LDAPSyntax):
 
 
 class Audio(Binary):
+    """
+    Plugin class for LDAP syntax 'Audio' (see RFC 2252)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.4'
     desc: str = 'Audio'
     mimeType: str = 'audio/basic'
@@ -481,6 +494,10 @@ class Audio(Binary):
 
 
 class DirectoryString(LDAPSyntax):
+    """
+    Plugin class for LDAP syntax 'Directory String'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.6)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.15'
     desc: str = 'Directory String'
     html_tmpl = '{av}'
@@ -499,6 +516,10 @@ class DirectoryString(LDAPSyntax):
 
 
 class DistinguishedName(DirectoryString):
+    """
+    Plugin class for LDAP syntax 'DN'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.9)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.12'
     desc: str = 'Distinguished Name'
     isBindDN = False
@@ -592,12 +613,18 @@ class DistinguishedName(DirectoryString):
 
 
 class BindDN(DistinguishedName):
+    """
+    Plugin class for DNs probably usable as bind-DN
+    """
     oid: str = 'BindDN-oid'
     desc: str = 'A Distinguished Name used to bind to a directory'
     isBindDN = True
 
 
 class AuthzDN(DistinguishedName):
+    """
+    Plugin class for DNs used for authorization
+    """
     oid: str = 'AuthzDN-oid'
     desc: str = 'Authz Distinguished Name'
 
@@ -619,6 +646,10 @@ class AuthzDN(DistinguishedName):
 
 
 class NameAndOptionalUID(DistinguishedName):
+    """
+    Plugin class for LDAP syntax 'Name and Optional UID'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.21)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.34'
     desc: str = 'Name And Optional UID'
 
@@ -652,12 +683,20 @@ class NameAndOptionalUID(DistinguishedName):
 
 
 class BitString(DirectoryString):
+    """
+    Plugin class for LDAP syntax 'Bit String'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.2)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.6'
     desc: str = 'Bit String'
     reObj = re.compile("^'[01]+'B$")
 
 
 class IA5String(DirectoryString):
+    """
+    Plugin class for LDAP syntax 'IA5 String'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.15)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.26'
     desc: str = 'IA5 String'
 
@@ -670,6 +709,10 @@ class IA5String(DirectoryString):
 
 
 class GeneralizedTime(IA5String):
+    """
+    Plugin class for LDAP syntax 'Generalized Time'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.13)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.24'
     desc: str = 'Generalized Time'
     inputSize: int = 24
@@ -816,23 +859,36 @@ class GeneralizedTime(IA5String):
 
 
 class NotBefore(GeneralizedTime):
+    """
+    Plugin class for attributes indicating start of a period
+    """
     oid: str = 'NotBefore-oid'
     desc: str = 'A not-before timestamp by default starting at 00:00:00'
     timeDefault = '000000'
 
 
 class NotAfter(GeneralizedTime):
+    """
+    Plugin class for attributes indicating end of a period
+    """
     oid: str = 'NotAfter-oid'
     desc: str = 'A not-after timestamp by default ending at 23:59:59'
     timeDefault = '235959'
 
 
 class UTCTime(GeneralizedTime):
+    """
+    Plugin class for LDAP syntax 'UTC Time'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.34)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.53'
     desc: str = 'UTC Time'
 
 
 class NullTerminatedDirectoryString(DirectoryString):
+    """
+    Plugin class for strings terminated with null-byte
+    """
     oid: str = 'NullTerminatedDirectoryString-oid'
     desc: str = 'Directory String terminated by null-byte'
 
@@ -852,12 +908,20 @@ class NullTerminatedDirectoryString(DirectoryString):
 
 
 class OtherMailbox(DirectoryString):
+    """
+    Plugin class for LDAP syntax 'Other Mailbox'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.27)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.39'
     desc: str = 'Other Mailbox'
     charset = 'ascii'
 
 
 class Integer(IA5String):
+    """
+    Plugin class for LDAP syntax 'Integer'
+    (see https://tools.ietf.org/html/rfc4517#section-3.3.16)
+    """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.27'
     desc: str = 'Integer'
     inputSize: int = 12
@@ -911,6 +975,9 @@ class Integer(IA5String):
 
 
 class IPHostAddress(IA5String):
+    """
+    Plugin class for string representation of IPv4 or IPv6 host address
+    """
     oid: str = 'IPHostAddress-oid'
     desc: str = 'string representation of IPv4 or IPv6 address'
     # Class in module ipaddr which parses address/network values
@@ -928,18 +995,27 @@ class IPHostAddress(IA5String):
 
 
 class IPv4HostAddress(IPHostAddress):
+    """
+    Plugin class for string representation of IPv4 host address
+    """
     oid: str = 'IPv4HostAddress-oid'
     desc: str = 'string representation of IPv4 address'
     addr_class = ipaddress.IPv4Address
 
 
 class IPv6HostAddress(IPHostAddress):
+    """
+    Plugin class for string representation of IPv6 host address
+    """
     oid: str = 'IPv6HostAddress-oid'
     desc: str = 'string representation of IPv6 address'
     addr_class = ipaddress.IPv6Address
 
 
 class IPNetworkAddress(IPHostAddress):
+    """
+    Plugin class for string representation of IPv4 or IPv6 network address
+    """
     oid: str = 'IPNetworkAddress-oid'
     desc: str = 'string representation of IPv4 or IPv6 network address/mask'
 
@@ -952,18 +1028,27 @@ class IPNetworkAddress(IPHostAddress):
 
 
 class IPv4NetworkAddress(IPNetworkAddress):
+    """
+    Plugin class for string representation of IPv4 network address
+    """
     oid: str = 'IPv4NetworkAddress-oid'
     desc: str = 'string representation of IPv4 network address/mask'
     addr_class = ipaddress.IPv4Network
 
 
 class IPv6NetworkAddress(IPNetworkAddress):
+    """
+    Plugin class for string representation of IPv6 network address
+    """
     oid: str = 'IPv6NetworkAddress-oid'
     desc: str = 'string representation of IPv6 network address/mask'
     addr_class = ipaddress.IPv6Network
 
 
 class IPServicePortNumber(Integer):
+    """
+    Plugin class for service port number (see /etc/services)
+    """
     oid: str = 'IPServicePortNumber-oid'
     desc: str = 'Port number for an UDP- or TCP-based service'
     minValue = 0
