@@ -524,19 +524,10 @@ class DistinguishedName(DirectoryString):
     desc: str = 'Distinguished Name'
     isBindDN = False
     hasSubordinates = False
-    noSubordinateAttrs = set(map(
-        str.lower,
-        [
-            'subschemaSubentry',
-        ],
-    ))
     ref_attrs = None
 
     def _validate(self, attrValue: bytes) -> bool:
         return is_dn(self._app.ls.uc_decode(attrValue)[0])
-
-    def _has_subordinates(self):
-        return self.hasSubordinates and not self._at.lower() in self.noSubordinateAttrs
 
     def _additional_links(self):
         r = []
@@ -547,7 +538,7 @@ class DistinguishedName(DirectoryString):
                     [('dn', self.av_u)],
                 )
             )
-        if self._has_subordinates():
+        if self.hasSubordinates:
             r.append(self._app.anchor(
                 'search', 'Down',
                 (
