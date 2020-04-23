@@ -2409,18 +2409,6 @@ class DomainComponent(DNSDomain):
     maxLen: int = min(63, DNSDomain.maxLen)
 
 
-class OnOffFlag(SelectList):
-    """
-    Plugin class for flag attribute with value "on" or "off"
-    """
-    oid: str = 'OnOffFlag-oid'
-    desc: str = 'Only values "on" or "off" are allowed'
-    attr_value_dict = {
-        'on': 'on',
-        'off': 'off',
-    }
-
-
 class JSONValue(PreformattedMultilineText):
     """
     Plugin class used for JSON data (see RFC 8259)
