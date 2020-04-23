@@ -389,7 +389,7 @@ class LDAPSyntax:
         try:
             result = self.av_u or ''
         except UnicodeDecodeError:
-            result = u'!!!snipped because of UnicodeDecodeError!!!'
+            result = '!!!snipped because of UnicodeDecodeError!!!'
         return result
 
     def formFields(self):
@@ -544,7 +544,7 @@ class DistinguishedName(DirectoryString):
                 (
                     ('dn', self.av_u),
                     ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
-                    ('filterstr', u'(objectClass=*)'),
+                    ('filterstr', '(objectClass=*)'),
                 )
             ))
         if self.isBindDN:
@@ -570,7 +570,7 @@ class DistinguishedName(DirectoryString):
                 ref_attr, ref_text, ref_dn, ref_title = ref_attr_tuple
             ref_attr = ref_attr or self._at
             ref_dn = ref_dn or self._dn
-            ref_title = ref_title or u'Search %s entries referencing entry %s in attribute %s' % (
+            ref_title = ref_title or 'Search %s entries referencing entry %s in attribute %s' % (
                 ref_oc, self.av_u, ref_attr,
             )
             r.append(self._app.anchor(
@@ -587,7 +587,7 @@ class DistinguishedName(DirectoryString):
                             False: web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL,
                         }[ref_oc is None]
                     ),
-                    ('search_string', ref_oc or u''),
+                    ('search_string', ref_oc or ''),
                     ('search_attr', ref_attr),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
@@ -597,7 +597,7 @@ class DistinguishedName(DirectoryString):
         return r
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        r = [self._app.form.utf2display(self.av_u or u'- World -')]
+        r = [self._app.form.utf2display(self.av_u or '- World -')]
         if commandbutton:
             r.extend(self._additional_links())
         return web2ldapcnf.command_link_separator.join(r)
@@ -646,7 +646,7 @@ class NameAndOptionalUID(DistinguishedName):
 
     def _split_dn_and_uid(self, val):
         try:
-            sep_ind = val.rindex(u'#')
+            sep_ind = val.rindex('#')
         except ValueError:
             dn = val
             uid = None
@@ -755,7 +755,7 @@ class GeneralizedTime(IA5String):
 
     def formValue(self) -> str:
         if not self._av:
-            return u''
+            return ''
         try:
             dt = datetime.datetime.strptime(self.av_u, r'%Y%m%d%H%M%SZ')
         except ValueError:
@@ -839,7 +839,7 @@ class GeneralizedTime(IA5String):
             dt_utc=dt_utc_str,
             av=self._app.form.utf2display(self.av_u),
             timespan_disp=self._app.form.utf2display(
-                web2ldap.app.gui.ts2repr(Timespan.time_divisors, u' ', abs(time_span))
+                web2ldap.app.gui.ts2repr(Timespan.time_divisors, ' ', abs(time_span))
             ),
             timespan_comment={
                 1: 'ago',
@@ -1077,12 +1077,12 @@ class Uri(DirectoryString):
     def display(self, valueindex=0, commandbutton=False) -> str:
         attr_value = self.av_u
         try:
-            url, label = attr_value.split(u' ', 1)
+            url, label = attr_value.split(' ', 1)
         except ValueError:
             url, label = attr_value, attr_value
-            display_url = u''
+            display_url = ''
         else:
-            display_url = u' (%s)' % (url)
+            display_url = ' (%s)' % (url)
         if ldap0.ldapurl.is_ldapurl(url):
             return '<a href="%s?%s">%s%s</a>' % (
                 self._app.form.script_name,
@@ -1416,7 +1416,7 @@ class MultilineText(DirectoryString):
             self._app.ls.uc_decode(line_b)[0]
             for line_b in self._split_lines(self._av or b'')
         ]
-        return u'\r\n'.join(splitted_lines)
+        return '\r\n'.join(splitted_lines)
 
     def formField(self) -> str:
         form_value = self.formValue()
@@ -1716,13 +1716,13 @@ class Timespan(Integer):
     inputSize: int = LDAPSyntax.inputSize
     minValue = 0
     time_divisors = (
-        (u'weeks', 604800),
-        (u'days', 86400),
-        (u'hours', 3600),
-        (u'mins', 60),
-        (u'secs', 1),
+        ('weeks', 604800),
+        ('days', 86400),
+        ('hours', 3600),
+        ('mins', 60),
+        ('secs', 1),
     )
-    sep = u','
+    sep = ','
 
     def sanitize(self, attrValue: bytes) -> bytes:
         if not attrValue:
@@ -1824,7 +1824,7 @@ class SelectList(DirectoryString):
         return tag_tmpl.format(
             attr_value=attr_value_str,
             attr_text=self._app.form.utf2display(attr_text),
-            attr_title=self._app.form.utf2display(attr_title or u'')
+            attr_title=self._app.form.utf2display(attr_title or '')
         )
 
     def formField(self) -> str:
@@ -1852,7 +1852,7 @@ class PropertiesSelectList(SelectList):
     oid: str = 'PropertiesSelectList-oid'
     properties_pathname = None
     properties_charset = 'utf-8'
-    properties_delimiter = u'='
+    properties_delimiter = '='
 
     def _get_attr_value_dict(self):
         attr_value_dict = SelectList._get_attr_value_dict(self)
@@ -1980,7 +1980,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             result_dn = ','.join((ldap_url_dn[:-3], str(self.dn.parent())))
         else:
             result_dn = ldap_url_dn
-        if result_dn.endswith(u','):
+        if result_dn.endswith(','):
             result_dn = result_dn[:-1]
         return result_dn
         # end of _search_root()
@@ -2161,8 +2161,8 @@ class Boolean(SelectList, IA5String):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.7'
     desc: str = 'Boolean'
     attr_value_dict = {
-        u'TRUE': u'TRUE',
-        u'FALSE': u'FALSE',
+        'TRUE': 'TRUE',
+        'FALSE': 'FALSE',
     }
 
     def _get_attr_value_dict(self):
@@ -2262,7 +2262,7 @@ class BitArrayInteger(MultilineText, Integer):
             ))
             for flag_desc, flag_int in self.flag_desc_table
         ]
-        return u'\r\n'.join(flag_lines)
+        return '\r\n'.join(flag_lines)
 
     def formField(self) -> str:
         form_value = self.formValue()
@@ -2344,12 +2344,12 @@ class DNSDomain(IA5String):
 
     def formValue(self) -> str:
         try:
-            result = u'.'.join([
+            result = '.'.join([
                 dc.decode('idna')
                 for dc in (self._av or b'').split(b'.')
             ])
         except UnicodeDecodeError:
-            result = u'!!!snipped because of UnicodeDecodeError!!!'
+            result = '!!!snipped because of UnicodeDecodeError!!!'
         return result
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -2416,8 +2416,8 @@ class YesNoIntegerFlag(SelectList):
     oid: str = 'YesNoIntegerFlag-oid'
     desc: str = '0 means no, 1 means yes'
     attr_value_dict = {
-        u'0': u'no',
-        u'1': u'yes',
+        '0': 'no',
+        '1': 'yes',
     }
 
 
@@ -2428,8 +2428,8 @@ class OnOffFlag(SelectList):
     oid: str = 'OnOffFlag-oid'
     desc: str = 'Only values "on" or "off" are allowed'
     attr_value_dict = {
-        u'on': u'on',
-        u'off': u'off',
+        'on': 'on',
+        'off': 'off',
     }
 
 
@@ -2533,13 +2533,13 @@ class HashAlgorithmOID(SelectList, AlgorithmOID):
     oid: str = 'HashAlgorithmOID-oid'
     desc: str = 'values from https://www.iana.org/assignments/hash-function-text-names/'
     attr_value_dict = {
-        u'1.2.840.113549.2.2': u'md2',          # [RFC3279]
-        u'1.2.840.113549.2.5': u'md5',          # [RFC3279]
-        u'1.3.14.3.2.26': u'sha-1',             # [RFC3279]
-        u'2.16.840.1.101.3.4.2.4': u'sha-224',  # [RFC4055]
-        u'2.16.840.1.101.3.4.2.1': u'sha-256',  # [RFC4055]
-        u'2.16.840.1.101.3.4.2.2': u'sha-384',  # [RFC4055]
-        u'2.16.840.1.101.3.4.2.3': u'sha-512',  # [RFC4055]
+        '1.2.840.113549.2.2': 'md2',          # [RFC3279]
+        '1.2.840.113549.2.5': 'md5',          # [RFC3279]
+        '1.3.14.3.2.26': 'sha-1',             # [RFC3279]
+        '2.16.840.1.101.3.4.2.4': 'sha-224',  # [RFC4055]
+        '2.16.840.1.101.3.4.2.1': 'sha-256',  # [RFC4055]
+        '2.16.840.1.101.3.4.2.2': 'sha-384',  # [RFC4055]
+        '2.16.840.1.101.3.4.2.3': 'sha-512',  # [RFC4055]
     }
 
 
@@ -2551,11 +2551,11 @@ class HMACAlgorithmOID(SelectList, AlgorithmOID):
     desc: str = 'values from RFC 8018'
     attr_value_dict = {
         # from RFC 8018
-        u'1.2.840.113549.2.7': u'hmacWithSHA1',
-        u'1.2.840.113549.2.8': u'hmacWithSHA224',
-        u'1.2.840.113549.2.9': u'hmacWithSHA256',
-        u'1.2.840.113549.2.10': u'hmacWithSHA384',
-        u'1.2.840.113549.2.11': u'hmacWithSHA512',
+        '1.2.840.113549.2.7': 'hmacWithSHA1',
+        '1.2.840.113549.2.8': 'hmacWithSHA224',
+        '1.2.840.113549.2.9': 'hmacWithSHA256',
+        '1.2.840.113549.2.10': 'hmacWithSHA384',
+        '1.2.840.113549.2.11': 'hmacWithSHA512',
     }
 
 
@@ -2595,7 +2595,7 @@ class ComposedAttribute(LDAPSyntax):
         Return a dummy value that attribute is returned from input form and
         then seen by .transmute()
         """
-        return u''
+        return ''
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         """
