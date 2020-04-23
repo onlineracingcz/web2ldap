@@ -685,18 +685,18 @@ class AEZoneAdminGroupDN(AEGroupDN):
     oid: str = 'AEZoneAdminGroupDN-oid'
     desc: str = 'AE-DIR: DN of zone admin group entry'
     ldap_url = (
-      'ldap:///_??sub?'
-      '(&'
-        '(objectClass=aeGroup)'
-        '(aeStatus=0)'
-        '(cn=*-zone-admins)'
-        '(!'
-          '(|'
-            '(cn:dn:=pub)'
-            '(cn:dn:=ae)'
+        'ldap:///_??sub?'
+        '(&'
+          '(objectClass=aeGroup)'
+          '(aeStatus=0)'
+          '(cn=*-zone-admins)'
+          '(!'
+            '(|'
+              '(cn:dn:=pub)'
+              '(cn:dn:=ae)'
+            ')'
           ')'
         ')'
-      ')'
     )
 
 syntax_registry.reg_at(
@@ -711,21 +711,21 @@ class AEZoneAuditorGroupDN(AEGroupDN):
     oid: str = 'AEZoneAuditorGroupDN-oid'
     desc: str = 'AE-DIR: DN of zone auditor group entry'
     ldap_url = (
-      'ldap:///_??sub?'
-      '(&'
-        '(objectClass=aeGroup)'
-        '(aeStatus=0)'
-        '(|'
-          '(cn=*-zone-admins)'
-          '(cn=*-zone-auditors)'
-        ')'
-        '(!'
+        'ldap:///_??sub?'
+        '(&'
+          '(objectClass=aeGroup)'
+          '(aeStatus=0)'
           '(|'
-            '(cn:dn:=pub)'
-            '(cn:dn:=ae)'
+            '(cn=*-zone-admins)'
+            '(cn=*-zone-auditors)'
+          ')'
+          '(!'
+            '(|'
+              '(cn:dn:=pub)'
+              '(cn:dn:=ae)'
+            ')'
           ')'
         ')'
-      ')'
     )
 
 syntax_registry.reg_at(
@@ -1503,24 +1503,24 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
             return False
         attr_value_dict = self._get_attr_value_dict()
         if (
-            not attr_value_dict
-            or (
+                not attr_value_dict
+                or (
                     len(attr_value_dict) == 1
                     and tuple(attr_value_dict.keys()) == ('',)
-                )
+                    )
             ):
             return True
         return DynamicValueSelectList._validate(self, attrValue)
 
     def _filterstr(self):
         return (
-          '(&'
-            '(objectClass=aeUser)'
-            '(objectClass=inetLocalMailRecipient)'
-            '(aeStatus=0)'
-            '(aePerson=%s)'
-            '(mailLocalAddress=*)'
-          ')'
+            '(&'
+              '(objectClass=aeUser)'
+              '(objectClass=inetLocalMailRecipient)'
+              '(aeStatus=0)'
+              '(aePerson=%s)'
+              '(mailLocalAddress=*)'
+            ')'
         ) % ldap0.filter.escape_str(self._dn)
 
 syntax_registry.reg_at(
@@ -1946,9 +1946,9 @@ class AENotAfter(NotAfter):
         if result:
             ae_not_after = time.strptime(attrValue.decode('ascii'), '%Y%m%d%H%M%SZ')
             if (
-                'aeNotBefore' not in self._entry
-                or not self._entry['aeNotBefore']
-                or not self._entry['aeNotBefore'][0]
+                    'aeNotBefore' not in self._entry
+                    or not self._entry['aeNotBefore']
+                    or not self._entry['aeNotBefore'][0]
                 ):
                 return True
             try:
