@@ -2409,18 +2409,6 @@ class DomainComponent(DNSDomain):
     maxLen: int = min(63, DNSDomain.maxLen)
 
 
-class YesNoIntegerFlag(SelectList):
-    """
-    Plugin class for flag attribute with value "yes" or "no"
-    """
-    oid: str = 'YesNoIntegerFlag-oid'
-    desc: str = '0 means no, 1 means yes'
-    attr_value_dict = {
-        '0': 'no',
-        '1': 'yes',
-    }
-
-
 class OnOffFlag(SelectList):
     """
     Plugin class for flag attribute with value "on" or "off"

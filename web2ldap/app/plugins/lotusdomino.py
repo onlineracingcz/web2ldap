@@ -9,9 +9,19 @@ from web2ldap.app.schema.syntaxes import \
     DynamicDNSelectList, \
     MultilineText, \
     SelectList, \
-    YesNoIntegerFlag, \
     syntax_registry
 
+
+class YesNoIntegerFlag(SelectList):
+    """
+    Plugin class for flag attribute with value "yes" or "no"
+    """
+    oid: str = 'YesNoIntegerFlag-oid'
+    desc: str = '0 means no, 1 means yes'
+    attr_value_dict = {
+        '0': 'no',
+        '1': 'yes',
+    }
 
 syntax_registry.reg_at(
     YesNoIntegerFlag.oid, [
