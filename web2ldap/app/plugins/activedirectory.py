@@ -426,11 +426,11 @@ class LogonHours(OctetString):
             int(attrValue[i:i+1] == b'X')<<i%8
             for i in range(len(attrValue))
         ]
-        r = [
+        res = [
             sum(hour_flags[i*8:(i+1)*8])
             for i in range(21)
         ]
-        return bytes(r)
+        return bytes(res)
 
     def _validate(self, attrValue: bytes) -> bool:
         return len(attrValue) == 21
