@@ -104,10 +104,7 @@ def w2l_modify(app):
         )
         return
 
-    in_oldattrtypes = set([
-        a
-        for a in app.form.getInputValue('in_oldattrtypes', [])
-    ])
+    in_oldattrtypes = {a for a in app.form.getInputValue('in_oldattrtypes', [])}
 
     try:
         old_entry, dummy = web2ldap.app.addmodifyform.read_old_entry(app, app.dn, app.schema, in_assertion)

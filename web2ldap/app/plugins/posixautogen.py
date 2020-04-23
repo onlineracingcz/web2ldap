@@ -45,7 +45,7 @@ class AutogenNumberMixIn:
     object_class = 'posixAccount'
 
     def formValue(self) -> str:
-        if self.object_class.lower() not in set([oc.lower() for oc in self._entry['objectClass']]):
+        if self.object_class.lower() not in {oc.lower() for oc in self._entry['objectClass']}:
             return u''
         try:
             ldap_result = self._app.ls.l.search_s(

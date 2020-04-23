@@ -344,7 +344,7 @@ class DisplayObjectClass(DisplaySchemaElement):
         oc_ref_list = []
         for nf_oid, name_form_se in self.s.sed[NameForm].items():
             name_form_oc = name_form_se.oc.lower()
-            se_names = set([o.lower() for o in self.sei.names])
+            se_names = {o.lower() for o in self.sei.names}
             if name_form_se.oc == self.sei.oid or name_form_oc in se_names:
                 oc_ref_list.append(nf_oid)
         if oc_ref_list:

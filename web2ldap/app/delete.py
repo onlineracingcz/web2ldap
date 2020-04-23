@@ -418,10 +418,10 @@ def w2l_delete(app):
         return
 
     # determine extended controls to be sent with delete operation
-    conn_server_ctrls = set([
+    conn_server_ctrls = {
         server_ctrl.controlType
         for server_ctrl in app.ls.l._req_ctrls['**all**']+app.ls.l._req_ctrls['**write**']+app.ls.l._req_ctrls['delete']
-    ])
+    }
     delete_server_ctrls = [
         ldap0.controls.LDAPControl(ctrl_oid, True, None)
         for ctrl_oid in delete_ctrl_oids

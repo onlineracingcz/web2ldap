@@ -1778,10 +1778,10 @@ class AECommonNameAEHost(AECommonName):
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if self.derive_from_host:
-            return list(set([
+            return {
                 b'.'.join(av.strip().lower().split(b'.')[self.host_begin_item:self.host_end_item])
                 for av in self._entry['host']
-            ]))
+            }
         return attrValues
 
 syntax_registry.reg_at(

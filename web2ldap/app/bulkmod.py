@@ -138,7 +138,7 @@ def bulkmod_input_form(
     bulkmod_at = bulkmod_at or [u'']
     bulkmod_op = bulkmod_op or [u'']
     bulkmod_av = bulkmod_av or [u'']
-    error_attrs = sorted(set([bulkmod_at[i] for i in input_errors]))
+    error_attrs = sorted({bulkmod_at[i] for i in input_errors})
     if error_attrs:
         Msg = '<p class="ErrorMessage">Invalid input: %s</p>' % (
             ', '.join(map(app.form.utf2display, error_attrs))
@@ -387,15 +387,15 @@ def w2l_bulkmod(app):
 
         # now gather list of extended controls to be used with search request
         bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
-        conn_server_ctrls = set([
+        conn_server_ctrls = {
             server_ctrl.controlType
             for server_ctrl in app.ls.l._req_ctrls['**all**']+app.ls.l._req_ctrls['**write**']+app.ls.l._req_ctrls['modify']
-        ])
-        bulkmod_server_ctrls = list(set([
+        }
+        bulkmod_server_ctrls = list({
             ldap0.controls.LDAPControl(ctrl_oid, True, None)
             for ctrl_oid in bulkmod_ctrl_oids
             if ctrl_oid and ctrl_oid not in conn_server_ctrls
-        ])) or None
+        }) or None
 
         ldap_error_html = []
 

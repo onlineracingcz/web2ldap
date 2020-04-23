@@ -50,10 +50,7 @@ class VCardEntry(UserDict):
 
 def get_vcard_template(app, object_classes):
     template_dict = CIDict(app.cfg_param('vcard_template', {}))
-    current_oc_set = set([
-        s.lower().decode('ascii')
-        for s in object_classes
-    ])
+    current_oc_set = {s.lower().decode('ascii') for s in object_classes}
     template_oc = list(current_oc_set.intersection(template_dict.data.keys()))
     if not template_oc:
         return None
@@ -222,10 +219,10 @@ class DisplayEntry(UserDict):
                 except IOError:
                     error_msg = 'I/O error reading template file'
                     continue
-                template_attr_oid_set = set([
+                template_attr_oid_set = {
                     self.entry._s.get_oid(ldap0.schema.models.AttributeType, attr_type_name)
                     for attr_type_name in GrabKeys(template_str)()
-                ])
+                }
                 if display_duplicate_attrs or not displayed_attrs.intersection(template_attr_oid_set):
                     self._app.outf.write(template_str % self)
                     displayed_attrs.update(template_attr_oid_set)
@@ -254,11 +251,11 @@ def display_attribute_table(app, entry, attrs, comment):
         return
     show_attrs.sort(key=str.lower)
     # Determine which attributes are shown expanded or collapsed
-    read_expandattr_set = set([
+    read_expandattr_set = {
         at.strip().lower()
         for at in app.form.getInputValue('read_expandattr', [])
         if at
-    ])
+    }
     if u'*' in read_expandattr_set:
         read_tablemaxcount_dict = {}
     else:

@@ -263,10 +263,10 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         self.existing_object_classes = existing_object_classes
         self.writeable_attr_oids = writeable_attr_oids
         self.invalid_attrs = invalid_attrs or {}
-        new_object_classes = set(list(self.entry.object_class_oid_set())) - set([
+        new_object_classes = set(self.entry.object_class_oid_set()) - {
             self.entry._s.get_oid(ObjectClass, oc_name)
             for oc_name in existing_object_classes or []
-        ])
+        }
         new_attribute_types = self.entry._s.attribute_types(
             new_object_classes,
             raise_keyerror=0,
@@ -686,10 +686,10 @@ def ObjectClassForm(
                     dit_content_rule_status_text = 'Ignored'
                 else:
                     dit_content_rule_status_text = 'Governed by'
-                    all_auxiliary_oc_oids = set([
+                    all_auxiliary_oc_oids = {
                         app.schema.get_oid(ObjectClass, nameoroid)
                         for nameoroid in dit_content_rule.aux
-                    ])
+                    }
                     all_auxiliary_oc = [
                         oc
                         for oc in all_auxiliary_oc
@@ -833,11 +833,11 @@ def ObjectClassForm(
                     tmpl_parent_dn,
                     parent_result.entry_as,
                 )
-                missing_parent_attrs = set([
+                missing_parent_attrs = {
                     attr_type
                     for attr_type in addform_parent_attrs
                     if attr_type not in parent_entry
-                ])
+                }
                 if missing_parent_attrs:
                     continue
             restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, tmpl_parent_dn)
@@ -1280,7 +1280,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
     if in_wrtattroids == ['nonePseudoValue;x-web2ldap-None']:
         writeable_attr_oids = None
     elif in_wrtattroids:
-        writeable_attr_oids = set([a.encode(app.ls.charset) for a in in_wrtattroids])
+        writeable_attr_oids = {a.encode(app.ls.charset) for a in in_wrtattroids}
     else:
         writeable_attr_oids = read_writeable_attr_oids
 
