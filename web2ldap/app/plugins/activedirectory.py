@@ -372,13 +372,13 @@ class SearchFlags(BitArrayInteger):
     """
     http://msdn.microsoft.com/en-us/library/ms679765(VS.85).aspx
 
-     1 (0x00000001)   Create an index for the attribute.
-     2 (0x00000002)   Create an index for the attribute in each container.
-     4 (0x00000004)   Add this attribute to the Ambiguous Name Resolution (ANR) set. This is used to assist in finding an object when only partial information is given. For example, if the LDAP filter is (ANR=JEFF), the search will find each object where the first name, last name, e-mail address, or other ANR attribute is equal to JEFF. Bit 0 must be set for this index take affect.
-     8 (0x00000008)   Preserve this attribute in the tombstone object for deleted objects.
-    16 (0x00000010)   Copy the value for this attribute when the object is copied.
-    32 (0x00000020)   Supported beginning with Windows Server 2003. Create a tuple index for the attribute. This will improve searches where the wildcard appears at the front of the search string. For example, (sn=*mith).
-    64 (0x00000040)   Supported beginning with ADAM. Creates an index to greatly help VLV performance on arbitrary attributes.
+     1 (0x00000001) Create an index for the attribute.
+     2 (0x00000002) Create an index for the attribute in each container.
+     4 (0x00000004) Add this attribute to the Ambiguous Name Resolution (ANR) set.
+     8 (0x00000008) Preserve this attribute in the tombstone object for deleted objects.
+    16 (0x00000010) Copy the value for this attribute when the object is copied.
+    32 (0x00000020) Create a tuple index for the attribute (since Windows Server 2003).
+    64 (0x00000040) Creates an index to greatly help VLV performance on arbitrary attributes (ADAM).
     """
     oid: str = 'SearchFlags-oid'
     flag_desc_table = (
