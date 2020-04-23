@@ -409,9 +409,6 @@ class LDAPSyntax:
         input_field.set_default(self.formValue())
         return input_field
 
-    def getMimeType(self) -> str:
-        return self.mimeType
-
     def display(self, valueindex=0, commandbutton=False) -> str:
         if ldap0.ldapurl.is_ldapurl(self.av_u):
             displayer_class = LDAPUrl
@@ -477,7 +474,7 @@ class Audio(Binary):
         return res is not None
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        mimetype = self.getMimeType()
+        mimetype = self.mimeType
         return (
             '<embed type="%s" autostart="false" '
             'src="%s/read/%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d">'

@@ -441,7 +441,7 @@ def w2l_read(app):
             app,
             app.form.getInputValue(
                 'read_attrmimetype',
-                [attr_instance.getMimeType()],
+                [attr_instance.mimeType],
             )[0],
             app.form.accept_charset,
             more_headers=[
