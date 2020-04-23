@@ -504,9 +504,12 @@ class CountryCode(PropertiesSelectList):
         bytes.strip,
     )
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
-        self.attr_value_dict[u'0'] = u'-/-'
-        SelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
+    def _get_attr_value_dict(self):
+        # Enable empty value in any case
+        attr_value_dict = {'0': '-/-'}
+        attr_value_dict.update(PropertiesSelectList._get_attr_value_dict(self))
+        del attr_value_dict['']
+        return attr_value_dict
 
 
 syntax_registry.reg_at(
