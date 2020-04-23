@@ -43,7 +43,7 @@ class ObjectCategory(DynamicDNSelectList, DistinguishedName):
     desc: str = 'DN of the class entry'
     ldap_url = 'ldap:///CN=Schema,CN=Configuration,_?cn?one?(objectClass=classSchema)'
     ref_attrs = (
-        (None, u'Same category', None, None),
+        (None, 'Same category', None, None),
     )
 
 syntax_registry.reg_at(
@@ -58,18 +58,18 @@ class ObjectVersion(Integer, SelectList):
     oid: str = 'ObjectVersion-oid'
     desc: str = 'Object version in MS AD (see [MS-ADTS])'
     attr_value_dict = {
-        u'13': u'Windows 2000 Server operating system',
-        u'30': u'Windows Server 2003 operating system or Windows Server 2008 (AD LDS)',
-        u'31': u'Windows Server 2003 R2 operating system or Windows Server 2008 R2 (AD LDS)',
-        u'44': u'Windows Server 2008 operating system (AD DS)',
-        u'47': u'Windows Server 2008 R2 (AD DS)',
-        u'11221': u'Exchange 2007 SP1',
-        u'11222': u'Exchange 2007 SP2',
-        u'12639': u'Exchange 2010',
-        u'12640': u'Exchange 2010',
-        u'13040': u'Exchange 2010 SP1',
-        u'13214': u'Exchange 2010 SP1',
-        u'14247': u'Exchange 2010 SP2',
+        '13': 'Windows 2000 Server operating system',
+        '30': 'Windows Server 2003 operating system or Windows Server 2008 (AD LDS)',
+        '31': 'Windows Server 2003 R2 operating system or Windows Server 2008 R2 (AD LDS)',
+        '44': 'Windows Server 2008 operating system (AD DS)',
+        '47': 'Windows Server 2008 R2 (AD DS)',
+        '11221': 'Exchange 2007 SP1',
+        '11222': 'Exchange 2007 SP2',
+        '12639': 'Exchange 2010',
+        '12640': 'Exchange 2010',
+        '13040': 'Exchange 2010 SP1',
+        '13214': 'Exchange 2010 SP1',
+        '14247': 'Exchange 2010 SP2',
     }
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -230,16 +230,16 @@ class SAMAccountType(SelectList):
     oid: str = 'SAMAccountType-oid'
     desc: str = 'SAM-Account-Type in MS AD'
     attr_value_dict = {
-        u'268435456': u'SAM_GROUP_OBJECT',
-        u'268435457': u'SAM_NON_SECURITY_GROUP_OBJECT',
-        u'536870912': u'SAM_ALIAS_OBJECT',
-        u'536870913': u'SAM_NON_SECURITY_ALIAS_OBJECT',
-        u'805306368': u'SAM_NORMAL_USER_ACCOUNT',
-        u'805306369': u'SAM_MACHINE_ACCOUNT',
-        u'805306370': u'SAM_TRUST_ACCOUNT',
-        u'1073741824': u'SAM_APP_BASIC_GROUP',
-        u'1073741825': u'SAM_APP_QUERY_GROUP',
-        u'2147483647': u'SAM_ACCOUNT_TYPE_MAX',
+        '268435456': 'SAM_GROUP_OBJECT',
+        '268435457': 'SAM_NON_SECURITY_GROUP_OBJECT',
+        '536870912': 'SAM_ALIAS_OBJECT',
+        '536870913': 'SAM_NON_SECURITY_ALIAS_OBJECT',
+        '805306368': 'SAM_NORMAL_USER_ACCOUNT',
+        '805306369': 'SAM_MACHINE_ACCOUNT',
+        '805306370': 'SAM_TRUST_ACCOUNT',
+        '1073741824': 'SAM_APP_BASIC_GROUP',
+        '1073741825': 'SAM_APP_QUERY_GROUP',
+        '2147483647': 'SAM_ACCOUNT_TYPE_MAX',
     }
 
 # Register certain attribute types for syntax classes
@@ -277,19 +277,19 @@ class DomainRID(SelectList):
     oid: str = 'DomainRID-oid'
     desc: str = 'Domain RID in MS AD'
     attr_value_dict = {
-        u'9': u'DOMAIN_RID_LOGON',
-        u'500': u'DOMAIN_RID_ADMINISTRATOR',
-        u'501': u'DOMAIN_RID_GUEST',
-        u'502': u'DOMAIN_RID_KRBTGT',
-        u'512': u'DOMAIN_RID_ADMINS',
-        u'513': u'DOMAIN_RID_USERS',
-        u'514': u'DOMAIN_RID_GUESTS',
-        u'515': u'DOMAIN_RID_DOMAIN_MEMBERS',
-        u'516': u'DOMAIN_RID_DCS',
-        u'517': u'DOMAIN_RID_CERT_ADMINS',
-        u'518': u'DOMAIN_RID_SCHEMA_ADMINS',
-        u'519': u'DOMAIN_RID_ENTERPRISE_ADMINS',
-        u'520': u'DOMAIN_RID_POLICY_ADMINS',
+        '9': 'DOMAIN_RID_LOGON',
+        '500': 'DOMAIN_RID_ADMINISTRATOR',
+        '501': 'DOMAIN_RID_GUEST',
+        '502': 'DOMAIN_RID_KRBTGT',
+        '512': 'DOMAIN_RID_ADMINS',
+        '513': 'DOMAIN_RID_USERS',
+        '514': 'DOMAIN_RID_GUESTS',
+        '515': 'DOMAIN_RID_DOMAIN_MEMBERS',
+        '516': 'DOMAIN_RID_DCS',
+        '517': 'DOMAIN_RID_CERT_ADMINS',
+        '518': 'DOMAIN_RID_SCHEMA_ADMINS',
+        '519': 'DOMAIN_RID_ENTERPRISE_ADMINS',
+        '520': 'DOMAIN_RID_POLICY_ADMINS',
     }
 
 syntax_registry.reg_at(
@@ -663,13 +663,13 @@ class DomainFunctionality(SelectList):
     desc: str = 'Functional level of domain/forest'
 
     attr_value_dict = {
-        u'': u'',
-        u'0': u'Windows 2000',
-        u'1': u'Windows 2003 Mixed',
-        u'2': u'Windows 2003',
-        u'3': u'Windows 2008',
-        u'4': u'Windows 2008R2',
-        u'5': u'Windows 2012',
+        '': '',
+        '0': 'Windows 2000',
+        '1': 'Windows 2003 Mixed',
+        '2': 'Windows 2003',
+        '3': 'Windows 2008',
+        '4': 'Windows 2008R2',
+        '5': 'Windows 2012',
     }
 
 syntax_registry.reg_at(
@@ -685,13 +685,13 @@ class DomainControllerFunctionality(SelectList):
     desc: str = 'Functional level of domain controller'
 
     attr_value_dict = {
-        u'': u'',
-        u'0': u'Windows 2000',
-        u'2': u'Windows 2003',
-        u'3': u'Windows 2008',
-        u'4': u'Windows 2008R2',
-        u'5': u'Windows 2012',
-        u'6': u'Windows 2012R2',
+        '': '',
+        '0': 'Windows 2000',
+        '2': 'Windows 2003',
+        '3': 'Windows 2008',
+        '4': 'Windows 2008R2',
+        '5': 'Windows 2012',
+        '6': 'Windows 2012R2',
     }
 
 syntax_registry.reg_at(
@@ -718,9 +718,9 @@ class ServerStatus(SelectList):
     oid: str = 'ServerStatus-oid'
     desc: str = 'Specifies whether the server is enabled or disabled.'
     attr_value_dict = {
-        u'': u'',
-        u'1': u'enabled',
-        u'2': u'disabled',
+        '': '',
+        '1': 'enabled',
+        '2': 'disabled',
     }
 
 syntax_registry.reg_at(
@@ -734,9 +734,9 @@ class ObjectClassCategory(SelectList):
     oid: str = 'ObjectClassCategory-oid'
     desc: str = 'Category for object class'
     attr_value_dict = {
-        u'1': u'STRUCTURAL',
-        u'2': u'ABSTRACT',
-        u'3': u'AUXILIARY',
+        '1': 'STRUCTURAL',
+        '2': 'ABSTRACT',
+        '3': 'AUXILIARY',
     }
 
 syntax_registry.reg_at(
