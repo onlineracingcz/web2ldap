@@ -336,7 +336,7 @@ class AEUserUid(AEUid):
                 return uid_candidate
             gen_collisions += 1
         raise web2ldap.app.core.ErrorExit(
-            u'Gave up generating new unique <em>uid</em> after %d attempts.' % (gen_collisions)
+            'Gave up generating new unique <em>uid</em> after %d attempts.' % (gen_collisions)
         )
         # end of _gen_uid()
 
@@ -401,7 +401,7 @@ class AEZoneDN(DerefDynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeZone)(aeStatus=0))'
     ref_attrs = (
-        (None, u'Same zone', None, u'Search all groups constrained to same zone'),
+        (None, 'Same zone', None, 'Search all groups constrained to same zone'),
     )
 
 syntax_registry.reg_at(
@@ -417,7 +417,7 @@ class AEHost(DerefDynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?host?sub?(&(objectClass=aeHost)(aeStatus=0))'
     ref_attrs = (
-        (None, u'Same host', None, u'Search all services running on same host'),
+        (None, 'Same host', None, 'Search all services running on same host'),
     )
 
 syntax_registry.reg_at(
@@ -433,7 +433,7 @@ class AENwDevice(DerefDynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///..?cn?sub?(&(objectClass=aeNwDevice)(aeStatus=0))'
     ref_attrs = (
-        (None, u'Siblings', None, u'Search sibling network devices'),
+        (None, 'Siblings', None, 'Search sibling network devices'),
     )
 
     def _search_root(self) -> str:
@@ -625,7 +625,7 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
         return list(filter(None, self._member_uids_from_member()))
 
     def formValue(self) -> str:
-        return u''
+        return ''
 
     def formField(self) -> str:
         input_field = HiddenInput(
@@ -653,7 +653,7 @@ class AEGroupDN(DerefDynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_??sub?(&(|(objectClass=aeGroup)(objectClass=aeMailGroup))(aeStatus=0))'
     ref_attrs = (
-        ('memberOf', u'Members', None, u'Search all member entries of this user group'),
+        ('memberOf', 'Members', None, 'Search all member entries of this user group'),
     )
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -847,8 +847,8 @@ class AERequires(DerefDynamicDNSelectList):
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0))'
     ref_attrs = (
         (
-            'aeRequires', u'Same require', None, 'aeSrvGroup',
-            u'Search all service groups depending on this service group.'
+            'aeRequires', 'Same require', None, 'aeSrvGroup',
+            'Search all service groups depending on this service group.'
         ),
     )
 
@@ -895,14 +895,14 @@ class AEEntryDNAEPerson(DistinguishedName):
     oid: str = 'AEEntryDNAEPerson-oid'
     desc: str = 'AE-DIR: entryDN of aePerson entry'
     ref_attrs = (
-        ('manager', u'Manages', None, u'Search all entries managed by this person'),
+        ('manager', 'Manages', None, 'Search all entries managed by this person'),
         (
-            'aePerson', u'Users', None, 'aeUser',
-            u'Search all personal AE-DIR user accounts (aeUser entries) of this person.'
+            'aePerson', 'Users', None, 'aeUser',
+            'Search all personal AE-DIR user accounts (aeUser entries) of this person.'
         ),
         (
-            'aeOwner', u'Devices', None, 'aeDevice',
-            u'Search all devices (aeDevice entries) assigned to this person.'
+            'aeOwner', 'Devices', None, 'aeDevice',
+            'Search all devices (aeDevice entries) assigned to this person.'
         ),
     )
 
@@ -927,15 +927,15 @@ class AEEntryDNAEUser(DistinguishedName):
                 'search', 'Activity',
                 (
                     ('dn', self._app.audit_context),
-                    ('searchform_mode', u'adv'),
-                    ('search_attr', u'objectClass'),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'objectClass'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', u'auditObject'),
-                    ('search_attr', u'reqAuthzID'),
+                    ('search_string', 'auditObject'),
+                    ('search_attr', 'reqAuthzID'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
                 ),
-                title=u'Search modifications made by %s in accesslog DB' % (self.av_u),
+                title='Search modifications made by %s in accesslog DB' % (self.av_u),
             ))
         return r
 
@@ -953,12 +953,12 @@ class AEEntryDNAEHost(DistinguishedName):
     oid: str = 'AEEntryDNAEHost-oid'
     desc: str = 'AE-DIR: entryDN of aeUser entry'
     ref_attrs = (
-        ('aeHost', u'Services', None, u'Search all services running on this host'),
+        ('aeHost', 'Services', None, 'Search all services running on this host'),
     )
 
     def _additional_links(self):
-        aesrvgroup_filter = u''.join([
-            u'(aeSrvGroup=%s)' % av.decode(self._app.ls.charset)
+        aesrvgroup_filter = ''.join([
+            '(aeSrvGroup=%s)' % av.decode(self._app.ls.charset)
             for av in self._entry.get('aeSrvGroup', [])
         ])
         r = DistinguishedName._additional_links(self)
@@ -968,12 +968,12 @@ class AEEntryDNAEHost(DistinguishedName):
                 (
                     ('dn', self._dn),
                     ('search_root', str(self._app.naming_context)),
-                    ('searchform_mode', u'exp'),
+                    ('searchform_mode', 'exp'),
                     (
                         'filterstr',
                         (
-                            u'(&(|(objectClass=aeHost)(objectClass=aeService))'
-                            u'(|(entryDN:dnSubordinateMatch:=%s)%s))'
+                            '(&(|(objectClass=aeHost)(objectClass=aeService))'
+                            '(|(entryDN:dnSubordinateMatch:=%s)%s))'
                         ) % (
                             ldap0.filter.escape_str(str(self.dn.parent())),
                             aesrvgroup_filter,
@@ -981,8 +981,8 @@ class AEEntryDNAEHost(DistinguishedName):
                     ),
                 ),
                 title=(
-                    u'Search all host entries which are member in '
-                    u'at least one common server group(s) with this host'
+                    'Search all host entries which are member in '
+                    'at least one common server group(s) with this host'
                 ),
             ),
         ])
@@ -1009,11 +1009,11 @@ class AEEntryDNAEZone(DistinguishedName):
                 'search', 'Audit all',
                 (
                     ('dn', self._app.audit_context),
-                    ('searchform_mode', u'adv'),
-                    ('search_attr', u'objectClass'),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'objectClass'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', u'auditObject'),
-                    ('search_attr', u'reqDN'),
+                    ('search_string', 'auditObject'),
+                    ('search_attr', 'reqDN'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_DN_SUBTREE),
                     ('search_string', self.av_u),
                 ),
@@ -1023,11 +1023,11 @@ class AEEntryDNAEZone(DistinguishedName):
                 'search', 'Audit writes',
                 (
                     ('dn', self._app.audit_context),
-                    ('searchform_mode', u'adv'),
-                    ('search_attr', u'objectClass'),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'objectClass'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', u'auditObject'),
-                    ('search_attr', u'reqDN'),
+                    ('search_string', 'auditObject'),
+                    ('search_attr', 'reqDN'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_DN_SUBTREE),
                     ('search_string', self.av_u),
                 ),
@@ -1051,8 +1051,8 @@ class AEEntryDNAEMailGroup(GroupEntryDN):
     oid: str = 'AEEntryDNAEMailGroup-oid'
     desc: str = 'AE-DIR: entryDN of aeGroup entry'
     ref_attrs = (
-        ('memberOf', u'Members', None, u'Search all member entries of this mail group'),
-        ('aeVisibleGroups', u'Visible', None, u'Search all server/service groups (aeSrvGroup)\non which this mail group is visible'),
+        ('memberOf', 'Members', None, 'Search all member entries of this mail group'),
+        ('aeVisibleGroups', 'Visible', None, 'Search all server/service groups (aeSrvGroup)\non which this mail group is visible'),
     )
 
 syntax_registry.reg_at(
@@ -1069,11 +1069,11 @@ class AEEntryDNAEGroup(GroupEntryDN):
     oid: str = 'AEEntryDNAEGroup-oid'
     desc: str = 'AE-DIR: entryDN of aeGroup entry'
     ref_attrs = (
-        ('memberOf', u'Members', None, u'Search all member entries of this user group'),
-        ('aeLoginGroups', u'Login', None, u'Search all server/service groups (aeSrvGroup)\non which this user group has login right'),
-        ('aeLogStoreGroups', u'View Logs', None, u'Search all server/service groups (aeSrvGroup)\non which this user group has log view right'),
-        ('aeSetupGroups', u'Setup', None, u'Search all server/service groups (aeSrvGroup)\non which this user group has setup/installation rights'),
-        ('aeVisibleGroups', u'Visible', None, u'Search all server/service groups (aeSrvGroup)\non which this user group is at least visible'),
+        ('memberOf', 'Members', None, 'Search all member entries of this user group'),
+        ('aeLoginGroups', 'Login', None, 'Search all server/service groups (aeSrvGroup)\non which this user group has login right'),
+        ('aeLogStoreGroups', 'View Logs', None, 'Search all server/service groups (aeSrvGroup)\non which this user group has log view right'),
+        ('aeSetupGroups', 'Setup', None, 'Search all server/service groups (aeSrvGroup)\non which this user group has setup/installation rights'),
+        ('aeVisibleGroups', 'Visible', None, 'Search all server/service groups (aeSrvGroup)\non which this user group is at least visible'),
     )
 
     def _additional_links(self):
@@ -1082,19 +1082,19 @@ class AEEntryDNAEGroup(GroupEntryDN):
         if aegroup_cn.endswith('zone-admins'):
             ref_attrs.extend([
                 (
-                    'aeZoneAdmins', u'Zone Admins', None,
-                    u'Search all zones (aeZone)\nfor which members of this user group act as zone admins'
+                    'aeZoneAdmins', 'Zone Admins', None,
+                    'Search all zones (aeZone)\nfor which members of this user group act as zone admins'
                 ),
                 (
-                    'aePasswordAdmins', u'Password Admins', None,
-                    u'Search all zones (aeZone)\nfor which members of this user group act as password admins'
+                    'aePasswordAdmins', 'Password Admins', None,
+                    'Search all zones (aeZone)\nfor which members of this user group act as password admins'
                 ),
             ])
         if aegroup_cn.endswith('zone-auditors') or aegroup_cn.endswith('zone-admins'):
             ref_attrs.append(
                 (
-                    'aeZoneAuditors', u'Zone Auditors', None,
-                    u'Search all zones (aeZone)\nfor which members of this user group act as zone auditors'
+                    'aeZoneAuditors', 'Zone Auditors', None,
+                    'Search all zones (aeZone)\nfor which members of this user group act as zone auditors'
                 ),
             )
         self.ref_attrs = tuple(ref_attrs)
@@ -1104,10 +1104,10 @@ class AEEntryDNAEGroup(GroupEntryDN):
             (
                 ('dn', self._dn),
                 ('search_root', str(self._app.naming_context)),
-                ('searchform_mode', u'adv'),
-                ('search_attr', u'sudoUser'),
+                ('searchform_mode', 'adv'),
+                ('search_attr', 'sudoUser'),
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                ('search_string', u'%'+self._entry['cn'][0].decode(self._app.ls.charset)),
+                ('search_string', '%'+self._entry['cn'][0].decode(self._app.ls.charset)),
             ),
             title=u'Search for SUDO rules\napplicable with this user group',
         ))
@@ -1127,10 +1127,10 @@ class AEEntryDNAESrvGroup(DistinguishedName):
     oid: str = 'AEEntryDNAESrvGroup-oid'
     desc: str = 'AE-DIR: entryDN'
     ref_attrs = (
-        ('aeProxyFor', u'Proxy', None, u'Search access gateway/proxy group for this server group'),
+        ('aeProxyFor', 'Proxy', None, 'Search access gateway/proxy group for this server group'),
         (
-            'aeRequires', u'Required by', None, 'aeSrvGroup',
-            u'Search all service groups depending on this service group.'
+            'aeRequires', 'Required by', None, 'aeSrvGroup',
+            'Search all service groups depending on this service group.'
         ),
     )
 
@@ -1142,14 +1142,14 @@ class AEEntryDNAESrvGroup(DistinguishedName):
                 (
                     ('dn', self._dn),
                     ('search_root', str(self._app.naming_context)),
-                    ('searchform_mode', u'exp'),
+                    ('searchform_mode', 'exp'),
                     (
                         'filterstr',
                         (
-                            u'(&'
-                            u'(|(objectClass=aeHost)(objectClass=aeService))'
-                            u'(|(entryDN:dnSubordinateMatch:={0})(aeSrvGroup={0}))'
-                            u')'
+                            '(&'
+                            '(|(objectClass=aeHost)(objectClass=aeService))'
+                            '(|(entryDN:dnSubordinateMatch:={0})(aeSrvGroup={0}))'
+                            ')'
                         ).format(self.av_u)
                     ),
                 ),
@@ -1172,7 +1172,7 @@ class AEEntryDNSudoRule(DistinguishedName):
     oid: str = 'AEEntryDNSudoRule-oid'
     desc: str = 'AE-DIR: entryDN'
     ref_attrs = (
-        ('aeVisibleSudoers', u'Used on', None, u'Search all server groups (aeSrvGroup entries) referencing this SUDO rule'),
+        ('aeVisibleSudoers', 'Used on', None, 'Search all server groups (aeSrvGroup entries) referencing this SUDO rule'),
     )
 
 syntax_registry.reg_at(
@@ -1189,9 +1189,9 @@ class AEEntryDNAELocation(DistinguishedName):
     oid: str = 'AEEntryDNAELocation-oid'
     desc: str = 'AE-DIR: entryDN of aeLocation entry'
     ref_attrs = (
-        ('aeLocation', u'Persons', None, 'aePerson', u'Search all persons assigned to this location.'),
-        ('aeLocation', u'Zones', None, 'aeZone', u'Search all location-based zones associated with this location.'),
-        ('aeLocation', u'Groups', None, 'groupOfEntries', u'Search all location-based zones associated with this location.'),
+        ('aeLocation', 'Persons', None, 'aePerson', 'Search all persons assigned to this location.'),
+        ('aeLocation', 'Zones', None, 'aeZone', 'Search all location-based zones associated with this location.'),
+        ('aeLocation', 'Groups', None, 'groupOfEntries', 'Search all location-based zones associated with this location.'),
     )
 
 syntax_registry.reg_at(
@@ -1222,9 +1222,9 @@ class AEEntryDNAEDept(DistinguishedName):
     oid: str = 'AEEntryDNAEDept-oid'
     desc: str = 'AE-DIR: entryDN of aePerson entry'
     ref_attrs = (
-        ('aeDept', u'Persons', None, 'aePerson', u'Search all persons assigned to this department.'),
-        ('aeDept', u'Zones', None, 'aeZone', u'Search all team-related zones associated with this department.'),
-        ('aeDept', u'Groups', None, 'groupOfEntries', u'Search all team-related groups associated with this department.'),
+        ('aeDept', 'Persons', None, 'aePerson', 'Search all persons assigned to this department.'),
+        ('aeDept', 'Zones', None, 'aeZone', 'Search all team-related zones associated with this department.'),
+        ('aeDept', 'Groups', None, 'groupOfEntries', 'Search all team-related groups associated with this department.'),
     )
 
 syntax_registry.reg_at(
@@ -1256,7 +1256,7 @@ class AEOwner(DerefDynamicDNSelectList):
     desc: str = 'AE-DIR: DN of owner entry'
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
     ref_attrs = (
-        ('aeOwner', u'Devices', None, 'aeDevice', u'Search all devices (aeDevice entries) assigned to same owner.'),
+        ('aeOwner', 'Devices', None, 'aeDevice', 'Search all devices (aeDevice entries) assigned to same owner.'),
     )
 
 syntax_registry.reg_at(
@@ -1271,7 +1271,7 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectMixIn):
     desc: str = 'AE-DIR: DN of person entry'
     ldap_url = 'ldap:///_?displayName?sub?(objectClass=aePerson)'
     ref_attrs = (
-        ('aePerson', u'Users', None, 'aeUser', u'Search all personal AE-DIR user accounts (aeUser entries) of this person.'),
+        ('aePerson', 'Users', None, 'aeUser', 'Search all personal AE-DIR user accounts (aeUser entries) of this person.'),
     )
     ae_status_map = {
         -1: (-1, 0),
@@ -1382,7 +1382,7 @@ class AEDerefAttribute(DirectoryString):
         return result
 
     def formValue(self) -> str:
-        return u''
+        return ''
 
     def formField(self) -> str:
         input_field = HiddenInput(
@@ -1443,7 +1443,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
 
     def _get_attr_value_dict(self):
         attr_value_dict = {
-            u'': u'-/-',
+            '': '-/-',
         }
         attr_value_dict.update([
             (addr.decode(self._app.ls.charset), addr.decode(self._app.ls.charset))
@@ -1869,8 +1869,8 @@ class AECommonNameAETag(AEZonePrefixCommonName):
                 (
                     ('dn', self._dn),
                     ('search_root', str(self._app.naming_context)),
-                    ('searchform_mode', u'adv'),
-                    ('search_attr', u'aeTag'),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'aeTag'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
                 ),
@@ -1975,10 +1975,10 @@ class AEStatus(SelectList, Integer):
     oid: str = 'AEStatus-oid'
     desc: str = 'AE-DIR: Status of object'
     attr_value_dict = {
-        u'-1': u'requested',
-        u'0': u'active',
-        u'1': u'deactivated',
-        u'2': u'archived',
+        '-1': 'requested',
+        '0': 'active',
+        '1': 'deactivated',
+        '2': 'archived',
     }
 
     def _validate(self, attrValue: bytes) -> bool:
@@ -2047,9 +2047,9 @@ class AEExpiryStatus(SelectList):
     oid: str = 'AEExpiryStatus-oid'
     desc: str = 'AE-DIR: Expiry status of object'
     attr_value_dict = {
-        u'-/-': u'',
-        u'1': u'deactivated',
-        u'2': u'archived',
+        '-/-': '',
+        '1': 'deactivated',
+        '2': 'archived',
     }
 
 syntax_registry.reg_at(
@@ -2107,7 +2107,7 @@ class AEEntryDNAEAuthcToken(DistinguishedName):
     oid: str = 'AEEntryDNAEAuthcToken-oid'
     desc: str = 'AE-DIR: entryDN of aeAuthcToken entry'
     ref_attrs = (
-        ('oathToken', u'Users', None, 'aeUser', u'Search all personal user accounts using this OATH token.'),
+        ('oathToken', 'Users', None, 'aeUser', 'Search all personal user accounts using this OATH token.'),
     )
 
 syntax_registry.reg_at(
@@ -2124,11 +2124,11 @@ class AEEntryDNAEPolicy(DistinguishedName):
     oid: str = 'AEEntryDNAEPolicy-oid'
     desc: str = 'AE-DIR: entryDN of aePolicy entry'
     ref_attrs = (
-        ('pwdPolicySubentry', u'Users', None, 'aeUser', u'Search all personal user accounts restricted by this password policy.'),
-        ('pwdPolicySubentry', u'Services', None, 'aeService', u'Search all service accounts restricted by this password policy.'),
-        ('pwdPolicySubentry', u'Tokens', None, 'aeAuthcToken', u'Search all authentication tokens restricted by this password policy.'),
-        ('oathHOTPParams', u'HOTP Tokens', None, 'oathHOTPToken', u'Search all HOTP tokens affected by this HOTP parameters.'),
-        ('oathTOTPParams', u'TOTP Tokens', None, 'oathTOTPToken', u'Search all TOTP tokens affected by this TOTP parameters.'),
+        ('pwdPolicySubentry', 'Users', None, 'aeUser', 'Search all personal user accounts restricted by this password policy.'),
+        ('pwdPolicySubentry', 'Services', None, 'aeService', 'Search all service accounts restricted by this password policy.'),
+        ('pwdPolicySubentry', 'Tokens', None, 'aeAuthcToken', 'Search all authentication tokens restricted by this password policy.'),
+        ('oathHOTPParams', 'HOTP Tokens', None, 'oathHOTPToken', 'Search all HOTP tokens affected by this HOTP parameters.'),
+        ('oathTOTPParams', 'TOTP Tokens', None, 'oathTOTPToken', 'Search all TOTP tokens affected by this TOTP parameters.'),
     )
 
 syntax_registry.reg_at(
@@ -2255,9 +2255,9 @@ class AELoginShell(Shell):
     oid: str = 'AELoginShell-oid'
     desc: str = 'AE-DIR: Login shell for POSIX users'
     attr_value_dict = {
-        u'/bin/bash': u'/bin/bash',
-        u'/bin/true': u'/bin/true',
-        u'/bin/false': u'/bin/false',
+        '/bin/bash': '/bin/bash',
+        '/bin/true': '/bin/true',
+        '/bin/false': '/bin/false',
     }
 
 syntax_registry.reg_at(
@@ -2275,7 +2275,7 @@ class AEOathHOTPToken(OathHOTPToken):
     oid: str = 'AEOathHOTPToken-oid'
     desc: str = 'DN of the associated oathHOTPToken entry in aeUser entry'
     ref_attrs = (
-        (None, u'Users', None, None),
+        (None, 'Users', None, None),
     )
     input_fallback = False
 
@@ -2303,11 +2303,11 @@ class AESSHPermissions(SelectList):
     oid: str = 'AESSHPermissions-oid'
     desc: str = 'AE-DIR: Status of object'
     attr_value_dict = {
-        u'pty': u'PTY allocation',
-        u'X11-forwarding': u'X11 forwarding',
-        u'agent-forwarding': u'Key agent forwarding',
-        u'port-forwarding': u'Port forwarding',
-        u'user-rc': u'Execute ~/.ssh/rc',
+        'pty': 'PTY allocation',
+        'X11-forwarding': 'X11 forwarding',
+        'agent-forwarding': 'Key agent forwarding',
+        'port-forwarding': 'Port forwarding',
+        'user-rc': 'Execute ~/.ssh/rc',
     }
 
 syntax_registry.reg_at(
