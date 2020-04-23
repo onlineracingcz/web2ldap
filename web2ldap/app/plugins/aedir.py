@@ -921,9 +921,9 @@ class AEEntryDNAEUser(DistinguishedName):
     desc: str = 'AE-DIR: entryDN of aeUser entry'
 
     def _additional_links(self):
-        r = DistinguishedName._additional_links(self)
+        res = DistinguishedName._additional_links(self)
         if self._app.audit_context:
-            r.append(self._app.anchor(
+            res.append(self._app.anchor(
                 'search', 'Activity',
                 (
                     ('dn', self._app.audit_context),
@@ -937,7 +937,7 @@ class AEEntryDNAEUser(DistinguishedName):
                 ),
                 title='Search modifications made by %s in accesslog DB' % (self.av_u),
             ))
-        return r
+        return res
 
 syntax_registry.reg_at(
     AEEntryDNAEUser.oid, [
