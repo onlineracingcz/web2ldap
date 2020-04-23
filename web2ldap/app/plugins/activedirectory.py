@@ -5,7 +5,6 @@ web2ldap plugin classes for Active Directory (for some information see draft-arm
 
 import os
 import time
-import struct
 import uuid
 
 from ldap0.dn import is_dn
@@ -17,25 +16,26 @@ import web2ldap.web
 import web2ldap.app.searchform
 from web2ldap.utctime import strftimeiso8601
 from web2ldap.app.plugins.groups import GroupEntryDN
-from web2ldap.app.schema.syntaxes import \
-    Binary, \
-    BitArrayInteger, \
-    Boolean, \
-    DirectoryString, \
-    DistinguishedName, \
-    DNSDomain, \
-    DynamicDNSelectList, \
-    DynamicValueSelectList, \
-    GeneralizedTime, \
-    IA5String, \
-    Integer, \
-    OctetString, \
-    OID, \
-    PropertiesSelectList, \
-    SelectList, \
-    Uri, \
-    XmlValue, \
-    syntax_registry
+from web2ldap.app.schema.syntaxes import (
+    Binary,
+    BitArrayInteger,
+    Boolean,
+    DirectoryString,
+    DistinguishedName,
+    DNSDomain,
+    DynamicDNSelectList,
+    DynamicValueSelectList,
+    GeneralizedTime,
+    IA5String,
+    Integer,
+    OctetString,
+    OID,
+    PropertiesSelectList,
+    SelectList,
+    Uri,
+    XmlValue,
+    syntax_registry,
+)
 
 
 class ObjectCategory(DynamicDNSelectList, DistinguishedName):
