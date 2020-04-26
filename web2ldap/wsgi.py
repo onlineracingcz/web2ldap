@@ -164,12 +164,12 @@ def run_standalone():
     else:
         raise ValueError('Command-line arguments must be: [host] port')
     with wsgiref.simple_server.make_server(
-        host_arg,
-        port_arg,
-        application,
-        server_class=W2lWSGIServer,
-        handler_class=W2lWSGIRequestHandler,
-    ) as httpd:
+            host_arg,
+            port_arg,
+            application,
+            server_class=W2lWSGIServer,
+            handler_class=W2lWSGIRequestHandler,
+        ) as httpd:
         host, port = httpd.socket.getsockname()
         logger.info('Serving http://%s:%s/web2ldap', host, port)
         try:
