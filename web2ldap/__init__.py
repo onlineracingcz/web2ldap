@@ -13,8 +13,8 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 
-def cmp(a, b):
+def cmp(val1, val2):
     """
     Workaround to have cmp() like in Python 2
     """
-    return bool(a > b) - bool(a < b)
+    return bool(val1 > val2) - bool(val1 < val2)
