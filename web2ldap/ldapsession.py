@@ -978,14 +978,7 @@ class LDAPSession:
                 dn_str=ldap0.filter.escape_str(dn),
             )
             req_ctrls.append(AssertionControl(self.is_openldap, assertion_filter_str))
-        self.l.modify_s(
-            dn_str,
-            [
-                (mod_type, mod_at, mod_avs)
-                for mod_type, mod_at, mod_avs in modlist
-            ],
-            req_ctrls=req_ctrls
-        )
+        self.l.modify_s(dn_str, modlist, req_ctrls=req_ctrls)
         # end of LDAPSession.modify()
 
     def rename(self, dn, new_rdn, new_superior=None, delold=1):
