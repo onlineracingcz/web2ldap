@@ -620,7 +620,7 @@ class LDAPSession:
         """
         if not uri:
             raise ValueError('Empty value for uri')
-        elif isinstance(uri, str):
+        if isinstance(uri, str):
             uri_list = [uri]
         elif isinstance(uri, (list, tuple)):
             uri_list = uri
@@ -1116,7 +1116,7 @@ class LDAPSession:
         if not result:
             logger.warning('No result when searching user entry')
             raise UsernameNotFound({'desc':'Login did not find a matching user entry.'})
-        elif len(result) != 1:
+        if len(result) != 1:
             logger.warning('More than one matching user entries: %r', result)
             raise UsernameNotUnique({'desc':'More than one matching user entries.'})
         logger.debug(
