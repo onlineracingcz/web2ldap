@@ -50,10 +50,6 @@ input_maxfieldlen = 600000
 # maximum count of search parameters in a search form
 max_searchparams = 20
 
-# Path name to dumpasn1.cfg. Grab it from
-# https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.cfg
-dumpasn1cfg = os.path.join(etc_dir, 'dumpasn1.cfg')
-
 #---------------------------------------------------------------------------
 # Global HTML options (templates etc.)
 #---------------------------------------------------------------------------
