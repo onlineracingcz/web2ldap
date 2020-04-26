@@ -40,9 +40,9 @@ class GidNumber(DynamicValueSelectList, Integer):
         ocs = self._entry.object_class_oid_set()
         if 'posixAccount' in ocs or 'shadowAccount' in ocs:
             return DynamicValueSelectList.display(self, valueindex, commandbutton)
-        r = [Integer.display(self, valueindex, commandbutton=False)]
+        res = [Integer.display(self, valueindex, commandbutton=False)]
         if not commandbutton:
-            return r[0]
+            return res[0]
         if 'posixGroup' in ocs:
             title = u'Search primary group members'
             searchform_params = [
@@ -59,12 +59,12 @@ class GidNumber(DynamicValueSelectList, Integer):
             title = None
             searchform_params = None
         if title and searchform_params:
-            r.append(self._app.anchor(
+            res.append(self._app.anchor(
                 'searchform', '&raquo;',
                 searchform_params,
                 title=title,
             ))
-        return ' '.join(r)
+        return ' '.join(res)
 
     def formField(self) -> str:
         ocs = self._entry.object_class_oid_set()
@@ -101,9 +101,9 @@ class MemberUID(IA5String, DynamicValueSelectList):
         return IA5String.formField(self)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        r = [IA5String.display(self, valueindex, commandbutton=False)]
+        res = [IA5String.display(self, valueindex, commandbutton=False)]
         if commandbutton:
-            r.append(self._app.anchor(
+            res.append(self._app.anchor(
                 'searchform', '&raquo;',
                 [
                     ('dn', self._dn),
@@ -116,7 +116,7 @@ class MemberUID(IA5String, DynamicValueSelectList):
                 ],
                 title=u'Search for user entry',
             ))
-        return ' '.join(r)
+        return ' '.join(res)
 
 syntax_registry.reg_at(
     MemberUID.oid, [

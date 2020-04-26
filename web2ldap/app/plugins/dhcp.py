@@ -30,7 +30,7 @@ class DHCPConfigStatement(MultilineText):
     lineSep = b''
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        r = ['<code>%s</code>' % (
+        res = ['<code>%s</code>' % (
             MultilineText.display(self, valueindex, commandbutton)
         )]
         if commandbutton:
@@ -42,7 +42,7 @@ class DHCPConfigStatement(MultilineText):
             dhcp_value = dhcp_value.replace('"', '').strip()
             if dhcp_type == 'host-name':
                 host_name = dhcp_value.lower()
-                r.append(self._app.anchor(
+                res.append(self._app.anchor(
                     'search', 'DNS RR',
                     (
                         ('dn', str(self._app.naming_context)),
@@ -82,14 +82,14 @@ class DHCPConfigStatement(MultilineText):
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                         ('search_string', reverse_dns),
                     ))
-                r.append(
+                res.append(
                     self._app.anchor(
                         'search', 'DNS RRs',
                         search_params,
                         title=u'Search related DNS RR entries',
                     )
                 )
-        return web2ldapcnf.command_link_separator.join(r)
+        return web2ldapcnf.command_link_separator.join(res)
 
 syntax_registry.reg_at(
     DHCPConfigStatement.oid, [

@@ -70,7 +70,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
     )
 
     # Start node's HTML
-    r = ['<dl>']
+    res = ['<dl>']
 
     for dn, d in dit_dict.items():
 
@@ -130,7 +130,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
 
         dn_anchor_id = dn_anchor_hash(dn)
 
-        r.append('<dt id="%s">' % (app.form.utf2display(dn_anchor_id)))
+        res.append('<dt id="%s">' % (app.form.utf2display(dn_anchor_id)))
         if has_subordinates:
             if dn == anchor_dn:
                 link_text = '&lsaquo;&lsaquo;'
@@ -139,7 +139,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
                 link_text = '&rsaquo;&rsaquo;'
                 next_dn = dn
             # Only display link if there are subordinate entries expected or unknown
-            r.append(
+            res.append(
                 app.anchor(
                     'dit', link_text,
                     [('dn', str(next_dn))],
@@ -149,30 +149,30 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
             )
         else:
             # FIX ME! Better solution in pure CSS?
-            r.append('&nbsp;&nbsp;&nbsp;&nbsp;')
-        r.append('<span title="%s">%s</span>' % (
+            res.append('&nbsp;&nbsp;&nbsp;&nbsp;')
+        res.append('<span title="%s">%s</span>' % (
             app.form.utf2display(title_msg),
             display_name
         ))
-        r.append(
+        res.append(
             app.anchor(
                 'read', '&rsaquo;',
                 [('dn', str(dn))],
                 title=u'Read entry',
             )
         )
-        r.append('</dt>')
+        res.append('</dt>')
 
         # Subordinate nodes' HTML
-        r.append('<dd>')
+        res.append('<dd>')
         if max_levels and d:
-            r.extend(dit_html(app, anchor_dn, d, entry_dict, max_levels-1))
-        r.append('</dd>')
+            res.extend(dit_html(app, anchor_dn, d, entry_dict, max_levels-1))
+        res.append('</dd>')
 
     # Finish node's HTML
-    r.append('</dl>')
+    res.append('</dl>')
 
-    return r # dit_html()
+    return res # dit_html()
 
 
 def w2l_dit(app):

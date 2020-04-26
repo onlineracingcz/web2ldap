@@ -33,8 +33,8 @@ class DynamicSubtrees(DistinguishedName):
     desc: str = 'Subtrees with dynamic entries'
 
     def _additional_links(self):
-        r = DistinguishedName._additional_links(self)
-        r.append(
+        res = DistinguishedName._additional_links(self)
+        res.append(
             self._app.anchor(
                 'search', 'Search',
                 [
@@ -46,7 +46,7 @@ class DynamicSubtrees(DistinguishedName):
                 title=u'Search for dynamic entries',
             ),
         )
-        return r
+        return res
 
 syntax_registry.reg_at(
     DynamicSubtrees.oid, [

@@ -1003,9 +1003,9 @@ class AEEntryDNAEZone(DistinguishedName):
     desc: str = 'AE-DIR: entryDN of aeZone entry'
 
     def _additional_links(self):
-        r = DistinguishedName._additional_links(self)
+        res = DistinguishedName._additional_links(self)
         if self._app.audit_context:
-            r.append(self._app.anchor(
+            res.append(self._app.anchor(
                 'search', 'Audit all',
                 (
                     ('dn', self._app.audit_context),
@@ -1019,7 +1019,7 @@ class AEEntryDNAEZone(DistinguishedName):
                 ),
                 title=u'Search all audit log entries for sub-tree %s' % (self.av_u),
             ))
-            r.append(self._app.anchor(
+            res.append(self._app.anchor(
                 'search', 'Audit writes',
                 (
                     ('dn', self._app.audit_context),
@@ -1035,7 +1035,7 @@ class AEEntryDNAEZone(DistinguishedName):
                     self.av_u
                 ),
             ))
-        return r
+        return res
 
 syntax_registry.reg_at(
     AEEntryDNAEZone.oid, [
@@ -1098,8 +1098,8 @@ class AEEntryDNAEGroup(GroupEntryDN):
                 ),
             )
         self.ref_attrs = tuple(ref_attrs)
-        r = DistinguishedName._additional_links(self)
-        r.append(self._app.anchor(
+        res = DistinguishedName._additional_links(self)
+        res.append(self._app.anchor(
             'search', 'SUDO rules',
             (
                 ('dn', self._dn),
@@ -1111,7 +1111,7 @@ class AEEntryDNAEGroup(GroupEntryDN):
             ),
             title=u'Search for SUDO rules\napplicable with this user group',
         ))
-        return r
+        return res
 
 syntax_registry.reg_at(
     AEEntryDNAEGroup.oid, [
@@ -1135,8 +1135,8 @@ class AEEntryDNAESrvGroup(DistinguishedName):
     )
 
     def _additional_links(self):
-        r = DistinguishedName._additional_links(self)
-        r.append(
+        res = DistinguishedName._additional_links(self)
+        res.append(
             self._app.anchor(
                 'search', 'All members',
                 (
@@ -1156,7 +1156,7 @@ class AEEntryDNAESrvGroup(DistinguishedName):
                 title=u'Search all service and host entries which are member in this service/host group {0}'.format(self.av_u),
             )
         )
-        return r
+        return res
 
 syntax_registry.reg_at(
     AEEntryDNAESrvGroup.oid, [

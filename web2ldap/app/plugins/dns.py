@@ -96,10 +96,10 @@ class AssociatedDomain(DNSDomain):
         return form_value
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        r = [DNSDomain.display(self, valueindex, commandbutton)]
+        res = [DNSDomain.display(self, valueindex, commandbutton)]
         if commandbutton:
             av = self.av_u.lower()
-            r.append(self._app.anchor(
+            res.append(self._app.anchor(
                 'search', 'Ref. RRs',
                 (
                     ('dn', str(self._app.naming_context)),
@@ -119,7 +119,7 @@ class AssociatedDomain(DNSDomain):
             ))
             parent_domain = u'.'.join(av.strip().split(u'.')[1:])
             if parent_domain and 'sOARecord' not in self._entry:
-                r.append(self._app.anchor(
+                res.append(self._app.anchor(
                     'search', 'SOA RR',
                     (
                         ('dn', str(self._app.naming_context)),
@@ -141,7 +141,7 @@ class AssociatedDomain(DNSDomain):
                 except ValueError:
                     pass
                 else:
-                    r.append(self._app.anchor(
+                    res.append(self._app.anchor(
                         'search', 'A RRs',
                         (
                             ('dn', str(self._app.naming_context)),
@@ -153,7 +153,7 @@ class AssociatedDomain(DNSDomain):
                         title=u'Search referencing DNS A RR entries',
                     ))
                     if '1.3.6.1.1.1.1.19' in self._schema.sed[ldap0.schema.models.AttributeType]:
-                        r.append(self._app.anchor(
+                        res.append(self._app.anchor(
                             'search', 'IP host(s)',
                             (
                                 ('dn', str(self._app.naming_context)),
@@ -165,7 +165,7 @@ class AssociatedDomain(DNSDomain):
                             title=u'Search IP host(s) for this A address',
                         ))
                     if '2.16.840.1.113719.1.203.4.3' in self._schema.sed[ldap0.schema.models.AttributeType]:
-                        r.append(self._app.anchor(
+                        res.append(self._app.anchor(
                             'search', 'DHCP host(s)',
                             (
                                 ('dn', str(self._app.naming_context)),
@@ -176,7 +176,7 @@ class AssociatedDomain(DNSDomain):
                             ),
                             title=u'Search DHCP host(s) for this A address',
                         ))
-        return web2ldapcnf.command_link_separator.join(r)
+        return web2ldapcnf.command_link_separator.join(res)
 
 syntax_registry.reg_at(
     AssociatedDomain.oid, [
@@ -244,10 +244,10 @@ class ARecord(IPv4HostAddress):
     desc: str = 'A resource record pointing to IPv4 address'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        r = [IPv4HostAddress.display(self, valueindex, commandbutton)]
+        res = [IPv4HostAddress.display(self, valueindex, commandbutton)]
         if commandbutton:
             ip_addr = self.addr_class(self.av_u)
-            r.append(self._app.anchor(
+            res.append(self._app.anchor(
                 'search', 'PTR RR',
                 (
                     ('dn', str(self._app.naming_context)),
@@ -259,7 +259,7 @@ class ARecord(IPv4HostAddress):
                 title=u'Search PTR RR for this A address',
             ))
             if '1.3.6.1.1.1.1.19' in self._schema.sed[ldap0.schema.models.AttributeType]:
-                r.append(self._app.anchor(
+                res.append(self._app.anchor(
                     'search', 'IP host(s)',
                     (
                         ('dn', str(self._app.naming_context)),
@@ -271,7 +271,7 @@ class ARecord(IPv4HostAddress):
                     title=u'Search IP host(s) for this A address',
                 ))
             if '2.16.840.1.113719.1.203.4.3' in self._schema.sed[ldap0.schema.models.AttributeType]:
-                r.append(self._app.anchor(
+                res.append(self._app.anchor(
                     'search', 'DHCP host(s)',
                     (
                         ('dn', str(self._app.naming_context)),
@@ -282,7 +282,7 @@ class ARecord(IPv4HostAddress):
                     ),
                     title=u'Search DHCP host(s) for this A address',
                 ))
-        return web2ldapcnf.command_link_separator.join(r)
+        return web2ldapcnf.command_link_separator.join(res)
 
 syntax_registry.reg_at(
     ARecord.oid, [
@@ -296,7 +296,7 @@ class AAAARecord(IPv6HostAddress):
     desc: str = 'AAAA resource record pointing to IPv6 address'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        r = [IPv6HostAddress.display(self, valueindex, commandbutton)]
+        res = [IPv6HostAddress.display(self, valueindex, commandbutton)]
         if commandbutton:
             ip_addr = self.addr_class(self.av_u)
             try:
@@ -304,7 +304,7 @@ class AAAARecord(IPv6HostAddress):
             except AttributeError:
                 pass
             else:
-                r.append(self._app.anchor(
+                res.append(self._app.anchor(
                     'search', 'PTR RR',
                     (
                         ('dn', str(self._app.naming_context)),
@@ -315,7 +315,7 @@ class AAAARecord(IPv6HostAddress):
                     ),
                     title=u'Search PTR RR for this AAAA address',
                 ))
-        return web2ldapcnf.command_link_separator.join(r)
+        return web2ldapcnf.command_link_separator.join(res)
 
 syntax_registry.reg_at(
     AAAARecord.oid, [

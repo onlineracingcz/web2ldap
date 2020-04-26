@@ -527,16 +527,16 @@ class DistinguishedName(DirectoryString):
         return is_dn(self._app.ls.uc_decode(attrValue)[0])
 
     def _additional_links(self):
-        r = []
+        res = []
         if self._at.lower() != 'entrydn':
-            r.append(
+            res.append(
                 self._app.anchor(
                     'read', 'Read',
                     [('dn', self.av_u)],
                 )
             )
         if self.hasSubordinates:
-            r.append(self._app.anchor(
+            res.append(self._app.anchor(
                 'search', 'Down',
                 (
                     ('dn', self.av_u),
@@ -546,7 +546,7 @@ class DistinguishedName(DirectoryString):
             ))
         if self.isBindDN:
             ldap_url_obj = self._app.ls.ldapUrl('', add_login=False)
-            r.append(
+            res.append(
                 self._app.anchor(
                     'login',
                     'Bind as',
@@ -570,7 +570,7 @@ class DistinguishedName(DirectoryString):
             ref_title = ref_title or 'Search %s entries referencing entry %s in attribute %s' % (
                 ref_oc, self.av_u, ref_attr,
             )
-            r.append(self._app.anchor(
+            res.append(self._app.anchor(
                 'search', self._app.form.utf2display(ref_text),
                 (
                     ('dn', ref_dn),
@@ -591,7 +591,7 @@ class DistinguishedName(DirectoryString):
                 ),
                 title=ref_title,
             ))
-        return r
+        return res
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         r = [self._app.form.utf2display(self.av_u or '- World -')]

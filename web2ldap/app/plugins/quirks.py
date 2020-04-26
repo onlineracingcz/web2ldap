@@ -230,8 +230,8 @@ class NamingContexts(DistinguishedName):
         return None
 
     def _additional_links(self):
-        r = DistinguishedName._additional_links(self)
-        r.append(self._app.anchor(
+        res = DistinguishedName._additional_links(self)
+        res.append(self._app.anchor(
             'search', 'Down',
             (
                 ('dn', self.av_u),
@@ -239,17 +239,17 @@ class NamingContexts(DistinguishedName):
                 ('filterstr', u'(objectClass=*)'),
             )
         ))
-        r.append(self._app.anchor(
+        res.append(self._app.anchor(
             'dit', 'Tree',
             (('dn', self.av_u),),
         ))
         config_link = self._config_link()
         if config_link:
-            r.append(config_link)
+            res.append(config_link)
         monitor_link = self._monitor_link()
         if monitor_link:
-            r.append(monitor_link)
-        return r
+            res.append(monitor_link)
+        return res
 
 syntax_registry.reg_at(
     NamingContexts.oid, [

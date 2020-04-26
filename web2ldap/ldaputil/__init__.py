@@ -47,7 +47,7 @@ def ietf_oid_str(oid):
     Returns normalized IETF string representation of oid
     """
     vl = oid.split(' ')
-    r = []
+    res = []
     for vs in vl:
         if vs:
             vs = ''.join([
@@ -58,8 +58,8 @@ def ietf_oid_str(oid):
             if not vs:
                 # no digits in component
                 raise ValueError('oid %r cannot be normalized' % (oid))
-            r.append(vs)
-    return '.'.join(r)
+            res.append(vs)
+    return '.'.join(res)
 
 
 def logdb_filter(logdb_objectclass, dn, entry_uuid=None):

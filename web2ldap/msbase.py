@@ -90,10 +90,10 @@ def ascii_dump(buf: bytes, repl: str = '.') -> str:
     Converts bytes in :buf: to str with non-ASCII chars replaced by :repl:.
     """
     assert isinstance(buf, bytes), ValueError('Expected buf to be bytes, got %r' % (buf,))
-    r = []
+    res = []
     for b in buf:
         if ord(' ') <= b <= ord('~'):
-            r.append(chr(b))
+            res.append(chr(b))
         else:
-            r.append(repl)
-    return ''.join(r)
+            res.append(repl)
+    return ''.join(res)
