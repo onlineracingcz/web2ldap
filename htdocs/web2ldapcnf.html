@@ -205,15 +205,15 @@
     certain page.
     <p>Example for accepting only clients from loopback network for all commands:</p>
     <samp>
-      access_allowed = {'_':[u'127.0.0.1/255.0.0.0', u'::1']}
+      access_allowed = {'_': ['127.0.0.1/255.0.0.0', '::1']}
     </samp>
     <p>Example for allowing access to all clients for all commands:</p>
     <samp>
-      access_allowed = {'_':[u'0.0.0.0/0.0.0.0', u'::0/0']}
+      access_allowed = {'_': ['0.0.0.0/0.0.0.0', '::0/0']}
     </samp>
     <p>Example for allowing access to all clients for all commands except monitor page:</p>
     <samp>
-      access_allowed = {'_':[u'0.0.0.0/0.0.0.0', u'::0/0'], 'monitor':[u'127.0.0.1/255.255.255.255']}
+      access_allowed = {'_': ['0.0.0.0/0.0.0.0', '::0/0'], 'monitor': ['127.0.0.1/255.255.255.255']}
     </samp>
   </dd>
 
