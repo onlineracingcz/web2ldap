@@ -7,7 +7,6 @@ Experimental => you have to understand what it internally does when enabling it!
 
 import ldap0
 
-from web2ldap.msbase import Str1stValueDict
 from web2ldap.app.plugins.nis import syntax_registry, UidNumber, GidNumber, IA5String
 
 

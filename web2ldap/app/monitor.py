@@ -26,7 +26,7 @@ import web2ldap.app.handler
 from web2ldap.app.session import session_store, cleanUpThread
 from web2ldap.utctime import strftimeiso8601
 from ..ldapsession import LDAPSession
-from ..log import logger, EXC_TYPE_COUNTER
+from ..log import EXC_TYPE_COUNTER
 from .core import STARTUP_TIME
 from .metrics import METRICS_AVAIL
 
