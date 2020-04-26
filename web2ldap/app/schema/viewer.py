@@ -54,7 +54,7 @@ SCHEMA_ELEMENT_HEAD_TMPL = """
 %s
 <h1>%s <em>%s</em> (%s)</h1>
 Try to look it up:
-<a id="alvestrand_oid" href="%s/urlredirect/%s?http://www.alvestrand.no/objectid/%s.html">[Alvestrand]</a>
+<a id="alvestrand_oid" href="%s/urlredirect/%s?https://www.alvestrand.no/objectid/%s.html">[Alvestrand]</a>
 <a id="oid-info_oid" href="%s/urlredirect/%s?http://www.oid-info.com/get/%s">[oid-info.com]</a>
 <dl>
 <dt>Schema element string:</dt>
