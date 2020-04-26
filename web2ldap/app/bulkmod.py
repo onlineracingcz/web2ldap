@@ -115,7 +115,7 @@ def input_modlist(app, bulkmod_at, bulkmod_op, bulkmod_av):
 
     mod_list = []
     if not input_errors:
-        for mod_op, mod_type in mod_dict.keys():
+        for mod_op, mod_type in mod_dict:
             mod_vals = mod_dict[(mod_op, mod_type)]
             if mod_op == ldap0.MOD_DELETE and None in mod_vals:
                 mod_vals = None
@@ -124,7 +124,8 @@ def input_modlist(app, bulkmod_at, bulkmod_op, bulkmod_av):
             if m[2] is not None:
                 mod_list[i] = (m[0], m[1], list(m[2]))
 
-    return mod_list, input_errors # input_modlist()
+    return mod_list, input_errors
+    # end of input_modlist()
 
 
 def bulkmod_input_form(

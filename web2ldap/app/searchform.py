@@ -240,7 +240,7 @@ def w2l_searchform(
                 ('scope', str(scope)),
             ],
         )
-        for mode in SEARCHFORM_MODE_TEXT.keys()
+        for mode in SEARCHFORM_MODE_TEXT
         if mode != searchform_mode
     ]
 

@@ -74,7 +74,7 @@ def group_select_field(
             sorted(
                 [
                     dn
-                    for dn in optgroup_dict.keys()
+                    for dn in optgroup_dict
                     if dn is not None and dn != colgroup_memberdn and dn != colgroup_authzdn
                 ],
                 key=str.lower
@@ -210,7 +210,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         ldaperror_entries = []
         successful_group_mods = []
 
-        for action in ACTION2MODTYPE.keys():
+        for action in ACTION2MODTYPE:
 
             for action_group_dn in app.form.getInputValue('groupadm_%s' % action, []):
                 group_dn = action_group_dn

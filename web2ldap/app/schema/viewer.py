@@ -853,7 +853,7 @@ def display_schema_elements(app, se_classes, se_list):
     app.outf.write(oid_input_form(app, ''))
 
     if oid_dict:
-        for schema_class in oid_dict.keys():
+        for schema_class in oid_dict:
             schema_elements = oid_dict[schema_class]
             if not schema_elements:
                 continue

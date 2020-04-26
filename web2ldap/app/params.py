@@ -75,7 +75,7 @@ def w2l_params(app):
 
     # Prepare input fields for LDAPv3 controls
     control_table_rows = []
-    for control_oid in AVAILABLE_BOOLEAN_CONTROLS.keys():
+    for control_oid in AVAILABLE_BOOLEAN_CONTROLS:
         control_enabled = (control_oid in enabled_controls)
         if not (control_enabled or ldapparam_all_controls or control_oid in app.ls.supportedControl):
             continue
