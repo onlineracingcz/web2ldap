@@ -2469,23 +2469,6 @@ class ASN1Object(Binary):
     oid: str = 'ASN1Object-oid'
     desc: str = 'BER-encoded ASN.1 data'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        # TODO: implement this again based on pyasn1 or whatever
-        return Binary.display(self, valueindex=valueindex, commandbutton=commandbutton)
-
-
-class DumpASN1CfgOID(OID):
-    """
-    Base-class class used for OIDs described in file dumpasn1.cfg
-    curated by Peter Gutmann.
-    """
-    oid: str = 'DumpASN1Cfg-oid'
-    desc: str = "OID registered in Peter Gutmann's dumpasn1.cfg"
-
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        # TODO: implement this again
-        return OID.display(self, valueindex=valueindex, commandbutton=commandbutton)
-
 
 class AlgorithmOID(OID):
     """

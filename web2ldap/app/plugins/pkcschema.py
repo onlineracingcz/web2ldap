@@ -8,26 +8,10 @@ http://tools.ietf.org/draft/draft-ietf-pkix-ldap-pkc-schema
 
 import ldap0.filter
 
-from web2ldap.app.schema.syntaxes import DumpASN1CfgOID
 from web2ldap.app.schema.syntaxes import \
     DistinguishedName, \
     SelectList, \
     syntax_registry
-
-
-# This overrides the eventually configured OctetString syntax
-# and treats these attribute types as not human-readable and
-# not editable binary blobs
-syntax_registry.reg_at(
-    DumpASN1CfgOID.oid, [
-        '1.3.6.1.4.1.10126.1.5.3.3', # x509signatureAlgorithm
-        '1.3.6.1.4.1.10126.1.5.3.8', # x509subjectPublicKeyInfoAlgorithm
-        '1.3.6.1.4.1.10126.1.5.3.16', # x509policyInformationIdentifier
-        '1.3.6.1.4.1.10126.1.5.3.22', # x509subjectRegisteredID
-        '1.3.6.1.4.1.10126.1.5.3.28', # x509issuerRegisteredID
-        '1.3.6.1.4.1.10126.1.5.3.30', # x509extKeyUsage
-    ]
-)
 
 
 class PkcX509Issuer(DistinguishedName):
