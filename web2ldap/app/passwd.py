@@ -316,10 +316,7 @@ def w2l_passwd(app):
         elif '1.2.840.113556.1.4.96' in app.schema.sed[AttributeType]:
             passwd_modlist.append((ldap0.MOD_REPLACE, b'pwdLastSet', '0'))
 
-    if not passwd_action:
-        raise web2ldap.app.core.ErrorExit(u'No password action chosen.')
-
-    elif passwd_action == 'passwdextop':
+    if passwd_action == 'passwdextop':
 
         # Modify password via Password Modify Extended Operation
         #--------------------------------------------------------
