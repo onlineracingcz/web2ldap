@@ -326,14 +326,9 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     except (ldap0.SIZELIMIT_EXCEEDED, ldap0.TIMELIMIT_EXCEEDED):
         error_msg = 'Size or time limit exceeded while searching group entries!'
 
-    remove_group_dns = sorted(remove_groups_dict.keys(), key=str.lower)
-
     all_groups_dict.update(remove_groups_dict)
 
-    remove_groups = [
-        group_dn
-        for group_dn in remove_group_dns
-    ]
+    remove_groups = sorted(remove_groups_dict.keys(), key=str.lower)
 
     if not all_groups_dict:
         info_msg = 'No group entries found. Did you choose a valid search base or valid name?'
