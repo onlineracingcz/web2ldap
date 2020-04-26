@@ -116,10 +116,6 @@ session_checkvars = (
     'SSL_CLIENT_M_SERIAL', 'SSL_CLIENT_CERT_SERIAL',
     # HTTP_ACCEPT_ENCODING disabled because of Google Chrome
     #'HTTP_ACCEPT_ENCODING',
-    # SSL session ID if running on SSL server capable
-    # of reusing SSL sessions (needs server configuration)
-    # not usable with newer TLS implementations though
-    #'SSL_SESSION_ID',
 )
 
 # Static dict of HTTP headers to be always sent to the browser
@@ -139,22 +135,45 @@ http_headers = {
     # Referer sending policy (see also https://www.w3.org/TR/referrer-policy/)
     'Referrer-Policy': 'no-referrer',
     # Content Security Policy
-    'Content-Security-Policy': ' '.join((
-        "base-uri 'none';",
-        "child-src 'none';",
-        "connect-src 'none';",
-        "default-src 'none';",
-        "font-src 'self';",
-        "form-action 'self';",
-        "frame-ancestors 'none';",
-        "frame-src 'none';",
-        "img-src 'self' data:;",
-        "media-src 'none';",
-        "object-src 'none';",
-        "script-src 'none';",
-        "style-src 'self';",
-        #"report-uri https://logger.example.com/csp-error-handler",
-    )),
+    'Content-Security-Policy': (
+        "base-uri 'none'; "
+        "child-src 'none'; "
+        "connect-src 'none'; "
+        "default-src 'none'; "
+        "font-src 'self'; "
+        "form-action 'self'; "
+        "frame-ancestors 'none'; "
+        "frame-src 'none'; "
+        "img-src 'self' data:; "
+        "media-src 'none'; "
+        "object-src 'none'; "
+        "script-src 'none'; "
+        "style-src 'self';"
+#        "report-uri https://logger.example.com/csp-error-handler"
+    ),
+    'Feature-Policy': (
+        "ambient-light-sensor 'none'; "
+        "autoplay 'none'; "
+        "accelerometer 'none'; "
+        "camera 'none'; "
+        "display-capture 'none'; "
+        "document-domain 'none'; "
+        "encrypted-media 'none'; "
+        "fullscreen 'none'; "
+        "geolocation 'none'; "
+        "gyroscope 'none'; "
+        "magnetometer 'none'; "
+        "microphone 'none'; "
+        "midi 'none'; "
+        "payment 'none'; "
+        "picture-in-picture 'none'; "
+        "speaker 'none'; "
+        "sync-xhr 'none'; "
+        "usb 'none'; "
+        "wake-lock 'none'; "
+        "vr 'none'; "
+        "xr 'none'"
+    ),
 }
 http_headers['X-Webkit-CSP'] = http_headers['Content-Security-Policy']
 http_headers['X-Content-Security-Policy'] = http_headers['Content-Security-Policy']

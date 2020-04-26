@@ -1134,7 +1134,7 @@ ldap_def = {
 # You can apply sections defined above to other configuration keys
 #---------------------------------------------------------------------------
 
-# another cloned config for setting specific LDAPS parameters for AE-DIR demo server
+# another cloned config for setting specific LDAPS parameters for public AE-DIR demo server
 ldap_def['ldaps://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com/ou=ae-dir'].clone(
     tls_options={
         ldap0.OPT_X_TLS_CACERTFILE: os.path.join(etc_dir, 'tls', 'cacerts', 'DST_Root_CA_X3.pem'),
@@ -1145,13 +1145,34 @@ ldap_def['ldap://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com'].clone(
     starttls=2,
 )
 
-# set MS AD configuration for all AD LDAP URIs
-for ad_uri, ad_desc in [
-        ('ldap:///DC=adt1,DC=example,DC=com', u'adt1.example.com'),
-        ('ldap:///CN=Configuration,DC=adt1,DC=example,DC=com', u'adt1.example.com'),
-        ('ldap:///DC=adt2,DC=example,DC=com', u'adt2.example.com'),
-        ('ldap:///CN=Configuration,DC=adt2,DC=example,DC=com', u'adt2.example.com'),
-    ]:
-    ldap_def[ad_uri] = MSAD_CONFIG.clone(
-        description=u'MS AD %s' % (ad_desc),
+# set MS AD configuration presets for all AD LDAP URIs
+from ldap0.dn import DNObj
+from ldap0.ldapurl import LDAPUrl
+
+AD_DOMAINS = (
+#    'adt1.example.com',
+)
+
+for ad_domain in AD_DOMAINS:
+    ad_dn = DNObj.from_domain(ad_domain)
+    ad_url = str(
+        LDAPUrl(
+            urlscheme='ldap',
+            dn=str(ad_dn),
+        )
     )
+    ldap_def[ad_url] = MSAD_CONFIG.clone(
+        description='AD domain %s' % (ad_domain),
+    )
+    for ad_sub_dn in (
+            'CN=Configuration',
+            'CN=Schema,CN=Configuration',
+            'DC=DomainDnsZones',
+            'DC=ForestDnsZones',
+        ):
+        ldap_def[str(
+            LDAPUrl(
+                urlscheme='ldap',
+                dn=str(DNObj.from_str(ad_sub_dn)+ad_dn),
+            )
+        )] = ldap_def[ad_url]
