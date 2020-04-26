@@ -49,7 +49,7 @@ import ipaddress
 
 import ldap0
 import ldap0.ldapurl
-from ldap0.schema.models import AttributeType, ObjectClass
+from ldap0.schema.models import AttributeType, ObjectClass, OBJECTCLASS_KIND_STR
 from ldap0.controls.deref import DereferenceControl
 from ldap0.dn import DNObj, is_dn
 from ldap0.res import SearchResultEntry
@@ -1260,17 +1260,13 @@ class OID(IA5String):
                     self._app,
                     self.av_u,
                     AttributeType,
-                    name_template=r'%s',
+                    name_template='{name}\n{anchor}',
                     link_text='&raquo',
                 )
             if self._at.lower() == 'structuralobjectclass':
-                name_template = r'%s'
+                name_template = '{name}\n{anchor}'
             else:
-                name_template = {
-                    0: r'%s (STRUCTURAL)',
-                    1: r'%s (ABSTRACT)',
-                    2: r'%s (AUXILIARY)'
-                }[se.kind]
+                name_template = '{name}\n (%s){anchor}' % (OBJECTCLASS_KIND_STR[se.kind],)
             # objectClass attribute is displayed with different function
             return schema_anchor(
                 self._app,

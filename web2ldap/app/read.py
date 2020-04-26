@@ -276,7 +276,7 @@ def display_attribute_table(app, entry, attrs, comment):
             app,
             attr_type_name,
             ldap0.schema.models.AttributeType,
-            name_template=r'<var>%s</var>',
+            name_template='<var>{name}</var>\n{anchor}',
             link_text='&raquo;'
         )
         attr_value_disp_list = (

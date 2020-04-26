@@ -45,8 +45,21 @@ SCHEMA_VIEWER_USAGE = """
 </ul>
 """
 
+SCHEMA_ELEMENT_HEAD_TMPL = """
+%s
+<h1>%s <em>%s</em> (%s)</h1>
+Try to look it up:
+<a id="alvestrand_oid" href="%s/urlredirect/%s?http://www.alvestrand.no/objectid/%s.html">[Alvestrand]</a>
+<a id="oid-info_oid" href="%s/urlredirect/%s?http://www.oid-info.com/get/%s">[oid-info.com]</a>
+<dl>
+<dt>Schema element string:</dt>
+<dd><code>%s</code></dd>
+%s
+</dl>
+"""
 
-def schema_link_text(se, charset):
+
+def schema_link_text(se):
     names = [
         escape_html(name)
         for name in se.__dict__.get('names', (()))
@@ -55,7 +68,10 @@ def schema_link_text(se, charset):
     if len(names) == 1:
         res = names[0]
     elif len(names) > 1:
-        res = '%s (alias %s)' % (names[0], ', '.join(names[1:]))
+        res = '{name} (alias {other_names})'.format(
+            name=names[0],
+            other_names=', '.join(names[1:]),
+        )
     elif isinstance(se, LDAPSyntax) and se.desc is not None:
         res = escape_html(se.desc)
     else:
@@ -67,29 +83,29 @@ def schema_anchor(
         app,
         se_nameoroid,
         se_class,
-        name_template=r'%s',
+        name_template='{name}\n{anchor}',
         link_text=None,
     ):
     """
     Return a pretty HTML-formatted string describing a schema element
     referenced by name or OID
     """
-    se = app.schema.get_obj(se_class, se_nameoroid, None)
-    if se is None:
-        return name_template % (app.form.utf2display(se_nameoroid))
-    anchor = app.anchor(
-        'oid', link_text or schema_link_text(se, app.form.accept_charset),
-        [
-            ('dn', app.dn),
-            ('oid', se.oid),
-            ('oid_class', ldap0.schema.SCHEMA_ATTR_MAPPING[se_class]),
-        ]
-    )
-    if link_text is None:
-        return name_template % (anchor)
-    return '%s\n%s' % (
-        name_template % (app.form.utf2display(se_nameoroid)),
-        anchor,
+    try:
+        se = app.schema.get_obj(se_class, se_nameoroid, None, raise_keyerror=True)
+    except KeyError:
+        anchor = ''
+    else:
+        anchor = app.anchor(
+            'oid', link_text or schema_link_text(se),
+            [
+                ('dn', app.dn),
+                ('oid', se.oid),
+                ('oid_class', ldap0.schema.SCHEMA_ATTR_MAPPING[se_class]),
+            ]
+        )
+    return name_template.format(
+        name=app.form.utf2display(se_nameoroid),
+        anchor=anchor,
     )
     # end of schema_anchor()
 
@@ -99,7 +115,7 @@ def schema_anchors(app, se_names, se_class):
     for se_nameoroid in se_names:
         se = app.schema.get_obj(se_class, se_nameoroid, default=None)
         if se:
-            ltxt = schema_link_text(se, app.form.accept_charset)
+            ltxt = schema_link_text(se)
             try:
                 schema_id = se.oid
             except AttributeError:
@@ -125,11 +141,7 @@ def schema_tree_html(app, schema, se_class, se_tree, se_oid, level):
     se_obj = schema.get_obj(se_class, se_oid)
     if se_obj is not None:
         display_id = (se_obj.names or (se_oid,))[0]
-        app.outf.write(
-            '<dt>%s</dt>' % (
-                schema_anchor(app, display_id, se_class),
-            )
-        )
+        app.outf.write(schema_anchor(app, display_id, se_class, name_template='<dt>{anchor}</dt>'))
     if se_tree[se_oid]:
         app.outf.write('<dd>')
         for sub_se_oid in se_tree[se_oid]:
@@ -175,7 +187,7 @@ def schema_context_menu(app):
                     app.anchor(
                         'oid', se_class_attr,
                         [('dn', app.dn), ('oid_class', se_class_attr)],
-                        title=u'Browse all %s' % (se_class_attr),
+                        title=u'Browse all %s' % (se_class_attr,),
                     )
                 )
     return context_menu_list
@@ -240,7 +252,10 @@ class DisplaySchemaElement:
             else:
                 if result:
                     ad_schema_dn, ad_schema_entry = result[0].dn_s, result[0].entry_s
-                    ms_ad_schema_link = '<dt>Schema Definition Entry (MS AD)</dt>\n<dd>\n%s\n</dd>\n' % (
+                    ms_ad_schema_link = (
+                        '<dt>Schema Definition Entry (MS AD)</dt>\n'
+                        '<dd>\n%s\n</dd>\n'
+                    ) % (
                         self._app.anchor(
                             'read', ad_schema_entry['cn'][0],
                             [('dn', ad_schema_dn)],
@@ -260,18 +275,7 @@ class DisplaySchemaElement:
             context_menu_list=schema_context_menu(self._app)
         )
         self._app.outf.write(
-            """
-            %s
-            <h1>%s <em>%s</em> (%s)</h1>
-            Try to look it up:
-            <a id="alvestrand_oid" href="%s/urlredirect/%s?http://www.alvestrand.no/objectid/%s.html">[Alvestrand]</a>
-            <a id="oid-info_oid" href="%s/urlredirect/%s?http://www.oid-info.com/get/%s">[oid-info.com]</a>
-            <dl>
-            <dt>Schema element string:</dt>
-            <dd><code>%s</code></dd>
-            %s
-            </dl>
-            """ % (
+            SCHEMA_ELEMENT_HEAD_TMPL % (
                 oid_input_form(self._app, ''),
                 self.type_desc,
                 OBSOLETE_TEMPL[obsolete] % (
@@ -304,25 +308,29 @@ class DisplayObjectClass(DisplaySchemaElement):
         must, may = self.s.attribute_types([self.se.oid], raise_keyerror=False)
         # Display all required and allowed attributes
         self._app.outf.write('<dt>Kind of object class:</dt><dd>\n%s&nbsp;</dd>\n' % (
-            OBJECTCLASS_KIND_STR[self.sei.kind]
+            OBJECTCLASS_KIND_STR[self.sei.kind],
         ))
         # Display all required and allowed attributes
         self._app.outf.write('<dt>All required attributes:</dt><dd>\n%s&nbsp;</dd>\n' % (
-            ', '.join(schema_anchors(self._app, must.keys(), AttributeType))
+            ', '.join(schema_anchors(self._app, must.keys(), AttributeType)),
         ))
         self._app.outf.write('<dt>All allowed attributes:</dt><dd>\n%s&nbsp;</dd>\n' % (
-            ', '.join(schema_anchors(self._app, may.keys(), AttributeType))
+            ', '.join(schema_anchors(self._app, may.keys(), AttributeType)),
         ))
         # Display relationship to DIT content rule(s)
         # normally only in case of a STRUCTURAL object class)
         content_rule = self.s.get_obj(DITContentRule, self.se.oid)
         if content_rule:
-            self._app.outf.write('<dt>Governed by DIT content rule:</dt><dd>\n%s&nbsp;</dd>\n' % (
-                schema_anchor(self._app, content_rule.oid, DITContentRule)
-            ))
-            self._app.outf.write('<dt>Applicable auxiliary object classes:</dt><dd>\n%s&nbsp;</dd>\n' % (
-                ', '.join(schema_anchors(self._app, content_rule.aux, ObjectClass))
-            ))
+            self._app.outf.write(
+                '<dt>Governed by DIT content rule:</dt><dd>\n%s&nbsp;</dd>\n' % (
+                    schema_anchor(self._app, content_rule.oid, DITContentRule),
+                )
+            )
+            self._app.outf.write(
+                '<dt>Applicable auxiliary object classes:</dt><dd>\n%s&nbsp;</dd>\n' % (
+                    ', '.join(schema_anchors(self._app, content_rule.aux, ObjectClass)),
+                )
+            )
         # normally only in case of a AUXILIARY object class
         dcr_list = []
         structural_oc_list = []
@@ -333,13 +341,17 @@ class DisplayObjectClass(DisplaySchemaElement):
                     dcr_list.append(content_rule.oid)
                     structural_oc_list.append(content_rule.oid)
         if dcr_list:
-            self._app.outf.write('<dt>Referring DIT content rules:</dt><dd>\n%s&nbsp;</dd>\n' % (
-                ', '.join(schema_anchors(self._app, dcr_list, DITContentRule))
-            ))
+            self._app.outf.write(
+                '<dt>Referring DIT content rules:</dt><dd>\n%s&nbsp;</dd>\n' % (
+                    ', '.join(schema_anchors(self._app, dcr_list, DITContentRule)),
+                )
+            )
         if structural_oc_list:
-            self._app.outf.write('<dt>Allowed with structural object classes:</dt><dd>\n%s&nbsp;</dd>\n' % (
-                ', '.join(schema_anchors(self._app, structural_oc_list, ObjectClass))
-            ))
+            self._app.outf.write(
+                '<dt>Allowed with structural object classes:</dt><dd>\n%s&nbsp;</dd>\n' % (
+                    ', '.join(schema_anchors(self._app, structural_oc_list, ObjectClass)),
+                )
+            )
         # Display name forms which regulates naming for this object class
         oc_ref_list = []
         for nf_oid, name_form_se in self.s.sed[NameForm].items():
@@ -348,16 +360,22 @@ class DisplayObjectClass(DisplaySchemaElement):
             if name_form_se.oc == self.sei.oid or name_form_oc in se_names:
                 oc_ref_list.append(nf_oid)
         if oc_ref_list:
-            self._app.outf.write('<dt>Applicable name forms:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(schema_anchors(self._app, oc_ref_list, NameForm))
-            ))
+            self._app.outf.write(
+                '<dt>Applicable name forms:</dt>\n<dd>\n%s\n</dd>\n' % (
+                    ', '.join(schema_anchors(self._app, oc_ref_list, NameForm)),
+                )
+            )
         # Display tree of derived object classes
         self._app.outf.write('<dt>Object class tree:</dt>\n')
         self._app.outf.write('<dd>\n')
         try:
             oc_tree = self.s.tree(ObjectClass)
         except KeyError as e:
-            self._app.outf.write('<strong>Missing schema elements referenced:<pre>%s</pre></strong>\n' % self._app.form.utf2display(str(e)))
+            self._app.outf.write(
+                '<strong>Missing schema elements referenced:<pre>%s</pre></strong>\n' % (
+                    self._app.form.utf2display(str(e)),
+                )
+            )
         else:
             if self.se.oid in oc_tree and oc_tree[self.se.oid]:
                 schema_tree_html(self._app, self.s, ObjectClass, oc_tree, self.se.oid, 0)
@@ -367,7 +385,9 @@ class DisplayObjectClass(DisplaySchemaElement):
             '<dt>Search entries</dt>\n<dd>\n%s\n</dd>\n' % (
                 self._app.anchor(
                     'searchform',
-                    '(objectClass=%s)' % self._app.form.utf2display(str((self.se.names or [self.se.oid])[0])),
+                    '(objectClass=%s)' % (
+                        self._app.form.utf2display(str((self.se.names or [self.se.oid])[0])),
+                    ),
                     [
                         ('dn', self._app.dn),
                         ('searchform_mode', u'adv'),
@@ -376,7 +396,7 @@ class DisplayObjectClass(DisplaySchemaElement):
                         ('search_string', str((self.se.names or [self.se.oid])[0])),
                     ],
                     title=u'Search entries by object class',
-                )
+                ),
             )
         )
         # end of disp_details()
@@ -417,7 +437,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                 1: 'directoryOperation',
                 2: 'distributedOperation',
                 3: 'dSAOperation',
-            }[self.se.usage]
+            }[self.se.usage],
         ))
 
         if syntax_oid is not None:
@@ -441,7 +461,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                 self._app.outf.write('<dt>Applicable matching rules:</dt>\n<dd>\n%s\n</dd>\n' % (
                     ', '.join(
                         schema_anchors(self._app, mr_applicable_for, MatchingRule)
-                    )
+                    ),
                 ))
 
         # Display DIT content rules which reference attributes of this type
@@ -453,9 +473,11 @@ class DisplayAttributeType(DisplaySchemaElement):
                 if dcr_at == at_oid or dcr_at in self.sei.names:
                     attr_type_ref_list.append(oc_oid)
         if attr_type_ref_list:
-            self._app.outf.write('<dt>Directly referencing object classes:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(schema_anchors(self._app, attr_type_ref_list, ObjectClass))
-            ))
+            self._app.outf.write(
+                '<dt>Directly referencing object classes:</dt>\n<dd>\n%s\n</dd>\n' % (
+                    ', '.join(schema_anchors(self._app, attr_type_ref_list, ObjectClass)),
+                )
+            )
 
         # Display object classes which may contain attributes of this type
         #-------------------------------------------------------------------
@@ -466,9 +488,11 @@ class DisplayAttributeType(DisplaySchemaElement):
             if at_oid in must or at_oid in may:
                 attr_type_ref_list.append(oc_oid)
         if attr_type_ref_list:
-            self._app.outf.write('<dt>Usable in these object classes:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(schema_anchors(self._app, attr_type_ref_list, ObjectClass))
-            ))
+            self._app.outf.write(
+                '<dt>Usable in these object classes:</dt>\n<dd>\n%s\n</dd>\n' % (
+                    ', '.join(schema_anchors(self._app, attr_type_ref_list, ObjectClass)),
+                )
+            )
 
         # Display DIT content rules which reference attributes of this type
         #-------------------------------------------------------------------
@@ -480,7 +504,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                     attr_type_ref_list.append(dcr_oid)
         if attr_type_ref_list:
             self._app.outf.write('<dt>Referencing DIT content rules:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(schema_anchors(self._app, attr_type_ref_list, DITContentRule))
+                ', '.join(schema_anchors(self._app, attr_type_ref_list, DITContentRule)),
             ))
 
         # Display name forms which uses this attribute type for naming an entry
@@ -493,7 +517,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                     attr_type_ref_list.append(nf_oid)
         if attr_type_ref_list:
             self._app.outf.write('<dt>Referencing name forms:</dt>\n<dd>\n%s\n</dd>\n' % (
-                ', '.join(schema_anchors(self._app, attr_type_ref_list, NameForm))
+                ', '.join(schema_anchors(self._app, attr_type_ref_list, NameForm)),
             ))
 
         #########################################
@@ -504,7 +528,11 @@ class DisplayAttributeType(DisplaySchemaElement):
         try:
             at_tree = self.s.tree(AttributeType)
         except KeyError as e:
-            self._app.outf.write('<strong>Missing schema elements referenced:<pre>%s</pre></strong>\n' % self._app.form.utf2display(str(e)))
+            self._app.outf.write(
+                '<strong>Missing schema elements referenced:<pre>%s</pre></strong>\n' % (
+                    self._app.form.utf2display(str(e)),
+                )
+            )
         else:
             if at_oid in at_tree and at_tree[at_oid]:
                 schema_tree_html(self._app, self.s, AttributeType, at_tree, at_oid, 0)
@@ -513,7 +541,9 @@ class DisplayAttributeType(DisplaySchemaElement):
             '</dd>\n<dt>Search entries</dt>\n<dd>\n%s\n</dd>\n' % (
                 self._app.anchor(
                     'searchform',
-                    '(%s=*)' % self._app.form.utf2display(str((self.se.names or [self.se.oid])[0])),
+                    '(%s=*)' % (
+                        self._app.form.utf2display(str((self.se.names or [self.se.oid])[0])),
+                    ),
                     [
                         ('dn', self._app.dn),
                         ('searchform_mode', u'adv'),
@@ -522,7 +552,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                         ('search_string', ''),
                     ],
                     title=u'Search entries by attribute presence',
-                )
+                ),
             )
         )
 
@@ -534,8 +564,14 @@ class DisplayAttributeType(DisplaySchemaElement):
           <dd>
             <table>
               <tr><th>Structural<br>object class</th><th>Plugin class</th>""")
-        for structural_oc in web2ldap.app.schema.syntaxes.syntax_registry.at2syntax[at_oid].keys() or [None]:
-            syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.get_syntax(self.s, at_oid, structural_oc)
+        for structural_oc in (
+                web2ldap.app.schema.syntaxes.syntax_registry.at2syntax[at_oid].keys() or [None]
+            ):
+            syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.get_syntax(
+                self.s,
+                at_oid,
+                structural_oc,
+            )
             if structural_oc:
                 oc_text = schema_anchor(self._app, structural_oc, ObjectClass)
             else:
@@ -567,10 +603,7 @@ class DisplayLDAPSyntax(DisplaySchemaElement):
             self._app.outf.write('<dt>Referencing attribute types:</dt>\n<dd>\n%s\n</dd>\n' % (
                 ', '.join(schema_anchors(self._app, syntax_using_at_list, AttributeType))
             ))
-        syntax_ref_mr_list = [
-            mr_oid
-            for mr_oid in self.s.listall(MatchingRule, [('syntax', self.se.oid)])
-        ]
+        syntax_ref_mr_list = self.s.listall(MatchingRule, [('syntax', self.se.oid)])
         if syntax_ref_mr_list:
             self._app.outf.write('<dt>Referencing matching rules:</dt>\n<dd>\n%s\n</dd>\n' % (
                 ', '.join(schema_anchors(self._app, syntax_ref_mr_list, MatchingRule))
@@ -618,20 +651,37 @@ class DisplayMatchingRule(DisplaySchemaElement):
                 if at_oid in applies_dict
             ]
             if mr_applicable_for:
-                self._app.outf.write('<dt>Applicable for attribute types per matching rule use:</dt>\n<dd>\n%s\n</dd>\n' % (
-                    ', '.join(schema_anchors(self._app, mr_applicable_for, AttributeType))
-                ))
+                self._app.outf.write(
+                    (
+                        '<dt>Applicable for attribute types per matching rule use:</dt>\n'
+                        '<dd>\n%s\n</dd>\n'
+                    ) % (
+                        ', '.join(schema_anchors(self._app, mr_applicable_for, AttributeType)),
+                    )
+                )
         mr_used_by = []
         for at_oid in self.s.sed[AttributeType].keys():
             try:
-                at_se = self.s.get_inheritedobj(AttributeType, at_oid, ('equality', 'substr', 'ordering'))
+                at_se = self.s.get_inheritedobj(
+                    AttributeType,
+                    at_oid,
+                    ('equality', 'substr', 'ordering'),
+                )
             except KeyError:
                 pass
             else:
-                if at_se and ( \
-                   (at_se.equality in self.se.names or at_se.substr in self.se.names or at_se.ordering in self.se.names) or \
-                   (at_se.equality == self.se.oid or at_se.substr == self.se.oid or at_se.ordering == self.se.oid) \
-                ):
+                if (
+                        at_se and (
+                            (
+                                at_se.equality in self.se.names or
+                                at_se.substr in self.se.names or at_se.ordering in self.se.names
+                            ) or (
+                                at_se.equality == self.se.oid or
+                                at_se.substr == self.se.oid or
+                                at_se.ordering == self.se.oid
+                            )
+                        )
+                    ):
                     mr_used_by.append(at_se.oid)
         if mr_used_by:
             self._app.outf.write('<dt>Referencing attribute types:</dt>\n<dd>\n%s\n</dd>\n' % (
@@ -901,8 +951,11 @@ def w2l_schema_viewer(app):
         # Display error message with input form
         app.simple_message(
             title=u'',
-            message='<h1>Schema elements</h1><p class="ErrorMessage">Name or OID not found in schema!</p><p>%s</p>' % (
-                oid_input_form(app, oid)
+            message=(
+                '<h1>Schema elements</h1><p class="ErrorMessage">'
+                'Name or OID not found in schema!</p><p>%s</p>'
+            ) % (
+                oid_input_form(app, oid),
             ),
             main_div_id='Message',
             main_menu_list=web2ldap.app.gui.main_menu(app),
