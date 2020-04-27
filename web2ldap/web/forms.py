@@ -303,34 +303,7 @@ class HiddenInput(Input):
     Hidden input field:
     <input type="hidden">
     """
-
-    def __init__(
-            self,
-            name,
-            text,
-            maxLen,
-            maxValues,
-            pattern,
-            required=False,
-            default=None,
-            accesskey='',
-        ):
-        Input.__init__(self, name, text, maxLen, maxValues, pattern, required, default, accesskey)
-
-    def input_html(self, default=None, id_value=None, title=None, show=0):
-        default_html = self._default_html(default)
-        if show:
-            default_str = default_html
-        else:
-            default_str = ''
-        return '<input type="hidden" %stitle="%s" name="%s" %s  value="%s">%s' % (
-            self.id_attr(id_value),
-            self.titleHTML(title),
-            self.name,
-            self._accesskey_attr(),
-            default_html,
-            default_str
-        )
+    input_type = 'hidden'
 
 
 class BytesInput(Input):
