@@ -951,7 +951,7 @@ class Integer(IA5String):
     def formField(self) -> str:
         form_value = self.formValue()
         max_len = self._maxlen(form_value)
-        return web2ldap.web.forms.Input(
+        input_field = web2ldap.web.forms.Input(
             self._at,
             ': '.join([self._at, self.desc]),
             max_len,
@@ -960,6 +960,8 @@ class Integer(IA5String):
             default=form_value,
             size=min(self.inputSize, max_len),
         )
+        input_field.input_type = 'number'
+        return input_field
 
 
 class IPHostAddress(IA5String):
