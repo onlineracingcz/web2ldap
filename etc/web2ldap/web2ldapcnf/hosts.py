@@ -6,7 +6,7 @@ See documentation for details:
 https://www.web2ldap.de/web2ldapcnf_hosts.html
 https://www.web2ldap.de/usability.html
 
-(c) 1998-2019 by Michael Stroeder <michael@stroeder.com>
+(c) 1998-2020 by Michael Stroeder <michael@stroeder.com>
 """
 
 # Leave these import lines alone
@@ -126,7 +126,7 @@ MSAD_CONFIG = Web2LDAPConfig(
         'computer':r'<strong>%(cn)s</strong> (%(sAMAccountName)s)',
     },
     # anonymous search normally not allowed for MS AD
-    binddn_mapping=u'',
+    binddn_mapping='',
     requested_attrs=(
         'structuralObjectClass', 'subschemaSubentry',
         # counters
@@ -341,7 +341,7 @@ CN_CONFIG = Web2LDAPConfig(
 AE_DIR_CONFIG = Web2LDAPConfig(
     description='Æ-DIR',
     top_template=os.path.join(templates_dir, 'ae-dir', 'top.html'),
-    binddn_mapping=u'ldap:///uid={user},_??base',
+    binddn_mapping='ldap:///uid={user},_??base',
     boundas_template={
         'aeUser':r'<span title="%(displayName)s: %(description)s">%(uid)s: %(description)s</span>',
     },
@@ -479,7 +479,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'uniqueIdentifier',
         'userPassword',
     ),
-    searchform_search_root_url=u'ldap:///ou=ae-dir??one?(|(objectClass=aeZone))',
+    searchform_search_root_url='ldap:///ou=ae-dir??one?(|(objectClass=aeZone))',
     searchform_template={
         '_': os.path.join(templates_dir, 'ae-dir', 'searchform_aedir.html'),
     },
@@ -688,7 +688,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'Æ-DIR primary user account': os.path.join(templates_dir, 'ae-dir', 'add_aeUser_inetLocalMailRecipient.ldif'),
         'Æ-DIR personal user account': os.path.join(templates_dir, 'ae-dir', 'add_aeUser.ldif'),
         'Æ-DIR OATH-HOTP token': os.path.join(templates_dir, 'ae-dir', 'add_oath_hotp_token.ldif'),
-        #u'Æ-DIR OATH-TOTP token': os.path.join(templates_dir, 'ae-dir', 'add_oath_totp_token.ldif'),
+        #'Æ-DIR OATH-TOTP token': os.path.join(templates_dir, 'ae-dir', 'add_oath_totp_token.ldif'),
         'Æ-DIR password policy': os.path.join(templates_dir, 'ae-dir', 'add_pwdPolicy.ldif'),
         'Æ-DIR OATH-HOTP parameters': os.path.join(templates_dir, 'ae-dir', 'add_oathHOTPParams.ldif'),
         'Æ-DIR person': os.path.join(templates_dir, 'ae-dir', 'add_aePerson.ldif'),
