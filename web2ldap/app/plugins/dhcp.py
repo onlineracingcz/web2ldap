@@ -278,16 +278,22 @@ class DHCPRange(IA5String):
     desc: str = 'Network address range'
 
     def _get_ipnetwork(self):
-        cn = self._entry['cn'][0].strip()
-        net_mask = self._entry['dhcpNetMask'][0].strip()
-        return ipaddress.ip_network(('%s/%s' % (cn, net_mask)).decode('ascii'), strict=False)
+        cn = self._entry['cn'][0].strip().decode('ascii')
+        net_mask = self._entry['dhcpNetMask'][0].strip().decode('ascii')
+        return ipaddress.ip_network(('%s/%s' % (cn, net_mask)), strict=False)
 
     def formValue(self) -> str:
         form_value = IA5String.formValue(self)
         if not form_value:
             try:
-                ipv4_network = self._get_ipnetwork().hosts()
-                form_value = u' '.join((str(ipv4_network[0]), str(ipv4_network[-1])))
+                ipv4_hosts = self._get_ipnetwork().hosts()
+                first_address = next(ipv4_hosts)
+                try:
+                    while True:
+                        last_address = next(ipv4_hosts)
+                except StopIteration:
+                    pass
+                form_value = u'{0} {1}'.format(first_address, last_address)
             except ipaddress.AddressValueError:
                 pass
         return form_value
