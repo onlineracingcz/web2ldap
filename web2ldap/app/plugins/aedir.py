@@ -522,7 +522,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
                 # process dn and entry
                 if ldap_res.ctrls:
                     deref_control = ldap_res.ctrls[0]
-                    deref_entry = deref_control.derefRes['aePerson'][0].entry_s
+                    deref_entry = deref_control.derefRes['aePerson'][0].entry_as
                 elif deref_person_attrset:
                     # if we have constrained attributes, no deref response control
                     # means constraint not valid
@@ -530,9 +530,12 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
                 # check constrained values here
                 valid = True
                 for attr_type, attr_values in deref_person_attrset.items():
-                    if attr_type not in deref_entry or \
-                       deref_entry[attr_type][0] not in attr_values:
+                    if (
+                            attr_type not in deref_entry
+                            or deref_entry[attr_type][0] not in attr_values
+                        ):
                         valid = False
+                        break
                 if valid:
                     option_value = ldap_res.dn_s
                     try:
