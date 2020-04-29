@@ -31,15 +31,6 @@ class DefaultDict(defaultdict):
         return self.__default__
 
 
-class Str1stValueDict(DefaultDict):
-    """
-    Dicitionary class which always returns first item of value sequence
-    """
-
-    def __setitem__(self, key, val):
-        DefaultDict.__setitem__(self, key, val[0])
-
-
 class GrabKeys:
     """
     Class for grabbing the dict keys out of a C-style formatter string
