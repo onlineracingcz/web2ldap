@@ -197,7 +197,7 @@ class Field:
 
     def _defaultValue(self, default):
         """returns default value"""
-        return default or self.__dict__.get('default', '')
+        return default or getattr(self, 'default', '')
 
     def titleHTML(self, title):
         """HTML output of default."""

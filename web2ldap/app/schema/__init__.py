@@ -98,14 +98,15 @@ def no_humanreadable_attr(schema, attr_type):
     attr_type_se = schema.get_obj(AttributeType, attr_type)
     if attr_type_se is None:
         return False
-    syntax_oid = attr_type_se.__dict__.get('syntax', None)
+    syntax_oid = getattr(attr_type_se, 'syntax', None)
     if syntax_oid is not None:
         syntax_se = schema.get_obj(LDAPSyntax, syntax_oid)
         if syntax_se is not None and syntax_se.not_human_readable:
             return True
-    return \
-        syntax_oid in NOT_HUMAN_READABLE_LDAP_SYNTAXES or \
+    return (
+        syntax_oid in NOT_HUMAN_READABLE_LDAP_SYNTAXES or
         attr_type.endswith(';binary')
+    )
 
 
 def object_class_categories(sub_schema, object_classes):

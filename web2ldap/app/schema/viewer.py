@@ -67,9 +67,9 @@ Try to look it up:
 def schema_link_text(se_obj):
     names = [
         escape_html(name)
-        for name in se_obj.__dict__.get('names', (()))
+        for name in getattr(se_obj, 'names', (()))
     ]
-    obsolete = se_obj.__dict__.get('obsolete', False)
+    obsolete = getattr(se_obj, 'obsolete', False)
     if len(names) == 1:
         res = names[0]
     elif len(names) > 1:
@@ -215,7 +215,7 @@ class DisplaySchemaElement:
 
     def disp_details(self):
         for text, class_attr, se_class in self.detail_attrs:
-            class_attr_value = self._sei.__dict__.get(class_attr, None)
+            class_attr_value = getattr(self._sei, class_attr, None)
             if class_attr_value is None:
                 continue
             if isinstance(class_attr_value, (tuple, list)):
@@ -267,13 +267,13 @@ class DisplaySchemaElement:
                             [('dn', ad_schema_dn)],
                         )
                     )
-        obsolete = self._se.__dict__.get('obsolete', 0)
+        obsolete = getattr(self._se, 'obsolete', 0)
         web2ldap.app.gui.top_section(
             self._app,
             '%s %s (%s)' % (
                 self.type_desc,
                 ', '.join(
-                    self._se.__dict__.get('names', (()))
+                    getattr(self._se, 'names', (()))
                 ),
                 self._se.oid
             ),
@@ -285,7 +285,7 @@ class DisplaySchemaElement:
                 oid_input_form(self._app, ''),
                 self.type_desc,
                 OBSOLETE_TEMPL[obsolete] % (
-                    ', '.join(self._se.__dict__.get('names', (()))),
+                    ', '.join(getattr(self._se, 'names', (()))),
                 ),
                 self._se.oid,
                 self._app.form.script_name, self._app.sid, self._se.oid,
@@ -728,7 +728,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
             '%s %s (%s)' % (
                 self.type_desc,
                 ', '.join(
-                    self._se.__dict__.get('names', (()))
+                    getattr(self._se, 'names', (()))
                 ),
                 self._se.ruleid
             ),
@@ -747,7 +747,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
                 oid_input_form(self._app, ''),
                 self.type_desc,
                 ", ".join(
-                    self._se.__dict__.get('names', (()))
+                    getattr(self._se, 'names', (()))
                 ),
                 self._se.ruleid,
                 self._app.form.utf2display(str(self._se)),
