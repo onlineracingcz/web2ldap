@@ -109,7 +109,7 @@ class SyntaxRegistry:
         """
         logger.debug('Register syntax classes from module %r', modulename)
         for _, cls in inspect.getmembers(sys.modules[modulename], inspect.isclass):
-            if hasattr(cls, 'oid'):
+            if issubclass(cls, LDAPSyntax) and hasattr(cls, 'oid'):
                 self.reg_syntax(cls)
 
     def reg_at(self, syntax_oid: str, attr_types, structural_oc_oids=None):
