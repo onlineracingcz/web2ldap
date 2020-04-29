@@ -13,13 +13,18 @@
     in login form templates.
   </li>
   <li>
-    Code cleaning for compability with upcoming <var>ldap0</var> release using
-    <a href="https://docs.python.org/3/reference/datamodel.html#slots">__slots__</a>.
-  </li>
-  <li>
     &AElig;-DIR plugin class for group <var>member</var> attribute
     now uses higher cache TTL when checking referenced group member entries.
     This should reduce load when editing groups with many members.
+  </li>
+  <li>
+    Using <a href="https://docs.python.org/3/reference/datamodel.html#slots">__slots__</a>
+    for better performance and reduced memory footprint:
+    <ul>
+      <li>
+        Compability for upcoming <var>ldap0</var> release 1.0.3.
+      </li>
+    </ul>
   </li>
 </ul>
 
