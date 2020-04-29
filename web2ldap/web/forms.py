@@ -27,6 +27,17 @@ class Field:
     In most cases this class is not used directly
     since derivate classes for most types of input fields exist.
     """
+    __slots__ = (
+        'accesskey',
+        '_charset',
+        'maxLen',
+        'maxValues',
+        'name',
+        '_re',
+        'required',
+        'text',
+        'value',
+    )
 
     def __init__(
             self,
@@ -834,6 +845,21 @@ class Form:
     """
     Class for declaring and processing a whole <form>
     """
+    __slots__ = (
+        'accept_language',
+        'env',
+        'field',
+        'http_accept_charset',
+        'http_accept_encoding',
+        'http_accept_language',
+        'inf',
+        'input_field_names',
+        'query_string',
+        'request_method',
+        'script_name',
+        'uc_decode',
+        'uc_encode',
+    )
 
     def __init__(self, inf, env):
         """
