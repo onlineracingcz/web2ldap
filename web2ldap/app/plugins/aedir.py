@@ -522,9 +522,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
                 # process dn and entry
                 if ldap_res.ctrls:
                     deref_control = ldap_res.ctrls[0]
-                    print('deref_control.derefRes =', repr(deref_control.derefRes))
                     deref_entry = deref_control.derefRes['aePerson'][0].entry_s
-                    print('deref_entry =', repr(deref_entry))
                 elif deref_person_attrset:
                     # if we have constrained attributes, no deref response control
                     # means constraint not valid
