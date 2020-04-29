@@ -16,6 +16,11 @@
     Code cleaning for compability with upcoming <var>ldap0</var> release using
     <a href="https://docs.python.org/3/reference/datamodel.html#slots">__slots__</a>.
   </li>
+  <li>
+    &AElig;-DIR plugin class for group <var>member</var> attribute
+    now uses higher cache TTL when checking referenced group member entries.
+    This should reduce load when editing groups with many members.
+  </li>
 </ul>
 
 <h1 id="r1.5.66">1.5.66</h1>
