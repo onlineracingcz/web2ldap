@@ -90,7 +90,7 @@ class Field:
         """
         if isinstance(default, list):
             self.default = [i for i in default if i is not None]
-        self.default = default or u''
+        self.default = default or ''
 
     def _regex_with_options(self, pattern):
         """
