@@ -66,7 +66,7 @@ class Field:
         self.required = required
         self.accesskey = accesskey
         # Charset is the preferred character set of the browser.
-        # This is set by Form.add() the something meaningful.
+        # This is set by Form.add() to something meaningful.
         self._charset = 'utf-8'
         self.set_default(default)
         self.setRegex(pattern)
