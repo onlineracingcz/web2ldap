@@ -30,6 +30,7 @@ class Field:
     __slots__ = (
         'accesskey',
         '_charset',
+        'default',
         'maxLen',
         'maxValues',
         'name',
