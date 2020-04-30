@@ -24,6 +24,7 @@ from ldap0.base import decode_list
 
 import web2ldapcnf
 
+from web2ldap.log import logger
 from web2ldap.web.forms import HiddenInput
 import web2ldap.ldaputil
 import web2ldap.app.searchform
@@ -506,11 +507,12 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
             srv_ctrls = None
         # Use the existing LDAP connection as current user
         attr_value_dict = SelectList._get_attr_value_dict(self)
+        member_filter = self._filterstr()
         try:
             ldap_result = self._app.ls.l.search_s(
                 self._search_root(),
                 self.lu_obj.scope or ldap0.SCOPE_SUBTREE,
-                filterstr=self._filterstr(),
+                filterstr=member_filter,
                 attrlist=self.lu_obj.attrs+['description'],
                 req_ctrls=srv_ctrls,
                 cache_ttl=7*self._app.ls.l.cache_ttl,
@@ -555,9 +557,15 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
                 ldap0.INSUFFICIENT_ACCESS,
                 ldap0.CONSTRAINT_VIOLATION,
                 ldap0.REFERRAL,
-            ):
-            pass
-        return attr_value_dict # _get_attr_value_dict()
+            ) as ldap_err:
+            logger.warning(
+                '%s._get_attr_value_dict() searching %r failed: %s',
+                self.__class__.__name__,
+                member_filter,
+                ldap_err,
+            )
+        return attr_value_dict
+        # _get_attr_value_dict()
 
     def _validate(self, attrValue: bytes) -> bool:
         if 'memberURL' in self._entry:
