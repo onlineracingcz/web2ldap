@@ -669,15 +669,15 @@ class AEGroupDN(DerefDynamicDNSelectList):
     def display(self, valueindex=0, commandbutton=False) -> str:
         group_dn = DNObj.from_str(self.av_u)
         group_cn = group_dn[0][0][1]
-        r = [
+        res = [
             'cn=<strong>{0}</strong>,{1}'.format(
                 self._app.form.utf2display(group_cn),
                 self._app.form.utf2display(str(group_dn.parent())),
             )
         ]
         if commandbutton:
-            r.extend(self._additional_links())
-        return web2ldapcnf.command_link_separator.join(r)
+            res.extend(self._additional_links())
+        return web2ldapcnf.command_link_separator.join(res)
 
 syntax_registry.reg_at(
     AEGroupDN.oid, [
@@ -971,8 +971,8 @@ class AEEntryDNAEHost(DistinguishedName):
             '(aeSrvGroup=%s)' % av.decode(self._app.ls.charset)
             for av in self._entry.get('aeSrvGroup', [])
         ])
-        r = DistinguishedName._additional_links(self)
-        r.extend([
+        res = DistinguishedName._additional_links(self)
+        res.extend([
             self._app.anchor(
                 'search', 'Siblings',
                 (
@@ -996,7 +996,7 @@ class AEEntryDNAEHost(DistinguishedName):
                 ),
             ),
         ])
-        return r
+        return res
 
 syntax_registry.reg_at(
     AEEntryDNAEHost.oid, [
