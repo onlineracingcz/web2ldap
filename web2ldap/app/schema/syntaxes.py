@@ -424,22 +424,7 @@ class LDAPSyntax:
         return input_field
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        if ldap0.ldapurl.is_ldapurl(self.av_u):
-            displayer_class = LDAPUrl
-        elif Uri.reObj.match(self.av_u) is not None:
-            displayer_class = Uri
-        elif GeneralizedTime.reObj.match(self.av_u) is not None:
-            displayer_class = GeneralizedTime
-        elif RFC822Address.reObj.match(self.av_u) is not None:
-            displayer_class = RFC822Address
-        else:
-            displayer_class = DirectoryString
-        # Crude hack
-        self_class = self.__class__
-        self.__class__ = displayer_class
-        result = displayer_class.display(self, valueindex, commandbutton)
-        self.__class__ = self_class
-        return result
+        return self._app.form.utf2display(repr(self._av))
 
 
 class Binary(LDAPSyntax):

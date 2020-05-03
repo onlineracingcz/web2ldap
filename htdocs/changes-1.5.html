@@ -13,6 +13,11 @@
     are used for better performance and reduced memory footprint in
     <var>web2ldap.schema.syntaxes</var>.
   </li>
+  <li>
+    Replaced crude hack in <var>LDAPSyntax.display()</var> with simply
+    returning <var>repr()</var> of attribute value.
+    Anyway this will not happen often nowadays.
+  </li>
 </ul>
 
 <h1 id="r1.5.68">1.5.68</h1>
