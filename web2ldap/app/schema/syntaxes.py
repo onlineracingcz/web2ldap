@@ -72,6 +72,10 @@ class SyntaxRegistry:
     """
     syntax registry used to register plugin classes
     """
+    __slots__ = (
+        'at2syntax',
+        'oid2syntax',
+    )
 
     def __init__(self):
         self.oid2syntax = ldap0.cidict.CIDict()
