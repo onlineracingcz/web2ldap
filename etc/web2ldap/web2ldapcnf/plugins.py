@@ -238,7 +238,7 @@ import web2ldap.app.plugins.dns
 # to allow trailing dot in fully-qualified domain names in all plugin
 # classes derived from syntax base class DNSDomain
 #import re, web2ldap.app.schema.syntaxes
-#web2ldap.app.schema.syntaxes.DNSDomain.reObj = re.compile('^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*)*$')
+#web2ldap.app.schema.syntaxes.DNSDomain.reObj = re.compile('^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]*)*$')
 
 #---------------------------------------------------------------------------
 # Univention Corporate Server
