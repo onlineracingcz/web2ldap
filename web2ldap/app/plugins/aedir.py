@@ -555,8 +555,6 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
                 ldap0.TIMELIMIT_EXCEEDED,
                 ldap0.PARTIAL_RESULTS,
                 ldap0.INSUFFICIENT_ACCESS,
-                ldap0.CONSTRAINT_VIOLATION,
-                ldap0.REFERRAL,
             ) as ldap_err:
             logger.warning(
                 '%s._get_attr_value_dict() searching %r failed: %s',
