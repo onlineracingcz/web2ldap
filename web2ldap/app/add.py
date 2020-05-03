@@ -74,16 +74,7 @@ def w2l_add(app):
         add_basedn = app.form.getInputValue('add_basedn', [app.dn])[0]
 
     if invalid_attrs:
-        invalid_attr_types_ui = [
-            app.form.utf2display(at)
-            for at in sorted(invalid_attrs.keys())
-        ]
-        error_msg = 'Wrong syntax in following attributes: %s' % (
-            ', '.join([
-                '<a class="CL" href="#in_a_%s">%s</a>' % (v, v)
-                for v in invalid_attr_types_ui
-            ])
-        )
+        error_msg = web2ldap.app.gui.invalid_syntax_message(app, invalid_attrs)
     else:
         error_msg = ''
 

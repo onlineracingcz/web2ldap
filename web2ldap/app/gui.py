@@ -656,6 +656,19 @@ def search_root_field(
     return srf # search_root_field()
 
 
+def invalid_syntax_message(app, invalid_attrs):
+    invalid_attr_types_ui = [
+        app.form.utf2display(at)
+        for at in sorted(invalid_attrs.keys())
+    ]
+    return 'Wrong syntax in following attributes: %s' % (
+        ', '.join([
+            '<a class="CL" href="#in_a_%s">%s</a>' % (at_ui, at_ui)
+            for at_ui in invalid_attr_types_ui
+        ])
+    )
+
+
 def exception_message(app, h1_msg, error_msg):
     """
     h1_msg
