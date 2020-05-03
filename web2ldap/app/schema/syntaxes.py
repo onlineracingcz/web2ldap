@@ -227,6 +227,16 @@ class LDAPSyntax:
     """
     Base class for all LDAP syntax and attribute value plugin classes
     """
+    __slots__ = (
+        '_app',
+        '_at',
+        '_at_b',
+        '_av',
+        '_av_u',
+        '_dn',
+        '_entry',
+        '_schema',
+    )
     oid: str = ''
     desc: str = 'Any LDAP syntax'
     inputSize: int = 50
