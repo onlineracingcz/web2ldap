@@ -133,6 +133,9 @@ class Web2LDAPConfigDict(LogHelper):
     """
     the configuration registry for site-specific parameters
     """
+    __slots__ = (
+        'cfg_data',
+    )
 
     def __init__(self, cfg_dict):
         self.cfg_data = {}
