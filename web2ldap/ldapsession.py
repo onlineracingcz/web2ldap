@@ -858,14 +858,14 @@ class LDAPSession:
         hasSubordinates = numSubordinates = numAllSubordinates = numSubordinates_attr = None
         sre = self.l.read_s(dn, '(objectClass=*)', self.subordinate_attrs)
         if sre:
-            for a in (
+            for atype in (
                     'subordinateCount',
                     'numSubordinates',
                     'msDS-Approx-Immed-Subordinates',
                 ):
-                if a in sre.entry_s:
-                    numSubordinates = int(sre.entry_s[a][0])
-                    numSubordinates_attr = a
+                if atype in sre.entry_s:
+                    numSubordinates = int(sre.entry_s[atype][0])
+                    numSubordinates_attr = atype
                     break
             try:
                 numAllSubordinates = int(sre.entry_s['numAllSubordinates'][0])
@@ -1042,11 +1042,11 @@ class LDAPSession:
             req_ctrls=rename_req_ctrls
         )
         # Try to extract Read Entry controls from response
-        prec_ctrls = dict([
-            (c.controlType, c)
-            for c in rename_result.ctrls or []
-            if c.controlType in (PreReadControl.controlType, PostReadControl.controlType)
-        ])
+        prec_ctrls = {
+            ctrl.controlType: ctrl
+            for ctrl in rename_result.ctrls or []
+            if ctrl.controlType in (PreReadControl.controlType, PostReadControl.controlType)
+        }
         if prec_ctrls:
             new_dn = prec_ctrls[PostReadControl.controlType].res.dn_s
             try:
