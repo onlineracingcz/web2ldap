@@ -1,17 +1,15 @@
-FROM opensuse:tumbleweed
+FROM opensuse/tumbleweed
 MAINTAINER Michael Stroeder <michael@stroeder.com>
 
 # install latest updates to be on the safe side
 RUN zypper --non-interactive dup --auto-agree-with-licenses --no-allow-vendor-change --no-recommends
 
 # install packages from openSUSE standard repo
-RUN zypper --non-interactive install --no-confirm --no-recommends ca-certificates ca-certificates-mozilla
-# Python3 and some modules
-RUN zypper --non-interactive install --no-confirm --no-recommends python3 python3-setuptools
+RUN zypper --non-interactive install --no-confirm --no-recommends shadow ca-certificates ca-certificates-mozilla gcc python3 python3-devel python3-virtualenv python3-setuptools cyrus-sasl-devel openldap2-devel
 
 # install web2ldap in virtual env
 RUN python3 -m venv /opt/web2ldap
-RUN /opt/web2ldap/bin/pip3 install --no-cache-dir --upgrade-strategy=only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap
+RUN /opt/web2ldap/bin/pip3 install --no-cache-dir --upgrade-strategy=only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap[image,xml,metrics]
 
 # Override web2ldap's config module files
 ADD --chown=root:root web2ldapcnf/*.py /opt/web2ldap/etc/web2ldap/web2ldapcnf/
