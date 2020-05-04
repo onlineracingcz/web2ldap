@@ -313,11 +313,11 @@ def w2l_conninfo(app):
         sasl_mech = u'SASL/%s' % (app.ls.sasl_mech)
         sasl_auth_info = '<table>%s</table>' % '\n'.join([
             '<tr><td>%s</td><td>%s</td></tr>' % (
-                app.form.utf2display(ldap0.OPT_NAMES.get(k, str(k))),
-                app.form.utf2display(repr(v).decode(app.ls.charset))
+                app.form.utf2display(ldap0.OPT_NAMES.get(key, str(key))),
+                app.form.utf2display(repr(val))
             )
-            for k, v in app.ls.sasl_auth.cb_value_dict.items()
-            if v
+            for key, val in app.ls.sasl_auth.cb_value_dict.items()
+            if val
         ])
     else:
         sasl_mech = u'simple'
