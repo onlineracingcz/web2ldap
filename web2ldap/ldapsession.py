@@ -204,12 +204,13 @@ USER_ENTRY_ATTRIBUTES = (
 )
 
 WHOAMI_FILTER_TMPL = (
-    u'ldap:///_??sub?'
-    u'(|'
-      u'(uid={user})(uidNumber={user})'
-      u'(sAMAccountName={user})'
-      u'(userPrincipalName={user})'
-    u')'
+    'ldap:///_??sub?'
+    '(|'
+        '(uid={user})'
+        '(uidNumber={user})'
+        '(sAMAccountName={user})'
+        '(userPrincipalName={user})'
+    ')'
 )
 
 LDAPLimitErrors = (
@@ -782,7 +783,7 @@ class LDAPSession:
             self,
             dn,
             search_scope=ldap0.SCOPE_SUBTREE,
-            search_filter=u'(objectClass=*)',
+            search_filter='(objectClass=*)',
             timeout=COUNT_TIMEOUT,
             sizelimit=0,
         ):
@@ -970,9 +971,9 @@ class LDAPSession:
         if AssertionControl.controlType in self.supportedControl and assertion_filter:
             if self.is_openldap:
                 # work-around for OpenLDAP ITS#6916
-                assertion_filter_tmpl = u'(|{filter_str}(!(entryDN={dn_str})))'
+                assertion_filter_tmpl = '(|{filter_str}(!(entryDN={dn_str})))'
             else:
-                assertion_filter_tmpl = u'{filter_str}'
+                assertion_filter_tmpl = '{filter_str}'
             assertion_filter_str = assertion_filter_tmpl.format(
                 filter_str=assertion_filter,
                 dn_str=ldap0.filter.escape_str(dn),
@@ -1019,7 +1020,7 @@ class LDAPSession:
             except KeyError:
                 entry_uuid = None
         else:
-            new_dn = u','.join([new_rdn, new_superior or str(old_superior_dn)])
+            new_dn = ','.join([new_rdn, new_superior or str(old_superior_dn)])
             entry_uuid = None
         return new_dn, entry_uuid
         # end of LDAPSession.rename()
@@ -1056,7 +1057,7 @@ class LDAPSession:
         """
         if not username:
             # seems to be anonymous bind
-            return u''
+            return ''
         if ldap0.dn.is_dn(username):
             # already a bind-DN -> return it normalized
             return str(DNObj.from_str(username))
@@ -1072,13 +1073,13 @@ class LDAPSession:
         search_root = search_root or self.rootDSE.get(
             'defaultNamingContext',
             [b''],
-        )[0].decode(self.charset) or u''
+        )[0].decode(self.charset) or ''
         lu_obj = LDAPUrl(binddn_mapping)
         search_base = lu_obj.dn.format(user=ldap0.dn.escape_str(username))
-        if search_base == u'_':
+        if search_base == '_':
             search_base = str(search_root)
-        elif search_base.endswith(u',_'):
-            search_base = u''.join((search_base[:-1], str(search_root)))
+        elif search_base.endswith(',_'):
+            search_base = ''.join((search_base[:-1], str(search_root)))
         if lu_obj.scope == ldap0.SCOPE_BASE and lu_obj.filterstr is None:
             logger.debug('Directly mapped %r to %r', username, search_base)
             return search_base
@@ -1130,7 +1131,7 @@ class LDAPSession:
             sasl_realm,
             binddn_mapping,
             whoami_filtertemplate=WHOAMI_FILTER_TMPL,
-            loginSearchRoot=u''
+            loginSearchRoot=''
         ):
         """
         Send BindRequest to LDAP server
@@ -1159,10 +1160,10 @@ class LDAPSession:
                 self.l.set_option(ldap0.OPT_X_SASL_NOCANON, 1)
             sasl_auth = ldap0.sasl.SaslAuth(
                 {
-                    ldap0.sasl.CB_AUTHNAME: (who or u'').encode(self.charset),
-                    ldap0.sasl.CB_PASS: (cred or u'').encode(self.charset),
-                    ldap0.sasl.CB_USER: (sasl_authzid or u'').encode(self.charset),
-                    ldap0.sasl.CB_GETREALM: (sasl_realm or u'').encode(self.charset),
+                    ldap0.sasl.CB_AUTHNAME: (who or '').encode(self.charset),
+                    ldap0.sasl.CB_PASS: (cred or '').encode(self.charset),
+                    ldap0.sasl.CB_USER: (sasl_authzid or '').encode(self.charset),
+                    ldap0.sasl.CB_GETREALM: (sasl_realm or '').encode(self.charset),
                 },
             )
             if ldap0.SASL_AVAIL:
@@ -1194,8 +1195,8 @@ class LDAPSession:
             # Call simple bind
             try:
                 self.l.simple_bind_s(
-                    who or u'',
-                    (cred or u'').encode(self.charset),
+                    who or '',
+                    (cred or '').encode(self.charset),
                     req_ctrls=bind_server_ctrls,
                 )
             except ldap0.INVALID_DN_SYNTAX:
@@ -1213,12 +1214,12 @@ class LDAPSession:
             whoami = self.l.whoami_s()
         except ldap0.LDAPError:
             if who:
-                self.who = u'u:%s' % (who)
+                self.who = 'u:%s' % (who)
             else:
                 self.who = None
         else:
             if whoami:
-                if whoami.startswith(u'dn:'):
+                if whoami.startswith('dn:'):
                     self.who = whoami[3:]
                 else:
                     self.who = whoami
@@ -1343,10 +1344,10 @@ class LDAPSession:
                 if self.sasl_mech in ldap0.sasl.SASL_PASSWORD_MECHS:
                     lu.who = self.sasl_auth.cb_value_dict.get(
                         ldap0.sasl.CB_AUTHNAME,
-                        u'',
+                        '',
                     ) or None
             else:
-                lu.who = (self.who or u'') or None
+                lu.who = (self.who or '') or None
         return lu
         # end of ldapUrl()
 
