@@ -7,20 +7,12 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.5.70",
-         "state": "stable",
-         "scope": "minor fix",
-         "changes": "Various fixes for Python 3.9.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.70.tar.gz",
-         "published": "2020-05-xxT12:30:00+00:00"
-      },
-      {
-         "version": "1.5.69",
+         "version": "1.5.71",
          "state": "stable",
          "scope": "minor fix",
          "changes": "Various fixes for niche use-cases, much code-cleaning.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.69.tar.gz",
-         "published": "2020-05-04T12:30:00+00:00"
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.71.tar.gz",
+         "published": "2020-05-04T13:00:00+00:00"
       },
       {
          "version": "1.5.68",
