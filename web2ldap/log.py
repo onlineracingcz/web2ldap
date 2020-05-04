@@ -73,7 +73,10 @@ def log_exception(env, ls, dn, debug):
     ]
     if debug and ls is not None:
         # Log the LDAPSession object attributes
-        logentry.append(pprint.pformat(ls.__dict__))
+        logentry.append(pprint.pformat([
+            (attr, getattr(ls, attr))
+            for attr in ls.__slots__
+        ]))
     if debug:
         # Log all environment vars
         logentry.append(pprint.pformat(sorted([
