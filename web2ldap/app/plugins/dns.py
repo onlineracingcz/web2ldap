@@ -55,20 +55,17 @@ class AssociatedDomain(DNSDomain):
         )
         if not ldap_result:
             return None
-        d = dict([
-            (
-                DNObj.from_str(r.dn_s),
-                r.entry_s['associatedDomain'][0]
-            )
-            for r in ldap_result
-            if isinstance(r, SearchResultEntry)
-        ])
-        if not d:
+        dn2domain = {
+            DNObj.from_str(res.dn_s): res.entry_s['associatedDomain'][0]
+            for res in ldap_result
+            if isinstance(res, SearchResultEntry)
+        }
+        if not dn2domain:
             return None
-        matched_dn = self.dn.match(d.keys())
+        matched_dn = self.dn.match(dn2domain.keys())
         if not matched_dn:
             return None
-        return d.get(matched_dn, None)
+        return dn2domain.get(matched_dn, None)
         # end of _parent_domain()
 
     def sanitize(self, attrValue: bytes) -> bytes:
