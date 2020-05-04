@@ -499,8 +499,7 @@ class LDAPSession:
         self._traceLevel = traceLevel
         # Character set/encoding of data stored on this particular host
         self.charset = 'utf-8'
-        conn_codec = codecs.lookup(self.charset)
-        self.uc_encode, self.uc_decode = conn_codec[0], conn_codec[1]
+        self.uc_encode, self.uc_decode, _, _ = codecs.lookup(self.charset)
         # initialize class attributes derived from rootDSE attributes later
         self._reset_rootdse_attrs()
         # security attributes of the connection
