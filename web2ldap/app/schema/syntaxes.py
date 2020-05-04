@@ -1678,7 +1678,7 @@ class SecondsSinceEpoch(Integer):
         int_str = Integer.display(self, valueindex, commandbutton)
         try:
             return '%s (%s)' % (
-                strftimeiso8601(time.gmtime(float(self._av))).encode('ascii'),
+                strftimeiso8601(time.gmtime(float(self._av))),
                 int_str,
             )
         except ValueError:
