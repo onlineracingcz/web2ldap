@@ -1375,10 +1375,10 @@ class LDAPSession:
         if add_login:
             if self.sasl_auth:
                 lu.saslMech = self.sasl_mech
-                if self.sasl_mech in ldap0.sasl.SASL_PASSWORD_MECHS:
+                if self.sasl_mech.encode('ascii') in ldap0.sasl.SASL_PASSWORD_MECHS:
                     lu.who = self.sasl_auth.cb_value_dict.get(
                         ldap0.sasl.CB_AUTHNAME,
-                        '',
+                        b'',
                     ) or None
             else:
                 lu.who = (self.who or '') or None
