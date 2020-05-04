@@ -74,6 +74,7 @@ class Web2LDAPConfig(LogHelper):
     """
     Base class for a web2ldap host-/backend configuration section.
     """
+    __slots__ = VALID_CFG_PARAM_NAMES.keys()
 
     def __init__(self, **params):
         self.update(params)
