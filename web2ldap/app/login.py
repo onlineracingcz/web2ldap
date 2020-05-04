@@ -102,7 +102,7 @@ def w2l_login(
         filterstr_hidden_field = ''
 
     search_attrs_hidden_field = ''
-    if app.command in {'search', 'searchform'}:
+    if 'search_attrs' in app.form.field:
         search_attrs = app.form.getInputValue('search_attrs', [u','.join(app.ldap_url.attrs or [])])[0]
         if search_attrs:
             search_attrs_hidden_field = app.form.hiddenFieldHTML('search_attrs', search_attrs, u'')
