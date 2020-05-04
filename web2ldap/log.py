@@ -76,6 +76,7 @@ def log_exception(env, ls, dn, debug):
         logentry.append(pprint.pformat([
             (attr, getattr(ls, attr))
             for attr in ls.__slots__
+            if hasattr(ls, attr)
         ]))
     if debug:
         # Log all environment vars
