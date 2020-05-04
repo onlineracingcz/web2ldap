@@ -126,7 +126,7 @@ def w2l_login(
             '\n'.join((
                 login_msg_html,
                 app.form.begin_form(action_command, None, 'POST', None),
-                app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldapUrl('')), u''),
+                app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldap_url('')), u''),
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('delsid', app.sid, u''),
                 app.form.hiddenFieldHTML('conntype', str(int(app.ls.startTLSOption > 0)), u''),

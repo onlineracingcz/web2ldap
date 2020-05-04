@@ -544,7 +544,7 @@ class DistinguishedName(DirectoryString):
                 )
             ))
         if self.isBindDN:
-            ldap_url_obj = self._app.ls.ldapUrl('', add_login=False)
+            ldap_url_obj = self._app.ls.ldap_url('', add_login=False)
             res.append(
                 self._app.anchor(
                     'login',

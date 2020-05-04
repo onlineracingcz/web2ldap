@@ -178,7 +178,7 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
         ),
     ]
     if app.dn:
-        ldap_url_obj = app.ls.ldapUrl('', add_login=False)
+        ldap_url_obj = app.ls.ldap_url('', add_login=False)
         result.extend([
             app.anchor(
                 'login', 'Bind as',
@@ -480,7 +480,7 @@ def top_section(
     if app.ls is not None and app.ls.uri is not None:
         # Only output something meaningful if valid connection
         template_dict.update({
-            'ldap_url': app.ls.ldapUrl(app.dn),
+            'ldap_url': app.ls.ldap_url(app.dn),
             'ldap_uri': app.form.utf2display(app.ls.uri),
             'description': escape_html(app.cfg_param('description', u'')),
             'dit_navi': ',\n'.join(dit_navigation(app)),

@@ -1365,7 +1365,7 @@ class LDAPSession:
                         governing_structure_rule = None
         return governing_structure_rule # get_governing_structure_rule()
 
-    def ldapUrl(self, dn, add_login=True):
+    def ldap_url(self, dn, add_login=True):
         if not self.uri:
             return None
         lu = ExtendedLDAPUrl(ldapUrl=self.uri)
@@ -1383,7 +1383,7 @@ class LDAPSession:
             else:
                 lu.who = (self.who or '') or None
         return lu
-        # end of ldapUrl()
+        # end of ldap_url()
 
     def __repr__(self):
         try:
