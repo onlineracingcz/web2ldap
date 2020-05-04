@@ -252,9 +252,9 @@ class AuditContext(NamingContexts):
     desc: str = 'OpenLDAP DN pointing to audit naming context'
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        r = [DistinguishedName.display(self, valueindex, commandbutton)]
+        res = [DistinguishedName.display(self, valueindex, commandbutton)]
         if commandbutton:
-            r.extend([
+            res.extend([
                 self._app.anchor(
                     'searchform', 'Search',
                     [
@@ -282,7 +282,7 @@ class AuditContext(NamingContexts):
                     title=u'List audit log entries of all write operations',
                 ),
             ])
-        return web2ldapcnf.command_link_separator.join(r)
+        return web2ldapcnf.command_link_separator.join(res)
 
 syntax_registry.reg_at(
     AuditContext.oid,
