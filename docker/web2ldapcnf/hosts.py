@@ -6,7 +6,7 @@ See documentation for details:
 https://www.web2ldap.de/web2ldapcnf_hosts.html
 https://www.web2ldap.de/usability.html
 
-(c) 1998-2019 by Michael Stroeder <michael@stroeder.com>
+(c) 1998-2020 by Michael Stroeder <michael@stroeder.com>
 """
 
 # Leave these import lines alone
@@ -114,7 +114,7 @@ MSAD_CONFIG = Web2LDAPConfig(
         'computer':r'<strong>%(cn)s</strong> (%(sAMAccountName)s)',
     },
     # anonymous search normally not allowed for MS AD
-    binddn_mapping=u'',
+    binddn_mapping='',
     requested_attrs=(
         'structuralObjectClass', 'subschemaSubentry',
         # counters
@@ -329,7 +329,7 @@ CN_CONFIG = Web2LDAPConfig(
 AE_DIR_CONFIG = Web2LDAPConfig(
     description='Æ-DIR',
     top_template=os.path.join(templates_dir, 'ae-dir', 'top.html'),
-    binddn_mapping=u'ldap:///uid={user},_??base',
+    binddn_mapping='ldap:///uid={user},_??base',
     boundas_template={
         'aeUser':r'<span title="%(displayName)s: %(description)s">%(uid)s: %(description)s</span>',
     },
@@ -467,7 +467,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'uniqueIdentifier',
         'userPassword',
     ),
-    searchform_search_root_url=u'ldap:///ou=ae-dir??one?(|(objectClass=aeZone))',
+    searchform_search_root_url='ldap:///ou=ae-dir??one?(|(objectClass=aeZone))',
     searchform_template={
         '_': os.path.join(templates_dir, 'ae-dir', 'searchform_aedir.html'),
     },
@@ -676,7 +676,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'Æ-DIR primary user account': os.path.join(templates_dir, 'ae-dir', 'add_aeUser_inetLocalMailRecipient.ldif'),
         'Æ-DIR personal user account': os.path.join(templates_dir, 'ae-dir', 'add_aeUser.ldif'),
         'Æ-DIR OATH-HOTP token': os.path.join(templates_dir, 'ae-dir', 'add_oath_hotp_token.ldif'),
-        #u'Æ-DIR OATH-TOTP token': os.path.join(templates_dir, 'ae-dir', 'add_oath_totp_token.ldif'),
+        #'Æ-DIR OATH-TOTP token': os.path.join(templates_dir, 'ae-dir', 'add_oath_totp_token.ldif'),
         'Æ-DIR password policy': os.path.join(templates_dir, 'ae-dir', 'add_pwdPolicy.ldif'),
         'Æ-DIR OATH-HOTP parameters': os.path.join(templates_dir, 'ae-dir', 'add_oathHOTPParams.ldif'),
         'Æ-DIR person': os.path.join(templates_dir, 'ae-dir', 'add_aePerson.ldif'),
@@ -701,9 +701,9 @@ AE_DIR_CONFIG = Web2LDAPConfig(
     groupadm_filterstr_template=r'(&(|(objectClass=aeGroup)(objectClass=aeMailGroup))(aeStatus=0)(!(memberURL=*))(|%s))',
     groupadm_optgroup_bounds=(-2, -1),
     groupadm_defs={
-        'groupOfEntries':('member', None, True),
-        'posixGroup':('memberUid', 'uid', False),
-        'nisMailAlias':('rfc822MailMember', 'mail', False),
+        'groupOfEntries': ('member', None, True),
+        'posixGroup': ('memberUid', 'uid', False),
+        'nisMailAlias': ('rfc822MailMember', 'mail', False),
     },
     read_tablemaxcount={
         'member':40,
@@ -717,8 +717,8 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'pwdPolicySubentry',
     ),
     rename_supsearchurl={
-        'Search for zone (aeZone)':'ldap:///_??one?(objectClass=aeZone)',
-        'Search for server/service group (aeSrvGroup)':'ldap:///_??sub?(objectClass=aeSrvGroup)',
+        'Search for zone (aeZone)': 'ldap:///_??one?(objectClass=aeZone)',
+        'Search for server/service group (aeSrvGroup)': 'ldap:///_??sub?(objectClass=aeSrvGroup)',
     },
     # Use delold: 1 with MODRDN requests when doing bulk renaming
     bulkmod_delold=True,
@@ -752,18 +752,17 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     # (see section TLS OPTIONS on OpenLDAP's man page ldap_set_option(3)
     tls_options={
         # you should really set this!
-        ldap0.OPT_X_TLS_REQUIRE_CERT:ldap0.OPT_X_TLS_DEMAND,
+        ldap0.OPT_X_TLS_REQUIRE_CERT: ldap0.OPT_X_TLS_DEMAND,
         # Directory containing all the trusted root CA certs (symbolic hash links required!)
-        #ldap0.OPT_X_TLS_CACERTDIR:'/var/lib/ca-certificates/pem',
-        ldap0.OPT_X_TLS_CACERTDIR:os.path.join(etc_dir, 'tls','cacerts'),
+        #ldap0.OPT_X_TLS_CACERTDIR: '/var/lib/ca-certificates/pem',
+        ldap0.OPT_X_TLS_CACERTDIR: os.path.join(etc_dir, 'tls', 'cacerts'),
         # File containing all the trusted root CA certs
-        #ldap0.OPT_X_TLS_CACERTFILE:'/etc/ssl/ca-bundle.pem',
-        #ldap0.OPT_X_TLS_CACERTFILE:'/var/lib/ca-certificates/ca-bundle.pem',
-
-        #ldap0.OPT_X_TLS_CIPHER_SUITE:'ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA',
-        ldap0.OPT_X_TLS_PROTOCOL_MIN:3,
-        #ldap0.OPT_X_TLS_CRLCHECK:ldap0.OPT_X_TLS_CRL_PEER,
-        #ldap0.OPT_X_TLS_CRLFILE:os.path.join(etc_dir, 'ssl', 'crt', 'peers.crl'),
+        #ldap0.OPT_X_TLS_CACERTFILE: '/etc/ssl/ca-bundle.pem',
+        #ldap0.OPT_X_TLS_CACERTFILE: '/var/lib/ca-certificates/ca-bundle.pem',
+        ldap0.OPT_X_TLS_CIPHER_SUITE: 'HIGH',
+        ldap0.OPT_X_TLS_PROTOCOL_MIN: 3,
+        #ldap0.OPT_X_TLS_CRLCHECK: ldap0.OPT_X_TLS_CRL_PEER,
+        #ldap0.OPT_X_TLS_CRLFILE: os.path.join(etc_dir, 'ssl', 'crt', 'peers.crl'),
     },
 
     # Send session track control
@@ -823,7 +822,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
 
     # vCard template files
     vcard_template={
-        # 'object class':'pathname of vCard template file'
+        # 'object class': 'pathname of vCard template file'
         'person': os.path.join(templates_dir, 'vcard_person.txt'),
         'inetOrgPerson': os.path.join(templates_dir, 'vcard_person.txt'),
         'organization': os.path.join(templates_dir, 'vcard_organization.txt'),
@@ -831,7 +830,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
 
     # HTML template files for printing table entries
     print_template={
-        # 'object class':'pathname of printable HTML template file'
+        # 'object class': 'pathname of printable HTML template file'
         'person': os.path.join(templates_dir, 'print_person.html'),
         'organization': os.path.join(templates_dir, 'print_organization.html'),
         'organizationalUnit': os.path.join(templates_dir, 'print_organizationalUnit.html'),
@@ -907,7 +906,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
 
     # HTML template file used for displaying entries of specific object class
     read_template={
-        # 'object class':'pathname of HTML template file'
+        # 'object class': 'pathname of HTML template file'
         'inetOrgPerson': os.path.join(templates_dir, 'read_inetOrgPerson.html'),
         'account': os.path.join(templates_dir, 'read_account.html'),
         'organizationalPerson': os.path.join(templates_dir, 'read_inetOrgPerson.html'),
@@ -963,7 +962,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     # HTML template file used for displaying input forms for entries
     # of specific object class
     input_template={
-        # 'object class':'pathname of HTML template file'
+        # 'object class': 'pathname of HTML template file'
         'inetOrgPerson': os.path.join(templates_dir, 'inputform_inetOrgPerson.html'),
         'account': os.path.join(templates_dir, 'inputform_account.html'),
         'msPerson': os.path.join(templates_dir, 'inputform_msPerson.html'),
@@ -1031,14 +1030,14 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
 
     # Named set of LDAP URLs for searching new superior DN when renaming an entry
     rename_supsearchurl={
-        'Search current naming context for organizationalUnit':'ldap:///_??sub?(objectClass=organizationalUnit)',
-        'Search current naming context for organization':'ldap:///_??sub?(objectClass=organization)',
-        'Search current naming context for locality':'ldap:///_??sub?(objectClass=locality)',
-        'Search current naming context for domain':'ldap:///_??sub?(objectClass=domain)',
-        'Search below superior entry for organizationalUnit':'ldap:///..??sub?(objectClass=organizationalUnit)',
-        'Search below superior entry for organization':'ldap:///..??sub?(objectClass=organization)',
-        'Search below superior entry for locality':'ldap:///..??sub?(objectClass=locality)',
-        'Search below superior entry for domain':'ldap:///..??sub?(objectClass=domain)',
+        'Search current naming context for organizationalUnit': 'ldap:///_??sub?(objectClass=organizationalUnit)',
+        'Search current naming context for organization': 'ldap:///_??sub?(objectClass=organization)',
+        'Search current naming context for locality': 'ldap:///_??sub?(objectClass=locality)',
+        'Search current naming context for domain': 'ldap:///_??sub?(objectClass=domain)',
+        'Search below superior entry for organizationalUnit': 'ldap:///..??sub?(objectClass=organizationalUnit)',
+        'Search below superior entry for organization': 'ldap:///..??sub?(objectClass=organization)',
+        'Search below superior entry for locality': 'ldap:///..??sub?(objectClass=locality)',
+        'Search below superior entry for domain': 'ldap:///..??sub?(objectClass=domain)',
     },
 
     # LDIF file used as locally stored pseudo LDAPv3 schema
@@ -1051,25 +1050,25 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     groupadm_filterstr_template=r'(|%s)',
     groupadm_optgroup_bounds=(1, None),
     groupadm_defs={
-        'groupOfNames':       ('member', None),
+        'groupOfNames': ('member', None),
         'groupOfUniqueNames': ('uniqueMember', None),
         'organizationalRole': ('roleOccupant', None),
-        'rfc822MailGroup':    ('mail', 'mail'),
-        'nisMailAlias':       ('rfc822MailMember', 'mail'),
-        'mailGroup':          ('mgrprfc822mailmember', 'mail'),
+        'rfc822MailGroup': ('mail', 'mail'),
+        'nisMailAlias': ('rfc822MailMember', 'mail'),
+        'mailGroup': ('mgrprfc822mailmember', 'mail'),
         # Found on IBM SecureWay Directory
-        'accessGroup':        ('member', None),
+        'accessGroup': ('member', None),
         # RFC2370
-        'posixGroup':         ('memberUid', 'uid'),
-        'nisNetgroup':        ('memberNisNetgroup', 'uid'),
+        'posixGroup': ('memberUid', 'uid'),
+        'nisNetgroup': ('memberNisNetgroup', 'uid'),
         # Samba 3.0
-        #'sambaGroupMapping':  ('sambaSIDList', 'sambaSID'),
+        #'sambaGroupMapping': ('sambaSIDList', 'sambaSID'),
         # Active Directory
-        'group':              ('member', None),
+        'group':    ('member', None),
         # draft-findlay-ldap-groupofentries
-        'groupOfEntries':     ('member', None),
+        'groupOfEntries': ('member', None),
         # Apple MAC OS X
-        'apple-group':        ('apple-group-memberguid', 'apple-generateduid'),
+        'apple-group': ('apple-group-memberguid', 'apple-generateduid'),
     },
 
 )
