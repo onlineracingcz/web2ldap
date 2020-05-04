@@ -29,10 +29,10 @@ from web2ldap.ldaputil.passwd import user_password_hash
 from web2ldap.app.form import Web2LDAPForm_passwd
 
 
-PASSWD_ACTIONS_DICT = dict([
-    (action, (short_desc, long_desc))
+PASSWD_ACTIONS_DICT = {
+    action: (short_desc, long_desc)
     for action, short_desc, long_desc in Web2LDAPForm_passwd.passwd_actions
-])
+}
 
 PASSWD_GEN_DEFAULT_LENGTH = 20
 

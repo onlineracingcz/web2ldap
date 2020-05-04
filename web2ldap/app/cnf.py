@@ -104,11 +104,11 @@ class Web2LDAPConfig(LogHelper):
         returns a copy of the current Web2LDAPConfig
         with some more params set
         """
-        old_params = dict([
-            (param_name, getattr(self, param_name))
+        old_params = {
+            param_name: getattr(self, param_name)
             for param_name in VALID_CFG_PARAM_NAMES
             if hasattr(self, param_name)
-        ])
+        }
         new = Web2LDAPConfig(**old_params)
         new.update(params)
         self.log(

@@ -255,13 +255,13 @@ syntax_registry.reg_at(
 class SambaHomeDrive(SelectList):
     oid: str = 'SambaHomeDrive-oid'
     desc: str = 'Samba home drive letter'
-    attr_value_dict = dict([
-        (driveletter, driveletter)
+    attr_value_dict = {
+        driveletter: driveletter
         for driveletter in [
             '%s:' % letter
             for letter in string.ascii_lowercase.upper()
         ]
-    ])
+    }
 
 syntax_registry.reg_at(
     SambaHomeDrive.oid, [

@@ -57,10 +57,10 @@ class SshPublicKey(DirectoryString):
             pk_type, pk_base64 = attr_value.split(' ', 1)
         try:
             pk_bin = binascii.a2b_base64(pk_base64)
-            pk_fingerprints = dict([
-                (hash_algo, hashlib.new(hash_algo, pk_bin).digest())
+            pk_fingerprints = {
+                hash_algo: hashlib.new(hash_algo, pk_bin).digest()
                 for hash_algo in self.hash_algorithms
-            ])
+            }
         except Exception as err:
             logger.warning('Error decoding SSH public key: %s', err)
             pk_bin, pk_fingerprints = None, None
