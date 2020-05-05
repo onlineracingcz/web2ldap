@@ -39,7 +39,7 @@ ldap_uri_list = [
         'FreeIPA demo as admin',
     ),
     (
-        'ldap://db.debian.org/dc=debian,dc=org??one',
+        'ldaps://db.debian.org/dc=debian,dc=org??one',
         'debian.org Developers LDAP Search'
     ),
     (
@@ -759,7 +759,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         # File containing all the trusted root CA certs
         #ldap0.OPT_X_TLS_CACERTFILE: '/etc/ssl/ca-bundle.pem',
         #ldap0.OPT_X_TLS_CACERTFILE: '/var/lib/ca-certificates/ca-bundle.pem',
-        ldap0.OPT_X_TLS_CIPHER_SUITE: 'HIGH',
+        #ldap0.OPT_X_TLS_CIPHER_SUITE: 'HIGH',
         ldap0.OPT_X_TLS_PROTOCOL_MIN: 3,
         #ldap0.OPT_X_TLS_CRLCHECK: ldap0.OPT_X_TLS_CRL_PEER,
         #ldap0.OPT_X_TLS_CRLFILE: os.path.join(etc_dir, 'ssl', 'crt', 'peers.crl'),
