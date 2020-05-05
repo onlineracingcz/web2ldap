@@ -374,7 +374,7 @@ class SSHFPRecord(IA5String):
         try:
             key_algo, fp_algo, _ = tuple(filter(None, map(bytes.strip, self._av.split(b' '))))
         except ValueError:
-            r = display_value
+            res = display_value
         else:
             try:
                 key_algo_name = self.key_algo_dict[key_algo]
@@ -384,12 +384,12 @@ class SSHFPRecord(IA5String):
                 fp_algo_name = self.fp_algo_dict[fp_algo]
             except KeyError:
                 fp_algo_name = '?'
-            r = 'key_algo={key_algo_name} fp_algo={fp_algo_name}:<br><code>{display_value}</code>'.format(
+            res = 'key_algo={key_algo_name} fp_algo={fp_algo_name}:<br><code>{display_value}</code>'.format(
                 key_algo_name=key_algo_name,
                 fp_algo_name=fp_algo_name,
                 display_value=display_value,
             )
-        return r
+        return res
 
 syntax_registry.reg_at(
     SSHFPRecord.oid, [
