@@ -294,18 +294,25 @@ class MyLDAPObject(ReconnectLDAPObject):
         return ReconnectLDAPObject.abandon(
             self,
             msgid,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['abandon'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['abandon']
+            ),
         )
 
     def simple_bind(self, who='', cred='', req_ctrls=None):
-        assert isinstance(who, str), TypeError("Type of argument 'who' must be str but was %r" % (who,))
-        assert isinstance(cred, bytes), TypeError("Type of argument 'cred' must be bytes but was %r" % (cred,))
         self.flush_cache()
         return ReconnectLDAPObject.simple_bind(
             self,
             who,
             cred,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**bind**']+self._req_ctrls['simple_bind'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['**bind**']
+                + self._req_ctrls['simple_bind']
+            ),
         )
 
     def sasl_interactive_bind_s(
@@ -315,76 +322,99 @@ class MyLDAPObject(ReconnectLDAPObject):
             req_ctrls=None,
             sasl_flags=ldap0.SASL_QUIET
         ):
-        assert isinstance(sasl_mech, str), TypeError("Type of argument 'sasl_mech' must be str but was %r" % (sasl_mech,))
         self.flush_cache()
         return ReconnectLDAPObject.sasl_interactive_bind_s(
             self,
             sasl_mech,
             auth,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**bind**']+self._req_ctrls['sasl_interactive_bind_s'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['**bind**']
+                + self._req_ctrls['sasl_interactive_bind_s']
+            ),
             sasl_flags
         )
 
     def add(self, dn, modlist, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
         return ReconnectLDAPObject.add(
             self,
             dn,
             modlist,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['add'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['**write**']
+                + self._req_ctrls['add']
+            ),
         )
 
     def compare(self, dn, attr, value, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
-        assert isinstance(attr, str), TypeError("Type of argument 'attr' must be str but was %r" % (attr,))
-        assert isinstance(value, bytes), TypeError("Type of argument 'value' must be bytes but was %r" % (value,))
         return ReconnectLDAPObject.compare(
             self,
             dn,
             attr,
             value,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**read**']+self._req_ctrls['compare'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['**read**']
+                + self._req_ctrls['compare']
+            ),
         )
 
     def delete(self, dn, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
         return ReconnectLDAPObject.delete(
             self,
             dn,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['delete'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['**write**']
+                + self._req_ctrls['delete']
+            ),
         )
 
     def modify(self, dn, modlist, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
         return ReconnectLDAPObject.modify(
             self,
             dn,
             modlist,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['modify'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['**write**']
+                + self._req_ctrls['modify']
+            ),
         )
 
     def passwd(self, user, oldpw, newpw, req_ctrls=None):
-        assert isinstance(user, str), TypeError("Type of argument 'user' must be str but was %r" % user)
-        assert oldpw is None or isinstance(oldpw, bytes), TypeError("Type of argument 'oldpw' must be None or bytes but was %r" % oldpw)
-        assert isinstance(newpw, bytes), TypeError("Type of argument 'newpw' must be bytes but was %r" % newpw)
         return ReconnectLDAPObject.passwd(
             self,
             user,
             oldpw,
             newpw,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['passwd'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['**write**']
+                + self._req_ctrls['passwd']
+            ),
         )
 
     def rename(self, dn, newrdn, newsuperior=None, delold=1, req_ctrls=None):
-        assert isinstance(dn, str), TypeError("Type of argument 'dn' must be str but was %r" % (dn,))
-        assert isinstance(newrdn, str), TypeError("Type of argument 'newrdn' must be str but was %r" % newrdn)
         return ReconnectLDAPObject.rename(
             self,
             dn,
             newrdn,
             newsuperior,
             delold,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**write**']+self._req_ctrls['rename'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['**write**']
+                + self._req_ctrls['rename']
+            ),
         )
 
     def search(
@@ -398,10 +428,6 @@ class MyLDAPObject(ReconnectLDAPObject):
             timeout=-1,
             sizelimit=0,
         ):
-        assert isinstance(base, str), \
-            TypeError("Type of 'base' must be str, was %r" % (base,))
-        assert isinstance(filterstr, str), \
-            TypeError("Type of 'filterstr' must be str, was %r" % (filterstr,))
         if base not in self.last_search_bases:
             self.last_search_bases.append(base)
         return ReconnectLDAPObject.search(
@@ -411,7 +437,12 @@ class MyLDAPObject(ReconnectLDAPObject):
             filterstr,
             attrlist,
             attrsonly,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['**read**']+self._req_ctrls['search'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['**read**']
+                + self._req_ctrls['search']
+            ),
             timeout,
             sizelimit,
         )
@@ -419,7 +450,11 @@ class MyLDAPObject(ReconnectLDAPObject):
     def unbind(self, req_ctrls=None):
         return ReconnectLDAPObject.unbind(
             self,
-            (req_ctrls or [])+self._req_ctrls['**all**']+self._req_ctrls['unbind'],
+            (
+                (req_ctrls or [])
+                + self._req_ctrls['**all**']
+                + self._req_ctrls['unbind']
+            ),
         )
 
 
