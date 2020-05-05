@@ -2009,7 +2009,6 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             return {}
         if search_scope == ldap0.SCOPE_BASE:
             # When reading a single entry we build the map from a single multi-valued attribute
-            dn_r, entry_r = ldap_result[0]
             assert len(self.lu_obj.attrs or []) == 1, ValueError(
                 'attrlist in ldap_url must be of length 1 if scope is base, got %r' % (self.lu_obj.attrs,)
             )
@@ -2017,10 +2016,10 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             attr_values_u = [
                 ''.join((
                     self.valuePrefix,
-                    self._app.ls.uc_decode(attr_value)[0],
+                    attr_value,
                     self.valueSuffix,
                 ))
-                for attr_value in entry_r[list_attr]
+                for attr_value in ldap_result[0].entry_s[list_attr]
             ]
             attr_value_dict = {
                 u: u
