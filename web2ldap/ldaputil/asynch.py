@@ -98,7 +98,6 @@ class AsyncSearchHandler:
         self.pre_processing()
         result_counter = 0
         end_result_counter = ignoreResultsNumber + processResultsCount
-        go_ahead = True
         partial = False
         self.beginResultsDropped = 0
         self.endResultBreak = result_counter
@@ -114,7 +113,6 @@ class AsyncSearchHandler:
                     elif processResultsCount == 0 or result_counter < end_result_counter:
                         self._process_result(result_item)
                     else:
-                        go_ahead = False # break-out from while go_ahead
                         partial = True
                         break # break-out from this for-loop
                     result_counter = result_counter+1
