@@ -642,7 +642,7 @@ class LDAPSession:
             self.secureConn = 1
         # end of _start_tls()
 
-    def _initialize(self, uri_list, tls_options=None):
+    def _initialize(self, uri_list, timeout, tls_options=None):
         while uri_list:
             uri = uri_list[0].strip()
             # Try connecting to LDAP host
@@ -654,9 +654,9 @@ class LDAPSession:
                 )
                 self.uri = uri
                 self._set_tls_options(tls_options)
-                # Default timeout 60 seconds
-                self.l.set_option(ldap0.OPT_TIMEOUT, LDAP_DEFAULT_TIMEOUT)
-                self.l.set_option(ldap0.OPT_NETWORK_TIMEOUT, LDAP_DEFAULT_TIMEOUT)
+                # Default timeout
+                self.l.set_option(ldap0.OPT_TIMEOUT, timeout)
+                self.l.set_option(ldap0.OPT_NETWORK_TIMEOUT, timeout)
                 self.who = None
             except ldap0.SERVER_DOWN:
                 # Remove current host from list
@@ -696,7 +696,7 @@ class LDAPSession:
             uri_list = uri
         else:
             raise TypeError('Expected either list of str or single str for uri, got %r.' % (uri,))
-        self._initialize(uri_list, tls_options)
+        self._initialize(uri_list, timeout, tls_options)
         if enableSessionTracking:
             session_tracking_ctrl = SessionTrackingControl(
                 self.onBehalf,
