@@ -809,7 +809,7 @@ def ObjectClassForm(
 
 
     def LDIFTemplateField(app, parent_dn):
-        all_structural_oc, all_abstract_oc, all_auxiliary_oc = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
+        all_structural_oc, _, _ = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
         addform_entry_templates_keys = list(app.cfg_param('addform_entry_templates', {}).keys())
         addform_parent_attrs = app.cfg_param('addform_parent_attrs', [])
         addform_entry_templates_keys.sort()
@@ -840,7 +840,7 @@ def ObjectClassForm(
                 }
                 if missing_parent_attrs:
                     continue
-            restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, tmpl_parent_dn)
+            restricted_structural_oc, _ = get_possible_soc(app, tmpl_parent_dn)
             if app.schema.sed[DITStructureRule]:
                 parent_gov_structure_rule = app.ls.get_governing_structure_rule(tmpl_parent_dn, app.schema)
                 if parent_gov_structure_rule is None:
@@ -1197,7 +1197,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
 
     # Check whether to fall back to table input mode
     if input_formtype == u'Template':
-        template_oc, read_template_dict = input_form_entry.get_html_templates('input_template')
+        template_oc, _ = input_form_entry.get_html_templates('input_template')
         if not template_oc:
             msg = ''.join((
                 msg,
