@@ -356,10 +356,9 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
     group_search_root_field = web2ldap.app.gui.search_root_field(
         app,
-        name='groupadm_searchroot'
+        name='groupadm_searchroot',
+        default=str(group_search_root),
     )
-    group_search_root_field.charset = app.form.accept_charset
-    group_search_root_field.set_default(str(group_search_root))
 
     if error_msg:
         app.outf.write('<p class="ErrorMessage">%s</p>' % (error_msg))

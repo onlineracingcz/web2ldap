@@ -217,17 +217,16 @@ def w2l_searchform(
 
     naming_contexts = app.cfg_param('naming_contexts', None)
 
-    search_root_field = web2ldap.app.gui.search_root_field(
-        app,
-        name='search_root',
-        search_root_searchurl=app.cfg_param('searchform_search_root_url', None),
-        naming_contexts=naming_contexts,
-    )
     search_root = app.form.getInputValue(
         'search_root',
         [search_root or str(app.naming_context)],
     )[0]
-    search_root_field.set_default(search_root)
+    search_root_field = web2ldap.app.gui.search_root_field(
+        app,
+        name='search_root',
+        default=search_root,
+        search_root_searchurl=app.cfg_param('searchform_search_root_url', None),
+    )
 
     ContextMenuList = [
         app.anchor(

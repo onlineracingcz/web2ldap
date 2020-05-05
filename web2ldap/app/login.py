@@ -41,13 +41,11 @@ def w2l_login(
     if 'login_who' in app.form.input_field_names:
         who = app.form.field['login_who'].value[0]
 
-    login_search_root = login_search_root or app.dn
-
     login_search_root_field = web2ldap.app.gui.search_root_field(
         app,
         name='login_search_root',
+        default=str(login_search_root),
     )
-    login_search_root_field.set_default(str(login_search_root))
 
     login_template_str = web2ldap.app.gui.read_template(app, 'login_template', u'login form')
 

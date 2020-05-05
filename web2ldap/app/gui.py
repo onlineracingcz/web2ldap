@@ -597,7 +597,6 @@ def search_root_field(
         text=u'Search Root',
         default=None,
         search_root_searchurl=None,
-        naming_contexts=None
     ):
     """
     Returns input field for search root
@@ -653,7 +652,8 @@ def search_root_field(
         ignoreCase=1
     )
     srf.charset = app.form.accept_charset
-    return srf # search_root_field()
+    return srf
+    # search_root_field()
 
 
 def invalid_syntax_message(app, invalid_attrs):
