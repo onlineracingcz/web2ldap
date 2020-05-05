@@ -741,7 +741,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     },
 
     # Timeout for LDAP operations (seconds)
-    timeout=300,
+    timeout=20,
 
     # Use StartTLS on connect. It's recommended saying 0 as default
     # since not many servers can handle an unknown extended operation properly

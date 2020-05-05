@@ -801,7 +801,7 @@ class AppHandler(LogHelper):
                 # Connect to new specified host
                 self.ls.open(
                     init_uri,
-                    self.cfg_param('timeout', -1),
+                    self.cfg_param('timeout', web2ldap.ldapsession.LDAP_DEFAULT_TIMEOUT),
                     self.ldap_url.get_starttls_extop(
                         self.cfg_param('starttls', web2ldap.ldapsession.START_TLS_NO)
                     ),
