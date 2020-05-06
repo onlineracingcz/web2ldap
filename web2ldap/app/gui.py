@@ -450,7 +450,7 @@ def top_section(
     template_dict = {
         'main_div_id': main_div_id,
         'accept_charset': app.form.accept_charset,
-        'refresh_time': str(web2ldapcnf.session_remove+10),
+        'refresh_time': str(web2ldapcnf.session_remove),
         'sid': app.sid or '',
         'title_text': title,
         'script_name': script_name,
