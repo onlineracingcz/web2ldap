@@ -2635,6 +2635,38 @@ class LDAPv3ResultCode(SelectList):
     }
 
 
+class ObjectClassDescription(DirectoryString):
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.37'
+
+
+class AttributeTypeDescription(DirectoryString):
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.3'
+
+
+class MatchingRuleDescription(DirectoryString):
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.30'
+
+
+class MatchingRuleUseDescription(DirectoryString):
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.31'
+
+
+class LdapSyntaxDescription(DirectoryString):
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.54'
+
+
+class DITContentRuleDescription(DirectoryString):
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.16'
+
+
+class DITStructureRuleDescription(DirectoryString):
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.17'
+
+
+class NameFormDescription(DirectoryString):
+    oid: str = '1.3.6.1.4.1.1466.115.121.1.35'
+
+
 # Set up the central syntax registry instance
 syntax_registry = SyntaxRegistry()
 
