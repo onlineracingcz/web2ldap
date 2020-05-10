@@ -695,7 +695,7 @@ class DomainControllerFunctionality(SelectList):
     }
 
 syntax_registry.reg_at(
-    DomainFunctionality.oid, [
+    DomainControllerFunctionality.oid, [
         'domainControllerFunctionality', # no schema information available
     ]
 )
@@ -918,12 +918,32 @@ syntax_registry.reg_at(
 syntax_registry.reg_at(
     DirectoryString.oid, [
         'supportedLDAPPolicies',
+        'ldapServiceName',
     ]
 )
 
 syntax_registry.reg_at(
     DNSDomain.oid, [
         '1.2.840.113556.1.4.619',   # dNSHostName
+    ]
+)
+
+syntax_registry.reg_at(
+    Boolean.oid, [
+        'isGlobalCatalogReady',
+        'isSynchronized',
+    ]
+)
+
+syntax_registry.reg_at(
+    Integer.oid, [
+        'highestCommittedUSN',
+    ]
+)
+
+syntax_registry.reg_at(
+    GeneralizedTime.oid, [
+        'currentTime',
     ]
 )
 
