@@ -916,6 +916,12 @@ syntax_registry.reg_at(
 )
 
 syntax_registry.reg_at(
+    DirectoryString.oid, [
+        'supportedLDAPPolicies',
+    ]
+)
+
+syntax_registry.reg_at(
     DNSDomain.oid, [
         '1.2.840.113556.1.4.619',   # dNSHostName
     ]

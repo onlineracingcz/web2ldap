@@ -18,6 +18,7 @@ from web2ldap.app.schema.syntaxes import \
     DirectoryString, \
     DistinguishedName, \
     DomainComponent, \
+    Integer, \
     JPEGImage, \
     LDAPUrl, \
     OctetString, \
@@ -50,6 +51,18 @@ syntax_registry.reg_at(
         '1.3.6.1.4.1.42.2.27.2.1.15',   # rfc822MailMember
         '2.16.840.1.113730.3.1.47',     # mailRoutingAddress
         '1.2.840.113549.1.9.1',         # email, emailAddress, pkcs9email
+    ]
+)
+
+syntax_registry.reg_at(
+    DirectoryString.oid, [
+        'supportedSASLMechanisms',
+    ]
+)
+
+syntax_registry.reg_at(
+    Integer.oid, [
+        'supportedLDAPVersion ',
     ]
 )
 
