@@ -10,9 +10,9 @@
          "version": "1.5.76",
          "state": "stable",
          "scope": "minor fix",
-         "changes": "",
+         "changes": "Fixed/improved plugin registration for MS AD rootDSE attributes.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.76.tar.gz",
-         "published": "2020-05-xxT12:00:00+00:00"
+         "published": "2020-05-10T12:00:00+00:00"
       },
       {
          "version": "1.5.75",
