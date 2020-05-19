@@ -6,6 +6,7 @@ Experimental => you have to understand what it internally does when enabling it!
 """
 
 import ldap0
+from ldap0.res import SearchReference
 
 from web2ldap.app.plugins.nis import syntax_registry, UidNumber, GidNumber, IA5String
 
@@ -44,11 +45,11 @@ class AutogenNumberMixIn:
     object_class = 'posixAccount'
 
     def formValue(self) -> str:
-        if self.object_class.lower() not in {oc.lower() for oc in self._entry['objectClass']}:
+        if self.object_class.lower() not in {oc.lower().decode('ascii') for oc in self._entry['objectClass']}:
             return u''
         try:
-            ldap_result = self._app.ls.l.search_s(
-                self._app.naming_context.encode(self._app.ls.charset),
+            ldap_results = self._app.ls.l.search_s(
+                str(self._app.naming_context),
                 ldap0.SCOPE_SUBTREE,
                 '(&(objectClass={0})({1}>={2})({1}<={3}))'.format(
                     self.object_class,
@@ -66,12 +67,12 @@ class AutogenNumberMixIn:
             # search failed => no value suggested
             return u''
         idnumber_set = set()
-        for ldap_dn, ldap_entry in ldap_result:
-            if ldap_dn is not None:
-                ldap_dn = ldap_dn.decode(self._app.ls.charset)
-                if ldap_dn == self._dn:
-                    return ldap_entry[self._at][0].decode(self._app.ls.charset)
-                idnumber_set.add(int(ldap_entry[self._at][0]))
+        for res in ldap_results:
+            if isinstance(res, SearchReference):
+                continue
+            if res.dn_s == self._dn:
+                return res.entry_s[self._at][0]
+            idnumber_set.add(int(res.entry_s[self._at][0]))
         for idnumber in range(self.__class__.minNewValue, self.maxNewValue+1):
             if idnumber in idnumber_set:
                 self.__class__.minNewValue = idnumber
