@@ -815,7 +815,7 @@ def ObjectClassForm(
         addform_entry_templates_keys.sort()
         add_tmpl_dict = {}
         for template_name in addform_entry_templates_keys:
-            ldif_dn, ldif_entry = ReadLDIFTemplate(app, template_name)
+            ldif_dn, ldif_entry = read_ldif_template(app, template_name)
             tmpl_parent_dn = str(DNObj.from_str(ldif_dn.decode(app.ls.charset)).parent()) or parent_dn
             # first check whether mandatory attributes in parent entry are readable
             if addform_parent_attrs:
@@ -961,7 +961,7 @@ def ObjectClassForm(
     # end of ObjectClassForm()
 
 
-def ReadLDIFTemplate(app, template_name):
+def read_ldif_template(app, template_name):
     addform_entry_templates = app.cfg_param('addform_entry_templates', {})
     template_name_html = escape_html(template_name)
     if template_name not in addform_entry_templates:
@@ -986,7 +986,7 @@ def ReadLDIFTemplate(app, template_name):
     finally:
         if ldif_file is not None:
             ldif_file.close()
-    return dn, entry # ReadLDIFTemplate()
+    return dn, entry # read_ldif_template()
 
 
 def AttributeTypeDict(app, param_name, param_default):

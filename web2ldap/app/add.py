@@ -22,7 +22,7 @@ import web2ldap.app.cnf
 import web2ldap.app.core
 import web2ldap.app.gui
 import web2ldap.app.schema
-import web2ldap.app.addmodifyform
+from .addmodifyform import w2l_addform, get_entry_input, read_old_entry, read_ldif_template
 
 # Attribute types always ignored for add requests
 ADD_IGNORE_ATTR_TYPES = {
@@ -58,18 +58,18 @@ def w2l_add(app):
     invalid_attrs = None
 
     if add_clonedn:
-        entry, _ = web2ldap.app.addmodifyform.read_old_entry(app, add_clonedn, app.schema, None, {'*':'*'})
+        entry, _ = read_old_entry(app, add_clonedn, app.schema, None, {'*':'*'})
         add_clonedn_obj = DNObj.from_str(add_clonedn)
         add_rdn = u'+'.join(['%s=' % (at) for at, _ in add_clonedn_obj[0]])
         add_basedn = str(add_clonedn_obj.parent()) or app.dn
     elif add_template:
-        add_dn, entry = web2ldap.app.addmodifyform.ReadLDIFTemplate(app, add_template)
+        add_dn, entry = read_ldif_template(app, add_template)
         add_dn_obj = DNObj.from_str(add_dn.decode(app.ls.charset))
         add_rdn, add_basedn = str(add_dn_obj.rdn()), str(add_dn_obj.parent())
         add_basedn = add_basedn or app.dn
         entry = ldap0.schema.models.Entry(app.schema, add_basedn, entry)
     else:
-        entry, invalid_attrs = web2ldap.app.addmodifyform.get_entry_input(app)
+        entry, invalid_attrs = get_entry_input(app)
         add_rdn = app.form.getInputValue('add_rdn', [''])[0]
         add_basedn = app.form.getInputValue('add_basedn', [app.dn])[0]
 
@@ -86,7 +86,7 @@ def w2l_add(app):
             'in_oc' in app.form.input_field_names or
             'in_ft' in app.form.input_field_names
         ):
-        web2ldap.app.addmodifyform.w2l_addform(
+        w2l_addform(
             app,
             add_rdn, add_basedn, entry,
             msg=error_msg,
@@ -103,7 +103,7 @@ def w2l_add(app):
     try:
         rdn_list = list(DNObj.from_str(add_rdn).rdn_attrs().items())
     except ldap0.DECODING_ERROR:
-        web2ldap.app.addmodifyform.w2l_addform(
+        w2l_addform(
             app,
             add_rdn, add_basedn, entry,
             msg='Wrong format of RDN string.',
@@ -122,7 +122,7 @@ def w2l_add(app):
             ):
             rdn_list[i] = rdn_attr_type, entry[rdn_attr_type][0].decode(app.ls.charset)
         else:
-            web2ldap.app.addmodifyform.w2l_addform(
+            w2l_addform(
                 app,
                 add_rdn,
                 add_basedn, entry,
@@ -185,13 +185,9 @@ def w2l_add(app):
             ldap0.TYPE_OR_VALUE_EXISTS,
             ldap0.UNDEFINED_TYPE,
             ldap0.UNWILLING_TO_PERFORM,
-        ) as e:
+        ) as err:
         # Some error in user's input => present input form to edit input values
-        web2ldap.app.addmodifyform.w2l_addform(
-            app,
-            add_rdn, add_basedn, entry,
-            msg=app.ldap_error_msg(e),
-        )
+        w2l_addform(app, add_rdn, add_basedn, entry, msg=app.ldap_error_msg(err))
     else:
         # Try to extract Post Read Entry response control
         prec_ctrls = [

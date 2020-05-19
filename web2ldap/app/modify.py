@@ -24,10 +24,10 @@ import web2ldap.ldapsession
 import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
-import web2ldap.app.addmodifyform
 import web2ldap.app.add
 import web2ldap.app.schema
 from web2ldap.app.schema.syntaxes import syntax_registry
+from .addmodifyform import w2l_modifyform, get_entry_input, read_old_entry
 
 
 def modlist_ldif(dn, form, modlist):
@@ -74,7 +74,7 @@ def w2l_modify(app):
         app.form.field['in_av'].value.insert(insert_row_num+1, '')
         app.form.field['in_avi'].value = map(str, range(0, len(app.form.field['in_av'].value)))
 
-    new_entry, invalid_attrs = web2ldap.app.addmodifyform.get_entry_input(app)
+    new_entry, invalid_attrs = get_entry_input(app)
 
     if invalid_attrs:
         error_msg = web2ldap.app.gui.invalid_syntax_message(app, invalid_attrs)
@@ -82,12 +82,14 @@ def w2l_modify(app):
         error_msg = ''
 
     # Check if the user just switched/modified input form
-    if 'in_ft' in app.form.input_field_names or \
-       'in_oc' in app.form.input_field_names or \
-       'in_mr' in app.form.input_field_names or \
-       not new_entry or \
-       invalid_attrs:
-        web2ldap.app.addmodifyform.w2l_modifyform(
+    if (
+            not new_entry
+            or invalid_attrs
+            or 'in_ft' in app.form.input_field_names
+            or 'in_oc' in app.form.input_field_names
+            or 'in_mr' in app.form.input_field_names
+        ):
+        w2l_modifyform(
             app,
             new_entry,
             msg=error_msg,
@@ -98,7 +100,7 @@ def w2l_modify(app):
     in_oldattrtypes = {a for a in app.form.getInputValue('in_oldattrtypes', [])}
 
     try:
-        old_entry, dummy = web2ldap.app.addmodifyform.read_old_entry(app, app.dn, app.schema, in_assertion)
+        old_entry, dummy = read_old_entry(app, app.dn, app.schema, in_assertion)
     except ldap0.NO_SUCH_OBJECT:
         raise web2ldap.app.core.ErrorExit(u'Old entry was removed or modified in between! You have to edit it again.')
 
@@ -192,13 +194,9 @@ def w2l_modify(app):
             ldap0.TYPE_OR_VALUE_EXISTS,
             ldap0.UNDEFINED_TYPE,
             ldap0.UNWILLING_TO_PERFORM,
-        ) as e:
+        ) as err:
         # go back to input form so the user can correct something
-        web2ldap.app.addmodifyform.w2l_modifyform(
-            app,
-            new_entry,
-            msg=app.ldap_error_msg(e),
-        )
+        w2l_modifyform(app, new_entry, msg=app.ldap_error_msg(err))
         return
 
     # Display success message
