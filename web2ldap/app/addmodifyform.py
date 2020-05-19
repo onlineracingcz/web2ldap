@@ -1300,13 +1300,14 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
     supentry_display_string = SupentryDisplayString(app, app.parent_dn)
 
-    if writeable_attr_oids is None:
-        in_wrtattroids_values = app.form.hiddenFieldHTML('in_wrtattroids', 'nonePseudoValue;x-web2ldap-None', '')
-    else:
-        in_wrtattroids_values = ''.join([
-            app.form.hiddenFieldHTML('in_wrtattroids', at_name, '')
-            for at_name in writeable_attr_oids or []
-        ])
+    in_wrtattroids_fields_html = '\n'.join([
+        app.form.hiddenFieldHTML('in_wrtattroids', at_name, '')
+        for at_name in (
+            writeable_attr_oids
+            if writeable_attr_oids is not None
+            else ['nonePseudoValue;x-web2ldap-None']
+        )
+    ])
 
     if app.ls.relax_rules:
         msg = ''.join((
@@ -1355,9 +1356,9 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
                 app.form.hiddenFieldHTML('in_oldattrtypes', at_name, '')
                 for at_name in app.form.getInputValue('in_oldattrtypes', entry.keys())
             ]),
-            in_wrtattroids_values,
         ))
     )
+    app.outf.write(in_wrtattroids_fields_html)
 
     if input_formtype == 'Template':
         input_form_entry.template_output(
