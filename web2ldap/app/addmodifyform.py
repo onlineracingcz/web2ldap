@@ -1113,7 +1113,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
         try:
             writeable_attr_oids = ldap0.schema.models.SchemaElementOIDSet(
                 sub_schema, AttributeType,
-                [av.decode('ascii') for av in ldap_res.entry_as.get('allowedAttributesEffective', [])]
+                [aval.decode('ascii') for aval in ldap_res.entry_as.get('allowedAttributesEffective', [])]
             )
         except KeyError:
             writeable_attr_oids = set([])
