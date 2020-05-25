@@ -4,6 +4,15 @@ web2ldap plugin classes for attributes used on ldap://db.debian.org
 """
 
 from web2ldap.app.schema.syntaxes import DynamicValueSelectList, syntax_registry
+from .opensshlpk import SshPublicKey
+
+
+syntax_registry.reg_at(
+    SshPublicKey.oid, [
+        '1.3.6.1.4.1.9586.100.4.2.1',  # sshRSAAuthKey
+        '1.3.6.1.4.1.9586.100.4.2.26',  # sshRSAHostKey
+    ]
+)
 
 
 class DebianSupplementaryGid(DynamicValueSelectList):
