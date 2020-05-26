@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.78",
+         "state": "stable",
+         "scope": "minor fix",
+         "changes": "Support for Æ-DIR object class aeSSHAccount, updated fall-back schema.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.78.tar.gz",
+         "published": "2020-05-26T17:00:00+00:00"
+      },
+      {
          "version": "1.5.77",
          "state": "stable",
          "scope": "minor fix",
