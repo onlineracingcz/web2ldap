@@ -20,7 +20,7 @@ from ldap0.pw import random_string
 
 import web2ldapcnf
 
-from web2ldap.web import escape_html
+from web2ldap.web import HTML_ESCAPE_MAP
 import web2ldap.ldaputil
 from web2ldap.ldaputil.oidreg import OID_REG
 import web2ldap.ldapsession
@@ -79,7 +79,12 @@ class Web2LDAPForm(Form):
         assert isinstance(value, str), \
             TypeError('Argument value must be str, was %r' % (value,))
         value = value or u''
-        return escape_html(value).replace('\n', lf_entity).replace('\t', tab_identiation).replace('  ', sp_entity)
+        translate_map = dict(HTML_ESCAPE_MAP.items())
+        translate_map.update({
+            9: tab_identiation,
+            10: lf_entity,
+        })
+        return value.translate(translate_map).replace('  ', sp_entity)
 
     def unset_cookie(self, cki):
         if cki is not None:

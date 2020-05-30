@@ -9,10 +9,10 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-# map for escape all HTML chars except ampersand "&"
+# map for escape all HTML chars with str.translate()
 HTML_ESCAPE_MAP = {
     ord(char): '&#%d;' % (ord(char))
-    for char in ('<', '>', "'", '"', ':', '=', '{', '}', '(', ',', '`')
+    for char in ('&', '<', '>', "'", '"', ':', '=', '{', '}', '(', ',', '`')
 }
 
 def escape_html(val: str) -> str:
@@ -20,4 +20,4 @@ def escape_html(val: str) -> str:
     Escape all characters with a special meaning in HTML
     to appropriate character tags
     """
-    return val.replace('&', '&#38;').translate(HTML_ESCAPE_MAP)
+    return val.translate(HTML_ESCAPE_MAP)
