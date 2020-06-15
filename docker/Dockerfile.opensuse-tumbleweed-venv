@@ -1,4 +1,4 @@
-FROM opensuse/tumbleweed
+FROM opensuse/tumbleweed:latest
 MAINTAINER Michael Stroeder <michael@stroeder.com>
 
 # install latest updates to be on the safe side
