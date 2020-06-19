@@ -9,10 +9,10 @@
       {
          "version": "1.5.82",
          "state": "stable",
-         "scope": "minor feature",
-         "changes": "",
+         "scope": "minor fix",
+         "changes": "Fixed displaying OpenLDAP syncrepl statements.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.82.tar.gz",
-         "published": "2020-06-xxT16:30:00+00:00"
+         "published": "2020-06-19T18:30:00+00:00"
       },
       {
          "version": "1.5.81",
