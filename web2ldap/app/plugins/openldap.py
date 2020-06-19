@@ -160,7 +160,7 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
     def display(self, valueindex=0, commandbutton=False) -> str:
         if not commandbutton or not self._av:
             return OlcMultilineText.display(self, valueindex, commandbutton)
-        srd = ldap0.openldap.SyncReplDesc(self._av)
+        srd = ldap0.openldap.SyncReplDesc(self.av_u)
         return ' '.join((
             OlcMultilineText.display(self, valueindex, commandbutton),
             web2ldap.app.gui.ldap_url_anchor(
