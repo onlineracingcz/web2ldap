@@ -35,7 +35,6 @@ import web2ldap.app.cnf
 import web2ldap.app.schema.syntaxes
 import web2ldap.app.searchform
 from web2ldap.msbase import GrabKeys
-import web2ldap.ldaputil
 from web2ldap.ldaputil import logdb_filter
 
 
@@ -74,10 +73,9 @@ def get_variant_filename(pathname, variantlist):
             variant_filename = pathname
         else:
             variant_filename = '.'.join((pathname, v))
-        if not v in checked_set and os.path.isfile(variant_filename):
+        if v not in checked_set and os.path.isfile(variant_filename):
             break
-        else:
-            checked_set.add(v)
+        checked_set.add(v)
     else:
         variant_filename = pathname
     return variant_filename
@@ -120,9 +118,9 @@ def repr2ts(time_divisors, ts_sep, value):
     l2 = [(int(v), d.strip()) for v, d in l1]
     time_divisors_dict = dict(time_divisors)
     result = 0
-    for value, desc in l2:
+    for val, desc in l2:
         try:
-            result += value*time_divisors_dict[desc]
+            result += val * time_divisors_dict[desc]
         except KeyError:
             raise ValueError
         else:
