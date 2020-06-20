@@ -166,7 +166,7 @@ def w2l_modify(app):
                 app.display_dn(app.dn, commandbutton=True),
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
+            context_menu_list=web2ldap.app.gui.context_menu_single_entry(app)
         )
         return
 
@@ -207,5 +207,5 @@ def w2l_modify(app):
             modlist_ldif(app.dn, app.form, modlist),
         ),
         main_menu_list=web2ldap.app.gui.main_menu(app),
-        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
+        context_menu_list=web2ldap.app.gui.context_menu_single_entry(app)
     )

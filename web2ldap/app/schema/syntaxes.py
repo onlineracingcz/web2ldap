@@ -1850,7 +1850,7 @@ class PropertiesSelectList(SelectList):
 
     def _get_attr_value_dict(self):
         attr_value_dict = SelectList._get_attr_value_dict(self)
-        real_path_name = web2ldap.app.gui.GetVariantFilename(
+        real_path_name = web2ldap.app.gui.get_variant_filename(
             self.properties_pathname,
             self._app.form.accept_language
         )

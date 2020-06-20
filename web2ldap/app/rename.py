@@ -99,7 +99,7 @@ def w2l_rename(app):
                 app.display_dn(app.dn)
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(
+            context_menu_list=web2ldap.app.gui.context_menu_single_entry(
                 app, entry_uuid=entry_uuid
             ),
         )

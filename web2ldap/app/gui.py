@@ -62,7 +62,7 @@ HTML_FOOTER = """
 """
 
 
-def GetVariantFilename(pathname, variantlist):
+def get_variant_filename(pathname, variantlist):
     """
     returns variant filename
     """
@@ -88,7 +88,7 @@ def read_template(app, config_key, form_desc=u'', tmpl_filename=None):
         tmpl_filename = app.cfg_param(config_key, None)
     if not tmpl_filename:
         raise web2ldap.app.core.ErrorExit(u'No template specified for %s.' % (form_desc))
-    tmpl_filename = web2ldap.app.gui.GetVariantFilename(tmpl_filename, app.form.accept_language)
+    tmpl_filename = web2ldap.app.gui.get_variant_filename(tmpl_filename, app.form.accept_language)
     try:
         # Read template from file
         with open(tmpl_filename, 'rb') as tmpl_fileobj:
@@ -162,7 +162,7 @@ def simple_main_menu(app):
     return main_menu
 
 
-def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
+def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     """
     Output the context menu for a single entry
     """
@@ -287,7 +287,7 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
         ))
 
     return result
-    # end of ContextMenuSingleEntry()
+    # end of context_menu_single_entry()
 
 
 def display_authz_dn(app, who=None, entry=None):

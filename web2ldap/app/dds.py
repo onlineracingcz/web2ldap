@@ -49,7 +49,7 @@ def dds_form(app, msg):
     web2ldap.app.gui.top_section(
         app, 'Refresh dynamic entry',
         web2ldap.app.gui.main_menu(app),
-        context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app),
+        context_menu_list=web2ldap.app.gui.context_menu_single_entry(app),
     )
     app.outf.write(
         DDS_FORM_TMPL.format(
@@ -102,7 +102,7 @@ def w2l_dds(app):
         app.simple_message(
             message=msg,
             main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app, dds_link=1)
+            context_menu_list=web2ldap.app.gui.context_menu_single_entry(app, dds_link=1)
         )
 
     return # end of w2l_dds()

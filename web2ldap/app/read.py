@@ -54,7 +54,7 @@ def get_vcard_template(app, object_classes):
     template_oc = list(current_oc_set.intersection(template_dict.data.keys()))
     if not template_oc:
         return None
-    return web2ldap.app.gui.GetVariantFilename(template_dict[template_oc[0]], app.form.accept_language)
+    return web2ldap.app.gui.get_variant_filename(template_dict[template_oc[0]], app.form.accept_language)
 
 
 def generate_vcard(template_str, vcard_entry):
@@ -202,7 +202,7 @@ class DisplayEntry(UserDict):
                 except KeyError:
                     error_msg = 'Template file not found'
                     continue
-                read_template_filename = web2ldap.app.gui.GetVariantFilename(
+                read_template_filename = web2ldap.app.gui.get_variant_filename(
                     read_template_filename,
                     self._app.form.accept_language,
                 )
@@ -463,7 +463,7 @@ def w2l_read(app):
             app,
             '',
             web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(
+            context_menu_list=web2ldap.app.gui.context_menu_single_entry(
                 app,
                 vcard_link=not get_vcard_template(app, entry.get('objectClass', [])) is None,
                 dds_link=b'dynamicObject' in entry.get('objectClass', []),

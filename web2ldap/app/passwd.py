@@ -521,7 +521,7 @@ def w2l_passwd(app):
                 passwd_link,
             ),
             main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.ContextMenuSingleEntry(app)
+            context_menu_list=web2ldap.app.gui.context_menu_single_entry(app)
         )
 
     # end of w2l_passwd()

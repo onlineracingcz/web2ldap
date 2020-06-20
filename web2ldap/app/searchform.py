@@ -102,7 +102,7 @@ def SearchForm_base(app, searchform_template_name):
     """
     searchform_template_cfg = app.cfg_param('searchform_template', '')
     searchform_template = searchform_template_cfg.get(searchform_template_name, None)
-    searchform_template_filename = web2ldap.app.gui.GetVariantFilename(searchform_template, app.form.accept_language)
+    searchform_template_filename = web2ldap.app.gui.get_variant_filename(searchform_template, app.form.accept_language)
     with open(searchform_template_filename, 'rb') as fileobj:
         template_str = fileobj.read().decode('utf-8')
     return template_str # SearchForm_base()
@@ -277,7 +277,7 @@ def w2l_searchform(
         # base search form with fixed input fields
         inner_searchform_html = SearchForm_adv(app)
 
-    searchoptions_template_filename = web2ldap.app.gui.GetVariantFilename(
+    searchoptions_template_filename = web2ldap.app.gui.get_variant_filename(
         app.cfg_param('searchoptions_template', None),
         app.form.accept_language
     )
