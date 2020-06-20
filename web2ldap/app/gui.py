@@ -149,7 +149,8 @@ def command_div(
             (separator).join(commandlist),
             end_tag,
         )
-    return '' # command_div()
+    return ''
+    # end of command_div()
 
 
 def simple_main_menu(app):
@@ -285,7 +286,8 @@ def ContextMenuSingleEntry(app, vcard_link=0, dds_link=0, entry_uuid=None):
             title=u'Find connections of this user in monitor database',
         ))
 
-    return result # ContextMenuSingleEntry()
+    return result
+    # end of ContextMenuSingleEntry()
 
 
 def display_authz_dn(app, who=None, entry=None):
@@ -325,8 +327,8 @@ def display_authz_dn(app, who=None, entry=None):
                         pass
     else:
         result = app.form.utf2display(who)
-    return result # display_authz_dn()
-
+    return result
+    # end of display_authz_dn()
 
 
 def main_menu(app):
@@ -408,7 +410,8 @@ def main_menu(app):
 
         cl.append(app.anchor('', 'Connect', (), title=u'New connection to LDAP server'))
 
-    return cl # main_menu()
+    return cl
+    # end of main_menu()
 
 
 def dit_navigation(app):
@@ -428,7 +431,8 @@ def dit_navigation(app):
             title=u'Jump to root DSE',
         )
     )
-    return result # dit_navigation()
+    return result
+    # end of dit_navigation()
 
 
 def top_section(
@@ -489,7 +493,6 @@ def top_section(
         template_dict['who'] = display_authz_dn(app)
 
     app.outf.write(top_template_str.format(**template_dict))
-
     # end of top_section()
 
 
@@ -552,6 +555,7 @@ def attrtype_select_field(
     )
     attr_select.charset = app.form.accept_charset
     return attr_select
+    # end of attrtype_select_field()
 
 
 def gen_headers(content_type, charset, more_headers=None):
@@ -567,7 +571,8 @@ def gen_headers(content_type, charset, more_headers=None):
     for h, v in web2ldapcnf.http_headers.items():
         headers.append((h, v))
     headers.extend(more_headers or [])
-    return headers # gen_headers()
+    return headers
+    # end of gen_headers()
 
 
 def Header(app, content_type, charset, more_headers=None):
@@ -584,7 +589,8 @@ def Header(app, content_type, charset, more_headers=None):
        'Strict-Transport-Security' not in web2ldapcnf.http_headers:
         headers.append(('Strict-Transport-Security', 'max-age=15768000 ; includeSubDomains'))
     app.outf.set_headers(headers)
-    return headers # Header()
+    return headers
+    # end of Header()
 
 
 def footer(app):
@@ -653,7 +659,7 @@ def search_root_field(
     )
     srf.charset = app.form.accept_charset
     return srf
-    # search_root_field()
+    # end of search_root_field()
 
 
 def invalid_syntax_message(app, invalid_attrs):
