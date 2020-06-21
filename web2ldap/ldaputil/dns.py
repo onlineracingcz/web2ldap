@@ -21,7 +21,7 @@ from dns import resolver
 from web2ldap.log import logger
 
 
-def srv_lookup(dns_name, srv_prefix: str ='_ldap._tcp'):
+def srv_lookup(dns_name, srv_prefix: str = '_ldap._tcp'):
     """
     Look up SRV RR with name _ldap._tcp.dns_name and return
     list of tuples of results.
