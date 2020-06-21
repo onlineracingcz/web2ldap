@@ -26,6 +26,7 @@ import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
 import web2ldap.app.schema
+from web2ldap.log import logger
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.msbase import GrabKeys
 from web2ldap.app.schema.viewer import schema_anchor
@@ -194,13 +195,12 @@ class DisplayEntry(UserDict):
         # Templates defined => display the entry with the help of the template
         used_templates = set()
         displayed_attrs = set()
-        error_msg = None
         for oc_set in (structural_oc, abstract_oc, auxiliary_oc):
             for oc in oc_set:
-                try:
-                    read_template_filename = read_template_dict[oc]
-                except KeyError:
-                    error_msg = 'Template file not found'
+                read_template_filename = read_template_dict[oc]
+                logger.debug('Template file name %r defined for %r', read_template_dict[oc], oc)
+                if not read_template_filename:
+                    logger.warning('Ignoring empty template file name for %r', oc)
                     continue
                 read_template_filename = web2ldap.app.gui.get_variant_filename(
                     read_template_filename,
@@ -208,16 +208,23 @@ class DisplayEntry(UserDict):
                 )
                 if read_template_filename in used_templates:
                     # template already processed
+                    logger.debug(
+                        'Skipping already processed template file name %r for %r',
+                        read_template_dict[oc],
+                        oc,
+                    )
                     continue
                 used_templates.add(read_template_filename)
-                if not read_template_filename:
-                    error_msg = 'Empty template filename'
-                    continue
                 try:
                     with open(read_template_filename, 'rb') as template_file:
                         template_str = template_file.read().decode('utf-8')
-                except IOError:
-                    error_msg = 'I/O error reading template file'
+                except IOError as err:
+                    logger.error(
+                        'Error reading template file %r for %r: %s',
+                        read_template_dict[oc],
+                        oc,
+                        err,
+                    )
                     continue
                 template_attr_oid_set = {
                     self.entry._s.get_oid(ldap0.schema.models.AttributeType, attr_type_name)
@@ -226,13 +233,6 @@ class DisplayEntry(UserDict):
                 if display_duplicate_attrs or not displayed_attrs.intersection(template_attr_oid_set):
                     self._app.outf.write(template_str % self)
                     displayed_attrs.update(template_attr_oid_set)
-        if error_msg:
-            self._app.outf.write(
-                '<p class="ErrorMessage">%s! (object class <var>%r</var>)</p>' % (
-                    error_msg,
-                    oc,
-                )
-            )
         return displayed_attrs # template_output()
 
 
