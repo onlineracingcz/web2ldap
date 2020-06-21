@@ -130,7 +130,6 @@ class AsyncSearchHandler:
         resultItem
             Single item of a result list
         """
-        pass
 
 
 class List(AsyncSearchHandler):
