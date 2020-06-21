@@ -270,7 +270,7 @@ class ExcelWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
                 csv_col_value_list.append(csv_col_value)
             csv_row_list.append('\r\n'.join(csv_col_value_list))
         for col, val in enumerate(csv_row_list):
-            self._worksheet.write(self._row_counter, col, csv_row_list[col])
+            self._worksheet.write(self._row_counter, col, val)
         self._row_counter += 1
 
 

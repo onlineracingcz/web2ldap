@@ -215,8 +215,6 @@ def w2l_searchform(
     searchform_mode = searchform_mode or app.form.getInputValue('searchform_mode', [u'base'])[0]
     searchform_template_name = app.form.getInputValue('searchform_template', [u'_'])[0]
 
-    naming_contexts = app.cfg_param('naming_contexts', None)
-
     search_root = app.form.getInputValue(
         'search_root',
         [search_root or str(app.naming_context)],
