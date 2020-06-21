@@ -1222,10 +1222,16 @@ class OID(IA5String):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.38'
     desc: str = 'OID'
     reObj = re.compile(r'^([a-zA-Z]+[a-zA-Z0-9;-]*|[0-2]?\.([0-9]+\.)*[0-9]+)$')
+    no_val_button_attrs = frozenset((
+        'objectclass',
+        'structuralobjectclass',
+        '2.5.4.0',
+        '2.5.21.9',
+    ))
 
     def valueButton(self, command, row, mode, link_text=None):
         at = self._at.lower()
-        if at in {'objectclass', 'structuralobjectclass', '2.5.4.0', '2.5.21.9'}:
+        if at in self.no_val_button_attrs:
             return ''
         return IA5String.valueButton(self, command, row, mode, link_text=link_text)
 
