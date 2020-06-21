@@ -1280,7 +1280,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
     if in_wrtattroids == ['nonePseudoValue;x-web2ldap-None']:
         writeable_attr_oids = None
     elif in_wrtattroids:
-        writeable_attr_oids = {a for a in in_wrtattroids}
+        writeable_attr_oids = set(in_wrtattroids)
     else:
         writeable_attr_oids = read_writeable_attr_oids
 

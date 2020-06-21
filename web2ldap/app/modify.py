@@ -97,7 +97,7 @@ def w2l_modify(app):
         )
         return
 
-    in_oldattrtypes = {a for a in app.form.getInputValue('in_oldattrtypes', [])}
+    in_oldattrtypes = set(app.form.getInputValue('in_oldattrtypes', []))
 
     try:
         old_entry, dummy = read_old_entry(app, app.dn, app.schema, in_assertion)
