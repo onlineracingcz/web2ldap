@@ -346,10 +346,7 @@ class SSHFPRecord(IA5String):
         if not attrValue:
             return attrValue
         try:
-            key_algo, fp_algo, fp_value = [
-                i
-                for i in filter(None, map(bytes.strip, attrValue.lower().split(b' ')))
-            ]
+            key_algo, fp_algo, fp_value = filter(None, map(bytes.strip, attrValue.lower().split(b' ')))
         except ValueError:
             return attrValue
         return b' '.join((key_algo, fp_algo, fp_value))
