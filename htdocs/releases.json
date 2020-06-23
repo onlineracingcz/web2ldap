@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.85",
+         "state": "stable",
+         "scope": "minor fix",
+         "changes": "Fixed minor str/bytes regression.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.85.tar.gz",
+         "published": "2020-06-xxT09:00:00+00:00"
+      },
+      {
          "version": "1.5.84",
          "state": "stable",
          "scope": "minor fix",
