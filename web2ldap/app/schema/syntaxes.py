@@ -1765,6 +1765,11 @@ class SelectList(DirectoryString):
     oid: str = 'SelectList-oid'
     attr_value_dict = {}   # Mapping attribute value to attribute description
     input_fallback = True  # Fallback to normal input field if attr_value_dict is empty
+    desc_sep: str = ' '
+    tag_tmpl = {
+        False: '{attr_text}: {attr_value}',
+        True: '<span title="{attr_title}">{attr_text}:{sep}{attr_value}</span>',
+    }
 
     def _get_attr_value_dict(self):
         # Enable empty value in any case
@@ -1817,12 +1822,9 @@ class SelectList(DirectoryString):
             attr_text, attr_title = attr_value_desc, None
         if attr_text == attr_value_str:
             return attr_value_str
-        if attr_title:
-            tag_tmpl = '<span title="{attr_title}">{attr_text}: {attr_value}</span>'
-        else:
-            tag_tmpl = '{attr_text}: {attr_value}'
-        return tag_tmpl.format(
+        return self.tag_tmpl[bool(attr_title)].format(
             attr_value=attr_value_str,
+            sep=self.desc_sep,
             attr_text=self._app.form.utf2display(attr_text),
             attr_title=self._app.form.utf2display(attr_title or '')
         )
@@ -2108,7 +2110,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
                 display_text = self._app.form.utf2display(attr_value_desc+u': ')
         else:
             display_text = ''
-        return ''.join((
+        return self.desc_sep.join((
             display_text,
             DistinguishedName.display(self, valueindex, commandbutton)
         ))

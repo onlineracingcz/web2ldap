@@ -1218,6 +1218,7 @@ class AELocation(DerefDynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aeLocation)(aeStatus=0))'
     ref_attrs = AEEntryDNAELocation.ref_attrs
+    desc_sep: str = '<br>'
 
 syntax_registry.reg_at(
     AELocation.oid, [
@@ -1251,6 +1252,7 @@ class AEDept(DerefDynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aeDept)(aeStatus=0))'
     ref_attrs = AEEntryDNAEDept.ref_attrs
+    desc_sep: str = '<br>'
 
 syntax_registry.reg_at(
     AEDept.oid, [
@@ -1266,6 +1268,7 @@ class AEOwner(DerefDynamicDNSelectList):
     ref_attrs = (
         ('aeOwner', 'Devices', None, 'aeDevice', 'Search all devices (aeDevice entries) assigned to same owner.'),
     )
+    desc_sep: str = '<br>'
 
 syntax_registry.reg_at(
     AEOwner.oid, [
@@ -1281,6 +1284,7 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectMixIn):
     ref_attrs = (
         ('aePerson', 'Users', None, 'aeUser', 'Search all personal AE-DIR user accounts (aeUser entries) of this person.'),
     )
+    desc_sep: str = '<br>'
     ae_status_map = {
         -1: (-1, 0),
         0: (0,),
@@ -1343,6 +1347,7 @@ class AEManager(DerefDynamicDNSelectList):
     desc: str = 'AE-DIR: Manager responsible for a person/department'
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
+    desc_sep: str = '<br>'
 
 syntax_registry.reg_at(
     AEManager.oid, [
