@@ -1,9 +1,7 @@
-/* Style sheet for web2ldap application */
-
 body {
   margin:0;
   padding:0;
-  font-family:'Source Sans Pro',sans-serif;
+  font-family:sans-serif;
 }
 
 img {
@@ -11,17 +9,15 @@ img {
 }
 
 h1 {
-  font-size:1.5em;
-  font-weight:bold;
+  font-size:1.4em;
   margin-top:0em;
-  padding-top:0em;
+  padding-top:0.5em;
   padding-bottom:0.5em;
   border-bottom:1px dotted #606060;
 }
 
 h2 {
-  font-size:1.25em;
-  font-weight:bold;
+  font-size:1.2em;
   padding-top:0.3em;
   padding-bottom:0.2em;
   border-bottom:1px dotted #606060;
@@ -29,7 +25,6 @@ h2 {
 
 h3 {
   font-size:1.1em;
-  font-weight:bold;
   padding-top:0.2em;
   border-bottom:1px dotted #606060;
 }
@@ -54,8 +49,8 @@ img.logo {
   size:100px;
 }
 
-/* TopSection encloses StatusLine, MainMenu and ContextMenu */
 #TopSection {
+  font-weight:normal;
 }
 
 #StatusLine {
@@ -64,7 +59,7 @@ img.logo {
   left:0em;
   right:0em;
   text-align:left;
-  padding:0.5em;
+  padding:0.3em;
   border:none;
   overflow:auto;
   color:#ffffff;
@@ -79,7 +74,7 @@ img.logo {
   left:0;
   right:0;
   text-align:left;
-  padding:0.5em;
+  padding:0.4em;
   color:#ffffff;
   background-color:#403F3F;
   white-space: nowrap;
@@ -111,8 +106,6 @@ html>body #DITNavigation {
 }
 
 #MainMenu {
-  background-color:#fbfbfb;
-  border-right: 1px dotted #606060;
   left:0;
   margin:3.0em 0 0 0;
   padding:0.6em 0 0 0;
@@ -127,8 +120,6 @@ html>body #MainMenu {
 }
 
 #ContextMenu {
-  background-color:#fbfbfb;
-  border-left: 1px dotted #606060;
   right:0;
   margin:3.0em 0 0 0;
   padding:0.6em 0 0 0;
@@ -210,7 +201,7 @@ td.About {
 
 div.Main {
   position:absolute;
-  top:5.5em;
+  top:3.5em;
   bottom:0;
   right:12%;
   left:12%;
@@ -252,19 +243,19 @@ fieldset {
 
 .ErrorMessage {
   font-weight:bold;
-  padding:0.5em;
+  padding:0.8em;
   border: 3px solid #c81f2a;
 }
 
 .WarningMessage {
   font-weight:bold;
-  padding:0.5em;
+  padding:0.8em;
   border: 3px solid #a0a0a0;
 }
 
 .SuccessMessage {
   font-weight:normal;
-  padding:0.5em;
+  padding:0.8em;
   border: 1px solid #e0e0e0;
 }
 
@@ -282,7 +273,6 @@ code {
 kbd {
   white-space:nowrap;
   overflow:scroll;
-  font-weight:bold;
   font-family:Courier,mono-space;
   font-size:1.5em;
 }
@@ -327,7 +317,6 @@ a {
   padding:0.2em;
   color:#3385a7;
   text-decoration:none;
-  font-weight:bold;
 }
 
 #StatusLine a {
@@ -338,13 +327,11 @@ a:hover,a:active,a:focus {
   text-decoration:underline;
 }
 
-
 a.CL {
   text-align:center;
-  color:#c81f2a;
-  text-decoration:none;
-  font-weight:bold;
+  color:#d02f2f;
   text-align:center;
+  font-weight:bold;
 }
 
 a.CL:hover,a.CL:active,a.CL:focus {
@@ -373,8 +360,11 @@ table.PrintSearchResults {
 #TopSection a.CL {
   border:none;
   padding:0.1em;
+}
+
+#DITNavigation a.CL {
   color:#ffffff;
-  background-color:transparent;
+  font-weight:normal;
 }
 
 #MainMenu a.CL {
@@ -384,12 +374,6 @@ table.PrintSearchResults {
   padding-left:0.1em;
   padding-right:0.1em;
   margin:0;
-  color:#c81f2a;
-  border-bottom: 1px dotted #606060;
-}
-
-#MainMenu a.CL:hover,#MainMenu a.CL:active,#MainMenu a.CL:focus {
-  background-color:#e8e8e8;
 }
 
 #ContextMenu a.CL {
@@ -399,16 +383,6 @@ table.PrintSearchResults {
   padding-left:0.1em;
   padding-right:0.1em;
   margin:0;
-  color:#c81f2a;
-  border-bottom: 1px dotted #606060;
-}
-
-#ContextMenu a.CL:hover,#ContextMenu a.CL:active,#ContextMenu a.CL:focus {
-  background-color:#e8e8e8;
-}
-
-#TopSection a.CL:hover,#TopSection a.CL:active,#TopSection a.CL:focus {
-  text-decoration:underline;
 }
 
 a.hide {
