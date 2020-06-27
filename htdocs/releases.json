@@ -9,10 +9,10 @@
       {
          "version": "1.5.85",
          "state": "stable",
-         "scope": "minor fix",
+         "scope": "minor feature",
          "changes": "Fixed minor str/bytes regression.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.85.tar.gz",
-         "published": "2020-06-xxT09:00:00+00:00"
+         "published": "2020-06-27T19:00:00+00:00"
       },
       {
          "version": "1.5.84",
