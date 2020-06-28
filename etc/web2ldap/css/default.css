@@ -2,6 +2,7 @@ body {
   margin:0;
   padding:0;
   font-family:sans-serif;
+  background-color:#ffffff;
 }
 
 img {
@@ -209,7 +210,6 @@ div.Main {
   line-height: 120%;
   padding:0.5em;
   color:#000000;
-  background-color:#ffffff;
   overflow-x: auto;
   -ms-overflow-x: auto;
   overflow-y: auto;
@@ -411,7 +411,6 @@ a.hide {
 #skipnavi a:focus,#skipnavi a:hover,#skipnavi a:active {
   top:0;
   z-index:20;
-  background-color:#ffffff;
   outline:0;
   -webkit-transition: top .1s ease-in, background .5s linear;
   transition: top .1s ease-in, background .5s linear;
