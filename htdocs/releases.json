@@ -10,9 +10,9 @@
          "version": "1.5.86",
          "state": "stable",
          "scope": "minor feature",
-         "changes": ".",
+         "changes": "Refactored HTML templating for login forms.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.86.tar.gz",
-         "published": "2020-06-28T19:00:00+00:00"
+         "published": "2020-06-28T11:00:00+00:00"
       },
       {
          "version": "1.5.85",
