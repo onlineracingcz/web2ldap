@@ -402,8 +402,7 @@ a.hide {
   float:left;
   text-align:left;
   border-top-right-radius:4px;
-  background-color:transparent;
-  background:transparent;
+  background-color:#ffffff;
   -webkit-transition: top 1s ease-out, background 1s linear;
   transition: top 1s ease-out, background 1s linear;
 }
