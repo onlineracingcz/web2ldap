@@ -22,7 +22,7 @@ from web2ldap.log import logger
 
 def w2l_login(
         app,
-        title_msg=u'Bind',
+        title_msg='Bind',
         login_msg='',
         who=u'',
         relogin=False,
@@ -69,7 +69,14 @@ def w2l_login(
     # form data or the key-word argument login_default_mech
     login_mech = app.form.getInputValue('login_mech', [login_default_mech] or u'')[0]
 
-    login_fields = login_template_str.format(
+    if login_msg:
+        login_msg_html = '<p class="ErrorMessage">%s</p>' % (login_msg)
+    else:
+        login_msg_html = ''
+
+    login_form_html = login_template_str.format(
+        text_heading=app.form.utf2display(title_msg),
+        text_error=login_msg_html,
         field_login_mech=app.form.field['login_mech'].input_html(default=login_mech),
         value_ldap_who=app.form.utf2display(who or u''),
         value_ldap_mapping=app.form.utf2display(app.binddn_mapping),
@@ -105,11 +112,6 @@ def w2l_login(
         if search_attrs:
             search_attrs_hidden_field = app.form.hiddenFieldHTML('search_attrs', search_attrs, u'')
 
-    if login_msg:
-        login_msg_html = '<p class="ErrorMessage">%s</p>' % (login_msg)
-    else:
-        login_msg_html = ''
-
     # determine which command will be put in form's action attribute
     if not app.command or app.command == 'login':
         action_command = 'searchform'
@@ -119,21 +121,17 @@ def w2l_login(
     logger.debug('Display login form for %r with next command %r', app.dn, action_command)
 
     app.outf.write(
-        '<h1>%s</h1>\n%s' % (
-            app.form.utf2display(title_msg),
-            '\n'.join((
-                login_msg_html,
-                app.form.begin_form(action_command, None, 'POST', None),
-                app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldap_url('')), u''),
-                app.form.hiddenFieldHTML('dn', app.dn, u''),
-                app.form.hiddenFieldHTML('delsid', app.sid, u''),
-                app.form.hiddenFieldHTML('conntype', str(int(app.ls.startTLSOption > 0)), u''),
-                scope_hidden_field,
-                filterstr_hidden_field,
-                login_fields,
-                search_attrs_hidden_field,
-            ))
-        )
+        '\n'.join((
+            app.form.begin_form(action_command, None, 'POST', None),
+            app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldap_url('')), u''),
+            app.form.hiddenFieldHTML('dn', app.dn, u''),
+            app.form.hiddenFieldHTML('delsid', app.sid, u''),
+            app.form.hiddenFieldHTML('conntype', str(int(app.ls.startTLSOption > 0)), u''),
+            scope_hidden_field,
+            filterstr_hidden_field,
+            login_form_html,
+            search_attrs_hidden_field,
+        ))
     )
     if relogin:
         app.outf.write(
