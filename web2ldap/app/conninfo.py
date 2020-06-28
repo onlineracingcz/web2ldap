@@ -305,7 +305,7 @@ def w2l_conninfo(app):
         who_html = 'anonymous'
 
     try:
-        whoami_result = '&quot;%s&quot;' % (app.form.utf2display(app.ls.l.whoami_s()))
+        whoami_result = '%s' % (app.form.utf2display(repr(app.ls.l.whoami_s())))
     except ldap0.LDAPError as ldap_err:
         whoami_result = '<strong>Failed:</strong> %s' % (app.ldap_error_msg(ldap_err))
 
