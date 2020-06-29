@@ -20,7 +20,7 @@ import web2ldap.web.forms
 import web2ldap.app.core
 import web2ldap.app.gui
 import web2ldap.app.cnf
-
+from ..log import logger
 
 SEARCHFORM_MODE_TEXT = {
     'adv': 'Advanced',
@@ -261,7 +261,8 @@ def w2l_searchform(
         # base search form with fixed input fields
         try:
             inner_searchform_html = SearchForm_base(app, searchform_template_name)
-        except IOError:
+        except IOError as err:
+            logger.warning('Error loading search form template: %s', err)
             msg_html = '\n'.join((
                 msg_html,
                 '<p class="ErrorMessage">I/O error while loading search form template!</p>'
