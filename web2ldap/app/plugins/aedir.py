@@ -135,7 +135,7 @@ class AEObjectMixIn:
         return res
 
     def _get_zone_dn(self) -> str:
-        return str(self.dn.slice(None, -len(DNObj.from_str(self._app.naming_context))-1))
+        return str(self.dn.slice(-len(DNObj.from_str(self._app.naming_context))-1, None))
 
     def _get_zone_name(self) -> str:
         return self.dn[-len(DNObj.from_str(self._app.naming_context))-1][0][1]
@@ -836,10 +836,10 @@ class AESrvGroup(AESameZoneObject):
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
 
     def _filterstr(self):
-        filter_str = self.lu_obj.filterstr or '(objectClass=*)'
+        filter_str = self.lu_obj.filterstr or '(objectClass=aeSrvGroup)'
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
-            ldap0.filter.escape_str(str(self.dn.parent())),
+            ldap0.filter.escape_str(self._dn),
         )
 
 syntax_registry.reg_at(
