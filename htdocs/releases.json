@@ -7,12 +7,12 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.5.89",
+         "version": "1.5.90",
          "state": "stable",
          "scope": "minor fix",
          "changes": "Fixed determining zone DN in Æ-DIR plugin classes.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.89.tar.gz",
-         "published": "2020-06-30T18:30:00+00:00"
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.90.tar.gz",
+         "published": "2020-06-30T19:30:00+00:00"
       },
       {
          "version": "1.5.88",

@@ -830,17 +830,25 @@ class AESameZoneObject(DerefDynamicDNSelectList, AEObjectMixIn):
         return self._get_zone_dn()
 
 
-class AESrvGroup(AESameZoneObject):
+class AESrvGroupDN(AEGroupDN):
+    oid: str = 'AESrvGroupDN-oid'
+    desc: str = 'AE-DIR: DN of a referenced aeSrvGroup entry'
+    ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0))'
+    ref_attrs = DerefDynamicDNSelectList.ref_attrs
+
+
+class AESrvGroup(AESrvGroupDN, AESameZoneObject):
     oid: str = 'AESrvGroup-oid'
-    desc: str = 'AE-DIR: DN of referenced aeSrvGroup entry'
+    desc: str = 'AE-DIR: DN of supplemental aeSrvGroup entry'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
 
     def _filterstr(self):
         filter_str = self.lu_obj.filterstr or '(objectClass=aeSrvGroup)'
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
-            ldap0.filter.escape_str(self._dn),
+            ldap0.filter.escape_str(str(self.dn.parent())),
         )
+
 
 syntax_registry.reg_at(
     AESrvGroup.oid, [
@@ -849,7 +857,7 @@ syntax_registry.reg_at(
 )
 
 
-class AERequires(DerefDynamicDNSelectList):
+class AERequires(AESrvGroupDN):
     oid: str = 'AERequires-oid'
     desc: str = 'AE-DIR: DN of required aeSrvGroup'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0))'
@@ -863,12 +871,12 @@ class AERequires(DerefDynamicDNSelectList):
 
 syntax_registry.reg_at(
     AERequires.oid, [
-        AE_OID_PREFIX+'.4.48', # aeSrvGroup
+        AE_OID_PREFIX+'.4.48', # aeRequires
     ]
 )
 
 
-class AEProxyFor(AESameZoneObject, AEObjectMixIn):
+class AEProxyFor(AESrvGroupDN, AESameZoneObject):
     oid: str = 'AEProxyFor-oid'
     desc: str = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
@@ -877,7 +885,7 @@ class AEProxyFor(AESameZoneObject, AEObjectMixIn):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
-            self._dn,
+            ldap0.filter.escape_str(self._dn),
         )
 
 syntax_registry.reg_at(
