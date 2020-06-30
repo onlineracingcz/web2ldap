@@ -597,7 +597,7 @@ def superior_display_html(
     return app.form.utf2display(parent_dn)
 
 
-def ObjectClassForm(
+def object_class_form(
         app,
         existing_object_classes,
         structural_object_class
@@ -662,7 +662,7 @@ def ObjectClassForm(
         return all_structural_oc, dit_structure_rule_html # get_possible_soc()
 
 
-    def ExpertOCFields(app, parent_dn):
+    def object_class_select_fields(app, parent_dn):
 
         all_structural_oc, all_abstract_oc, all_auxiliary_oc = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
         dit_structure_rule_html = ''
@@ -807,10 +807,10 @@ def ObjectClassForm(
         }[app.command]
         Msg = '<p class="WarningMessage">%s</p>' % (Msg)
         return Msg, add_template_field_html
-        # end of ExpertOCFields()
+        # end of object_class_select_fields()
 
 
-    def LDIFTemplateField(app, parent_dn):
+    def ldif_template_select_html(app, parent_dn):
         all_structural_oc, _, _ = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
         addform_entry_templates_keys = list(app.cfg_param('addform_entry_templates', {}).keys())
         addform_parent_attrs = app.cfg_param('addform_parent_attrs', [])
@@ -902,7 +902,8 @@ def ObjectClassForm(
         add_template_html_list.append('</dl>')
         add_template_field_html = '\n'.join(add_template_html_list)
         Msg = '<p class="WarningMessage">Choose a LDIF template and base DN for new entry</p>'
-        return Msg, add_template_field_html # LDIFTemplateField()
+        return Msg, add_template_field_html
+        # end of ldif_template_select_html()
 
 
     in_ocf = app.form.getInputValue('in_ocf', ['tmpl'])[0]
@@ -925,9 +926,9 @@ def ObjectClassForm(
 
     # Build an select field based on config param 'addform_entry_templates'
     if app.command == 'add' and in_ocf == 'tmpl':
-        Msg, add_template_field_html = LDIFTemplateField(app, parent_dn)
+        Msg, add_template_field_html = ldif_template_select_html(app, parent_dn)
     else:
-        Msg, add_template_field_html = ExpertOCFields(app, parent_dn)
+        Msg, add_template_field_html = object_class_select_fields(app, parent_dn)
 
     context_menu_list = []
     if app.command == 'add':
@@ -960,7 +961,7 @@ def ObjectClassForm(
         )
     )
     web2ldap.app.gui.footer(app)
-    # end of ObjectClassForm()
+    # end of object_class_form()
 
 
 def read_ldif_template(app, template_name):
@@ -1164,7 +1165,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
 
     if input_formtype == 'OC' or not entry:
         # Output the web page with object class input form
-        ObjectClassForm(app, decode_list(entry.get('objectClass', []), 'ascii'), None)
+        object_class_form(app, decode_list(entry.get('objectClass', []), 'ascii'), None)
         return
 
     input_form_entry = InputFormEntry(app, app.dn, app.schema, entry, None, invalid_attrs=invalid_attrs)
@@ -1287,7 +1288,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
     if input_formtype == 'OC':
         # Output the web page with object class input form
-        ObjectClassForm(app, decode_list(entry['objectClass'], 'ascii'), entry.get_structural_oc())
+        object_class_form(app, decode_list(entry['objectClass'], 'ascii'), entry.get_structural_oc())
         return
 
     existing_object_classes = decode_list(entry['objectClass'][:], encoding='ascii')
