@@ -142,7 +142,9 @@ def schema_anchors(app, se_names, se_class):
 
 
 def schema_tree_html(app, schema, se_class, se_tree, se_oid, level):
-    """HTML output for browser"""
+    """
+    returns HTML for displaying a schema descriptions inheritance tree
+    """
     app.outf.write('<dl>')
     se_obj = schema.get_obj(se_class, se_oid)
     if se_obj is not None:
