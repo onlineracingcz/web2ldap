@@ -484,129 +484,129 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         '_': os.path.join(templates_dir, 'ae-dir', 'searchform_aedir.html'),
     },
     search_tdtemplate={
-        'aeUser':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          %(displayName)s / %(description)s<br>
-          <dl>
-            <dt>Member of:</dt>
-            <dd>%(memberOf)s</dd>
-          </dl>
-        </div>
-        """,
-        'aeDept':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          %(ou)s (%(departmentNumber)s)
-        </div>
-        """,
-        'aePerson':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          %(displayName)s &lt;%(mail)s&gt;
-        </div>
-        """,
-        'aeGroup':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          User group %(cn)s (%(gidNumber)s):<br>
-          %(description)s
-        </div>
-        """,
-        'aeMailGroup':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Mail group %(cn)s &lt;%(mail)s&gt;<br>
-          %(description)s
-        </div>
-        """,
-        'aeSrvGroup':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Server group %(cn)s:<br>
-          %(description)s
-        </div>
-        """,
-        'aeService':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Service account %(uid)s:<br>
-          %(description)s
-          <dl>
-            <dt>Member of:</dt>
-            <dd>%(memberOf)s</dd>
-          </dl>
-        </div>
-        """,
-        'aeHost':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Server %(cn)s: %(host)s<br>
-          %(description)s
-        </div>
-        """,
-        'aeNwDevice':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          %(aeFqdn)s:<br>
-          inet addr:%(ipHostNumber)s<br>
-          HWaddr: %(macAddress)s
-        </div>
-        """,
-        'aeSudoRule':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Sudo rule %(cn)s:<br>
-          %(description)s
-        </div>
-        """,
-        'aeTag':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Tag %(cn)s: %(description)s
-        </div>
-        """,
-        'aeZone':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Zone %(cn)s: %(description)s
-        </div>
-        """,
-        'aeRoot':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Org unit %(ou)s:<br>
-          %(description)s
-        </div>
-        """,
-        'aeAuthcToken':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Authentication token %(displayName)s
-        </div>
-        """,
-        'aePolicy':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Policy %(cn)s: %(description)s
-        </div>
-        """,
-        'aeContact':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Contact %(cn)s: %(description)s
-          <dl>
-            <dt>Member of:</dt>
-            <dd>%(memberOf)s</dd>
-          </dl>
-        </div>
-        """,
-        'aeLocation':r"""
-        <div class="aestatus%(aeStatus)s">
-          <var>%(entryDN)s</var><br>
-          Location %(displayName)s
-        </div>
-        """,
+        'aeUser':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              '%(displayName)s / %(description)s<br>'
+              '<dl>'
+                '<dt>Member of:</dt>'
+                '<dd>%(memberOf)s</dd>'
+              '</dl>'
+            '</div>'
+        ),
+        'aeDept':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              '%(ou)s (%(departmentNumber)s)'
+            '</div>'
+        ),
+        'aePerson':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              '%(displayName)s &lt;%(mail)s&gt;'
+            '</div>'
+        ),
+        'aeGroup':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'User group %(cn)s (%(gidNumber)s):<br>'
+              '%(description)s'
+            '</div>'
+        ),
+        'aeMailGroup':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Mail group %(cn)s &lt;%(mail)s&gt;<br>'
+              '%(description)s'
+            '</div>'
+        ),
+        'aeSrvGroup':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Server group %(cn)s:<br>'
+              '%(description)s'
+            '</div>'
+        ),
+        'aeService':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Service account %(uid)s:<br>'
+              '%(description)s'
+              '<dl>'
+                '<dt>Member of:</dt>'
+                '<dd>%(memberOf)s</dd>'
+              '</dl>'
+            '</div>'
+        ),
+        'aeHost':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Server %(cn)s: %(host)s<br>'
+              '%(description)s'
+            '</div>'
+        ),
+        'aeNwDevice':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              '%(aeFqdn)s:<br>'
+              'inet addr:%(ipHostNumber)s<br>'
+              'HWaddr: %(macAddress)s'
+            '</div>'
+        ),
+        'aeSudoRule':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Sudo rule %(cn)s:<br>'
+              '%(description)s'
+            '</div>'
+        ),
+        'aeTag':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Tag %(cn)s: %(description)s'
+            '</div>'
+        ),
+        'aeZone':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Zone %(cn)s: %(description)s'
+            '</div>'
+        ),
+        'aeRoot':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Org unit %(ou)s:<br>'
+              '%(description)s'
+            '</div>'
+        ),
+        'aeAuthcToken':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Authentication token %(displayName)s'
+            '</div>'
+        ),
+        'aePolicy':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Policy %(cn)s: %(description)s'
+            '</div>'
+        ),
+        'aeContact':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Contact %(cn)s: %(description)s'
+              '<dl>'
+                '<dt>Member of:</dt>'
+                '<dd>%(memberOf)s</dd>'
+              '</dl>'
+            '</div>'
+        ),
+        'aeLocation':(
+            '<div class="aestatus%(aeStatus)s">'
+              '<var>%(entryDN)s</var><br>'
+              'Location %(displayName)s'
+            '</div>'
+        ),
     },
     read_template={
         'msPwdResetObject': os.path.join(templates_dir, 'ae-dir', 'read_msPwdResetObject.html'),
