@@ -549,14 +549,16 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         # end of ldif_input()
 
 
-def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
-    supentry_display_tmpl = supentry_display_tmpl or \
-        r"""
-        <p title="Superior entry information">
-          <strong>Superior entry:</strong><br>
-          %s
-        </p>
-        """
+def superior_display_html(
+        app,
+        parent_dn,
+        supentry_display_tmpl=(
+            '<p title="Superior entry information">'
+            '<strong>Superior entry:</strong><br>'
+            '{0}'
+            '</p>'
+        ),
+    ):
     assert isinstance(parent_dn, str), TypeError("Argument 'parent_dn' must be str, was %r" % (parent_dn))
     if parent_dn is None:
         return ''
@@ -591,7 +593,7 @@ def SupentryDisplayString(app, parent_dn, supentry_display_tmpl=None):
                     else:
                         supentry_display_strings.append(inputform_supentrytemplate[oc] % parent_entry)
     if supentry_display_strings:
-        return supentry_display_tmpl % ('\n'.join(supentry_display_strings))
+        return supentry_display_tmpl.format('\n'.join(supentry_display_strings))
     return app.form.utf2display(parent_dn)
 
 
@@ -879,7 +881,7 @@ def ObjectClassForm(
         add_template_html_list = ['<dl>']
         for pdn in sorted(add_tmpl_dict.keys()):
             add_template_html_list.append('<dt>%s<dt>' % (
-                SupentryDisplayString(app, pdn, supentry_display_tmpl=r'%s'),
+                superior_display_html(app, pdn, supentry_display_tmpl='{0}'),
             ))
             add_template_html_list.append('<dd><ul>')
             for tmpl_name in add_tmpl_dict[pdn]:
@@ -1170,8 +1172,6 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
 
     rdn_options = input_form_entry.entry.get_rdn_templates()
 
-    supentry_display_string = SupentryDisplayString(app, add_basedn)
-
     if rdn_options and len(rdn_options) > 0:
         # <select> field
         rdn_input_field = web2ldap.web.forms.Select('add_rdn', 'RDN variants', 1, options=rdn_options)
@@ -1222,7 +1222,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
         INPUT_FORM_BEGIN_TMPL.format(
             text_heading=H1_MSG[app.command],
             text_msg=msg,
-            text_supentry=supentry_display_string,
+            text_supentry=superior_display_html(app, add_basedn),
             form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
             field_currentformtype=app.form.hiddenFieldHTML('in_oft', str(input_formtype), ''),
@@ -1298,8 +1298,6 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
     required_attrs_dict, allowed_attrs_dict = input_form_entry.attribute_types()
     nomatching_attrs_dict = nomatching_attrs(app.schema, input_form_entry, allowed_attrs_dict, required_attrs_dict)
 
-    supentry_display_string = SupentryDisplayString(app, app.parent_dn)
-
     in_wrtattroids_fields_html = '\n'.join([
         app.form.hiddenFieldHTML('in_wrtattroids', at_name, '')
         for at_name in (
@@ -1342,7 +1340,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         INPUT_FORM_BEGIN_TMPL.format(
             text_heading=H1_MSG[app.command],
             text_msg=msg,
-            text_supentry=supentry_display_string,
+            text_supentry=superior_display_html(app, app.parent_dn),
             form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
             field_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
             field_currentformtype=app.form.hiddenFieldHTML('in_oft', input_formtype, ''),
