@@ -1012,15 +1012,15 @@ def ConfiguredConstantAttributes(app):
     )
 
 
-def AssertionFilter(app, entry):
-    assertion_filter_list = []
+def assertion_filter(app, entry):
+    filter_list = []
     for attr_type in ConfiguredConstantAttributes(app).values():
         try:
             attr_values = entry[attr_type]
         except KeyError:
             continue
         else:
-            assertion_filter_list.extend([
+            filter_list.extend([
                 '(%s)' % (
                     '='.join((
                         attr_type,
@@ -1030,11 +1030,12 @@ def AssertionFilter(app, entry):
                 for attr_value in attr_values
                 if attr_value is not None
             ])
-    if assertion_filter_list:
-        assertion_filter = '(&%s)' % ''.join(assertion_filter_list)
+    if filter_list:
+        res = '(&%s)' % ''.join(filter_list)
     else:
-        assertion_filter = '(objectClass=*)'
-    return assertion_filter # AssertionFilter()
+        res = '(objectClass=*)'
+    return res
+    # end of assertion_filter()
 
 
 def nomatching_attrs(sub_schema, entry, allowed_attrs_dict, required_attrs_dict):
@@ -1349,7 +1350,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
     app.outf.write(
         '\n'.join((
-            app.form.hiddenFieldHTML('in_assertion', AssertionFilter(app, entry), ''),
+            app.form.hiddenFieldHTML('in_assertion', assertion_filter(app, entry), ''),
             '\n'.join([
                 app.form.hiddenFieldHTML('in_oldattrtypes', at_name, '')
                 for at_name in app.form.getInputValue('in_oldattrtypes', entry.keys())
