@@ -50,6 +50,17 @@ import web2ldap.__about__
 
 SEARCH_NOOP_TIMEOUT = 5.0
 
+SEARCH_BOOKMARK_TMPL = """
+<a
+  href="{baseUrl}?{ldapUrl}"
+  target="_blank"
+  rel="bookmark"
+  title="Bookmark for these search results"
+>
+  Bookmark
+</a>
+"""
+
 PAGE_COMMAND_TMPL = """
 <nav><table>
   <tr>
@@ -800,19 +811,10 @@ def w2l_search(app):
                     elif search_resminindex+search_resnumber <= resind:
                         page_command_list[3] = page_next_link
 
-            search_bookmark = """
-                <a
-                  href="{baseUrl}?{ldapUrl}"
-                  target="_blank"
-                  rel="bookmark"
-                  title="Bookmark for these search results"
-                >
-                  Bookmark
-                </a>
-                """.format(
-                    baseUrl=escape_html(app.form.script_name),
-                    ldapUrl=str(search_ldap_url),
-                )
+            search_bookmark = SEARCH_BOOKMARK_TMPL.format(
+                baseUrl=escape_html(app.form.script_name),
+                ldapUrl=str(search_ldap_url),
+            )
             result_message = '\n<p>Search results %d - %d %s / <a href="#params" title="See search parameters and export options">Params</a> / %s</p>\n' % (
                 search_resminindex+1,
                 resind,
@@ -1006,13 +1008,8 @@ def w2l_search(app):
 
                 # write the search result table row
                 app.outf.write(
-                    """
-                    <tr>
-                      <td class="CT">\n%s\n</td>
-                      <td>\n%s\n</td>
-                    </tr>
-                    """ % (
-                        '\n'.join(command_table),
+                    '<tr><td class="CT">{0}</td><td>{1}</td></tr>\n'.format(
+                        ''.join(command_table),
                         result_dd_str
                     )
                 )
