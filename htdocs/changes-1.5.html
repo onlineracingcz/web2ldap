@@ -5,13 +5,17 @@
 
 <!--#include file="ssi/changes_navigation.html" -->
 
-<h1 id="r1.5.92">1.5.92</h1>
+<h1 id="r1.5.93">1.5.93</h1>
 <p>Release Date: 2020-07-01</p>
 <ul>
   <li>
     Added link to &AElig;-DIR plugin class for <var>entryDN</var> of
     <var>aeUser</var> and <var>aeService</var> entries to search for
     entries created or modified by this entity.
+  </li>
+  <li>
+    <var>SessionException</var> is now ignored in case of disconnect because
+    probably user has disconnected in other tab before.
   </li>
 </ul>
 

@@ -1083,8 +1083,12 @@ class AppHandler(LogHelper):
             self.simple_msg(u'Too many web sessions! Try later...')
 
         except web2ldap.web.session.SessionException:
-            log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
-            self.url_redirect(u'Session handling error.')
+            if self.command == 'disconnect':
+                # Probably already disconnected => ignore exception and redirect to start page
+                self.url_redirect(u'Disconnecting...', refresh_time=0)
+            else:
+                log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
+                self.url_redirect(u'Session handling error.')
 
         except Exception:
             if hasattr(self, 'ls'):
