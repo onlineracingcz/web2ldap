@@ -10,7 +10,7 @@
          "version": "1.5.91",
          "state": "stable",
          "scope": "minor fix",
-         "changes": ".",
+         "changes": "Compacted HTML output for search results.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.91.tar.gz",
          "published": "2020-06-30T18:30:00+00:00"
       },
