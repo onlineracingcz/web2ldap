@@ -938,6 +938,22 @@ class AEEntryDNAEUser(DistinguishedName):
 
     def _additional_links(self):
         res = DistinguishedName._additional_links(self)
+        res.append(self._app.anchor(
+            'searchform', 'Created/Modified',
+            (
+                ('dn', self._dn),
+                ('search_root', str(self._app.naming_context)),
+                ('searchform_mode', 'adv'),
+                ('search_mode', '(|%s)'),
+                ('search_attr', 'creatorsName'),
+                ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                ('search_string', self.av_u),
+                ('search_attr', 'modifiersName'),
+                ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                ('search_string', self.av_u),
+            ),
+            title='Search entries created or modified by %s' % (self.av_u),
+        ))
         if self._app.audit_context:
             res.append(self._app.anchor(
                 'search', 'Activity',
@@ -961,6 +977,7 @@ syntax_registry.reg_at(
     ],
     structural_oc_oids=[
         AE_USER_OID, # aeUser
+        AE_SERVICE_OID, # aeService
     ],
 )
 
