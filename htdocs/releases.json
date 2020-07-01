@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.92",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "Additional search link for Æ-DIR entities.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.92.tar.gz",
+         "published": "2020-07-01T18:30:00+00:00"
+      },
+      {
          "version": "1.5.91",
          "state": "stable",
          "scope": "minor fix",
