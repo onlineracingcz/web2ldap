@@ -30,18 +30,6 @@
     <td>%(aeTicketId)s</td>
   </tr>
   <tr>
-    <td>Member zones(s) (aeMemberZone):</td>
-    <td>%(aeMemberZone)s</td>
-  </tr>
-  <tr>
-    <td>Associated department(s) (aeDept):</td>
-    <td>%(aeDept)s</td>
-  </tr>
-  <tr>
-    <td>Associated location(s) (aeLocation):</td>
-    <td>%(aeLocation)s</td>
-  </tr>
-  <tr>
     <td>Validity period:</td>
     <td>
       <dl>
@@ -58,9 +46,26 @@
   </tr>
 </table>
 
-<h2>Group members (member)</h2>
-<p>%(member)s</p>
+<h2>Constraining relations</h2>
+<table>
+  <tr>
+    <td>Member zones(s) (aeMemberZone):</td>
+    <td>%(aeMemberZone)s</td>
+  </tr>
+  <tr>
+    <td>Associated department(s) (aeDept):</td>
+    <td>%(aeDept)s</td>
+  </tr>
+  <tr>
+    <td>Associated location(s) (aeLocation):</td>
+    <td>%(aeLocation)s</td>
+  </tr>
+</table>
 
-<h2>Member user names (memberUid)</h2>
-<p>%(memberUid)s</p>
-
+<h2>Group members</h2>
+<dl>
+  <dt><strong>Member DNs (member)</strong></dt>
+  <dd>%(member)s</dd>
+  <dt><strong>Member user names (memberUid)</strong></dt>
+  <dd>%(memberUid)s</dd>
+</dl>

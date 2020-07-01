@@ -9,7 +9,6 @@ objectClass: posixAccount
 objectClass: aeSSHAccount
 objectClass: inetLocalMailRecipient
 aeStatus: 0
-aeExpiryStatus: 1
 description: primary desktop/mailbox account
 loginShell: /bin/bash
 pwdPolicySubentry: cn=ppolicy-base-users,cn=ae,ou=ae-dir
