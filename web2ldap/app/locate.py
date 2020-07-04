@@ -95,7 +95,7 @@ def w2l_locate(app):
             msg_html = 'Input is considered LDAP distinguished name.'
             locate_domain = DNObj.from_str(locate_name).domain(only_dc=False).encode('idna').decode('ascii')
             locate_name_type = LOCATE_NAME_DCDN
-        elif u'@' in locate_name:
+        elif '@' in locate_name:
             # Use domain part of RFC822 mail address
             msg_html = 'Input is considered e-mail address or user principal name.'
             locate_domain = locate_name.split('@')[-1]
@@ -108,7 +108,7 @@ def w2l_locate(app):
 
         if locate_domain:
 
-            dns_list = locate_domain.lower().split(u'.')
+            dns_list = locate_domain.lower().split('.')
 
             for dns_index in range(len(dns_list), 0, -1):
 
