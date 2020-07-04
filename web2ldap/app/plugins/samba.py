@@ -138,13 +138,13 @@ class SambaSID(IA5String):
             try:
                 if 'sambaSamAccount' in ocs and 'posixAccount' in ocs:
                     uid_number = int(self._entry['uidNumber'][0])
-                    result = u'-'.join((
+                    result = '-'.join((
                         self._get_domain_sid(),
                         str(2*uid_number+1000)
                     ))
                 elif 'sambaGroupMapping' in ocs and 'posixGroup' in ocs:
                     gid_number = int(self._entry['gidNumber'][0])
-                    result = u'-'.join((
+                    result = '-'.join((
                         self._get_domain_sid(),
                         str(2*gid_number+1001)
                     ))
@@ -163,9 +163,9 @@ class SambaForceLogoff(SelectList):
     oid: str = 'SambaForceLogoff-oid'
     desc: str = 'Disconnect Users outside logon hours (default: -1 => off, 0 => on)'
     attr_value_dict = {
-        u'': u'',
-        u'0': u'on',
-        u'-1': u'off',
+        '': '',
+        '0': 'on',
+        '-1': 'off',
     }
 
 syntax_registry.reg_at(
@@ -178,9 +178,9 @@ class SambaLogonToChgPwd(SelectList):
     oid: str = 'SambaLogonToChgPwd-oid'
     desc: str = 'Force Users to logon for password change (default: 0 => off, 2 => on)'
     attr_value_dict = {
-        u'': u'',
-        u'0': u'off',
-        u'2': u'on',
+        '': '',
+        '0': 'off',
+        '2': 'on',
     }
 
 syntax_registry.reg_at(
@@ -193,10 +193,10 @@ class SambaGroupType(SelectList):
     oid: str = 'SambaGroupType-oid'
     desc: str = 'Samba group type'
     attr_value_dict = {
-        u'': u'',
-        u'2': u'Domain Group',
-        u'4': u'Local Group (Alias)',
-        u'5': u'Built-in Group (well-known)',
+        '': '',
+        '2': 'Domain Group',
+        '4': 'Local Group (Alias)',
+        '5': 'Built-in Group (well-known)',
     }
 
 syntax_registry.reg_at(
