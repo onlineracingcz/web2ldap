@@ -71,7 +71,7 @@ class AssociatedDomain(DNSDomain):
     def sanitize(self, attrValue: bytes) -> bytes:
         attrValue = DNSDomain.sanitize(self, attrValue)
         if not attrValue:
-            parent_domain = (self._parent_domain() or u'').encode(self._app.ls.charset)
+            parent_domain = (self._parent_domain() or '').encode(self._app.ls.charset)
             try:
                 dc_value = self._entry['dc'][0]
             except (KeyError, IndexError):
@@ -82,14 +82,14 @@ class AssociatedDomain(DNSDomain):
 
     def formValue(self) -> str:
         form_value = DNSDomain.formValue(self)
-        parent_domain = self._parent_domain() or u''
+        parent_domain = self._parent_domain() or ''
         if not form_value:
             try:
                 dc_value = self._entry['dc'][0].decode(self._app.ls.charset)
             except (KeyError, IndexError):
                 pass
             else:
-                form_value = u'.'.join((dc_value, parent_domain))
+                form_value = '.'.join((dc_value, parent_domain))
         return form_value
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -100,40 +100,40 @@ class AssociatedDomain(DNSDomain):
                 'search', 'Ref. RRs',
                 (
                     ('dn', str(self._app.naming_context)),
-                    ('searchform_mode', u'adv'),
-                    ('search_mode', u'(|%s)'),
-                    ('search_attr', u'cNAMERecord'),
+                    ('searchform_mode', 'adv'),
+                    ('search_mode', '(|%s)'),
+                    ('search_attr', 'cNAMERecord'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', av),
-                    ('search_attr', u'nSRecord'),
+                    ('search_attr', 'nSRecord'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', av),
-                    ('search_attr', u'pTRRecord'),
+                    ('search_attr', 'pTRRecord'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', av),
                 ),
-                title=u'Search referencing DNS RR entries',
+                title='Search referencing DNS RR entries',
             ))
-            parent_domain = u'.'.join(av.strip().split(u'.')[1:])
+            parent_domain = '.'.join(av.strip().split('.')[1:])
             if parent_domain and 'sOARecord' not in self._entry:
                 res.append(self._app.anchor(
                     'search', 'SOA RR',
                     (
                         ('dn', str(self._app.naming_context)),
-                        ('searchform_mode', u'adv'),
-                        ('search_attr', u'sOARecord'),
+                        ('searchform_mode', 'adv'),
+                        ('search_attr', 'sOARecord'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
-                        ('search_string', u''),
-                        ('search_attr', u'associatedDomain'),
+                        ('search_string', ''),
+                        ('search_attr', 'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                         ('search_string', parent_domain),
                     ),
-                    title=u'Search SOA RR entry of parent domain',
+                    title='Search SOA RR entry of parent domain',
                 ))
-            if av.endswith(u'.in-addr.arpa'):
+            if av.endswith('.in-addr.arpa'):
                 try:
-                    ip_addr_u = u'.'.join(
-                        map(str, reversed(list(map(int, av.split(u'.')[0:4]))))
+                    ip_addr_u = '.'.join(
+                        map(str, reversed(list(map(int, av.split('.')[0:4]))))
                     )
                 except ValueError:
                     pass
@@ -142,36 +142,36 @@ class AssociatedDomain(DNSDomain):
                         'search', 'A RRs',
                         (
                             ('dn', str(self._app.naming_context)),
-                            ('searchform_mode', u'adv'),
-                            ('search_attr', u'aRecord'),
+                            ('searchform_mode', 'adv'),
+                            ('search_attr', 'aRecord'),
                             ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                             ('search_string', ip_addr_u),
                         ),
-                        title=u'Search referencing DNS A RR entries',
+                        title='Search referencing DNS A RR entries',
                     ))
                     if '1.3.6.1.1.1.1.19' in self._schema.sed[ldap0.schema.models.AttributeType]:
                         res.append(self._app.anchor(
                             'search', 'IP host(s)',
                             (
                                 ('dn', str(self._app.naming_context)),
-                                ('searchform_mode', u'adv'),
-                                ('search_attr', u'ipHostNumber'),
+                                ('searchform_mode', 'adv'),
+                                ('search_attr', 'ipHostNumber'),
                                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                                 ('search_string', ip_addr_u),
                             ),
-                            title=u'Search IP host(s) for this A address',
+                            title='Search IP host(s) for this A address',
                         ))
                     if '2.16.840.1.113719.1.203.4.3' in self._schema.sed[ldap0.schema.models.AttributeType]:
                         res.append(self._app.anchor(
                             'search', 'DHCP host(s)',
                             (
                                 ('dn', str(self._app.naming_context)),
-                                ('searchform_mode', u'adv'),
-                                ('search_attr', u'dhcpStatements'),
+                                ('searchform_mode', 'adv'),
+                                ('search_attr', 'dhcpStatements'),
                                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                                ('search_string', u'fixed-address %s' % ip_addr_u),
+                                ('search_string', 'fixed-address %s' % ip_addr_u),
                             ),
-                            title=u'Search DHCP host(s) for this A address',
+                            title='Search DHCP host(s) for this A address',
                         ))
         return web2ldapcnf.command_link_separator.join(res)
 
@@ -248,36 +248,36 @@ class ARecord(IPv4HostAddress):
                 'search', 'PTR RR',
                 (
                     ('dn', str(self._app.naming_context)),
-                    ('searchform_mode', u'adv'),
-                    ('search_attr', u'associatedDomain'),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'associatedDomain'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', ip_addr.reverse_pointer),
                 ),
-                title=u'Search PTR RR for this A address',
+                title='Search PTR RR for this A address',
             ))
             if '1.3.6.1.1.1.1.19' in self._schema.sed[ldap0.schema.models.AttributeType]:
                 res.append(self._app.anchor(
                     'search', 'IP host(s)',
                     (
                         ('dn', str(self._app.naming_context)),
-                        ('searchform_mode', u'adv'),
-                        ('search_attr', u'ipHostNumber'),
+                        ('searchform_mode', 'adv'),
+                        ('search_attr', 'ipHostNumber'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                         ('search_string', str(ip_addr)),
                     ),
-                    title=u'Search IP host(s) for this A address',
+                    title='Search IP host(s) for this A address',
                 ))
             if '2.16.840.1.113719.1.203.4.3' in self._schema.sed[ldap0.schema.models.AttributeType]:
                 res.append(self._app.anchor(
                     'search', 'DHCP host(s)',
                     (
                         ('dn', str(self._app.naming_context)),
-                        ('searchform_mode', u'adv'),
-                        ('search_attr', u'dhcpStatements'),
+                        ('searchform_mode', 'adv'),
+                        ('search_attr', 'dhcpStatements'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                        ('search_string', u'fixed-address %s' % str(ip_addr)),
+                        ('search_string', 'fixed-address %s' % str(ip_addr)),
                     ),
-                    title=u'Search DHCP host(s) for this A address',
+                    title='Search DHCP host(s) for this A address',
                 ))
         return web2ldapcnf.command_link_separator.join(res)
 
@@ -305,12 +305,12 @@ class AAAARecord(IPv6HostAddress):
                     'search', 'PTR RR',
                     (
                         ('dn', str(self._app.naming_context)),
-                        ('searchform_mode', u'adv'),
-                        ('search_attr', u'associatedDomain'),
+                        ('searchform_mode', 'adv'),
+                        ('search_attr', 'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                         ('search_string', self._app.ls.uc_decode(ip_addr.reverse_dns)[0][:-1]),
                     ),
-                    title=u'Search PTR RR for this AAAA address',
+                    title='Search PTR RR for this AAAA address',
                 ))
         return web2ldapcnf.command_link_separator.join(res)
 

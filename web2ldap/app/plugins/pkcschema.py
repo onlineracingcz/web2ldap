@@ -25,12 +25,12 @@ class PkcX509Issuer(DistinguishedName):
                     ('dn', str(self._app.naming_context)),
                     (
                         'filterstr',
-                        u'(&(objectClass=x509caCertificate)(x509subject=%s))' % (
+                        '(&(objectClass=x509caCertificate)(x509subject=%s))' % (
                             ldap0.filter.escape_str(self.av_u),
                         )
                     ),
                 ],
-                title=u'Search for issuer entries',
+                title='Search for issuer entries',
             ),
         ]
 
@@ -45,15 +45,15 @@ class X509KeyUsage(SelectList):
     oid: str = 'X509KeyUsage-oid'
     desc: str = 'Key usage extension'
     attr_value_dict = {
-        u'digitalSignature': u'digitalSignature',
-        u'nonRepudiation': u'nonRepudiation',
-        u'keyEncipherment': u'keyEncipherment',
-        u'dataEncipherment': u'dataEncipherment',
-        u'keyAgreement': u'keyAgreement',
-        u'keyCertSign': u'keyCertSign',
-        u'cRLSign': u'cRLSign',
-        u'encipherOnly': u'encipherOnly',
-        u'decipherOnly': u'decipherOnly',
+        'digitalSignature': 'digitalSignature',
+        'nonRepudiation': 'nonRepudiation',
+        'keyEncipherment': 'keyEncipherment',
+        'dataEncipherment': 'dataEncipherment',
+        'keyAgreement': 'keyAgreement',
+        'keyCertSign': 'keyCertSign',
+        'cRLSign': 'cRLSign',
+        'encipherOnly': 'encipherOnly',
+        'decipherOnly': 'decipherOnly',
     }
 
 syntax_registry.reg_at(

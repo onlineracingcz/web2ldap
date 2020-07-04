@@ -44,14 +44,14 @@ class GidNumber(DynamicValueSelectList, Integer):
         if not commandbutton:
             return res[0]
         if 'posixGroup' in ocs:
-            title = u'Search primary group members'
+            title = 'Search primary group members'
             searchform_params = [
                 ('dn', self._dn),
-                ('searchform_mode', u'adv'),
-                ('search_attr', u'objectClass'),
+                ('searchform_mode', 'adv'),
+                ('search_attr', 'objectClass'),
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                ('search_string', u'posixAccount'),
-                ('search_attr', u'gidNumber'),
+                ('search_string', 'posixAccount'),
+                ('search_attr', 'gidNumber'),
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                 ('search_string', self.av_u),
             ]
@@ -112,9 +112,9 @@ class MemberUID(IA5String, DynamicValueSelectList):
                             self._app.form.utf2display(self.av_u)
                         )
                     ),
-                    ('searchform_mode', u'exp'),
+                    ('searchform_mode', 'exp'),
                 ],
-                title=u'Search for user entry',
+                title='Search for user entry',
             ))
         return ' '.join(res)
 
@@ -148,21 +148,21 @@ class Shell(SelectList):
     oid: str = 'Shell-oid'
     desc: str = 'Shell for user of Posix systems'
     attr_value_dict = {
-        u'/bin/sh': u'Standard shell /bin/sh',
-        u'/bin/bash': u'Bourne-Again SHell /bin/bash',
-        u'/bin/csh': u'/bin/csh',
-        u'/bin/tcsh': u'/bin/tcsh',
-        u'/bin/ksh': u'Korn shell /bin/ksh',
-        u'/bin/passwd': u'Password change /bin/passwd',
-        u'/bin/true': u'/bin/true',
-        u'/bin/false': u'/bin/false',
-        u'/bin/zsh': u'Zsh /bin/zsh',
-        u'/usr/bin/bash': u'Bourne-Again SHell /usr/bin/bash',
-        u'/usr/bin/csh': u'/usr/bin/csh',
-        u'/usr/bin/tcsh': u'/usr/bin/csh',
-        u'/usr/bin/ksh': u'Korn shell /usr/bin/ksh',
-        u'/usr/bin/zsh': u'Zsh /usr/bin/zsh',
-        u'/usr/sbin/nologin': u'Login denied /usr/sbin/nologin',
+        '/bin/sh': 'Standard shell /bin/sh',
+        '/bin/bash': 'Bourne-Again SHell /bin/bash',
+        '/bin/csh': '/bin/csh',
+        '/bin/tcsh': '/bin/tcsh',
+        '/bin/ksh': 'Korn shell /bin/ksh',
+        '/bin/passwd': 'Password change /bin/passwd',
+        '/bin/true': '/bin/true',
+        '/bin/false': '/bin/false',
+        '/bin/zsh': 'Zsh /bin/zsh',
+        '/usr/bin/bash': 'Bourne-Again SHell /usr/bin/bash',
+        '/usr/bin/csh': '/usr/bin/csh',
+        '/usr/bin/tcsh': '/usr/bin/csh',
+        '/usr/bin/ksh': 'Korn shell /usr/bin/ksh',
+        '/usr/bin/zsh': 'Zsh /usr/bin/zsh',
+        '/usr/sbin/nologin': 'Login denied /usr/sbin/nologin',
     }
 
 syntax_registry.reg_at(
@@ -177,8 +177,8 @@ class IpServiceProtocol(SelectList):
     desc: str = 'RFC 2307: IP service protocol'
 
     attr_value_dict = {
-        u'tcp': u'tcp',
-        u'udp': u'udp',
+        'tcp': 'tcp',
+        'udp': 'udp',
     }
 
 syntax_registry.reg_at(

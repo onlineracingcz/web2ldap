@@ -46,29 +46,29 @@ class DHCPConfigStatement(MultilineText):
                     'search', 'DNS RR',
                     (
                         ('dn', str(self._app.naming_context)),
-                        ('searchform_mode', u'adv'),
-                        ('search_mode', u'(|%s)'),
-                        ('search_attr', u'dc'),
+                        ('searchform_mode', 'adv'),
+                        ('search_mode', '(|%s)'),
+                        ('search_attr', 'dc'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                         ('search_string', host_name),
-                        ('search_attr', u'pTRRecord'),
+                        ('search_attr', 'pTRRecord'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_BEGINS_WITH),
-                        ('search_string', host_name+u'.'),
-                        ('search_attr', u'associatedDomain'),
+                        ('search_string', host_name+'.'),
+                        ('search_attr', 'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_BEGINS_WITH),
-                        ('search_string', host_name+u'.'),
+                        ('search_string', host_name+'.'),
                     ),
-                    title=u'Search related DNS RR entry',
+                    title='Search related DNS RR entry',
                 ))
             elif dhcp_type == 'fixed-address':
                 search_params = [
                     ('dn', str(self._app.naming_context)),
-                    ('searchform_mode', u'adv'),
-                    ('search_mode', u'(|%s)'),
-                    ('search_attr', u'aRecord'),
+                    ('searchform_mode', 'adv'),
+                    ('search_mode', '(|%s)'),
+                    ('search_attr', 'aRecord'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', dhcp_value),
-                    ('search_attr', u'aAAARecord'),
+                    ('search_attr', 'aAAARecord'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', dhcp_value),
                 ]
@@ -78,7 +78,7 @@ class DHCPConfigStatement(MultilineText):
                     pass
                 else:
                     search_params.extend((
-                        ('search_attr', u'associatedDomain'),
+                        ('search_attr', 'associatedDomain'),
                         ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                         ('search_string', reverse_dns),
                     ))
@@ -86,7 +86,7 @@ class DHCPConfigStatement(MultilineText):
                     self._app.anchor(
                         'search', 'DNS RRs',
                         search_params,
-                        title=u'Search related DNS RR entries',
+                        title='Search related DNS RR entries',
                     )
                 )
         return web2ldapcnf.command_link_separator.join(res)
@@ -293,7 +293,7 @@ class DHCPRange(IA5String):
                         last_address = next(ipv4_hosts)
                 except StopIteration:
                     pass
-                form_value = u'{0} {1}'.format(first_address, last_address)
+                form_value = '{0} {1}'.format(first_address, last_address)
             except ipaddress.AddressValueError:
                 pass
         return form_value
@@ -333,20 +333,20 @@ class DHCPAddressState(SelectList):
     desc: str = 'DHCP address state'
 
     attr_value_dict = {
-        u'': u'',
-        u'FREE': u'FREE',
-        u'ACTIVE': u'ACTIVE',
-        u'EXPIRED': u'EXPIRED',
-        u'RELEASED': u'RELEASED',
-        u'RESET': u'RESET',
-        u'ABANDONED': u'ABANDONED',
-        u'BACKUP': u'BACKUP',
-        u'UNKNOWN': u'UNKNOWN',
-        u'RESERVED': u'RESERVED (an address that is managed by DHCP that is reserved for a specific client)',
-        u'RESERVED-ACTIVE': u'RESERVED-ACTIVE (same as reserved, but address is currently in use)',
-        u'ASSIGNED': u'ASSIGNED (assigned manually or by some other mechanism)',
-        u'UNASSIGNED': u'UNASSIGNED',
-        u'NOTASSIGNABLE': u'NOTASSIGNABLE',
+        '': '',
+        'FREE': 'FREE',
+        'ACTIVE': 'ACTIVE',
+        'EXPIRED': 'EXPIRED',
+        'RELEASED': 'RELEASED',
+        'RESET': 'RESET',
+        'ABANDONED': 'ABANDONED',
+        'BACKUP': 'BACKUP',
+        'UNKNOWN': 'UNKNOWN',
+        'RESERVED': 'RESERVED (an address that is managed by DHCP that is reserved for a specific client)',
+        'RESERVED-ACTIVE': 'RESERVED-ACTIVE (same as reserved, but address is currently in use)',
+        'ASSIGNED': 'ASSIGNED (assigned manually or by some other mechanism)',
+        'UNASSIGNED': 'UNASSIGNED',
+        'NOTASSIGNABLE': 'NOTASSIGNABLE',
     }
 
 
@@ -360,10 +360,10 @@ class DHCPDnsStatus(BitArrayInteger):
     """
     oid: str = 'DHCPDnsStatus-oid'
     flag_desc_table = (
-        (u'(C): name to address (such as A RR) update successfully completed', 0x0001),
-        (u'(A): Server is controlling A RR on behalf of the client', 0x0002),
-        (u'(D): address to name (such as PTR RR) update successfully completed (Done)', 0x0004),
-        (u'(P): Server is controlling PTR RR on behalf of the client', 0x0008),
+        ('(C): name to address (such as A RR) update successfully completed', 0x0001),
+        ('(A): Server is controlling A RR on behalf of the client', 0x0002),
+        ('(D): address to name (such as PTR RR) update successfully completed (Done)', 0x0004),
+        ('(P): Server is controlling PTR RR on behalf of the client', 0x0008),
     )
 
 syntax_registry.reg_at(

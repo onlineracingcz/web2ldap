@@ -18,10 +18,10 @@ class VPIMExtendedAbsenceStatus(SelectList):
     desc: str = ''
 
     attr_value_dict = {
-        u'': u'',
-        u'Off': u'Off',
-        u'On': u'On',
-        u'MsgBlocked': u'MsgBlocked',
+        '': '',
+        'Off': 'Off',
+        'On': 'On',
+        'MsgBlocked': 'MsgBlocked',
     }
 
 syntax_registry.reg_at(
@@ -36,10 +36,10 @@ class VPIMSupportedUABehaviors(SelectList):
     desc: str = ''
 
     attr_value_dict = {
-        u'':'',
-        u'MessageDispositionNotification': u'recipient will send a MDN in response to an MDN request',
-        u'MessageSensitivity': u'recipient supports sensitivity indication',
-        u'MessageImportance': u'recipient supports importance indication',
+        '':'',
+        'MessageDispositionNotification': 'recipient will send a MDN in response to an MDN request',
+        'MessageSensitivity': 'recipient supports sensitivity indication',
+        'MessageImportance': 'recipient supports importance indication',
     }
 
 syntax_registry.reg_at(
@@ -54,11 +54,11 @@ class VPIMSupportedAudioMediaTypes(SelectList):
     desc: str = 'Audio Media Types'
 
     attr_value_dict = {
-        u'audio/basic': u'audio/basic',
-        u'audio/mpeg': u'audio/mpeg',
-        u'audio/x-aiff': u'audio/x-aiff',
-        u'audio/x-realaudio': u'audio/x-realaudio',
-        u'audio/x-wav': u'audio/x-wav',
+        'audio/basic': 'audio/basic',
+        'audio/mpeg': 'audio/mpeg',
+        'audio/x-aiff': 'audio/x-aiff',
+        'audio/x-realaudio': 'audio/x-realaudio',
+        'audio/x-wav': 'audio/x-wav',
     }
 
 syntax_registry.reg_at(

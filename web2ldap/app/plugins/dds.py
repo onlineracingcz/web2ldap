@@ -40,10 +40,10 @@ class DynamicSubtrees(DistinguishedName):
                 [
                     ('dn', self.av_u),
                     ('search_root', self.av_u),
-                    ('filterstr', u'(objectClass=dynamicObject)'),
-                    ('searchform_mode', u'exp'),
+                    ('filterstr', '(objectClass=dynamicObject)'),
+                    ('searchform_mode', 'exp'),
                 ],
-                title=u'Search for dynamic entries',
+                title='Search for dynamic entries',
             ),
         )
         return res

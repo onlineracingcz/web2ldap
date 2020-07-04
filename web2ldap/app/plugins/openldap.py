@@ -94,9 +94,9 @@ class OlcSubordinate(SelectList):
     oid: str = 'OlcSubordinate-oid'
     desc: str = 'Indicates whether backend is subordinate'
     attr_value_dict = {
-        u'': u'-/- (FALSE)',
-        u'TRUE': u'TRUE',
-        u'advertise': u'advertise',
+        '': '-/- (FALSE)',
+        'TRUE': 'TRUE',
+        'advertise': 'advertise',
     }
 
 syntax_registry.reg_at(
@@ -221,10 +221,10 @@ class OlcMemberOfDangling(SelectList):
     oid: str = 'OlcMemberOfDangling-oid'
     desc: str = 'Behavior in case of dangling references during modification'
     attr_value_dict = {
-        u'': u'-/-',
-        u'ignore': u'ignore',
-        u'drop': u'drop',
-        u'error': u'error',
+        '': '-/-',
+        'ignore': 'ignore',
+        'drop': 'drop',
+        'error': 'error',
     }
 
 syntax_registry.reg_at(
@@ -261,7 +261,7 @@ class AuditContext(NamingContexts):
                         ('dn', self.av_u),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
-                    title=u'Go to search form for audit log',
+                    title='Go to search form for audit log',
                 ),
                 self._app.anchor(
                     'search', 'List all',
@@ -270,7 +270,7 @@ class AuditContext(NamingContexts):
                         ('filterstr', u'(objectClass=auditObject)'),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
-                    title=u'List audit log entries of all operations',
+                    title='List audit log entries of all operations',
                 ),
                 self._app.anchor(
                     'search', 'List writes',
@@ -279,7 +279,7 @@ class AuditContext(NamingContexts):
                         ('filterstr', u'(objectClass=auditWriteObject)'),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
-                    title=u'List audit log entries of all write operations',
+                    title='List audit log entries of all write operations',
                 ),
             ])
         return web2ldapcnf.command_link_separator.join(res)
@@ -432,7 +432,7 @@ class ReqEntryUUID(UUID):
                         str(self._app.ls.get_search_root(self._app.ls.uc_decode(self._entry['reqDN'][0])[0])),
                     ),
                 ),
-                title=u'Search entry by UUID',
+                title='Search entry by UUID',
             )
         ))
 
@@ -462,7 +462,7 @@ class ReqSession(Integer):
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
                 ),
-                title=u'Search all audit entries with same session number',
+                title='Search all audit entries with same session number',
             )
         ))
 
@@ -518,7 +518,7 @@ class OpenLDAPSpecialBackendSuffix(NamingContexts):
                     u'(&(objectClass=olcDatabaseConfig)(olcDatabase=%s))' % (attr_type_u),
                 ),
             ),
-            title=u'Search for configuration entry below %s' % (config_context),
+            title='Search for configuration entry below %s' % (config_context),
         )
 
 syntax_registry.reg_at(

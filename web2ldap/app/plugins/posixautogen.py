@@ -46,7 +46,7 @@ class AutogenNumberMixIn:
 
     def formValue(self) -> str:
         if self.object_class.lower() not in {oc.lower().decode('ascii') for oc in self._entry['objectClass']}:
-            return u''
+            return ''
         try:
             ldap_results = self._app.ls.l.search_s(
                 str(self._app.naming_context),
@@ -65,7 +65,7 @@ class AutogenNumberMixIn:
                 ldap0.TIMELIMIT_EXCEEDED,
             ):
             # search failed => no value suggested
-            return u''
+            return ''
         idnumber_set = set()
         for res in ldap_results:
             if isinstance(res, SearchReference):
@@ -80,7 +80,7 @@ class AutogenNumberMixIn:
                 break
         if idnumber > self.maxNewValue:
             # end of valid range reached => no value suggested
-            return u''
+            return ''
         return str(idnumber)
 
 

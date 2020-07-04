@@ -14,21 +14,21 @@ class AuthorizedService(SelectList):
     desc: str = 'IANA GSS-API authorized service name'
 
     attr_value_dict = {
-        u'': u'',
-        u'rcmd': u'remote command/rlogin/telnet',
-        u'imap': u'mailstore access/IMAP4',
-        u'pop': u'maildrop access/POP3',
-        u'acap': u'remote configuration access/ACAP',
-        u'nfs': u'distributed file system protocol (NFS)',
-        u'ftp': u'file transfer/FTP/TFTP',
-        u'ldap': u'Lightweight Directory Access Protocol (LDAP)',
-        u'smtp': u'message transfer/SMTP',
-        u'beep': u'Blocks Extensible Exchange Protocol (BEEP)',
-        u'mupdate': u'Mailbox Update (MUPDATE) Protocol',
-        u'sacred': u'Secure Available Credentials (SACRED) Protocol',
-        u'sieve': u'ManageSieve Protocol',
-        u'xmpp': u'Extensible Messaging and Presence Protocol (XMPP)',
-        u'nntp': u'Network News Transfer Protocol (NNTP)',
+        '': '',
+        'rcmd': 'remote command/rlogin/telnet',
+        'imap': 'mailstore access/IMAP4',
+        'pop': 'maildrop access/POP3',
+        'acap': 'remote configuration access/ACAP',
+        'nfs': 'distributed file system protocol (NFS)',
+        'ftp': 'file transfer/FTP/TFTP',
+        'ldap': 'Lightweight Directory Access Protocol (LDAP)',
+        'smtp': 'message transfer/SMTP',
+        'beep': 'Blocks Extensible Exchange Protocol (BEEP)',
+        'mupdate': 'Mailbox Update (MUPDATE) Protocol',
+        'sacred': 'Secure Available Credentials (SACRED) Protocol',
+        'sieve': 'ManageSieve Protocol',
+        'xmpp': 'Extensible Messaging and Presence Protocol (XMPP)',
+        'nntp': 'Network News Transfer Protocol (NNTP)',
     }
 
 

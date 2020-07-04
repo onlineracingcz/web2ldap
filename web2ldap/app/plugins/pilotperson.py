@@ -13,15 +13,15 @@ class MailPreferenceOption(SelectList):
     desc: str = 'RFC1274: mail preference option syntax'
 
     attr_value_dict = {
-        u'': u'',
-        u'0': u'no-list-inclusion',
-        u'1': u'any-list-inclusion',
-        u'2': u'professional-list-inclusion',
+        '': '',
+        '0': 'no-list-inclusion',
+        '1': 'any-list-inclusion',
+        '2': 'professional-list-inclusion',
     }
 
 syntax_registry.reg_at(
     MailPreferenceOption.oid, [
-        '0.9.2342.19200300.100.1.47', # mailPreferenceOption
+        '0.9.2342.19200300.100.1.47',  # mailPreferenceOption
     ]
 )
 

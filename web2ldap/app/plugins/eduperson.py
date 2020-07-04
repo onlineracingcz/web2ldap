@@ -15,15 +15,15 @@ class EduPersonAffiliation(SelectList):
     desc: str = 'Affiliation (see eduPerson)'
 
     attr_value_dict = {
-        u'': u'',
-        u'faculty': u'faculty',
-        u'student': u'student',
-        u'staff': u'staff',
-        u'alum': u'alum',
-        u'member': u'member',
-        u'affiliate': u'affiliate',
-        u'employee': u'employee',
-        u'library-walk-in': u'library-walk-in',
+        '': '',
+        'faculty': 'faculty',
+        'student': 'student',
+        'staff': 'staff',
+        'alum': 'alum',
+        'member': 'member',
+        'affiliate': 'affiliate',
+        'employee': 'employee',
+        'library-walk-in': 'library-walk-in',
     }
 
 syntax_registry.reg_at(

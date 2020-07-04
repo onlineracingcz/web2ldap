@@ -39,8 +39,8 @@ class OathOTPLength(SelectList):
     oid: str = 'OathOTPLength-oid'
     desc: str = 'number of OTP digits'
     attr_value_dict = {
-        u'6': u'6',
-        u'8': u'8',
+        '6': '6',
+        '8': '8',
     }
 
 syntax_registry.reg_at(
@@ -55,7 +55,7 @@ class OathHOTPParams(DynamicDNSelectList):
     desc: str = 'DN of the oathHOTPParams entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=oathHOTPParams)'
     ref_attrs = (
-        (None, u'Same params', None, None),
+        (None, 'Same params', None, None),
     )
 
 syntax_registry.reg_at(
@@ -81,7 +81,7 @@ class OathHOTPToken(DynamicDNSelectList):
     desc: str = 'DN of the oathHOTPToken entry'
     ldap_url = 'ldap:///_?oathTokenSerialNumber?sub?(objectClass=oathHOTPToken)'
     ref_attrs = (
-        (None, u'Users', None, None),
+        (None, 'Users', None, None),
     )
 
 syntax_registry.reg_at(
@@ -96,7 +96,7 @@ class OathTOTPParams(DynamicDNSelectList):
     desc: str = 'DN of the oathTOTPParams entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=oathTOTPParams)'
     ref_attrs = (
-        (None, u'Same params', None, None),
+        (None, 'Same params', None, None),
     )
 
 syntax_registry.reg_at(
@@ -111,7 +111,7 @@ class OathTOTPToken(DynamicDNSelectList):
     desc: str = 'DN of the oathTOTPToken entry'
     ldap_url = 'ldap:///_?oathTokenSerialNumber?sub?(objectClass=oathTOTPToken)'
     ref_attrs = (
-        (None, u'Users', None, None),
+        (None, 'Users', None, None),
     )
 
 syntax_registry.reg_at(
@@ -145,7 +145,7 @@ class OathInitPwAlphabet(DirectoryString):
         return ''.join([
             self._app.ls.uc_encode(c)[0]
             for c in sorted(set(
-                self._app.ls.uc_decode(attrValue or '')[0].replace(u' ', '')
+                self._app.ls.uc_decode(attrValue or '')[0].replace(' ', '')
             ))
         ])
 
@@ -231,7 +231,7 @@ class OathSecretTime(GeneralizedTime):
                     self._app.form.utf2display(
                         web2ldap.app.gui.ts2repr(
                             self.time_divisors,
-                            u' ',
+                            ' ',
                             abs(expired_since),
                         )
                     ),

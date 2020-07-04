@@ -20,7 +20,7 @@ class MemberOf(DistinguishedName):
     oid: str = 'MemberOf-oid'
     desc: str = 'memberOf attribute in a group member entry'
     ref_attrs = (
-        (None, u'Group members', None, u'Search all members of this group'),
+        (None, 'Group members', None, 'Search all members of this group'),
     )
 
 syntax_registry.reg_at(
@@ -34,7 +34,7 @@ class GroupEntryDN(DistinguishedName):
     oid: str = 'GroupEntryDN-oid'
     desc: str = 'entryDN attribute in a group entry'
     ref_attrs = (
-        ('memberOf', u'Group members', None, u'Search all members of this group'),
+        ('memberOf', 'Group members', None, 'Search all members of this group'),
     )
 
 syntax_registry.reg_at(

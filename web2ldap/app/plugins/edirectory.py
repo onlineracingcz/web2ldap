@@ -112,7 +112,7 @@ class OctetStringGUID(OctetString):
         ))
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        if self._at == u'GUID':
+        if self._at == 'GUID':
             # GUID of an entry is displayed in several variants
             return """
             <table summary="GUID representation variants">
@@ -138,9 +138,9 @@ class OctetStringGUID(OctetString):
                 [
                     ('dn', self._dn),
                     ('filterstr', ldap0.filter.escape_str(self._av)),
-                    ('searchform_mode', u'exp'),
+                    ('searchform_mode', 'exp'),
                 ],
-                title=u'Search entry with this GUID',
+                title='Search entry with this GUID',
             )
         ))
 
@@ -282,20 +282,20 @@ class EntryFlags(BitArrayInteger):
     """
     oid: str = 'EntryFlags-oid'
     flag_desc_table = (
-        (u'DS_ALIAS_ENTRY', 0x0001),
-        (u'DS_PARTITION_ROOT', 0x0002),
-        (u'DS_CONTAINER_ENTRY', 0x0004),
-        (u'DS_CONTAINER_ALIAS', 0x0008),
-        (u'DS_MATCHES_LIST_FILTER', 0x0010),
-        (u'DS_REFERENCE_ENTRY', 0x0020),
-        (u'DS_40X_REFERENCE_ENTRY', 0x0040),
-        (u'DS_BACKLINKED', 0x0080),
-        (u'DS_NEW_ENTRY', 0x0100),
-        (u'DS_TEMPORARY_REFERENCE', 0x0200),
-        (u'DS_AUDITED', 0x0400),
-        (u'DS_ENTRY_NOT_PRESENT', 0x0800),
-        (u'DS_ENTRY_VERIFY_CTS', 0x1000),
-        (u'DS_ENTRY_DAMAGED', 0x2000),
+        ('DS_ALIAS_ENTRY', 0x0001),
+        ('DS_PARTITION_ROOT', 0x0002),
+        ('DS_CONTAINER_ENTRY', 0x0004),
+        ('DS_CONTAINER_ALIAS', 0x0008),
+        ('DS_MATCHES_LIST_FILTER', 0x0010),
+        ('DS_REFERENCE_ENTRY', 0x0020),
+        ('DS_40X_REFERENCE_ENTRY', 0x0040),
+        ('DS_BACKLINKED', 0x0080),
+        ('DS_NEW_ENTRY', 0x0100),
+        ('DS_TEMPORARY_REFERENCE', 0x0200),
+        ('DS_AUDITED', 0x0400),
+        ('DS_ENTRY_NOT_PRESENT', 0x0800),
+        ('DS_ENTRY_VERIFY_CTS', 0x1000),
+        ('DS_ENTRY_DAMAGED', 0x2000),
     )
 
 syntax_registry.reg_at(
@@ -311,16 +311,16 @@ class NspmConfigurationOptions(BitArrayInteger):
     """
     oid: str = 'NspmConfigurationOptions-oid'
     flag_desc_table = (
-        (u'On set password request the NDS password hash will be removed by SPM', 0x01),
-        (u'On set password request the NDS password hash will not be set by SPM', 0x02),
-        (u'On set password request the Simple password will not be set by SPM', 0x04),
-        (u'Reserved 0x08', 0x08),
-        (u'Allow password retrieval by self (User)', 0x10),
-        (u'Allow password retrieval by admin', 0x20),
-        (u'Allow password retrieval by password agents (trusted app)', 0x40),
-        (u'Reserved 0x80', 0x80),
-        (u'Password enabled', 0x100),
-        (u'Advanced password policy enabled', 0x200),
+        ('On set password request the NDS password hash will be removed by SPM', 0x01),
+        ('On set password request the NDS password hash will not be set by SPM', 0x02),
+        ('On set password request the Simple password will not be set by SPM', 0x04),
+        ('Reserved 0x08', 0x08),
+        ('Allow password retrieval by self (User)', 0x10),
+        ('Allow password retrieval by admin', 0x20),
+        ('Allow password retrieval by password agents (trusted app)', 0x40),
+        ('Reserved 0x80', 0x80),
+        ('Password enabled', 0x100),
+        ('Advanced password policy enabled', 0x200),
     )
 
 syntax_registry.reg_at(
@@ -370,9 +370,9 @@ class DirXMLDriverStartOption(SelectList):
     oid: str = 'DirXML-DriverStartOption-oid'
     desc: str = 'Start option for a DirXML driver'
     attr_value_dict = {
-        u'0': u'disabled',
-        u'1': u'manual',
-        u'2': u'auto',
+        '0': 'disabled',
+        '1': 'manual',
+        '2': 'auto',
     }
 
 syntax_registry.reg_at(
@@ -386,10 +386,10 @@ class DirXMLState(SelectList):
     oid: str = 'DirXML-State-DriverStartOption-oid'
     desc: str = 'Current state of a DirXML driver'
     attr_value_dict = {
-        u'0': u'stopped',
-        u'1': u'starting',
-        u'2': u'running',
-        u'3': u'stopping',
+        '0': 'stopped',
+        '1': 'starting',
+        '2': 'running',
+        '3': 'stopping',
     }
 
 syntax_registry.reg_at(

@@ -51,20 +51,20 @@ class Krb5KDCFlagsSyntax(BitArrayInteger):
     """
     oid: str = '1.3.6.1.4.1.5322.10.0.1'
     flag_desc_table = (
-        (u'initial', 0x0001),
-        (u'forwardable', 0x0002),
-        (u'proxiable', 0x0004),
-        (u'renewable', 0x0008),
-        (u'postdate', 0x0010),
-        (u'server', 0x0020),
-        (u'client', 0x0040),
-        (u'invalid', 0x0080),
-        (u'require-preauth', 0x0100),
-        (u'change-pw', 0x0200),
-        (u'require-hwauth', 0x0800),
-        (u'ok-as-delegate', 0x1000),
-        (u'user-to-user', 0x2000),
-        (u'immutable', 0x4000),
+        ('initial', 0x0001),
+        ('forwardable', 0x0002),
+        ('proxiable', 0x0004),
+        ('renewable', 0x0008),
+        ('postdate', 0x0010),
+        ('server', 0x0020),
+        ('client', 0x0040),
+        ('invalid', 0x0080),
+        ('require-preauth', 0x0100),
+        ('change-pw', 0x0200),
+        ('require-hwauth', 0x0800),
+        ('ok-as-delegate', 0x1000),
+        ('user-to-user', 0x2000),
+        ('immutable', 0x4000),
     )
 
 syntax_registry.reg_at(
@@ -90,18 +90,18 @@ syntax_registry.reg_at(
 class KrbTicketFlags(BitArrayInteger):
     oid: str = 'KrbTicketFlags-oid'
     flag_desc_table = (
-        (u'DISALLOW_POSTDATED', 0x00000001),
-        (u'DISALLOW_FORWARDABLE', 0x00000002),
-        (u'DISALLOW_TGT_BASED', 0x00000004),
-        (u'DISALLOW_RENEWABLE', 0x00000008),
-        (u'DISALLOW_PROXIABLE', 0x00000010),
-        (u'DISALLOW_DUP_SKEY', 0x00000020),
-        (u'DISALLOW_ALL_TIX', 0x00000040),
-        (u'REQUIRES_PRE_AUTH', 0x00000080),
-        (u'REQUIRES_HW_AUTH', 0x00000100),
-        (u'REQUIRES_PWCHANGE', 0x00000200),
-        (u'DISALLOW_SVR', 0x00001000),
-        (u'PWCHANGE_SERVICE', 0x00002000),
+        ('DISALLOW_POSTDATED', 0x00000001),
+        ('DISALLOW_FORWARDABLE', 0x00000002),
+        ('DISALLOW_TGT_BASED', 0x00000004),
+        ('DISALLOW_RENEWABLE', 0x00000008),
+        ('DISALLOW_PROXIABLE', 0x00000010),
+        ('DISALLOW_DUP_SKEY', 0x00000020),
+        ('DISALLOW_ALL_TIX', 0x00000040),
+        ('REQUIRES_PRE_AUTH', 0x00000080),
+        ('REQUIRES_HW_AUTH', 0x00000100),
+        ('REQUIRES_PWCHANGE', 0x00000200),
+        ('DISALLOW_SVR', 0x00001000),
+        ('PWCHANGE_SERVICE', 0x00002000),
     )
 
 syntax_registry.reg_at(
@@ -114,8 +114,8 @@ class KrbSearchScope(SelectList):
     oid: str = 'KrbSearchScope-oid'
     desc: str = 'Kerberos search scope'
     attr_value_dict = {
-        u'1': u'ONE_LEVEL',
-        u'2': u'SUB_TREE',
+        '1': 'ONE_LEVEL',
+        '2': 'SUB_TREE',
     }
 
 syntax_registry.reg_at(
@@ -129,15 +129,15 @@ class KrbPrincipalType(SelectList):
     oid: str = 'KrbPrincipalType-oid'
     desc: str = 'Kerberos V Principal Type (see RFC 4120, section 6.2)'
     attr_value_dict = {
-        u'0': u'NT-UNKNOWN',        # Name type not known
-        u'1': u'NT-PRINCIPAL',      # Just the name of the principal as in DCE, or for users
-        u'2': u'NT-SRV-INST',       # Service and other unique instance (krbtgt)
-        u'3': u'NT-SRV-HST',        # Service with host name as instance (telnet, rcommands)
-        u'4': u'NT-SRV-XHST',       # Service with host as remaining components
-        u'5': u'NT-UID',            # Unique ID
-        u'6': u'NT-X500-PRINCIPAL', # Encoded X.509 Distinguished name [RFC2253]
-        u'7': u'NT-SMTP-NAME',      # Name in form of SMTP email name (e.g., user@example.com)
-        u'10': u'NT-ENTERPRISE',     # Enterprise name - may be mapped to principal name
+        '0': 'NT-UNKNOWN',        # Name type not known
+        '1': 'NT-PRINCIPAL',      # Just the name of the principal as in DCE, or for users
+        '2': 'NT-SRV-INST',       # Service and other unique instance (krbtgt)
+        '3': 'NT-SRV-HST',        # Service with host name as instance (telnet, rcommands)
+        '4': 'NT-SRV-XHST',       # Service with host as remaining components
+        '5': 'NT-UID',            # Unique ID
+        '6': 'NT-X500-PRINCIPAL', # Encoded X.509 Distinguished name [RFC2253]
+        '7': 'NT-SMTP-NAME',      # Name in form of SMTP email name (e.g., user@example.com)
+        '10': 'NT-ENTERPRISE',     # Enterprise name - may be mapped to principal name
     }
 
 syntax_registry.reg_at(

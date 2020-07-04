@@ -19,12 +19,12 @@ class AdministrativeRole(SelectList):
     )
 
     attr_value_dict = {
-        u'2.5.23.1': u'autonomousArea',
-        u'2.5.23.2': u'accessControlSpecificArea',
-        u'2.5.23.3': u'accessControlInnerArea',
-        u'2.5.23.4': u'subschemaAdminSpecificArea',
-        u'2.5.23.5': u'collectiveAttributeSpecificArea',
-        u'2.5.23.6': u'collectiveAttributeInnerArea',
+        '2.5.23.1': 'autonomousArea',
+        '2.5.23.2': 'accessControlSpecificArea',
+        '2.5.23.3': 'accessControlInnerArea',
+        '2.5.23.4': 'subschemaAdminSpecificArea',
+        '2.5.23.5': 'collectiveAttributeSpecificArea',
+        '2.5.23.6': 'collectiveAttributeInnerArea',
     }
 
 syntax_registry.reg_at(

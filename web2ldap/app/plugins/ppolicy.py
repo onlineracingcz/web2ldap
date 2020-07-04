@@ -24,9 +24,9 @@ class PwdCheckQuality(SelectList):
     oid: str = 'PwdCheckQuality-oid'
     desc: str = 'Password quality checking enforced'
     attr_value_dict = {
-        u'0': u'quality checking not be enforced',
-        u'1': u'quality checking enforced, accepting un-checkable passwords',
-        u'2': u'quality checking always enforced',
+        '0': 'quality checking not be enforced',
+        '1': 'quality checking enforced, accepting un-checkable passwords',
+        '2': 'quality checking always enforced',
     }
 
 syntax_registry.reg_at(
@@ -40,7 +40,7 @@ class PwdAttribute(SelectList):
     oid: str = 'PwdAttribute-oid'
     desc: str = 'Password attribute'
     attr_value_dict = {
-        u'2.5.4.35': u'userPassword',
+        '2.5.4.35': 'userPassword',
     }
 
     def _validate(self, attrValue: bytes) -> bool:
@@ -72,7 +72,7 @@ class PwdMaxAge(Timespan):
     oid: str = 'PwdMaxAge-oid'
     desc: str = 'pwdPolicy entry: Maximum age of user password'
     link_text = 'Search expired'
-    title_text = u'Search for entries with this password policy and expired password'
+    title_text = 'Search for entries with this password policy and expired password'
 
     @staticmethod
     def _search_timestamp(diff_secs):
@@ -99,8 +99,8 @@ class PwdMaxAge(Timespan):
             'searchform', self.link_text,
             (
                 ('dn', self._dn),
-                ('searchform_mode', u'adv'),
-                ('search_attr', u'pwdPolicySubentry'),
+                ('searchform_mode', 'adv'),
+                ('search_attr', 'pwdPolicySubentry'),
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                 ('search_string', self._dn),
             ) + ts_search_params,
@@ -119,7 +119,7 @@ class PwdExpireWarning(PwdMaxAge):
     oid: str = 'PwdExpireWarning-oid'
     desc: str = 'pwdPolicy entry: Password warning period'
     link_text = 'Search soon to expire'
-    title_text = u'Search for entries with this password policy and soon to expire password'
+    title_text = 'Search for entries with this password policy and soon to expire password'
 
     def _timespan_search_params(self):
         pwd_expire_warning = int(self.av_u.strip())
@@ -210,7 +210,7 @@ class PwdChangedTime(GeneralizedTime):
                     self._app.form.utf2display(
                         web2ldap.app.gui.ts2repr(
                             self.time_divisors,
-                            u' ',
+                            ' ',
                             abs(expired_since),
                         )
                     ),

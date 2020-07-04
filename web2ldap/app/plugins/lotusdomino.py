@@ -59,9 +59,9 @@ class CheckPassword(SelectList):
     oid: str = 'CheckPassword-oid'
     desc: str = ''
     attr_value_dict = {
-        u'0': u'Do not check password',
-        u'1': u'Check password',
-        u'2': u'ID is locked',
+        '0': 'Do not check password',
+        '1': 'Check password',
+        '2': 'ID is locked',
     }
 
 syntax_registry.reg_at(

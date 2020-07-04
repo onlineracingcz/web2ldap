@@ -90,7 +90,7 @@ class Certificate(Binary):
                 self.cert_extn_display_template.format(
                     ext_id=self._app.form.utf2display(ext_oid),
                     ext_name=asn1crypto.x509.ExtensionId._map.get(ext_oid, ext_oid),
-                    ext_crit={False:u'', True:u'critical: '}[ext['critical'].native],
+                    ext_crit={False:'', True:'critical: '}[ext['critical'].native],
                     extn_value=self._app.form.utf2display(str(ext['extn_value'].parsed)),
                 )
             )

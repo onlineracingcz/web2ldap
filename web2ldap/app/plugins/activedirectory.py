@@ -106,7 +106,7 @@ class ObjectSID(OctetString, IA5String):
 
     def formValue(self) -> str:
         if not self._av:
-            return u''
+            return ''
         return sid2sddl(self._av)
 
     def formField(self) -> str:
@@ -186,12 +186,12 @@ class OtherSID(ObjectSID):
                 'searchform', '&raquo;',
                 [
                     ('dn', self._dn),
-                    ('searchform_mode', u'adv'),
-                    ('search_attr', u'objectSid'),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'objectSid'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', sddl_str),
                 ],
-                title=u'Search by SID',
+                title='Search by SID',
             )
         return '%s %s<br>%s' % (
             self._app.form.utf2display(sddl_str),

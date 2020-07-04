@@ -191,11 +191,11 @@ class NamingContexts(DistinguishedName):
             except KeyError:
                 pass
             else:
-                config_context = u'cn=Backends,cn=config'
-                config_filter = u'(&(objectClass=ds-cfg-backend)(ds-cfg-base-dn=%s))' % (self.av_u)
+                config_context = 'cn=Backends,cn=config'
+                config_filter = '(&(objectClass=ds-cfg-backend)(ds-cfg-base-dn=%s))' % (self.av_u)
                 config_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         else:
-            config_filter = u'(&(objectClass=olcDatabaseConfig)(olcSuffix=%s))' % (self.av_u)
+            config_filter = '(&(objectClass=olcDatabaseConfig)(olcSuffix=%s))' % (self.av_u)
             config_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         if config_context and config_scope_str and config_filter:
             return self._app.anchor(
@@ -205,7 +205,7 @@ class NamingContexts(DistinguishedName):
                     ('scope', config_scope_str),
                     ('filterstr', config_filter),
                 ),
-                title=u'Search for configuration entry below %s' % (config_context),
+                title='Search for configuration entry below %s' % (config_context),
             )
         return None
 
@@ -223,12 +223,12 @@ class NamingContexts(DistinguishedName):
             except KeyError:
                 pass
             else:
-                monitor_context = u'cn=monitor'
-                monitor_filter = u'(&(objectClass=ds-backend-monitor-entry)(ds-backend-base-dn=%s))' % (self.av_u)
+                monitor_context = 'cn=monitor'
+                monitor_filter = '(&(objectClass=ds-backend-monitor-entry)(ds-backend-base-dn=%s))' % (self.av_u)
                 monitor_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         else:
-            monitor_context = u'cn=Databases,cn=Monitor'
-            monitor_filter = u'(&(objectClass=monitoredObject)(namingContexts=%s))' % (self.av_u)
+            monitor_context = 'cn=Databases,cn=Monitor'
+            monitor_filter = '(&(objectClass=monitoredObject)(namingContexts=%s))' % (self.av_u)
             monitor_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         if monitor_context and monitor_scope_str and monitor_filter:
             return self._app.anchor(
@@ -238,7 +238,7 @@ class NamingContexts(DistinguishedName):
                     ('scope', monitor_scope_str),
                     ('filterstr', monitor_filter),
                 ),
-                title=u'Search for monitoring entry below %s' % (monitor_context),
+                title='Search for monitoring entry below %s' % (monitor_context),
             )
         return None
 
@@ -249,7 +249,7 @@ class NamingContexts(DistinguishedName):
             (
                 ('dn', self.av_u),
                 ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
-                ('filterstr', u'(objectClass=*)'),
+                ('filterstr', '(objectClass=*)'),
             )
         ))
         res.append(self._app.anchor(
