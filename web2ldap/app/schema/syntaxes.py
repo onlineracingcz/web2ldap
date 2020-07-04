@@ -554,7 +554,7 @@ class DistinguishedName(DirectoryString):
                         ('dn', self._dn),
                         ('login_who', self.av_u),
                     ],
-                    title=u'Connect and bind new session as\r\n%s' % (self.av_u)
+                    title='Connect and bind new session as\r\n%s' % (self.av_u)
                 ),
             )
         # If self.ref_attrs is not empty then add links for searching back-linking entries
@@ -1948,7 +1948,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                     if self.lu_obj.attrs[0].lower() == self.lu_obj.attrs[1].lower():
                         display_text = ''
                     else:
-                        display_text = self._app.form.utf2display(attr_value_desc+u':')
+                        display_text = self._app.form.utf2display(attr_value_desc+':')
                     if commandbutton:
                         link_html = self._app.anchor(
                             'read', '&raquo;',
@@ -2107,7 +2107,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
             except (KeyError, IndexError):
                 display_text = ''
             else:
-                display_text = self._app.form.utf2display(attr_value_desc+u': ')
+                display_text = self._app.form.utf2display(attr_value_desc+': ')
         else:
             display_text = ''
         return self.desc_sep.join((
