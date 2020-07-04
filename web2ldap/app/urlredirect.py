@@ -28,22 +28,22 @@ def w2l_urlredirect(app):
             tu = urllib.parse.urlparse(app.form.query_string)
         except Exception:
             redirect_ok = False
-            error_msg = u'Rejected non-parseable redirect URL!'
+            error_msg = 'Rejected non-parseable redirect URL!'
         else:
             redirect_ok = True
             # further checks
             if not tu or not tu.scheme or not tu.netloc:
                 redirect_ok = False
-                error_msg = u'Rejected malformed/suspicious redirect URL!'
+                error_msg = 'Rejected malformed/suspicious redirect URL!'
             # Check for valid session
             if app.sid not in session_store.sessiondict:
                 redirect_ok = False
-                error_msg = u'Rejected redirect without session-ID!'
+                error_msg = 'Rejected redirect without session-ID!'
     # finally send return redirect to browser
     if redirect_ok:
         # URL redirecting has absolutely nothing to do with rest
         app.url_redirect(
-            u'Redirecting to %s...' % (app.form.query_string),
+            'Redirecting to %s...' % (app.form.query_string),
             refresh_time=0,
             target_url=app.form.query_string,
         )
