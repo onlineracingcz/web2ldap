@@ -1029,7 +1029,7 @@ class AppHandler(LogHelper):
 
         except PasswordPolicyException as err:
             # Setup what's required for executing command 'passwd'
-            self.dn = (self.ls.l.whoami_s()[3:] or err.who).decode(self.ls.charset)
+            self.dn = self.ls.l.get_whoami_dn() or err.who
             # Output the change password form
             web2ldap.app.passwd.passwd_form(
                 self,
