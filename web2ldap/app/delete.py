@@ -274,11 +274,11 @@ def del_singleentry_form(app):
 
 def del_subtree_form(app, scope):
     delete_scope_field = web2ldap.web.forms.Select(
-        'scope', u'Scope of delete operation', 1,
+        'scope', 'Scope of delete operation', 1,
         options=(
-            (str(ldap0.SCOPE_BASE), u'Only this entry'),
-            (str(ldap0.SCOPE_ONELEVEL), u'All entries below this entry (recursive)'),
-            (str(ldap0.SCOPE_SUBTREE), u'All entries including this entry (recursive)'),
+            (str(ldap0.SCOPE_BASE), 'Only this entry'),
+            (str(ldap0.SCOPE_ONELEVEL), 'All entries below this entry (recursive)'),
+            (str(ldap0.SCOPE_SUBTREE), 'All entries including this entry (recursive)'),
         ),
         default=str(scope),
     )
@@ -402,7 +402,7 @@ def w2l_delete(app):
                 form_begin=app.begin_form('delete', 'POST'),
                 inner_form=inner_form,
                 field_delete_ctrl=app.form.field['delete_ctrl'].input_html(default=delete_ctrl_oids),
-                field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
+                field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
             )
         )
         web2ldap.app.gui.footer(app)
