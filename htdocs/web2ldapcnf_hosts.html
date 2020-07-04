@@ -194,7 +194,7 @@ addform_entry_templates={
           Default (searching a user in the current naming context by
           attribute <var>uid</var>):
       </dt>
-      <dd><code>u'ldap:///_??sub?(uid={user})'</code></dd>
+      <dd><code>'ldap:///_??sub?(uid={user})'</code></dd>
       <dt>
           Example for searching a user in sub-tree <em>ou=Users</em> beneath
           current naming context by attribute <var>uid</var> or
@@ -202,7 +202,7 @@ addform_entry_templates={
       </dt>
       <dd>
         <samp>
-          <code>u'ldap:///ou=Users,_??sub?(|(uid={user})(mail={user}))'</code>
+          <code>'ldap:///ou=Users,_??sub?(|(uid={user})(mail={user}))'</code>
         </samp>
       </dd>
       <dt>
@@ -211,7 +211,7 @@ addform_entry_templates={
       </dt>
       <dd>
         <samp>
-          <code>u'ldap:///uid={user},ou=Users,_??base'</code>
+          <code>'ldap:///uid={user},ou=Users,_??base'</code>
         </samp>
       </dd>
     </dl>
@@ -242,11 +242,11 @@ addform_entry_templates={
     status area at top of the window.
     <dl>
       <dt>Default:</dt>
-      <dd><code>u''</code></dd>
+      <dd><code>''</code></dd>
       <dt>Example:</dt>
       <dd>
         <samp>
-          <code>u'My nifty LDAP server for user accounts'</code>
+          <code>'My nifty LDAP server for user accounts'</code>
         </samp>
       </dd>
     </dl>
