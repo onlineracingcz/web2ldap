@@ -9,10 +9,21 @@
 <p>Release Date: 2020-07-04</p>
 <ul>
   <li>
-    Fixed str/bytes regression when generating password self-service reset URL.
+    Regression fixes for password change:
+    <ul>
+      <li>
+        Fixed str/bytes regression when generating password self-service reset URL.
+      </li>
+      <li>
+        Fixed setting <var>shadowLastChange</var>.
+      </li>
+      <li>
+        Fixed setting <var>pwdReset</var> and <var>pwdLastSet</var>.
+      </li>
+    </ul>
   </li>
   <li>
-    Fixed regression when setting <var>shadowLastChange</var> on password change.
+    Fixed str/bytes regression when handling <var>PasswordPolicyException</var>.
   </li>
 </ul>
 
