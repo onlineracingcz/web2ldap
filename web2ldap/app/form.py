@@ -78,7 +78,7 @@ class Web2LDAPForm(Form):
         ):
         assert isinstance(value, str), \
             TypeError('Argument value must be str, was %r' % (value,))
-        value = value or u''
+        value = value or ''
         translate_map = dict(HTML_ESCAPE_MAP.items())
         translate_map.update({
             9: tab_identiation,
@@ -129,26 +129,26 @@ class Web2LDAPForm(Form):
         return [
             Input(
                 'delsid',
-                u'Old SID to be deleted',
+                'Old SID to be deleted',
                 session_store.session_id_len,
                 1,
                 session_store.session_id_re.pattern
             ),
-            Input('who', u'Bind DN/AuthcID', 1000, 1, u'.*', size=40),
-            Input('cred', u'with Password', 200, 1, u'.*', size=15),
+            Input('who', 'Bind DN/AuthcID', 1000, 1, '.*', size=40),
+            Input('cred', 'with Password', 200, 1, '.*', size=15),
             Select(
                 'login_authzid_prefix',
-                u'SASL AuthzID',
+                'SASL AuthzID',
                 1,
-                options=[(u'', u'- no prefix -'), ('u:', u'user-ID'), ('dn:', u'DN')],
+                options=[('', '- no prefix -'), ('u:', 'user-ID'), ('dn:', 'DN')],
                 default=None
             ),
-            Input('login_authzid', u'SASL AuthzID', 1000, 1, u'.*', size=20),
-            Input('login_realm', u'SASL Realm', 1000, 1, u'.*', size=20),
-            AuthMechSelect('login_mech', u'Authentication mechanism'),
-            Input('ldapurl', u'LDAP Url', 1024, 1, '[ ]*ldap(|i|s)://.*', size=30),
+            Input('login_authzid', 'SASL AuthzID', 1000, 1, '.*', size=20),
+            Input('login_realm', 'SASL Realm', 1000, 1, '.*', size=20),
+            AuthMechSelect('login_mech', 'Authentication mechanism'),
+            Input('ldapurl', 'LDAP Url', 1024, 1, '[ ]*ldap(|i|s)://.*', size=30),
             Input(
-                'host', u'Host:Port',
+                'host', 'Host:Port',
                 255, 1,
                 '(%s|[a-zA-Z0-9/._-]+)' % web2ldap.app.gui.host_pattern,
                 size=30,
@@ -163,12 +163,12 @@ class Web2LDAPForm(Form):
             Select(
                 'conntype', 'Connection type', 1,
                 options=[
-                    (u'0', u'LDAP clear-text connection'),
-                    (u'1', u'LDAP with StartTLS ext.op.'),
-                    (u'2', u'LDAP over separate SSL port (LDAPS)'),
-                    (u'3', u'LDAP over Unix domain socket (LDAPI)')
+                    ('0', 'LDAP clear-text connection'),
+                    ('1', 'LDAP with StartTLS ext.op.'),
+                    ('2', 'LDAP over separate SSL port (LDAPS)'),
+                    ('3', 'LDAP over Unix domain socket (LDAPI)')
                 ],
-                default=u'0',
+                default='0',
             )
         ]
 
@@ -231,14 +231,14 @@ class Web2LDAPForm(Form):
             for val in f.value:
                 if not isinstance(val, str):
                     val = self.uc_decode(val)[0]
-                result.append(self.hiddenFieldHTML(f.name, val, u''))
+                result.append(self.hiddenFieldHTML(f.name, val, ''))
         return '\n'.join(result) # hiddenInputFieldString()
 
 
 class SearchAttrs(Input):
 
-    def __init__(self, name='search_attrs', text=u'Attributes to be read'):
-        Input.__init__(self, name, text, 1000, 1, u'[@*+0-9.\\w,_;-]+')
+    def __init__(self, name='search_attrs', text='Attributes to be read'):
+        Input.__init__(self, name, text, 1000, 1, '[@*+0-9.\\w,_;-]+')
 
     def set_value(self, value):
         value = ','.join(
@@ -257,21 +257,21 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
         res = Web2LDAPForm.fields(self)
         res.extend([
             Input(
-                'search_submit', u'Search form submit button',
+                'search_submit', 'Search form submit button',
                 6, 1,
                 '(Search|[+-][0-9]+)',
             ),
             Select(
                 'searchform_mode',
-                u'Search form mode',
+                'Search form mode',
                 1,
-                options=[(u'base', u'Base'), (u'adv', u'Advanced'), (u'exp', u'Expert')],
-                default=u'base',
+                options=[('base', 'Base'), ('adv', 'Advanced'), ('exp', 'Expert')],
+                default='base',
             ),
             DistinguishedNameInput('search_root', 'Search root'),
             Input(
                 'filterstr',
-                u'Search filter string',
+                'Search filter string',
                 1200,
                 1,
                 '.*',
@@ -279,63 +279,63 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
             ),
             Input(
                 'searchform_template',
-                u'Search form template name',
+                'Search form template name',
                 60,
                 web2ldapcnf.max_searchparams,
-                u'[a-zA-Z0-9. ()_-]+',
+                '[a-zA-Z0-9. ()_-]+',
             ),
             Select(
-                'search_resnumber', u'Number of results to display', 1,
+                'search_resnumber', 'Number of results to display', 1,
                 options=[
-                    (u'0', u'unlimited'), (u'10', u'10'), (u'20', u'20'),
-                    (u'50', u'50'), (u'100', u'100'), (u'200', u'200'),
+                    ('0', 'unlimited'), ('10', '10'), ('20', '20'),
+                    ('50', '50'), ('100', '100'), ('200', '200'),
                 ],
-                default=u'10'
+                default='10'
             ),
             Select(
-                'search_lastmod', u'Interval of last creation/modification', 1,
+                'search_lastmod', 'Interval of last creation/modification', 1,
                 options=[
-                    (u'-1', u'-'),
-                    (u'10', u'10 sec.'),
-                    (u'60', u'1 min.'),
-                    (u'600', u'10 min.'),
-                    (u'3600', u'1 hour'),
-                    (u'14400', u'4 hours'),
-                    (u'43200', u'12 hours'),
-                    (u'86400', u'24 hours'),
-                    (u'172800', u'2 days'),
-                    (u'604800', u'1 week'),
-                    (u'2419200', u'4 weeks'),
-                    (u'6048000', u'10 weeks'),
-                    (u'31536000', u'1 year'),
+                    ('-1', '-'),
+                    ('10', '10 sec.'),
+                    ('60', '1 min.'),
+                    ('600', '10 min.'),
+                    ('3600', '1 hour'),
+                    ('14400', '4 hours'),
+                    ('43200', '12 hours'),
+                    ('86400', '24 hours'),
+                    ('172800', '2 days'),
+                    ('604800', '1 week'),
+                    ('2419200', '4 weeks'),
+                    ('6048000', '10 weeks'),
+                    ('31536000', '1 year'),
                 ],
-                default=u'-1'
+                default='-1'
             ),
-            InclOpAttrsCheckbox(default=u'yes', checked=False),
-            Select('search_mode', u'Search Mode', 1, options=[u'(&%s)', u'(|%s)']),
+            InclOpAttrsCheckbox(default='yes', checked=False),
+            Select('search_mode', 'Search Mode', 1, options=['(&%s)', '(|%s)']),
             Input(
                 'search_attr',
-                u'Attribute(s) to be searched',
+                'Attribute(s) to be searched',
                 100,
                 web2ldapcnf.max_searchparams,
-                u'[\\w,_;-]+',
+                '[\\w,_;-]+',
             ),
             Input(
-                'search_mr', u'Matching Rule',
+                'search_mr', 'Matching Rule',
                 100,
                 web2ldapcnf.max_searchparams,
-                u'[\\w,_;-]+',
+                '[\\w,_;-]+',
             ),
             Select(
-                'search_option', u'Search option',
+                'search_option', 'Search option',
                 web2ldapcnf.max_searchparams,
                 options=web2ldap.app.searchform.search_options,
             ),
             Input(
-                'search_string', u'Search string',
+                'search_string', 'Search string',
                 600,
                 web2ldapcnf.max_searchparams,
-                u'.*',
+                '.*',
                 size=60,
             ),
             SearchAttrs(),
@@ -352,15 +352,15 @@ class Web2LDAPForm_search(Web2LDAPForm_searchform):
         res.extend([
             Input(
                 'search_resminindex',
-                u'Minimum index of search results',
+                'Minimum index of search results',
                 10, 1,
-                u'[0-9]+',
+                '[0-9]+',
             ),
             Input(
                 'search_resnumber',
-                u'Number of results to display',
+                'Number of results to display',
                 3, 1,
-                u'[0-9]+',
+                '[0-9]+',
             ),
         ])
         return res
@@ -374,10 +374,10 @@ class Web2LDAPForm_conninfo(Web2LDAPForm):
         res.append(
             Select(
                 'conninfo_flushcaches',
-                u'Flush caches',
+                'Flush caches',
                 1,
-                options=(u'0', u'1'),
-                default=u'0',
+                options=('0', '1'),
+                default='0',
             )
         )
         return res
@@ -391,33 +391,33 @@ class Web2LDAPForm_params(Web2LDAPForm):
         res.extend([
             Select(
                 'params_all_controls',
-                u'List all controls',
+                'List all controls',
                 1,
-                options=(u'0', u'1'),
-                default=u'0',
+                options=('0', '1'),
+                default='0',
             ),
             Input(
                 'params_enable_control',
-                u'Enable LDAPv3 Boolean Control',
+                'Enable LDAPv3 Boolean Control',
                 50, 1,
-                u'([0-9]+.)*[0-9]+',
+                '([0-9]+.)*[0-9]+',
             ),
             Input(
                 'params_disable_control',
-                u'Disable LDAPv3 Boolean Control',
+                'Disable LDAPv3 Boolean Control',
                 50, 1,
-                u'([0-9]+.)*[0-9]+',
+                '([0-9]+.)*[0-9]+',
             ),
             Select(
                 'ldap_deref',
-                u'Dereference aliases',
+                'Dereference aliases',
                 maxValues=1,
                 default=str(ldap0.DEREF_NEVER),
                 options=[
-                    (str(ldap0.DEREF_NEVER), u'never'),
-                    (str(ldap0.DEREF_SEARCHING), u'searching'),
-                    (str(ldap0.DEREF_FINDING), u'finding'),
-                    (str(ldap0.DEREF_ALWAYS), u'always'),
+                    (str(ldap0.DEREF_NEVER), 'never'),
+                    (str(ldap0.DEREF_SEARCHING), 'searching'),
+                    (str(ldap0.DEREF_FINDING), 'finding'),
+                    (str(ldap0.DEREF_ALWAYS), 'always'),
                 ]
             ),
         ])
@@ -430,41 +430,41 @@ class Web2LDAPForm_input(Web2LDAPForm):
     def fields(self):
         res = Web2LDAPForm.fields(self)
         res.extend([
-            Input('in_oc', u'Object classes', 60, 40, u'[a-zA-Z0-9.-]+'),
+            Input('in_oc', 'Object classes', 60, 40, '[a-zA-Z0-9.-]+'),
             Select(
-                'in_ft', u'Type of input form',
+                'in_ft', 'Type of input form',
                 1,
-                options=(u'Template', u'Table', u'LDIF', u'OC'),
-                default=u'Template',
+                options=('Template', 'Table', 'LDIF', 'OC'),
+                default='Template',
             ),
             Input(
                 'in_mr',
-                u'Add/del row',
+                'Add/del row',
                 8, 1,
                 '(Template|Table|LDIF|[+-][0-9]+)',
             ),
             Select(
-                'in_oft', u'Type of input form',
+                'in_oft', 'Type of input form',
                 1,
-                options=(u'Template', u'Table', u'LDIF'),
-                default=u'Template',
+                options=('Template', 'Table', 'LDIF'),
+                default='Template',
             ),
-            AttributeType('in_at', u'Attribute type', web2ldapcnf.input_maxattrs),
-            AttributeType('in_avi', u'Value index', web2ldapcnf.input_maxattrs),
+            AttributeType('in_at', 'Attribute type', web2ldapcnf.input_maxattrs),
+            AttributeType('in_avi', 'Value index', web2ldapcnf.input_maxattrs),
             BytesInput(
-                'in_av', u'Attribute Value',
+                'in_av', 'Attribute Value',
                 web2ldapcnf.input_maxfieldlen,
                 web2ldapcnf.input_maxattrs,
                 None
             ),
-            LDIFTextArea('in_ldif', u'LDIF data'),
+            LDIFTextArea('in_ldif', 'LDIF data'),
             Select(
-                'in_ocf', u'Object class form mode', 1,
+                'in_ocf', 'Object class form mode', 1,
                 options=[
-                    (u'tmpl', u'LDIF templates'),
-                    (u'exp', u'Object class selection')
+                    ('tmpl', 'LDIF templates'),
+                    ('exp', 'Object class selection')
                 ],
-                default=u'tmpl',
+                default='tmpl',
             ),
         ])
         return res
@@ -476,15 +476,15 @@ class Web2LDAPForm_add(Web2LDAPForm_input):
     def fields(self):
         res = Web2LDAPForm_input.fields(self)
         res.extend([
-            Input('add_rdn', u'RDN of new entry', 255, 1, u'.*', size=50),
-            DistinguishedNameInput('add_clonedn', u'DN of template entry'),
+            Input('add_rdn', 'RDN of new entry', 255, 1, '.*', size=50),
+            DistinguishedNameInput('add_clonedn', 'DN of template entry'),
             Input(
-                'add_template', u'LDIF template name',
+                'add_template', 'LDIF template name',
                 60,
                 web2ldapcnf.max_searchparams,
-                u'.+',
+                '.+',
             ),
-            Input('add_basedn', u'Base DN of new entry', 1024, 1, u'.*', size=50),
+            Input('add_basedn', 'Base DN of new entry', 1024, 1, '.*', size=50),
         ])
         return res
 
@@ -497,17 +497,17 @@ class Web2LDAPForm_modify(Web2LDAPForm_input):
         res.extend([
             AttributeType(
                 'in_oldattrtypes',
-                u'Old attribute types',
+                'Old attribute types',
                 web2ldapcnf.input_maxattrs,
             ),
             AttributeType(
                 'in_wrtattroids',
-                u'Writeable attribute types',
+                'Writeable attribute types',
                 web2ldapcnf.input_maxattrs,
             ),
             Input(
                 'in_assertion',
-                u'Assertion filter string',
+                'Assertion filter string',
                 2000,
                 1,
                 '.*',
@@ -525,22 +525,22 @@ class Web2LDAPForm_dds(Web2LDAPForm):
         res.extend([
             Input(
                 'dds_renewttlnum',
-                u'Request TTL number',
+                'Request TTL number',
                 12, 1,
                 '[0-9]+',
                 default=None,
             ),
             Select(
                 'dds_renewttlfac',
-                u'Request TTL factor',
+                'Request TTL factor',
                 1,
                 options=(
-                    (u'1', u'seconds'),
-                    (u'60', u'minutes'),
-                    (u'3600', u'hours'),
-                    (u'86400', u'days'),
+                    ('1', 'seconds'),
+                    ('60', 'minutes'),
+                    ('3600', 'hours'),
+                    ('86400', 'days'),
                 ),
-                default=u'1'
+                default='1'
             ),
         ])
         return res
@@ -563,13 +563,13 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
         res.extend([
             Input(
                 'bulkmod_submit',
-                u'Search form submit button',
+                'Search form submit button',
                 6, 1,
-                u'(Next>>|<<Back|Apply|Cancel|[+-][0-9]+)',
+                '(Next>>|<<Back|Apply|Cancel|[+-][0-9]+)',
             ),
             Select(
                 'bulkmod_ctrl',
-                u'Extended controls',
+                'Extended controls',
                 len(bulkmod_ctrl_options),
                 options=bulkmod_ctrl_options,
                 default=None,
@@ -578,39 +578,39 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
             ),
             Input(
                 'filterstr',
-                u'Search filter string for searching entries to be deleted',
+                'Search filter string for searching entries to be deleted',
                 1200, 1,
                 '.*',
             ),
             Input(
                 'bulkmod_modrow',
-                u'Add/del row',
+                'Add/del row',
                 8, 1,
                 '(Template|Table|LDIF|[+-][0-9]+)',
             ),
-            AttributeType('bulkmod_at', u'Attribute type', web2ldapcnf.input_maxattrs),
+            AttributeType('bulkmod_at', 'Attribute type', web2ldapcnf.input_maxattrs),
             Select(
                 'bulkmod_op',
-                u'Modification type',
+                'Modification type',
                 web2ldapcnf.input_maxattrs,
                 options=(
-                    (u'', u''),
-                    (str(ldap0.MOD_ADD), u'add'),
-                    (str(ldap0.MOD_DELETE), u'delete'),
-                    (str(ldap0.MOD_REPLACE), u'replace'),
-                    (str(ldap0.MOD_INCREMENT), u'increment'),
+                    ('', ''),
+                    (str(ldap0.MOD_ADD), 'add'),
+                    (str(ldap0.MOD_DELETE), 'delete'),
+                    (str(ldap0.MOD_REPLACE), 'replace'),
+                    (str(ldap0.MOD_INCREMENT), 'increment'),
                 ),
                 default=None,
             ),
             BytesInput(
-                'bulkmod_av', u'Attribute Value',
+                'bulkmod_av', 'Attribute Value',
                 web2ldapcnf.input_maxfieldlen,
                 web2ldapcnf.input_maxattrs,
                 None,
                 size=30,
             ),
-            DistinguishedNameInput('bulkmod_newsuperior', u'New superior DN'),
-            Checkbox('bulkmod_cp', u'Copy entries', 1, default=u'yes', checked=False),
+            DistinguishedNameInput('bulkmod_newsuperior', 'New superior DN'),
+            Checkbox('bulkmod_cp', 'Copy entries', 1, default='yes', checked=False),
         ])
         return res
 
@@ -629,17 +629,17 @@ class Web2LDAPForm_delete(Web2LDAPForm):
                 or 'delete' in control_spec[0]
             )
         ]
-        delete_ctrl_options.append((web2ldap.ldapsession.CONTROL_TREEDELETE, u'Tree Deletion'))
+        delete_ctrl_options.append((web2ldap.ldapsession.CONTROL_TREEDELETE, 'Tree Deletion'))
         res.extend([
             Select(
-                'delete_confirm', u'Confirmation',
+                'delete_confirm', 'Confirmation',
                 1,
                 options=('yes', 'no'),
-                default=u'no',
+                default='no',
             ),
             Select(
                 'delete_ctrl',
-                u'Extended controls',
+                'Extended controls',
                 len(delete_ctrl_options),
                 options=delete_ctrl_options,
                 default=None,
@@ -648,11 +648,11 @@ class Web2LDAPForm_delete(Web2LDAPForm):
             ),
             Input(
                 'filterstr',
-                u'Search filter string for searching entries to be deleted',
+                'Search filter string for searching entries to be deleted',
                 1200, 1,
                 '.*',
             ),
-            Input('delete_attr', u'Attribute to be deleted', 255, 100, u'[\\w_;-]+'),
+            Input('delete_attr', 'Attribute to be deleted', 255, 100, '[\\w_;-]+'),
         ])
         return res
 
@@ -665,26 +665,26 @@ class Web2LDAPForm_rename(Web2LDAPForm):
         res.extend([
             Input(
                 'rename_newrdn',
-                u'New RDN',
+                'New RDN',
                 255, 1,
                 web2ldap.ldaputil.rdn_pattern,
                 size=50,
             ),
-            DistinguishedNameInput('rename_newsuperior', u'New superior DN'),
-            Checkbox('rename_delold', u'Delete old', 1, default=u'yes', checked=True),
+            DistinguishedNameInput('rename_newsuperior', 'New superior DN'),
+            Checkbox('rename_delold', 'Delete old', 1, default='yes', checked=True),
             Input(
                 'rename_newsupfilter',
-                u'Filter string for searching new superior entry', 300, 1, '.*',
-                default=u'(|(objectClass=organization)(objectClass=organizationalUnit))',
+                'Filter string for searching new superior entry', 300, 1, '.*',
+                default='(|(objectClass=organization)(objectClass=organizationalUnit))',
                 size=50,
             ),
             DistinguishedNameInput(
                 'rename_searchroot',
-                u'Search root under which to look for new superior entry.',
+                'Search root under which to look for new superior entry.',
             ),
             Input(
                 'rename_supsearchurl',
-                u'LDAP URL for searching new superior entry',
+                'LDAP URL for searching new superior entry',
                 100, 1,
                 '.*',
                 size=30,
@@ -699,12 +699,12 @@ class Web2LDAPForm_passwd(Web2LDAPForm):
         (
             'passwdextop',
             'Server-side',
-            u'Password modify extended operation',
+            'Password modify extended operation',
         ),
         (
             'setuserpassword',
             'Modify password attribute',
-            u'Set the password attribute with modify operation'
+            'Set the password attribute with modify operation'
         ),
     )
 
@@ -715,45 +715,45 @@ class Web2LDAPForm_passwd(Web2LDAPForm):
         """
         return [
             Select(
-                'passwd_action', u'Password action', 1,
+                'passwd_action', 'Password action', 1,
                 options=[
                     (action, short_desc)
                     for action, short_desc, _ in Web2LDAPForm_passwd.passwd_actions
                 ],
-                default=u'setuserpassword'
+                default='setuserpassword'
             ),
-            DistinguishedNameInput('passwd_who', u'Password DN'),
-            Field('passwd_oldpasswd', u'Old password', 100, 1, '.*'),
-            Field('passwd_newpasswd', u'New password', 100, 2, '.*'),
+            DistinguishedNameInput('passwd_who', 'Password DN'),
+            Field('passwd_oldpasswd', 'Old password', 100, 1, '.*'),
+            Field('passwd_newpasswd', 'New password', 100, 2, '.*'),
             Select(
-                'passwd_scheme', u'Password hash scheme', 1,
+                'passwd_scheme', 'Password hash scheme', 1,
                 options=web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items(),
                 default=None,
             ),
             Checkbox(
                 'passwd_ntpasswordsync',
-                u'Sync ntPassword for Samba',
+                'Sync ntPassword for Samba',
                 1,
-                default=u'yes',
+                default='yes',
                 checked=True,
             ),
             Checkbox(
                 'passwd_settimesync',
-                u'Sync password setting times',
+                'Sync password setting times',
                 1,
-                default=u'yes',
+                default='yes',
                 checked=True,
             ),
             Checkbox(
                 'passwd_forcechange',
-                u'Force password change',
+                'Force password change',
                 1,
-                default=u'yes',
+                default='yes',
                 checked=False,
             ),
             Checkbox(
                 'passwd_inform',
-                u'Password change inform action',
+                'Password change inform action',
                 1,
                 default="display_url",
                 checked=False,
@@ -774,27 +774,27 @@ class Web2LDAPForm_read(Web2LDAPForm):
         res.extend([
             Input(
                 'filterstr',
-                u'Search filter string when reading single entry',
+                'Search filter string when reading single entry',
                 1200, 1,
                 '.*',
             ),
             Select(
-                'read_nocache', u'Force fresh read',
+                'read_nocache', 'Force fresh read',
                 1,
-                options=[u'0', u'1'],
-                default=u'0',
+                options=['0', '1'],
+                default='0',
             ),
-            Input('read_attr', u'Read attribute', 255, 100, u'[\\w_;-]+'),
-            Input('read_attrindex', u'Read attribute', 255, 1, u'[0-9]+'),
-            Input('read_attrmimetype', u'MIME type', 255, 1, u'[\\w.-]+/[\\w.-]+'),
+            Input('read_attr', 'Read attribute', 255, 100, '[\\w_;-]+'),
+            Input('read_attrindex', 'Read attribute', 255, 1, '[0-9]+'),
+            Input('read_attrmimetype', 'MIME type', 255, 1, '[\\w.-]+/[\\w.-]+'),
             Select(
-                'read_output', u'Read output format',
+                'read_output', 'Read output format',
                 1,
-                options=(u'table', u'vcard', u'template'),
-                default=u'template',
+                options=('table', 'vcard', 'template'),
+                default='template',
             ),
             SearchAttrs(),
-            Input('read_expandattr', u'Attributes to be read', 1000, 50, u'[*+\\w,_;-]+'),
+            Input('read_expandattr', 'Attributes to be read', 1000, 50, '[*+\\w,_;-]+'),
         ])
         return res
 
@@ -805,20 +805,20 @@ class Web2LDAPForm_groupadm(Web2LDAPForm):
     def fields(self):
         res = Web2LDAPForm.fields(self)
         res.extend([
-            DistinguishedNameInput('groupadm_searchroot', u'Group search root'),
-            Input('groupadm_name', u'Group name', 100, 1, u'.*', size=30),
-            DistinguishedNameInput('groupadm_add', u'Add to group', 300),
-            DistinguishedNameInput('groupadm_remove', u'Remove from group', 300),
+            DistinguishedNameInput('groupadm_searchroot', 'Group search root'),
+            Input('groupadm_name', 'Group name', 100, 1, '.*', size=30),
+            DistinguishedNameInput('groupadm_add', 'Add to group', 300),
+            DistinguishedNameInput('groupadm_remove', 'Remove from group', 300),
             Select(
                 'groupadm_view',
-                u'Group list view',
+                'Group list view',
                 1,
                 options=(
                     ('0', 'none of the'),
                     ('1', 'only member'),
                     ('2', 'all'),
                 ),
-                default=u'1',
+                default='1',
             ),
         ])
         return res
@@ -830,7 +830,7 @@ class Web2LDAPForm_login(Web2LDAPForm):
     def fields(self):
         res = Web2LDAPForm.fields(self)
         res.append(
-            DistinguishedNameInput('login_who', u'Bind DN')
+            DistinguishedNameInput('login_who', 'Bind DN')
         )
         return res
 
@@ -841,7 +841,7 @@ class Web2LDAPForm_locate(Web2LDAPForm):
     def fields(self):
         res = Web2LDAPForm.fields(self)
         res.append(
-            Input('locate_name', u'Location name', 500, 1, u'.*', size=25)
+            Input('locate_name', 'Location name', 500, 1, '.*', size=25)
         )
         return res
 
@@ -852,13 +852,13 @@ class Web2LDAPForm_oid(Web2LDAPForm):
     def fields(self):
         res = Web2LDAPForm.fields(self)
         res.extend([
-            OIDInput('oid', u'OID'),
+            OIDInput('oid', 'OID'),
             Select(
                 'oid_class',
-                u'Schema element class',
+                'Schema element class',
                 1,
                 options=ldap0.schema.SCHEMA_ATTRS,
-                default=u'',
+                default='',
             ),
         ])
         return res
@@ -871,7 +871,7 @@ class Web2LDAPForm_dit(Web2LDAPForm):
 class DistinguishedNameInput(Input):
     """Input field class for LDAP DNs."""
 
-    def __init__(self, name='dn', text='DN', maxValues=1, required=False, default=u''):
+    def __init__(self, name='dn', text='DN', maxValues=1, required=False, default=''):
         Input.__init__(
             self, name, text, 1024, maxValues, None,
             size=70, required=required, default=default
@@ -925,7 +925,7 @@ class OIDInput(Input):
     def __init__(self, name, text, default=None):
         Input.__init__(
             self, name, text,
-            512, 1, u'[a-zA-Z0-9_.;*-]+',
+            512, 1, '[a-zA-Z0-9_.;*-]+',
             default=default,
             required=False,
             size=30,
@@ -967,7 +967,7 @@ class ObjectClassSelect(Select):
             ignoreCase=1,
             multiSelect=1
         )
-        self.setRegex(u'[\\w]+')
+        self.setRegex('[\\w]+')
         self.maxLen = 200
         # end of ObjectClassSelect()
 
@@ -977,22 +977,22 @@ class ExportFormatSelect(Select):
 
     def __init__(
             self,
-            default=u'ldif1',
+            default='ldif1',
             required=False,
         ):
         Select.__init__(
             self,
             'search_output',
-            u'Export format',
+            'Export format',
             1,
             options=(
-                (u'table', u'Table/template'),
-                (u'raw', u'Raw DN list'),
-                (u'print', u'Printable'),
-                (u'ldif', u'LDIF (Umich)'),
-                (u'ldif1', u'LDIFv1 (RFC2849)'),
-                (u'csv', u'CSV'),
-                (u'excel', u'Excel'),
+                ('table', 'Table/template'),
+                ('raw', 'Raw DN list'),
+                ('print', 'Printable'),
+                ('ldif', 'LDIF (Umich)'),
+                ('ldif1', 'LDIFv1 (RFC2849)'),
+                ('csv', 'CSV'),
+                ('excel', 'Excel'),
             ),
             default=default,
             required=required,
@@ -1019,11 +1019,11 @@ class AttributeType(Input):
 
 class InclOpAttrsCheckbox(Checkbox):
 
-    def __init__(self, default=u'yes', checked=False):
+    def __init__(self, default='yes', checked=False):
         Checkbox.__init__(
             self,
             'search_opattrs',
-            u'Request operational attributes',
+            'Request operational attributes',
             1,
             default=default,
             checked=checked
@@ -1034,23 +1034,23 @@ class AuthMechSelect(Select):
     """Select field class for choosing the bind mech"""
 
     supported_bind_mechs = {
-        u'': u'Simple Bind',
-        u'DIGEST-MD5': u'SASL Bind: DIGEST-MD5',
-        u'CRAM-MD5': u'SASL Bind: CRAM-MD5',
-        u'PLAIN': u'SASL Bind: PLAIN',
-        u'LOGIN': u'SASL Bind: LOGIN',
-        u'GSSAPI': u'SASL Bind: GSSAPI',
-        u'EXTERNAL': u'SASL Bind: EXTERNAL',
-        u'OTP': u'SASL Bind: OTP',
-        u'NTLM': u'SASL Bind: NTLM',
-        u'SCRAM-SHA-1': u'SASL Bind: SCRAM-SHA-1',
-        u'SCRAM-SHA-256': u'SASL Bind: SCRAM-SHA-256',
+        '': 'Simple Bind',
+        'DIGEST-MD5': 'SASL Bind: DIGEST-MD5',
+        'CRAM-MD5': 'SASL Bind: CRAM-MD5',
+        'PLAIN': 'SASL Bind: PLAIN',
+        'LOGIN': 'SASL Bind: LOGIN',
+        'GSSAPI': 'SASL Bind: GSSAPI',
+        'EXTERNAL': 'SASL Bind: EXTERNAL',
+        'OTP': 'SASL Bind: OTP',
+        'NTLM': 'SASL Bind: NTLM',
+        'SCRAM-SHA-1': 'SASL Bind: SCRAM-SHA-1',
+        'SCRAM-SHA-256': 'SASL Bind: SCRAM-SHA-256',
     }
 
     def __init__(
             self,
             name='login_mech',
-            text=u'Authentication mechanism',
+            text='Authentication mechanism',
             default=None,
             required=False,
             accesskey='',
@@ -1070,7 +1070,7 @@ class AuthMechSelect(Select):
 
     def setOptions(self, options):
         options_dict = {}
-        options_dict[u''] = self.supported_bind_mechs[u'']
+        options_dict[''] = self.supported_bind_mechs['']
         for o in options or self.supported_bind_mechs.keys():
             o_upper = o.upper()
             if o_upper in self.supported_bind_mechs:
