@@ -310,10 +310,10 @@ def w2l_passwd(app):
     if passwd_forcechange:
         # draft-behera-password-policy
         if '1.3.6.1.4.1.42.2.27.8.1.22' in app.schema.sed[AttributeType]:
-            passwd_modlist.append((ldap0.MOD_REPLACE, b'pwdReset', 'TRUE'))
+            passwd_modlist.append((ldap0.MOD_REPLACE, b'pwdReset', b'TRUE'))
         # MS AD
         elif '1.2.840.113556.1.4.96' in app.schema.sed[AttributeType]:
-            passwd_modlist.append((ldap0.MOD_REPLACE, b'pwdLastSet', '0'))
+            passwd_modlist.append((ldap0.MOD_REPLACE, b'pwdLastSet', b'0'))
 
     if passwd_action == 'passwdextop':
 
@@ -425,7 +425,7 @@ def w2l_passwd(app):
                 (
                     ldap0.MOD_REPLACE,
                     b'shadowLastChange',
-                    str(int(pwd_change_timestamp/86400)).encode(app.ls.charset),
+                    [str(int(pwd_change_timestamp/86400)).encode(app.ls.charset)],
                 )
             )
 
@@ -462,6 +462,7 @@ def w2l_passwd(app):
 
         # Modify password
         try:
+            print('passwd_modlist', repr(passwd_modlist))
             app.ls.modify(passwd_who, passwd_modlist)
         except (
                 ldap0.CONSTRAINT_VIOLATION,
