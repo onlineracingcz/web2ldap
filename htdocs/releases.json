@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.94",
+         "state": "stable",
+         "scope": "minor fix",
+         "changes": "Fixed regressions in password change handling.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.94.tar.gz",
+         "published": "2020-07-04T18:30:00+00:00"
+      },
+      {
          "version": "1.5.93",
          "state": "stable",
          "scope": "minor feature",
