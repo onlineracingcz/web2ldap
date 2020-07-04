@@ -1050,7 +1050,7 @@ class AEEntryDNAEZone(DistinguishedName):
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_DN_SUBTREE),
                     ('search_string', self.av_u),
                 ),
-                title=u'Search all audit log entries for sub-tree %s' % (self.av_u),
+                title='Search all audit log entries for sub-tree %s' % (self.av_u),
             ))
             res.append(self._app.anchor(
                 'search', 'Audit writes',
@@ -1064,7 +1064,7 @@ class AEEntryDNAEZone(DistinguishedName):
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_DN_SUBTREE),
                     ('search_string', self.av_u),
                 ),
-                title=u'Search audit log entries for write operation within sub-tree %s' % (
+                title='Search audit log entries for write operation within sub-tree %s' % (
                     self.av_u
                 ),
             ))
@@ -1142,7 +1142,7 @@ class AEEntryDNAEGroup(GroupEntryDN):
                 ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                 ('search_string', '%'+self._entry['cn'][0].decode(self._app.ls.charset)),
             ),
-            title=u'Search for SUDO rules\napplicable with this user group',
+            title='Search for SUDO rules\napplicable with this user group',
         ))
         return res
 
@@ -1186,7 +1186,7 @@ class AEEntryDNAESrvGroup(DistinguishedName):
                         ).format(self.av_u)
                     ),
                 ),
-                title=u'Search all service and host entries which are member in this service/host group {0}'.format(self.av_u),
+                title='Search all service and host entries which are member in this service/host group {0}'.format(self.av_u),
             )
         )
         return res
@@ -1854,7 +1854,7 @@ class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
             zone_cn = self._get_zone_name()
             result = (
                 zone_cn and
-                (zone_cn == 'pub' or attrValue.decode(self._app.ls.charset).startswith(zone_cn+u'-'))
+                (zone_cn == 'pub' or attrValue.decode(self._app.ls.charset).startswith(zone_cn+'-'))
             )
         return result
 
@@ -1863,10 +1863,10 @@ class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
         zone_cn = self._get_zone_name()
         if zone_cn:
             if not self._av:
-                result = zone_cn+u'-'
+                result = zone_cn+'-'
             elif self._av_u in self.special_names:
                 result = '-'.join((zone_cn, self.av_u))
-        return result # formValue()
+        return result
 
 
 class AECommonNameAEGroup(AEZonePrefixCommonName):
@@ -1912,7 +1912,7 @@ class AECommonNameAETag(AEZonePrefixCommonName):
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
                 ),
-                title=u'Search all entries tagged with this tag',
+                title='Search all entries tagged with this tag',
             )
         else:
             search_anchor = ''
