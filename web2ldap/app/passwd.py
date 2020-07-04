@@ -98,11 +98,11 @@ def passwd_context_menu(app):
         ('delete_attr', attr_type)
         for attr_type in (
             # Samba-Passwortattribute
-            u'sambaBadPasswordCount', u'sambaBadPasswordTime',
+            'sambaBadPasswordCount', 'sambaBadPasswordTime',
             # draft-behera-ldap-password-policy
-            u'pwdAccountLockedTime', u'pwdFailureTime',
+            'pwdAccountLockedTime', 'pwdFailureTime',
             # SunONE/Netscape/Fedora/389 Directory Server
-            u'passwordRetryCount', u'accountUnlockTime',
+            'passwordRetryCount', 'accountUnlockTime',
         )
         if app.schema.get_obj(AttributeType, attr_type, None) is not None
     ])
@@ -110,7 +110,7 @@ def passwd_context_menu(app):
         app.anchor(
             'delete', 'Unlock',
             delete_param_list,
-            title=u'Unlock locked out entry',
+            title='Unlock locked out entry',
         )
     )
     # Menu entry for deleting all password-related attrs
@@ -139,7 +139,7 @@ def passwd_context_menu(app):
         app.anchor(
             'delete', 'Unset',
             delete_param_list,
-            title=u'Delete password related attributes',
+            title='Delete password related attributes',
         )
     )
     return result
@@ -199,7 +199,7 @@ def passwd_form(
     passwd_template_str = web2ldap.app.gui.read_template(
         app,
         'passwd_template',
-        u'password form',
+        'password form',
     )
 
     web2ldap.app.gui.top_section(
@@ -214,9 +214,9 @@ def passwd_form(
         text_heading=heading,
         text_msg=error_msg or app.form.utf2display(PASSWD_ACTIONS_DICT[passwd_action][1]),
         form_begin=app.begin_form('passwd', 'POST'),
-        value_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
-        value_passwd_action=app.form.hiddenFieldHTML('passwd_action', passwd_action, u''),
-        value_passwd_who=app.form.hiddenFieldHTML('passwd_who', passwd_who, u''),
+        value_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
+        value_passwd_action=app.form.hiddenFieldHTML('passwd_action', passwd_action, ''),
+        value_passwd_who=app.form.hiddenFieldHTML('passwd_who', passwd_who, ''),
         text_desc={False:'Change password for', True:'Change own password of'}[own_pwd_change],
         text_whoami=web2ldap.app.gui.display_authz_dn(app, passwd_who),
         disable_oldpw_start={False:'', True:'<!--'}[not own_pwd_change],
@@ -247,9 +247,9 @@ def w2l_passwd(app):
     # server's visible configuration
     if PassmodRequest.requestName in app.ls.supportedExtension:
         # Password Modify extended operation seems to be announced in rootDSE
-        passwd_action_default = u'passwdextop'
+        passwd_action_default = 'passwdextop'
     else:
-        passwd_action_default = u'setuserpassword'
+        passwd_action_default = 'setuserpassword'
 
     passwd_action = app.form.getInputValue('passwd_action', [None])[0] or passwd_action_default
     passwd_who = app.form.getInputValue('passwd_who', [app.dn])[0]
@@ -278,7 +278,7 @@ def w2l_passwd(app):
     #----------------------------------------------
 
     if len(app.form.field['passwd_newpasswd'].value) != 2:
-        raise web2ldap.app.core.ErrorExit(u'Repeat password!')
+        raise web2ldap.app.core.ErrorExit('Repeat password!')
 
     if app.form.field['passwd_newpasswd'].value[0] != app.form.field['passwd_newpasswd'].value[1]:
         passwd_form(
@@ -324,7 +324,7 @@ def w2l_passwd(app):
         try:
             app.ls.l.passwd_s(
                 passwd_who,
-                (old_password or u'').encode(app.ls.charset) or None,
+                (old_password or '').encode(app.ls.charset) or None,
                 passwd_input.encode(app.ls.charset)
             )
         except (
