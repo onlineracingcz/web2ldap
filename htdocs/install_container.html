@@ -1,0 +1,58 @@
+<!--#set var="web2ldap_subtitle" value="Running in a container" -->
+<!--#set var="web2ldap_pagedescription" value="A brief description on how to run web2ldap in a container" -->
+<!--#include file="ssi/head.html" -->
+<!--#include file="ssi/navigation.html" -->
+
+<p>
+  You can either use
+  <a href="https://www.docker.com/">Docker</a>
+  or run as root-less containers using
+  <a href="https://github.com/containers/libpod">podman</a>.
+  For using <em>podman</em> you simply replace command
+  <code>docker</code> by command <code>podman</code> in the instructions below.
+</p>
+
+<p>
+  You can choose some example images for quick tests or even developing
+  your own custom container:
+</p>
+<dl>
+  <dt>Dockerfile.debian-stable-venv</dt>
+  <dd>
+    Installation to virtual environment on current
+    <a href="https://www.debian.org/releases/stable/">Debian stable</a>.
+  </dd>
+  <dt>Dockerfile.opensuse-tumbleweed-rpm</dt>
+  <dd>
+    RPM-based installation like described in installation instructions for
+    <a href="install_opensuse.html">openSUSE and SLE</a> using
+    <a href="https://www.opensuse.org/#Tumbleweed">openSUSE Tumbleweed</a>.
+  </dd>
+  <dt>Dockerfile.opensuse-tumbleweed-venv</dt>
+  <dd>
+    Installation to virtual environment on current
+    <a href="https://www.opensuse.org/#Tumbleweed">openSUSE Tumbleweed</a>.
+  </dd>
+</dl>
+
+<p>Build the container image with one of the above Docker files:</p>
+
+<pre class="cli">
+docker build --tag web2ldap --file Dockerfile.&lt;flavor&gt; .
+</pre>
+
+<p>
+  Run with stand-alone web server by default listening port 1760:
+</p>
+<pre class="cli">
+docker run -p 1760:1760 web2ldap
+</pre>
+
+<p>
+  Test by accessing the monitor page:
+</p>
+<pre class="cli">
+curl http://172.17.0.1:1760/web2ldap/monitor|html2text
+</pre>
+
+<!--#include file="ssi/footer.html" -->
