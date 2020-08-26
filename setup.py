@@ -56,7 +56,7 @@ setup(
         'ldap0>=1.0.1',
         'asn1crypto',
         'xlwt',
-        'dnspython',
+        'dnspython>=2.0.0',
         'paramiko',
     ],
     extras_require={

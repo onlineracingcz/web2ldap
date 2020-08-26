@@ -14,7 +14,8 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import socket
 
-from dns import resolver
+# from dnspython
+from dns.exception import DNSException
 
 import ldap0
 from ldap0.dn import DNObj
@@ -143,18 +144,11 @@ def w2l_locate(app):
                             dns_name,
                             srv_prefix=srv_prefix,
                         )
-                    except (
-                            resolver.NoAnswer,
-                            resolver.NoNameservers,
-                            resolver.NotAbsolute,
-                            resolver.NoRootSOA,
-                            resolver.NXDOMAIN,
-                            socket.error,
-                        ) as e:
+                    except (DNSException, socket.error) as dns_err:
                         outf_lines.append(
                             'DNS or socket error when querying %s: %s' % (
                                 srv_prefix,
-                                app.form.utf2display(str(e)),
+                                app.form.utf2display(str(dns_err)),
                             )
                         )
                     else:

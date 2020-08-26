@@ -16,7 +16,10 @@ import socket
 
 from ldap0.dn import DNObj
 
-from dns import resolver
+# from dnspython
+import dns.rdatatype
+import dns.resolver
+from dns.exception import DNSException
 
 from web2ldap.log import logger
 
@@ -35,19 +38,16 @@ def srv_lookup(dns_name, srv_prefix: str = '_ldap._tcp'):
         return []
     query_name = ('%s.%s' % (srv_prefix, dns_name))
     logger.debug('Query DNS for SRV RR %r', query_name)
-    srv_result = resolver.query(query_name, 'SRV')
-    if not srv_result:
-        return []
-    srv_result_answers = [
-        (
-            res.priority,
-            res.weight,
-            res.port,
-            res.target.to_text().rstrip('.'),
-        )
-        for res in srv_result
-        #if res['typename'] == 'SRV'
-    ]
+    srv_result = dns.resolver.resolve(query_name, rdtype=dns.rdatatype.RdataType.SRV)
+    srv_result_answers = []
+    for rrset in srv_result.response.answer:
+        for rdata in rrset.items.keys():
+            srv_result_answers.append((
+                rdata.priority,
+                rdata.weight,
+                rdata.port,
+                rdata.target.to_text().rstrip('.'),
+            ))
     srv_result_answers.sort()
     logger.debug('DNS result for SRV RR %r: %r', query_name, srv_result_answers)
     return srv_result_answers
@@ -62,14 +62,7 @@ def dc_dn_lookup(dn):
     dns_domain = DNObj.from_str(dn).domain(only_dc=False)
     try:
         dns_result = srv_lookup(dns_domain)
-    except (
-            resolver.NoAnswer,
-            resolver.NoNameservers,
-            resolver.NotAbsolute,
-            resolver.NoRootSOA,
-            resolver.NXDOMAIN,
-            socket.error,
-        ) as dns_err:
+    except (DNSException, socket.error) as dns_err:
         logger.warning('Error looking up SRV RR for %s: %s', dns_domain, dns_err)
         return []
     logger.debug('dns_result = %r', dns_result)
