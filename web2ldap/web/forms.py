@@ -989,8 +989,6 @@ class Form:
         elif self.request_method == 'GET':
             query_string = self.env.get('QUERY_STRING', '')
 
-        self.inf.close()
-
         if not query_string:
             return
 
