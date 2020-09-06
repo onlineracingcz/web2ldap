@@ -23,4 +23,4 @@ export PYTHONDONTWRITEBYTECODE
 PYTHONWARNINGS=error
 export PYTHONWARNINGS
 
-/usr/bin/gunicorn --bind 127.0.0.1:1760 web2ldap.wsgi:application
+python3 -m gunicorn.app.wsgiapp --bind 127.0.0.1:1760 web2ldap.wsgi:application
