@@ -142,9 +142,9 @@ syntax_registry.check()
 
 def check_access(env, command):
     """
-    simple access control based on REMOTE_ADDR
+    simple access control based on client IP address
     """
-    remote_addr = ip_address(env['REMOTE_ADDR'])
+    remote_addr = ip_address(env[web2ldapcnf.httpenv_remote_addr])
     access_allowed = web2ldapcnf.access_allowed.get(
         command,
         web2ldapcnf.access_allowed['_']
@@ -717,7 +717,7 @@ class AppHandler(LogHelper):
                 self.log(
                     logging.WARN,
                     'Access denied from %r to command %r',
-                    self.env['REMOTE_ADDR'],
+                    self.env[web2ldapcnf.httpenv_remote_addr],
                     self.command,
                 )
                 raise ErrorExit(u'Access denied.')

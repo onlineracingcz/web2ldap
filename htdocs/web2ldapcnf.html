@@ -40,6 +40,7 @@
   [<a href="#cookie_max_age">cookie_max_age</a>]
   [<a href="#good_redirect_targets">good_redirect_targets</a>]
   [<a href="#http_headers">http_headers</a>]
+  [<a href="#httpenv_remote_addr">httpenv_remote_addr</a>]
   [<a href="#input_maxattrs">input_maxattrs</a>]
   [<a href="#input_maxfieldlen">input_maxfieldlen</a>]
   [<a href="#ldap_cache_ttl">ldap_cache_ttl</a>]
@@ -180,6 +181,15 @@
 
 <h1>HTML and HTTP options</h1>
 <dl>
+
+  <dt id="httpenv_remote_addr">httpenv_remote_addr</dt>
+  <dd>
+    Name of environment variable from where to read the client's IP address
+    for IP-based access control. Make sure you understand the interaction
+    between a front-end web server (e.g. nginx, Apache httpd) and your
+    WSGI application server (e.g. gunicorn, uwsgi) and whether to trust
+    the referenced environment variable or not.
+  </dd>
 
   <dt id="http_headers">http_headers</dt>
   <dd>

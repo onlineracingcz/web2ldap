@@ -50,6 +50,10 @@ input_maxfieldlen = 600000
 # maximum count of search parameters in a search form
 max_searchparams = 20
 
+# name of env var which contains browser's IP address
+# httpenv_remote_addr = 'HTTP_X_FORWARDED_FOR'
+httpenv_remote_addr = 'REMOTE_ADDR'
+
 #---------------------------------------------------------------------------
 # Global HTML options (templates etc.)
 #---------------------------------------------------------------------------
