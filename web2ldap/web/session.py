@@ -351,7 +351,7 @@ class WebSession:
         """
         current_time = time.time()
         result = 0
-        for session_id in self.sessiondict.keys():
+        for session_id in list(self.sessiondict.keys()):
             if not session_id.startswith('__'):
                 try:
                     session_timestamp = self.sessiondict[session_id][0]

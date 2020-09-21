@@ -151,7 +151,6 @@ class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
         web2ldap.web.session.CleanUpThread.__init__(self, *args, **kwargs)
         self.removed_sessions = 0
         self.run_counter = 0
-        self.last_run_time = 0
         self.enabled = True
 
     def run(self):
@@ -164,34 +163,17 @@ class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
             )
         while self.enabled and not self._stop_event.isSet():
             self.run_counter += 1
-#            self.log(
-#                logging.DEBUG,
-#                'run() %d. expiry run on %s[%x]',
-#                self.run_counter,
-#                self._sessionInstance.__class__.__name__,
-#                id(self._sessionInstance),
-#            )
-            current_time = time.time()
             try:
-                sessiondict_keys = [
-                    sid
-                    for sid in globals()['session_store'].sessiondict.keys()
-                    if not sid.startswith('__')
-                ]
-                for session_id in sessiondict_keys:
-                    try:
-                        session_timestamp, _ = self._sessionInstance.sessiondict[session_id]
-                    except KeyError:
-                        # Avoid race condition. The session might have been
-                        # deleted in the meantime. But make sure everything is deleted.
-                        self._sessionInstance.delete(session_id)
-                    else:
-                        # Check expiration time
-                        if session_timestamp+self._sessionInstance.session_ttl < current_time:
-                            # Remove expired session
-                            self._sessionInstance.delete(session_id)
-                            self.removed_sessions += 1
-                self.last_run_time = current_time
+                removed_sessions = self._sessionInstance.clean()
+                self.removed_sessions += removed_sessions
+                if removed_sessions:
+                    self.log(
+                        logging.INFO,
+                        'run() removed %d expired sessions in %s[%x]',
+                        removed_sessions,
+                        self._sessionInstance.__class__.__name__,
+                        id(self._sessionInstance),
+                    )
             except (KeyboardInterrupt, SystemExit) as exit_exc:
                 self.log(logging.DEBUG, 'Caught exit exception in run(): %s', exit_exc)
                 self.enabled = False
@@ -219,7 +201,7 @@ session_store = Session(
 )
 logger.debug('Initialized web2ldap session store %s[%x]', session_store.__class__.__name__, id(session_store))
 
-global cleanUpThread
-cleanUpThread = CleanUpThread(session_store, interval=5)
-cleanUpThread.start()
-logger.debug('Started clean-up thread %s[%x]', cleanUpThread.__class__.__name__, id(cleanUpThread))
+global session_expiry_thread
+session_expiry_thread = CleanUpThread(session_store, interval=5)
+session_expiry_thread.start()
+logger.debug('Started clean-up thread %s[%x]', session_expiry_thread.__class__.__name__, id(session_expiry_thread))

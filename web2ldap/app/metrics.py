@@ -15,7 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import threading
 
 import web2ldap.__about__
-from web2ldap.app.session import session_store, cleanUpThread
+from web2ldap.app.session import session_store, session_expiry_thread
 import web2ldap.app.gui
 import web2ldap.app.handler
 from web2ldap.app.handler import COMMAND_COUNT
@@ -74,7 +74,7 @@ if METRICS_AVAIL:
                 labels=('type',),
             )
             sess_count.add_metric(('all',), session_store.sessionCounter)
-            sess_count.add_metric(('removed',), cleanUpThread.removed_sessions)
+            sess_count.add_metric(('removed',), session_expiry_thread.removed_sessions)
             return sess_count
 
         def _session_gauges(self):

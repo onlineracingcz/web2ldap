@@ -23,7 +23,7 @@ import web2ldapcnf
 import web2ldap.__about__
 import web2ldap.app.gui
 import web2ldap.app.handler
-from web2ldap.app.session import session_store, cleanUpThread
+from web2ldap.app.session import session_store, session_expiry_thread
 from web2ldap.utctime import strftimeiso8601
 from ..ldapsession import LDAPSession
 from ..log import EXC_TYPE_COUNTER
@@ -215,7 +215,7 @@ def w2l_monitor(app):
         ),
         int_sessioncounter=session_store.sessionCounter,
         int_maxconcurrentsessions=session_store.max_concurrent_sessions,
-        int_removedsessions=cleanUpThread.removed_sessions,
+        int_removedsessions=session_expiry_thread.removed_sessions,
         int_sessionlimit=web2ldapcnf.session_limit,
         int_sessionlimitperip=web2ldapcnf.session_per_ip_limit,
         int_sessionremoveperiod=session_store.session_ttl,
