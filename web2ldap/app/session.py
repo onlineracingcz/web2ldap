@@ -65,12 +65,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         self.session_ip_addr = {}
         self.max_session_count_per_ip = max_session_count_per_ip or self.maxSessionCount/4
         self.remote_ip_counter = collections.Counter()
-        self.log(
-            logging.DEBUG,
-            'Initialized clean-up thread working on %s[%x]',
-            self.__class__.__name__,
-            id(self),
-        )
+        self.log(logging.DEBUG, 'Finished __init__()')
 
     def new(self, env=None):
         self.log(logging.DEBUG, 'new(): creating a new session')
@@ -161,7 +156,12 @@ class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
 
     def run(self):
         """Thread function for cleaning up session database"""
-        self.log(logging.DEBUG, 'Entering .run()')
+        self.log(
+            logging.DEBUG,
+            'Entering .run() cleaning %s[%x]',
+            self._sessionInstance.__class__.__name__,
+            id(self._sessionInstance),
+            )
         while self.enabled and not self._stop_event.isSet():
             self.run_counter += 1
 #            self.log(
@@ -217,7 +217,7 @@ session_store = Session(
     maxSessionCount=web2ldapcnf.session_limit,
     max_session_count_per_ip=web2ldapcnf.session_per_ip_limit,
 )
-logger.debug('Initialized web2ldap session store %r', session_store)
+logger.debug('Initialized web2ldap session store %s[%x]', session_store.__class__.__name__, id(session_store))
 
 global cleanUpThread
 cleanUpThread = CleanUpThread(session_store, interval=5)
