@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.98",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "Fixed session clean-up when running under control of gunicorn.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.98.tar.gz",
+         "published": "2020-09-21T14:00:00+00:00"
+      },
+      {
          "version": "1.5.97",
          "state": "stable",
          "scope": "minor feature",
