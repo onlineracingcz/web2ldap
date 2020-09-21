@@ -23,4 +23,14 @@ export PYTHONDONTWRITEBYTECODE
 PYTHONWARNINGS=error
 export PYTHONWARNINGS
 
-python3 -m gunicorn.app.wsgiapp --bind 127.0.0.1:1760 web2ldap.wsgi:application
+python3 -m gunicorn.app.wsgiapp \
+  --name=web2ldap \
+  --preload \
+  --worker-class=gthread \
+  --workers=1 \
+  --threads=4 \
+  --worker-connections=40 \
+  --log-level=DEBUG \
+  --bind=127.0.0.1:1760 \
+  --reuse-port \
+  web2ldap.wsgi:application
