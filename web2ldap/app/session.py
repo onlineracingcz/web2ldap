@@ -68,6 +68,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         self.log(logging.DEBUG, 'Finished __init__()')
 
     def new(self, env=None):
+        self.expire()
         self.log(logging.DEBUG, 'new(): creating a new session')
         remote_ip = get_remote_ip(env)
         self.log(logging.DEBUG, 'new(): remote_ip = %r', remote_ip)
@@ -137,6 +138,13 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
             self._remove_ip_assoc(sid, remote_ip)
         # end of delete()
 
+    def expire(self):
+        expired = web2ldap.web.session.WebSession.expire(self)
+        if expired:
+            self.log(logging.INFO, 'expire() removed %d expired sessions', expired)
+        return expired
+        # end of expire()
+
 
 class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
     """
@@ -163,15 +171,7 @@ class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
         while self.enabled and not self._stop_event.isSet():
             self.run_counter += 1
             try:
-                expired_sessions = self._sessionInstance.expire()
-                if expired_sessions:
-                    self.log(
-                        logging.INFO,
-                        'run() removed %d expired sessions in %s[%x]',
-                        expired_sessions,
-                        self._sessionInstance.__class__.__name__,
-                        id(self._sessionInstance),
-                    )
+                self._sessionInstance.expire()
             except (KeyboardInterrupt, SystemExit) as exit_exc:
                 self.log(logging.DEBUG, 'Caught exit exception in run(): %s', exit_exc)
                 self.enabled = False
