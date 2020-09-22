@@ -215,7 +215,7 @@ def w2l_monitor(app):
         ),
         int_sessioncounter=session_store.sessionCounter,
         int_maxconcurrentsessions=session_store.max_concurrent_sessions,
-        int_removedsessions=session_expiry_thread.removed_sessions,
+        int_removedsessions=session_store.expired_counter,
         int_sessionlimit=web2ldapcnf.session_limit,
         int_sessionlimitperip=web2ldapcnf.session_per_ip_limit,
         int_sessionremoveperiod=session_store.session_ttl,

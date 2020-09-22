@@ -149,7 +149,6 @@ class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
 
     def __init__(self, *args, **kwargs):
         web2ldap.web.session.CleanUpThread.__init__(self, *args, **kwargs)
-        self.removed_sessions = 0
         self.run_counter = 0
         self.enabled = True
 
@@ -164,13 +163,12 @@ class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
         while self.enabled and not self._stop_event.isSet():
             self.run_counter += 1
             try:
-                removed_sessions = self._sessionInstance.clean()
-                self.removed_sessions += removed_sessions
-                if removed_sessions:
+                expired_sessions = self._sessionInstance.expire()
+                if expired_sessions:
                     self.log(
                         logging.INFO,
                         'run() removed %d expired sessions in %s[%x]',
-                        removed_sessions,
+                        expired_sessions,
                         self._sessionInstance.__class__.__name__,
                         id(self._sessionInstance),
                     )

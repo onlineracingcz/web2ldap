@@ -74,7 +74,7 @@ if METRICS_AVAIL:
                 labels=('type',),
             )
             sess_count.add_metric(('all',), session_store.sessionCounter)
-            sess_count.add_metric(('removed',), session_expiry_thread.removed_sessions)
+            sess_count.add_metric(('removed',), session_store.expired_counter)
             return sess_count
 
         def _session_gauges(self):

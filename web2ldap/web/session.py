@@ -208,6 +208,7 @@ class WebSession:
         self.crossCheckVars = crossCheckVars
         self.maxSessionCount = maxSessionCount
         self.sessionCounter = 0
+        self.expired_counter = 0
         self.session_id_len = sessionIDLength
         self.session_id_chars = sessionIDChars or SESSION_ID_CHARS
         self.session_id_re = re.compile('^[%s]+$' % (re.escape(self.session_id_chars)))
@@ -343,14 +344,14 @@ class WebSession:
             self._session_lock.release()
         return session_id
 
-    def clean(self):
+    def expire(self):
         """
         Search for expired session entries and delete them.
 
         Returns integer counter of deleted sessions as result.
         """
         current_time = time.time()
-        result = 0
+        expired = 0
         for session_id in list(self.sessiondict.keys()):
             if not session_id.startswith('__'):
                 try:
@@ -363,5 +364,6 @@ class WebSession:
                     # Check expiration time
                     if session_timestamp+self.session_ttl < current_time:
                         self.delete(session_id)
-                        result += 1
-        return result
+                        expired += 1
+        self.expired_counter += expired
+        return expired
