@@ -384,7 +384,7 @@ def w2l_conninfo(app):
         )
     )
 
-    cross_check_vars = session_store.sessiondict['__session_checkvars__'+app.sid].items()
+    cross_check_vars = session_store().sessiondict['__session_checkvars__'+app.sid].items()
     cross_check_vars_html = '\n'.join([
         '<tr><td>%s</td><td>%s</td></tr>' % (
             app.form.utf2display(k),

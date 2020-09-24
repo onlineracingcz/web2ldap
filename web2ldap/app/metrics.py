@@ -15,7 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import threading
 
 import web2ldap.__about__
-from web2ldap.app.session import session_store, session_expiry_thread
+from web2ldap.app.session import session_store
 import web2ldap.app.gui
 import web2ldap.app.handler
 from web2ldap.app.handler import COMMAND_COUNT
@@ -73,14 +73,14 @@ if METRICS_AVAIL:
                 'Session counters',
                 labels=('type',),
             )
-            sess_count.add_metric(('all',), session_store.sessionCounter)
-            sess_count.add_metric(('removed',), session_store.expired_counter)
+            sess_count.add_metric(('all',), self._session_store.sessionCounter)
+            sess_count.add_metric(('removed',), self._session_store.expired_counter)
             return sess_count
 
         def _session_gauges(self):
             active_sessions_count = 0
             req_sessions_count = 0
-            for k, i in session_store.sessiondict.items():
+            for k, i in self._session_store.sessiondict.items():
                 if not k.startswith('__'):
                     if isinstance(i[1], LDAPSession) and i[1].uri:
                         active_sessions_count += 1
@@ -92,9 +92,9 @@ if METRICS_AVAIL:
                 labels=('type',),
             )
             sess_gauge.add_metric(('active',), active_sessions_count)
-            sess_gauge.add_metric(('limit',), session_store.maxSessionCount)
+            sess_gauge.add_metric(('limit',), self._session_store.maxSessionCount)
             sess_gauge.add_metric(('req',), req_sessions_count)
-            sess_gauge.add_metric(('max',), session_store.max_concurrent_sessions)
+            sess_gauge.add_metric(('max',), self._session_store.max_concurrent_sessions)
             return sess_gauge
 
         def _error_counts(self):
@@ -121,6 +121,7 @@ if METRICS_AVAIL:
             """
             yield all the metric instances
             """
+            self._session_store = session_store()
             yield self._info()
             yield self._session_counters()
             yield self._session_gauges()
@@ -138,13 +139,18 @@ if METRICS_AVAIL:
         '; charset='
     )
 
-    REGISTRY.register(MetricsCollector())
+
+METRICS_REGISTERED = False
 
 
 def w2l_metrics(app):
     """
     Send metrics to client
     """
+    global METRICS_REGISTERED
+    if not METRICS_REGISTERED:
+        REGISTRY.register(MetricsCollector())
+        METRICS_REGISTERED = True
     app.outf.set_headers(
         web2ldap.app.gui.gen_headers(
             content_type=METRICS_CONTENT_TYPE,

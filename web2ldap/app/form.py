@@ -30,7 +30,6 @@ import web2ldap.app.gui
 import web2ldap.app.searchform
 import web2ldap.app.params
 import web2ldap.app.session
-from web2ldap.app.session import session_store
 from web2ldap.ldapsession import AVAILABLE_BOOLEAN_CONTROLS
 import web2ldap.web.forms
 from web2ldap.web.forms import \
@@ -130,9 +129,9 @@ class Web2LDAPForm(Form):
             Input(
                 'delsid',
                 'Old SID to be deleted',
-                session_store.session_id_len,
+                web2ldap.web.session.SESSION_ID_LENGTH,
                 1,
-                session_store.session_id_re.pattern
+                web2ldap.web.session.SESSION_ID_REGEX,
             ),
             Input('who', 'Bind DN/AuthcID', 1000, 1, '.*', size=40),
             Input('cred', 'with Password', 200, 1, '.*', size=15),

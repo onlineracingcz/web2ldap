@@ -23,7 +23,7 @@ import web2ldapcnf
 import web2ldap.__about__
 import web2ldap.app.gui
 import web2ldap.app.handler
-from web2ldap.app.session import session_store, session_expiry_thread
+from web2ldap.app.session import session_store
 from web2ldap.utctime import strftimeiso8601
 from ..ldapsession import LDAPSession
 from ..log import EXC_TYPE_COUNTER
@@ -181,6 +181,7 @@ def w2l_monitor(app):
 
     uptime = get_uptime()
     posix_uid, posix_username = get_user_info()
+    _session_store = session_store()
 
     web2ldap.app.gui.top_section(
         app,
@@ -213,21 +214,21 @@ def w2l_monitor(app):
                 for t in threading.enumerate()
             ]
         ),
-        int_sessioncounter=session_store.sessionCounter,
-        int_maxconcurrentsessions=session_store.max_concurrent_sessions,
-        int_removedsessions=session_store.expired_counter,
+        int_sessioncounter=_session_store.sessionCounter,
+        int_maxconcurrentsessions=_session_store.max_concurrent_sessions,
+        int_removedsessions=_session_store.expired_counter,
         int_sessionlimit=web2ldapcnf.session_limit,
         int_sessionlimitperip=web2ldapcnf.session_per_ip_limit,
-        int_sessionremoveperiod=session_store.session_ttl,
-        int_currentnumremoteipaddrs=len(session_store.remote_ip_sessions),
-        int_numremoteipaddrs=len(session_store.remote_ip_counter),
+        int_sessionremoveperiod=_session_store.session_ttl,
+        int_currentnumremoteipaddrs=len(_session_store.remote_ip_sessions),
+        int_numremoteipaddrs=len(_session_store.remote_ip_counter),
         text_remoteiphitlist='\n'.join(
             [
                 '<tr><td>%s</td><td>%d</td></tr>' % (
                     app.form.utf2display((ip or '-')),
                     count,
                 )
-                for ip, count in session_store.remote_ip_counter.most_common()
+                for ip, count in _session_store.remote_ip_counter.most_common()
             ]
         ),
         text_cmd_counters='\n'.join(
@@ -251,11 +252,11 @@ def w2l_monitor(app):
     )
     app.outf.write(MONITOR_TEMPLATE.format(**monitor_tmpl_vars))
 
-    if session_store.sessiondict:
+    if _session_store.sessiondict:
 
         real_ldap_sessions = []
         fresh_ldap_sessions = []
-        for k, i in session_store.sessiondict.items():
+        for k, i in _session_store.sessiondict.items():
             if not k.startswith('__'):
                 if isinstance(i[1], LDAPSession) and i[1].uri:
                     real_ldap_sessions.append((k, i))

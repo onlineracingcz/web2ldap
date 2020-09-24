@@ -47,8 +47,6 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
             session_ttl=0,
             crossCheckVars=None,
             maxSessionCount=None,
-            sessionIDLength=12,
-            sessionIDChars=None,
             max_session_count_per_ip=None,
         ):
         web2ldap.web.session.WebSession.__init__(
@@ -57,15 +55,19 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
             session_ttl,
             crossCheckVars,
             maxSessionCount,
-            sessionIDLength,
-            sessionIDChars,
         )
         self.max_concurrent_sessions = 0
         self.remote_ip_sessions = collections.defaultdict(set)
         self.session_ip_addr = {}
         self.max_session_count_per_ip = max_session_count_per_ip or self.maxSessionCount/4
         self.remote_ip_counter = collections.Counter()
-        self.log(logging.DEBUG, 'Finished __init__()')
+        self.expiry_thread = ExpiryThread(self, interval=5)
+        self.expiry_thread.start()
+        logger.debug(
+            'Started clean-up thread %s[%x]',
+            self.expiry_thread.__class__.__name__,
+            id(self.expiry_thread),
+        )
 
     def new(self, env=None):
         self.expire()
@@ -146,17 +148,17 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         # end of expire()
 
 
-class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
+class ExpiryThread(web2ldap.web.session.ExpiryThread, LogHelper):
     """
     Thread class for clean-up thread
 
-    Mainly it overrides web2ldap.web.session.CleanUpThread.run()
+    Mainly it overrides web2ldap.web.session.ExpiryThread.run()
     to call ldapSession.unbind().
     """
 
 
     def __init__(self, *args, **kwargs):
-        web2ldap.web.session.CleanUpThread.__init__(self, *args, **kwargs)
+        web2ldap.web.session.ExpiryThread.__init__(self, *args, **kwargs)
         self.run_counter = 0
         self.enabled = True
 
@@ -183,23 +185,23 @@ class CleanUpThread(web2ldap.web.session.CleanUpThread, LogHelper):
             self._stop_event.wait(self._interval)
 
         self.log(logging.DEBUG, 'Exiting run()')
-        # end of CleanUpThread.run()
+        # end of ExpiryThread.run()
 
 
 ########################################################################
 # Initialize web session object
 ########################################################################
 
-global session_store
-session_store = Session(
-    session_ttl=web2ldapcnf.session_remove,
-    crossCheckVars=web2ldapcnf.session_checkvars,
-    maxSessionCount=web2ldapcnf.session_limit,
-    max_session_count_per_ip=web2ldapcnf.session_per_ip_limit,
-)
-logger.debug('Initialized web2ldap session store %s[%x]', session_store.__class__.__name__, id(session_store))
+_session_store = None
 
-global session_expiry_thread
-session_expiry_thread = CleanUpThread(session_store, interval=5)
-session_expiry_thread.start()
-logger.debug('Started clean-up thread %s[%x]', session_expiry_thread.__class__.__name__, id(session_expiry_thread))
+def session_store():
+    global _session_store
+    if _session_store is None:
+        _session_store = Session(
+            session_ttl=web2ldapcnf.session_remove,
+            crossCheckVars=web2ldapcnf.session_checkvars,
+            maxSessionCount=web2ldapcnf.session_limit,
+            max_session_count_per_ip=web2ldapcnf.session_per_ip_limit,
+        )
+        logger.debug('Initialized web2ldap session store %s[%x]', _session_store.__class__.__name__, id(_session_store))
+    return _session_store

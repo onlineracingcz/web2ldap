@@ -36,7 +36,7 @@ def w2l_urlredirect(app):
                 redirect_ok = False
                 error_msg = 'Rejected malformed/suspicious redirect URL!'
             # Check for valid session
-            if app.sid not in session_store.sessiondict:
+            if app.sid not in session_store().sessiondict:
                 redirect_ok = False
                 error_msg = 'Rejected redirect without session-ID!'
     # finally send return redirect to browser

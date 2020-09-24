@@ -16,9 +16,14 @@ import threading
 
 from ldap0.pw import random_string
 
+# length of session ID
+SESSION_ID_LENGTH = 12
 
 # characters to be used when generating session IDs
 SESSION_ID_CHARS = string.ascii_letters + string.digits + '-._'
+
+# regex pattern for checking valid session IDs
+SESSION_ID_REGEX = '^[%s]+$' % (re.escape(SESSION_ID_CHARS))
 
 # List of environment variables assumed to be constant throughout
 # web sessions with the same ID if existent.
@@ -127,7 +132,7 @@ class InvalidSessionId(SessionException):
         return "No session with key %s." % (self.session_id)
 
 
-class CleanUpThread(threading.Thread):
+class ExpiryThread(threading.Thread):
     """
     Thread class for clean-up thread
     """
@@ -171,7 +176,7 @@ class WebSession:
             session_ttl=0,
             crossCheckVars=None,
             maxSessionCount=None,
-            sessionIDLength=12,
+            sessionIDLength=SESSION_ID_LENGTH,
             sessionIDChars=None,
         ):
         """
@@ -191,11 +196,6 @@ class WebSession:
             Maximum number of valid sessions. This affects
             behaviour of retrieveSession() which raises.
             None means unlimited number of sessions.
-        sessionIDLength
-            Exact integer length of the session ID generated
-        sessionIDChars
-            String containing the valid chars for session IDs
-            (if this is zero-value the default is SESSION_ID_CHARS)
         """
         if dictobj is None:
             self.sessiondict = self.dict_class()
@@ -209,9 +209,9 @@ class WebSession:
         self.maxSessionCount = maxSessionCount
         self.sessionCounter = 0
         self.expired_counter = 0
-        self.session_id_len = sessionIDLength
-        self.session_id_chars = sessionIDChars or SESSION_ID_CHARS
-        self.session_id_re = re.compile('^[%s]+$' % (re.escape(self.session_id_chars)))
+        self.session_id_len = SESSION_ID_LENGTH
+        self.session_id_chars = SESSION_ID_CHARS
+        self.session_id_re = re.compile(SESSION_ID_REGEX)
         # end of WebSession.__init__()
 
     def _validateSessionIdFormat(self, session_id):

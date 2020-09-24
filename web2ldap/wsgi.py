@@ -107,6 +107,7 @@ class AppResponse:
         del self.lines
 
 
+import web2ldap.app.session
 import web2ldap.app.handler
 
 
@@ -188,7 +189,7 @@ def run_standalone():
             pass
     logger.info('Stopped service http://%s:%s/web2ldap', host, port)
     # Stop clean-up thread
-    web2ldap.app.session.session_expiry_thread.enabled = 0
+    web2ldap.app.session.session_store().expiry_thread.enabled = False
     # end of run_standalone()
 
 
