@@ -15,6 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import time
 import collections
 import logging
+import threading
 
 import web2ldap.web.session
 from web2ldap.web.helper import get_remote_ip
@@ -192,16 +193,23 @@ class ExpiryThread(web2ldap.web.session.ExpiryThread, LogHelper):
 # Initialize web session object
 ########################################################################
 
-_session_store = None
+_SESSION_STORE_LOCK = threading.Lock()
+_SESSION_STORE = None
 
 def session_store():
-    global _session_store
-    if _session_store is None:
-        _session_store = Session(
-            session_ttl=web2ldapcnf.session_remove,
-            crossCheckVars=web2ldapcnf.session_checkvars,
-            maxSessionCount=web2ldapcnf.session_limit,
-            max_session_count_per_ip=web2ldapcnf.session_per_ip_limit,
-        )
-        logger.debug('Initialized web2ldap session store %s[%x]', _session_store.__class__.__name__, id(_session_store))
-    return _session_store
+    global _SESSION_STORE_LOCK
+    global _SESSION_STORE
+    with _SESSION_STORE_LOCK:
+        if _SESSION_STORE is None:
+            _SESSION_STORE = Session(
+                session_ttl=web2ldapcnf.session_remove,
+                crossCheckVars=web2ldapcnf.session_checkvars,
+                maxSessionCount=web2ldapcnf.session_limit,
+                max_session_count_per_ip=web2ldapcnf.session_per_ip_limit,
+            )
+            logger.debug(
+                'Initialized web2ldap session store %s[%x]',
+                _SESSION_STORE.__class__.__name__,
+                id(_SESSION_STORE),
+            )
+    return _SESSION_STORE

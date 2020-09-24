@@ -7,11 +7,11 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.5.99",
+         "version": "1.5.100",
          "state": "stable",
          "scope": "minor feature",
          "changes": "Lazy initialization of session store and expiry thread.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.99.tar.gz",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.100.tar.gz",
          "published": "2020-09-24T21:00:00+00:00"
       },
       {
