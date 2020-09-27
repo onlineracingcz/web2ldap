@@ -4,7 +4,6 @@ objectClass: aeObject
 objectClass: aeService
 aeStatus: 0
 uid: system_service_
-loginShell: /usr/sbin/nologin
 pwdPolicySubentry: cn=ppolicy-systems,cn=ae,ou=ae-dir
 aeNotBefore: now
 
