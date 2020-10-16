@@ -10,9 +10,9 @@
          "version": "1.5.101",
          "state": "stable",
          "scope": "minor fix",
-         "changes": "",
+         "changes": "Deal wtih multi-valued Forwarded-For header.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.101.tar.gz",
-         "published": "2020-10-xxT21:00:00+00:00"
+         "published": "2020-10-16T20:00:00+00:00"
       },
       {
          "version": "1.5.100",
