@@ -9,6 +9,10 @@
 <p>Release Date: 2020-10-xx</p>
 <ul>
   <li>
+    Split env var value referenced by
+    <a href="web2ldapcnf.html#httpenv_remote_addr">httpenv_remote_addr</a>
+    by comma and use last value, e.g. in case IP addresses of cascaded proxies
+    are stored in <var>HTTP_X_FORWARDED_FOR</var>.
   </li>
 </ul>
 

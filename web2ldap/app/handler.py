@@ -144,7 +144,7 @@ def check_access(env, command):
     """
     simple access control based on client IP address
     """
-    remote_addr = ip_address(env[web2ldapcnf.httpenv_remote_addr])
+    remote_addr = ip_address(env[web2ldapcnf.httpenv_remote_addr.split(',')[-1].strip()])
     access_allowed = web2ldapcnf.access_allowed.get(
         command,
         web2ldapcnf.access_allowed['_']
