@@ -473,6 +473,37 @@ syntax_registry.reg_at(
 )
 
 
+class ReqDN(DistinguishedName):
+    oid: str = 'ReqDN-oid'
+    desc: str = 'Target DN of request'
+    ref_attrs = (
+        ('reqDN', 'Same target', None, 'Search all entries with same target DN'),
+    )
+
+
+syntax_registry.reg_at(
+    ReqDN.oid, [
+        '1.3.6.1.4.1.4203.666.11.5.1.1', 'reqDN', # reqDN
+    ]
+)
+
+
+class ReqAuthzID(DistinguishedName):
+    oid: str = 'ReqAuthzID-oid'
+    desc: str = 'Authorization DN'
+    ref_attrs = (
+        ('reqAuthzID', 'Same authz-DN', None, 'Search all entries with same authz DN'),
+    )
+
+
+syntax_registry.reg_at(
+    ReqAuthzID.oid, [
+        'reqAuthzID',
+        '1.3.6.1.4.1.4203.666.11.5.1.6', # reqAuthzID
+    ]
+)
+
+
 #---------------------------------------------------------------------------
 # General
 #---------------------------------------------------------------------------
@@ -487,8 +518,6 @@ syntax_registry.reg_at(
     AuthzDN.oid, [
         'monitorConnectionAuthzDN',
         '1.3.6.1.4.1.4203.666.1.55.7', # monitorConnectionAuthzDN
-        'reqAuthzID',
-        '1.3.6.1.4.1.4203.666.11.5.1.6', # reqAuthzID
     ]
 )
 
@@ -538,7 +567,6 @@ syntax_registry.reg_at(
 syntax_registry.reg_at(
     DistinguishedName.oid, [
         'entryDN',
-        'reqDN',
     ]
 )
 
