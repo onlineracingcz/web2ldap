@@ -7,11 +7,11 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
-         "version": "1.5.102",
+         "version": "1.5.103",
          "state": "stable",
          "scope": "minor feature",
          "changes": "Added more links when displaying OpenLDAP accesslog entries.",
-         "download": "https://www.web2ldap.de/download/web2ldap-1.5.102.tar.gz",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.103.tar.gz",
          "published": "2020-10-27T20:00:00+00:00"
       },
       {
