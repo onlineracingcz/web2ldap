@@ -14,9 +14,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import socket
 
-# from dnspython
-from dns.exception import DNSException
-
 import ldap0
 from ldap0.dn import DNObj
 from ldap0.ldapurl import LDAPUrlExtension, LDAPUrlExtensions
@@ -25,11 +22,19 @@ from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 
 # Modules shipped with web2ldap
 import web2ldap.ldaputil
-import web2ldap.ldaputil.dns
-import web2ldap.app.gui
+from web2ldap.log import logger
+from web2ldap.app.core import ErrorExit
+from web2ldap.app.gui import ldap_url_anchor, simple_main_menu
+try:
+    from web2ldap.ldaputil.dns import srv_lookup
+except ImportError:
+    srv_lookup = None
+else:
+    # from dnspython
+    from dns.exception import DNSException
 
 
-LDAP_HOSTNAME_ALIASES = [
+LDAP_HOSTNAME_ALIASES = (
     'ldap',
     #'ldaps',
     #'dsa',
@@ -37,7 +42,7 @@ LDAP_HOSTNAME_ALIASES = [
     #'ldapdb',
     #'nds',
     #'openldap',
-]
+)
 
 LOCATE_NAME_RFC822 = 0
 LOCATE_NAME_DCDN = 1
@@ -82,6 +87,10 @@ def w2l_locate(app):
     """
     Try to locate a LDAP server in DNS by several heuristics
     """
+
+    if srv_lookup is None:
+        logger.warning('Module package dnspython not installed!')
+        raise ErrorExit('No DNS support!')
 
     locate_name = app.form.getInputValue('locate_name', [''])[0].strip()
 
@@ -140,7 +149,7 @@ def w2l_locate(app):
                     # Search for a SRV RR of dns_name
                     srv_prefix = '_%s._tcp' % (url_scheme)
                     try:
-                        dns_result = web2ldap.ldaputil.dns.srv_lookup(
+                        dns_result = srv_lookup(
                             dns_name,
                             srv_prefix=srv_prefix,
                         )
@@ -195,7 +204,7 @@ def w2l_locate(app):
                                     """ % (
                                         hostname,
                                         host_address,
-                                        web2ldap.app.gui.ldap_url_anchor(app, str(ldap_url)),
+                                        ldap_url_anchor(app, str(ldap_url)),
                                         ldap_url.unparse(),
                                         ldap_url.unparse(),
                                     )
@@ -216,7 +225,7 @@ def w2l_locate(app):
                                     <td><a href="%s">Search %s</a></td>
                                     </tr>
                                     """ % (
-                                        web2ldap.app.gui.ldap_url_anchor(app, ldap_url),
+                                        ldap_url_anchor(app, ldap_url),
                                         ldap_url.unparse(),
                                         ldap_url.unparse(),
                                     )
@@ -247,7 +256,7 @@ def w2l_locate(app):
                             LOCATE_HOST_RESULT_TMPL % (
                                 alias_name,
                                 host_address,
-                                web2ldap.app.gui.ldap_url_anchor(app, ldap_url),
+                                ldap_url_anchor(app, ldap_url),
                                 ldap_url.unparse(),
                                 ldap_url.unparse(),
                             )
@@ -261,6 +270,6 @@ def w2l_locate(app):
             app.form.script_name,
             app.form.accept_charset,
         ),
-        main_menu_list=web2ldap.app.gui.simple_main_menu(app),
+        main_menu_list=simple_main_menu(app),
         context_menu_list=[],
     )

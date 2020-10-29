@@ -23,12 +23,18 @@ import ldap0.filter
 from ldap0.dn import DNObj
 from ldap0.res import SearchResultEntry
 
+try:
+    import dns
+except ImportError:
+    dns_available = False
+else:
+    dns_available = True
+
 import web2ldapcnf
 
 import web2ldap.web.forms
 from web2ldap.web import escape_html
 import web2ldap.__about__
-import web2ldap.ldaputil
 import web2ldap.msbase
 import web2ldap.app.core
 import web2ldap.app.cnf
@@ -37,6 +43,8 @@ import web2ldap.app.searchform
 from web2ldap.msbase import GrabKeys
 from web2ldap.ldaputil import logdb_filter
 
+from web2ldap.log import logger
+logger.debug('dns_available = %r', dns_available)
 
 #---------------------------------------------------------------------------
 # Constants
@@ -155,7 +163,7 @@ def simple_main_menu(app):
     main_menu = [app.anchor('', 'Connect', [])]
     if web2ldap.app.handler.check_access(app.env, 'monitor'):
         main_menu.append(app.anchor('monitor', 'Monitor', []))
-    if web2ldap.app.handler.check_access(app.env, 'locate'):
+    if dns_available and web2ldap.app.handler.check_access(app.env, 'locate'):
         main_menu.append(app.anchor('locate', 'DNS lookup', []))
     return main_menu
 

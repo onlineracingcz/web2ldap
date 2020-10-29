@@ -37,7 +37,6 @@ import web2ldap.web.session
 from web2ldap.web.helper import get_remote_ip
 import web2ldap.__about__
 import web2ldap.ldaputil
-import web2ldap.ldaputil.dns
 import web2ldap.ldapsession
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 from web2ldap.ldapsession import LDAPSession
@@ -69,12 +68,14 @@ import web2ldap.app.bulkmod
 import web2ldap.app.srvrr
 import web2ldap.app.schema.viewer
 import web2ldap.app.metrics
-from web2ldap.app.gui import exception_message
+from web2ldap.app.gui import exception_message, dns_available
 from web2ldap.app.form import Web2LDAPForm
 from web2ldap.app.session import session_store
 from web2ldap.app.schema.syntaxes import syntax_registry
 from web2ldap.ldaputil import AD_LDAP49_ERROR_CODES, AD_LDAP49_ERROR_PREFIX
 from web2ldap.app.core import ErrorExit
+if dns_available:
+    from web2ldap.ldaputil.dns import dc_dn_lookup
 
 SCOPE2COMMAND = {
     None:'search',
@@ -753,12 +754,15 @@ class AppHandler(LogHelper):
             # Connect to LDAP server
             #-------------------------------------------------
 
-            if self.ldap_url.hostport == '' and \
-               self.ldap_url.urlscheme == 'ldap' and \
-               (self.ls is None or self.ls.uri is None):
+            if (
+                    dns_available
+                    and self.ldap_url.hostport == ''
+                    and self.ldap_url.urlscheme == 'ldap'
+                    and (self.ls is None or self.ls.uri is None)
+                ):
                 # Force a SRV RR lookup for dc-style DNs,
                 # create list of URLs to connect to
-                dns_srv_rrs = web2ldap.ldaputil.dns.dc_dn_lookup(self.dn)
+                dns_srv_rrs = dc_dn_lookup(self.dn)
                 init_uri_list = [
                     ExtendedLDAPUrl(urlscheme='ldap', hostport=host, dn=self.dn).connect_uri()
                     for host in dns_srv_rrs
@@ -777,10 +781,7 @@ class AppHandler(LogHelper):
                     init_uri = init_uri_list[0]
                 else:
                     # more than one possible servers => let user choose one
-                    web2ldap.app.srvrr.w2l_chasesrvrecord(
-                        self,
-                        init_uri_list
-                    )
+                    web2ldap.app.srvrr.w2l_chasesrvrecord(self, init_uri_list)
                     return
             elif self.ldap_url.hostport is not None:
                 init_uri = str(self.ldap_url.connect_uri()[:])
@@ -948,13 +949,14 @@ class AppHandler(LogHelper):
 
         except ldap0.NO_SUCH_OBJECT as ldap_err:
 
-            # first try to lookup dc-style DN via DNS
-            host_list = web2ldap.ldaputil.dns.dc_dn_lookup(self.dn)
-            self.log(logging.DEBUG, 'host_list = %r', host_list)
-            if host_list and ExtendedLDAPUrl(self.ls.uri).hostport not in host_list:
-                # Found LDAP server for this naming context via DNS SRV RR
-                web2ldap.app.srvrr.w2l_chasesrvrecord(self, host_list)
-                return
+            if dns_available:
+                # first try to lookup dc-style DN via DNS
+                host_list = dc_dn_lookup(self.dn)
+                self.log(logging.DEBUG, 'host_list = %r', host_list)
+                if host_list and ExtendedLDAPUrl(self.ls.uri).hostport not in host_list:
+                    # Found LDAP server for this naming context via DNS SRV RR
+                    web2ldap.app.srvrr.w2l_chasesrvrecord(self, host_list)
+                    return
 
             # Normal error handling
             log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)

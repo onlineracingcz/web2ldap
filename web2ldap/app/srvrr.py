@@ -50,7 +50,6 @@ def w2l_chasesrvrecord(app, host_list):
     """
     Present an input form to change to a server located via DNS SRV RR
     """
-    host_list = [host.decode('idna') for host in host_list]
     host_select_field = web2ldap.web.forms.Select(
         'host', 'Host selection', 1,
         options=host_list,

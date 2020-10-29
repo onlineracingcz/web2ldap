@@ -56,13 +56,13 @@ setup(
         'ldap0>=1.0.1',
         'asn1crypto',
         'xlwt',
-        'dnspython>=2.0.0',
         'paramiko',
     ],
     extras_require={
         'image': ["Pillow"],
         'xml': ['defusedxml'],
         'metrics': ['prometheus_client>=0.7.1'],
+        'dns': ['dnspython>=2.0.0'],
     },
     zip_safe=False,
     entry_points={
