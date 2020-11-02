@@ -74,7 +74,7 @@ class DHCPConfigStatement(MultilineText):
                 ]
                 try:
                     reverse_dns = ipaddress.ip_address(dhcp_value).reverse_pointer
-                except ipaddress.AddressValueError:
+                except ValueError:
                     pass
                 else:
                     search_params.extend((
