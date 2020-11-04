@@ -5,6 +5,20 @@
 
 <!--#include file="ssi/changes_navigation.html" -->
 
+<h1 id="r1.5.106">1.5.106</h1>
+<p>Release Date: 2020-11-04</p>
+<ul>
+  <li>
+    New global configuration variable
+    <a href="web2ldapcnf.html#httpenv_override">httpenv_override</a> allows
+    to override all env vars of a request.
+    For example this can be used to set <var>HTTPS=on</var> to enforce
+    setting the &quot;secure&quot; cookie flag.
+    E.g. this is highly recommended when running under control of
+    <a href="https://gunicorn.org/">gunicorn</a>.
+  </li>
+</ul>
+
 <h1 id="r1.5.105">1.5.105</h1>
 <p>Release Date: 2020-11-02</p>
 <ul>

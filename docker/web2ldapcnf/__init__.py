@@ -54,6 +54,12 @@ max_searchparams = 20
 # httpenv_remote_addr = 'HTTP_X_FORWARDED_FOR'
 httpenv_remote_addr = 'REMOTE_ADDR'
 
+# dictionary for setting/overriding environment variables
+httpenv_override = {
+    # explicitly set HTTPS=on to force "secure" cookie flag no matter what
+    #'HTTPS': 'on',
+}
+
 #---------------------------------------------------------------------------
 # Global HTML options (templates etc.)
 #---------------------------------------------------------------------------

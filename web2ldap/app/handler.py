@@ -167,6 +167,7 @@ class AppHandler(LogHelper):
         self.inf = env['wsgi.input']
         self.outf = outf
         self.env = env
+        self.env.update(web2ldapcnf.httpenv_override)
         self.script_name = self.env['SCRIPT_NAME']
         self.command, self.sid = self.path_info(env)
         self.form = None

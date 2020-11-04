@@ -182,6 +182,17 @@
 <h1>HTML and HTTP options</h1>
 <dl>
 
+  <dt id="httpenv_override">httpenv_override</dt>
+  <dd>
+    Dictionary for setting/overriding environment variables useful in case
+    the frontend web server / app server combo sets a wrong variable value
+    or is not setting a variable at all.
+    <p>Example setting env var <var>HTTPS</var> to &quot;on&quot;:</p>
+    <samp>
+      httpenv_override = {'HTTPS': 'on'}
+    </samp>
+  </dd>
+
   <dt id="httpenv_remote_addr">httpenv_remote_addr</dt>
   <dd>
     Name of environment variable from where to read the client's IP address
