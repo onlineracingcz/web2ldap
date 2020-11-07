@@ -308,6 +308,9 @@ class ReqMod(OctetString, DirectoryString):
     desc: str = 'List of modifications/old values'
     known_modtypes = {b'+', b'-', b'=', b'#', b''}
 
+    def _validate(self, attrValue: bytes) -> bool:
+        return OctetString._validate(self, attrValue)
+
     def display(self, valueindex=0, commandbutton=False) -> str:
         if self._av == b':':
             # magic value used for fixing OpenLDAP ITS#6545
