@@ -9,7 +9,7 @@
       {
          "version": "1.5.107",
          "state": "stable",
-         "scope": "minor fix",
+         "scope": "minor feature",
          "changes": "",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.107.tar.gz",
          "published": "2020-11-xxT17:00:00+00:00"
