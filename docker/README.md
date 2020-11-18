@@ -1,6 +1,6 @@
 Running web2ldap in containers
 ==============================
 
-Instructions moved to
+Instructions for using web2ldap with _docker_ or _podman_:
 
-  https://web2ldap.de/install_opensuse.html
+   https://web2ldap.de/install_container.html
