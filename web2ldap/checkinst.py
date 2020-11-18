@@ -68,6 +68,7 @@ def check_inst():
     logger.debug('sysconfig.get_python_version() = %r', sysconfig.get_python_version())
     logger.debug('sysconfig.get_platform() = %r', sysconfig.get_platform())
     logger.debug('sysconfig.is_python_build() = %r', sysconfig.is_python_build())
+    logger.debug('sys.getfilesystemencoding() = %r', sys.getfilesystemencoding())
 
     # Display version numbers of OpenLDAP libs
     logger.debug('*** Imported modules ***')

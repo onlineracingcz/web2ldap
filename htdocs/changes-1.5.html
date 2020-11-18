@@ -12,6 +12,13 @@
     Plugin class for OpenLDAP accesslog attribute <var>reqMod</var>
     now uses validate method for LDAP syntax <var>OctetString</var>.
   </li>
+  <li>
+    Installation check now also logs result of
+    <a href="https://docs.python.org/3/library/sys.html?highlight=getfilesystemencoding#sys.getfilesystemencoding">
+      sys.getfilesystemencoding()
+    </a>
+    at <var>DEBUG</var> log level.
+  </li>
 </ul>
 
 <h1 id="r1.5.106">1.5.106</h1>
