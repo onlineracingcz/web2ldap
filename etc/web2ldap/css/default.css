@@ -96,6 +96,11 @@ html>body #DITNavigation {
   font-size:0.95em;
 }
 
+#StatusLine input {
+  font-size:1.1em;
+  color: white;
+}
+
 #StatusLine th {
   min-width:10%;
   max-width:20%;

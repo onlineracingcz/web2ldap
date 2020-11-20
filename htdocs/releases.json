@@ -7,6 +7,14 @@
    "tags": "python, ldap, web, gateway",
    "releases": [
       {
+         "version": "1.5.108",
+         "state": "stable",
+         "scope": "minor feature",
+         "changes": "Added quick search field for Æ-DIR.",
+         "download": "https://www.web2ldap.de/download/web2ldap-1.5.108.tar.gz",
+         "published": "2020-11-20T17:00:00+00:00"
+      },
+      {
          "version": "1.5.107",
          "state": "stable",
          "scope": "minor feature",

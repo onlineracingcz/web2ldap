@@ -14,7 +14,7 @@
       rel="stylesheet"
       type="text/css"
       media="all"
-      integrity="sha512-SHCdZFufCy/94RjEV0I/Y93/F0eSZ1rnwxx0yCKkRUxzlNFUCHgR+DmSM6V7zRKgw4khHDd4h7I2yMB32FLksA=="
+      integrity="sha512-d1dbFX2hBuDKzlrN3D+/+8a6drWoqTQcOrdon8Ead4Q9BEEPYY1Pezuj2Uo+v3vhyiYOLLPH32diYHsvgcF8DA=="
       href="/css/web2ldap/default.css"
     >
     <link
@@ -76,6 +76,22 @@
                 >
                   <span class="server">{ldap_uri} {description}</span>
                 </a>
+              </td>
+              <td rowspan="2">
+                <form
+                  action="{script_name}/search/{sid}"
+                  method="GET"
+                  enctype="application/x-www-form-urlencoded"
+                  accept-charset="utf-8"
+                >
+                  <input type="hidden" name="search_mr" value="">
+                  <input type="hidden" name="search_option" value="({{at}}=*{{av}}*)">
+                  <input type="hidden" name="search_attr" value="cn">
+                  <input type="hidden" name="dn" value="ou=ae-dir">
+                  <input type="hidden" name="search_root" value="ou=ae-dir">
+                  <input type="text" name="search_string" maxlength="70" value="">
+                  <input type="submit" value="&#128269;">
+                </form>
               </td>
               <td class="About">
                 web2ldap {web2ldap_version}
