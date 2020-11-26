@@ -1746,6 +1746,9 @@ class Timespan(Integer):
             result = Integer.formValue(self)
         return result
 
+    def formField(self):
+        return IA5String.formField(self)
+
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             result = self._app.form.utf2display('%s (%s)' % (
