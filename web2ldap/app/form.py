@@ -878,11 +878,7 @@ class DistinguishedNameInput(Input):
 
     def _validate_format(self, value):
         if value and not ldap0.dn.is_dn(value):
-            raise InvalidValueFormat(
-                self.name,
-                self.text.encode(self.charset),
-                value.encode(self.charset)
-            )
+            raise InvalidValueFormat(self.name, self.text, value)
 
 
 class LDIFTextArea(Textarea):

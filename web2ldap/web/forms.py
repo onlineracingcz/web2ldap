@@ -15,6 +15,7 @@ import sys
 import re
 import urllib.parse
 import uuid
+from typing import List
 
 from . import escape_html
 from . import helper
@@ -157,11 +158,7 @@ class Field:
         if (not self._re is None) and value:
             rm = self._re.match(value)
             if rm is None:
-                raise InvalidValueFormat(
-                    self.name,
-                    self.text,
-                    value.encode(self.charset)
-                )
+                raise InvalidValueFormat(self.name, self.text, value)
 
     def _validate_val_count(self):
         if len(self.value) >= self.maxValues:
@@ -413,11 +410,7 @@ class Radio(Field):
         You might override this method to change this behaviour.
         """
         if value and (not value in self.optionValues):
-            raise InvalidValueFormat(
-                self.name,
-                self.text.encode(self.charset),
-                value.encode(self.charset)
-            )
+            raise InvalidValueFormat(self.name, self.text, value)
 
     def setOptions(self, options):
         self.optionValues = {}
@@ -704,7 +697,7 @@ class ContentLengthExceeded(FormException):
     maxContentLength      maximum valid content length
     """
 
-    def __init__(self, content_length, max_length):
+    def __init__(self, content_length: int, max_length: int):
         FormException.__init__(self)
         self.content_length = content_length
         self.max_length = max_length
@@ -724,7 +717,7 @@ class InvalidFieldName(FormException):
     name          name of undeclared field
     """
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         FormException.__init__(self)
         self.name = name
 
@@ -740,7 +733,7 @@ class ParamsMissing(FormException):
     missingParamNames     list of strings containing all names of missing
                           input fields.
     """
-    def __init__(self, missingParamNames):
+    def __init__(self, missingParamNames: List[str]):
         FormException.__init__(self)
         self.missingParamNames = missingParamNames
 
@@ -765,7 +758,7 @@ class InvalidValueFormat(FormException):
     value         input value received
     """
 
-    def __init__(self, name, text, value):
+    def __init__(self, name: str, text: str, value):
         FormException.__init__(self)
         self.name = name
         self.text = text
@@ -788,7 +781,7 @@ class InvalidValueLen(FormException):
     maxValueLen   integer number of maximum value length
     """
 
-    def __init__(self, name, text, valueLen, maxValueLen):
+    def __init__(self, name: str, text: str, valueLen: int, maxValueLen: int):
         FormException.__init__(self)
         self.name = name
         self.text = text
@@ -815,7 +808,7 @@ class TooManyValues(FormException):
     maxValueCount         integer number of maximum values with name allowed
     """
 
-    def __init__(self, name, text, valueCount, maxValueCount):
+    def __init__(self, name: str, text: str, valueCount: int, maxValueCount: int):
         FormException.__init__(self)
         self.name = name
         self.text = text
