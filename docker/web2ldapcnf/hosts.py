@@ -597,7 +597,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         ),
     },
     read_template={
-        'msPwdResetObject': os.path.join(templates_dir, 'ae-dir', 'read_msPwdResetObject.html'),
+        'msPwdResetObject': os.path.join(templates_dir, 'read_msPwdResetObject.html'),
         'posixAccount': os.path.join(templates_dir, 'read_posixAccount.html'),
         'aePolicy': os.path.join(templates_dir, 'ae-dir', 'read_aePolicy.html'),
         'pwdPolicy': os.path.join(templates_dir, 'read_pwdPolicy.html'),
@@ -632,7 +632,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'oathTOTPParams': os.path.join(templates_dir, 'oath', 'read_oathTOTPParams.html'),
     },
     input_template={
-        'msPwdResetObject': os.path.join(templates_dir, 'ae-dir', 'inputform_msPwdResetObject.html'),
+        'msPwdResetObject': os.path.join(templates_dir, 'inputform_msPwdResetObject.html'),
         'posixAccount': os.path.join(templates_dir, 'inputform_posixAccount.html'),
         'aePolicy': os.path.join(templates_dir, 'ae-dir', 'inputform_aePolicy.html'),
         'pwdPolicy': os.path.join(templates_dir, 'inputform_pwdPolicy.html'),
