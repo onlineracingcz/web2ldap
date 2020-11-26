@@ -10,9 +10,9 @@
          "version": "1.5.109",
          "state": "stable",
          "scope": "minor feature",
-         "changes": "",
+         "changes": "Support new attribute 'msPwdChangeNotification' and minor fixes.",
          "download": "https://www.web2ldap.de/download/web2ldap-1.5.109.tar.gz",
-         "published": "2020-11-xxT17:00:00+00:00"
+         "published": "2020-11-26T19:00:00+00:00"
       },
       {
          "version": "1.5.108",
