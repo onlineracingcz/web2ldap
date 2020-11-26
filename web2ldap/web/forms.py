@@ -676,18 +676,7 @@ class Checkbox(Field):
 class FormException(Exception):
     """
     Base exception class to indicate form processing errors.
-
-    Attributes:
-    args          unstructured List of parameters
     """
-
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-    def html(self):
-        return escape_html(str(self))
 
 
 class InvalidFormEncoding(FormException):
@@ -699,7 +688,7 @@ class InvalidFormEncoding(FormException):
     """
 
     def __init__(self, param):
-        FormException.__init__(self, ())
+        FormException.__init__(self)
         self.param = param
 
     def __str__(self):
@@ -715,15 +704,15 @@ class ContentLengthExceeded(FormException):
     maxContentLength      maximum valid content length
     """
 
-    def __init__(self, content_length, maxContentLength):
-        FormException.__init__(self, ())
+    def __init__(self, content_length, max_length):
+        FormException.__init__(self)
         self.content_length = content_length
-        self.maxContentLength = maxContentLength
+        self.max_length = max_length
 
     def __str__(self):
         return 'Input length of %d bytes exceeded the maximum of %d bytes.' % (
             self.content_length,
-            self.maxContentLength
+            self.max_length
         )
 
 
@@ -736,7 +725,7 @@ class InvalidFieldName(FormException):
     """
 
     def __init__(self, name):
-        FormException.__init__(self, ())
+        FormException.__init__(self)
         self.name = name
 
     def __str__(self):
@@ -752,7 +741,7 @@ class ParamsMissing(FormException):
                           input fields.
     """
     def __init__(self, missingParamNames):
-        FormException.__init__(self, ())
+        FormException.__init__(self)
         self.missingParamNames = missingParamNames
 
     def __str__(self):
@@ -777,7 +766,7 @@ class InvalidValueFormat(FormException):
     """
 
     def __init__(self, name, text, value):
-        FormException.__init__(self, ())
+        FormException.__init__(self)
         self.name = name
         self.text = text
         self.value = value
@@ -800,7 +789,7 @@ class InvalidValueLen(FormException):
     """
 
     def __init__(self, name, text, valueLen, maxValueLen):
-        FormException.__init__(self, ())
+        FormException.__init__(self)
         self.name = name
         self.text = text
         self.valueLen = valueLen
@@ -827,7 +816,7 @@ class TooManyValues(FormException):
     """
 
     def __init__(self, name, text, valueCount, maxValueCount):
-        FormException.__init__(self, ())
+        FormException.__init__(self)
         self.name = name
         self.text = text
         self.valueCount = valueCount
