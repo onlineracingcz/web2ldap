@@ -167,12 +167,19 @@ def run_standalone():
         port_arg = 1760
     elif len(sys.argv) == 2:
         host_arg = '127.0.0.1'
-        port_arg = int(sys.argv[1])
+        port_arg = sys.argv[1]
     elif len(sys.argv) == 3:
-        port_arg = int(sys.argv[2])
+        port_arg = sys.argv[2]
         host_arg = sys.argv[1]
     else:
-        raise ValueError('Command-line arguments must be: [host] port')
+        raise SystemExit('Expected at most 2 optional arguments: [[host] port]')
+    try:
+        port_arg = int(port_arg)
+    except ValueError:
+        raise SystemExit(
+            'Argument for port must be valid integer literal, was {0!r}'.format(port_arg)
+        )
+    logger.debug('Start listening for http://%s:%s/web2ldap', host_arg, port_arg)
     with wsgiref.simple_server.make_server(
             host_arg,
             port_arg,
