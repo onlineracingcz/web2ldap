@@ -2,7 +2,7 @@
 """
 web2ldap.web - module package for low-level web programming
 
-(c) 1998-2020 by Michael Stroeder <michael@stroeder.com>
+(c) 1998-2021 by Michael Stroeder <michael@stroeder.com>
 
 This software is distributed under the terms of the
 Apache License Version 2.0 (Apache-2.0)

@@ -8,7 +8,7 @@ LDAP-related OIDs (e.g. in RootDSE)
 web2ldap - a web-based LDAP Client,
 see http://www.web2ldap.de for details
 
-(c) 1998-2020 by Michael Stroeder <michael@stroeder.com>
+(c) 1998-2021 by Michael Stroeder <michael@stroeder.com>
 
 Comprehensive list initially contributed by Norbert Klasen
 """
