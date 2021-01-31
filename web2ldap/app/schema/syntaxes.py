@@ -25,7 +25,7 @@ import time
 import json
 import inspect
 import warnings
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Pattern, Sequence, Tuple
 
 try:
     import defusedxml.ElementTree
@@ -245,14 +245,14 @@ class LDAPSyntax:
     mimeType: str = 'application/octet-stream'
     fileExt: str = 'bin'
     editable: bool = True
-    reObj = None
+    reObj: Optional[Pattern[str]] = None
     input_pattern: Optional[str] = None
-    searchSep = '<br>'
-    readSep = '<br>'
-    fieldSep = '<br>'
-    fieldCountAssert = 1
-    simpleSanitizers = tuple()
-    showValueButton = True
+    searchSep: str = '<br>'
+    readSep: str = '<br>'
+    fieldSep: str = '<br>'
+    fieldCountAssert: int = 1
+    simpleSanitizers: Sequence[Callable] = tuple()
+    showValueButton: bool = True
 
     def __init__(
             self,
