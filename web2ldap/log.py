@@ -17,6 +17,7 @@ import sys
 import logging
 import pprint
 import collections
+from typing import Dict
 
 import web2ldap.__about__
 
@@ -38,7 +39,7 @@ HTTP_ENV_VARS = {
     'SERVER_PORT',
 }
 
-EXC_TYPE_COUNTER = collections.defaultdict(lambda: 0)
+EXC_TYPE_COUNTER: Dict[str, int] = collections.defaultdict(lambda: 0)
 
 
 class LogHelper:
