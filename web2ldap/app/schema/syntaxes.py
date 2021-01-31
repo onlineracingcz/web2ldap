@@ -476,8 +476,8 @@ class Audio(Binary):
     fileExt: str = 'au'
 
     def _validate(self, attrValue: bytes) -> bool:
-        fileobj = BytesIO(attrValue)
-        res = sndhdr.test_au(attrValue, fileobj)
+        with BytesIO(attrValue) as fileobj:
+            res = sndhdr.test_au(attrValue, fileobj)
         return res is not None
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -1125,11 +1125,12 @@ class Image(Binary):
 
     def sanitize(self, attrValue: bytes) -> bytes:
         if not self._validate(attrValue) and PILImage:
-            imgfile = BytesIO(attrValue)
             try:
-                im = PILImage.open(imgfile)
-                imgfile.seek(0)
-                im.save(imgfile, self.imageFormat)
+                with BytesIO(attrValue) as imgfile:
+                    im = PILImage.open(imgfile)
+                    imgfile.seek(0)
+                    im.save(imgfile, self.imageFormat)
+                    attrValue = imgfile.getvalue()
             except Exception as err:
                 logger.warning(
                     'Error converting image data (%d bytes) to %s: %r',
@@ -1137,8 +1138,6 @@ class Image(Binary):
                     self.imageFormat,
                     err,
                 )
-            else:
-                attrValue = imgfile.getvalue()
         return attrValue
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -1146,9 +1145,9 @@ class Image(Binary):
         width, height = None, None
         size_attr_html = ''
         if PILImage:
-            f = BytesIO(self._av)
             try:
-                im = PILImage.open(f)
+                with BytesIO(self._av) as imgfile:
+                    im = PILImage.open(imgfile)
             except IOError:
                 pass
             else:
