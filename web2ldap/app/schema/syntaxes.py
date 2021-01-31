@@ -1590,8 +1590,11 @@ class Date(IA5String):
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
-            datetime.datetime.strptime(attrValue, self.storageFormat)
-        except ValueError:
+            datetime.datetime.strptime(
+                self._app.ls.uc_decode(attrValue)[0],
+                self.storageFormat
+            )
+        except (UnicodeDecodeError, ValueError):
             return False
         return True
 
