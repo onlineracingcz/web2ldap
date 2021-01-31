@@ -25,7 +25,15 @@ import time
 import json
 import inspect
 import warnings
-from typing import Callable, List, Optional, Pattern, Sequence, Tuple
+from typing import (
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Pattern,
+    Sequence,
+    Tuple,
+)
 
 try:
     import defusedxml.ElementTree
@@ -2221,8 +2229,8 @@ class BitArrayInteger(MultilineText, Integer):
     value is interpreted as binary flags
     """
     oid: str = 'BitArrayInteger-oid'
-    flag_desc_table = tuple()
-    true_false_desc = {
+    flag_desc_table: Sequence[Tuple[str, int]] = tuple()
+    true_false_desc: Dict[bool, str] = {
         False: '-',
         True: '+',
     }
