@@ -15,7 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import time
 import os
 from hashlib import md5
-from typing import Union
+from typing import Tuple, Union
 
 import ldap0
 import ldap0.ldapurl
