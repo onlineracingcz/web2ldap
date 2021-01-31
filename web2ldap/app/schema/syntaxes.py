@@ -1744,7 +1744,7 @@ class Timespan(Integer):
         if not self._av:
             return ''
         try:
-            result = web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, int(self._av))
+            result = web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, self._av)
         except ValueError:
             result = Integer.formValue(self)
         return result
