@@ -880,17 +880,17 @@ class NullTerminatedDirectoryString(DirectoryString):
     desc: str = 'Directory String terminated by null-byte'
 
     def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue + chr(0)
+        return attrValue + b'\x00'
 
     def _validate(self, attrValue: bytes) -> bool:
-        return attrValue.endswith(chr(0))
+        return attrValue.endswith(b'\x00')
 
     def formValue(self) -> str:
-        return self._app.ls.uc_decode((self._av or chr(0))[:-1])[0]
+        return self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return self._app.form.utf2display(
-            self._app.ls.uc_decode((self._av or chr(0))[:-1])[0]
+            self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
         )
 
 
