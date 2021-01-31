@@ -5,9 +5,9 @@ web2ldap plugin classes for attributes defined for DHCP service
 See http://tools.ietf.org/draft/draft-ietf-dhc-ldap-schema/
 """
 
-import re
-
 import ipaddress
+import re
+from typing import Dict
 
 import web2ldapcnf
 
@@ -332,7 +332,7 @@ class DHCPAddressState(SelectList):
     oid: str = 'DHCPAddressState-oid'
     desc: str = 'DHCP address state'
 
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         'FREE': 'FREE',
         'ACTIVE': 'ACTIVE',

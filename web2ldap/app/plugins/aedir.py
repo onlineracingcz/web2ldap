@@ -9,7 +9,7 @@ web2ldap plugin classes for
 import re
 import time
 import socket
-from typing import List
+from typing import Dict, List
 
 # from ldap0 package
 import ldap0
@@ -506,7 +506,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
         else:
             srv_ctrls = None
         # Use the existing LDAP connection as current user
-        attr_value_dict = SelectList._get_attr_value_dict(self)
+        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
         member_filter = self._filterstr()
         try:
             ldap_result = self._app.ls.l.search_s(
@@ -1480,7 +1480,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
     simpleSanitizers = AEMailLocalAddress.simpleSanitizers
 
     def _get_attr_value_dict(self):
-        attr_value_dict = {
+        attr_value_dict: Dict[str, str] = {
             '': '-/-',
         }
         attr_value_dict.update([
@@ -1539,7 +1539,7 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
     def _validate(self, attrValue: bytes) -> bool:
         if not RFC822Address._validate(self, attrValue):
             return False
-        attr_value_dict = self._get_attr_value_dict()
+        attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
         if (
                 not attr_value_dict
                 or (
@@ -2012,7 +2012,7 @@ syntax_registry.reg_at(
 class AEStatus(SelectList, Integer):
     oid: str = 'AEStatus-oid'
     desc: str = 'AE-DIR: Status of object'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '-1': 'requested',
         '0': 'active',
         '1': 'deactivated',
@@ -2084,7 +2084,7 @@ syntax_registry.reg_at(
 class AEExpiryStatus(SelectList):
     oid: str = 'AEExpiryStatus-oid'
     desc: str = 'AE-DIR: Expiry status of object'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '-/-': '',
         '1': 'deactivated',
         '2': 'archived',
@@ -2292,7 +2292,7 @@ syntax_registry.reg_at(
 class AELoginShell(Shell):
     oid: str = 'AELoginShell-oid'
     desc: str = 'AE-DIR: Login shell for POSIX users'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '/bin/bash': '/bin/bash',
         '/bin/true': '/bin/true',
         '/bin/false': '/bin/false',
@@ -2340,7 +2340,7 @@ syntax_registry.reg_at(
 class AESSHPermissions(SelectList):
     oid: str = 'AESSHPermissions-oid'
     desc: str = 'AE-DIR: Status of object'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'pty': 'PTY allocation',
         'X11-forwarding': 'X11 forwarding',
         'agent-forwarding': 'Key agent forwarding',
@@ -2388,7 +2388,7 @@ syntax_registry.reg_at(
 class AEChildClasses(SelectList):
     oid = 'AEChildClasses-oid'
     desc = 'AE-DIR: Structural object classes allowed to be added in child entries'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '-/-': '',
         'aeAuthcToken': 'Authentication Token (aeAuthcToken)',
         'aeContact': 'Contact (aeContact)',

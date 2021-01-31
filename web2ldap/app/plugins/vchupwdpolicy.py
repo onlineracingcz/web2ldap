@@ -3,6 +3,8 @@
 web2ldap plugin classes for attributes defined in draft-vchu-ldap-pwd-policy
 """
 
+from typing import Dict
+
 from web2ldap.app.schema.syntaxes import SelectList, syntax_registry
 
 
@@ -12,7 +14,7 @@ class OnOffFlag(SelectList):
     """
     oid: str = 'OnOffFlag-oid'
     desc: str = 'Only values "on" or "off" are allowed'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'on': 'on',
         'off': 'off',
     }

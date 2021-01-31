@@ -5,6 +5,7 @@ web2ldap plugin classes for Samba 3
 
 import string
 import re
+from typing import Dict
 
 import ldap0
 import ldap0.filter
@@ -162,7 +163,7 @@ syntax_registry.reg_at(
 class SambaForceLogoff(SelectList):
     oid: str = 'SambaForceLogoff-oid'
     desc: str = 'Disconnect Users outside logon hours (default: -1 => off, 0 => on)'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         '0': 'on',
         '-1': 'off',
@@ -177,7 +178,7 @@ syntax_registry.reg_at(
 class SambaLogonToChgPwd(SelectList):
     oid: str = 'SambaLogonToChgPwd-oid'
     desc: str = 'Force Users to logon for password change (default: 0 => off, 2 => on)'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         '0': 'off',
         '2': 'on',
@@ -192,7 +193,7 @@ syntax_registry.reg_at(
 class SambaGroupType(SelectList):
     oid: str = 'SambaGroupType-oid'
     desc: str = 'Samba group type'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         '2': 'Domain Group',
         '4': 'Local Group (Alias)',
@@ -255,7 +256,7 @@ syntax_registry.reg_at(
 class SambaHomeDrive(SelectList):
     oid: str = 'SambaHomeDrive-oid'
     desc: str = 'Samba home drive letter'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         driveletter: driveletter
         for driveletter in [
             '%s:' % letter

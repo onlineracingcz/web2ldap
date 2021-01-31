@@ -1777,17 +1777,17 @@ class SelectList(DirectoryString):
     should not be used directly
     """
     oid: str = 'SelectList-oid'
-    attr_value_dict = {}   # Mapping attribute value to attribute description
-    input_fallback = True  # Fallback to normal input field if attr_value_dict is empty
+    attr_value_dict: Dict[str, str] = {}   # Mapping attribute value to attribute description
+    input_fallback: bool = True  # Fallback to normal input field if attr_value_dict is empty
     desc_sep: str = ' '
-    tag_tmpl = {
+    tag_tmpl: Dict[bool, str] = {
         False: '{attr_text}: {attr_value}',
         True: '<span title="{attr_title}">{attr_text}:{sep}{attr_value}</span>',
     }
 
     def _get_attr_value_dict(self):
         # Enable empty value in any case
-        attr_value_dict = {'': '-/-'}
+        attr_value_dict: Dict[str, str] = {'': '-/-'}
         attr_value_dict.update(self.attr_value_dict)
         return attr_value_dict
 
@@ -1820,12 +1820,12 @@ class SelectList(DirectoryString):
         )
 
     def _validate(self, attrValue: bytes) -> bool:
-        attr_value_dict = self._get_attr_value_dict()
+        attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
         return self._app.ls.uc_decode(attrValue)[0] in attr_value_dict
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         attr_value_str = DirectoryString.display(self, valueindex, commandbutton)
-        attr_value_dict = self._get_attr_value_dict()
+        attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
         try:
             attr_value_desc = attr_value_dict[self.av_u]
         except KeyError:
@@ -1844,7 +1844,7 @@ class SelectList(DirectoryString):
         )
 
     def formField(self) -> web2ldap.web.forms.Field:
-        attr_value_dict = self._get_attr_value_dict()
+        attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
         if self.input_fallback and \
            (not attr_value_dict or not list(filter(None, attr_value_dict.keys()))):
             return DirectoryString.formField(self)
@@ -1871,7 +1871,7 @@ class PropertiesSelectList(SelectList):
     properties_delimiter: str = '='
 
     def _get_attr_value_dict(self):
-        attr_value_dict = SelectList._get_attr_value_dict(self)
+        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
         real_path_name = web2ldap.app.gui.get_variant_filename(
             self.properties_pathname,
             self._app.form.accept_language
@@ -1892,9 +1892,9 @@ class DynamicValueSelectList(SelectList, DirectoryString):
     constructed and validated by internal LDAP search.
     """
     oid: str = 'DynamicValueSelectList-oid'
-    ldap_url = None
-    valuePrefix = ''
-    valueSuffix = ''
+    ldap_url: Optional[str] = None
+    valuePrefix: str = ''
+    valueSuffix: str = ''
 
     def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         self.lu_obj = ldap0.ldapurl.LDAPUrl(self.ldap_url)
@@ -2002,7 +2002,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         # end of _search_root()
 
     def _get_attr_value_dict(self):
-        attr_value_dict = SelectList._get_attr_value_dict(self)
+        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
         if self.lu_obj.hostport:
             raise ValueError(
                 'Connecting to other server not supported! hostport attribute was %r' % (
@@ -2043,7 +2043,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                 ))
                 for attr_value in ldap_result[0].entry_s[list_attr]
             ]
-            attr_value_dict = {
+            attr_value_dict: Dict[str, str] = {
                 u: u
                 for u in attr_values_u
             }
@@ -2175,13 +2175,13 @@ class Boolean(SelectList, IA5String):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.7'
     desc: str = 'Boolean'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'TRUE': 'TRUE',
         'FALSE': 'FALSE',
     }
 
     def _get_attr_value_dict(self):
-        attr_value_dict = SelectList._get_attr_value_dict(self)
+        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
         if self._av and self._av.lower() == self._av:
             for key, val in attr_value_dict.items():
                 del attr_value_dict[key]
@@ -2506,7 +2506,7 @@ class HashAlgorithmOID(SelectList, AlgorithmOID):
     """
     oid: str = 'HashAlgorithmOID-oid'
     desc: str = 'values from https://www.iana.org/assignments/hash-function-text-names/'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '1.2.840.113549.2.2': 'md2',          # [RFC3279]
         '1.2.840.113549.2.5': 'md5',          # [RFC3279]
         '1.3.14.3.2.26': 'sha-1',             # [RFC3279]
@@ -2523,7 +2523,7 @@ class HMACAlgorithmOID(SelectList, AlgorithmOID):
     """
     oid: str = 'HMACAlgorithmOID-oid'
     desc: str = 'values from RFC 8018'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         # from RFC 8018
         '1.2.840.113549.2.7': 'hmacWithSHA1',
         '1.2.840.113549.2.8': 'hmacWithSHA224',
@@ -2611,7 +2611,7 @@ class LDAPv3ResultCode(SelectList):
     """
     oid: str = 'LDAPResultCode-oid'
     desc: str = 'LDAPv3 declaration of resultCode in (see RFC 4511)'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '0': 'success',
         '1': 'operationsError',
         '2': 'protocolError',

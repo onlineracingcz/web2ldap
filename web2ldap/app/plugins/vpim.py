@@ -3,6 +3,8 @@
 web2ldap plugin classes for attributes defined in VPIM (see RFC 4237)
 """
 
+from typing import Dict
+
 from web2ldap.app.schema.syntaxes import SelectList, RFC822Address, syntax_registry
 
 
@@ -17,7 +19,7 @@ class VPIMExtendedAbsenceStatus(SelectList):
     oid: str = 'VPIMExtendedAbsenceStatus-oid'
     desc: str = ''
 
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         'Off': 'Off',
         'On': 'On',
@@ -35,7 +37,7 @@ class VPIMSupportedUABehaviors(SelectList):
     oid: str = 'VPIMSupportedUABehaviors-oid'
     desc: str = ''
 
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '':'',
         'MessageDispositionNotification': 'recipient will send a MDN in response to an MDN request',
         'MessageSensitivity': 'recipient supports sensitivity indication',
@@ -53,7 +55,7 @@ class VPIMSupportedAudioMediaTypes(SelectList):
     oid: str = 'VPIMSupportedAudioMediaTypes-oid'
     desc: str = 'Audio Media Types'
 
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'audio/basic': 'audio/basic',
         'audio/mpeg': 'audio/mpeg',
         'audio/x-aiff': 'audio/x-aiff',

@@ -3,6 +3,8 @@
 web2ldap plugin classes for LDAP-based naming service (ldapns.schema)
 """
 
+from typing import Dict
+
 from web2ldap.app.schema.syntaxes import SelectList, syntax_registry
 
 
@@ -13,7 +15,7 @@ class AuthorizedService(SelectList):
     oid: str = 'AuthorizedService-oid'
     desc: str = 'IANA GSS-API authorized service name'
 
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         'rcmd': 'remote command/rlogin/telnet',
         'imap': 'mailstore access/IMAP4',

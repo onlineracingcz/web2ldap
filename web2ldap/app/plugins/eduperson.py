@@ -6,6 +6,7 @@ See http://middleware.internet2.edu/eduperson/
 """
 
 import re
+from typing import Dict
 
 from web2ldap.app.schema.syntaxes import IA5String, SelectList, DynamicDNSelectList, syntax_registry
 
@@ -14,7 +15,7 @@ class EduPersonAffiliation(SelectList):
     oid: str = 'EduPersonAffiliation-oid'
     desc: str = 'Affiliation (see eduPerson)'
 
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         'faculty': 'faculty',
         'student': 'student',

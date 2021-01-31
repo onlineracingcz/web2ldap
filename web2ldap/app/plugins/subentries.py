@@ -3,6 +3,8 @@
 web2ldap plugin classes for attributes defined for subentries (see RFC 3672)
 """
 
+from typing import Dict
+
 from web2ldap.app.schema.syntaxes import GSER, SelectList, syntax_registry
 
 
@@ -17,8 +19,7 @@ class AdministrativeRole(SelectList):
         'RFC 3672: indicate that the associated administrative'
         ' area is concerned with one or more administrative roles'
     )
-
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '2.5.23.1': 'autonomousArea',
         '2.5.23.2': 'accessControlSpecificArea',
         '2.5.23.3': 'accessControlInnerArea',

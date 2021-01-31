@@ -8,6 +8,7 @@ see https://www.stroeder.com/oath-ldap.html
 import re
 import datetime
 import base64
+from typing import Dict
 
 from ldap0 import LDAPError
 
@@ -38,7 +39,7 @@ syntax_registry.reg_at(
 class OathOTPLength(SelectList):
     oid: str = 'OathOTPLength-oid'
     desc: str = 'number of OTP digits'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '6': '6',
         '8': '8',
     }

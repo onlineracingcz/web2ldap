@@ -4,6 +4,7 @@ web2ldap plugin classes for PGP key server
 """
 
 import re
+from typing import Dict
 
 from web2ldap.app.schema.syntaxes import \
     DynamicDNSelectList, \
@@ -18,7 +19,7 @@ class YesNoIntegerFlag(SelectList):
     """
     oid: str = 'YesNoIntegerFlag-oid'
     desc: str = '0 means no, 1 means yes'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '0': 'no',
         '1': 'yes',
     }
@@ -58,7 +59,7 @@ syntax_registry.reg_at(
 class CheckPassword(SelectList):
     oid: str = 'CheckPassword-oid'
     desc: str = ''
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '0': 'Do not check password',
         '1': 'Check password',
         '2': 'ID is locked',

@@ -6,6 +6,7 @@ web2ldap plugin classes for Active Directory (for some information see draft-arm
 import os
 import time
 import uuid
+from typing import Dict
 
 from ldap0.dn import is_dn
 from ldap0.msad import sid2sddl, sddl2sid
@@ -57,7 +58,7 @@ syntax_registry.reg_at(
 class ObjectVersion(Integer, SelectList):
     oid: str = 'ObjectVersion-oid'
     desc: str = 'Object version in MS AD (see [MS-ADTS])'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '13': 'Windows 2000 Server operating system',
         '30': 'Windows Server 2003 operating system or Windows Server 2008 (AD LDS)',
         '31': 'Windows Server 2003 R2 operating system or Windows Server 2008 R2 (AD LDS)',
@@ -229,7 +230,7 @@ class SAMAccountType(SelectList):
     """
     oid: str = 'SAMAccountType-oid'
     desc: str = 'SAM-Account-Type in MS AD'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '268435456': 'SAM_GROUP_OBJECT',
         '268435457': 'SAM_NON_SECURITY_GROUP_OBJECT',
         '536870912': 'SAM_ALIAS_OBJECT',
@@ -276,7 +277,7 @@ syntax_registry.reg_at(
 class DomainRID(SelectList):
     oid: str = 'DomainRID-oid'
     desc: str = 'Domain RID in MS AD'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '9': 'DOMAIN_RID_LOGON',
         '500': 'DOMAIN_RID_ADMINISTRATOR',
         '501': 'DOMAIN_RID_GUEST',
@@ -506,7 +507,7 @@ class CountryCode(PropertiesSelectList):
 
     def _get_attr_value_dict(self):
         # Enable empty value in any case
-        attr_value_dict = {'0': '-/-'}
+        attr_value_dict: Dict[str, str] = {'0': '-/-'}
         attr_value_dict.update(PropertiesSelectList._get_attr_value_dict(self))
         del attr_value_dict['']
         return attr_value_dict
@@ -662,7 +663,7 @@ class DomainFunctionality(SelectList):
     oid: str = 'DomainFunctionality-oid'
     desc: str = 'Functional level of domain/forest'
 
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         '0': 'Windows 2000',
         '1': 'Windows 2003 Mixed',
@@ -684,7 +685,7 @@ class DomainControllerFunctionality(SelectList):
     oid: str = 'DomainControllerFunctionality-oid'
     desc: str = 'Functional level of domain controller'
 
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         '0': 'Windows 2000',
         '2': 'Windows 2003',
@@ -717,7 +718,7 @@ syntax_registry.reg_at(
 class ServerStatus(SelectList):
     oid: str = 'ServerStatus-oid'
     desc: str = 'Specifies whether the server is enabled or disabled.'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '',
         '1': 'enabled',
         '2': 'disabled',
@@ -733,7 +734,7 @@ syntax_registry.reg_at(
 class ObjectClassCategory(SelectList):
     oid: str = 'ObjectClassCategory-oid'
     desc: str = 'Category for object class'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '1': 'STRUCTURAL',
         '2': 'ABSTRACT',
         '3': 'AUXILIARY',

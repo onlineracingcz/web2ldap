@@ -4,6 +4,7 @@ web2ldap plugin classes for OpenDS and OpenDJ
 """
 
 import re
+from typing import Dict
 
 import ldap0
 from ldap0.dn import DNObj
@@ -117,7 +118,7 @@ syntax_registry.reg_at(
 class OpenDSCfgSSLClientAuthPolicy(SelectList):
     oid: str = 'OpenDSCfgSSLClientAuthPolicy-oid'
     desc: str = 'Specifies the policy regarding client SSL certificates'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'disabled': 'Client certificate is not requested',
         'optional': 'Client certificate is requested but not required',
         'required': 'Client certificate is required',
@@ -133,7 +134,7 @@ syntax_registry.reg_at(
 class OpenDSCfgSNMPSecurityLevel(SelectList):
     oid: str = 'OpenDSCfgSNMPSecurityLevel-oid'
     desc: str = 'Specifies the policy regarding client SSL certificates'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'authnopriv': 'Authentication activated with no privacy.',
         'authpriv': 'Authentication with privacy activated.',
         'noauthnopriv': 'No security mechanisms activated.',
@@ -149,7 +150,7 @@ syntax_registry.reg_at(
 class OpenDSCfgInvalidSchemaBehaviour(SelectList):
     oid: str = 'OpenDSCfgInvalidSchemaBehaviour-oid'
     desc: str = 'Specifies how OpenDS behaves in case of schema errors'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'reject': 'reject',
         'default': 'default',
         'accept': 'accept',
@@ -167,7 +168,7 @@ syntax_registry.reg_at(
 class OpenDSCfgEtimeResolution(SelectList):
     oid: str = 'OpenDSCfgEtimeResolution-oid'
     desc: str = 'Specifies the resolution to use for operation elapsed processing time (etime) measurements.'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'milliseconds': 'milliseconds',
         'nanoseconds': 'nanoseconds',
     }
@@ -182,7 +183,7 @@ syntax_registry.reg_at(
 class OpenDSCfgWritabilityMode(SelectList):
     oid: str = 'OpenDSCfgWritabilityMode-oid'
     desc: str = 'Specifies the kinds of write operations the Directory Server can process.'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'disabled': 'all write operations are rejected',
         'enabled': 'all write operations are processed',
         'internal-only': 'write operations requested as internal/sync operations are processed',
@@ -198,7 +199,7 @@ syntax_registry.reg_at(
 class OpenDSCfgCertificateValidationPolicy(SelectList):
     oid: str = 'OpenDSCfgCertificateValidationPolicy-oid'
     desc: str = 'Specifies the way client certs are checked in user entry.'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'always': u"Always require matching peer certificate in user's entry",
         'ifpresent': u"Require one matching certificate if attribute exists in user's entry",
         'never': u"Peer certificate is not checked in user's entry at all",
@@ -214,7 +215,7 @@ syntax_registry.reg_at(
 class OpenDSCfgAccountStatusNotificationType(SelectList):
     oid: str = 'OpenDSCfgAccountStatusNotificationType-oid'
     desc: str = 'Specifies when the generate a notification about account status'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'account-disabled': 'User account has been disabled by an administrator',
         'account-enabled': 'User account has been enabled by an administrator',
         'account-expired': 'User authentication has failed because the account has expired',
@@ -239,7 +240,7 @@ syntax_registry.reg_at(
 class OpenDSCfgSslProtocol(SelectList):
     oid: str = 'OpenDSCfgSslProtocol-oid'
     desc: str = 'Specifies the SSL/TLS protocols supported.'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'SSL': 'any version of SSL',
         'SSLv2': 'SSL version 2 or higher',
         'SSLv3': 'SSL version 3',
@@ -258,7 +259,7 @@ syntax_registry.reg_at(
 class OpenDSCfgSslCipherSuite(SelectList):
     oid: str = 'OpenDSCfgSslCipherSuite-oid'
     desc: str = 'Specifies the used cipher suites.'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA': 'SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA',
         'SSL_DHE_DSS_EXPORT1024_WITH_RC4_56_SHA': 'SSL_DHE_DSS_EXPORT1024_WITH_RC4_56_SHA',
         'SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA': 'SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA',
@@ -329,7 +330,7 @@ syntax_registry.reg_at(
 class OpenDSCfgPrivilege(SelectList):
     oid: str = 'OpenDSCfgPrivilege-oid'
     desc: str = 'Specifies the name of a privilege that should not be evaluated by the server.'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'backend-backup': 'Request backup tasks',
         'backend-restore': 'Request restore tasks',
         'bypass-acl': 'Bypass access control checks',

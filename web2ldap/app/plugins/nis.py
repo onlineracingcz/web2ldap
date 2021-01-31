@@ -4,7 +4,7 @@ web2ldap plugin classes for schema elements defined in RFC2307
 """
 
 import re
-from typing import Union
+from typing import Dict, Union
 
 import web2ldap.web.forms
 import web2ldap.app.searchform
@@ -149,7 +149,7 @@ syntax_registry.reg_at(
 class Shell(SelectList):
     oid: str = 'Shell-oid'
     desc: str = 'Shell for user of Posix systems'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '/bin/sh': 'Standard shell /bin/sh',
         '/bin/bash': 'Bourne-Again SHell /bin/bash',
         '/bin/csh': '/bin/csh',
@@ -178,7 +178,7 @@ class IpServiceProtocol(SelectList):
     oid: str = 'IpServiceProtocol-oid'
     desc: str = 'RFC 2307: IP service protocol'
 
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'tcp': 'tcp',
         'udp': 'udp',
     }

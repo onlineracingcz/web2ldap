@@ -5,6 +5,7 @@ web2ldap plugin classes for OpenLDAP
 
 import re
 import binascii
+from typing import Dict
 
 from pyasn1.codec.ber import decoder as ber_decoder
 
@@ -93,7 +94,7 @@ syntax_registry.reg_at(
 class OlcSubordinate(SelectList):
     oid: str = 'OlcSubordinate-oid'
     desc: str = 'Indicates whether backend is subordinate'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '-/- (FALSE)',
         'TRUE': 'TRUE',
         'advertise': 'advertise',
@@ -220,7 +221,7 @@ syntax_registry.reg_at(
 class OlcMemberOfDangling(SelectList):
     oid: str = 'OlcMemberOfDangling-oid'
     desc: str = 'Behavior in case of dangling references during modification'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '': '-/-',
         'ignore': 'ignore',
         'drop': 'drop',

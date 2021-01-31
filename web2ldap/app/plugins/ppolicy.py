@@ -5,6 +5,7 @@ web2ldap plugin classes for attributes defined in draft-behera-ldap-password-pol
 
 import time
 import datetime
+from typing import Dict
 
 from ldap0 import LDAPError
 
@@ -23,7 +24,7 @@ from web2ldap import cmp
 class PwdCheckQuality(SelectList):
     oid: str = 'PwdCheckQuality-oid'
     desc: str = 'Password quality checking enforced'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '0': 'quality checking not be enforced',
         '1': 'quality checking enforced, accepting un-checkable passwords',
         '2': 'quality checking always enforced',
@@ -39,7 +40,7 @@ syntax_registry.reg_at(
 class PwdAttribute(SelectList):
     oid: str = 'PwdAttribute-oid'
     desc: str = 'Password attribute'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '2.5.4.35': 'userPassword',
     }
 

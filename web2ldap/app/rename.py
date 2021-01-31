@@ -15,6 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import ldap0
 import ldap0.ldapurl
 import ldap0.filter
+from typing import Dict
 
 import web2ldap.web.forms
 
@@ -37,8 +38,8 @@ def new_superior_field(app, sup_search_url, old_superior_dn):
         """
         plugin class for choosing a new superior entry
         """
-        attr_value_dict = {
-            u'': u'- Root Naming Context -',
+        attr_value_dict: Dict[str, str] = {
+            '': '- Root Naming Context -',
         }
 
         def __init__(self, app, dn, schema, attrType, attrValue, ldap_url):

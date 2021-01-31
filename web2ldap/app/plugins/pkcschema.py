@@ -6,6 +6,8 @@ See also:
 http://tools.ietf.org/draft/draft-ietf-pkix-ldap-pkc-schema
 """
 
+from typing import Dict
+
 import ldap0.filter
 
 from web2ldap.app.schema.syntaxes import \
@@ -44,7 +46,7 @@ syntax_registry.reg_at(
 class X509KeyUsage(SelectList):
     oid: str = 'X509KeyUsage-oid'
     desc: str = 'Key usage extension'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         'digitalSignature': 'digitalSignature',
         'nonRepudiation': 'nonRepudiation',
         'keyEncipherment': 'keyEncipherment',

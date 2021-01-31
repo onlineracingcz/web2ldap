@@ -3,6 +3,8 @@
 web2ldap plugin classes for Kerberos (see krb5-kdc.schema)
 """
 
+from typing import Dict
+
 from web2ldap.app.schema.syntaxes import \
     BitArrayInteger, \
     DirectoryString, \
@@ -113,7 +115,7 @@ syntax_registry.reg_at(
 class KrbSearchScope(SelectList):
     oid: str = 'KrbSearchScope-oid'
     desc: str = 'Kerberos search scope'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '1': 'ONE_LEVEL',
         '2': 'SUB_TREE',
     }
@@ -128,7 +130,7 @@ syntax_registry.reg_at(
 class KrbPrincipalType(SelectList):
     oid: str = 'KrbPrincipalType-oid'
     desc: str = 'Kerberos V Principal Type (see RFC 4120, section 6.2)'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '0': 'NT-UNKNOWN',        # Name type not known
         '1': 'NT-PRINCIPAL',      # Just the name of the principal as in DCE, or for users
         '2': 'NT-SRV-INST',       # Service and other unique instance (krbtgt)

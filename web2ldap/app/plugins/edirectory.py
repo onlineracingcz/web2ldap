@@ -6,6 +6,7 @@ web2ldap plugin classes for Novell eDirectory/DirXML
 
 import uuid
 from binascii import hexlify
+from typing import Dict
 
 import ldap0.filter
 
@@ -369,7 +370,7 @@ syntax_registry.reg_at(
 class DirXMLDriverStartOption(SelectList):
     oid: str = 'DirXML-DriverStartOption-oid'
     desc: str = 'Start option for a DirXML driver'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '0': 'disabled',
         '1': 'manual',
         '2': 'auto',
@@ -385,7 +386,7 @@ syntax_registry.reg_at(
 class DirXMLState(SelectList):
     oid: str = 'DirXML-State-DriverStartOption-oid'
     desc: str = 'Current state of a DirXML driver'
-    attr_value_dict = {
+    attr_value_dict: Dict[str, str] = {
         '0': 'stopped',
         '1': 'starting',
         '2': 'running',
