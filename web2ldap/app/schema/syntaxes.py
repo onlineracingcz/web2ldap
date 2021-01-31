@@ -1311,7 +1311,7 @@ class LDAPUrl(Uri):
                 commandbuttonstr = ''
         except ValueError:
             return '<strong>Not a valid LDAP URL:</strong> %s' % (
-                self._app.form.utf2display(repr(self._av).decode('ascii'))
+                self._app.form.utf2display(repr(self._av))
             )
         return '<table><tr><td>%s</td><td><a href="%s">%s</a></td></tr></table>' % (
             commandbuttonstr,
