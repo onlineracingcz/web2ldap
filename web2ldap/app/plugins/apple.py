@@ -3,6 +3,7 @@
 web2ldap plugin classes for attributes defined in apple.schema
 """
 
+import web2ldap.web.forms
 import web2ldap.app.searchform
 
 from web2ldap.app.schema.syntaxes import XmlValue, UUID, DynamicValueSelectList, syntax_registry
@@ -36,7 +37,7 @@ class UUIDReference(DynamicValueSelectList, UUID):
             )
         ))
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         return DynamicValueSelectList.formField(self)
 
 syntax_registry.reg_at(

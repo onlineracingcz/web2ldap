@@ -12,7 +12,7 @@ from ldap0.msad import sid2sddl, sddl2sid
 
 import web2ldapcnf
 
-import web2ldap.web
+import web2ldap.web.forms
 import web2ldap.app.searchform
 from web2ldap.utctime import strftimeiso8601
 from web2ldap.app.plugins.groups import GroupEntryDN
@@ -109,7 +109,7 @@ class ObjectSID(OctetString, IA5String):
             return ''
         return sid2sddl(self._av)
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         return IA5String.formField(self)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -446,7 +446,7 @@ class LogonHours(OctetString):
             day_bits = []
         return '\r\n'.join(day_bits)
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         return web2ldap.web.forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),

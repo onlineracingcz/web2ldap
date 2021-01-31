@@ -4,7 +4,9 @@ web2ldap plugin classes for schema elements defined in RFC2307
 """
 
 import re
+from typing import Union
 
+import web2ldap.web.forms
 import web2ldap.app.searchform
 from web2ldap.app.schema.syntaxes import \
     DaysSinceEpoch, \
@@ -66,7 +68,7 @@ class GidNumber(DynamicValueSelectList, Integer):
             ))
         return ' '.join(res)
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         ocs = self._entry.object_class_oid_set()
         if 'posixAccount' in ocs or 'shadowAccount' in ocs:
             return DynamicValueSelectList.formField(self)
@@ -95,7 +97,7 @@ class MemberUID(IA5String, DynamicValueSelectList):
             return DynamicValueSelectList._validate(self, attrValue)
         return IA5String._validate(self, attrValue)
 
-    def formField(self) -> str:
+    def formField(self) -> Union[web2ldap.web.forms.Input, web2ldap.web.forms.Select]:
         if self.ldap_url:
             return DynamicValueSelectList.formField(self)
         return IA5String.formField(self)

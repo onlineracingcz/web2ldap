@@ -25,7 +25,7 @@ from ldap0.base import decode_list
 import web2ldapcnf
 
 from web2ldap.log import logger
-from web2ldap.web.forms import HiddenInput
+import web2ldap.web.forms
 import web2ldap.ldaputil
 import web2ldap.app.searchform
 import web2ldap.app.plugins.inetorgperson
@@ -178,8 +178,8 @@ class AEHomeDirectory(HomeDirectory):
             prefix = self.homeDirectoryPrefixes[0]
         return [self._app.ls.uc_encode('/'.join((prefix, uid)))[0]]
 
-    def formField(self) -> str:
-        input_field = HiddenInput(
+    def formField(self) -> web2ldap.web.forms.Field:
+        input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen,
@@ -205,8 +205,8 @@ class AEUIDNumber(UidNumber):
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         return self._entry.get('gidNumber', [b''])
 
-    def formField(self) -> str:
-        input_field = HiddenInput(
+    def formField(self) -> web2ldap.web.forms.Field:
+        input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues, None,
@@ -277,7 +277,7 @@ class AEGIDNumber(GidNumber):
     def formValue(self) -> str:
         return Integer.formValue(self)
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         return Integer.formField(self)
 
 syntax_registry.reg_at(
@@ -347,8 +347,8 @@ class AEUserUid(AEUid):
             form_value = self._gen_uid()
         return form_value
 
-    def formField(self) -> str:
-        return HiddenInput(
+    def formField(self) -> web2ldap.web.forms.Field:
+        return web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues, None,
@@ -635,8 +635,8 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
     def formValue(self) -> str:
         return ''
 
-    def formField(self) -> str:
-        input_field = HiddenInput(
+    def formField(self) -> web2ldap.web.forms.Field:
+        input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues, None,
@@ -1422,8 +1422,8 @@ class AEDerefAttribute(DirectoryString):
     def formValue(self) -> str:
         return ''
 
-    def formField(self) -> str:
-        input_field = HiddenInput(
+    def formField(self) -> web2ldap.web.forms.Field:
+        input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues, None,
@@ -1514,7 +1514,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
             attrValues = AEPersonAttribute.transmute(self, attrValues)
         return attrValues
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         if self._is_mail_account():
             return SelectList.formField(self)
         return AEPersonAttribute.formField(self)
@@ -1732,8 +1732,8 @@ class AEUniqueIdentifier(DirectoryString):
             return [self.gen_template.format(timestamp=time.time()).encode(self._app.ls.charset)]
         return attrValues
 
-    def formField(self) -> str:
-        input_field = HiddenInput(
+    def formField(self) -> web2ldap.web.forms.Field:
+        input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues, None,
@@ -2223,8 +2223,8 @@ class AERFC822MailMember(DynamicValueSelectList, AEObjectMixIn):
             mail_addresses.extend(res.entry_as['mail'])
         return sorted(mail_addresses)
 
-    def formField(self) -> str:
-        input_field = HiddenInput(
+    def formField(self) -> web2ldap.web.forms.Field:
+        input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues, None,
@@ -2269,8 +2269,8 @@ class AESudoHost(IA5String):
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         return [b'ALL']
 
-    def formField(self) -> str:
-        input_field = HiddenInput(
+    def formField(self) -> web2ldap.web.forms.Field:
+        input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues, None,

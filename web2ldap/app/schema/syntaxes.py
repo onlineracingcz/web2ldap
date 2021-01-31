@@ -25,7 +25,7 @@ import time
 import json
 import inspect
 import warnings
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 try:
     import defusedxml.ElementTree
@@ -409,7 +409,7 @@ class LDAPSyntax:
     def formFields(self):
         return (self.formField(),)
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         input_field = web2ldap.web.forms.Input(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -435,7 +435,7 @@ class Binary(LDAPSyntax):
     desc: str = 'Binary'
     editable: bool = False
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         f = web2ldap.web.forms.File(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -520,7 +520,7 @@ class DistinguishedName(DirectoryString):
     desc: str = 'Distinguished Name'
     isBindDN = False
     hasSubordinates = False
-    ref_attrs = None
+    ref_attrs: Optional[Tuple[Tuple[Optional[str], str, Optional[str], str]]] = None
 
     def _validate(self, attrValue: bytes) -> bool:
         return is_dn(self._app.ls.uc_decode(attrValue)[0])
@@ -947,7 +947,7 @@ class Integer(IA5String):
         except ValueError:
             return attrValue
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         form_value = self.formValue()
         max_len = self._maxlen(form_value)
         input_field = web2ldap.web.forms.Input(
@@ -1367,7 +1367,7 @@ class OctetString(Binary):
             )
         ))
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         form_value = self.formValue()
         return web2ldap.web.forms.Textarea(
             self._at,
@@ -1418,7 +1418,7 @@ class MultilineText(DirectoryString):
         ]
         return '\r\n'.join(splitted_lines)
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         form_value = self.formValue()
         return web2ldap.web.forms.Textarea(
             self._at,
@@ -1746,7 +1746,7 @@ class Timespan(Integer):
             result = Integer.formValue(self)
         return result
 
-    def formField(self):
+    def formField(self) -> web2ldap.web.forms.Field:
         return IA5String.formField(self)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -1832,7 +1832,7 @@ class SelectList(DirectoryString):
             attr_title=self._app.form.utf2display(attr_title or '')
         )
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         attr_value_dict = self._get_attr_value_dict()
         if self.input_fallback and \
            (not attr_value_dict or not list(filter(None, attr_value_dict.keys()))):
@@ -2268,7 +2268,7 @@ class BitArrayInteger(MultilineText, Integer):
         ]
         return '\r\n'.join(flag_lines)
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         form_value = self.formValue()
         return web2ldap.web.forms.Textarea(
             self._at,
@@ -2577,7 +2577,7 @@ class ComposedAttribute(LDAPSyntax):
             return attrValues
         return attr_values
 
-    def formField(self) -> str:
+    def formField(self) -> web2ldap.web.forms.Field:
         """
         composed attributes must only have hidden input field
         """
