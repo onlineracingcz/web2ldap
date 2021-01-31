@@ -15,7 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import time
 import os
 from hashlib import md5
-from typing import Tuple, Union
+from typing import Sequence, Tuple, Union
 
 import ldap0
 import ldap0.ldapurl
@@ -110,7 +110,7 @@ def dn_anchor_hash(dn):
 
 
 def ts2repr(
-        time_divisors: Tuple[Tuple[str, int]],
+        time_divisors: Sequence[Tuple[str, int]],
         ts_sep: str,
         ts_value: Union[str, bytes],
     ) -> str:
