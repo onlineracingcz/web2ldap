@@ -1866,9 +1866,9 @@ class PropertiesSelectList(SelectList):
     constructed and validated by reading a properties file.
     """
     oid: str = 'PropertiesSelectList-oid'
-    properties_pathname = None
-    properties_charset = 'utf-8'
-    properties_delimiter = '='
+    properties_pathname: Optional[str] = None
+    properties_charset: str = 'utf-8'
+    properties_delimiter: str = '='
 
     def _get_attr_value_dict(self):
         attr_value_dict = SelectList._get_attr_value_dict(self)
