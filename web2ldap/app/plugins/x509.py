@@ -8,6 +8,8 @@ At this time this is mainly a stub module.
 Currently untested!
 """
 
+from collections import OrderedDict
+
 import ldap0.dn
 
 import asn1crypto.pem
@@ -35,10 +37,12 @@ def x509name2ldapdn(x509name, subschema=None):
                     pass
                 else:
                     type_name = at_obj.names[0]
-            rdn_list.append((
-                type_name,
-                ava['value'].native,
-            ))
+            aval = ava['value'].native
+            if isinstance(aval, OrderedDict):
+                aval = ' $ '.join(aval.values())
+            elif not isinstance(ava['value'].native, str):
+                aval = str(aval)
+            rdn_list.append((type_name, aval))
         dn_list.append(rdn_list)
     return str(ldap0.dn.DNObj(tuple(dn_list)))
     # end of x509name2ldapdn()
