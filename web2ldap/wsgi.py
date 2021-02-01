@@ -180,20 +180,22 @@ def run_standalone():
             'Argument for port must be valid integer literal, was {0!r}'.format(port_arg)
         )
     logger.debug('Start listening for http://%s:%s/web2ldap', host_arg, port_arg)
-    with wsgiref.simple_server.make_server(
-            host_arg,
-            port_arg,
-            application,
-            server_class=W2lWSGIServer,
-            handler_class=W2lWSGIRequestHandler,
-        ) as httpd:
-        host, port = httpd.socket.getsockname()
-        logger.info('Serving http://%s:%s/web2ldap', host, port)
-        try:
-            # Serve until process is killed
+    try:
+        with wsgiref.simple_server.make_server(
+                host_arg,
+                port_arg,
+                application,
+                server_class=W2lWSGIServer,
+                handler_class=W2lWSGIRequestHandler,
+            ) as httpd:
+            host, port = httpd.socket.getsockname()
+            logger.info('Serving http://%s:%s/web2ldap', host, port)
             httpd.serve_forever()
-        except KeyboardInterrupt:
-            pass
+    except KeyboardInterrupt:
+        pass
+    except OSError as err:
+        logger.error('Error starting service http://%s:%s/web2ldap: %s', host_arg, port_arg, err)
+        raise SystemExit('Exiting because of OS error')
     logger.info('Stopped service http://%s:%s/web2ldap', host, port)
     # Stop clean-up thread
     web2ldap.app.session.session_store().expiry_thread.enabled = False
