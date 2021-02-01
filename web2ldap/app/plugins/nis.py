@@ -97,7 +97,7 @@ class MemberUID(IA5String, DynamicValueSelectList):
             return DynamicValueSelectList._validate(self, attrValue)
         return IA5String._validate(self, attrValue)
 
-    def formField(self) -> Union[web2ldap.web.forms.Input, web2ldap.web.forms.Select]:
+    def formField(self) -> web2ldap.web.forms.Field:
         if self.ldap_url:
             return DynamicValueSelectList.formField(self)
         return IA5String.formField(self)

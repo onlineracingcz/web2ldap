@@ -635,7 +635,7 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
     def formValue(self) -> str:
         return ''
 
-    def formField(self) -> web2ldap.web.forms.HiddenInput:
+    def formField(self) -> web2ldap.web.forms.Field:
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
