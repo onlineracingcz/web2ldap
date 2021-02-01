@@ -1598,7 +1598,7 @@ class AEHostname(DNSDomain):
             return False
         if self.host_lookup:
             try:
-                ip_addr = socket.gethostbyname(attrValue)
+                ip_addr = socket.gethostbyname(self._app.ls.uc_decode(attrValue)[0])
             except (socket.gaierror, socket.herror):
                 return False
             if self.host_lookup >= 2:
@@ -1616,7 +1616,7 @@ class AEHostname(DNSDomain):
             attr_value.lower().strip()
             if self.host_lookup:
                 try:
-                    ip_addr = socket.gethostbyname(attr_value)
+                    ip_addr = socket.gethostbyname(self._app.ls.uc_decode(attr_value)[0])
                     reverse_hostname = socket.gethostbyaddr(ip_addr)[0]
                 except (socket.gaierror, socket.herror):
                     pass
