@@ -2050,7 +2050,7 @@ class AEStatus(SelectList, Integer):
         try:
             ae_not_before = time.strptime(self._entry['aeNotBefore'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
         except (KeyError, IndexError, ValueError):
-            ae_not_before = None
+            pass
         else:
             if ae_status == 0 and current_time < ae_not_before:
                 ae_status = -1
