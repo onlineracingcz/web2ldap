@@ -2544,7 +2544,7 @@ class ComposedAttribute(LDAPSyntax):
     more precisely only the "first" attribute value is used.
     """
     oid: str = 'ComposedDirectoryString-oid'
-    compose_templates = ()
+    compose_templates: Sequence[str] = ()
 
     class SingleValueDict(dict):
         """
