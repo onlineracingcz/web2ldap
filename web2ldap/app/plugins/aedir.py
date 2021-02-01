@@ -1477,7 +1477,10 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
     html_tmpl = RFC822Address.html_tmpl
     maxValues = 1
     input_fallback = False
-    simpleSanitizers = AEMailLocalAddress.simpleSanitizers
+    simpleSanitizers = (
+        bytes.strip,
+        bytes.lower,
+    )
 
     def _get_attr_value_dict(self):
         attr_value_dict: Dict[str, str] = {
