@@ -259,7 +259,7 @@ class LDAPSyntax:
     readSep: str = '<br>'
     fieldSep: str = '<br>'
     fieldCountAssert: int = 1
-    simpleSanitizers: Sequence[Callable] = tuple()
+    simpleSanitizers: Sequence[Callable] = (())
     showValueButton: bool = True
 
     def __init__(
