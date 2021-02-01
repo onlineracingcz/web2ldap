@@ -528,7 +528,7 @@ class DistinguishedName(DirectoryString):
     desc: str = 'Distinguished Name'
     isBindDN = False
     hasSubordinates = False
-    ref_attrs: Optional[Tuple[Tuple[Optional[str], str, Optional[str], str]]] = None
+    ref_attrs: Optional[Sequence[Tuple[Optional[str], str, Optional[str], str]]] = None
 
     def _validate(self, attrValue: bytes) -> bool:
         return is_dn(self._app.ls.uc_decode(attrValue)[0])
