@@ -9,7 +9,7 @@ web2ldap plugin classes for
 import re
 import time
 import socket
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 # from ldap0 package
 import ldap0
@@ -1387,10 +1387,10 @@ syntax_registry.reg_at(
 
 class AEDerefAttribute(DirectoryString):
     oid: str = 'AEDerefAttribute-oid'
-    maxValues = 1
-    deref_object_class = None
-    deref_attribute_type = None
-    deref_filter_tmpl = '(&(objectClass={deref_object_class})(aeStatus<=0)({attribute_type}=*))'
+    maxValues: int = 1
+    deref_object_class: Optional[str] = None
+    deref_attribute_type: Optional[str] = None
+    deref_filter_tmpl: str = '(&(objectClass={deref_object_class})(aeStatus<=0)({attribute_type}=*))'
 
     def _read_person_attr(self):
         try:
