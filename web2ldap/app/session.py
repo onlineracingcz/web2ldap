@@ -25,6 +25,9 @@ from web2ldap.log import logger, LogHelper
 import web2ldapcnf
 
 
+SESSION_EXPIRY_INTERVAL: int = 61
+
+
 class InvalidSessionInstance(web2ldap.web.session.SessionException):
     """
     Exception raised in case of invalid session
@@ -62,7 +65,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         self.session_ip_addr = {}
         self.max_session_count_per_ip = max_session_count_per_ip or self.maxSessionCount/4
         self.remote_ip_counter = collections.Counter()
-        self.expiry_thread = ExpiryThread(self, interval=5)
+        self.expiry_thread = ExpiryThread(self, interval=SESSION_EXPIRY_INTERVAL)
         self.expiry_thread.start()
         logger.debug(
             'Started clean-up thread %s[%x]',
@@ -142,6 +145,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         # end of delete()
 
     def expire(self):
+        self.log(logging.DEBUG, 'Entering .expire()')
         expired = web2ldap.web.session.WebSession.expire(self)
         if expired:
             self.log(logging.INFO, 'expire() removed %d expired sessions', expired)
@@ -161,7 +165,6 @@ class ExpiryThread(web2ldap.web.session.ExpiryThread, LogHelper):
     def __init__(self, *args, **kwargs):
         web2ldap.web.session.ExpiryThread.__init__(self, *args, **kwargs)
         self.run_counter = 0
-        self.enabled = True
 
     def run(self):
         """Thread function for cleaning up session database"""
@@ -171,13 +174,10 @@ class ExpiryThread(web2ldap.web.session.ExpiryThread, LogHelper):
             self._sessionInstance.__class__.__name__,
             id(self._sessionInstance),
             )
-        while self.enabled and not self._stop_event.isSet():
+        while not self._stop_event.is_set():
             self.run_counter += 1
             try:
                 self._sessionInstance.expire()
-            except (KeyboardInterrupt, SystemExit) as exit_exc:
-                self.log(logging.DEBUG, 'Caught exit exception in run(): %s', exit_exc)
-                self.enabled = False
             except Exception:
                 # Catch all exceptions to avoid thread being killed.
                 self.log(logging.ERROR, 'Unhandled exception in run()', exc_info=True)

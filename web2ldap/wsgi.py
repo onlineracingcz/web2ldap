@@ -193,12 +193,14 @@ def run_standalone():
             httpd.serve_forever()
     except KeyboardInterrupt:
         pass
+    except (KeyboardInterrupt, SystemExit) as exit_exc:
+        self.log(logging.DEBUG, 'Caught exit exception in run(): %s', exit_exc)
     except OSError as err:
         logger.error('Error starting service http://%s:%s/web2ldap: %s', host_arg, port_arg, err)
         raise SystemExit('Exiting because of OS error')
-    logger.info('Stopped service http://%s:%s/web2ldap', host, port)
     # Stop clean-up thread
-    web2ldap.app.session.session_store().expiry_thread.enabled = False
+    web2ldap.app.session.session_store().expiry_thread.stop()
+    logger.info('Stopped service http://%s:%s/web2ldap', host, port)
     # end of run_standalone()
 
 

@@ -5,6 +5,20 @@
 
 <!--#include file="ssi/changes_navigation.html" -->
 
+<h1 id="r1.5.114">1.5.114</h1>
+<p>Release Date: 2021-02-12</p>
+<ul>
+  <li>
+    Stopping the session expiry thread is now correctly done via the
+    thread's stop event instance.
+  </li>
+  <li>
+    Session expiry check interval is now set to 61 secs (formerly 5 secs)
+    because since release <a href="#r1.5.98">1.5.98</a> session expiry is
+    explicitly invoked each time before creating a new session anyway.
+  </li>
+</ul>
+
 <h1 id="r1.5.113">1.5.113</h1>
 <p>Release Date: 2021-02-01</p>
 <ul>

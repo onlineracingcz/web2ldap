@@ -144,11 +144,14 @@ class ExpiryThread(threading.Thread):
         self._removed = 0
         threading.Thread.__init__(self, name=self.__class__.__module__+self.__class__.__name__)
 
+    def stop(self):
+        self._stop_event.set()
+
     def run(self):
         """
         Thread function for cleaning up session database
         """
-        while not self._stop_event.isSet():
+        while not self._stop_event.is_set():
             self._removed += self._sessionInstance.clean()
             self._stop_event.wait(self._interval)
 
@@ -157,10 +160,6 @@ class ExpiryThread(threading.Thread):
             self.getName(),
             self._removed,
         )
-
-    def join(self, timeout=0.0):
-        self._stop_event.set()
-        threading.Thread.join(self, timeout)
 
 
 class WebSession:

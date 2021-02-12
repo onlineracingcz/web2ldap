@@ -20,8 +20,8 @@ PYTHONDONTWRITEBYTECODE="1"
 export PYTHONDONTWRITEBYTECODE
 
 # Convert warnings to exceptions
-PYTHONWARNINGS=error
-export PYTHONWARNINGS
+#PYTHONWARNINGS=error
+#export PYTHONWARNINGS
 
 python3 -m gunicorn.app.wsgiapp \
   --name=web2ldap \
