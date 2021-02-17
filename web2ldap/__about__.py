@@ -14,7 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import collections
 
-VersionInfo = collections.namedtuple('version_info', ('major', 'minor', 'micro'))
+VersionInfo = collections.namedtuple('VersionInfo', ('major', 'minor', 'micro'))
 __version_info__ = VersionInfo(
     major=1,
     minor=5,
