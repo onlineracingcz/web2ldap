@@ -146,7 +146,7 @@ class PwdAccountLockedTime(GeneralizedTime):
     oid: str = 'PwdAccountLockedTime-oid'
     desc: str = 'user entry: time that the account was locked'
     magic_values = {
-        '000001010000Z': 'permanently locked',
+        b'000001010000Z': 'permanently locked',
     }
 
     def _validate(self, attrValue: bytes) -> bool:
