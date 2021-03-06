@@ -128,7 +128,12 @@ class SyntaxRegistry:
         """
         register an attribute type (by OID) to explicitly use a certain LDAPSyntax class
         """
-        logger.debug('Register syntax OID %s for %r / %r', syntax_oid, attr_types, structural_oc_oids)
+        logger.debug(
+            'Register syntax OID %s for %r / %r',
+            syntax_oid,
+            attr_types,
+            structural_oc_oids,
+        )
         assert isinstance(syntax_oid, str), ValueError(
             'Expected syntax_oid to be str, got %r' % (syntax_oid,)
         )
@@ -772,7 +777,10 @@ class GeneralizedTime(IA5String):
         av_u = self._app.ls.uc_decode(attrValue.strip().upper())[0]
         # Special cases first
         if av_u in {'N', 'NOW', '0'}:
-            return datetime.datetime.strftime(datetime.datetime.utcnow(), r'%Y%m%d%H%M%SZ').encode('ascii')
+            return datetime.datetime.strftime(
+                datetime.datetime.utcnow(),
+                r'%Y%m%d%H%M%SZ',
+            ).encode('ascii')
         # a single integer value is interpreted as seconds relative to now
         try:
             float_val = float(av_u)
@@ -2031,7 +2039,9 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         if search_scope == ldap0.SCOPE_BASE:
             # When reading a single entry we build the map from a single multi-valued attribute
             assert len(self.lu_obj.attrs or []) == 1, ValueError(
-                'attrlist in ldap_url must be of length 1 if scope is base, got %r' % (self.lu_obj.attrs,)
+                'attrlist in ldap_url must be of length 1 if scope is base, got %r' % (
+                    self.lu_obj.attrs,
+                )
             )
             list_attr = self.lu_obj.attrs[0]
             attr_values_u = [
