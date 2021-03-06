@@ -1007,7 +1007,9 @@ class LDAPSession:
             except (IndexError, ValueError):
                 pass
             else:
-                subschemasubentry.update(decode_entry_dict(supplement_schema, encoding=self.charset) or {})
+                subschemasubentry.update(
+                    decode_entry_dict(supplement_schema, encoding=self.charset) or {}
+                )
         try:
             sub_schema = ldap0.schema.subentry.SubSchema(
                 subschemasubentry,
@@ -1385,7 +1387,10 @@ class LDAPSession:
         else:
             # More than one possible DIT structure rule found
             if parent_dn:
-                parent_governing_structure_rule = self.get_governing_structure_rule(parent_dn, schema)
+                parent_governing_structure_rule = self.get_governing_structure_rule(
+                    parent_dn,
+                    schema,
+                )
                 if not parent_governing_structure_rule is None:
                     subord_structural_rules, _ = schema.get_subord_structural_oc_names(
                         parent_governing_structure_rule
