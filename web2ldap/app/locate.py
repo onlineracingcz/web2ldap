@@ -179,7 +179,7 @@ def w2l_locate(app):
                             )
                             try:
                                 host_address = socket.gethostbyname(hostname)
-                            except socket.error as e:
+                            except socket.error:
                                 outf_lines.append(
                                     '<p class="ErrorMessage">Did not find IP address for hostname <em>%s</em>.</p>' % (
                                         app.form.utf2display(hostname.decode('ascii'))
