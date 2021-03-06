@@ -389,7 +389,9 @@ class ReqControls(IA5String):
             result_lines.append('criticality %s' % str(ctrl_criticality).upper())
             # Extract controlValue
             try:
-                ctrl_value = binascii.unhexlify(ctrl_tokens[ctrl_tokens.index('controlValue')+1].upper()[1:-1])
+                ctrl_value = binascii.unhexlify(
+                    ctrl_tokens[ctrl_tokens.index('controlValue')+1].upper()[1:-1]
+                )
             except (KeyError, ValueError, IndexError):
                 pass
             else:
@@ -433,7 +435,11 @@ class ReqEntryUUID(UUID):
                     ),
                     (
                         'search_root',
-                        str(self._app.ls.get_search_root(self._app.ls.uc_decode(self._entry['reqDN'][0])[0])),
+                        str(
+                            self._app.ls.get_search_root(
+                                self._app.ls.uc_decode(self._entry['reqDN'][0])[0]
+                            )
+                        ),
                     ),
                 ),
                 title='Search entry by UUID',
