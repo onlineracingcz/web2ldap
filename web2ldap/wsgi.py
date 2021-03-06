@@ -191,10 +191,8 @@ def run_standalone():
             host, port = httpd.socket.getsockname()
             logger.info('Serving http://%s:%s/web2ldap', host, port)
             httpd.serve_forever()
-    except KeyboardInterrupt:
-        pass
     except (KeyboardInterrupt, SystemExit) as exit_exc:
-        self.log(logging.DEBUG, 'Caught exit exception in run(): %s', exit_exc)
+        logger.debug('Caught %s in run_standalone()', exit_exc.__class__.__name__)
     except OSError as err:
         logger.error('Error starting service http://%s:%s/web2ldap: %s', host_arg, port_arg, err)
         raise SystemExit('Exiting because of OS error')
