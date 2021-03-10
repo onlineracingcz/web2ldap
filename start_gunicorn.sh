@@ -33,6 +33,7 @@ ${PYTHON3} -m gunicorn.app.wsgiapp \
   --worker-class=gthread \
   --workers=1 \
   --threads=4 \
+  --graceful-timeout=0 \
   --worker-connections=40 \
   --log-level=DEBUG \
   --bind=127.0.0.1:1760 \
