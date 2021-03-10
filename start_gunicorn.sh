@@ -8,6 +8,10 @@ fi
 export WEB2LDAP_HOME
 declare -p WEB2LDAP_HOME
 
+PYTHON3=${PYTHON3:-"python3"}
+export PYTHON3
+declare -p PYTHON3
+
 LOG_LEVEL=${LOG_LEVEL:-"DEBUG"}
 export LOG_LEVEL
 declare -p LOG_LEVEL
@@ -23,7 +27,7 @@ export PYTHONDONTWRITEBYTECODE
 #PYTHONWARNINGS=error
 #export PYTHONWARNINGS
 
-python3 -m gunicorn.app.wsgiapp \
+${PYTHON3} -m gunicorn.app.wsgiapp \
   --name=web2ldap \
   --preload \
   --worker-class=gthread \

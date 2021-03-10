@@ -8,6 +8,10 @@ fi
 export WEB2LDAP_HOME
 declare -p WEB2LDAP_HOME
 
+PYTHON3=${PYTHON3:-"python3"}
+export PYTHON3
+declare -p PYTHON3
+
 LOG_LEVEL=${LOG_LEVEL:-"DEBUG"}
 export LOG_LEVEL
 declare -p LOG_LEVEL
@@ -31,5 +35,5 @@ export PYTHONTHREADDEBUG
 PYTHONDUMPREFS=1
 export PYTHONDUMPREFS
 
-python3 -R -bb -tt "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
+${PYTHON3} -R -bb -tt "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
 #coverage-3 run "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
