@@ -1,0 +1,43 @@
+#-----------------------------------------------------------------------
+# initiate:   systemctl enable web2ldap_gunicorn.service
+# start:      systemctl start web2ldap_gunicorn.service
+# get status: systemctl status web2ldap_gunicorn.service
+#-----------------------------------------------------------------------
+
+[Unit]
+Description=web2ldap - web-based LDAPv3 client (uwsgi)
+Requires=local-fs.target network.target
+After=local-fs.target network.target
+
+[Service]
+Type=simple
+Environment=LDAPNOINIT=1
+Environment=PYTHONOPTIMIZE=2
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -ROOBs -m gunicorn.app.wsgiapp --preload --forwarded-allow-ips=* --graceful-timeout=2 --worker-tmp-dir=/run/web2ldap --bind=unix:/run/web2ldap/web2ldap.sock web2ldap.wsgi:application
+User=web2ldap
+Group=web2ldap
+Restart=always
+KillSignal=SIGQUIT
+StandardError=syslog
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+#AppArmorProfile=web2ldap
+# various hardening options
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=full
+ProtectHome=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+NoNewPrivileges=yes
+MountFlags=private
+SystemCallArchitectures=native
+LockPersonality=yes
+KeyringMode=private
+RestrictRealtime=yes
+RestrictNamespaces=yes
+SystemCallFilter=~ @clock @cpu-emulation @debug @keyring @module @mount @raw-io @reboot @swap @obsolete
+
+[Install]
+WantedBy=multi-user.target
