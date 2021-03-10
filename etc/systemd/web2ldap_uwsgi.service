@@ -19,7 +19,7 @@ User=web2ldap
 Group=web2ldap
 Restart=always
 KillSignal=SIGQUIT
-StandardError=syslog
+RuntimeDirectory=web2ldap
 RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
 #AppArmorProfile=web2ldap
 # various hardening options
