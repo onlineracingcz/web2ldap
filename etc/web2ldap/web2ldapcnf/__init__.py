@@ -180,6 +180,23 @@ http_headers = {
         "vr 'none'; "
         "xr 'none'"
     ),
+    'Permissions-Policy': (
+        "geolocation=(none), "
+        "notifications=(none), "
+        "push=(none), "
+        "midi=(none), "
+        "camera=(none), "
+        "microphone=(none), "
+        "speaker-selection=(none), "
+        "ambient-light-sensor=(none), "
+        "accelerometer=(none), "
+        "gyroscope=(none), "
+        "magnetometer=(none), "
+        "clipboard-read=(none), "
+        "clipboard-write=(none), "
+        "display-capture=(none)"
+    )
+
 }
 http_headers['X-Webkit-CSP'] = http_headers['Content-Security-Policy']
 http_headers['X-Content-Security-Policy'] = http_headers['Content-Security-Policy']
