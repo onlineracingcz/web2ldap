@@ -15,6 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import sys
 import os
 import time
+import warnings
 
 import web2ldap.__about__
 from web2ldap.log import logger
@@ -74,8 +75,7 @@ class ErrorExit(Exception):
 logger.debug('End of module %s', __name__)
 
 # Raise UnicodeError instead of output of UnicodeWarning
-from warnings import filterwarnings
-filterwarnings(action="error", category=UnicodeWarning)
+warnings.filterwarnings(action="error", category=UnicodeWarning)
 
 ldap0._trace_level = web2ldapcnf.ldap_trace_level
 ldap0.set_option(ldap0.OPT_DEBUG_LEVEL, web2ldapcnf.ldap_opt_debug_level)

@@ -21,7 +21,6 @@ from ldap0.ldapurl import LDAPUrlExtension, LDAPUrlExtensions
 from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 
 # Modules shipped with web2ldap
-import web2ldap.ldaputil
 from web2ldap.log import logger
 from web2ldap.app.core import ErrorExit
 from web2ldap.app.gui import ldap_url_anchor, simple_main_menu

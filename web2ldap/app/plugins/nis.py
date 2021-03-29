@@ -4,7 +4,7 @@ web2ldap plugin classes for schema elements defined in RFC2307
 """
 
 import re
-from typing import Dict, Union
+from typing import Dict
 
 import web2ldap.web.forms
 import web2ldap.app.searchform
