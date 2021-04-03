@@ -38,8 +38,8 @@ from ldap0.controls.readentry import PreReadControl, PostReadControl
 from ldap0.controls.ppolicy import PasswordPolicyControl
 from ldap0.controls.sessiontrack import SessionTrackingControl, SESSION_TRACKING_FORMAT_OID_USERNAME
 
-from web2ldap.log import logger
-from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
+from .log import logger
+from .ldaputil.extldapurl import ExtendedLDAPUrl
 
 START_TLS_NO = 0
 START_TLS_TRY = 1

@@ -15,7 +15,12 @@ https://www.apache.org/licenses/LICENSE-2.0
 import ldap0
 from ldap0.extop.dds import RefreshRequest, RefreshResponse
 
-import web2ldap.app.gui
+from .gui import (
+    context_menu_single_entry,
+    footer,
+    main_menu,
+    top_section,
+)
 
 
 DDS_FORM_TMPL = """
@@ -46,10 +51,10 @@ def dds_form(app, msg):
             'Enter time-to-live for refresh request or leave empty for server-side default.'
             '</p>'
         )
-    web2ldap.app.gui.top_section(
+    top_section(
         app, 'Refresh dynamic entry',
-        web2ldap.app.gui.main_menu(app),
-        context_menu_list=web2ldap.app.gui.context_menu_single_entry(app),
+        main_menu(app),
+        context_menu_list=context_menu_single_entry(app),
     )
     app.outf.write(
         DDS_FORM_TMPL.format(
@@ -61,7 +66,7 @@ def dds_form(app, msg):
             field_dds_renewttlfac=app.form.field['dds_renewttlfac'].input_html(),
         )
     )
-    web2ldap.app.gui.footer(app)
+    footer(app)
     # end of dds_form()
 
 
@@ -101,8 +106,8 @@ def w2l_dds(app):
             )
         app.simple_message(
             message=msg,
-            main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.context_menu_single_entry(app, dds_link=1)
+            main_menu_list=main_menu(app),
+            context_menu_list=context_menu_single_entry(app, dds_link=1)
         )
 
     return # end of w2l_dds()

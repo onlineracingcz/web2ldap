@@ -19,7 +19,7 @@ import pprint
 import collections
 from typing import Dict
 
-import web2ldap.__about__
+from .__about__ import __version__
 
 
 LOG_LEVEL = os.environ.get('LOG_LEVEL', '').upper() or logging.INFO
@@ -66,7 +66,7 @@ def log_exception(env, ls, dn, debug):
     EXC_TYPE_COUNTER[exc_key] += 1
     logentry = [
         '--------------------------- Unhandled error ---------------------------',
-        'web2ldap %s' % (web2ldap.__about__.__version__,),
+        'web2ldap %s' % (__version__,),
         '%s raised %d times' % (exc_type, EXC_TYPE_COUNTER[exc_key]),
         'LDAPSession instance: %r' % (ls,),
         'DN: %s' % (dn,),

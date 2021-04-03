@@ -11,3 +11,11 @@ This software is distributed under the terms of the
 Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
+
+class ErrorExit(Exception):
+    """Base class for web2ldap application exceptions"""
+
+    def __init__(self, Msg):
+        assert isinstance(Msg, str), \
+            TypeError("Type of argument 'Msg' must be str, was %r" % (Msg))
+        self.Msg = Msg

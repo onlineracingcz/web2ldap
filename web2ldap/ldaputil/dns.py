@@ -21,7 +21,7 @@ import dns.rdatatype
 import dns.resolver
 from dns.exception import DNSException
 
-from web2ldap.log import logger
+from ..log import logger
 
 
 def srv_lookup(dns_name, srv_prefix: str = '_ldap._tcp'):

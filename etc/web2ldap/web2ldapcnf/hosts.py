@@ -13,8 +13,7 @@ https://www.web2ldap.de/usability.html
 import os
 import ldap0
 
-from web2ldap.app.core import etc_dir, templates_dir
-from web2ldap.app.cnf import Web2LDAPConfig
+from web2ldap import etc_dir, templates_dir, Web2LDAPConfig
 
 ########################################################################
 # List of all LDAP hosts to use. These hosts will appear in the

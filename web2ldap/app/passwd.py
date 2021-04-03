@@ -25,8 +25,9 @@ import web2ldap.app.cnf
 import web2ldap.app.core
 import web2ldap.app.gui
 import web2ldap.app.login
-from web2ldap.ldaputil.passwd import user_password_hash
-from web2ldap.app.form import Web2LDAPForm_passwd
+from ..ldaputil.passwd import user_password_hash
+from .form import Web2LDAPForm_passwd
+from . import ErrorExit
 
 
 PASSWD_ACTIONS_DICT = {
@@ -277,7 +278,7 @@ def w2l_passwd(app):
     #----------------------------------------------
 
     if len(app.form.field['passwd_newpasswd'].value) != 2:
-        raise web2ldap.app.core.ErrorExit('Repeat password!')
+        raise ErrorExit('Repeat password!')
 
     if app.form.field['passwd_newpasswd'].value[0] != app.form.field['passwd_newpasswd'].value[1]:
         passwd_form(

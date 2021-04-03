@@ -18,8 +18,7 @@ import uuid
 from typing import List
 
 from . import escape_html
-from . import helper
-
+from .helper import AcceptCharsetDict, AcceptHeaderDict
 
 class Field:
     """
@@ -862,10 +861,10 @@ class Form:
         self.request_method = env['REQUEST_METHOD']
         self.script_name = env['SCRIPT_NAME']
         # Initialize the AcceptHeaderDict objects
-        self.http_accept_charset = helper.AcceptCharsetDict('HTTP_ACCEPT_CHARSET', env)
-        self.http_accept_language = helper.AcceptHeaderDict('HTTP_ACCEPT_LANGUAGE', env)
+        self.http_accept_charset = AcceptCharsetDict('HTTP_ACCEPT_CHARSET', env)
+        self.http_accept_language = AcceptHeaderDict('HTTP_ACCEPT_LANGUAGE', env)
         self.accept_language = self.http_accept_language.keys()
-        self.http_accept_encoding = helper.AcceptHeaderDict('HTTP_ACCEPT_ENCODING', env)
+        self.http_accept_encoding = AcceptHeaderDict('HTTP_ACCEPT_ENCODING', env)
         # Determine query string
         self.query_string = env.get('QUERY_STRING', '')
         # initialize Unicode codecs

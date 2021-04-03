@@ -19,6 +19,7 @@ from ldap0.res import SearchResultEntry
 
 import web2ldap.app.core
 import web2ldap.app.gui
+from . import ErrorExit
 
 ACTION2MODTYPE = {
     'add': ldap0.MOD_ADD,
@@ -122,7 +123,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
     groupadm_defs = ldap0.cidict.CIDict(app.cfg_param('groupadm_defs', {}))
     if not groupadm_defs:
-        raise web2ldap.app.core.ErrorExit(u'Group admin options empty or not set.')
+        raise ErrorExit(u'Group admin options empty or not set.')
     groupadm_defs_keys = groupadm_defs.keys()
 
     all_membership_attrs = [
@@ -133,7 +134,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
     search_result = app.ls.l.read_s(app.dn, attrlist=all_membership_attrs)
     if not search_result:
-        raise web2ldap.app.core.ErrorExit(u'No search result when reading entry.')
+        raise ErrorExit(u'No search result when reading entry.')
 
     user_entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
 
@@ -229,7 +230,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                             member_value = app.ldap_dn
                         else:
                             if user_entry_attrtype not in user_entry:
-                                raise web2ldap.app.core.ErrorExit(
+                                raise ErrorExit(
                                     u'Object class %s requires attribute %s in group entry.' % (
                                         oc,
                                         user_entry_attrtype,

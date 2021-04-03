@@ -16,7 +16,7 @@ import urllib.parse
 
 import web2ldapcnf
 
-from web2ldap.app.session import session_store
+from .session import session_store
 
 
 def w2l_urlredirect(app):

@@ -66,14 +66,15 @@ from ldap0.schema.subentry import SubSchema
 import web2ldapcnf
 
 import web2ldap.web.forms
-import web2ldap.msbase
+from ... import msbase
 import web2ldap.ldaputil
 import web2ldap.app.gui
 import web2ldap.utctime
-from web2ldap.utctime import strftimeiso8601
-from web2ldap.ldaputil.oidreg import OID_REG
-from web2ldap.log import logger
-from web2ldap import cmp
+from ...utctime import strftimeiso8601
+from ...ldaputil.oidreg import OID_REG
+from ...log import logger
+from ... import cmp
+from . import schema_anchor
 
 
 class SyntaxRegistry:
@@ -1225,10 +1226,6 @@ class PhotoG3Fax(Binary):
     fileExt: str = 'tif'
 
 
-# late import of schema_anchor()
-from web2ldap.app.schema.viewer import schema_anchor
-
-
 class OID(IA5String):
     """
     Plugin class for LDAP syntax 'OID'
@@ -1366,9 +1363,9 @@ class OctetString(Binary):
             ) % (
                 i*self.bytes_split,
                 ':'.join(c[j:j+1].hex().upper() for j in range(len(c))),
-                self._app.form.utf2display(web2ldap.msbase.ascii_dump(c), 'ascii'),
+                self._app.form.utf2display(msbase.ascii_dump(c), 'ascii'),
             )
-            for i, c in enumerate(web2ldap.msbase.chunks(self._av, self.bytes_split))
+            for i, c in enumerate(msbase.chunks(self._av, self.bytes_split))
         ]
         return '\n<table class="HexDump">\n%s\n</table>\n' % ('\n'.join(lines))
 
@@ -1376,7 +1373,7 @@ class OctetString(Binary):
         hex_av = (self._av or b'').hex().upper()
         hex_range = range(0, len(hex_av), 2)
         return str('\r\n'.join(
-            web2ldap.msbase.chunks(
+            msbase.chunks(
                 ':'.join([hex_av[i:i+2] for i in hex_range]),
                 self.bytes_split*3
             )

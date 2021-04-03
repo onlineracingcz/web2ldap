@@ -20,16 +20,19 @@ import pwd
 
 import web2ldapcnf
 
-import web2ldap.__about__
-import web2ldap.app.gui
-import web2ldap.app.handler
-from web2ldap.app.session import session_store
-from web2ldap.utctime import strftimeiso8601
-from ..ldapsession import LDAPSession
+from ..__about__ import __version__
+from ..utctime import strftimeiso8601
 from ..log import EXC_TYPE_COUNTER
-from .core import STARTUP_TIME
+from ..ldapsession import LDAPSession
+from .. import STARTUP_TIME
+from .gui import (
+    footer,
+    simple_main_menu,
+    top_section,
+)
+from .session import session_store
 from .metrics import METRICS_AVAIL
-
+from .stats import COMMAND_COUNT
 
 MONITOR_TEMPLATE = """
 <h1>Monitor</h1>
@@ -183,16 +186,11 @@ def w2l_monitor(app):
     posix_uid, posix_username = get_user_info()
     _session_store = session_store()
 
-    web2ldap.app.gui.top_section(
-        app,
-        'Monitor',
-        web2ldap.app.gui.simple_main_menu(app),
-        [],
-    )
+    top_section(app, 'Monitor', simple_main_menu(app), [])
 
     monitor_tmpl_vars = dict(
         text_metricsurl=METRICS_AVAIL*app.anchor('metrics', 'Metrics endpoint', []),
-        text_version=web2ldap.__about__.__version__,
+        text_version=__version__,
         text_sysfqdn=socket.getfqdn(),
         int_pid=os.getpid(),
         int_ppid=os.getppid(),
@@ -237,7 +235,7 @@ def w2l_monitor(app):
                     app.form.utf2display(cmd),
                     ctr,
                 )
-                for cmd, ctr in sorted(web2ldap.app.handler.COMMAND_COUNT.items())
+                for cmd, ctr in sorted(COMMAND_COUNT.items())
             ]
         ),
         text_exc_counters='\n'.join(
@@ -293,4 +291,4 @@ def w2l_monitor(app):
     else:
         app.outf.write('No active sessions.\n')
 
-    web2ldap.app.gui.footer(app)
+    footer(app)

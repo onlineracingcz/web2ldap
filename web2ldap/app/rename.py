@@ -26,7 +26,8 @@ import web2ldap.app.gui
 import web2ldap.app.form
 import web2ldap.app.schema
 import web2ldap.app.schema.syntaxes
-from web2ldap.app.schema.viewer import schema_anchors
+from .schema.viewer import schema_anchors
+from . import ErrorExit
 
 
 def new_superior_field(app, sup_search_url, old_superior_dn):
@@ -71,7 +72,7 @@ def w2l_rename(app):
     rename_supsearchurl_cfg = app.cfg_param('rename_supsearchurl', {})
 
     if not app.dn:
-        raise web2ldap.app.core.ErrorExit(u'Rename operation not possible at - World - or RootDSE.')
+        raise ErrorExit(u'Rename operation not possible at - World - or RootDSE.')
 
     rename_newrdn = app.form.getInputValue('rename_newrdn', [None])[0]
     rename_newsuperior = app.form.getInputValue('rename_newsuperior', [None])[0]
@@ -162,7 +163,7 @@ def w2l_rename(app):
             attrlist=['objectClass', 'structuralObjectClass', 'governingStructureRule'],
         )
         if not search_result:
-            raise web2ldap.app.core.ErrorExit(
+            raise ErrorExit(
                 u'Empty search result when reading entry to be renamed.'
             )
 

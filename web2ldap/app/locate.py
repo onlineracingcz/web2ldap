@@ -22,10 +22,10 @@ from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
 
 # Modules shipped with web2ldap
 from web2ldap.log import logger
-from web2ldap.app.core import ErrorExit
-from web2ldap.app.gui import ldap_url_anchor, simple_main_menu
+from . import ErrorExit
+from .gui import ldap_url_anchor, simple_main_menu
 try:
-    from web2ldap.ldaputil.dns import srv_lookup
+    from ..ldaputil.dns import srv_lookup
 except ImportError:
     srv_lookup = None
 else:

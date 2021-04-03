@@ -19,14 +19,18 @@ from ldap0.dn import DNObj
 
 import web2ldapcnf
 
-import web2ldap.ldapsession
-import web2ldap.ldaputil
-import web2ldap.app.cnf
-import web2ldap.app.gui
-import web2ldap.app.params
-from web2ldap.ldaputil.oidreg import OID_REG
-from web2ldap.app.schema.syntaxes import syntax_registry, LDAPSyntaxValueError
-from web2ldap.app.modify import modlist_ldif
+from ..ldaputil.oidreg import OID_REG
+from ..ldapsession import LDAPLimitErrors
+
+from . import ErrorExit
+from .gui import (
+    attrtype_select_field,
+    footer,
+    main_menu,
+    top_section,
+)
+from .schema.syntaxes import syntax_registry, LDAPSyntaxValueError
+from .modify import modlist_ldif
 
 
 BULKMOD_CONFIRMATION_FORM_TMPL = """
@@ -159,18 +163,14 @@ def bulkmod_input_form(
             bulkmod_op.insert(insert_row_num+1, bulkmod_op[insert_row_num])
             bulkmod_av.insert(insert_row_num+1, u'')
     # Generate a select field for the attribute type
-    bulkmod_attr_select = web2ldap.app.gui.attrtype_select_field(
+    bulkmod_attr_select = attrtype_select_field(
         app,
         'bulkmod_at',
         u'Attribute type',
         [], default_attr_options=None
     )
     # Output confirmation form
-    web2ldap.app.gui.top_section(
-        app,
-        'Bulk modification input',
-        web2ldap.app.gui.main_menu(app),
-    )
+    top_section(app, 'Bulk modification input', main_menu(app))
     input_fields = '\n'.join([
         """
         <tr>
@@ -246,7 +246,7 @@ def bulkmod_input_form(
             field_bulkmod_cp=app.form.field['bulkmod_cp'].input_html(checked=bulkmod_cp),
         )
     )
-    web2ldap.app.gui.footer(app)
+    footer(app)
     # end of bulkmod_input_form()
 
 
@@ -259,7 +259,7 @@ def bulkmod_confirmation_form(
     # first try to determine the number of affected entries
     try:
         num_entries, num_referrals = app.ls.count(app.dn, scope, bulkmod_filter, sizelimit=1000)
-    except web2ldap.ldapsession.LDAPLimitErrors:
+    except LDAPLimitErrors:
         num_entries, num_referrals = ('unknown', 'unknown')
     else:
         if num_entries is None:
@@ -282,12 +282,7 @@ def bulkmod_confirmation_form(
         bulk_mod_list_ldif = '- none -'
 
     # Output confirmation form
-    web2ldap.app.gui.top_section(
-        app,
-        'Modify entries?',
-        web2ldap.app.gui.main_menu(app),
-        main_div_id='Input',
-    )
+    top_section(app, 'Modify entries?', main_menu(app), main_div_id='Input')
     app.outf.write(
         BULKMOD_CONFIRMATION_FORM_TMPL.format(
             form_begin=app.begin_form('bulkmod', 'POST'),
@@ -315,7 +310,7 @@ def bulkmod_confirmation_form(
             ]),
         )
     )
-    web2ldap.app.gui.footer(app)
+    footer(app)
     # end of bulkmod_confirmation_form()
 
 
@@ -345,7 +340,7 @@ def w2l_bulkmod(app):
     bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
 
     if not len(bulkmod_at) == len(bulkmod_op) == len(bulkmod_av):
-        raise web2ldap.app.core.ErrorExit(u'Invalid bulk modification input.')
+        raise ErrorExit(u'Invalid bulk modification input.')
 
     bulk_mod_list, input_errors = input_modlist(
         app,
@@ -357,7 +352,7 @@ def w2l_bulkmod(app):
         app.simple_message(
             'Canceled bulk modification.',
             '<p class="SuccessMessage">Canceled bulk modification.</p>',
-            main_menu_list=web2ldap.app.gui.main_menu(app),
+            main_menu_list=main_menu(app),
         )
 
     elif not (bulk_mod_list or bulkmod_newsuperior) or \
@@ -531,11 +526,11 @@ def w2l_bulkmod(app):
                 error_messages,
                 change_records,
             ),
-            main_menu_list=web2ldap.app.gui.main_menu(app),
+            main_menu_list=main_menu(app),
         )
 
     else:
 
-        raise web2ldap.app.core.ErrorExit(u'Invalid bulk modification form data.')
+        raise ErrorExit(u'Invalid bulk modification form data.')
 
     # end of w2l_bulkmod()

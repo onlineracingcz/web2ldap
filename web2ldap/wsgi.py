@@ -14,107 +14,52 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import sys
 import os
-import socketserver
 import time
-import codecs
+import warnings
 import wsgiref.util
 import wsgiref.simple_server
 
-import web2ldap.app.core
-from web2ldap.log import logger
+from . import etc_dir
+from .log import logger
+from .web.wsgi import (
+    AppResponse,
+    W2lWSGIServer,
+    W2lWSGIRequestHandler,
+)
+
+# this has to be done before import module package ldap0
+os.environ['LDAPNOINIT'] = '1'
+logger.debug('Disabled processing .ldaprc or ldap.conf (LDAPNOINIT=%s)', os.environ['LDAPNOINIT'])
+import ldap0
+
+from .checkinst import check_inst
+check_inst()
+
+sys.path.append(etc_dir)
+# import config after extending Python module path
 import web2ldapcnf
 
+########################################################################
+# Initialize some constants
+########################################################################
 
-class W2lWSGIRequestHandler(wsgiref.simple_server.WSGIRequestHandler):
-    """
-    custom WSGIServer class
-    """
+logger.debug('End of module %s', __name__)
 
+# Raise UnicodeError instead of output of UnicodeWarning
+warnings.filterwarnings(action="error", category=UnicodeWarning)
 
-class W2lWSGIServer(wsgiref.simple_server.WSGIServer, socketserver.ThreadingMixIn):
-    """
-    custom WSGIServer class
-    """
-
-
-class WSGIBytesWrapper:
-
-    def __init__(self, outf):
-        self._outf = outf
-
-    def set_headers(self, headers):
-        self._outf.set_headers(headers)
-
-    def write(self, buf):
-        self._outf.write_bytes(buf)
-
-
-class AppResponse:
-    """
-    Application response class as file-like object
-    """
-
-    def __init__(self):
-        self.bytelen = 0
-        self.lines = []
-        self.headers = []
-        self.reset()
-
-    def reset(self):
-        """
-        reset the output completely (e.g. in case of error message)
-        """
-        self.bytelen = 0
-        del self.lines
-        self.lines = []
-        del self.headers
-        self.headers = []
-        self._charset = None
-        self.charset = 'utf-8'
-
-    @property
-    def charset(self):
-        return self._charset
-
-    @charset.setter
-    def charset(self, charset):
-        self._charset = charset
-        codec = codecs.lookup(self._charset)
-        self._uc_encode, self._uc_decode = codec[0], codec[1]
-
-    def set_headers(self, headers):
-        """
-        set all HTTP headers at once
-        """
-        self.headers = headers
-
-    def write(self, buf):
-        """
-        file-like method
-        """
-        assert isinstance(buf, str), TypeError('expected str for buf, but got %r', buf)
-        self.write_bytes(self._uc_encode(buf, 'replace')[0])
-
-    def write_bytes(self, buf):
-        assert isinstance(buf, bytes), TypeError('expected bytes for buf, but got %r', buf)
-        self.lines.append(buf)
-        self.bytelen += len(buf)
-
-    def close(self):
-        """
-        file-like method
-        """
-        del self.lines
-
-
-import web2ldap.app.session
-import web2ldap.app.handler
+ldap0._trace_level = web2ldapcnf.ldap_trace_level
+ldap0.set_option(ldap0.OPT_DEBUG_LEVEL, web2ldapcnf.ldap_opt_debug_level)
+ldap0.set_option(ldap0.OPT_RESTART, 0)
+ldap0.set_option(ldap0.OPT_DEREF, 0)
+ldap0.set_option(ldap0.OPT_REFERRALS, 0)
 
 
 def application(environ, start_response):
     """
     the main WSGI application function
     """
+    from .app.handler import AppHandler
     # check whether HTTP request method is valid
     if environ['REQUEST_METHOD'] not in {'POST', 'GET'}:
         logger.error('Invalid HTTP request method %r', environ['REQUEST_METHOD'])
@@ -145,7 +90,7 @@ def application(environ, start_response):
     if not environ['SCRIPT_NAME']:
         wsgiref.util.shift_path_info(environ)
     outf = AppResponse()
-    app = web2ldap.app.handler.AppHandler(environ, outf)
+    app = AppHandler(environ, outf)
     app.run()
     logger.debug(
         'Executing %s.run() took %0.3f secs',
@@ -161,6 +106,7 @@ def run_standalone():
     """
     start a simple stand-alone web server
     """
+    from .app.session import session_store
     logger.debug('Start stand-alone WSGI server')
     if len(sys.argv) == 1:
         host_arg = '127.0.0.1'
@@ -197,7 +143,7 @@ def run_standalone():
         logger.error('Error starting service http://%s:%s/web2ldap: %s', host_arg, port_arg, err)
         raise SystemExit('Exiting because of OS error')
     # Stop clean-up thread
-    web2ldap.app.session.session_store().expiry_thread.stop()
+    session_store().expiry_thread.stop()
     logger.info('Stopped service http://%s:%s/web2ldap', host, port)
     # end of run_standalone()
 

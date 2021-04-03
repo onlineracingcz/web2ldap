@@ -34,18 +34,15 @@ else:
 import web2ldapcnf
 
 import web2ldap.web.forms
-from web2ldap.web import escape_html
-import web2ldap.__about__
-import web2ldap.msbase
-import web2ldap.app.core
-import web2ldap.app.cnf
-import web2ldap.app.schema.syntaxes
-import web2ldap.app.searchform
-from web2ldap.msbase import GrabKeys
-from web2ldap.ldaputil import logdb_filter
-
-from web2ldap.log import logger
+from  ..__about__ import __version__
+from ..web import escape_html
+from ..msbase import GrabKeys
+from ..ldaputil import logdb_filter
+from ..log import logger
 logger.debug('dns_available = %r', dns_available)
+
+from . import ErrorExit
+
 
 #---------------------------------------------------------------------------
 # Constants
@@ -94,14 +91,14 @@ def read_template(app, config_key, form_desc=u'', tmpl_filename=None):
     if not tmpl_filename:
         tmpl_filename = app.cfg_param(config_key, None)
     if not tmpl_filename:
-        raise web2ldap.app.core.ErrorExit(u'No template specified for %s.' % (form_desc))
+        raise ErrorExit(u'No template specified for %s.' % (form_desc))
     tmpl_filename = web2ldap.app.gui.get_variant_filename(tmpl_filename, app.form.accept_language)
     try:
         # Read template from file
         with open(tmpl_filename, 'rb') as tmpl_fileobj:
             tmpl_str = tmpl_fileobj.read().decode('utf-8')
     except IOError:
-        raise web2ldap.app.core.ErrorExit(u'I/O error during reading %s template file.' % (form_desc))
+        raise ErrorExit(u'I/O error during reading %s template file.' % (form_desc))
     return tmpl_str # read_template()
 
 
@@ -356,10 +353,10 @@ def main_menu(app):
                     'search', 'Up',
                     (
                         ('dn', app.parent_dn),
-                        ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
+                        ('scope', str(ldap0.SCOPE_ONELEVEL)),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'objectClass'),
-                        ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
+                        ('search_option', '({at}=*)'),
                         ('search_string', ''),
                     ),
                     title=u'List direct subordinates of %s' % (app.parent_dn or u'Root DSE'),
@@ -371,10 +368,10 @@ def main_menu(app):
                 'search', 'Down',
                 (
                     ('dn', app.dn),
-                    ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
+                    ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'objectClass'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
+                    ('search_option', '({at}=*)'),
                     ('search_string', u''),
                 ),
                 title=u'List direct subordinates of %s' % (app.dn or u'Root DSE'),
@@ -469,7 +466,7 @@ def top_section(
         'sid': app.sid or '',
         'title_text': title,
         'script_name': script_name,
-        'web2ldap_version': escape_html(web2ldap.__about__.__version__),
+        'web2ldap_version': escape_html(__version__),
         'command': app.command,
         'ldap_url': '',
         'ldap_uri': '-/-',

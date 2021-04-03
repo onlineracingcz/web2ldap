@@ -16,30 +16,32 @@ import collections
 import logging
 import threading
 
-import web2ldap.web.session
-from web2ldap.web.helper import get_remote_ip
+from ..web import session
+from ..web.session import WebSession
+from ..web.helper import get_remote_ip
 
-from web2ldap.ldapsession import LDAPSession
-from web2ldap.log import logger, LogHelper
+from ..ldapsession import LDAPSession
+from ..log import logger, LogHelper
+
 import web2ldapcnf
 
 
 SESSION_EXPIRY_INTERVAL: int = 61
 
 
-class InvalidSessionInstance(web2ldap.web.session.SessionException):
+class InvalidSessionInstance(session.SessionException):
     """
     Exception raised in case of invalid session
     """
 
 
-class WrongSessionCookie(web2ldap.web.session.SessionException):
+class WrongSessionCookie(session.SessionException):
     """
     Exception raised in case of invalid cookie
     """
 
 
-class Session(web2ldap.web.session.WebSession, LogHelper):
+class Session(WebSession, LogHelper):
     """
     session store
     """
@@ -52,13 +54,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
             maxSessionCount=None,
             max_session_count_per_ip=None,
         ):
-        web2ldap.web.session.WebSession.__init__(
-            self,
-            dictobj,
-            session_ttl,
-            crossCheckVars,
-            maxSessionCount,
-        )
+        WebSession.__init__(self, dictobj, session_ttl, crossCheckVars, maxSessionCount)
         self.max_concurrent_sessions = 0
         self.remote_ip_sessions = collections.defaultdict(set)
         self.session_ip_addr = {}
@@ -85,8 +81,8 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
                 remote_ip,
                 self.max_session_count_per_ip,
             )
-            raise web2ldap.web.session.MaxSessionPerIPExceeded(remote_ip, self.max_session_count_per_ip)
-        session_id = web2ldap.web.session.WebSession.new(self, env)
+            raise session.MaxSessionPerIPExceeded(remote_ip, self.max_session_count_per_ip)
+        session_id = WebSession.new(self, env)
         current_concurrent_sessions = len(self.sessiondict) // 2
         if current_concurrent_sessions > self.max_concurrent_sessions:
             self.max_concurrent_sessions = current_concurrent_sessions
@@ -114,7 +110,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         session_data = self.retrieveSession(old_sid, env)
         new_sid = self.new(env)
         self.save(new_sid, session_data)
-        web2ldap.web.session.WebSession.delete(self, old_sid)
+        WebSession.delete(self, old_sid)
         # Set new remote IP associations
         remote_ip = get_remote_ip(env)
         self.session_ip_addr[new_sid] = remote_ip
@@ -132,7 +128,7 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
         else:
             if isinstance(ls_local, LDAPSession):
                 ls_local.unbind()
-        web2ldap.web.session.WebSession.delete(self, sid)
+        WebSession.delete(self, sid)
         self.log(logging.INFO, 'delete(%r): removed session', sid)
         # Remove old remote IP associations
         try:
@@ -145,14 +141,14 @@ class Session(web2ldap.web.session.WebSession, LogHelper):
 
     def expire(self):
         self.log(logging.DEBUG, 'Entering .expire()')
-        expired = web2ldap.web.session.WebSession.expire(self)
+        expired = WebSession.expire(self)
         if expired:
             self.log(logging.INFO, 'expire() removed %d expired sessions', expired)
         return expired
         # end of expire()
 
 
-class ExpiryThread(web2ldap.web.session.ExpiryThread, LogHelper):
+class ExpiryThread(session.ExpiryThread, LogHelper):
     """
     Thread class for clean-up thread
 
@@ -162,7 +158,7 @@ class ExpiryThread(web2ldap.web.session.ExpiryThread, LogHelper):
 
 
     def __init__(self, *args, **kwargs):
-        web2ldap.web.session.ExpiryThread.__init__(self, *args, **kwargs)
+        session.ExpiryThread.__init__(self, *args, **kwargs)
         self.run_counter = 0
 
     def run(self):

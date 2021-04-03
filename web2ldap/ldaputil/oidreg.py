@@ -13,7 +13,7 @@ see http://www.web2ldap.de for details
 Comprehensive list initially contributed by Norbert Klasen
 """
 
-from web2ldap.log import logger
+from ..log import logger
 
 OID_LIST = (
 

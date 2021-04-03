@@ -28,20 +28,24 @@ from ldap0.schema.models import \
 import web2ldapcnf
 
 import web2ldap.web
-from web2ldap.web import escape_html
-import web2ldap.ldapsession
-import web2ldap.app.core
-import web2ldap.app.cnf
-import web2ldap.app.form
-import web2ldap.app.gui
-import web2ldap.app.read
-import web2ldap.app.schema
-from web2ldap.app.schema.viewer import schema_anchors
-from web2ldap.app.schema.syntaxes import syntax_registry
-from web2ldap.msbase import GrabKeys
-from web2ldap.app.schema.syntaxes import LDAPSyntaxValueError
-from web2ldap.app.schema.viewer import schema_anchor
+from ..msbase import GrabKeys
+from ..web import escape_html
+from ..web.forms import Select as SelectField
+from . import ErrorExit
 
+from .schema import no_userapp_attr, NEEDS_BINARY_TAG
+from .schema.viewer import schema_anchors
+from .schema.syntaxes import syntax_registry
+from .schema.syntaxes import LDAPSyntaxValueError
+from .schema.viewer import schema_anchor
+from .form import ObjectClassSelect
+from .gui import (
+    HIDDEN_FIELD,
+    footer,
+    main_menu,
+    top_section,
+)
+from .read import DisplayEntry
 
 H1_MSG = {
     'add':'Add new entry',
@@ -134,7 +138,7 @@ def get_entry_input(app):
     in_value_list = app.form.getInputValue('in_av', [])
 
     if not len(in_attrtype_list) == len(in_value_list):
-        raise web2ldap.app.core.ErrorExit('Different count of attribute types and values input.')
+        raise ErrorExit('Different count of attribute types and values input.')
 
     entry = ldap0.schema.models.Entry(app.schema, app.dn, {})
 
@@ -190,7 +194,7 @@ def get_entry_input(app):
     try:
         in_ldif = app.form.field['in_ldif'].getLDIFRecords()
     except ValueError as e:
-        raise web2ldap.app.core.ErrorExit(
+        raise ErrorExit(
             'LDIF parsing error: %s' % (app.form.utf2display(str(e)))
         )
     else:
@@ -248,7 +252,7 @@ def get_entry_input(app):
     return entry, invalid_attrs # get_entry_input()
 
 
-class InputFormEntry(web2ldap.app.read.DisplayEntry):
+class InputFormEntry(DisplayEntry):
 
     def __init__(
             self, app, dn, schema, entry,
@@ -257,7 +261,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
             invalid_attrs=None
         ):
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
-        web2ldap.app.read.DisplayEntry.__init__(
+        DisplayEntry.__init__(
             self, app, dn, schema, entry, 'fieldSep', False
         )
         self.existing_object_classes = existing_object_classes
@@ -297,11 +301,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
         """
         oid = self.entry.name2key(nameoroid)[0]
         nameoroid_se = self.entry._s.get_obj(AttributeType, nameoroid)
-        syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.get_syntax(
-            self.entry._s,
-            nameoroid,
-            self.soc,
-        )
+        syntax_class = syntax_registry.get_syntax(self.entry._s, nameoroid, self.soc)
         try:
             attr_values = self.entry.__getitem__(nameoroid)
         except KeyError:
@@ -347,13 +347,13 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                 ) or (
                     # Set to writeable if relax rules control is in effect and attribute is NO-USER-APP in subschema
                     not self._app.ls.relax_rules and \
-                    web2ldap.app.schema.no_userapp_attr(self.entry._s, oid)
+                    no_userapp_attr(self.entry._s, oid)
                 ):
                 result.append('\n'.join((
                     '<span class="InvalidInput">'*highlight_invalid,
                     self._app.form.hiddenFieldHTML('in_at', nameoroid, ''),
-                    web2ldap.app.gui.HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
-                    web2ldap.app.gui.HIDDEN_FIELD % (
+                    HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
+                    HIDDEN_FIELD % (
                         'in_av',
                         self._app.form.utf2display(attr_inst.formValue(), sp_entity='  '),
                         self._app.form.utf2display(attr_inst.formValue(), sp_entity='&nbsp;&nbsp;')
@@ -377,8 +377,8 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                     # Determine whether transfer syntax has to be specified with ;binary
                     if (
                             nameoroid.endswith(';binary') or
-                            oid in web2ldap.app.schema.NEEDS_BINARY_TAG or
-                            nameoroid_se.syntax in web2ldap.app.schema.NEEDS_BINARY_TAG
+                            oid in NEEDS_BINARY_TAG or
+                            nameoroid_se.syntax in NEEDS_BINARY_TAG
                         ):
                         attr_type_tags.append('binary')
                 input_fields = attr_inst.formFields()
@@ -387,13 +387,13 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                     input_field.charset = self._app.form.accept_charset
                     result.append('\n'.join([
                         '<span class="InvalidInput">'*highlight_invalid,
-                        web2ldap.app.gui.HIDDEN_FIELD % (
+                        HIDDEN_FIELD % (
                             'in_at',
                             ';'.join([attr_type_name]+attr_type_tags),
                             ''
                         ),
 
-                        web2ldap.app.gui.HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
+                        HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
                         input_field.input_html(
                             id_value='_'.join((
                                 'inputattr', attr_type_name, str(attr_index)
@@ -495,7 +495,7 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
 
     def template_output(self, cnf_key, display_duplicate_attrs=True):
         self._reset_input_counters()
-        displayed_attrs = web2ldap.app.read.DisplayEntry.template_output(
+        displayed_attrs = DisplayEntry.template_output(
             self, cnf_key, display_duplicate_attrs=display_duplicate_attrs
         )
         # Output hidden fields for attributes not displayed in template-based input form
@@ -510,13 +510,13 @@ class InputFormEntry(web2ldap.app.read.DisplayEntry):
                         self._app, self.dn, self.entry._s, attr_type, attr_value, self.entry
                     )
                     self._app.outf.write(self._app.form.hiddenFieldHTML('in_at', attr_type, ''))
-                    self._app.outf.write(web2ldap.app.gui.HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''))
+                    self._app.outf.write(HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''))
                     try:
                         attr_value_html = self._app.form.utf2display(attr_inst.formValue(), sp_entity='  ')
                     except UnicodeDecodeError:
                         # Simply display an empty string if anything goes wrong with Unicode decoding (e.g. with binary attributes)
                         attr_value_html = ''
-                    self._app.outf.write(web2ldap.app.gui.HIDDEN_FIELD % (
+                    self._app.outf.write(HIDDEN_FIELD % (
                         'in_av', attr_value_html, ''
                     ))
                     self.attr_counter += 1
@@ -581,7 +581,7 @@ def superior_display_html(
             pass
         else:
             if parent_search_result is not None:
-                parent_entry = web2ldap.app.read.DisplayEntry(
+                parent_entry = DisplayEntry(
                     app, parent_dn, app.schema,
                     parent_search_result.entry_as, 'readSep', 0
                 )
@@ -707,28 +707,28 @@ def object_class_form(
                     )
                 )
 
-        abstract_select_field = web2ldap.app.form.ObjectClassSelect(
+        abstract_select_field = ObjectClassSelect(
             name='in_oc',
             text='Abstract object class(es)',
             options=all_abstract_oc,
             default=existing_abstract_oc,
             size=20
         )
-        structural_select_field = web2ldap.app.form.ObjectClassSelect(
+        structural_select_field = ObjectClassSelect(
             name='in_oc',
             text='Structural object class(es)',
             options=all_structural_oc,
             default=existing_structural_oc,
             size=20
         )
-        auxiliary_select_field = web2ldap.app.form.ObjectClassSelect(
+        auxiliary_select_field = ObjectClassSelect(
             name='in_oc',
             text='Auxiliary object class(es)',
             options=all_auxiliary_oc,
             default=existing_auxiliary_oc,
             size=20
         )
-        misc_select_field = web2ldap.app.form.ObjectClassSelect(
+        misc_select_field = ObjectClassSelect(
             name='in_oc',
             text='Misc. object class(es)',
             options=[],
@@ -937,10 +937,10 @@ def object_class_form(
             app.anchor('add', 'Expert', [('dn', app.dn), ('in_ocf', 'exp')]),
         ])
 
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         H1_MSG[app.command],
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=context_menu_list,
         main_div_id='Input'
     )
@@ -960,7 +960,7 @@ def object_class_form(
             ))
         )
     )
-    web2ldap.app.gui.footer(app)
+    footer(app)
     # end of object_class_form()
 
 
@@ -968,14 +968,14 @@ def read_ldif_template(app, template_name):
     addform_entry_templates = app.cfg_param('addform_entry_templates', {})
     template_name_html = escape_html(template_name)
     if template_name not in addform_entry_templates:
-        raise web2ldap.app.core.ErrorExit('LDIF template key &quot;%s&quot; not known.' % (template_name_html))
+        raise ErrorExit('LDIF template key &quot;%s&quot; not known.' % (template_name_html))
     ldif_file_name = addform_entry_templates[template_name]
     try:
         ldif_file = None
         try:
             ldif_file = open(ldif_file_name, 'rb')
         except IOError:
-            raise web2ldap.app.core.ErrorExit('I/O error opening LDIF template for &quot;%s&quot;.' % (template_name_html))
+            raise ErrorExit('I/O error opening LDIF template for &quot;%s&quot;.' % (template_name_html))
         try:
             dn, entry = list(ldap0.ldif.LDIFParser(
                 ldif_file,
@@ -983,9 +983,9 @@ def read_ldif_template(app, template_name):
                 process_url_schemes=web2ldapcnf.ldif_url_schemes
             ).parse(max_entries=1))[0]
         except (IOError, ValueError):
-            raise web2ldap.app.core.ErrorExit('Value error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
+            raise ErrorExit('Value error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
         except Exception:
-            raise web2ldap.app.core.ErrorExit('Other error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
+            raise ErrorExit('Other error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
     finally:
         if ldif_file is not None:
             ldif_file.close()
@@ -1176,7 +1176,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
 
     if rdn_options and len(rdn_options) > 0:
         # <select> field
-        rdn_input_field = web2ldap.web.forms.Select('add_rdn', 'RDN variants', 1, options=rdn_options)
+        rdn_input_field = SelectField('add_rdn', 'RDN variants', 1, options=rdn_options)
     else:
         # Just a normal <input> text field
         rdn_input_field = app.form.field['add_rdn']
@@ -1213,10 +1213,10 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
             ))
             input_formtype = 'Table'
 
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         H1_MSG[app.command],
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=[]
     )
 
@@ -1256,7 +1256,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
         input_form_entry.ldif_input()
 
     app.outf.write('</form>')
-    web2ldap.app.gui.footer(app)
+    footer(app)
     # end of w2l_addform()
 
 
@@ -1331,10 +1331,10 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
             ))
             input_formtype = 'Table'
 
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         H1_MSG[app.command],
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=[]
     )
 
@@ -1379,5 +1379,5 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         input_form_entry.ldif_input()
 
     app.outf.write('</form>')
-    web2ldap.app.gui.footer(app)
+    footer(app)
     # end of w2l_modifyform()

@@ -31,15 +31,16 @@ from ldap0.schema.models import (
     OBJECTCLASS_KIND_STR,
 )
 
-from web2ldap.web import escape_html
-import web2ldap.app.gui
-import web2ldap.app.schema.syntaxes
-
-
-OBSOLETE_TEMPL = {
-    False: '%s',
-    True: '<s>%s</s>',
-}
+from .. import ErrorExit
+from ..gui import (
+    footer,
+    main_menu,
+    top_section,
+)
+from ..form import OIDInput
+from ..searchform import SEARCH_OPT_ATTR_EXISTS, SEARCH_OPT_IS_EQUAL
+from . import OBSOLETE_TEMPL, schema_link_text, schema_anchor
+from .syntaxes import syntax_registry, LDAPSyntax
 
 SCHEMA_VIEWER_USAGE = """
 <p>Hints:</p>
@@ -62,57 +63,6 @@ Try to look it up:
 %s
 </dl>
 """
-
-
-def schema_link_text(se_obj):
-    names = [
-        escape_html(name)
-        for name in getattr(se_obj, 'names', (()))
-    ]
-    obsolete = getattr(se_obj, 'obsolete', False)
-    if len(names) == 1:
-        res = names[0]
-    elif len(names) > 1:
-        res = '{name} (alias {other_names})'.format(
-            name=names[0],
-            other_names=', '.join(names[1:]),
-        )
-    elif isinstance(se_obj, LDAPSyntax) and se_obj.desc is not None:
-        res = escape_html(se_obj.desc)
-    else:
-        res = escape_html(se_obj.oid)
-    return OBSOLETE_TEMPL[obsolete] % res
-
-
-def schema_anchor(
-        app,
-        se_nameoroid,
-        se_class,
-        name_template='{name}\n{anchor}',
-        link_text=None,
-    ):
-    """
-    Return a pretty HTML-formatted string describing a schema element
-    referenced by name or OID
-    """
-    try:
-        se_obj = app.schema.get_obj(se_class, se_nameoroid, None, raise_keyerror=True)
-    except KeyError:
-        anchor = ''
-    else:
-        anchor = app.anchor(
-            'oid', link_text or schema_link_text(se_obj),
-            [
-                ('dn', app.dn),
-                ('oid', se_obj.oid),
-                ('oid_class', SCHEMA_ATTR_MAPPING[se_class]),
-            ]
-        )
-    return name_template.format(
-        name=app.form.utf2display(se_nameoroid),
-        anchor=anchor,
-    )
-    # end of schema_anchor()
 
 
 def schema_anchors(app, se_names, se_class):
@@ -270,7 +220,7 @@ class DisplaySchemaElement:
                         )
                     )
         obsolete = getattr(self._se, 'obsolete', 0)
-        web2ldap.app.gui.top_section(
+        top_section(
             self._app,
             '%s %s (%s)' % (
                 self.type_desc,
@@ -279,7 +229,7 @@ class DisplaySchemaElement:
                 ),
                 self._se.oid
             ),
-            web2ldap.app.gui.main_menu(self._app),
+            main_menu(self._app),
             context_menu_list=schema_context_menu(self._app)
         )
         self._app.outf.write(
@@ -297,7 +247,7 @@ class DisplaySchemaElement:
             )
         )
         self.disp_details()
-        web2ldap.app.gui.footer(self._app)
+        footer(self._app)
 
 
 class DisplayObjectClass(DisplaySchemaElement):
@@ -400,7 +350,7 @@ class DisplayObjectClass(DisplaySchemaElement):
                         ('dn', self._app.dn),
                         ('searchform_mode', u'adv'),
                         ('search_attr', u'objectClass'),
-                        ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                        ('search_option', SEARCH_OPT_IS_EQUAL),
                         ('search_string', (self._se.names or [self._se.oid])[0]),
                     ],
                     title=u'Search entries by object class',
@@ -556,7 +506,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                         ('dn', self._app.dn),
                         ('searchform_mode', u'adv'),
                         ('search_attr', (self._se.names or [self._se.oid])[0]),
-                        ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
+                        ('search_option', SEARCH_OPT_ATTR_EXISTS),
                         ('search_string', ''),
                     ],
                     title=u'Search entries by attribute presence',
@@ -572,10 +522,8 @@ class DisplayAttributeType(DisplaySchemaElement):
           <dd>
             <table>
               <tr><th>Structural<br>object class</th><th>Plugin class</th>""")
-        for structural_oc in (
-                web2ldap.app.schema.syntaxes.syntax_registry.at2syntax[at_oid].keys() or [None]
-            ):
-            syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.get_syntax(
+        for structural_oc in (syntax_registry.at2syntax[at_oid].keys() or [None]):
+            syntax_class = syntax_registry.get_syntax(
                 self._schema,
                 at_oid,
                 structural_oc,
@@ -628,10 +576,7 @@ class DisplayLDAPSyntax(DisplaySchemaElement):
         #########################################
         # Output registered plugin class name
         #########################################
-        syntax_class = web2ldap.app.schema.syntaxes.syntax_registry.oid2syntax.get(
-            self._se.oid,
-            web2ldap.app.schema.syntaxes.LDAPSyntax,
-        )
+        syntax_class = syntax_registry.oid2syntax.get(self._se.oid, LDAPSyntax)
         self._app.outf.write('<dt>Associated syntax class</dt>\n<dd>\n%s\n</dd>\n' % (
             '.'.join((syntax_class.__module__, syntax_class.__name__))
         ))
@@ -725,7 +670,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
     )
 
     def display(self):
-        web2ldap.app.gui.top_section(
+        top_section(
             self._app,
             '%s %s (%s)' % (
                 self.type_desc,
@@ -734,7 +679,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
                 ),
                 self._se.ruleid
             ),
-            web2ldap.app.gui.main_menu(self._app),
+            main_menu(self._app),
             context_menu_list=schema_context_menu(self._app)
         )
         self._app.outf.write(
@@ -756,7 +701,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
             )
         )
         self.disp_details()
-        web2ldap.app.gui.footer(self._app)
+        footer(self._app)
 
     def disp_details(self):
         """
@@ -812,7 +757,7 @@ SCHEMA_VIEWER_CLASS = {
 
 
 def oid_input_form(app, oid=None):
-    oid_input_field_html = web2ldap.app.form.OIDInput(
+    oid_input_field_html = OIDInput(
         'oid',
         u'OID or descriptive name of schema element',
         default=oid
@@ -829,15 +774,15 @@ def display_schema_elements(app, se_classes, se_list):
     se_list = se_list or []
     se_classes = tuple(filter(None, se_classes or []) or SCHEMA_CLASS_MAPPING.values())
 
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         'Schema elements',
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=schema_context_menu(app)
     )
 
     if app.schema is None:
-        raise web2ldap.app.core.ErrorExit(u'No sub schema available!')
+        raise ErrorExit(u'No sub schema available!')
 
     oid_dict = {}
     if se_list:
@@ -869,7 +814,7 @@ def display_schema_elements(app, se_classes, se_list):
             ))
     else:
         app.outf.write(SCHEMA_VIEWER_USAGE)
-    web2ldap.app.gui.footer(app)
+    footer(app)
     # end of display_schema_elements()
 
 
@@ -966,7 +911,7 @@ def w2l_schema_viewer(app):
                 oid_input_form(app, oid),
             ),
             main_div_id='Message',
-            main_menu_list=web2ldap.app.gui.main_menu(app),
+            main_menu_list=main_menu(app),
             context_menu_list=schema_context_menu(app)
         )
         return
@@ -978,6 +923,6 @@ def w2l_schema_viewer(app):
     # Directly display a single schema element
     se_obj = se_list[0]
     if se_obj.__class__ not in SCHEMA_VIEWER_CLASS:
-        raise web2ldap.app.core.ErrorExit(u'No viewer for this type of schema element!')
+        raise ErrorExit(u'No viewer for this type of schema element!')
     schema_viewer = SCHEMA_VIEWER_CLASS[se_obj.__class__](app, se_obj)
     schema_viewer.display()

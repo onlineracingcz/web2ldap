@@ -17,12 +17,12 @@ import ldap0.modlist
 from ldap0.controls.readentry import PostReadControl
 from ldap0.dn import DNObj
 
-import web2ldap.web.forms
-import web2ldap.app.cnf
-import web2ldap.app.core
-import web2ldap.app.gui
-import web2ldap.app.schema
 from .addmodifyform import w2l_addform, get_entry_input, read_old_entry, read_ldif_template
+from . import ErrorExit
+from .gui import (
+    invalid_syntax_message,
+    main_menu,
+)
 
 # Attribute types always ignored for add requests
 ADD_IGNORE_ATTR_TYPES = {
@@ -74,7 +74,7 @@ def w2l_add(app):
         add_basedn = app.form.getInputValue('add_basedn', [app.dn])[0]
 
     if invalid_attrs:
-        error_msg = web2ldap.app.gui.invalid_syntax_message(app, invalid_attrs)
+        error_msg = invalid_syntax_message(app, invalid_attrs)
     else:
         error_msg = ''
 
@@ -143,7 +143,7 @@ def w2l_add(app):
     }
 
     if not add_entry:
-        raise web2ldap.app.core.ErrorExit(u'Cannot add entry without attribute values.')
+        raise ErrorExit(u'Cannot add entry without attribute values.')
 
     if app.dn:
         new_dn = rdn + DNObj.from_str(add_basedn)
@@ -164,7 +164,7 @@ def w2l_add(app):
             req_ctrls=add_req_ctrls
         )
     except ldap0.NO_SUCH_OBJECT as e:
-        raise web2ldap.app.core.ErrorExit(
+        raise ErrorExit(
             u"""
             %s<br>
             Probably this superiour entry does not exist:<br>%s<br>
@@ -214,6 +214,6 @@ def w2l_add(app):
                 ),
                 app.display_dn(str(new_dn), commandbutton=0),
             ),
-            main_menu_list=web2ldap.app.gui.main_menu(app),
+            main_menu_list=main_menu(app),
             context_menu_list=[]
         )

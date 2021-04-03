@@ -37,20 +37,22 @@ from web2ldap.app.plugins.groups import GroupEntryDN
 from web2ldap.app.plugins.oath import OathHOTPToken
 from web2ldap.app.plugins.opensshlpk import SshPublicKey
 from web2ldap.app.plugins.posixautogen import HomeDirectory
-from web2ldap.app.schema.syntaxes import \
-    ComposedAttribute, \
-    DirectoryString, \
-    DistinguishedName, \
-    DNSDomain, \
-    DerefDynamicDNSelectList, \
-    DynamicValueSelectList, \
-    IA5String, \
-    Integer, \
-    NotAfter, \
-    NotBefore, \
-    RFC822Address, \
-    SelectList, \
-    syntax_registry
+from web2ldap.app.schema.syntaxes import (
+    ComposedAttribute,
+    DirectoryString,
+    DistinguishedName,
+    DNSDomain,
+    DerefDynamicDNSelectList,
+    DynamicValueSelectList,
+    IA5String,
+    Integer,
+    NotAfter,
+    NotBefore,
+    RFC822Address,
+    SelectList,
+    syntax_registry,
+)
+from .. import ErrorExit
 
 
 # OID arc for AE-DIR, see stroeder.com-oid-macros.schema
@@ -336,7 +338,7 @@ class AEUserUid(AEUid):
             if not uid_result:
                 return uid_candidate
             gen_collisions += 1
-        raise web2ldap.app.core.ErrorExit(
+        raise ErrorExit(
             'Gave up generating new unique <em>uid</em> after %d attempts.' % (gen_collisions)
         )
         # end of _gen_uid()

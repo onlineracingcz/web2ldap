@@ -15,12 +15,12 @@ https://www.apache.org/licenses/LICENSE-2.0
 import threading
 
 import web2ldap.__about__
-from web2ldap.app.session import session_store
 import web2ldap.app.gui
-import web2ldap.app.handler
-from web2ldap.app.handler import COMMAND_COUNT
+
 from ..ldapsession import LDAPSession
 from ..log import logger, EXC_TYPE_COUNTER
+from .stats import COMMAND_COUNT
+from .session import session_store
 
 try:
     import prometheus_client.core

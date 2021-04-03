@@ -32,20 +32,20 @@ import web2ldap.app.params
 import web2ldap.app.session
 from web2ldap.ldapsession import AVAILABLE_BOOLEAN_CONTROLS
 import web2ldap.web.forms
-from web2ldap.web.forms import \
-    Input, \
-    Field, \
-    Textarea, \
-    BytesInput, \
-    Select, \
-    Checkbox, \
-    Form, \
-    InvalidValueFormat
+from web2ldap.web.forms import (
+    Input,
+    Field,
+    Textarea,
+    BytesInput,
+    Select,
+    Checkbox,
+    Form,
+    InvalidValueFormat,
+)
 
 
 # Work around https://bugs.python.org/issue29613
 http.cookies.Morsel._reserved['samesite'] = 'SameSite'
-
 
 class Web2LDAPForm(Form):
     """
@@ -328,7 +328,7 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
             Select(
                 'search_option', 'Search option',
                 web2ldapcnf.max_searchparams,
-                options=web2ldap.app.searchform.search_options,
+                options=web2ldap.app.searchform.SEARCH_OPTIONS,
             ),
             Input(
                 'search_string', 'Search string',

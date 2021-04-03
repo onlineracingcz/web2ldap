@@ -28,6 +28,7 @@ import web2ldap.app.add
 import web2ldap.app.schema
 from web2ldap.app.schema.syntaxes import syntax_registry
 from .addmodifyform import w2l_modifyform, get_entry_input, read_old_entry
+from . import ErrorExit
 
 
 def modlist_ldif(dn, form, modlist):
@@ -102,7 +103,7 @@ def w2l_modify(app):
     try:
         old_entry, dummy = read_old_entry(app, app.dn, app.schema, in_assertion)
     except ldap0.NO_SUCH_OBJECT:
-        raise web2ldap.app.core.ErrorExit(u'Old entry was removed or modified in between! You have to edit it again.')
+        raise ErrorExit(u'Old entry was removed or modified in between! You have to edit it again.')
 
     # Filter out empty values
     for attr_type, attr_values in new_entry.items():
@@ -179,7 +180,7 @@ def w2l_modify(app):
             assertion_filter=in_assertion,
         )
     except ldap0.ASSERTION_FAILED:
-        raise web2ldap.app.core.ErrorExit(
+        raise ErrorExit(
             'Assertion failed '
             '=> Entry was removed or modified in between! '
             'You have to edit it again.'

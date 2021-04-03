@@ -16,11 +16,19 @@ import ldap0
 
 import web2ldapcnf
 
-import web2ldap.web.forms
-import web2ldap.app.core
-import web2ldap.app.gui
-import web2ldap.app.cnf
+from ..web.forms import Select as SelectField
 from ..log import logger
+
+from . import ErrorExit
+from .gui import (
+    attrtype_select_field,
+    footer,
+    get_variant_filename,
+    main_menu,
+    search_root_field,
+    top_section,
+)
+
 
 SEARCHFORM_MODE_TEXT = {
     'adv': 'Advanced',
@@ -44,7 +52,19 @@ SEARCH_OPT_DN_SUBORDINATE = u'({at}:dnSubordinateMatch:={av})'
 SEARCH_OPT_DN_SUBTREE = u'({at}:dnSubtreeMatch:={av})'
 SEARCH_OPT_DN_ONE_LEVEL = u'({at}:dnOneLevelMatch:={av})'
 
-search_options = (
+SEARCH_SCOPE_STR_BASE = u'0'
+SEARCH_SCOPE_STR_ONELEVEL = u'1'
+SEARCH_SCOPE_STR_SUBTREE = u'2'
+SEARCH_SCOPE_STR_SUBORDINATES = u'3'
+
+SEARCH_SCOPE_OPTIONS = [
+    (str(ldap0.SCOPE_BASE), 'Base'),
+    (str(ldap0.SCOPE_ONELEVEL), 'One level'),
+    (str(ldap0.SCOPE_SUBTREE), 'Sub tree'),
+    (str(ldap0.SCOPE_SUBORDINATE), 'Subordinate'),
+]
+
+SEARCH_OPTIONS = (
     (SEARCH_OPT_IS_EQUAL, u'attribute value is'),
     (SEARCH_OPT_CONTAINS, u'attribute value contains'),
     (SEARCH_OPT_DOESNT_CONTAIN, u'attribute value does not contain'),
@@ -61,18 +81,6 @@ search_options = (
     (SEARCH_OPT_DN_SUBTREE, u'DN within subtree'),
     (SEARCH_OPT_DN_ONE_LEVEL, u'DN is direct child of'),
 )
-
-SEARCH_SCOPE_STR_BASE = u'0'
-SEARCH_SCOPE_STR_ONELEVEL = u'1'
-SEARCH_SCOPE_STR_SUBTREE = u'2'
-SEARCH_SCOPE_STR_SUBORDINATES = u'3'
-
-SEARCH_SCOPE_OPTIONS = [
-    (SEARCH_SCOPE_STR_BASE, u'Base'),
-    (SEARCH_SCOPE_STR_ONELEVEL, u'One level'),
-    (SEARCH_SCOPE_STR_SUBTREE, u'Sub tree'),
-    (SEARCH_SCOPE_STR_SUBORDINATES, u'Subordinate'),
-]
 
 FILTERSTR_FIELDSET_TMPL = """
 <fieldset>
@@ -102,7 +110,7 @@ def SearchForm_base(app, searchform_template_name):
     """
     searchform_template_cfg = app.cfg_param('searchform_template', '')
     searchform_template = searchform_template_cfg.get(searchform_template_name, None)
-    searchform_template_filename = web2ldap.app.gui.get_variant_filename(searchform_template, app.form.accept_language)
+    searchform_template_filename = get_variant_filename(searchform_template, app.form.accept_language)
     with open(searchform_template_filename, 'rb') as fileobj:
         template_str = fileobj.read().decode('utf-8')
     return template_str # SearchForm_base()
@@ -135,11 +143,11 @@ def SearchForm_adv(app):
             search_string_list.insert(insert_row_num+1, u'')
 
     if not len(search_option_list) == len(search_attr_list) == len(search_string_list):
-        raise web2ldap.app.core.ErrorExit(u'Invalid search form data.')
+        raise ErrorExit(u'Invalid search form data.')
 
     search_mode = app.form.getInputValue('search_mode', [u'(&%s)'])[0]
 
-    search_mode_select = web2ldap.web.forms.Select(
+    search_mode_select = SelectField(
         'search_mode', u'Search mode', 1,
         options=[
             (u'(&%s)', u'all'),
@@ -149,7 +157,7 @@ def SearchForm_adv(app):
     )
     search_mode_select.charset = app.form.accept_charset
 
-    search_attr_select = web2ldap.app.gui.attrtype_select_field(
+    search_attr_select = attrtype_select_field(
         app,
         'search_attr',
         u'Search attribute type',
@@ -159,7 +167,7 @@ def SearchForm_adv(app):
 
     mr_list = [''] + sorted(app.schema.name2oid[ldap0.schema.models.MatchingRule].keys())
     # Create a select field instance for matching rule name
-    search_mr_select = web2ldap.web.forms.Select(
+    search_mr_select = SelectField(
         'search_mr', u'Matching rule used',
         web2ldapcnf.max_searchparams,
         options=mr_list,
@@ -219,7 +227,7 @@ def w2l_searchform(
         'search_root',
         [search_root or str(app.naming_context)],
     )[0]
-    search_root_field = web2ldap.app.gui.search_root_field(
+    srf = search_root_field(
         app,
         name='search_root',
         default=search_root,
@@ -276,17 +284,17 @@ def w2l_searchform(
         # base search form with fixed input fields
         inner_searchform_html = SearchForm_adv(app)
 
-    searchoptions_template_filename = web2ldap.app.gui.get_variant_filename(
+    searchoptions_template_filename = get_variant_filename(
         app.cfg_param('searchoptions_template', None),
         app.form.accept_language
     )
     with open(searchoptions_template_filename, 'r') as template_file:
         searchoptions_template_str = template_file.read()
 
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         '%s Search Form' % SEARCHFORM_MODE_TEXT[searchform_mode],
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=ContextMenuList,
         main_div_id='Input'
     )
@@ -315,7 +323,7 @@ def w2l_searchform(
             inner_searchform_html=inner_searchform_html,
             form_dn_html=app.form.hiddenFieldHTML('dn', app.dn, u''),
             searchoptions_template_str=searchoptions_template_str.format(
-                field_search_root=search_root_field.input_html(),
+                field_search_root=srf.input_html(),
                 field_search_scope=app.form.field['scope'].input_html(
                     default=app.form.getInputValue('scope', [str(scope)])[0]
                 ),
@@ -333,4 +341,4 @@ def w2l_searchform(
         )
     )
 
-    web2ldap.app.gui.footer(app)
+    footer(app)

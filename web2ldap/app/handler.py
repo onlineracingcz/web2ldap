@@ -17,7 +17,6 @@ import socket
 import time
 import urllib.parse
 import logging
-from collections import defaultdict
 
 from ipaddress import ip_address, ip_network
 
@@ -29,8 +28,8 @@ from ldap0.err import PasswordPolicyException, PasswordPolicyExpirationWarning
 import web2ldapcnf
 import web2ldapcnf.hosts
 
-COMMAND_COUNT = defaultdict(lambda: 0)
-
+from . import ErrorExit
+from ..ldaputil import AD_LDAP49_ERROR_CODES, AD_LDAP49_ERROR_PREFIX
 import web2ldap.web.forms
 import web2ldap.web.helper
 import web2ldap.web.session
@@ -68,14 +67,14 @@ import web2ldap.app.bulkmod
 import web2ldap.app.srvrr
 import web2ldap.app.schema.viewer
 import web2ldap.app.metrics
-from web2ldap.app.gui import exception_message, dns_available
-from web2ldap.app.form import Web2LDAPForm
-from web2ldap.app.session import session_store
-from web2ldap.app.schema.syntaxes import syntax_registry
-from web2ldap.ldaputil import AD_LDAP49_ERROR_CODES, AD_LDAP49_ERROR_PREFIX
-from web2ldap.app.core import ErrorExit
+from .gui import exception_message, dns_available
+from .form import Web2LDAPForm
+from .session import session_store
+from .schema.syntaxes import syntax_registry
+from .stats import COMMAND_COUNT
+
 if dns_available:
-    from web2ldap.ldaputil.dns import dc_dn_lookup
+    from ..ldaputil.dns import dc_dn_lookup
 
 SCOPE2COMMAND = {
     None:'search',

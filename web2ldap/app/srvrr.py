@@ -12,8 +12,12 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-import web2ldap.web.forms
-import web2ldap.app.gui
+from ..web.forms import Select as SelectField
+from .gui import (
+    footer,
+    main_menu,
+    top_section,
+)
 
 SRVRR_TMPL = """
 <h1>Entry located via DNS</h1>
@@ -50,16 +54,16 @@ def w2l_chasesrvrecord(app, host_list):
     """
     Present an input form to change to a server located via DNS SRV RR
     """
-    host_select_field = web2ldap.web.forms.Select(
+    host_select_field = SelectField(
         'host', 'Host selection', 1,
         options=host_list,
         default=host_list[0],
         ignoreCase=1,
     )
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         'LDAP server located via DNS',
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=[],
         main_div_id='Input'
     )
@@ -80,4 +84,4 @@ def w2l_chasesrvrecord(app, host_list):
     )
     app.outf.write('</form>\n')
 
-    web2ldap.app.gui.footer(app)
+    footer(app)

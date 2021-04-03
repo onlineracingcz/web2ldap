@@ -26,10 +26,11 @@ import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
 import web2ldap.app.schema
-from web2ldap.log import logger
-from web2ldap.app.schema.syntaxes import syntax_registry
-from web2ldap.msbase import GrabKeys
-from web2ldap.app.schema.viewer import schema_anchor
+from ..log import logger
+from .schema.syntaxes import syntax_registry
+from ..msbase import GrabKeys
+from .schema.viewer import schema_anchor
+from . import ErrorExit
 
 
 class VCardEntry(UserDict):
@@ -383,7 +384,7 @@ def w2l_read(app):
     )
 
     if not search_result:
-        raise web2ldap.app.core.ErrorExit(u'Empty search result.')
+        raise ErrorExit(u'Empty search result.')
 
     entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
 
@@ -424,7 +425,7 @@ def w2l_read(app):
             if attr_type+';binary' in entry:
                 attr_type = attr_type+';binary'
             else:
-                raise web2ldap.app.core.ErrorExit(
+                raise ErrorExit(
                     u'Attribute <em>%s</em> not in entry.' % (
                         app.form.utf2display(attr_type)
                     )
@@ -583,13 +584,13 @@ def w2l_read(app):
         vcard_template_filename = get_vcard_template(app, entry.get('objectClass', []))
 
         if not vcard_template_filename:
-            raise web2ldap.app.core.ErrorExit(u'No vCard template file found for object class(es) of this entry.')
+            raise ErrorExit(u'No vCard template file found for object class(es) of this entry.')
 
         # Templates defined => display the entry with the help of a template
         try:
             template_str = open(vcard_template_filename, 'rb').read()
         except IOError:
-            raise web2ldap.app.core.ErrorExit(u'I/O error during reading vCard template file!')
+            raise ErrorExit(u'I/O error during reading vCard template file!')
 
         vcard_filename = u'web2ldap-vcard'
         for vcard_name_attr in ('displayName', 'cn', 'o'):

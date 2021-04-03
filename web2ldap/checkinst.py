@@ -22,7 +22,7 @@ from pprint import pformat
 
 import ldap0
 
-from web2ldap.log import logger
+from .log import logger
 
 
 def check_inst():

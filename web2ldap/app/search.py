@@ -28,25 +28,30 @@ from ldap0.schema.models import AttributeType
 from ldap0.base import decode_list
 from ldap0.res import SearchReference, SearchResultEntry
 
-import web2ldap.web.forms
-from web2ldap.web import escape_html
-import web2ldap.ldaputil.asynch
-import web2ldap.msbase
-import web2ldap.ldaputil
-import web2ldap.app.core
-import web2ldap.app.cnf
-import web2ldap.app.gui
-import web2ldap.app.read
-import web2ldap.app.searchform
-from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
-from web2ldap.msbase import GrabKeys
-from web2ldap.app.schema.syntaxes import syntax_registry
-from web2ldap.app.searchform import SEARCH_OPT_ATTR_EXISTS, SEARCH_OPT_ATTR_NOT_EXISTS
-from web2ldap.ldapsession import LDAPLimitErrors
-from web2ldap.msbase import CaseinsensitiveStringKeyDict
-from web2ldap.wsgi import WSGIBytesWrapper
+from ..__about__ import __version__
+from ..web import escape_html
+from ..ldaputil import asynch
+from ..ldaputil.extldapurl import ExtendedLDAPUrl
+from ..ldapsession import LDAPLimitErrors
+from ..msbase import GrabKeys, CaseinsensitiveStringKeyDict
+from ..web.wsgi import WSGIBytesWrapper
+from . import ErrorExit
 
-import web2ldap.__about__
+from .form import ExportFormatSelect, InclOpAttrsCheckbox
+from .read import DisplayEntry
+from .schema.syntaxes import syntax_registry
+from .searchform import (
+    w2l_searchform,
+    SEARCH_OPT_ATTR_EXISTS,
+    SEARCH_OPT_ATTR_NOT_EXISTS,
+    SEARCH_SCOPE_STR_ONELEVEL,
+)
+from .gui import (
+    footer,
+    gen_headers,
+    main_menu,
+    top_section,
+)
 
 SEARCH_NOOP_TIMEOUT = 5.0
 
@@ -110,14 +115,14 @@ class excel_semicolon(csv.excel):
 csv.register_dialect('excel-semicolon', excel_semicolon)
 
 
-class LDIFWriter(web2ldap.ldaputil.asynch.LDIFWriter):
+class LDIFWriter(asynch.LDIFWriter):
 
     def pre_processing(self):
         return
 
     def after_first(self):
         self._ldif_writer._output_file.set_headers(
-            web2ldap.app.gui.gen_headers(
+            gen_headers(
                 content_type='text/plain',
                 charset='utf-8',
                 more_headers=[
@@ -125,24 +130,24 @@ class LDIFWriter(web2ldap.ldaputil.asynch.LDIFWriter):
                 ]
             )
         )
-        web2ldap.ldaputil.asynch.LDIFWriter.pre_processing(self)
+        asynch.LDIFWriter.pre_processing(self)
 
 
-class PrintableHTMLWriter(web2ldap.ldaputil.asynch.List):
+class PrintableHTMLWriter(asynch.List):
     """
     Class for writing a stream LDAP search results to a printable file
     """
     _entryResultTypes = is_search_result
 
     def __init__(self, app, dn, sub_schema, print_template_str_dict):
-        web2ldap.ldaputil.asynch.List.__init__(self, app.ls.l)
+        asynch.List.__init__(self, app.ls.l)
         self._app = app
         self._dn = dn
         self._s = sub_schema
         self._p = print_template_str_dict
 
     def process_results(self, ignoreResultsNumber=0, processResultsCount=0):
-        web2ldap.ldaputil.asynch.List.process_results(self)
+        asynch.List.process_results(self)
         #self.allResults.sort()
         # This should speed up things
         utf2display = self._app.form.utf2display
@@ -165,7 +170,7 @@ class PrintableHTMLWriter(web2ldap.ldaputil.asynch.List):
                     ])
                 table.append(self._p[template_oc[0]] % (tableentry))
         # Output search results as pretty-printable table without buttons
-        web2ldap.app.gui.top_section(self._app, 'Printable Search Results', [])
+        top_section(self._app, 'Printable Search Results', [])
         self._app.outf.write(
             """
             <table
@@ -182,11 +187,11 @@ class PrintableHTMLWriter(web2ldap.ldaputil.asynch.List):
             ]
             self._app.outf.write('<tr>\n%s</tr>\n' % ('\n'.join(td_list)))
         self._app.outf.write('</table>\n')
-        web2ldap.app.gui.footer(self._app)
+        footer(self._app)
         # end of process_results()
 
 
-class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
+class CSVWriter(asynch.AsyncSearchHandler):
     """
     Class for writing a stream LDAP search results to a CSV file
     """
@@ -194,7 +199,7 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     _formular_prefixes = frozenset('@+-=|%')
 
     def __init__(self, l, f, sub_schema, attr_types, ldap_charset='utf-8'):
-        web2ldap.ldaputil.asynch.AsyncSearchHandler.__init__(self, l)
+        asynch.AsyncSearchHandler.__init__(self, l)
         self._output_file = f
         self._csv_writer = csv.writer(f, dialect='excel-semicolon')
         self._s = sub_schema
@@ -203,7 +208,7 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
 
     def after_first(self):
         self._output_file.set_headers(
-            web2ldap.app.gui.gen_headers(
+            gen_headers(
                 content_type='text/csv',
                 charset='utf-8',
                 more_headers=[
@@ -233,14 +238,14 @@ class CSVWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
         self._csv_writer.writerow(csv_row_list)
 
 
-class ExcelWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
+class ExcelWriter(asynch.AsyncSearchHandler):
     """
     Class for writing a stream LDAP search results to a Excel file
     """
     _entryResultTypes = is_search_result
 
     def __init__(self, l, f, sub_schema, attr_types, ldap_charset='utf-8'):
-        web2ldap.ldaputil.asynch.AsyncSearchHandler.__init__(self, l)
+        asynch.AsyncSearchHandler.__init__(self, l)
         self._f = f
         self._s = sub_schema
         self._attr_types = attr_types
@@ -251,7 +256,7 @@ class ExcelWriter(web2ldap.ldaputil.asynch.AsyncSearchHandler):
 
     def after_first(self):
         self._f.set_headers(
-            web2ldap.app.gui.gen_headers(
+            gen_headers(
                 content_type='application/vnd.ms-excel',
                 charset='utf-8',
                 more_headers=[
@@ -332,7 +337,7 @@ def w2l_search(app):
     searchform_mode = app.form.getInputValue('searchform_mode', [u'exp'])[0]
 
     if search_submit != u'Search' and searchform_mode == 'adv':
-        web2ldap.app.searchform.w2l_searchform(
+        w2l_searchform(
             app,
             Msg='',
             filterstr=u'',
@@ -359,7 +364,7 @@ def w2l_search(app):
     search_string = app.form.getInputValue('search_string', [])
 
     if not len(search_option) == len(search_attr) == len(search_mr) == len(search_string):
-        raise web2ldap.app.core.ErrorExit(u'Invalid search form data.')
+        raise ErrorExit(u'Invalid search form data.')
 
     # Build LDAP search filter from input data of advanced search form
     for i in range(len(search_attr)):
@@ -388,7 +393,7 @@ def w2l_search(app):
     search_filter = list(filter(None, search_filter))
 
     if not search_filter:
-        web2ldap.app.searchform.w2l_searchform(
+        w2l_searchform(
             app,
             Msg='Empty search values.',
             filterstr=u'',
@@ -453,7 +458,7 @@ def w2l_search(app):
     if search_output == 'print':
         print_template_filenames_dict = app.cfg_param('print_template', None)
         if print_template_filenames_dict is None:
-            raise web2ldap.app.core.ErrorExit(u'No templates for printing defined.')
+            raise ErrorExit(u'No templates for printing defined.')
         print_template_str_dict = CaseinsensitiveStringKeyDict()
         for oc in print_template_filenames_dict.keys():
             try:
@@ -493,7 +498,7 @@ def w2l_search(app):
         read_attrs = read_attr_set.names
 
         # Create async search handler instance
-        result_handler = web2ldap.ldaputil.asynch.List(app.ls.l)
+        result_handler = asynch.List(app.ls.l)
 
     elif search_output in {'ldif', 'ldif1'}:
         # read all attributes
@@ -505,7 +510,7 @@ def w2l_search(app):
         result_handler = LDIFWriter(app.ls.l, WSGIBytesWrapper(app.outf))
         if search_output == 'ldif1':
             result_handler.header = LDIF1_HEADER % (
-                web2ldap.__about__.__version__,
+                __version__,
                 time.strftime(
                     '%A, %Y-%m-%d %H:%M:%S GMT',
                     time.gmtime(time.time())
@@ -520,7 +525,7 @@ def w2l_search(app):
         if not read_attrs:
             if searchform_mode == u'base':
                 searchform_mode = u'adv'
-            web2ldap.app.searchform.w2l_searchform(
+            w2l_searchform(
                 app,
                 Msg='For table-structured export you have to define the attributes to be read!',
                 filterstr=filterstr,
@@ -553,7 +558,7 @@ def w2l_search(app):
             ldap0.INAPPROPRIATE_MATCHING,
         ) as e:
         # Give the user a chance to edit his bad search filter
-        web2ldap.app.searchform.w2l_searchform(
+        w2l_searchform(
             app,
             Msg=' '.join((
                 app.ldap_error_msg(e),
@@ -601,7 +606,7 @@ def w2l_search(app):
                     pass
         except (ldap0.FILTER_ERROR, ldap0.INAPPROPRIATE_MATCHING) as e:
             # Give the user a chance to edit his bad search filter
-            web2ldap.app.searchform.w2l_searchform(
+            w2l_searchform(
                 app,
                 Msg=app.ldap_error_msg(e),
                 filterstr=filterstr,
@@ -612,7 +617,7 @@ def w2l_search(app):
             resind = result_handler.endResultBreak
             if search_root or scope != ldap0.SCOPE_ONELEVEL:
                 # Give the user a chance to edit his bad search filter
-                web2ldap.app.searchform.w2l_searchform(
+                w2l_searchform(
                     app,
                     Msg=app.ldap_error_msg(e),
                     filterstr=filterstr,
@@ -710,7 +715,7 @@ def w2l_search(app):
             app.simple_message(
                 'No Search Results',
                 '<p class="WarningMessage">No entries found.</p>%s' % (search_param_html),
-                main_menu_list=web2ldap.app.gui.main_menu(app),
+                main_menu_list=main_menu(app),
                 context_menu_list=ContextMenuList
             )
 
@@ -822,14 +827,9 @@ def w2l_search(app):
                 search_bookmark,
             )
 
-            web2ldap.app.gui.top_section(
-                app,
-                'Search Results',
-                web2ldap.app.gui.main_menu(app),
-                context_menu_list=ContextMenuList
-            )
+            top_section(app, 'Search Results', main_menu(app), context_menu_list=ContextMenuList)
 
-            export_field = web2ldap.app.form.ExportFormatSelect()
+            export_field = ExportFormatSelect()
             export_field.charset = app.form.accept_charset
 
             app.outf.write('\n'.join((SearchWarningMsg, result_message)))
@@ -924,7 +924,7 @@ def w2l_search(app):
 
                         if tableentry_attrs:
                             # Output entry with the help of pre-defined templates
-                            tableentry = web2ldap.app.read.DisplayEntry(
+                            tableentry = DisplayEntry(
                                 app, r.dn_s, app.schema, entry, 'searchSep', False
                             )
                             tdlist = []
@@ -994,10 +994,10 @@ def w2l_search(app):
                             'search', 'Down',
                             (
                                 ('dn', r.dn_s),
-                                ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
+                                ('scope', SEARCH_SCOPE_STR_ONELEVEL),
                                 ('searchform_mode', u'adv'),
                                 ('search_attr', u'objectClass'),
-                                ('search_option', web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS),
+                                ('search_option', SEARCH_OPT_ATTR_EXISTS),
                                 ('search_string', ''),
                             ),
                             title=u'\r\n'.join(down_title_list),
@@ -1035,7 +1035,7 @@ def w2l_search(app):
                         app.form.hiddenFieldHTML('search_attrs', u','.join(search_attrs), u''),
                     )),
                     export_field.input_html(),
-                    web2ldap.app.form.InclOpAttrsCheckbox().input_html(),
+                    InclOpAttrsCheckbox().input_html(),
                 )
             )
 
@@ -1053,7 +1053,7 @@ def w2l_search(app):
                 )
             )
 
-            web2ldap.app.gui.footer(app)
+            footer(app)
 
 
     else:

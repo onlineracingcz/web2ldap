@@ -16,7 +16,12 @@ import asn1crypto.pem
 import asn1crypto.x509
 import asn1crypto.crl
 
-from web2ldap.app.schema.syntaxes import ASN1Object, Binary, GSER, syntax_registry
+from ..schema.syntaxes import (
+    ASN1Object,
+    Binary,
+    GSER,
+    syntax_registry,
+)
 
 
 def x509name2ldapdn(x509name, subschema=None):

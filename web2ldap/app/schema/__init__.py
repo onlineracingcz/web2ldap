@@ -23,8 +23,10 @@ from ldap0.schema.models import \
     LDAPSyntax, \
     NOT_HUMAN_READABLE_LDAP_SYNTAXES
 import ldap0.schema.util
+from ldap0.schema.subentry import SCHEMA_ATTR_MAPPING
 
-from web2ldap.log import logger
+from ...log import logger
+from ...web import escape_html
 
 
 NOT_HUMAN_READABLE_LDAP_SYNTAXES = {
@@ -67,6 +69,12 @@ USERAPP_ATTRS = {
 # all values must be lower-case!
 NO_USERAPP_ATTRS = {
     'entrycsn',
+}
+
+
+OBSOLETE_TEMPL = {
+    False: '%s',
+    True: '<s>%s</s>',
 }
 
 
@@ -163,3 +171,54 @@ def parse_fake_schema(ldap_def):
         # Store the pre-parsed schema in the configuration
         ldap_def.cfg_data[k]._schema = schema
     # end of parse_fake_schema()
+
+
+def schema_link_text(se_obj):
+    names = [
+        escape_html(name)
+        for name in getattr(se_obj, 'names', (()))
+    ]
+    obsolete = getattr(se_obj, 'obsolete', False)
+    if len(names) == 1:
+        res = names[0]
+    elif len(names) > 1:
+        res = '{name} (alias {other_names})'.format(
+            name=names[0],
+            other_names=', '.join(names[1:]),
+        )
+    elif isinstance(se_obj, LDAPSyntax) and se_obj.desc is not None:
+        res = escape_html(se_obj.desc)
+    else:
+        res = escape_html(se_obj.oid)
+    return OBSOLETE_TEMPL[obsolete] % res
+
+
+def schema_anchor(
+        app,
+        se_nameoroid,
+        se_class,
+        name_template='{name}\n{anchor}',
+        link_text=None,
+    ):
+    """
+    Return a pretty HTML-formatted string describing a schema element
+    referenced by name or OID
+    """
+    try:
+        se_obj = app.schema.get_obj(se_class, se_nameoroid, None, raise_keyerror=True)
+    except KeyError:
+        anchor = ''
+    else:
+        anchor = app.anchor(
+            'oid', link_text or schema_link_text(se_obj),
+            [
+                ('dn', app.dn),
+                ('oid', se_obj.oid),
+                ('oid_class', SCHEMA_ATTR_MAPPING[se_class]),
+            ]
+        )
+    return name_template.format(
+        name=app.form.utf2display(se_nameoroid),
+        anchor=anchor,
+    )
+    # end of schema_anchor()
