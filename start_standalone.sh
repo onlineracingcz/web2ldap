@@ -35,5 +35,4 @@ export PYTHONTHREADDEBUG
 PYTHONDUMPREFS=1
 export PYTHONDUMPREFS
 
-${PYTHON3} -R -bb -tt "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
-#coverage-3 run "${WEB2LDAP_HOME}/web2ldap/wsgi.py"
+${PYTHON3} -R -bb -tt -m web2ldap.wsgi
