@@ -17,9 +17,11 @@ import time
 import web2ldapcnf
 import web2ldapcnf.hosts
 
-import web2ldap.web.forms
-import web2ldap.app.core
-import web2ldap.app.gui
+from ..web import forms
+from .gui import (
+    read_template,
+    simple_main_menu,
+)
 
 
 def w2l_connect(app, h1_msg='Connect', error_msg=''):
@@ -27,13 +29,13 @@ def w2l_connect(app, h1_msg='Connect', error_msg=''):
     Display the landing page with a connect form
     """
 
-    connect_template_str = web2ldap.app.gui.read_template(
+    connect_template_str = read_template(
         app, None, u'connect form',
         tmpl_filename=web2ldapcnf.connect_template
     )
 
     if web2ldapcnf.hosts.ldap_uri_list:
-        uri_select_field = web2ldap.web.forms.Select(
+        uri_select_field = forms.Select(
             'ldapurl',
             u'LDAP uri',
             1,
@@ -61,6 +63,6 @@ def w2l_connect(app, h1_msg='Connect', error_msg=''):
             disable_end={False:'', True:'-->'}[web2ldapcnf.hosts.restricted_ldap_uri_list],
             value_currenttime=time.strftime(r'%Y%m%d%H%M%SZ', time.gmtime()),
         ),
-        main_menu_list=web2ldap.app.gui.simple_main_menu(app),
+        main_menu_list=simple_main_menu(app),
         context_menu_list=[],
     )
