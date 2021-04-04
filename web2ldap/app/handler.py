@@ -1065,12 +1065,8 @@ class AppHandler(LogHelper):
             )
 
         except ErrorExit as error_exit:
-            self.log(logging.WARN, 'ErrorExit: %r', error_exit.Msg)
-            exception_message(
-                self,
-                u'Error',
-                error_exit.Msg,
-            )
+            self.log(logging.WARN, 'ErrorExit: %r', error_exit.error_message)
+            exception_message(self, 'Error', error_exit.error_message)
 
         except web2ldap.web.session.MaxSessionPerIPExceeded as session_err:
             self.log(logging.WARN, str(session_err))

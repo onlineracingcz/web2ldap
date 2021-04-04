@@ -17,7 +17,9 @@ class ErrorExit(Exception):
     Base class for web2ldap application exceptions reaching the UI
     """
 
-    def __init__(self, Msg):
-        assert isinstance(Msg, str), TypeError("Argument 'Msg' must be str, got %r" % (Msg))
+    def __init__(self, error_message):
+        assert isinstance(error_message, str), TypeError(
+            "Argument 'error_message' must be str, got %r" % (error_message)
+        )
         Exception.__init__(self)
-        self.Msg = Msg
+        self.error_message = error_message
