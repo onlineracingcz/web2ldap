@@ -11,7 +11,7 @@ https://www.web2ldap.de/web2ldapcnf.html
 import os
 
 from web2ldap.log import logger
-from web2ldap.app.core import etc_dir, templates_dir
+from web2ldap import etc_dir, templates_dir
 
 #---------------------------------------------------------------------------
 # General options
@@ -180,6 +180,23 @@ http_headers = {
         "vr 'none'; "
         "xr 'none'"
     ),
+    'Permissions-Policy': (
+        "geolocation=(none), "
+        "notifications=(none), "
+        "push=(none), "
+        "midi=(none), "
+        "camera=(none), "
+        "microphone=(none), "
+        "speaker-selection=(none), "
+        "ambient-light-sensor=(none), "
+        "accelerometer=(none), "
+        "gyroscope=(none), "
+        "magnetometer=(none), "
+        "clipboard-read=(none), "
+        "clipboard-write=(none), "
+        "display-capture=(none)"
+    )
+
 }
 http_headers['X-Webkit-CSP'] = http_headers['Content-Security-Policy']
 http_headers['X-Content-Security-Policy'] = http_headers['Content-Security-Policy']

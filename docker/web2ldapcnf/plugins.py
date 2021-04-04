@@ -238,7 +238,7 @@ import web2ldap.app.plugins.dns
 # to allow trailing dot in fully-qualified domain names in all plugin
 # classes derived from syntax base class DNSDomain
 #import re, web2ldap.app.schema.syntaxes
-#web2ldap.app.schema.syntaxes.DNSDomain.reObj = re.compile('^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]*)*$')
+#web2ldap.app.schema.syntaxes.DNSDomain.pattern = re.compile('^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]*)*$')
 
 #---------------------------------------------------------------------------
 # Univention Corporate Server
@@ -264,7 +264,7 @@ import web2ldap.app.plugins.h350
 
 import web2ldap.app.plugins.aedir
 
-#web2ldap.app.plugins.aedir.AETicketId.reObj = re.compile('^[A-Z]+-[0-9]+$')
+#web2ldap.app.plugins.aedir.AETicketId.pattern = re.compile('^[A-Z]+-[0-9]+$')
 #web2ldap.app.plugins.aedir.AETicketId.html_tmpl = '<a href="https://issues.example.com/browse/{av}">{av}</a>'
 
 #web2ldap.app.plugins.aedir.AEHostname.html_tmpl = """{av} /
