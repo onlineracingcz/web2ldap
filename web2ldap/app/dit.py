@@ -15,8 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import ldap0
 from ldap0.dn import DNObj
 
-import web2ldap.app.gui
-from web2ldap.app.gui import dn_anchor_hash
+from .gui import dn_anchor_hash, main_menu
 
 
 # All attributes to be read for nodes
@@ -251,7 +250,7 @@ def w2l_dit(app):
         <h1>Directory Information Tree</h1>
         <div id="DIT">%s</div>
         """ % ('\n'.join(outf_lines)),
-        main_menu_list=web2ldap.app.gui.main_menu(app),
+        main_menu_list=main_menu(app),
         context_menu_list=[]
     )
 
