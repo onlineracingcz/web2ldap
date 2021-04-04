@@ -17,14 +17,16 @@ import time
 import ldap0
 from ldap0.res import SearchResultEntry
 
-import web2ldap.web.forms
-import web2ldap.ldaputil.asynch
-import web2ldap.ldapsession
-import web2ldap.ldaputil
-import web2ldap.app.core
-import web2ldap.app.cnf
-import web2ldap.app.gui
-from web2ldap.log import logger
+from ..web.forms import Select as SelectField
+from ..ldaputil.asynch import AsyncSearchHandler
+from ..ldapsession import CONTROL_TREEDELETE, LDAPLimitErrors
+from .gui import (
+    context_menu_single_entry,
+    footer,
+    main_menu,
+    top_section,
+)
+from ..log import logger
 
 
 DELETE_SUBTREE_FORM_TMPL = """
@@ -107,7 +109,7 @@ DELETE_ENTRIES_SUCCESS_TMPL = """
 """
 
 
-class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
+class DeleteLeafs(AsyncSearchHandler):
     """
     Class for deleting entries which are results of a search.
 
@@ -119,7 +121,7 @@ class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
     }
 
     def __init__(self, l, tree_delete_ctrl, delete_server_ctrls):
-        web2ldap.ldaputil.asynch.AsyncSearchHandler.__init__(self, l)
+        AsyncSearchHandler.__init__(self, l)
         self.req_ctrls = delete_server_ctrls
         self.tree_delete_ctrl = tree_delete_ctrl
 
@@ -130,7 +132,7 @@ class DeleteLeafs(web2ldap.ldaputil.asynch.AsyncSearchHandler):
         self.nonDeletableEntries = []
         self.deletedEntries = 0
         self.noSuchObjectCounter = 0
-        web2ldap.ldaputil.asynch.AsyncSearchHandler.start_search(
+        AsyncSearchHandler.start_search(
             self,
             searchRoot,
             searchScope,
@@ -273,7 +275,7 @@ def del_singleentry_form(app):
 
 
 def del_subtree_form(app, scope):
-    delete_scope_field = web2ldap.web.forms.Select(
+    delete_scope_field = SelectField(
         'scope', 'Scope of delete operation', 1,
         options=(
             (str(ldap0.SCOPE_BASE), 'Only this entry'),
@@ -298,9 +300,9 @@ def del_subtree_form(app, scope):
         text_num_sub_ordinates=numSubordinates_html,
         text_num_all_sub_ordinates=numAllSubordinates_html,
         field_delete_scope=delete_scope_field.input_html(),
-        value_delete_ctrl_oid=web2ldap.ldapsession.CONTROL_TREEDELETE,
+        value_delete_ctrl_oid=CONTROL_TREEDELETE,
         value_delete_ctrl_checked=' checked'*int(
-            web2ldap.ldapsession.CONTROL_TREEDELETE in app.ls.supportedControl and \
+            CONTROL_TREEDELETE in app.ls.supportedControl and \
             not app.ls.is_openldap
         ),
     )
@@ -331,7 +333,7 @@ def del_search_form(app, scope, delete_filter):
             delete_filter,
             sizelimit=1000,
         )
-    except web2ldap.ldapsession.LDAPLimitErrors:
+    except LDAPLimitErrors:
         num_entries, num_referrals = ('unknown', 'unknown')
     else:
         if num_entries is None:
@@ -372,7 +374,7 @@ def w2l_delete(app):
     # Generate a list of requested LDAPv3 extended controls to be sent along
     # with a modify or delete request
     delete_ctrl_oids = app.form.getInputValue('delete_ctrl', [])
-    delete_ctrl_tree_delete = web2ldap.ldapsession.CONTROL_TREEDELETE in delete_ctrl_oids
+    delete_ctrl_tree_delete = CONTROL_TREEDELETE in delete_ctrl_oids
 
     if delete_confirm is None:
         # First show delete confirmation and delete mode select form
@@ -391,10 +393,10 @@ def w2l_delete(app):
         else:
             inner_form = del_subtree_form(app, scope)
         # Output confirmation form
-        web2ldap.app.gui.top_section(
+        top_section(
             app,
             'Delete entry?',
-            web2ldap.app.gui.main_menu(app),
+            main_menu(app),
             context_menu_list=[],
         )
         app.outf.write(
@@ -405,15 +407,15 @@ def w2l_delete(app):
                 field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
             )
         )
-        web2ldap.app.gui.footer(app)
+        footer(app)
         return
 
     if delete_confirm != 'yes':
         app.simple_message(
             'Canceled delete',
             '<p class="SuccessMessage">Canceled delete.</p>',
-            main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.context_menu_single_entry(app)
+            main_menu_list=main_menu(app),
+            context_menu_list=context_menu_single_entry(app)
         )
         return
 
@@ -458,7 +460,7 @@ def w2l_delete(app):
                 end_time_stamp-begin_time_stamp,
                 len(non_deletable_entries),
             ),
-            main_menu_list=web2ldap.app.gui.main_menu(app),
+            main_menu_list=main_menu(app),
             context_menu_list=[],
         )
 
@@ -489,8 +491,8 @@ def w2l_delete(app):
                     for attr_type in delete_attr
                 ]),
             ),
-            main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.context_menu_single_entry(app)
+            main_menu_list=main_menu(app),
+            context_menu_list=context_menu_single_entry(app)
         )
 
     elif scope == ldap0.SCOPE_BASE:
@@ -506,6 +508,6 @@ def w2l_delete(app):
             '<p class="SuccessMessage">Deleted entry: %s</p>' % (
                 app.display_dn(old_dn)
             ),
-            main_menu_list=web2ldap.app.gui.main_menu(app),
+            main_menu_list=main_menu(app),
             context_menu_list=[],
         )
