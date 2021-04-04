@@ -30,48 +30,49 @@ import web2ldapcnf.hosts
 
 from . import ErrorExit
 from ..ldaputil import AD_LDAP49_ERROR_CODES, AD_LDAP49_ERROR_PREFIX
-import web2ldap.web.forms
-import web2ldap.web.helper
-import web2ldap.web.session
-from web2ldap.web.helper import get_remote_ip
-import web2ldap.__about__
-import web2ldap.ldaputil
-import web2ldap.ldapsession
-from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
-from web2ldap.ldapsession import LDAPSession
-from web2ldap.log import LogHelper, logger, log_exception
+from ..web.forms import FormException
+from ..web.session import SessionException, MaxSessionPerIPExceeded, MaxSessionCountExceeded
+from ..web.helper import get_remote_ip
+from ..ldaputil.extldapurl import ExtendedLDAPUrl
+from ..ldapsession import LDAPSession, START_TLS_REQUIRED, LDAP_DEFAULT_TIMEOUT, START_TLS_NO
+from ..log import LogHelper, logger, log_exception
 # Import the application modules
-import web2ldap.app.gui
-import web2ldap.app.cnf
-import web2ldap.app.passwd
-import web2ldap.app.dit
-import web2ldap.app.searchform
-import web2ldap.app.locate
-import web2ldap.app.search
-import web2ldap.app.addmodifyform
-import web2ldap.app.add
-import web2ldap.app.modify
-import web2ldap.app.dds
-import web2ldap.app.delete
-import web2ldap.app.params
-import web2ldap.app.read
-import web2ldap.app.conninfo
-import web2ldap.app.login
-import web2ldap.app.connect
-import web2ldap.app.referral
-import web2ldap.app.monitor
-import web2ldap.app.groupadm
-import web2ldap.app.rename
-import web2ldap.app.urlredirect
-import web2ldap.app.bulkmod
-import web2ldap.app.srvrr
-import web2ldap.app.schema.viewer
-import web2ldap.app.metrics
+from .gui import (
+    footer,
+    Header,
+    read_template,
+    top_section,
+    ts2repr,
+)
+from .cnf import LDAP_DEF, LDAP_URI_LIST_CHECK_DICT
+from . import passwd
 from .gui import exception_message, dns_available
 from .form import Web2LDAPForm
 from .session import session_store
 from .schema.syntaxes import syntax_registry
 from .stats import COMMAND_COUNT
+# action functions
+from .connect import w2l_connect
+from .locate import w2l_locate
+from .monitor import w2l_monitor
+from .urlredirect import w2l_urlredirect
+from .searchform import w2l_searchform
+from .search import w2l_search
+from .add import w2l_add
+from .modify import w2l_modify
+from .dds import w2l_dds
+from .bulkmod import w2l_bulkmod
+from .delete import w2l_delete
+from .dit import w2l_dit
+from .rename import w2l_rename
+from .passwd import w2l_passwd
+from .read import w2l_read
+from .conninfo import w2l_conninfo
+from .params import w2l_params
+from .login import w2l_login
+from .groupadm import w2l_groupadm
+from .schema.viewer import w2l_schema_viewer
+from .metrics import w2l_metrics, METRICS_AVAIL
 
 if dns_available:
     from ..ldaputil.dns import dc_dn_lookup
@@ -110,32 +111,31 @@ SIMPLE_MSG_HTML = """
 """
 
 COMMAND_FUNCTION = {
-    '': web2ldap.app.connect.w2l_connect,
+    '': w2l_connect,
     'disconnect': None,
-    'locate': web2ldap.app.locate.w2l_locate,
-    'monitor': web2ldap.app.monitor.w2l_monitor,
-    'urlredirect': web2ldap.app.urlredirect.w2l_urlredirect,
-    'searchform': web2ldap.app.searchform.w2l_searchform,
-    'search': web2ldap.app.search.w2l_search,
-    'add': web2ldap.app.add.w2l_add,
-    'modify': web2ldap.app.modify.w2l_modify,
-    'dds': web2ldap.app.dds.w2l_dds,
-    'bulkmod': web2ldap.app.bulkmod.w2l_bulkmod,
-    'delete': web2ldap.app.delete.w2l_delete,
-    'dit': web2ldap.app.dit.w2l_dit,
-    'rename': web2ldap.app.rename.w2l_rename,
-    'passwd': web2ldap.app.passwd.w2l_passwd,
-    'read': web2ldap.app.read.w2l_read,
-    'conninfo': web2ldap.app.conninfo.w2l_conninfo,
-    'params': web2ldap.app.params.w2l_params,
-    'login': web2ldap.app.login.w2l_login,
-    'groupadm': web2ldap.app.groupadm.w2l_groupadm,
-    'oid': web2ldap.app.schema.viewer.w2l_schema_viewer,
+    'locate': w2l_locate,
+    'monitor': w2l_monitor,
+    'urlredirect': w2l_urlredirect,
+    'searchform': w2l_searchform,
+    'search': w2l_search,
+    'add': w2l_add,
+    'modify': w2l_modify,
+    'dds': w2l_dds,
+    'bulkmod': w2l_bulkmod,
+    'delete': w2l_delete,
+    'dit': w2l_dit,
+    'rename': w2l_rename,
+    'passwd': w2l_passwd,
+    'read': w2l_read,
+    'conninfo': w2l_conninfo,
+    'params': w2l_params,
+    'login': w2l_login,
+    'groupadm': w2l_groupadm,
+    'oid': w2l_schema_viewer,
 }
 
-if web2ldap.app.metrics.METRICS_AVAIL:
-    COMMAND_FUNCTION['metrics'] = web2ldap.app.metrics.w2l_metrics
-
+if METRICS_AVAIL:
+    COMMAND_FUNCTION['metrics'] = w2l_metrics
 
 syntax_registry.check()
 
@@ -245,7 +245,7 @@ class AppHandler(LogHelper):
             cfg_url = self.ls.uri
         else:
             cfg_url = 'ldap://'
-        return web2ldap.app.cnf.LDAP_DEF.get_param(
+        return LDAP_DEF.get_param(
             cfg_url,
             self.naming_context or u'',
             param_key,
@@ -415,7 +415,7 @@ class AppHandler(LogHelper):
             main_menu_list=None,
             context_menu_list=None,
         ):
-        web2ldap.app.gui.top_section(
+        top_section(
             self,
             title,
             main_menu_list,
@@ -423,14 +423,14 @@ class AppHandler(LogHelper):
             main_div_id=main_div_id,
         )
         self.outf.write(message)
-        web2ldap.app.gui.footer(self)
+        footer(self)
         # end of simple_message()
 
     def simple_msg(self, msg):
         """
         Output HTML text.
         """
-        web2ldap.app.gui.Header(self, 'text/html', self.form.accept_charset)
+        Header(self, 'text/html', self.form.accept_charset)
         self.outf.write(SIMPLE_MSG_HTML.format(message=msg))
 
     def url_redirect(
@@ -446,7 +446,7 @@ class AppHandler(LogHelper):
         if self.form is None:
             self.form = Web2LDAPForm(None, self.env)
         target_url = target_url or self.script_name
-        url_redirect_template_str = web2ldap.app.gui.read_template(
+        url_redirect_template_str = read_template(
             self, None, u'redirect',
             tmpl_filename=web2ldapcnf.redirect_template,
         )
@@ -454,7 +454,7 @@ class AppHandler(LogHelper):
             message_class = 'ErrorMessage'
         else:
             message_class = 'SuccessMessage'
-        web2ldap.app.gui.Header(self, 'text/html', self.form.accept_charset)
+        Header(self, 'text/html', self.form.accept_charset)
         # Write out stub body with just a short redirect HTML snippet
         self.outf.write(
             url_redirect_template_str.format(
@@ -529,7 +529,7 @@ class AppHandler(LogHelper):
             return
         try:
             old_ls = self._session_store.retrieveSession(del_sid, self.env)
-        except web2ldap.web.session.SessionException:
+        except SessionException:
             pass
         else:
             # Remove session cookie
@@ -575,7 +575,7 @@ class AppHandler(LogHelper):
                 input_ldapurl.urlscheme = CONNTYPE2URLSCHEME[conntype]
                 input_ldapurl.hostport = self.form.getInputValue('host', [None])[0]
                 input_ldapurl.x_startTLS = str(
-                    web2ldap.ldapsession.START_TLS_REQUIRED * (conntype == 1)
+                    START_TLS_REQUIRED * (conntype == 1)
                 )
 
         # Separate parameters for dn, who, cred and scope
@@ -796,16 +796,16 @@ class AppHandler(LogHelper):
                 self._new_session()
                 # Check whether access to target LDAP server is allowed
                 if web2ldapcnf.hosts.restricted_ldap_uri_list and \
-                   init_uri not in web2ldap.app.cnf.LDAP_URI_LIST_CHECK_DICT:
+                   init_uri not in LDAP_URI_LIST_CHECK_DICT:
                     raise ErrorExit('Only pre-configured LDAP servers allowed.')
                 # set this to make .cfg_param() retrieve correct site-specific config parameters
                 self.ls.uri = init_uri
                 # Connect to new specified host
                 self.ls.open(
                     init_uri,
-                    self.cfg_param('timeout', web2ldap.ldapsession.LDAP_DEFAULT_TIMEOUT),
+                    self.cfg_param('timeout', LDAP_DEFAULT_TIMEOUT),
                     self.ldap_url.get_starttls_extop(
-                        self.cfg_param('starttls', web2ldap.ldapsession.START_TLS_NO)
+                        self.cfg_param('starttls', START_TLS_NO)
                     ),
                     self.env,
                     self.cfg_param('session_track_control', 0),
@@ -923,7 +923,7 @@ class AppHandler(LogHelper):
                 # Store current session
                 self._session_store.save(self.sid, self.ls)
 
-        except web2ldap.web.forms.FormException as form_error:
+        except FormException as form_error:
             log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
             exception_message(
                 self,
@@ -1013,7 +1013,7 @@ class AppHandler(LogHelper):
             # Setup what's required for executing command 'passwd'
             self.dn = self.ls.l.whoami_s()[3:] or err.who
             # Output the change password form
-            web2ldap.app.passwd.passwd_form(
+            passwd.passwd_form(
                 self,
                 u'',
                 self.dn,
@@ -1021,7 +1021,7 @@ class AppHandler(LogHelper):
                 'Password change needed',
                 self.form.utf2display(
                     u'Password will expire in %s!' % (
-                        web2ldap.app.gui.ts2repr(
+                        ts2repr(
                             web2ldap.app.schema.syntaxes.Timespan.time_divisors,
                             u' ',
                             err.timeBeforeExpiration,
@@ -1034,7 +1034,7 @@ class AppHandler(LogHelper):
             # Setup what's required for executing command 'passwd'
             self.dn = self.ls.l.get_whoami_dn() or err.who
             # Output the change password form
-            web2ldap.app.passwd.passwd_form(
+            passwd.passwd_form(
                 self,
                 u'',
                 self.dn,
@@ -1068,7 +1068,7 @@ class AppHandler(LogHelper):
             self.log(logging.WARN, 'ErrorExit: %r', error_exit.error_message)
             exception_message(self, 'Error', error_exit.error_message)
 
-        except web2ldap.web.session.MaxSessionPerIPExceeded as session_err:
+        except MaxSessionPerIPExceeded as session_err:
             self.log(logging.WARN, str(session_err))
             self.simple_msg(
                 u'Client %s exceeded limit of max. %d sessions! Try later...' % (
@@ -1077,11 +1077,11 @@ class AppHandler(LogHelper):
                 )
             )
 
-        except web2ldap.web.session.MaxSessionCountExceeded as session_err:
+        except MaxSessionCountExceeded as session_err:
             self.log(logging.WARN, str(session_err))
             self.simple_msg('Too many web sessions! Try later...')
 
-        except web2ldap.web.session.SessionException:
+        except SessionException:
             if self.command == 'disconnect':
                 # Probably already disconnected => ignore exception and redirect to start page
                 self.url_redirect('Disconnecting...', refresh_time=0)
