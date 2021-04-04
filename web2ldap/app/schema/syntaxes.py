@@ -144,23 +144,23 @@ class SyntaxRegistry:
             'Expected syntax_oid to be str, got %r' % (syntax_oid,)
         )
         structural_oc_oids = list(filter(None, map(str.strip, structural_oc_oids or []))) or [None]
-        for a in attr_types:
-            a = a.strip()
+        for atype in attr_types:
+            atype = atype.strip()
             for oc_oid in structural_oc_oids:
                 # FIX ME!
                 # A better approach for unique attribute type registration which
                 # allows overriding older registration is needed.
-                if a in self.at2syntax and oc_oid in self.at2syntax[a]:
+                if atype in self.at2syntax and oc_oid in self.at2syntax[atype]:
                     logger.warning(
                         (
                             'Registering attribute type %r with syntax %r'
                             ' overrides existing registration with syntax %r'
                         ),
-                        a,
+                        atype,
                         syntax_oid,
-                        self.at2syntax[a],
+                        self.at2syntax[atype],
                     )
-                self.at2syntax[a][oc_oid] = syntax_oid
+                self.at2syntax[atype][oc_oid] = syntax_oid
 
     def get_syntax(self, schema, attrtype_nameoroid, structural_oc):
         """
@@ -219,10 +219,10 @@ class SyntaxRegistry:
             len(self.oid2syntax),
             len(self.at2syntax),
         )
-        for at in self.at2syntax:
-            for oc in self.at2syntax[at]:
-                if self.at2syntax[at][oc] not in self.oid2syntax:
-                    logger.warning('No LDAPSyntax registered for (%r, %r)', at, oc)
+        for atype in self.at2syntax:
+            for object_class in self.at2syntax[atype]:
+                if self.at2syntax[atype][object_class] not in self.oid2syntax:
+                    logger.warning('No LDAPSyntax registered for (%r, %r)', atype, object_class)
 
 
 ####################################################################
@@ -454,13 +454,13 @@ class Binary(LDAPSyntax):
     editable: bool = False
 
     def formField(self) -> web_forms.Field:
-        f = web_forms.File(
+        field = web_forms.File(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None, default=self._av, size=50
         )
-        f.mime_type = self.mime_type
-        return f
+        field.mime_type = self.mime_type
+        return field
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return '%d bytes | %s' % (
@@ -758,21 +758,23 @@ class GeneralizedTime(IA5String):
 
     def _validate(self, attr_value: bytes) -> bool:
         try:
-            dt = utc_strptime(attr_value)
+            d_t = utc_strptime(attr_value)
         except ValueError:
             return False
-        return (self.notBefore is None or self.notBefore <= dt) and \
-               (self.notAfter is None or self.notAfter >= dt)
+        return (
+            (self.notBefore is None or self.notBefore <= d_t)
+            and (self.notAfter is None or self.notAfter >= d_t)
+        )
 
     def formValue(self) -> str:
         if not self._av:
             return ''
         try:
-            dt = datetime.datetime.strptime(self.av_u, r'%Y%m%d%H%M%SZ')
+            d_t = datetime.datetime.strptime(self.av_u, r'%Y%m%d%H%M%SZ')
         except ValueError:
             result = IA5String.formValue(self)
         else:
-            result = str(datetime.datetime.strftime(dt, self.formValueFormat))
+            result = str(datetime.datetime.strftime(d_t, self.formValueFormat))
         return result
 
     def sanitize(self, attr_value: bytes) -> bytes:
@@ -813,21 +815,21 @@ class GeneralizedTime(IA5String):
         # Try to parse various datetime syntaxes
         for time_format in self.dtFormats:
             try:
-                dt = datetime.datetime.strptime(av_u, time_format)
+                d_t = datetime.datetime.strptime(av_u, time_format)
             except ValueError:
                 result = None
             else:
-                result = datetime.datetime.strftime(dt, r'%Y%m%d%H%M%SZ')
+                result = datetime.datetime.strftime(d_t, r'%Y%m%d%H%M%SZ')
                 break
         if result is None:
             if self.timeDefault:
                 for time_format in self.acceptableDateformats or []:
                     try:
-                        dt = datetime.datetime.strptime(av_u, time_format)
+                        d_t = datetime.datetime.strptime(av_u, time_format)
                     except ValueError:
                         result = None
                     else:
-                        result = datetime.datetime.strftime(dt, r'%Y%m%d'+self.timeDefault+'Z')
+                        result = datetime.datetime.strftime(d_t, r'%Y%m%d'+self.timeDefault+'Z')
                         break
             else:
                 result = av_u
@@ -1068,7 +1070,7 @@ class MacAddress(IA5String):
     """
     oid: str = 'MacAddress-oid'
     desc: str = 'MAC address in hex-colon notation'
-    minLen: int = 17
+    min_len: int = 17
     max_len: int = 17
     pattern = re.compile(r'^([0-9a-f]{2}\:){5}[0-9a-f]{2}$')
 
@@ -1137,9 +1139,9 @@ class Image(Binary):
         if not self._validate(attr_value) and PILImage:
             try:
                 with BytesIO(attr_value) as imgfile:
-                    im = PILImage.open(imgfile)
+                    img = PILImage.open(imgfile)
                     imgfile.seek(0)
-                    im.save(imgfile, self.imageFormat)
+                    img.save(imgfile, self.imageFormat)
                     attr_value = imgfile.getvalue()
             except Exception as err:
                 logger.warning(
@@ -1157,11 +1159,11 @@ class Image(Binary):
         if PILImage:
             try:
                 with BytesIO(self._av) as imgfile:
-                    im = PILImage.open(imgfile)
+                    img = PILImage.open(imgfile)
             except IOError:
                 pass
             else:
-                width, height = im.size
+                width, height = img.size
                 if width > maxwidth:
                     size_attr_html = 'width="%d" height="%d"' % (
                         maxwidth,
@@ -1243,8 +1245,7 @@ class OID(IA5String):
     ))
 
     def valueButton(self, command, row, mode, link_text=None):
-        at = self._at.lower()
-        if at in self.no_val_button_attrs:
+        if self._at.lower() in self.no_val_button_attrs:
             return ''
         return IA5String.valueButton(self, command, row, mode, link_text=link_text)
 
@@ -1799,25 +1800,25 @@ class SelectList(DirectoryString):
         # First generate a set of all other currently available attribute values
         form_value = DirectoryString.formValue(self)
         # Initialize a dictionary with all options
-        d = self._get_attr_value_dict()
+        vdict = self._get_attr_value_dict()
         # Remove other existing values from the options dict
-        for v in self._entry.get(self._at, []):
-            v = self._app.ls.uc_decode(v)[0]
-            if v != form_value:
+        for val in self._entry.get(self._at, []):
+            val = self._app.ls.uc_decode(val)[0]
+            if val != form_value:
                 try:
-                    del d[v]
+                    del vdict[val]
                 except KeyError:
                     pass
         # Add the current attribute value if needed
-        if form_value not in d:
-            d[form_value] = form_value
+        if form_value not in vdict:
+            vdict[form_value] = form_value
         # Finally return the sorted option list
         result = []
-        for k, v in d.items():
-            if isinstance(v, str):
-                result.append((k, v, None))
-            elif isinstance(v, tuple):
-                result.append((k, v[0], v[1]))
+        for key, val in vdict.items():
+            if isinstance(val, str):
+                result.append((key, val, None))
+            elif isinstance(val, tuple):
+                result.append((key, val[0], val[1]))
         return sorted(
             result,
             key=lambda x: x[1].lower(),
@@ -1880,8 +1881,8 @@ class PropertiesSelectList(SelectList):
             self.properties_pathname,
             self._app.form.accept_language
         )
-        with open(real_path_name, 'rb') as f:
-            for line in f.readlines():
+        with open(real_path_name, 'rb') as prop_file:
+            for line in prop_file.readlines():
                 line = line.decode(self.properties_charset).strip()
                 if line and not line.startswith('#'):
                     key, value = line.split(self.properties_delimiter, 1)
@@ -1897,19 +1898,19 @@ class DynamicValueSelectList(SelectList, DirectoryString):
     """
     oid: str = 'DynamicValueSelectList-oid'
     ldap_url: Optional[str] = None
-    valuePrefix: str = ''
-    valueSuffix: str = ''
+    value_prefix: str = ''
+    value_suffix: str = ''
 
     def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
         self.lu_obj = ldap0.ldapurl.LDAPUrl(self.ldap_url)
-        self.minLen = len(self.valuePrefix)+len(self.valueSuffix)
+        self.min_len = len(self.value_prefix)+len(self.value_suffix)
         SelectList.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
     def _filterstr(self):
         return self.lu_obj.filterstr or '(objectClass=*)'
 
     def _search_ref(self, attr_value: str):
-        attr_value = attr_value[len(self.valuePrefix):-len(self.valueSuffix) or None]
+        attr_value = attr_value[len(self.value_prefix):-len(self.value_suffix) or None]
         search_filter = '(&%s(%s=%s))' % (
             self._filterstr(),
             self.lu_obj.attrs[0],
@@ -1945,9 +1946,9 @@ class DynamicValueSelectList(SelectList, DirectoryString):
     def _validate(self, attr_value: bytes) -> bool:
         av_u = self._app.ls.uc_decode(attr_value)[0]
         if (
-                not av_u.startswith(self.valuePrefix) or
-                not av_u.endswith(self.valueSuffix) or
-                len(av_u) < self.minLen or
+                not av_u.startswith(self.value_prefix) or
+                not av_u.endswith(self.value_suffix) or
+                len(av_u) < self.min_len or
                 (self.max_len is not None and len(av_u) > self.max_len)
             ):
             return False
@@ -2043,9 +2044,9 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             list_attr = self.lu_obj.attrs[0]
             attr_values_u = [
                 ''.join((
-                    self.valuePrefix,
+                    self.value_prefix,
                     attr_value,
-                    self.valueSuffix,
+                    self.value_suffix,
                 ))
                 for attr_value in ldap_result[0].entry_s[list_attr]
             ]
@@ -2067,9 +2068,9 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                 sre.entry_s[None] = [sre.dn_s]
                 try:
                     option_value = ''.join((
-                        self.valuePrefix,
+                        self.value_prefix,
                         sre.entry_s[option_value_map][0],
-                        self.valueSuffix,
+                        self.value_suffix,
                     ))
                 except KeyError:
                     pass
@@ -2350,7 +2351,8 @@ class DNSDomain(IA5String):
     oid: str = 'DNSDomain-oid'
     desc: str = 'DNS domain name (see RFC 1035)'
     pattern = re.compile(r'^(\*|[a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)*$')
-    max_len: int = min(255, IA5String.max_len)  # (see https://tools.ietf.org/html/rfc2181#section-11)
+    # see https://tools.ietf.org/html/rfc2181#section-11
+    max_len: int = min(255, IA5String.max_len)
     sani_funcs = (
         bytes.lower,
         bytes.strip,

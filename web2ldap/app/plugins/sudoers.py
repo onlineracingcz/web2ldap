@@ -15,7 +15,7 @@ class SudoUserGroup(DynamicValueSelectList):
     oid: str = 'SudoUserGroup-oid'
     desc: str = 'sudo-ldap: sudoUser (group)'
     ldap_url = 'ldap:///_?cn,cn?sub?(objectClass=posixGroup)'
-    valuePrefix = '%'
+    value_prefix = '%'
 
 
 syntax_registry.reg_at(

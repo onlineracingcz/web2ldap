@@ -309,7 +309,7 @@ class AEUserUid(AEUid):
     oid: str = 'AEUserUid-oid'
     desc: str = 'AE-DIR: User name'
     max_values = 1
-    minLen: int = 4
+    min_len: int = 4
     max_len: int = 4
     maxCollisionChecks: int = 15
     UID_LETTERS = 'abcdefghijklmnopqrstuvwxyz'

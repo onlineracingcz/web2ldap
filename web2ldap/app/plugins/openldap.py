@@ -45,7 +45,7 @@ from web2ldap.app.plugins.quirks import NamingContexts
 class CSNSid(IA5String):
     oid: str = '1.3.6.1.4.1.4203.666.11.2.4'
     desc: str = 'change sequence number SID (CSN SID)'
-    minLen: int = 3
+    min_len: int = 3
     max_len: int = 3
     pattern = re.compile('^[a-fA-F0-9]{3}$')
 
@@ -54,7 +54,7 @@ class CSNSid(IA5String):
 class CSN(IA5String):
     oid: str = '1.3.6.1.4.1.4203.666.11.2.1'
     desc: str = 'change sequence number (CSN)'
-    minLen: int = 40
+    min_len: int = 40
     max_len: int = 40
     pattern = re.compile('^[0-9]{14}\\.[0-9]{6}Z#[a-fA-F0-9]{6}#[a-fA-F0-9]{3}#[a-fA-F0-9]{6}$')
 
