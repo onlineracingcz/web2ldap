@@ -547,7 +547,7 @@ class AppHandler(LogHelper):
             try:
                 input_ldapurl = ExtendedLDAPUrl(self.form.query_string)
             except ValueError as err:
-                raise ErrorExit(u'Error parsing LDAP URL: %s.' % (
+                raise ErrorExit('Error parsing LDAP URL: %s.' % (
                     self.form.utf2display(str(err))
                 ))
             else:
@@ -615,7 +615,7 @@ class AppHandler(LogHelper):
         )
 
         if not ldap0.dn.is_dn(dn, flags=1):
-            raise ErrorExit(u'Invalid DN.')
+            raise ErrorExit('Invalid DN.')
 
         scope_str = self.form.getInputValue(
             'scope',
@@ -673,7 +673,7 @@ class AppHandler(LogHelper):
                 matched_dn = ldap_err.args[0].get('matched', b'').decode(self.ls.charset)
             except AttributeError:
                 matched_dn = None
-        error_msg = error_msg.replace(u'\r', '').replace(u'\t', '')
+        error_msg = error_msg.replace('\r', '').replace('\t', '')
         error_msg_html = self.form.utf2display(error_msg, lf_entity='<br>')
         # Add matchedDN to error message HTML if needed
         if matched_dn:
@@ -695,7 +695,7 @@ class AppHandler(LogHelper):
         if self.command not in COMMAND_FUNCTION:
 
             self.log(logging.WARN, 'Received invalid command %r', self.command)
-            self.url_redirect(u'Invalid web2ldap command')
+            self.url_redirect('Invalid web2ldap command')
             return
 
         # count command
@@ -722,7 +722,7 @@ class AppHandler(LogHelper):
                     self.env[web2ldapcnf.httpenv_remote_addr],
                     self.command,
                 )
-                raise ErrorExit(u'Access denied.')
+                raise ErrorExit('Access denied.')
 
             # Handle simple early-exit commands
             if self.command in {'', 'urlredirect', 'monitor', 'locate', 'metrics'}:
@@ -738,7 +738,7 @@ class AppHandler(LogHelper):
                 self._session_store.delete(self.sid)
                 self.sid = None
                 # Redirect to start page to avoid people bookmarking disconnect URL
-                self.url_redirect(u'Disconnecting...', refresh_time=0)
+                self.url_redirect('Disconnecting...', refresh_time=0)
                 return
 
             self.ldap_url, self.dn, who, cred = self._get_ldapconn_params()
@@ -797,7 +797,7 @@ class AppHandler(LogHelper):
                 # Check whether access to target LDAP server is allowed
                 if web2ldapcnf.hosts.restricted_ldap_uri_list and \
                    init_uri not in web2ldap.app.cnf.LDAP_URI_LIST_CHECK_DICT:
-                    raise ErrorExit(u'Only pre-configured LDAP servers allowed.')
+                    raise ErrorExit('Only pre-configured LDAP servers allowed.')
                 # set this to make .cfg_param() retrieve correct site-specific config parameters
                 self.ls.uri = init_uri
                 # Connect to new specified host
@@ -903,7 +903,7 @@ class AppHandler(LogHelper):
             # error message instead of logging exception in case user is playing
             # with manually generated URLs
             if not isinstance(self.ls, LDAPSession) or self.ls.uri is None:
-                self.url_redirect(u'No valid LDAP connection!')
+                self.url_redirect('No valid LDAP connection!')
                 return
             # Store session data in case anything goes wrong after here
             # to give the exception handler a good chance
@@ -1079,15 +1079,15 @@ class AppHandler(LogHelper):
 
         except web2ldap.web.session.MaxSessionCountExceeded as session_err:
             self.log(logging.WARN, str(session_err))
-            self.simple_msg(u'Too many web sessions! Try later...')
+            self.simple_msg('Too many web sessions! Try later...')
 
         except web2ldap.web.session.SessionException:
             if self.command == 'disconnect':
                 # Probably already disconnected => ignore exception and redirect to start page
-                self.url_redirect(u'Disconnecting...', refresh_time=0)
+                self.url_redirect('Disconnecting...', refresh_time=0)
             else:
                 log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
-                self.url_redirect(u'Session handling error.')
+                self.url_redirect('Session handling error.')
 
         except Exception:
             if hasattr(self, 'ls'):
@@ -1095,6 +1095,6 @@ class AppHandler(LogHelper):
             else:
                 error_ls = None
             log_exception(self.env, error_ls, self.dn, web2ldapcnf.log_error_details)
-            self.simple_msg(u'Unhandled error!')
+            self.simple_msg('Unhandled error!')
 
         # end of run()
