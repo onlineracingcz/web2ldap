@@ -1340,8 +1340,8 @@ class OctetString(Binary):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.40'
     desc: str = 'Octet String'
     editable: bool = True
-    minInputRows = 1  # minimum number of rows for input field
-    maxInputRows = 15 # maximum number of rows for in input field
+    min_input_rows = 1  # minimum number of rows for input field
+    max_input_rows = 15 # maximum number of rows for in input field
     bytes_split = 16
 
     def sanitize(self, attr_value: bytes) -> bytes:
@@ -1387,7 +1387,7 @@ class OctetString(Binary):
             10000, 1,
             None,
             default=form_value,
-            rows=max(self.minInputRows, min(self.maxInputRows, form_value.count('\r\n'))),
+            rows=max(self.min_input_rows, min(self.max_input_rows, form_value.count('\r\n'))),
             cols=49
         )
 
@@ -1402,8 +1402,8 @@ class MultilineText(DirectoryString):
     lineSep = b'\r\n'
     mime_type: str = 'text/plain'
     cols = 66
-    minInputRows = 1   # minimum number of rows for input field
-    maxInputRows = 30  # maximum number of rows for in input field
+    min_input_rows = 1   # minimum number of rows for input field
+    max_input_rows = 30  # maximum number of rows for in input field
 
     def _split_lines(self, value):
         if self.lineSep:
@@ -1438,7 +1438,7 @@ class MultilineText(DirectoryString):
             self.max_len, self.max_values,
             None,
             default=form_value,
-            rows=max(self.minInputRows, min(self.maxInputRows, form_value.count('\r\n'))),
+            rows=max(self.min_input_rows, min(self.max_input_rows, form_value.count('\r\n'))),
             cols=self.cols
         )
 
@@ -2249,7 +2249,7 @@ class BitArrayInteger(MultilineText, Integer):
             for i, j in self.flag_desc_table
         }
         self.maxValue = sum([j for i, j in self.flag_desc_table])
-        self.minInputRows = self.maxInputRows = max(len(self.flag_desc_table), 1)
+        self.min_input_rows = self.max_input_rows = max(len(self.flag_desc_table), 1)
 
     def sanitize(self, attr_value: bytes) -> bytes:
         try:
@@ -2293,7 +2293,7 @@ class BitArrayInteger(MultilineText, Integer):
             self.max_len, self.max_values,
             None,
             default=form_value,
-            rows=max(self.minInputRows, min(self.maxInputRows, form_value.count('\n'))),
+            rows=max(self.min_input_rows, min(self.max_input_rows, form_value.count('\n'))),
             cols=max([len(desc) for desc, _ in self.flag_desc_table])+1
         )
 

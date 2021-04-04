@@ -137,7 +137,7 @@ class OlcMultilineText(MultilineText):
     oid: str = 'OlcMultilineText-oid'
     desc: str = 'OpenLDAP multiline configuration strings'
     cols = 90
-    minInputRows = 3
+    min_input_rows = 3
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return '<code>%s</code>' % MultilineText.display(self, valueindex, commandbutton)
@@ -153,7 +153,7 @@ syntax_registry.reg_at(
 class OlcSyncRepl(OlcMultilineText, LDAPUrl):
     oid: str = 'OlcSyncRepl-oid'
     desc: str = 'OpenLDAP syncrepl directive'
-    minInputRows = 5
+    min_input_rows = 5
 
     def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
         OlcMultilineText.__init__(self, app, dn, schema, attrType, attr_value, entry)
