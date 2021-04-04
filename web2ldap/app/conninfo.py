@@ -19,11 +19,13 @@ import ldap0.filter
 
 import web2ldapcnf
 
-import web2ldap.utctime
-import web2ldap.ldaputil
-import web2ldap.app.core
-import web2ldap.app.gui
-from web2ldap.app.session import session_store
+from ..utctime import strftimeiso8601
+from .gui import (
+    footer,
+    main_menu,
+    top_section,
+)
+from .session import session_store
 
 CONNINFO_LDAP_TEMPLATE = """
 <h1>LDAP Connection Parameters</h1>
@@ -278,10 +280,10 @@ def w2l_conninfo(app):
             )
         )
 
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         'Connection Info',
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=context_menu_list
     )
 
@@ -343,7 +345,7 @@ def w2l_conninfo(app):
             protocol_version,
             app.ls.charset.upper(),
             {False:'not secured', True:'secured'}[app.ls.secureConn],
-            web2ldap.utctime.strftimeiso8601(time.gmtime(app.ls.connStartTime)),
+            strftimeiso8601(time.gmtime(app.ls.connStartTime)),
             time.time()-app.ls.connStartTime,
             app.ls.l._reconnects_done,
             app.form.utf2display(
@@ -405,4 +407,4 @@ def w2l_conninfo(app):
             app.form.utf2display(app.env.get('HTTP_USER_AGENT', '')),
         )
     )
-    web2ldap.app.gui.footer(app)
+    footer(app)
