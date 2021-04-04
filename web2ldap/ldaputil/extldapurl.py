@@ -15,7 +15,17 @@ https://www.apache.org/licenses/LICENSE-2.0
 import ldap0.ldapurl
 
 
-LDAPSEARCH_TMPL = 'ldapsearch -LL -H "{uri}" {tls} -b "{dn}" -s {scope} {auth} "{filterstr}" {attrs}'
+LDAPSEARCH_TMPL = (
+    'ldapsearch '
+    '-LL '
+    '-H "{uri}" '
+    '{tls} '
+    '-b "{dn}" '
+    '-s {scope} '
+    '{auth} '
+    '"{filterstr}" '
+    '{attrs}'
+)
 
 
 class ExtendedLDAPUrl(ldap0.ldapurl.LDAPUrl):
