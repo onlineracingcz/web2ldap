@@ -25,7 +25,9 @@ class PgpKey(PreformattedMultilineText):
     oid: str = 'PgpKey-oid'
     desc: str = 'PGP key'
     pattern = re.compile(
-        '^-----BEGIN PGP PUBLIC KEY BLOCK-----[a-zA-Z0-9.: ()+/ =\n-]+-----END PGP PUBLIC KEY BLOCK-----$',
+        '^-----BEGIN PGP PUBLIC KEY BLOCK-----'
+        '[a-zA-Z0-9.: ()+/ =\n-]+'
+        '-----END PGP PUBLIC KEY BLOCK-----$',
         re.S+re.M,
     )
     lineSep = b'\n'
@@ -55,8 +57,8 @@ class OtherPgpCertID(DynamicValueSelectList, PgpCertID):
     oid: str = 'OtherPgpCertID-oid'
     ldap_url = 'ldap:///_?pgpCertID,pgpCertID?sub?(objectClass=pgpKeyInfo)'
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return PgpCertID._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        return PgpCertID._validate(self, attr_value)
 
 syntax_registry.reg_at(
     OtherPgpCertID.oid, [

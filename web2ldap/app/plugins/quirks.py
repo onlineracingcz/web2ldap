@@ -224,7 +224,14 @@ class NamingContexts(DistinguishedName):
                 pass
             else:
                 monitor_context = 'cn=monitor'
-                monitor_filter = '(&(objectClass=ds-backend-monitor-entry)(ds-backend-base-dn=%s))' % (self.av_u)
+                monitor_filter = (
+                    '(&'
+                    '(objectClass=ds-backend-monitor-entry)'
+                    '(ds-backend-base-dn=%s)'
+                    ')'
+                ) % (
+                    self.av_u
+                )
                 monitor_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
         else:
             monitor_context = 'cn=Databases,cn=Monitor'

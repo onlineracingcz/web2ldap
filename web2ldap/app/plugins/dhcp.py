@@ -243,11 +243,11 @@ class DHCPHWAddress(MacAddress):
     max_len: str = 26
     pattern = re.compile(r'^(ethernet|token-ring|fddi) ([0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}$')
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        attrValue = attrValue.strip()
-        if len(attrValue) == 17:
-            return b'ethernet %s' % attrValue
-        return attrValue
+    def sanitize(self, attr_value: bytes) -> bytes:
+        attr_value = attr_value.strip()
+        if len(attr_value) == 17:
+            return b'ethernet %s' % attr_value
+        return attr_value
 
 syntax_registry.reg_at(
     DHCPHWAddress.oid, [
@@ -298,12 +298,12 @@ class DHCPRange(IA5String):
                 pass
         return form_value
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue.strip().replace(b'  ', b' ').replace(b'-', b' ').replace(b'..', b' ')
+    def sanitize(self, attr_value: bytes) -> bytes:
+        return attr_value.strip().replace(b'  ', b' ').replace(b'-', b' ').replace(b'..', b' ')
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            l, h = attrValue.split(b' ', 1)
+            l, h = attr_value.split(b' ', 1)
         except (IndexError, ValueError):
             return False
         try:

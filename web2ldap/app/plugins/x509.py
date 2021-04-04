@@ -82,13 +82,13 @@ class Certificate(Binary):
     <dd>{extn_value}</dd>
     """
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        if asn1crypto.pem.detect(attrValue):
+    def sanitize(self, attr_value: bytes) -> bytes:
+        if asn1crypto.pem.detect(attr_value):
             try:
-                _, _, attrValue = asn1crypto.pem.unarmor(attrValue, multiple=False)
+                _, _, attr_value = asn1crypto.pem.unarmor(attr_value, multiple=False)
             except ValueError:
                 pass
-        return attrValue
+        return attr_value
 
     def _display_extensions(self, x509):
         html = ['<p>Extensions</p>']
@@ -153,13 +153,13 @@ class CertificateList(Binary):
       </dl>
       """
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        if asn1crypto.pem.detect(attrValue):
+    def sanitize(self, attr_value: bytes) -> bytes:
+        if asn1crypto.pem.detect(attr_value):
             try:
-                _, _, attrValue = asn1crypto.pem.unarmor(attrValue, multiple=False)
+                _, _, attr_value = asn1crypto.pem.unarmor(attr_value, multiple=False)
             except ValueError:
                 pass
-        return attrValue
+        return attr_value
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:

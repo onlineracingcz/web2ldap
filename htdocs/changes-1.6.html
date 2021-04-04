@@ -21,10 +21,18 @@
 <h2>New features/enhancements</h2>
 <p>None.</p>
 
-<h2>Fixes</h2>
+<h2>Code-cleaning</h2>
 <ul>
   <li>
     Re-factored modules imports especially to get rid of cyclic imports.
+  </li>
+  <li>
+    Renamed following variables to be PEP-8 compliant which also requires
+    changes in custom plugin modules:
+    <ul>
+      <li><var>LDAPSyntax</var> class attributes</li>
+      <li><var>LDAPSyntax</var> method arguments</li>
+    </ul>
   </li>
 </ul>
 

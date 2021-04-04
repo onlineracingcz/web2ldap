@@ -34,8 +34,8 @@ class GidNumber(DynamicValueSelectList, Integer):
     maxValue = 4294967295
     ldap_url = 'ldap:///_?gidNumber,cn?sub?(objectClass=posixGroup)'
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return Integer._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        return Integer._validate(self, attr_value)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         # Possibly display a link
@@ -87,15 +87,15 @@ class MemberUID(IA5String, DynamicValueSelectList):
     ldap_url = None
     #ldap_url = 'ldap:///_?uid,cn?sub?(objectClass=posixAccount)'
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
-        IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
+        IA5String.__init__(self, app, dn, schema, attrType, attr_value, entry)
         if self.ldap_url:
-            DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
+            DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         if self.ldap_url:
-            return DynamicValueSelectList._validate(self, attrValue)
-        return IA5String._validate(self, attrValue)
+            return DynamicValueSelectList._validate(self, attr_value)
+        return IA5String._validate(self, attr_value)
 
     def formField(self) -> web2ldap.web.forms.Field:
         if self.ldap_url:

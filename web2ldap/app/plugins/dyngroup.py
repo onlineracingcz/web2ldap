@@ -18,17 +18,17 @@ class MemberUrl(LDAPUrl):
     desc: str = 'LDAP URL describing search parameters used to lookup group members'
     ldap_url = None
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
-        LDAPUrl.__init__(self, app, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
+        LDAPUrl.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         """
         Checks validity of membership LDAP URL.
         False if hostport part is non-empty, the search base is not a valid DN,
         or the base search to search base failed.
         """
         try:
-            ldap_url = ldap0.ldapurl.LDAPUrl(attrValue.decode(self._app.ls.charset))
+            ldap_url = ldap0.ldapurl.LDAPUrl(attr_value.decode(self._app.ls.charset))
         except ValueError:
             return False
         search_base = ldap_url.dn

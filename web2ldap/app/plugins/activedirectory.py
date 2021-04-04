@@ -97,13 +97,13 @@ class ObjectSID(OctetString, IA5String):
           [32 bits]
     """
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return OctetString._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        return OctetString._validate(self, attr_value)
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        if not attrValue:
+    def sanitize(self, attr_value: bytes) -> bytes:
+        if not attr_value:
             return b''
-        return sddl2sid(attrValue.decode('ascii'))
+        return sddl2sid(attr_value.decode('ascii'))
 
     def formValue(self) -> str:
         if not self._av:
@@ -419,13 +419,13 @@ class LogonHours(OctetString):
                 hour_flags.append({0:'-', 1:'X'}[(eight_hours>>i)&1])
         return hour_flags
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        if not attrValue:
+    def sanitize(self, attr_value: bytes) -> bytes:
+        if not attr_value:
             return b''
-        attrValue = attrValue.replace(b'\r', b'').replace(b'\n', b'')
+        attr_value = attr_value.replace(b'\r', b'').replace(b'\n', b'')
         hour_flags = [
-            int(attrValue[i:i+1] == b'X')<<i%8
-            for i in range(len(attrValue))
+            int(attr_value[i:i+1] == b'X')<<i%8
+            for i in range(len(attr_value))
         ]
         res = [
             sum(hour_flags[i*8:(i+1)*8])
@@ -433,8 +433,8 @@ class LogonHours(OctetString):
         ]
         return bytes(res)
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return len(attrValue) == 21
+    def _validate(self, attr_value: bytes) -> bool:
+        return len(attr_value) == 21
 
     def formValue(self) -> str:
         hour_flags = self._extract_hours(self._av)
@@ -546,9 +546,9 @@ class DNWithOctetString(DistinguishedName):
     desc: str = 'DNWithOctetString'
     octetTag = 'B'
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            octet_tag, count, octet_string, dn = self._app.ls.uc_decode(attrValue)[0].split(':')
+            octet_tag, count, octet_string, dn = self._app.ls.uc_decode(attr_value)[0].split(':')
         except ValueError:
             return False
         try:
@@ -593,11 +593,11 @@ class MsAdGUID(OctetString):
     oid: str = 'MsAdGUID-oid'
     desc: str = 'GUID in Active Directory'
 
-    def sanitize(self, attrValue: bytes) -> bytes:
+    def sanitize(self, attr_value: bytes) -> bytes:
         try:
-            object_guid_uuid = uuid.UUID(attrValue.decode('ascii').replace(':', ''))
+            object_guid_uuid = uuid.UUID(attr_value.decode('ascii').replace(':', ''))
         except ValueError:
-            return OctetString.sanitize(self, attrValue)
+            return OctetString.sanitize(self, attr_value)
         return object_guid_uuid.bytes
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -622,8 +622,8 @@ class Interval(MicrosoftLargeInteger):
     desc: str = 'Large integer with timestamp expressed as 100 nanoseconds since 1601-01-01 00:00'
 
     @staticmethod
-    def _delta(attrValue):
-        return (int(attrValue)-116444736000000000)/10000000
+    def _delta(attr_value):
+        return (int(attr_value)-116444736000000000)/10000000
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         if self.av_u == '9223372036854775807':
@@ -837,8 +837,8 @@ class MsDSReplAttributeMetaData(XmlValue):
     oid: str = 'MsDSReplAttributeMetaData-oid'
     editable: bool = False
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return attrValue.endswith(b'\n\x00') and XmlValue._validate(self, attrValue[:-1])
+    def _validate(self, attr_value: bytes) -> bool:
+        return attr_value.endswith(b'\n\x00') and XmlValue._validate(self, attr_value[:-1])
 
 syntax_registry.reg_at(
     MsDSReplAttributeMetaData.oid, [

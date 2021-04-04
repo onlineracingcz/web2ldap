@@ -41,15 +41,15 @@ class SshPublicKey(DirectoryString):
         'ssh-dss': 2048,
     }
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        if attrValue:
+    def sanitize(self, attr_value: bytes) -> bytes:
+        if attr_value:
             return DirectoryString.sanitize(
-                self, attrValue
+                self, attr_value
             ).strip().replace(b'\r', b'').replace(b'\n', b'')
-        return attrValue
+        return attr_value
 
-    def _extract_pk_params(self, attrValue):
-        attr_value = attrValue.decode(self._app.ls.charset)
+    def _extract_pk_params(self, attr_value):
+        attr_value = attr_value.decode(self._app.ls.charset)
         try:
             pk_type, pk_base64, pk_comment = attr_value.split(' ', 2)
         except ValueError:
@@ -83,12 +83,12 @@ class SshPublicKey(DirectoryString):
             pk_size = p.get_bits()
         return pk_size
 
-    def _validate(self, attrValue: bytes) -> bool:
-        valid = DirectoryString._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        valid = DirectoryString._validate(self, attr_value)
         if not valid:
             return False
         try:
-            pk_type, _, pk_bin, _ = self._extract_pk_params(attrValue)
+            pk_type, _, pk_bin, _ = self._extract_pk_params(attr_value)
         except ValueError:
             return False
         if pk_type not in self.min_key_size:

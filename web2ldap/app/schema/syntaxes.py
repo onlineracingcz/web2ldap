@@ -203,7 +203,7 @@ class SyntaxRegistry:
             syntax_class = LDAPSyntax
         return syntax_class
 
-    def get_at(self, app, dn, schema, attrType, attrValue, entry=None):
+    def get_at(self, app, dn, schema, attrType, attr_value, entry=None):
         """
         returns LDAPSyntax instance fully initialized for given attribute
         """
@@ -212,7 +212,7 @@ class SyntaxRegistry:
         else:
             structural_oc = None
         syntax_class = self.get_syntax(schema, attrType, structural_oc)
-        attr_instance = syntax_class(app, dn, schema, attrType, attrValue, entry)
+        attr_instance = syntax_class(app, dn, schema, attrType, attr_value, entry)
         return attr_instance
 
     def check(self):
@@ -284,7 +284,7 @@ class LDAPSyntax:
             dn: Optional[str],
             schema: SubSchema,
             attrType: Optional[str],
-            attrValue: Optional[bytes],
+            attr_value: Optional[bytes],
             entry=None,
         ):
         if not entry:
@@ -293,13 +293,13 @@ class LDAPSyntax:
             TypeError("Argument 'dn' must be str, was %r" % (dn))
         assert isinstance(attrType, str) or attrType is None, \
             TypeError("Argument 'attrType' must be str or None, was %r" % (attrType))
-        assert isinstance(attrValue, bytes) or attrValue is None, \
-            TypeError("Argument 'attrValue' must be bytes or None, was %r" % (attrValue))
+        assert isinstance(attr_value, bytes) or attr_value is None, \
+            TypeError("Argument 'attr_value' must be bytes or None, was %r" % (attr_value))
         assert entry is None or isinstance(entry, ldap0.schema.models.Entry), \
             TypeError('entry must be ldaputil.schema.Entry, was %r' % (entry))
         self._at = attrType
         self._at_b = None
-        self._av = attrValue
+        self._av = attr_value
         self._av_u = None
         self._app = app
         self._schema = schema
@@ -322,7 +322,7 @@ class LDAPSyntax:
             self._av_u = self._app.ls.uc_decode(self._av)[0]
         return self._av_u
 
-    def sanitize(self, attrValue: bytes) -> bytes:
+    def sanitize(self, attr_value: bytes) -> bytes:
         """
         Transforms the HTML form input field values into LDAP string
         representations and returns raw binary string.
@@ -333,10 +333,10 @@ class LDAPSyntax:
         present.
         """
         for sani_func in self.sani_funcs:
-            attrValue = sani_func(attrValue)
-        return attrValue
+            attr_value = sani_func(attr_value)
+        return attr_value
 
-    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
+    def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         """
         This method can be implemented to transmute attribute values and has
         to handle LDAP string representations (raw binary strings).
@@ -350,32 +350,32 @@ class LDAPSyntax:
         Exceptions KeyError or IndexError are caught by the calling code to
         re-iterate invoking this method.
         """
-        return attrValues
+        return attr_values
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         """
-        check the syntax of attrValue
+        check the syntax of attr_value
 
         Implementors can overload this method to apply arbitrary syntax checks.
         """
         return True
 
-    def validate(self, attrValue: bytes):
-        if not attrValue:
+    def validate(self, attr_value: bytes):
+        if not attr_value:
             return
-        if self.pattern and (self.pattern.match(attrValue.decode(self._app.ls.charset)) is None):
+        if self.pattern and (self.pattern.match(attr_value.decode(self._app.ls.charset)) is None):
             raise LDAPSyntaxRegexNoMatch(
                 "Class %s: %r does not match pattern %r." % (
                     self.__class__.__name__,
-                    attrValue,
+                    attr_value,
                     self.pattern.pattern,
                 )
             )
-        if not self._validate(attrValue):
+        if not self._validate(attr_value):
             raise LDAPSyntaxValueError(
                 "Class %s: %r does not comply to syntax (attr type %r)." % (
                     self.__class__.__name__,
-                    attrValue,
+                    attr_value,
                     self._at,
                 )
             )
@@ -491,9 +491,9 @@ class Audio(Binary):
     mime_type: str = 'audio/basic'
     file_ext: str = 'au'
 
-    def _validate(self, attrValue: bytes) -> bool:
-        with BytesIO(attrValue) as fileobj:
-            res = sndhdr.test_au(attrValue, fileobj)
+    def _validate(self, attr_value: bytes) -> bool:
+        with BytesIO(attr_value) as fileobj:
+            res = sndhdr.test_au(attr_value, fileobj)
         return res is not None
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -522,9 +522,9 @@ class DirectoryString(LDAPSyntax):
     desc: str = 'Directory String'
     html_tmpl = '{av}'
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            self._app.ls.uc_decode(attrValue)
+            self._app.ls.uc_decode(attr_value)
         except UnicodeDecodeError:
             return False
         return True
@@ -546,8 +546,8 @@ class DistinguishedName(DirectoryString):
     hasSubordinates = False
     ref_attrs: Optional[Sequence[Tuple[Optional[str], str, Optional[str], str]]] = None
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return is_dn(self._app.ls.uc_decode(attrValue)[0])
+    def _validate(self, attr_value: bytes) -> bool:
+        return is_dn(self._app.ls.uc_decode(attr_value)[0])
 
     def _additional_links(self):
         res = []
@@ -675,8 +675,8 @@ class NameAndOptionalUID(DistinguishedName):
             uid = val[sep_ind+1:]
         return dn, uid
 
-    def _validate(self, attrValue: bytes) -> bool:
-        dn, _ = self._split_dn_and_uid(self._app.ls.uc_decode(attrValue)[0])
+    def _validate(self, attr_value: bytes) -> bool:
+        dn, _ = self._split_dn_and_uid(self._app.ls.uc_decode(attr_value)[0])
         return is_dn(dn)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -711,9 +711,9 @@ class IA5String(DirectoryString):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.26'
     desc: str = 'IA5 String'
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            _ = attrValue.decode('ascii').encode('ascii')
+            _ = attr_value.decode('ascii').encode('ascii')
         except UnicodeError:
             return False
         return True
@@ -765,9 +765,9 @@ class GeneralizedTime(IA5String):
         '</time>'
     )
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            dt = utc_strptime(attrValue)
+            dt = utc_strptime(attr_value)
         except ValueError:
             return False
         return (self.notBefore is None or self.notBefore <= dt) and \
@@ -784,8 +784,8 @@ class GeneralizedTime(IA5String):
             result = str(datetime.datetime.strftime(dt, self.formValueFormat))
         return result
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        av_u = self._app.ls.uc_decode(attrValue.strip().upper())[0]
+    def sanitize(self, attr_value: bytes) -> bytes:
+        av_u = self._app.ls.uc_decode(attr_value.strip().upper())[0]
         # Special cases first
         if av_u in {'N', 'NOW', '0'}:
             return datetime.datetime.strftime(
@@ -841,7 +841,7 @@ class GeneralizedTime(IA5String):
             else:
                 result = av_u
         if result is None:
-            return IA5String.sanitize(self, attrValue)
+            return IA5String.sanitize(self, attr_value)
         return result.encode('ascii')
         # end of GeneralizedTime.sanitize()
 
@@ -906,11 +906,11 @@ class NullTerminatedDirectoryString(DirectoryString):
     oid: str = 'NullTerminatedDirectoryString-oid'
     desc: str = 'Directory String terminated by null-byte'
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue + b'\x00'
+    def sanitize(self, attr_value: bytes) -> bytes:
+        return attr_value + b'\x00'
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return attrValue.endswith(b'\x00')
+    def _validate(self, attr_value: bytes) -> bool:
+        return attr_value.endswith(b'\x00')
 
     def formValue(self) -> str:
         return self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
@@ -942,8 +942,8 @@ class Integer(IA5String):
     minValue = None
     maxValue = None
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
-        IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
+        IA5String.__init__(self, app, dn, schema, attrType, attr_value, entry)
         if self.maxValue is not None:
             self.max_len = len(str(self.maxValue))
 
@@ -957,9 +957,9 @@ class Integer(IA5String):
             form_value_len = len(form_value.encode(self._app.ls.charset))
         return max(self.input_size, form_value_len, min_value_len, max_value_len)
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            val = int(attrValue)
+            val = int(attr_value)
         except ValueError:
             return False
         min_value, max_value = self.minValue, self.maxValue
@@ -968,11 +968,11 @@ class Integer(IA5String):
             (max_value is None or val <= max_value)
         )
 
-    def sanitize(self, attrValue: bytes) -> bytes:
+    def sanitize(self, attr_value: bytes) -> bytes:
         try:
-            return str(int(attrValue)).encode('ascii')
+            return str(int(attr_value)).encode('ascii')
         except ValueError:
-            return attrValue
+            return attr_value
 
     def formField(self) -> web_forms.Field:
         form_value = self.formValue()
@@ -1002,9 +1002,9 @@ class IPHostAddress(IA5String):
         bytes.strip,
     )
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            addr = ipaddress.ip_address(attrValue.decode('ascii'))
+            addr = ipaddress.ip_address(attr_value.decode('ascii'))
         except Exception:
             return False
         return self.addr_class is None or isinstance(addr, self.addr_class)
@@ -1035,9 +1035,9 @@ class IPNetworkAddress(IPHostAddress):
     oid: str = 'IPNetworkAddress-oid'
     desc: str = 'string representation of IPv4 or IPv6 network address/mask'
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            addr = ipaddress.ip_network(attrValue.decode('ascii'), strict=False)
+            addr = ipaddress.ip_network(attr_value.decode('ascii'), strict=False)
         except Exception:
             return False
         return self.addr_class is None or isinstance(addr, self.addr_class)
@@ -1081,11 +1081,11 @@ class MacAddress(IA5String):
     max_len: int = 17
     pattern = re.compile(r'^([0-9a-f]{2}\:){5}[0-9a-f]{2}$')
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        attr_value = attrValue.translate(None, b'.-: ').lower().strip()
+    def sanitize(self, attr_value: bytes) -> bytes:
+        attr_value = attr_value.translate(None, b'.-: ').lower().strip()
         if len(attr_value) == 12:
             return b':'.join([attr_value[i*2:i*2+2] for i in range(6)])
-        return attrValue
+        return attr_value
 
 
 class Uri(DirectoryString):
@@ -1139,25 +1139,25 @@ class Image(Binary):
     imageFormat = None
     inline_maxlen = 630  # max. number of bytes to use data: URI instead of external URL
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return imghdr.what(None, attrValue) == self.imageFormat.lower()
+    def _validate(self, attr_value: bytes) -> bool:
+        return imghdr.what(None, attr_value) == self.imageFormat.lower()
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        if not self._validate(attrValue) and PILImage:
+    def sanitize(self, attr_value: bytes) -> bytes:
+        if not self._validate(attr_value) and PILImage:
             try:
-                with BytesIO(attrValue) as imgfile:
+                with BytesIO(attr_value) as imgfile:
                     im = PILImage.open(imgfile)
                     imgfile.seek(0)
                     im.save(imgfile, self.imageFormat)
-                    attrValue = imgfile.getvalue()
+                    attr_value = imgfile.getvalue()
             except Exception as err:
                 logger.warning(
                     'Error converting image data (%d bytes) to %s: %r',
-                    len(attrValue),
+                    len(attr_value),
                     self.imageFormat,
                     err,
                 )
-        return attrValue
+        return attr_value
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         maxwidth, maxheight = 100, 150
@@ -1257,14 +1257,14 @@ class OID(IA5String):
             return ''
         return IA5String.valueButton(self, command, row, mode, link_text=link_text)
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        attrValue = attrValue.strip()
-        if attrValue.startswith(b'{') and attrValue.endswith(b'}'):
+    def sanitize(self, attr_value: bytes) -> bytes:
+        attr_value = attr_value.strip()
+        if attr_value.startswith(b'{') and attr_value.endswith(b'}'):
             try:
-                attrValue = ietf_oid_str(attrValue)
+                attr_value = ietf_oid_str(attr_value)
             except ValueError:
                 pass
-        return attrValue
+        return attr_value
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
@@ -1354,12 +1354,12 @@ class OctetString(Binary):
     maxInputRows = 15 # maximum number of rows for in input field
     bytes_split = 16
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        attrValue = attrValue.translate(None, b': ,\r\n')
+    def sanitize(self, attr_value: bytes) -> bytes:
+        attr_value = attr_value.translate(None, b': ,\r\n')
         try:
-            res = binascii.unhexlify(attrValue)
+            res = binascii.unhexlify(attr_value)
         except binascii.Error:
-            res = attrValue
+            res = attr_value
         return res
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -1420,8 +1420,8 @@ class MultilineText(DirectoryString):
             return value.split(self.lineSep)
         return [value]
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue.replace(
+    def sanitize(self, attr_value: bytes) -> bytes:
+        return attr_value.replace(
             b'\r', b''
         ).replace(
             b'\n', self.lineSep
@@ -1489,8 +1489,8 @@ class PostalAddress(MultilineText):
             for v in value.split(self.lineSep.strip())
         ]
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue.replace(b'\r', b'').replace(b'\n', self.lineSep)
+    def sanitize(self, attr_value: bytes) -> bytes:
+        return attr_value.replace(b'\r', b'').replace(b'\n', self.lineSep)
 
 
 class PrintableString(DirectoryString):
@@ -1610,19 +1610,19 @@ class Date(IA5String):
         '%m/%d/%Y',
     )
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
             datetime.datetime.strptime(
-                self._app.ls.uc_decode(attrValue)[0],
+                self._app.ls.uc_decode(attr_value)[0],
                 self.storageFormat
             )
         except (UnicodeDecodeError, ValueError):
             return False
         return True
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        av_u = attrValue.strip().decode(self._app.ls.charset)
-        result = attrValue
+    def sanitize(self, attr_value: bytes) -> bytes:
+        av_u = attr_value.strip().decode(self._app.ls.charset)
+        result = attr_value
         for time_format in self.acceptableDateformats:
             try:
                 time_tuple = datetime.datetime.strptime(av_u, time_format)
@@ -1678,10 +1678,10 @@ class DateOfBirth(ISO8601Date):
             age = age - 1
         return age
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
             birth_dt = datetime.datetime.strptime(
-                self._app.ls.uc_decode(attrValue)[0],
+                self._app.ls.uc_decode(attr_value)[0],
                 self.storageFormat
             )
         except ValueError:
@@ -1749,17 +1749,17 @@ class Timespan(Integer):
     )
     sep = ','
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        if not attrValue:
-            return attrValue
+    def sanitize(self, attr_value: bytes) -> bytes:
+        if not attr_value:
+            return attr_value
         try:
             result = repr2ts(
                 self.time_divisors,
                 self.sep,
-                attrValue.decode('ascii')
+                attr_value.decode('ascii')
             ).encode('ascii')
         except ValueError:
-            result = Integer.sanitize(self, attrValue)
+            result = Integer.sanitize(self, attr_value)
         return result
 
     def formValue(self) -> str:
@@ -1833,9 +1833,9 @@ class SelectList(DirectoryString):
             key=lambda x: x[1].lower(),
         )
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
-        return self._app.ls.uc_decode(attrValue)[0] in attr_value_dict
+        return self._app.ls.uc_decode(attr_value)[0] in attr_value_dict
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         attr_value_str = DirectoryString.display(self, valueindex, commandbutton)
@@ -1910,16 +1910,16 @@ class DynamicValueSelectList(SelectList, DirectoryString):
     valuePrefix: str = ''
     valueSuffix: str = ''
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
+    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
         self.lu_obj = ldap0.ldapurl.LDAPUrl(self.ldap_url)
         self.minLen = len(self.valuePrefix)+len(self.valueSuffix)
-        SelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
+        SelectList.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
     def _filterstr(self):
         return self.lu_obj.filterstr or '(objectClass=*)'
 
-    def _search_ref(self, attrValue: str):
-        attr_value = attrValue[len(self.valuePrefix):-len(self.valueSuffix) or None]
+    def _search_ref(self, attr_value: str):
+        attr_value = attr_value[len(self.valuePrefix):-len(self.valueSuffix) or None]
         search_filter = '(&%s(%s=%s))' % (
             self._filterstr(),
             self.lu_obj.attrs[0],
@@ -1952,8 +1952,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             return ldap_result[0]
         return None
 
-    def _validate(self, attrValue: bytes) -> bool:
-        av_u = self._app.ls.uc_decode(attrValue)[0]
+    def _validate(self, attr_value: bytes) -> bool:
+        av_u = self._app.ls.uc_decode(attr_value)[0]
         if (
                 not av_u.startswith(self.valuePrefix) or
                 not av_u.endswith(self.valueSuffix) or
@@ -2123,9 +2123,9 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
             return None
         return sre.entry_s
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         return self._get_ref_entry(
-            self._app.ls.uc_decode(attrValue)[0],
+            self._app.ls.uc_decode(attr_value)[0],
             attrlist=['1.1']
         ) is not None
 
@@ -2180,8 +2180,8 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 return ref.entry_s
         return None
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return SelectList._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        return SelectList._validate(self, attr_value)
 
 
 class Boolean(SelectList, IA5String):
@@ -2204,10 +2204,10 @@ class Boolean(SelectList, IA5String):
                 attr_value_dict[key.lower()] = val.lower()
         return attr_value_dict
 
-    def _validate(self, attrValue: bytes) -> bool:
-        if not self._av and attrValue.lower() == attrValue:
-            return SelectList._validate(self, attrValue.upper())
-        return SelectList._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        if not self._av and attr_value.lower() == attr_value:
+            return SelectList._validate(self, attr_value.upper())
+        return SelectList._validate(self, attr_value)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return IA5String.display(self, valueindex, commandbutton)
@@ -2251,8 +2251,8 @@ class BitArrayInteger(MultilineText, Integer):
         True: '+',
     }
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
-        Integer.__init__(self, app, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
+        Integer.__init__(self, app, dn, schema, attrType, attr_value, entry)
         self.flag_desc2int = dict(self.flag_desc_table)
         self.flag_int2desc = {
             j: i
@@ -2261,11 +2261,11 @@ class BitArrayInteger(MultilineText, Integer):
         self.maxValue = sum([j for i, j in self.flag_desc_table])
         self.minInputRows = self.maxInputRows = max(len(self.flag_desc_table), 1)
 
-    def sanitize(self, attrValue: bytes) -> bytes:
+    def sanitize(self, attr_value: bytes) -> bytes:
         try:
-            av_u = attrValue.decode('ascii')
+            av_u = attr_value.decode('ascii')
         except UnicodeDecodeError:
-            return attrValue
+            return attr_value
         try:
             result = int(av_u)
         except ValueError:
@@ -2346,11 +2346,11 @@ class UUID(IA5String):
         '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
     )
 
-    def sanitize(self, attrValue: bytes) -> bytes:
+    def sanitize(self, attr_value: bytes) -> bytes:
         try:
-            return str(uuid.UUID(attrValue.decode('ascii').replace(':', ''))).encode('ascii')
+            return str(uuid.UUID(attr_value.decode('ascii').replace(':', ''))).encode('ascii')
         except ValueError:
-            return attrValue
+            return attr_value
 
 
 class DNSDomain(IA5String):
@@ -2366,11 +2366,11 @@ class DNSDomain(IA5String):
         bytes.strip,
     )
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        attrValue = IA5String.sanitize(self, attrValue)
+    def sanitize(self, attr_value: bytes) -> bytes:
+        attr_value = IA5String.sanitize(self, attr_value)
         return b'.'.join([
             dc.encode('idna')
-            for dc in attrValue.decode(self._app.form.accept_charset).split('.')
+            for dc in attr_value.decode(self._app.form.accept_charset).split('.')
         ])
 
     def formValue(self) -> str:
@@ -2401,8 +2401,8 @@ class RFC822Address(DNSDomain, IA5String):
     pattern = re.compile(r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$')
     html_tmpl = '<a href="mailto:{av}">{av}</a>'
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
-        IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
+        IA5String.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
     def formValue(self) -> str:
         if not self._av:
@@ -2417,11 +2417,11 @@ class RFC822Address(DNSDomain, IA5String):
             dns_domain.formValue()
         ))
 
-    def sanitize(self, attrValue: bytes) -> bytes:
+    def sanitize(self, attr_value: bytes) -> bytes:
         try:
-            localpart, domainpart = attrValue.rsplit(b'@')
+            localpart, domainpart = attr_value.rsplit(b'@')
         except ValueError:
-            return attrValue
+            return attr_value
         else:
             return b'@'.join((
                 localpart,
@@ -2449,9 +2449,9 @@ class JSONValue(PreformattedMultilineText):
     lineSep = b'\n'
     mime_type: str = 'application/json'
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            json.loads(attrValue)
+            json.loads(attr_value)
         except ValueError:
             return False
         return True
@@ -2470,11 +2470,11 @@ class JSONValue(PreformattedMultilineText):
             ).encode('utf-8')
         )
 
-    def sanitize(self, attrValue: bytes) -> bytes:
+    def sanitize(self, attr_value: bytes) -> bytes:
         try:
-            obj = json.loads(attrValue)
+            obj = json.loads(attr_value)
         except ValueError:
-            return PreformattedMultilineText.sanitize(self, attrValue)
+            return PreformattedMultilineText.sanitize(self, attr_value)
         return json.dumps(
             obj,
             separators=(',', ':')
@@ -2490,11 +2490,11 @@ class XmlValue(PreformattedMultilineText):
     lineSep = b'\n'
     mime_type: str = 'text/xml'
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         if defusedxml is None:
-            return PreformattedMultilineText._validate(self, attrValue)
+            return PreformattedMultilineText._validate(self, attr_value)
         try:
-            defusedxml.ElementTree.XML(attrValue)
+            defusedxml.ElementTree.XML(attr_value)
         except XMLParseError:
             return False
         return True
@@ -2587,7 +2587,7 @@ class ComposedAttribute(LDAPSyntax):
         """
         return ''
 
-    def transmute(self, attrValues: List[bytes]) -> List[bytes]:
+    def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         """
         always returns a list with a single value based on the first
         successfully applied compose template
@@ -2601,7 +2601,7 @@ class ComposedAttribute(LDAPSyntax):
             else:
                 break
         else:
-            return attrValues
+            return attr_values
         return attr_values
 
     def formField(self) -> web_forms.Field:

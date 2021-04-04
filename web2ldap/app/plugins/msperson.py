@@ -97,13 +97,13 @@ class EuVATId(IA5String):
         r'(SK)?[0-9]{10})$'
     )
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         if vatnumber:
-            return vatnumber.check_vat(attrValue)
-        return IA5String._validate(self, attrValue)
+            return vatnumber.check_vat(attr_value)
+        return IA5String._validate(self, attr_value)
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        return attrValue.upper().replace(b' ', b'')
+    def sanitize(self, attr_value: bytes) -> bytes:
+        return attr_value.upper().replace(b' ', b'')
 
 syntax_registry.reg_at(
     EuVATId.oid, [

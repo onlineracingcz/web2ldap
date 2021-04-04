@@ -70,9 +70,9 @@ class SchacYearOfBirth(NumericString):
     input_pattern: str = '^[0-9]{4}$'
     pattern = re.compile(input_pattern)
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            birth_year = int(attrValue)
+            birth_year = int(attr_value)
         except ValueError:
             return False
         return birth_year <= datetime.date.today().year

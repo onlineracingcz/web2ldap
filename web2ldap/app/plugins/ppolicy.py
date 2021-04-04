@@ -44,10 +44,10 @@ class PwdAttribute(SelectList):
         '2.5.4.35': 'userPassword',
     }
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         return (
-            not attrValue or
-            attrValue.lower() in {b'2.5.4.35', b'userpassword'}
+            not attr_value or
+            attr_value.lower() in {b'2.5.4.35', b'userpassword'}
         )
 
 syntax_registry.reg_at(
@@ -149,8 +149,8 @@ class PwdAccountLockedTime(GeneralizedTime):
         b'000001010000Z': 'permanently locked',
     }
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return attrValue in self.magic_values or GeneralizedTime._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        return attr_value in self.magic_values or GeneralizedTime._validate(self, attr_value)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         gt_disp_html = GeneralizedTime.display(self, valueindex, commandbutton)

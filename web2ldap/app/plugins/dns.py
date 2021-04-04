@@ -29,8 +29,8 @@ class AssociatedDomain(DNSDomain):
     oid: str = 'AssociatedDomain-oid'
     desc: str = 'Associated DNS domain name (see RFC 4524, section 2.1.)'
 
-    def _validate(self, attrValue: bytes) -> bool:
-        result = DNSDomain._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        result = DNSDomain._validate(self, attr_value)
         ocs = self._entry.object_class_oid_set()
         if 'dNSDomain' in ocs or 'dNSDomain2' in ocs:
             try:
@@ -38,7 +38,7 @@ class AssociatedDomain(DNSDomain):
             except KeyError:
                 pass
             else:
-                result = result and (attrValue == dc or attrValue.startswith(dc+b'.'))
+                result = result and (attr_value == dc or attr_value.startswith(dc+b'.'))
         return result
 
     def _parent_domain(self):
@@ -68,17 +68,17 @@ class AssociatedDomain(DNSDomain):
         return dn2domain.get(matched_dn, None)
         # end of _parent_domain()
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        attrValue = DNSDomain.sanitize(self, attrValue)
-        if not attrValue:
+    def sanitize(self, attr_value: bytes) -> bytes:
+        attr_value = DNSDomain.sanitize(self, attr_value)
+        if not attr_value:
             parent_domain = (self._parent_domain() or '').encode(self._app.ls.charset)
             try:
                 dc_value = self._entry['dc'][0]
             except (KeyError, IndexError):
                 pass
             else:
-                attrValue = DNSDomain.sanitize(self, b'.'.join((dc_value, parent_domain)))
-        return attrValue
+                attr_value = DNSDomain.sanitize(self, b'.'.join((dc_value, parent_domain)))
+        return attr_value
 
     def formValue(self) -> str:
         form_value = DNSDomain.formValue(self)
@@ -191,8 +191,8 @@ class ResourceRecord(DNSDomain, DynamicValueSelectList):
     desc: str = 'A resource record pointing to another DNS RR'
     ldap_url = 'ldap:///_?associatedDomain,associatedDomain?sub?(objectClass=domainRelatedObject)'
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
-        DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
+        DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return DynamicValueSelectList.display(self, valueindex, commandbutton)
@@ -222,9 +222,9 @@ class MXRecord(ResourceRecord):
     desc: str = 'A resource record pointing to a mail exchanger (MX)'
     pattern = re.compile(r'^[0-9]+[ ]+[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$')
 
-    def _search_ref(self, attrValue: str):
+    def _search_ref(self, attr_value: str):
         try:
-            _, hostname = attrValue.split(' ', 1)
+            _, hostname = attr_value.split(' ', 1)
         except ValueError:
             return None
         return ResourceRecord._search_ref(self, hostname.strip())
@@ -342,18 +342,18 @@ class SSHFPRecord(IA5String):
         b'2': 2*hashlib.sha256().digest_size,
     }
 
-    def sanitize(self, attrValue: bytes) -> bytes:
-        if not attrValue:
-            return attrValue
+    def sanitize(self, attr_value: bytes) -> bytes:
+        if not attr_value:
+            return attr_value
         try:
-            key_algo, fp_algo, fp_value = filter(None, map(bytes.strip, attrValue.lower().split(b' ')))
+            key_algo, fp_algo, fp_value = filter(None, map(bytes.strip, attr_value.lower().split(b' ')))
         except ValueError:
-            return attrValue
+            return attr_value
         return b' '.join((key_algo, fp_algo, fp_value))
 
-    def _validate(self, attrValue: bytes) -> bool:
+    def _validate(self, attr_value: bytes) -> bool:
         try:
-            key_algo, fp_algo, fp_value = tuple(filter(None, map(bytes.strip, attrValue.split(b' '))))
+            key_algo, fp_algo, fp_value = tuple(filter(None, map(bytes.strip, attr_value.split(b' '))))
         except ValueError:
             return False
         else:

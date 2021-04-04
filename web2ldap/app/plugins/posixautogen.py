@@ -17,19 +17,19 @@ class HomeDirectory(IA5String):
     uid_attr = 'uid'
     homeDirectoryTemplate = '/home/{uid}'
 
-    def transmute(self, attrValues):
+    def transmute(self, attr_values):
         if self.uid_attr not in self._entry:
-            return attrValues
+            return attr_values
         if (
-                not attrValues or
-                not attrValues[0] or
-                attrValues[0].decode(self._app.ls.charset) == self.homeDirectoryTemplate.format(**{self.uid_attr:''})
+                not attr_values or
+                not attr_values[0] or
+                attr_values[0].decode(self._app.ls.charset) == self.homeDirectoryTemplate.format(**{self.uid_attr:''})
             ):
             fmt_dict = {self.uid_attr:self._entry[self.uid_attr][0].decode(self._app.ls.charset)}
-            attrValues = [
+            attr_values = [
                 self.homeDirectoryTemplate.format(**fmt_dict).encode(self._app.ls.charset)
             ]
-        return attrValues
+        return attr_values
 
 syntax_registry.reg_at(
     HomeDirectory.oid, [

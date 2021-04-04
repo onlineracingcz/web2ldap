@@ -155,8 +155,8 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
     desc: str = 'OpenLDAP syncrepl directive'
     minInputRows = 5
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
-        OlcMultilineText.__init__(self, app, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
+        OlcMultilineText.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         if not commandbutton or not self._av:
@@ -205,11 +205,11 @@ class OlcPPolicyDefault(DynamicDNSelectList, DistinguishedName):
     desc: str = 'DN of a pwdPolicy object for uncustomized objects'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=pwdPolicy)'
 
-    def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
-        DynamicDNSelectList.__init__(self, app, dn, schema, attrType, attrValue, entry)
+    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
+        DynamicDNSelectList.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return DynamicDNSelectList._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        return DynamicDNSelectList._validate(self, attr_value)
 
 syntax_registry.reg_at(
     OlcPPolicyDefault.oid, [
@@ -309,8 +309,8 @@ class ReqMod(OctetString, DirectoryString):
     desc: str = 'List of modifications/old values'
     known_modtypes = {b'+', b'-', b'=', b'#', b''}
 
-    def _validate(self, attrValue: bytes) -> bool:
-        return OctetString._validate(self, attrValue)
+    def _validate(self, attr_value: bytes) -> bool:
+        return OctetString._validate(self, attr_value)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         if self._av == b':':

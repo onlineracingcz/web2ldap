@@ -43,10 +43,10 @@ def new_superior_field(app, sup_search_url, old_superior_dn):
             '': '- Root Naming Context -',
         }
 
-        def __init__(self, app, dn, schema, attrType, attrValue, ldap_url):
+        def __init__(self, app, dn, schema, attr_type, attr_value, ldap_url):
             self.ldap_url = ldap_url
             web2ldap.app.schema.syntaxes.DynamicDNSelectList.__init__(
-                self, app, dn, schema, attrType, attrValue, entry=None,
+                self, app, dn, schema, attr_type, attr_value, entry=None,
             )
 
     if not sup_search_url is None:
