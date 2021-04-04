@@ -164,10 +164,7 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
         srd = ldap0.openldap.SyncReplDesc(self.av_u)
         return ' '.join((
             OlcMultilineText.display(self, valueindex, commandbutton),
-            web2ldap.app.gui.ldap_url_anchor(
-                self._app,
-                srd.ldap_url(),
-            ),
+            self._app.ldap_url_anchor(srd.ldap_url()),
         ))
 
 syntax_registry.reg_at(

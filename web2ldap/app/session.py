@@ -16,14 +16,14 @@ import collections
 import logging
 import threading
 
+import web2ldapcnf
+
 from ..web import session
 from ..web.session import WebSession
 from ..web.helper import get_remote_ip
 
 from ..ldapsession import LDAPSession
 from ..log import logger, LogHelper
-
-import web2ldapcnf
 
 
 SESSION_EXPIRY_INTERVAL: int = 61

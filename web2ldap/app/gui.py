@@ -13,12 +13,9 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 import time
-import os
 from hashlib import md5
-from typing import Sequence, Tuple, Union
 
 import ldap0
-import ldap0.ldapurl
 from ldap0.ldapurl import LDAPUrl
 import ldap0.filter
 from ldap0.dn import DNObj
@@ -33,15 +30,14 @@ else:
 
 import web2ldapcnf
 
-import web2ldap.web.forms
+from ..web.forms import Select as SelectField
 from  ..__about__ import __version__
 from ..web import escape_html
-from ..msbase import GrabKeys
 from ..ldaputil import logdb_filter
 from ..log import logger
 logger.debug('dns_available = %r', dns_available)
 
-from . import ErrorExit
+from .tmpl import read_template
 
 
 #---------------------------------------------------------------------------
@@ -67,75 +63,8 @@ HTML_FOOTER = """
 """
 
 
-def get_variant_filename(pathname, variantlist):
-    """
-    returns variant filename
-    """
-    checked_set = set()
-    for v in variantlist:
-        # Strip subtags
-        v = v.lower().split('-', 1)[0]
-        if v == 'en':
-            variant_filename = pathname
-        else:
-            variant_filename = '.'.join((pathname, v))
-        if v not in checked_set and os.path.isfile(variant_filename):
-            break
-        checked_set.add(v)
-    else:
-        variant_filename = pathname
-    return variant_filename
-
-
-def read_template(app, config_key, form_desc=u'', tmpl_filename=None):
-    if not tmpl_filename:
-        tmpl_filename = app.cfg_param(config_key, None)
-    if not tmpl_filename:
-        raise ErrorExit(u'No template specified for %s.' % (form_desc))
-    tmpl_filename = web2ldap.app.gui.get_variant_filename(tmpl_filename, app.form.accept_language)
-    try:
-        # Read template from file
-        with open(tmpl_filename, 'rb') as tmpl_fileobj:
-            tmpl_str = tmpl_fileobj.read().decode('utf-8')
-    except IOError:
-        raise ErrorExit(u'I/O error during reading %s template file.' % (form_desc))
-    return tmpl_str # read_template()
-
-
 def dn_anchor_hash(dn):
     return str(md5(dn.encode('utf-8')).hexdigest())
-
-
-def ts2repr(
-        time_divisors: Sequence[Tuple[str, int]],
-        ts_sep: str,
-        ts_value: Union[str, bytes],
-    ) -> str:
-    rest = int(ts_value)
-    result = []
-    for desc, divisor in time_divisors:
-        mult = rest // divisor
-        rest = rest % divisor
-        if mult > 0:
-            result.append(u'%d %s' % (mult, desc))
-        if rest == 0:
-            break
-    return ts_sep.join(result)
-
-
-def repr2ts(time_divisors, ts_sep, value):
-    l1 = [v.strip().split(u' ') for v in value.split(ts_sep)]
-    l2 = [(int(v), d.strip()) for v, d in l1]
-    time_divisors_dict = dict(time_divisors)
-    result = 0
-    for val, desc in l2:
-        try:
-            result += val * time_divisors_dict[desc]
-        except KeyError:
-            raise ValueError
-        else:
-            del time_divisors_dict[desc]
-    return str(result)
 
 
 def command_div(
@@ -163,9 +92,9 @@ def command_div(
 
 def simple_main_menu(app):
     main_menu = [app.anchor('', 'Connect', [])]
-    if web2ldap.app.handler.check_access(app.env, 'monitor'):
+    if app.check_access('monitor'):
         main_menu.append(app.anchor('monitor', 'Monitor', []))
-    if dns_available and web2ldap.app.handler.check_access(app.env, 'locate'):
+    if dns_available and app.check_access('locate'):
         main_menu.append(app.anchor('locate', 'DNS lookup', []))
     return main_menu
 
@@ -298,47 +227,6 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     # end of context_menu_single_entry()
 
 
-def display_authz_dn(app, who=None, entry=None):
-    if who is None:
-        if hasattr(app.ls, 'who') and app.ls.who:
-            who = app.ls.who
-            entry = app.ls.userEntry
-        else:
-            return 'anonymous'
-    if ldap0.dn.is_dn(who):
-        # Fall-back is to display the DN
-        result = app.display_dn(who, commandbutton=False)
-        # Determine relevant templates dict
-        bound_as_templates = ldap0.cidict.CIDict(app.cfg_param('boundas_template', {}))
-        # Read entry if necessary
-        if entry is None:
-            read_attrs = set(['objectClass'])
-            for oc in bound_as_templates.keys():
-                read_attrs.update(GrabKeys(bound_as_templates[oc]).keys)
-            try:
-                user_res = app.ls.l.read_s(who, attrlist=read_attrs)
-            except ldap0.LDAPError:
-                entry = None
-            else:
-                if user_res is None:
-                    entry = {}
-                else:
-                    entry = user_res.entry_as
-        if entry:
-            display_entry = web2ldap.app.read.DisplayEntry(app, app.dn, app.schema, entry, 'read_sep', True)
-            user_structural_oc = display_entry.entry.get_structural_oc()
-            for oc in bound_as_templates.keys():
-                if app.schema.get_oid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:
-                    try:
-                        result = bound_as_templates[oc] % display_entry
-                    except KeyError:
-                        pass
-    else:
-        result = app.form.utf2display(who)
-    return result
-    # end of display_authz_dn()
-
-
 def main_menu(app):
     """
     Returns list of main menu items
@@ -455,7 +343,7 @@ def top_section(
     Header(app, 'text/html', app.form.accept_charset)
 
     # Read the template file for TopSection
-    top_template_str = web2ldap.app.gui.read_template(app, 'top_template', u'top section')
+    top_template_str = read_template(app, 'top_template', u'top section')
 
     script_name = escape_html(app.form.script_name)
 
@@ -498,35 +386,10 @@ def top_section(
             'dit_navi': ',\n'.join(dit_navigation(app)),
             'dn': app.form.utf2display(app.dn),
         })
-        template_dict['who'] = display_authz_dn(app)
+        template_dict['who'] = app.display_authz_dn()
 
     app.outf.write(top_template_str.format(**template_dict))
     # end of top_section()
-
-
-def ldap_url_anchor(app, data):
-    if isinstance(data, LDAPUrl):
-        l = data
-    else:
-        l = LDAPUrl(ldapUrl=data)
-    command_func = {True:'read', False:'search'}[l.scope == ldap0.SCOPE_BASE]
-    if l.hostport:
-        command_text = 'Connect'
-        return app.anchor(
-            command_func,
-            'Connect and %s' % (command_func),
-            (('ldapurl', str(l)),)
-        )
-    command_text = {True:'Read', False:'Search'}[l.scope == ldap0.SCOPE_BASE]
-    return app.anchor(
-        command_func, command_text,
-        [
-            ('dn', l.dn),
-            ('filterstr', (l.filterstr or '(objectClass=*)')),
-            ('scope', str(l.scope or ldap0.SCOPE_SUBTREE)),
-        ],
-    )
-    # end of ldap_url_anchor()
 
 
 def attrtype_select_field(
@@ -557,7 +420,7 @@ def attrtype_select_field(
         for at in sorted(attr_options_dict.keys(), key=str.lower)
     ]
     # Create a select field instance for attribute type name
-    attr_select = web2ldap.web.forms.Select(
+    attr_select = SelectField(
         field_name, field_desc, 1,
         options=sorted_attr_options,
     )
@@ -634,7 +497,7 @@ def search_root_field(
         dn_select_list.update(map(str, [app.dn_obj] + app.dn_obj.parents()))
     if search_root_searchurl:
         # search for more search bases
-        slu = ldap0.ldapurl.LDAPUrl(search_root_searchurl)
+        slu = LDAPUrl(search_root_searchurl)
         try:
             ldap_results = app.ls.l.search_s(
                 slu.dn,
@@ -655,7 +518,7 @@ def search_root_field(
         dn_select_list.remove('')
     # Add root search base string with description
     dn_select_list.add((u'', u'- World -'))
-    srf = web2ldap.web.forms.Select(
+    srf = SelectField(
         name, text, 1,
         size=1,
         options=sorted(

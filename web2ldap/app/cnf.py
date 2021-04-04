@@ -17,10 +17,10 @@ import logging
 from ldap0.ldapurl import LDAPUrl, is_ldapurl
 from ldap0.dn import is_dn
 
+import web2ldapcnf.hosts
+
 from ..log import logger, LogHelper
 from .. import VALID_CFG_PARAM_NAMES
-
-import web2ldapcnf.hosts
 
 from .schema import parse_fake_schema
 

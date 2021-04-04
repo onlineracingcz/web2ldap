@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""web2ldap.app.handler: base handler
+"""
+web2ldap.app.handler: base handler
 
 web2ldap - a web-based LDAP Client,
 see https://www.web2ldap.de for details
@@ -17,11 +18,10 @@ import socket
 import time
 import urllib.parse
 import logging
-
 from ipaddress import ip_address, ip_network
 
 import ldap0
-from ldap0.ldapurl import is_ldapurl
+from ldap0.ldapurl import LDAPUrl, is_ldapurl
 from ldap0.dn import DNObj
 from ldap0.err import PasswordPolicyException, PasswordPolicyExpirationWarning
 
@@ -34,21 +34,35 @@ from ..web.forms import FormException
 from ..web.session import SessionException, MaxSessionPerIPExceeded, MaxSessionCountExceeded
 from ..web.helper import get_remote_ip
 from ..ldaputil.extldapurl import ExtendedLDAPUrl
-from ..ldapsession import LDAPSession, START_TLS_REQUIRED, LDAP_DEFAULT_TIMEOUT, START_TLS_NO
+from ..ldapsession import (
+    LDAP_DEFAULT_TIMEOUT,
+    LDAPSession,
+    START_TLS_REQUIRED,
+    START_TLS_NO,
+    UsernameNotFound,
+    InvalidSimpleBindDN,
+    UsernameNotUnique,
+)
+from ..utctime import ts2repr
 from ..log import LogHelper, logger, log_exception
+from ..msbase import GrabKeys
 # Import the application modules
 from .gui import (
     footer,
     Header,
     read_template,
     top_section,
-    ts2repr,
 )
 from .cnf import LDAP_DEF, LDAP_URI_LIST_CHECK_DICT
 from . import passwd
+from .entry import DisplayEntry
 from .gui import exception_message, dns_available
 from .form import Web2LDAPForm
-from .session import session_store
+from .session import (
+    InvalidSessionInstance,
+    WrongSessionCookie,
+    session_store,
+)
 from .schema.syntaxes import syntax_registry
 from .stats import COMMAND_COUNT
 # action functions
@@ -73,6 +87,10 @@ from .login import w2l_login
 from .groupadm import w2l_groupadm
 from .schema.viewer import w2l_schema_viewer
 from .metrics import w2l_metrics, METRICS_AVAIL
+from .srvrr import w2l_chasesrvrecord
+from .referral import w2l_chasereferral
+from .login import w2l_login
+from .schema.syntaxes import Timespan
 
 if dns_available:
     from ..ldaputil.dns import dc_dn_lookup
@@ -138,21 +156,6 @@ if METRICS_AVAIL:
     COMMAND_FUNCTION['metrics'] = w2l_metrics
 
 syntax_registry.check()
-
-
-def check_access(env, command):
-    """
-    simple access control based on client IP address
-    """
-    remote_addr = ip_address(env[web2ldapcnf.httpenv_remote_addr.split(',')[-1].strip()])
-    access_allowed = web2ldapcnf.access_allowed.get(
-        command,
-        web2ldapcnf.access_allowed['_']
-    )
-    for net in access_allowed:
-        if remote_addr in ip_network(net, strict=False):
-            return True
-    return False
 
 
 class AppHandler(LogHelper):
@@ -259,6 +262,20 @@ class AppHandler(LogHelper):
         """
         return self.cfg_param('binddn_mapping', u'ldap:///_??sub?(uid={user})')
 
+    def check_access(self, command):
+        """
+        simple access control based on client IP address
+        """
+        remote_addr = ip_address(self.env[web2ldapcnf.httpenv_remote_addr].split(',')[-1].strip())
+        access_allowed = web2ldapcnf.access_allowed.get(
+            command,
+            web2ldapcnf.access_allowed['_']
+        )
+        for net in access_allowed:
+            if remote_addr in ip_network(net, strict=False):
+                return True
+        return False
+
     def anchor(
             self,
             command,
@@ -302,6 +319,30 @@ class AppHandler(LogHelper):
         )
         assert isinstance(res, str), TypeError('res must be str, was %r', res)
         return res
+
+    def ldap_url_anchor(self, data):
+        if isinstance(data, LDAPUrl):
+            ldap_url = data
+        else:
+            ldap_url = LDAPUrl(ldapUrl=data)
+        command_func = {True:'read', False:'search'}[ldap_url.scope == ldap0.SCOPE_BASE]
+        if ldap_url.hostport:
+            command_text = 'Connect'
+            return self.anchor(
+                command_func,
+                'Connect and %s' % (command_func),
+                (('ldapurl', str(ldap_url)),)
+            )
+        command_text = {True:'Read', False:'Search'}[ldap_url.scope == ldap0.SCOPE_BASE]
+        return self.anchor(
+            command_func, command_text,
+            [
+                ('dn', ldap_url.dn),
+                ('filterstr', (ldap_url.filterstr or '(objectClass=*)')),
+                ('scope', str(ldap_url.scope or ldap0.SCOPE_SUBTREE)),
+            ],
+        )
+        # end of ldap_url_anchor()
 
     def begin_form(
             self,
@@ -407,6 +448,46 @@ class AppHandler(LogHelper):
             return web2ldapcnf.command_link_separator.join(command_buttons)
         return dn_str
 
+    def display_authz_dn(self, who=None, entry=None):
+        if who is None:
+            if hasattr(self.ls, 'who') and self.ls.who:
+                who = self.ls.who
+                entry = self.ls.userEntry
+            else:
+                return 'anonymous'
+        if ldap0.dn.is_dn(who):
+            # Fall-back is to display the DN
+            result = self.display_dn(who, commandbutton=False)
+            # Determine relevant templates dict
+            bound_as_templates = ldap0.cidict.CIDict(self.cfg_param('boundas_template', {}))
+            # Read entry if necessary
+            if entry is None:
+                read_attrs = set(['objectClass'])
+                for oc in bound_as_templates.keys():
+                    read_attrs.update(GrabKeys(bound_as_templates[oc]).keys)
+                try:
+                    user_res = self.ls.l.read_s(who, attrlist=read_attrs)
+                except ldap0.LDAPError:
+                    entry = None
+                else:
+                    if user_res is None:
+                        entry = {}
+                    else:
+                        entry = user_res.entry_as
+            if entry:
+                display_entry = DisplayEntry(self, self.dn, self.schema, entry, 'read_sep', True)
+                user_structural_oc = display_entry.entry.get_structural_oc()
+                for oc in bound_as_templates.keys():
+                    if self.schema.get_oid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:
+                        try:
+                            result = bound_as_templates[oc] % display_entry
+                        except KeyError:
+                            pass
+        else:
+            result = self.form.utf2display(who)
+        return result
+        # end of display_authz_dn()
+
     def simple_message(
             self,
             title=u'',
@@ -493,7 +574,7 @@ class AppHandler(LogHelper):
                 pass
             self.ls = self._session_store.retrieveSession(self.sid, self.env)
             if not isinstance(self.ls, LDAPSession):
-                raise web2ldap.app.session.InvalidSessionInstance()
+                raise InvalidSessionInstance()
             if self.ls.cookie:
                 # Check whether HTTP_COOKIE contains the cookie of this particular session
                 cookie_name = ''.join((self.form.cookie_name_prefix, str(id(self.ls))))
@@ -501,7 +582,7 @@ class AppHandler(LogHelper):
                         cookie_name in self.form.cookies and
                         self.ls.cookie[cookie_name].value == self.form.cookies[cookie_name].value
                     ):
-                    raise web2ldap.app.session.WrongSessionCookie()
+                    raise WrongSessionCookie()
             if web2ldapcnf.session_paranoid and \
                self.current_access_time-last_session_timestamp > web2ldapcnf.session_paranoid:
                 # Store session with new session ID
@@ -715,7 +796,7 @@ class AppHandler(LogHelper):
                 self.form.getInputFields()
 
             # Check access here
-            if not check_access(self.env, self.command):
+            if not self.check_access(self.command):
                 self.log(
                     logging.WARN,
                     'Access denied from %r to command %r',
@@ -771,7 +852,7 @@ class AppHandler(LogHelper):
                     # No host specified in user's input
                     self._session_store.delete(self.sid)
                     self.sid = None
-                    web2ldap.app.connect.w2l_connect(
+                    w2l_connect(
                         self,
                         h1_msg='Connect failed',
                         error_msg='No host specified.'
@@ -781,7 +862,7 @@ class AppHandler(LogHelper):
                     init_uri = init_uri_list[0]
                 else:
                     # more than one possible servers => let user choose one
-                    web2ldap.app.srvrr.w2l_chasesrvrecord(self, init_uri_list)
+                    w2l_chasesrvrecord(self, init_uri_list)
                     return
             elif self.ldap_url.hostport is not None:
                 init_uri = str(self.ldap_url.connect_uri()[:])
@@ -826,7 +907,7 @@ class AppHandler(LogHelper):
             if self.ls.uri is None:
                 self._session_store.delete(self.sid)
                 self.sid = None
-                web2ldap.app.connect.w2l_connect(
+                w2l_connect(
                     self,
                     h1_msg='Connect failed',
                     error_msg='No valid LDAP connection.'
@@ -849,7 +930,7 @@ class AppHandler(LogHelper):
                     (login_mech or '').encode('ascii') not in ldap0.sasl.SASL_NONINTERACTIVE_MECHS
                 ):
                 # first ask for password in a login form
-                web2ldap.app.login.w2l_login(
+                w2l_login(
                     self,
                     login_msg='',
                     who=who, relogin=0, nomenu=1,
@@ -889,7 +970,7 @@ class AppHandler(LogHelper):
                         loginSearchRoot=login_search_root,
                     )
                 except ldap0.NO_SUCH_OBJECT as err:
-                    web2ldap.app.login.w2l_login(
+                    w2l_login(
                         self,
                         login_msg=self.ldap_error_msg(err),
                         who=who, relogin=True
@@ -938,7 +1019,7 @@ class AppHandler(LogHelper):
             self._session_store.delete(self.sid)
             self.sid = None
             # Redirect to entry page
-            web2ldap.app.connect.w2l_connect(
+            w2l_connect(
                 self,
                 h1_msg='Connect failed',
                 error_msg='Connecting to %s impossible!<br>%s' % (
@@ -955,7 +1036,7 @@ class AppHandler(LogHelper):
                 self.log(logging.DEBUG, 'host_list = %r', host_list)
                 if host_list and ExtendedLDAPUrl(self.ls.uri).hostport not in host_list:
                     # Found LDAP server for this naming context via DNS SRV RR
-                    web2ldap.app.srvrr.w2l_chasesrvrecord(self, host_list)
+                    w2l_chasesrvrecord(self, host_list)
                     return
 
             # Normal error handling
@@ -975,15 +1056,15 @@ class AppHandler(LogHelper):
             )
 
         except (ldap0.PARTIAL_RESULTS, ldap0.REFERRAL) as err:
-            web2ldap.app.referral.w2l_chasereferral(self, err)
+            w2l_chasereferral(self, err)
 
         except (
                 ldap0.INSUFFICIENT_ACCESS,
                 ldap0.STRONG_AUTH_REQUIRED,
                 ldap0.INAPPROPRIATE_AUTH,
-                web2ldap.ldapsession.UsernameNotFound,
+                UsernameNotFound,
             ) as err:
-            web2ldap.app.login.w2l_login(
+            w2l_login(
                 self,
                 who=u'',
                 login_msg=self.ldap_error_msg(err),
@@ -993,17 +1074,14 @@ class AppHandler(LogHelper):
         except (
                 ldap0.INVALID_CREDENTIALS,
             ) as err:
-            web2ldap.app.login.w2l_login(
+            w2l_login(
                 self,
                 login_msg=self.ldap_error_msg(err),
                 who=who, relogin=True,
             )
 
-        except (
-                web2ldap.ldapsession.InvalidSimpleBindDN,
-                web2ldap.ldapsession.UsernameNotUnique,
-            ) as err:
-            web2ldap.app.login.w2l_login(
+        except (InvalidSimpleBindDN, UsernameNotUnique) as err:
+            w2l_login(
                 self,
                 login_msg=self.form.utf2display(str(err)),
                 who=who, relogin=True,
@@ -1022,7 +1100,7 @@ class AppHandler(LogHelper):
                 self.form.utf2display(
                     u'Password will expire in %s!' % (
                         ts2repr(
-                            web2ldap.app.schema.syntaxes.Timespan.time_divisors,
+                            Timespan.time_divisors,
                             u' ',
                             err.timeBeforeExpiration,
                         )

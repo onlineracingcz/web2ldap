@@ -12,10 +12,11 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
+from typing import Dict
+
 import ldap0
 import ldap0.ldapurl
 import ldap0.filter
-from typing import Dict
 
 import web2ldap.web.forms
 

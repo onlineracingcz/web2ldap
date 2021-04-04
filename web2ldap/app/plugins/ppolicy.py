@@ -9,16 +9,21 @@ from typing import Dict
 
 from ldap0 import LDAPError
 
-import web2ldap.app.searchform
-from web2ldap.utctime import strptime
-from web2ldap.app.schema.syntaxes import \
-    SelectList, \
-    DynamicDNSelectList, \
-    Timespan, \
-    GeneralizedTime, \
-    syntax_registry
-from web2ldap.app.plugins.quirks import UserPassword
-from web2ldap import cmp
+from ...utctime import strptime, ts2repr
+from ..searchform import (
+    SEARCH_OPT_LE_THAN,
+    SEARCH_OPT_IS_EQUAL,
+    SEARCH_OPT_GE_THAN,
+)
+from ..schema.syntaxes import (
+    SelectList,
+    DynamicDNSelectList,
+    Timespan,
+    GeneralizedTime,
+    syntax_registry,
+)
+from .quirks import UserPassword
+from ... import cmp
 
 
 class PwdCheckQuality(SelectList):
@@ -82,7 +87,7 @@ class PwdMaxAge(Timespan):
     def _timespan_search_params(self):
         return (
             ('search_attr', 'pwdChangedTime'),
-            ('search_option', web2ldap.app.searchform.SEARCH_OPT_LE_THAN),
+            ('search_option', SEARCH_OPT_LE_THAN),
             ('search_string', self._search_timestamp(int(self.av_u.strip()))),
         )
 
@@ -102,7 +107,7 @@ class PwdMaxAge(Timespan):
                 ('dn', self._dn),
                 ('searchform_mode', 'adv'),
                 ('search_attr', 'pwdPolicySubentry'),
-                ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                ('search_option', SEARCH_OPT_IS_EQUAL),
                 ('search_string', self._dn),
             ) + ts_search_params,
             title=self.title_text,
@@ -128,10 +133,10 @@ class PwdExpireWarning(PwdMaxAge):
         warn_timestamp = pwd_max_age-pwd_expire_warning
         return (
             ('search_attr', 'pwdChangedTime'),
-            ('search_option', web2ldap.app.searchform.SEARCH_OPT_GE_THAN),
+            ('search_option', SEARCH_OPT_GE_THAN),
             ('search_string', self._search_timestamp(pwd_max_age)),
             ('search_attr', 'pwdChangedTime'),
-            ('search_option', web2ldap.app.searchform.SEARCH_OPT_LE_THAN),
+            ('search_option', SEARCH_OPT_LE_THAN),
             ('search_string', self._search_timestamp(warn_timestamp)),
         )
 
@@ -209,7 +214,7 @@ class PwdChangedTime(GeneralizedTime):
                     }[expire_cmp],
                     expire_dt.strftime('%c'),
                     self._app.form.utf2display(
-                        web2ldap.app.gui.ts2repr(
+                        ts2repr(
                             self.time_divisors,
                             ' ',
                             abs(expired_since),

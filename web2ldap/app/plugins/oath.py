@@ -12,20 +12,20 @@ from typing import Dict
 
 from ldap0 import LDAPError
 
-import web2ldap.app.gui
-from web2ldap.utctime import strptime
-from web2ldap.app.schema.syntaxes import \
-    DirectoryString, \
-    DynamicDNSelectList, \
-    GeneralizedTime, \
-    HMACAlgorithmOID, \
-    JSONValue, \
-    LDAPv3ResultCode, \
-    OctetString, \
-    SelectList, \
-    Timespan, \
-    syntax_registry
-from web2ldap import cmp
+from ... import cmp
+from ...utctime import strptime, ts2repr
+from ..schema.syntaxes import (
+    DirectoryString,
+    DynamicDNSelectList,
+    GeneralizedTime,
+    HMACAlgorithmOID,
+    JSONValue,
+    LDAPv3ResultCode,
+    OctetString,
+    SelectList,
+    Timespan,
+    syntax_registry,
+)
 
 
 syntax_registry.reg_at(
@@ -230,7 +230,7 @@ class OathSecretTime(GeneralizedTime):
                     }[expire_cmp],
                     expire_dt.strftime('%c'),
                     self._app.form.utf2display(
-                        web2ldap.app.gui.ts2repr(
+                        ts2repr(
                             self.time_divisors,
                             ' ',
                             abs(expired_since),

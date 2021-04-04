@@ -38,7 +38,7 @@ from ..web.wsgi import WSGIBytesWrapper
 from . import ErrorExit
 
 from .form import ExportFormatSelect, InclOpAttrsCheckbox
-from .read import DisplayEntry
+from .entry import DisplayEntry
 from .schema.syntaxes import syntax_registry
 from .searchform import (
     w2l_searchform,

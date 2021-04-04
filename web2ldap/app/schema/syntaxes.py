@@ -67,19 +67,13 @@ import web2ldapcnf
 
 from ...web import forms as web_forms
 from ... import msbase
-from ...utctime import strftimeiso8601
+from ...utctime import repr2ts, ts2repr, strftimeiso8601
 from ...ldaputil.oidreg import OID_REG
 from ...log import logger
 from ... import cmp
 from . import schema_anchor
 from ...ldaputil import ietf_oid_str
-from ..gui import (
-    display_authz_dn,
-    get_variant_filename,
-    ldap_url_anchor,
-    repr2ts,
-    ts2repr,
-)
+from ..tmpl import get_variant_filename
 from ...utctime import strptime as utc_strptime
 from ..searchform import (
     SEARCH_OPT_ATTR_EXISTS,
@@ -647,10 +641,7 @@ class AuthzDN(DistinguishedName):
                 valueindex,
                 commandbutton=False,
             )
-            whoami_display_str = display_authz_dn(
-                self._app,
-                who=self.av_u
-            )
+            whoami_display_str = self._app.display_authz_dn(who=self.av_u)
             if whoami_display_str != simple_display_str:
                 result = '<br>'.join((whoami_display_str, result))
         return result
@@ -1325,8 +1316,7 @@ class LDAPUrl(Uri):
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             if commandbutton:
-                commandbuttonstr = ldap_url_anchor(
-                    self._app,
+                commandbuttonstr = self._app.ldap_url_anchor(
                     self._command_ldap_url(self.av_u),
                 )
             else:

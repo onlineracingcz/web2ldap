@@ -17,8 +17,12 @@ import ldap0.cidict
 from ldap0.dn import DNObj
 from ldap0.res import SearchResultEntry
 
-import web2ldap.app.core
-import web2ldap.app.gui
+from .gui import (
+    footer,
+    main_menu,
+    search_root_field,
+    top_section,
+)
 from . import ErrorExit
 
 ACTION2MODTYPE = {
@@ -348,14 +352,9 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     # HTML output
     #########################################################
 
-    web2ldap.app.gui.top_section(
-        app,
-        'Group membership',
-        web2ldap.app.gui.main_menu(app),
-        context_menu_list=[]
-    )
+    top_section(app, 'Group membership', main_menu(app), context_menu_list=[])
 
-    group_search_root_field = web2ldap.app.gui.search_root_field(
+    group_search_root_field = search_root_field(
         app,
         name='groupadm_searchroot',
         default=str(group_search_root),
@@ -448,4 +447,4 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             ))
         app.outf.write('</dl>\n')
 
-    web2ldap.app.gui.footer(app)
+    footer(app)

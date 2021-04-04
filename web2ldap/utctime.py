@@ -14,6 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import time
 import datetime
+from typing import Sequence, Tuple, Union
 
 
 UTC_TIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
@@ -69,3 +70,35 @@ def strftimeiso8601(t):
         return t.strftime(UTC_TIME_FORMAT)
     except AttributeError:
         return time.strftime(UTC_TIME_FORMAT, t)
+
+
+def ts2repr(
+        time_divisors: Sequence[Tuple[str, int]],
+        ts_sep: str,
+        ts_value: Union[str, bytes],
+    ) -> str:
+    rest = int(ts_value)
+    result = []
+    for desc, divisor in time_divisors:
+        mult = rest // divisor
+        rest = rest % divisor
+        if mult > 0:
+            result.append(u'%d %s' % (mult, desc))
+        if rest == 0:
+            break
+    return ts_sep.join(result)
+
+
+def repr2ts(time_divisors, ts_sep, value):
+    l1 = [v.strip().split(u' ') for v in value.split(ts_sep)]
+    l2 = [(int(v), d.strip()) for v, d in l1]
+    time_divisors_dict = dict(time_divisors)
+    result = 0
+    for val, desc in l2:
+        try:
+            result += val * time_divisors_dict[desc]
+        except KeyError:
+            raise ValueError
+        else:
+            del time_divisors_dict[desc]
+    return str(result)

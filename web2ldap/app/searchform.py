@@ -23,11 +23,11 @@ from . import ErrorExit
 from .gui import (
     attrtype_select_field,
     footer,
-    get_variant_filename,
     main_menu,
     search_root_field,
     top_section,
 )
+from .tmpl import get_variant_filename
 
 
 SEARCHFORM_MODE_TEXT = {

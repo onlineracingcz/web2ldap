@@ -45,7 +45,7 @@ from .gui import (
     main_menu,
     top_section,
 )
-from .read import DisplayEntry
+from .entry import DisplayEntry
 
 H1_MSG = {
     'add':'Add new entry',

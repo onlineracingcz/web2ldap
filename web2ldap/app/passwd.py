@@ -19,15 +19,18 @@ from ldap0.pw import random_string, unicode_pwd, ntlm_password_hash, PWD_ALPHABE
 from ldap0.schema.models import AttributeType, ObjectClass, SchemaElementOIDSet
 from ldap0.extop.passmod import PassmodRequest
 
-import web2ldap.web.forms
-import web2ldap.ldapsession
-import web2ldap.app.cnf
-import web2ldap.app.core
-import web2ldap.app.gui
-import web2ldap.app.login
+from ..ldapsession import CONTROL_RELAXRULES
 from ..ldaputil.passwd import user_password_hash
 from .form import Web2LDAPForm_passwd
 from . import ErrorExit
+from .gui import (
+    context_menu_single_entry,
+    footer,
+    main_menu,
+    read_template,
+    top_section,
+)
+from .login import w2l_login
 
 
 PASSWD_ACTIONS_DICT = {
@@ -92,7 +95,7 @@ def passwd_context_menu(app):
     # Menu entry for unlocking entry
     delete_param_list = [
         ('dn', app.dn),
-        ('delete_ctrl', web2ldap.ldapsession.CONTROL_RELAXRULES),
+        ('delete_ctrl', CONTROL_RELAXRULES),
     ]
     delete_param_list.extend([
         ('delete_attr', attr_type)
@@ -196,16 +199,16 @@ def passwd_form(
     nthash_available = '1.3.6.1.4.1.7165.2.1.25' in all_attrs
     show_clientside_pw_fields = passwd_action == 'setuserpassword' and not unicode_pwd_avail
 
-    passwd_template_str = web2ldap.app.gui.read_template(
+    passwd_template_str = read_template(
         app,
         'passwd_template',
         'password form',
     )
 
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         'Change password',
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=passwd_context_menu(app),
         main_div_id='Input',
     )
@@ -218,7 +221,7 @@ def passwd_form(
         value_passwd_action=app.form.hiddenFieldHTML('passwd_action', passwd_action, ''),
         value_passwd_who=app.form.hiddenFieldHTML('passwd_who', passwd_who, ''),
         text_desc={False:'Change password for', True:'Change own password of'}[own_pwd_change],
-        text_whoami=web2ldap.app.gui.display_authz_dn(app, passwd_who),
+        text_whoami=app.display_authz_dn(passwd_who),
         disable_oldpw_start={False:'', True:'<!--'}[not own_pwd_change],
         disable_oldpw_end={False:'', True:'-->'}[not own_pwd_change],
         disable_ownuser_start={False:'', True:'<!--'}[own_pwd_change],
@@ -234,7 +237,7 @@ def passwd_form(
         form_field_passwd_settimesync=app.form.field['passwd_settimesync'].input_html(checked=(not own_pwd_change)),
     ))
 
-    web2ldap.app.gui.footer(app)
+    footer(app)
     # end of passwd_form()
 
 
@@ -497,7 +500,7 @@ def w2l_passwd(app):
         app.ls.who = None
         # Display login form with search form as landing page
         app.command = 'searchform'
-        web2ldap.app.login.w2l_login(
+        w2l_login(
             app,
             login_msg='New login is required!<br>'+password_attr_types_msg,
             who=passwd_who,
@@ -521,8 +524,8 @@ def w2l_passwd(app):
                 password_attr_types_msg,
                 passwd_link,
             ),
-            main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.context_menu_single_entry(app)
+            main_menu_list=main_menu(app),
+            context_menu_list=context_menu_single_entry(app)
         )
 
     # end of w2l_passwd()

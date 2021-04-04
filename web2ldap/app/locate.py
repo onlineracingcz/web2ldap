@@ -18,12 +18,8 @@ import ldap0
 from ldap0.dn import DNObj
 from ldap0.ldapurl import LDAPUrlExtension, LDAPUrlExtensions
 
-from web2ldap.ldaputil.extldapurl import ExtendedLDAPUrl
-
-# Modules shipped with web2ldap
-from web2ldap.log import logger
-from . import ErrorExit
-from .gui import ldap_url_anchor, simple_main_menu
+from ..ldaputil.extldapurl import ExtendedLDAPUrl
+from ..log import logger
 try:
     from ..ldaputil.dns import srv_lookup
 except ImportError:
@@ -31,6 +27,9 @@ except ImportError:
 else:
     # from dnspython
     from dns.exception import DNSException
+
+from . import ErrorExit
+from .gui import simple_main_menu
 
 
 LDAP_HOSTNAME_ALIASES = (
@@ -203,7 +202,7 @@ def w2l_locate(app):
                                     """ % (
                                         hostname,
                                         host_address,
-                                        ldap_url_anchor(app, str(ldap_url)),
+                                        app.ldap_url_anchor(ldap_url),
                                         ldap_url.unparse(),
                                         ldap_url.unparse(),
                                     )
@@ -224,7 +223,7 @@ def w2l_locate(app):
                                     <td><a href="%s">Search %s</a></td>
                                     </tr>
                                     """ % (
-                                        ldap_url_anchor(app, ldap_url),
+                                        app.ldap_url_anchor(ldap_url),
                                         ldap_url.unparse(),
                                         ldap_url.unparse(),
                                     )
@@ -255,7 +254,7 @@ def w2l_locate(app):
                             LOCATE_HOST_RESULT_TMPL % (
                                 alias_name,
                                 host_address,
-                                ldap_url_anchor(app, ldap_url),
+                                app.ldap_url_anchor(ldap_url),
                                 ldap_url.unparse(),
                                 ldap_url.unparse(),
                             )
