@@ -35,7 +35,7 @@ syntax_registry.reg_at(
 class SchacMotherTongue(IA5String):
     oid: str = 'SchacMotherTongue-oid'
     desc: str = 'Language tag of the language a person learns first (see RFC 3066).'
-    reObj = re.compile('^[a-zA-Z]{2,8}(-[a-zA-Z0-9]{2,8})*$')
+    pattern = re.compile('^[a-zA-Z]{2,8}(-[a-zA-Z0-9]{2,8})*$')
 
 syntax_registry.reg_at(
     SchacMotherTongue.oid, [
@@ -66,9 +66,9 @@ syntax_registry.reg_at(
 class SchacYearOfBirth(NumericString):
     oid: str = 'SchacYearOfBirth-oid'
     desc: str = 'Year of birth: syntax YYYY'
-    maxLen: str = 4
+    max_len: str = 4
     input_pattern: str = '^[0-9]{4}$'
-    reObj = re.compile(input_pattern)
+    pattern = re.compile(input_pattern)
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
@@ -88,7 +88,7 @@ class SchacUrn(DirectoryString):
     oid: str = 'SchacUrn-oid'
     desc: str = 'Generic URN for SCHAC'
     input_pattern: str = '^urn:mace:terena.org:schac:.+$'
-    reObj = re.compile(input_pattern)
+    pattern = re.compile(input_pattern)
 
 syntax_registry.reg_at(
     SchacUrn.oid, [

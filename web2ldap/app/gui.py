@@ -325,7 +325,7 @@ def display_authz_dn(app, who=None, entry=None):
                 else:
                     entry = user_res.entry_as
         if entry:
-            display_entry = web2ldap.app.read.DisplayEntry(app, app.dn, app.schema, entry, 'readSep', True)
+            display_entry = web2ldap.app.read.DisplayEntry(app, app.dn, app.schema, entry, 'read_sep', True)
             user_structural_oc = display_entry.entry.get_structural_oc()
             for oc in bound_as_templates.keys():
                 if app.schema.get_oid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:

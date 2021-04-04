@@ -240,8 +240,8 @@ syntax_registry.reg_at(
 class DHCPHWAddress(MacAddress):
     oid: str = 'DHCPHWAddress-oid'
     desc: str = 'Network classifier and MAC address'
-    maxLen: str = 26
-    reObj = re.compile(r'^(ethernet|token-ring|fddi) ([0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}$')
+    max_len: str = 26
+    pattern = re.compile(r'^(ethernet|token-ring|fddi) ([0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}$')
 
     def sanitize(self, attrValue: bytes) -> bytes:
         attrValue = attrValue.strip()
@@ -261,10 +261,10 @@ class DHCPNetMask(Integer):
     desc: str = 'Network address mask bits'
     maxValue = 0
     maxValue = 32
-    inputSize = 15
+    input_size = 15
 
     def _maxlen(self, form_value):
-        return self.inputSize
+        return self.input_size
 
 syntax_registry.reg_at(
     DHCPNetMask.oid, [

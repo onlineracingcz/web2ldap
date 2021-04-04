@@ -223,7 +223,7 @@ class PwdChangedTime(GeneralizedTime):
                 )
             else:
                 expire_msg = 'will never expire'
-        return self.readSep.join((gt_disp_html, expire_msg))
+        return self.read_sep.join((gt_disp_html, expire_msg))
 
 
 syntax_registry.reg_at(

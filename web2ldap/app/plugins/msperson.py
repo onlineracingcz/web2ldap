@@ -67,7 +67,7 @@ class EuVATId(IA5String):
     """
     oid: str = 'EuVATId-oid'
     desc: str = 'Value Added Tax Ident Number of organizations within European Union'
-    reObj = re.compile(
+    pattern = re.compile(
         r'^((AT)?U[0-9]{8}|' +
         r'(BE)?[0-9]{10}|' +
         r'(BG)?[0-9]{9,10}|' +

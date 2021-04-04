@@ -56,15 +56,15 @@ def x509name2ldapdn(x509name, subschema=None):
 class AttributeCertificate(Binary):
     oid: str = '1.3.6.1.4.1.4203.666.11.10.2.1'
     desc: str = 'X.509 Attribute Certificate'
-    mimeType = 'application/pkix-attr-cert'
-    fileExt = 'cer'
+    mime_type = 'application/pkix-attr-cert'
+    file_ext = 'cer'
 
 
 class Certificate(Binary):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.8'
     desc: str = 'X.509 Certificate'
-    mimeType = 'application/pkix-cert'
-    fileExt = 'cer'
+    mime_type = 'application/pkix-cert'
+    file_ext = 'cer'
     cert_display_template = """
     <dl>
       <dt>Issuer:</dt>
@@ -134,14 +134,14 @@ class Certificate(Binary):
 class CACertificate(Certificate):
     oid: str = 'CACertificate-oid'
     desc: str = 'X.509 CA Certificate'
-    mimeType = 'application/x-x509-ca-cert'
+    mime_type = 'application/x-x509-ca-cert'
 
 
 class CertificateList(Binary):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.9'
     desc: str = 'Certificate Revocation List'
-    mimeType = 'application/pkix-crl'
-    fileExt = 'crl'
+    mime_type = 'application/pkix-crl'
+    file_ext = 'crl'
     crl_display_template = """
       <dl>
         <dt>Issuer:</dt>
@@ -178,8 +178,8 @@ class CertificateList(Binary):
 class CertificatePair(ASN1Object):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.10'
     desc: str = 'X.509 Certificate Pair'
-    mimeType = 'application/pkix-cert'
-    fileExt = 'cer'
+    mime_type = 'application/pkix-cert'
+    file_ext = 'cer'
 
 
 class SupportedAlgorithm(ASN1Object):

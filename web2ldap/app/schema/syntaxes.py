@@ -264,20 +264,19 @@ class LDAPSyntax:
     )
     oid: str = ''
     desc: str = 'Any LDAP syntax'
-    inputSize: int = 50
-    maxLen: int = web2ldapcnf.input_maxfieldlen
-    maxValues: int = web2ldapcnf.input_maxattrs
-    mimeType: str = 'application/octet-stream'
-    fileExt: str = 'bin'
+    input_size: int = 50
+    max_len: int = web2ldapcnf.input_maxfieldlen
+    max_values: int = web2ldapcnf.input_maxattrs
+    mime_type: str = 'application/octet-stream'
+    file_ext: str = 'bin'
     editable: bool = True
-    reObj: Optional[Pattern[str]] = None
+    pattern: Optional[Pattern[str]] = None
     input_pattern: Optional[str] = None
-    searchSep: str = '<br>'
-    readSep: str = '<br>'
-    fieldSep: str = '<br>'
-    fieldCountAssert: int = 1
-    simpleSanitizers: Sequence[Callable] = (())
-    showValueButton: bool = True
+    search_sep: str = '<br>'
+    read_sep: str = '<br>'
+    field_sep: str = '<br>'
+    sani_funcs: Sequence[Callable] = (())
+    show_val_button: bool = True
 
     def __init__(
             self,
@@ -333,7 +332,7 @@ class LDAPSyntax:
         When using this method one MUST NOT assume that the whole entry is
         present.
         """
-        for sani_func in self.simpleSanitizers:
+        for sani_func in self.sani_funcs:
             attrValue = sani_func(attrValue)
         return attrValue
 
@@ -364,12 +363,12 @@ class LDAPSyntax:
     def validate(self, attrValue: bytes):
         if not attrValue:
             return
-        if self.reObj and (self.reObj.match(attrValue.decode(self._app.ls.charset)) is None):
+        if self.pattern and (self.pattern.match(attrValue.decode(self._app.ls.charset)) is None):
             raise LDAPSyntaxRegexNoMatch(
                 "Class %s: %r does not match pattern %r." % (
                     self.__class__.__name__,
                     attrValue,
-                    self.reObj.pattern,
+                    self.pattern.pattern,
                 )
             )
         if not self._validate(attrValue):
@@ -396,9 +395,9 @@ class LDAPSyntax:
         """
         link_text = link_text or mode
         if (
-                not self.showValueButton or
-                self.maxValues <= 1 or
-                len(self._entry.get(self._at, [])) >= self.maxValues
+                not self.show_val_button or
+                self.max_values <= 1 or
+                len(self._entry.get(self._at, [])) >= self.max_values
             ):
             return ''
         se = self._schema.get_obj(AttributeType, self._at)
@@ -438,11 +437,11 @@ class LDAPSyntax:
         input_field = web_forms.Input(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen,
-            self.maxValues,
+            self.max_len,
+            self.max_values,
             self.input_pattern,
             default=None,
-            size=min(self.maxLen, self.inputSize),
+            size=min(self.max_len, self.input_size),
         )
         input_field.charset = self._app.form.accept_charset
         input_field.set_default(self.formValue())
@@ -464,9 +463,9 @@ class Binary(LDAPSyntax):
         f = web_forms.File(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues, None, default=self._av, size=50
+            self.max_len, self.max_values, None, default=self._av, size=50
         )
-        f.mimeType = self.mimeType
+        f.mime_type = self.mime_type
         return f
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -489,8 +488,8 @@ class Audio(Binary):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.4'
     desc: str = 'Audio'
-    mimeType: str = 'audio/basic'
-    fileExt: str = 'au'
+    mime_type: str = 'audio/basic'
+    file_ext: str = 'au'
 
     def _validate(self, attrValue: bytes) -> bool:
         with BytesIO(attrValue) as fileobj:
@@ -498,7 +497,7 @@ class Audio(Binary):
         return res is not None
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        mimetype = self.mimeType
+        mimetype = self.mime_type
         return (
             '<embed type="%s" autostart="false" '
             'src="%s/read/%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d">'
@@ -701,7 +700,7 @@ class BitString(DirectoryString):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.6'
     desc: str = 'Bit String'
-    reObj = re.compile("^'[01]+'B$")
+    pattern = re.compile("^'[01]+'B$")
 
 
 class IA5String(DirectoryString):
@@ -727,9 +726,9 @@ class GeneralizedTime(IA5String):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.24'
     desc: str = 'Generalized Time'
-    inputSize: int = 24
-    maxLen: int = 24
-    reObj = re.compile(r'^([0-9]){12,14}((\.|,)[0-9]+)*(Z|(\+|-)[0-9]{4})$')
+    input_size: int = 24
+    max_len: int = 24
+    pattern = re.compile(r'^([0-9]){12,14}((\.|,)[0-9]+)*(Z|(\+|-)[0-9]{4})$')
     timeDefault = None
     notBefore = None
     notAfter = None
@@ -939,14 +938,14 @@ class Integer(IA5String):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.27'
     desc: str = 'Integer'
-    inputSize: int = 12
+    input_size: int = 12
     minValue = None
     maxValue = None
 
     def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
         IA5String.__init__(self, app, dn, schema, attrType, attrValue, entry)
         if self.maxValue is not None:
-            self.maxLen = len(str(self.maxValue))
+            self.max_len = len(str(self.maxValue))
 
     def _maxlen(self, form_value):
         min_value_len = max_value_len = form_value_len = 0
@@ -956,7 +955,7 @@ class Integer(IA5String):
             max_value_len = len(str(self.maxValue))
         if form_value is not None:
             form_value_len = len(form_value.encode(self._app.ls.charset))
-        return max(self.inputSize, form_value_len, min_value_len, max_value_len)
+        return max(self.input_size, form_value_len, min_value_len, max_value_len)
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
@@ -982,10 +981,10 @@ class Integer(IA5String):
             self._at,
             ': '.join([self._at, self.desc]),
             max_len,
-            self.maxValues,
+            self.max_values,
             self.input_pattern,
             default=form_value,
-            size=min(self.inputSize, max_len),
+            size=min(self.input_size, max_len),
         )
         input_field.input_type = 'number'
         return input_field
@@ -999,7 +998,7 @@ class IPHostAddress(IA5String):
     desc: str = 'string representation of IPv4 or IPv6 address'
     # Class in module ipaddr which parses address/network values
     addr_class = None
-    simpleSanitizers = (
+    sani_funcs = (
         bytes.strip,
     )
 
@@ -1079,8 +1078,8 @@ class MacAddress(IA5String):
     oid: str = 'MacAddress-oid'
     desc: str = 'MAC address in hex-colon notation'
     minLen: int = 17
-    maxLen: int = 17
-    reObj = re.compile(r'^([0-9a-f]{2}\:){5}[0-9a-f]{2}$')
+    max_len: int = 17
+    pattern = re.compile(r'^([0-9a-f]{2}\:){5}[0-9a-f]{2}$')
 
     def sanitize(self, attrValue: bytes) -> bytes:
         attr_value = attrValue.translate(None, b'.-: ').lower().strip()
@@ -1095,8 +1094,8 @@ class Uri(DirectoryString):
     """
     oid: str = 'Uri-OID'
     desc: str = 'URI'
-    reObj = re.compile(r'^(ftp|http|https|news|snews|ldap|ldaps|mailto):(|//)[^ ]*')
-    simpleSanitizers = (
+    pattern = re.compile(r'^(ftp|http|https|news|snews|ldap|ldaps|mailto):(|//)[^ ]*')
+    sani_funcs = (
         bytes.strip,
     )
 
@@ -1135,8 +1134,8 @@ class Image(Binary):
     """
     oid: str = 'Image-OID'
     desc: str = 'Image base class'
-    mimeType: str = 'application/octet-stream'
-    fileExt: str = 'bin'
+    mime_type: str = 'application/octet-stream'
+    file_ext: str = 'bin'
     imageFormat = None
     inline_maxlen = 630  # max. number of bytes to use data: URI instead of external URL
 
@@ -1201,7 +1200,7 @@ class Image(Binary):
                 '</a>'
             ) % (
                 img_link,
-                self.mimeType,
+                self.mime_type,
                 self._av.encode('base64'),
                 attr_value_len,
                 size_attr_html,
@@ -1221,8 +1220,8 @@ class JPEGImage(Image):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.28'
     desc: str = 'JPEG image'
-    mimeType: str = 'image/jpeg'
-    fileExt: str = 'jpg'
+    mime_type: str = 'image/jpeg'
+    file_ext: str = 'jpg'
     imageFormat = 'JPEG'
 
 
@@ -1233,8 +1232,8 @@ class PhotoG3Fax(Binary):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.23'
     desc: str = 'Photo (G3 fax)'
-    mimeType: str = 'image/g3fax'
-    fileExt: str = 'tif'
+    mime_type: str = 'image/g3fax'
+    file_ext: str = 'tif'
 
 
 class OID(IA5String):
@@ -1244,7 +1243,7 @@ class OID(IA5String):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.38'
     desc: str = 'OID'
-    reObj = re.compile(r'^([a-zA-Z]+[a-zA-Z0-9;-]*|[0-2]?\.([0-9]+\.)*[0-9]+)$')
+    pattern = re.compile(r'^([a-zA-Z]+[a-zA-Z0-9;-]*|[0-2]?\.([0-9]+\.)*[0-9]+)$')
     no_val_button_attrs = frozenset((
         'objectclass',
         'structuralobjectclass',
@@ -1409,9 +1408,9 @@ class MultilineText(DirectoryString):
     """
     oid: str = 'MultilineText-oid'
     desc: str = 'Multiple lines of text'
-    reObj = re.compile('^.*$', re.S+re.M)
+    pattern = re.compile('^.*$', re.S+re.M)
     lineSep = b'\r\n'
-    mimeType: str = 'text/plain'
+    mime_type: str = 'text/plain'
     cols = 66
     minInputRows = 1   # minimum number of rows for input field
     maxInputRows = 30  # maximum number of rows for in input field
@@ -1446,7 +1445,7 @@ class MultilineText(DirectoryString):
         return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues,
+            self.max_len, self.max_values,
             None,
             default=form_value,
             rows=max(self.minInputRows, min(self.maxInputRows, form_value.count('\r\n'))),
@@ -1501,7 +1500,7 @@ class PrintableString(DirectoryString):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.44'
     desc: str = 'Printable String'
-    reObj = re.compile("^[a-zA-Z0-9'()+,.=/:? -]*$")
+    pattern = re.compile("^[a-zA-Z0-9'()+,.=/:? -]*$")
     charset = 'ascii'
 
 
@@ -1512,7 +1511,7 @@ class NumericString(PrintableString):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.36'
     desc: str = 'Numeric String'
-    reObj = re.compile('^[ 0-9]+$')
+    pattern = re.compile('^[ 0-9]+$')
 
 
 class EnhancedGuide(PrintableString):
@@ -1540,7 +1539,7 @@ class TelephoneNumber(PrintableString):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.50'
     desc: str = 'Telephone Number'
-    reObj = re.compile('^[0-9+x(). /-]+$')
+    pattern = re.compile('^[0-9+x(). /-]+$')
 
 
 class FacsimileTelephoneNumber(TelephoneNumber):
@@ -1550,7 +1549,7 @@ class FacsimileTelephoneNumber(TelephoneNumber):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.22'
     desc: str = 'Facsimile Number'
-    reObj = re.compile(
+    pattern = re.compile(
         r'^[0-9+x(). /-]+'
         r'(\$'
         r'(twoDimensional|fineResolution|unlimitedLength|b4Length|a3Width|b4Width|uncompressed)'
@@ -1565,7 +1564,7 @@ class TelexNumber(PrintableString):
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.52'
     desc: str = 'Telex Number'
-    reObj = re.compile("^[a-zA-Z0-9'()+,.=/:?$ -]*$")
+    pattern = re.compile("^[a-zA-Z0-9'()+,.=/:?$ -]*$")
 
 
 class TeletexTerminalIdentifier(PrintableString):
@@ -1603,7 +1602,7 @@ class Date(IA5String):
     """
     oid: str = 'Date-oid'
     desc: str = 'Date in syntax specified by class attribute storageFormat'
-    maxLen: int = 10
+    max_len: int = 10
     storageFormat = '%Y-%m-%d'
     acceptableDateformats = (
         '%Y-%m-%d',
@@ -1642,7 +1641,7 @@ class NumstringDate(Date):
     """
     oid: str = 'NumstringDate-oid'
     desc: str = 'Date in syntax YYYYMMDD'
-    reObj = re.compile('^[0-9]{4}[0-1][0-9][0-3][0-9]$')
+    pattern = re.compile('^[0-9]{4}[0-1][0-9][0-3][0-9]$')
     storageFormat = '%Y%m%d'
 
 
@@ -1652,7 +1651,7 @@ class ISO8601Date(Date):
     """
     oid: str = 'ISO8601Date-oid'
     desc: str = 'Date in syntax YYYY-MM-DD (see ISO 8601)'
-    reObj = re.compile('^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$')
+    pattern = re.compile('^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$')
     storageFormat = '%Y-%m-%d'
 
 
@@ -1739,7 +1738,7 @@ class DaysSinceEpoch(Integer):
 class Timespan(Integer):
     oid: str = 'Timespan-oid'
     desc: str = 'Time span in seconds'
-    inputSize: int = LDAPSyntax.inputSize
+    input_size: int = LDAPSyntax.input_size
     minValue = 0
     time_divisors = (
         ('weeks', 604800),
@@ -1959,7 +1958,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                 not av_u.startswith(self.valuePrefix) or
                 not av_u.endswith(self.valueSuffix) or
                 len(av_u) < self.minLen or
-                (self.maxLen is not None and len(av_u) > self.maxLen)
+                (self.max_len is not None and len(av_u) > self.max_len)
             ):
             return False
         return self._search_ref(av_u) is not None
@@ -2224,7 +2223,7 @@ class CountryString(PropertiesSelectList):
     properties_pathname = os.path.join(
         web2ldapcnf.etc_dir, 'properties', 'attribute_select_c.properties'
     )
-    simpleSanitizers = (
+    sani_funcs = (
         bytes.strip,
     )
 
@@ -2237,7 +2236,7 @@ class DeliveryMethod(PrintableString):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.14'
     desc: str = 'Delivery Method'
     pdm = '(any|mhs|physical|telex|teletex|g3fax|g4fax|ia5|videotex|telephone)'
-    reObj = re.compile('^%s[ $]*%s$' % (pdm, pdm))
+    pattern = re.compile('^%s[ $]*%s$' % (pdm, pdm))
 
 
 class BitArrayInteger(MultilineText, Integer):
@@ -2301,7 +2300,7 @@ class BitArrayInteger(MultilineText, Integer):
         return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues,
+            self.max_len, self.max_values,
             None,
             default=form_value,
             rows=max(self.minInputRows, min(self.maxInputRows, form_value.count('\n'))),
@@ -2343,7 +2342,7 @@ class UUID(IA5String):
     """
     oid: str = '1.3.6.1.1.16.1'
     desc: str = 'UUID'
-    reObj = re.compile(
+    pattern = re.compile(
         '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
     )
 
@@ -2360,9 +2359,9 @@ class DNSDomain(IA5String):
     """
     oid: str = 'DNSDomain-oid'
     desc: str = 'DNS domain name (see RFC 1035)'
-    reObj = re.compile(r'^(\*|[a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)*$')
-    maxLen: int = min(255, IA5String.maxLen)  # (see https://tools.ietf.org/html/rfc2181#section-11)
-    simpleSanitizers = (
+    pattern = re.compile(r'^(\*|[a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)*$')
+    max_len: int = min(255, IA5String.max_len)  # (see https://tools.ietf.org/html/rfc2181#section-11)
+    sani_funcs = (
         bytes.lower,
         bytes.strip,
     )
@@ -2399,7 +2398,7 @@ class RFC822Address(DNSDomain, IA5String):
     """
     oid: str = 'RFC822Address-oid'
     desc: str = 'RFC 822 mail address'
-    reObj = re.compile(r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$')
+    pattern = re.compile(r'^[\w@.+=/_ ()-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$')
     html_tmpl = '<a href="mailto:{av}">{av}</a>'
 
     def __init__(self, app, dn: str, schema, attrType: str, attrValue: bytes, entry=None):
@@ -2437,8 +2436,8 @@ class DomainComponent(DNSDomain):
     """
     oid: str = 'DomainComponent-oid'
     desc: str = 'DNS domain name component'
-    reObj = re.compile(r'^(\*|[a-zA-Z0-9_-]+)$')
-    maxLen: int = min(63, DNSDomain.maxLen)
+    pattern = re.compile(r'^(\*|[a-zA-Z0-9_-]+)$')
+    max_len: int = min(63, DNSDomain.max_len)
 
 
 class JSONValue(PreformattedMultilineText):
@@ -2448,7 +2447,7 @@ class JSONValue(PreformattedMultilineText):
     oid: str = 'JSONValue-oid'
     desc: str = 'JSON data'
     lineSep = b'\n'
-    mimeType: str = 'application/json'
+    mime_type: str = 'application/json'
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
@@ -2489,7 +2488,7 @@ class XmlValue(PreformattedMultilineText):
     oid: str = 'XmlValue-oid'
     desc: str = 'XML data'
     lineSep = b'\n'
-    mimeType: str = 'text/xml'
+    mime_type: str = 'text/xml'
 
     def _validate(self, attrValue: bytes) -> bool:
         if defusedxml is None:
@@ -2612,8 +2611,8 @@ class ComposedAttribute(LDAPSyntax):
         input_field = web_forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen,
-            self.maxValues,
+            self.max_len,
+            self.max_values,
             None,
             default=self.formValue(),
         )

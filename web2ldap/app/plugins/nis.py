@@ -24,7 +24,7 @@ from web2ldap.app.schema.syntaxes import \
 class RFC2307BootParameter(IA5String):
     oid: str = '1.3.6.1.1.1.0.1'
     desc: str = 'RFC2307 Boot Parameter'
-    reObj = None # just a stub, should be made stricter
+    pattern = None # just a stub, should be made stricter
 
 
 class GidNumber(DynamicValueSelectList, Integer):
@@ -130,7 +130,7 @@ syntax_registry.reg_at(
 class RFC2307NISNetgroupTriple(IA5String):
     oid: str = '1.3.6.1.1.1.0.0'
     desc: str = 'RFC2307 NIS Netgroup Triple'
-    reObj = re.compile(r'^\([a-z0-9.-]*,[a-z0-9.-]*,[a-z0-9.-]*\)$')
+    pattern = re.compile(r'^\([a-z0-9.-]*,[a-z0-9.-]*,[a-z0-9.-]*\)$')
 
 
 class UidNumber(Integer):

@@ -13,7 +13,7 @@ from web2ldap.app.schema.syntaxes import ComposedAttribute, DirectoryString, syn
 class CNInetOrgPerson(ComposedAttribute, DirectoryString):
     oid: str = 'CNInetOrgPerson-oid'
     desc: str = 'Attribute cn in object class inetOrgPerson'
-    maxValues = 1
+    max_values = 1
     compose_templates = (
         '{givenName} {sn}',
     )
@@ -22,7 +22,7 @@ class CNInetOrgPerson(ComposedAttribute, DirectoryString):
 class DisplayNameInetOrgPerson(ComposedAttribute, DirectoryString):
     oid: str = 'DisplayNameInetOrgPerson-oid'
     desc: str = 'Attribute displayName in object class inetOrgPerson'
-    maxValues = 1
+    max_values = 1
     compose_templates = (
         '{givenName} {sn} ({uid}/{employeeNumber})',
         '{givenName} {sn} ({uid}/{uniqueIdentifier})',

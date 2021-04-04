@@ -39,7 +39,7 @@ syntax_registry.reg_at(
 
 
 class AutogenNumberMixIn:
-    inputSize = 12
+    input_size = 12
     minNewValue = 10000
     maxNewValue = 19999
     object_class = 'posixAccount'

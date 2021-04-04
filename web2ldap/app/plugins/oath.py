@@ -128,8 +128,8 @@ class OathTokenIdentifier(DirectoryString):
     """
     oid: str = 'OathTokenIdentifier-oid'
     desc: str = 'Globally unique token identifier'
-    maxLen: str = 12
-    reObj = re.compile(r'^[a-zA-Z0-9]{12}$')
+    max_len: str = 12
+    pattern = re.compile(r'^[a-zA-Z0-9]{12}$')
 
 syntax_registry.reg_at(
     OathTokenIdentifier.oid, [
@@ -244,7 +244,7 @@ class OathSecretTime(GeneralizedTime):
                 )
             else:
                 expire_msg = 'will never expire'
-        return self.readSep.join((gt_disp_html, expire_msg))
+        return self.read_sep.join((gt_disp_html, expire_msg))
 
 
 syntax_registry.reg_at(

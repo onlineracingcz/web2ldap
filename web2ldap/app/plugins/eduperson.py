@@ -38,7 +38,7 @@ syntax_registry.reg_at(
 class EduPersonScopedAffiliation(IA5String):
     oid: str = 'EduPersonScopedAffiliation-oid'
     desc: str = 'Scoped affiliation (see eduPerson)'
-    reObj = re.compile('^(faculty|student|staff|alum|member|affiliate|employee|library-walk-in)@[a-zA-Z0-9.-]+$')
+    pattern = re.compile('^(faculty|student|staff|alum|member|affiliate|employee|library-walk-in)@[a-zA-Z0-9.-]+$')
 
 syntax_registry.reg_at(
     EduPersonScopedAffiliation.oid, [

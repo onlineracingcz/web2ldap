@@ -372,7 +372,7 @@ syntax_registry.reg_at(
 class OpenDSCfgTimeInterval(DirectoryString):
     oid: str = 'OpenDSCfgTimeInterval-oid'
     desc: str = 'A time interval consisting of integer value and time unit'
-    reObj = re.compile('^[0-9]+ (seconds|minutes|hours|days)$')
+    pattern = re.compile('^[0-9]+ (seconds|minutes|hours|days)$')
 
 syntax_registry.reg_at(
     OpenDSCfgTimeInterval.oid, [

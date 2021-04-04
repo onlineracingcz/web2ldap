@@ -261,9 +261,7 @@ class InputFormEntry(DisplayEntry):
             invalid_attrs=None
         ):
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
-        DisplayEntry.__init__(
-            self, app, dn, schema, entry, 'fieldSep', False
-        )
+        DisplayEntry.__init__(self, app, dn, schema, entry, 'field_sep', False)
         self.existing_object_classes = existing_object_classes
         self.writeable_attr_oids = writeable_attr_oids
         self.invalid_attrs = invalid_attrs or {}
@@ -583,7 +581,7 @@ def superior_display_html(
             if parent_search_result is not None:
                 parent_entry = DisplayEntry(
                     app, parent_dn, app.schema,
-                    parent_search_result.entry_as, 'readSep', 0
+                    parent_search_result.entry_as, 'read_sep', 0
                 )
                 for oc in parent_search_result.entry_s.get('objectClass', []):
                     try:

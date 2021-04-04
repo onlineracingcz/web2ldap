@@ -208,7 +208,7 @@ syntax_registry.reg_at(
 class CNAMERecord(ResourceRecord):
     oid: str = 'CNAMERecord-oid'
     desc: str = 'A resource record used as alias (CNAME)'
-    maxValues = 1 # It's illegal to have multiple CNAME RR values
+    max_values = 1 # It's illegal to have multiple CNAME RR values
 
 syntax_registry.reg_at(
     CNAMERecord.oid, [
@@ -220,7 +220,7 @@ syntax_registry.reg_at(
 class MXRecord(ResourceRecord):
     oid: str = 'MXRecord-oid'
     desc: str = 'A resource record pointing to a mail exchanger (MX)'
-    reObj = re.compile(r'^[0-9]+[ ]+[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$')
+    pattern = re.compile(r'^[0-9]+[ ]+[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$')
 
     def _search_ref(self, attrValue: str):
         try:
@@ -324,7 +324,7 @@ syntax_registry.reg_at(
 class SSHFPRecord(IA5String):
     oid: str = 'SSHFPRecord-oid'
     desc: str = 'A resource record with SSH fingerprint (SSHFP)'
-    reObj = re.compile('^[0-4]? [0-2]? [0-9a-fA-F]+$')
+    pattern = re.compile('^[0-4]? [0-2]? [0-9a-fA-F]+$')
     key_algo_dict = {
         b'0': 'reserved',
         b'1': 'RSA',

@@ -407,7 +407,7 @@ def w2l_read(app):
             if search_result:
                 entry.update(search_result.entry_as)
 
-    display_entry = DisplayEntry(app, app.dn, app.schema, entry, 'readSep', 1)
+    display_entry = DisplayEntry(app, app.dn, app.schema, entry, 'read_sep', 1)
 
     if (
             wanted_attrs
@@ -442,13 +442,13 @@ def w2l_read(app):
             app,
             app.form.getInputValue(
                 'read_attrmimetype',
-                [attr_instance.mimeType],
+                [attr_instance.mime_type],
             )[0],
             app.form.accept_charset,
             more_headers=[
                 (
                     'Content-Disposition',
-                    'inline; filename=web2ldap-export.%s' % (attr_instance.fileExt,)
+                    'inline; filename=web2ldap-export.%s' % (attr_instance.file_ext,)
                 ),
             ]
         )
@@ -551,7 +551,7 @@ def w2l_read(app):
         display_attribute_table(app, display_entry, allowed_attrs, 'Allowed Attributes')
         display_attribute_table(app, display_entry, collective_attrs, 'Collective Attributes')
         display_attribute_table(app, display_entry, nomatching_attrs, 'Various Attributes')
-        display_entry.sep_attr = 'readSep'
+        display_entry.sep_attr = 'read_sep'
 
         app.outf.write(
             """%s\n%s\n%s<p>\n%s\n

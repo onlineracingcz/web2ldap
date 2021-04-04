@@ -24,12 +24,12 @@ syntax_registry.reg_at(
 class PgpKey(PreformattedMultilineText):
     oid: str = 'PgpKey-oid'
     desc: str = 'PGP key'
-    reObj = re.compile(
+    pattern = re.compile(
         '^-----BEGIN PGP PUBLIC KEY BLOCK-----[a-zA-Z0-9.: ()+/ =\n-]+-----END PGP PUBLIC KEY BLOCK-----$',
         re.S+re.M,
     )
     lineSep = b'\n'
-    mimeType = 'application/pgp-keys'
+    mime_type = 'application/pgp-keys'
     cols = 64
 
 syntax_registry.reg_at(
@@ -42,7 +42,7 @@ syntax_registry.reg_at(
 class PgpCertID(DirectoryString):
     oid: str = 'PgpCertID-oid'
     desc: str = 'PGP Cert ID'
-    reObj = re.compile('^[a-fA-F0-9]{16}$')
+    pattern = re.compile('^[a-fA-F0-9]{16}$')
 
 syntax_registry.reg_at(
     PgpCertID.oid, [

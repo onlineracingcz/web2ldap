@@ -35,9 +35,9 @@ syntax_registry.reg_at(
 class DominoCertificate(MultilineText):
     oid: str = 'DominoCertificate-oid'
     desc: str = 'Domino certificate'
-    reObj = re.compile('^([A-Z0-9]{8} [A-Z0-9]{8} [A-Z0-9]{8} [A-Z0-9]{8}[\x00]?)+[A-Z0-9 ]*$')
+    pattern = re.compile('^([A-Z0-9]{8} [A-Z0-9]{8} [A-Z0-9]{8} [A-Z0-9]{8}[\x00]?)+[A-Z0-9 ]*$')
     lineSep = b'\x00'
-    mimeType = 'text/plain'
+    mime_type = 'text/plain'
     cols = 36
 
     def display(self, valueindex=0, commandbutton=False) -> str:

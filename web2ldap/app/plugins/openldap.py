@@ -46,8 +46,8 @@ class CSNSid(IA5String):
     oid: str = '1.3.6.1.4.1.4203.666.11.2.4'
     desc: str = 'change sequence number SID (CSN SID)'
     minLen: int = 3
-    maxLen: int = 3
-    reObj = re.compile('^[a-fA-F0-9]{3}$')
+    max_len: int = 3
+    pattern = re.compile('^[a-fA-F0-9]{3}$')
 
 
 # see https://www.openldap.org/faq/data/cache/1145.html
@@ -55,8 +55,8 @@ class CSN(IA5String):
     oid: str = '1.3.6.1.4.1.4203.666.11.2.1'
     desc: str = 'change sequence number (CSN)'
     minLen: int = 40
-    maxLen: int = 40
-    reObj = re.compile('^[0-9]{14}\\.[0-9]{6}Z#[a-fA-F0-9]{6}#[a-fA-F0-9]{3}#[a-fA-F0-9]{6}$')
+    max_len: int = 40
+    pattern = re.compile('^[0-9]{14}\\.[0-9]{6}Z#[a-fA-F0-9]{6}#[a-fA-F0-9]{3}#[a-fA-F0-9]{6}$')
 
 syntax_registry.reg_at(
     CSN.oid, [
@@ -82,7 +82,7 @@ syntax_registry.reg_at(
 class OlcDbIndex(DirectoryString):
     oid: str = 'OlcDbIndex-oid'
     desc: str = 'OpenLDAP indexing directive'
-    reObj = re.compile("^[a-zA-Z]?[a-zA-Z0-9.,;-]* (pres|eq|sub)(,(pres|eq|sub))*$")
+    pattern = re.compile("^[a-zA-Z]?[a-zA-Z0-9.,;-]* (pres|eq|sub)(,(pres|eq|sub))*$")
 
 syntax_registry.reg_at(
     OlcDbIndex.oid, [

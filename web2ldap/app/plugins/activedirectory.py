@@ -214,7 +214,7 @@ syntax_registry.reg_at(
 class SAMAccountName(DirectoryString):
     oid: str = 'SAMAccountName-oid'
     desc: str = 'SAM-Account-Name in MS AD'
-    maxLen: int = 20
+    max_len: int = 20
 
 # Register certain attribute types for syntax classes
 syntax_registry.reg_at(
@@ -451,7 +451,7 @@ class LogonHours(OctetString):
         return web2ldap.web.forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen,
+            self.max_len,
             1,
             None,
             default=self.formValue(),
@@ -501,7 +501,7 @@ class CountryCode(PropertiesSelectList):
     properties_pathname = os.path.join(
         web2ldapcnf.etc_dir, 'properties', 'attribute_select_countryCode.properties'
     )
-    simpleSanitizers = (
+    sani_funcs = (
         bytes.strip,
     )
 

@@ -184,8 +184,8 @@ class AEHomeDirectory(HomeDirectory):
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen,
-            self.maxValues,
+            self.max_len,
+            self.max_values,
             None,
             default=self.formValue()
         )
@@ -211,7 +211,7 @@ class AEUIDNumber(UidNumber):
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues, None,
+            self.max_len, self.max_values, None,
             default=self.formValue()
         )
         input_field.charset = self._app.form.accept_charset
@@ -296,7 +296,7 @@ syntax_registry.reg_at(
 
 class AEUid(IA5String):
     oid: str = 'AEUid-oid'
-    simpleSanitizers = (
+    sani_funcs = (
         bytes.strip,
         bytes.lower,
     )
@@ -308,14 +308,14 @@ class AEUserUid(AEUid):
     """
     oid: str = 'AEUserUid-oid'
     desc: str = 'AE-DIR: User name'
-    maxValues = 1
+    max_values = 1
     minLen: int = 4
-    maxLen: int = 4
+    max_len: int = 4
     maxCollisionChecks: int = 15
     UID_LETTERS = 'abcdefghijklmnopqrstuvwxyz'
     reobj = re.compile('^%s$' % (UID_LETTERS))
     genLen = 4
-    simpleSanitizers = (
+    sani_funcs = (
         bytes.strip,
         bytes.lower,
     )
@@ -353,7 +353,7 @@ class AEUserUid(AEUid):
         return web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues, None,
+            self.max_len, self.max_values, None,
             default=self.formValue()
         )
 
@@ -386,7 +386,7 @@ syntax_registry.reg_at(
 class AETicketId(IA5String):
     oid: str = 'AETicketId-oid'
     desc: str = 'AE-DIR: Ticket no. related to last change of entry'
-    simpleSanitizers = (
+    sani_funcs = (
         bytes.upper,
         bytes.strip,
     )
@@ -611,7 +611,7 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
     oid: str = 'AEMemberUid-oid'
     desc: str = 'AE-DIR: username (uid) of member of a group'
     ldap_url = None
-    showValueButton = False
+    show_val_button = False
     reobj = AEUserUid.reobj
 
     def _member_uids_from_member(self):
@@ -641,7 +641,7 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues, None,
+            self.max_len, self.max_values, None,
         )
         input_field.charset = self._app.form.accept_charset
         input_field.set_default(self.formValue())
@@ -1389,7 +1389,7 @@ syntax_registry.reg_at(
 
 class AEDerefAttribute(DirectoryString):
     oid: str = 'AEDerefAttribute-oid'
-    maxValues: int = 1
+    max_values: int = 1
     deref_object_class: Optional[str] = None
     deref_attribute_type: Optional[str] = None
     deref_filter_tmpl: str = '(&(objectClass={deref_object_class})(aeStatus<=0)({attribute_type}=*))'
@@ -1428,7 +1428,7 @@ class AEDerefAttribute(DirectoryString):
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues, None,
+            self.max_len, self.max_values, None,
         )
         input_field.charset = self._app.form.accept_charset
         input_field.set_default(self.formValue())
@@ -1437,7 +1437,7 @@ class AEDerefAttribute(DirectoryString):
 
 class AEPersonAttribute(AEDerefAttribute):
     oid: str = 'AEPersonAttribute-oid'
-    maxValues = 1
+    max_values = 1
     deref_object_class = 'aePerson'
     deref_attribute_type = 'aePerson'
 
@@ -1458,7 +1458,7 @@ syntax_registry.reg_at(
 
 class AEMailLocalAddress(RFC822Address):
     oid: str = 'AEMailLocalAddress-oid'
-    simpleSanitizers = (
+    sani_funcs = (
         bytes.strip,
         bytes.lower,
     )
@@ -1477,9 +1477,9 @@ syntax_registry.reg_at(
 class AEUserMailaddress(AEPersonAttribute, SelectList):
     oid: str = 'AEUserMailaddress-oid'
     html_tmpl = RFC822Address.html_tmpl
-    maxValues = 1
+    max_values = 1
     input_fallback = False
-    simpleSanitizers = (
+    sani_funcs = (
         bytes.strip,
         bytes.lower,
     )
@@ -1536,7 +1536,7 @@ syntax_registry.reg_at(
 
 class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
     oid: str = 'AEPersonMailaddress-oid'
-    maxValues = 1
+    max_values = 1
     ldap_url = 'ldap:///_?mail,mail?sub?'
     input_fallback = True
     html_tmpl = RFC822Address.html_tmpl
@@ -1578,7 +1578,7 @@ syntax_registry.reg_at(
 
 class AEDeptAttribute(AEDerefAttribute, DirectoryString):
     oid: str = 'AEDeptAttribute-oid'
-    maxValues = 1
+    max_values = 1
     deref_object_class = 'aeDept'
     deref_attribute_type = 'aeDept'
 
@@ -1729,7 +1729,7 @@ syntax_registry.reg_at(
 
 class AEUniqueIdentifier(DirectoryString):
     oid: str = 'AEUniqueIdentifier-oid'
-    maxValues = 1
+    max_values = 1
     gen_template = 'web2ldap-{timestamp}'
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
@@ -1741,7 +1741,7 @@ class AEUniqueIdentifier(DirectoryString):
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues, None,
+            self.max_len, self.max_values, None,
             default=self.formValue(),
         )
         input_field.charset = self._app.form.accept_charset
@@ -1759,7 +1759,7 @@ syntax_registry.reg_at(
 
 class AEDepartmentNumber(DirectoryString):
     oid: str = 'AEDepartmentNumber-oid'
-    maxValues = 1
+    max_values = 1
 
 syntax_registry.reg_at(
     AEDepartmentNumber.oid, [
@@ -1774,8 +1774,8 @@ syntax_registry.reg_at(
 class AECommonName(DirectoryString):
     oid: str = 'AECommonName-oid'
     desc: str = 'AE-DIR: common name of aeObject'
-    maxValues = 1
-    simpleSanitizers = (
+    max_values = 1
+    sani_funcs = (
         bytes.strip,
     )
 
@@ -1783,7 +1783,7 @@ class AECommonName(DirectoryString):
 class AECommonNameAEZone(AECommonName):
     oid: str = 'AECommonNameAEZone-oid'
     desc: str = 'AE-DIR: common name of aeZone'
-    simpleSanitizers = (
+    sani_funcs = (
         bytes.strip,
         bytes.lower,
     )
@@ -1840,7 +1840,7 @@ syntax_registry.reg_at(
 class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
     oid: str = 'AEZonePrefixCommonName-oid'
     desc: str = 'AE-DIR: Attribute values have to be prefixed with zone name'
-    reObj = re.compile(r'^[a-z0-9]+-[a-z0-9-]+$')
+    pattern = re.compile(r'^[a-z0-9]+-[a-z0-9-]+$')
     special_names = {
         'zone-admins',
         'zone-auditors',
@@ -2203,7 +2203,7 @@ class AERFC822MailMember(DynamicValueSelectList, AEObjectMixIn):
     desc: str = 'AE-DIR: rfc822MailMember'
     ldap_url = 'ldap:///_?mail,displayName?sub?(&(|(objectClass=inetLocalMailRecipient)(objectClass=aeContact))(mail=*)(aeStatus=0))'
     html_tmpl = RFC822Address.html_tmpl
-    showValueButton = False
+    show_val_button = False
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
         if 'member' not in self._entry:
@@ -2232,7 +2232,7 @@ class AERFC822MailMember(DynamicValueSelectList, AEObjectMixIn):
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues, None,
+            self.max_len, self.max_values, None,
         )
         input_field.charset = self._app.form.accept_charset
         input_field.set_default(self.formValue())
@@ -2268,7 +2268,7 @@ syntax_registry.reg_at(
 class AESudoHost(IA5String):
     oid: str = 'AESudoHost-oid'
     desc: str = 'AE-DIR: sudoHost'
-    maxValues = 1
+    max_values = 1
     reobj = re.compile('^ALL$')
 
     def transmute(self, attrValues: List[bytes]) -> List[bytes]:
@@ -2278,7 +2278,7 @@ class AESudoHost(IA5String):
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
-            self.maxLen, self.maxValues, None,
+            self.max_len, self.max_values, None,
             default=self.formValue()
         )
         input_field.charset = self._app.form.accept_charset

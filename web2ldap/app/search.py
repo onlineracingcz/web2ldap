@@ -925,7 +925,7 @@ def w2l_search(app):
                         if tableentry_attrs:
                             # Output entry with the help of pre-defined templates
                             tableentry = DisplayEntry(
-                                app, r.dn_s, app.schema, entry, 'searchSep', False
+                                app, r.dn_s, app.schema, entry, 'search_sep', False
                             )
                             tdlist = []
                             for oc in tdtemplate_oc:

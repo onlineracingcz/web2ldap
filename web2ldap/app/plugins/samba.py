@@ -49,7 +49,7 @@ class SambaAcctFlags(IA5String):
     oid: str = 'SambaAcctFlags-oid'
     desc: str = 'Samba 3 account flags'
     input_pattern: str = r'^\[[NDHTUMWSLXI ]{0,16}\]$'
-    reObj = re.compile(input_pattern)
+    pattern = re.compile(input_pattern)
     flags_dict = {
         'N': '<b>N</b>o password.',
         'D': '<b>D</b>isabled.',
@@ -87,7 +87,7 @@ class SambaSID(IA5String):
     oid: str = 'SambaSID-oid'
     desc: str = 'Samba SID (SDDL syntax)'
     input_pattern: str = r'^S(-[0-9]+)+$'
-    reObj = re.compile(input_pattern)
+    pattern = re.compile(input_pattern)
 
     def _search_domain_entry(self, domain_name):
         if domain_name:
