@@ -13,9 +13,11 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 class ErrorExit(Exception):
-    """Base class for web2ldap application exceptions"""
+    """
+    Base class for web2ldap application exceptions reaching the UI
+    """
 
     def __init__(self, Msg):
-        assert isinstance(Msg, str), \
-            TypeError("Type of argument 'Msg' must be str, was %r" % (Msg))
+        assert isinstance(Msg, str), TypeError("Argument 'Msg' must be str, got %r" % (Msg))
+        Exception.__init__(self)
         self.Msg = Msg
