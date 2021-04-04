@@ -22,7 +22,7 @@ from .. import VALID_CFG_PARAM_NAMES
 
 import web2ldapcnf.hosts
 
-import web2ldap.app.schema
+from .schema import parse_fake_schema
 
 
 class Web2LDAPConfigDict(LogHelper):
@@ -106,7 +106,7 @@ class Web2LDAPConfigDict(LogHelper):
 
 logger.debug('Initialize ldap_def')
 LDAP_DEF = Web2LDAPConfigDict(web2ldapcnf.hosts.ldap_def)
-web2ldap.app.schema.parse_fake_schema(LDAP_DEF)
+parse_fake_schema(LDAP_DEF)
 
 
 def set_target_check_dict(ldap_uri_list):
