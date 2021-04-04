@@ -20,7 +20,7 @@ from ldap0.schema.models import AttributeType, ObjectClass, SchemaElementOIDSet
 from ldap0.extop.passmod import PassmodRequest
 
 from ..ldapsession import CONTROL_RELAXRULES
-from ..ldaputil.passwd import user_password_hash
+from ..ldaputil.passwd import user_password_hash, AVAIL_USERPASSWORD_SCHEMES
 from .form import Web2LDAPForm_passwd
 from . import ErrorExit
 from .gui import (
@@ -191,7 +191,7 @@ def passwd_form(
             # The set of hash types are restricted by local configuration
             default_hashtypes = [
                 hash_type
-                for hash_type in web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items()
+                for hash_type in AVAIL_USERPASSWORD_SCHEMES.items()
                 if hash_type[0] in config_hashtypes
             ]
             app.form.field['passwd_scheme'].options = default_hashtypes
