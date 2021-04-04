@@ -65,16 +65,27 @@ from ldap0.schema.subentry import SubSchema
 
 import web2ldapcnf
 
-import web2ldap.web.forms
+from ...web import forms as web_forms
 from ... import msbase
-import web2ldap.ldaputil
-import web2ldap.app.gui
-import web2ldap.utctime
 from ...utctime import strftimeiso8601
 from ...ldaputil.oidreg import OID_REG
 from ...log import logger
 from ... import cmp
 from . import schema_anchor
+from ...ldaputil import ietf_oid_str
+from ..gui import (
+    display_authz_dn,
+    get_variant_filename,
+    ldap_url_anchor,
+    repr2ts,
+    ts2repr,
+)
+from ...utctime import strptime as utc_strptime
+from ..searchform import (
+    SEARCH_OPT_ATTR_EXISTS,
+    SEARCH_OPT_IS_EQUAL,
+    SEARCH_SCOPE_STR_ONELEVEL,
+)
 
 
 class SyntaxRegistry:
@@ -423,8 +434,8 @@ class LDAPSyntax:
     def formFields(self):
         return (self.formField(),)
 
-    def formField(self) -> web2ldap.web.forms.Field:
-        input_field = web2ldap.web.forms.Input(
+    def formField(self) -> web_forms.Field:
+        input_field = web_forms.Input(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen,
@@ -449,8 +460,8 @@ class Binary(LDAPSyntax):
     desc: str = 'Binary'
     editable: bool = False
 
-    def formField(self) -> web2ldap.web.forms.Field:
-        f = web2ldap.web.forms.File(
+    def formField(self) -> web_forms.Field:
+        f = web_forms.File(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues, None, default=self._av, size=50
@@ -553,7 +564,7 @@ class DistinguishedName(DirectoryString):
                 'search', 'Down',
                 (
                     ('dn', self.av_u),
-                    ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
+                    ('scope', SEARCH_SCOPE_STR_ONELEVEL),
                     ('filterstr', '(objectClass=*)'),
                 )
             ))
@@ -593,13 +604,13 @@ class DistinguishedName(DirectoryString):
                     (
                         'search_option',
                         {
-                            True: web2ldap.app.searchform.SEARCH_OPT_ATTR_EXISTS,
-                            False: web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL,
+                            True: SEARCH_OPT_ATTR_EXISTS,
+                            False: SEARCH_OPT_IS_EQUAL,
                         }[ref_oc is None]
                     ),
                     ('search_string', ref_oc or ''),
                     ('search_attr', ref_attr),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
                 ),
                 title=ref_title,
@@ -637,7 +648,7 @@ class AuthzDN(DistinguishedName):
                 valueindex,
                 commandbutton=False,
             )
-            whoami_display_str = web2ldap.app.gui.display_authz_dn(
+            whoami_display_str = display_authz_dn(
                 self._app,
                 who=self.av_u
             )
@@ -757,7 +768,7 @@ class GeneralizedTime(IA5String):
 
     def _validate(self, attrValue: bytes) -> bool:
         try:
-            dt = web2ldap.utctime.strptime(attrValue)
+            dt = utc_strptime(attrValue)
         except ValueError:
             return False
         return (self.notBefore is None or self.notBefore <= dt) and \
@@ -837,7 +848,7 @@ class GeneralizedTime(IA5String):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
-            dt_utc = web2ldap.utctime.strptime(self.av_u)
+            dt_utc = utc_strptime(self.av_u)
         except ValueError:
             return IA5String.display(self, valueindex, commandbutton)
         try:
@@ -852,7 +863,7 @@ class GeneralizedTime(IA5String):
             dt_utc=dt_utc_str,
             av=self._app.form.utf2display(self.av_u),
             timespan_disp=self._app.form.utf2display(
-                web2ldap.app.gui.ts2repr(Timespan.time_divisors, ' ', abs(time_span))
+                ts2repr(Timespan.time_divisors, ' ', abs(time_span))
             ),
             timespan_comment={
                 1: 'ago',
@@ -964,10 +975,10 @@ class Integer(IA5String):
         except ValueError:
             return attrValue
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def formField(self) -> web_forms.Field:
         form_value = self.formValue()
         max_len = self._maxlen(form_value)
-        input_field = web2ldap.web.forms.Input(
+        input_field = web_forms.Input(
             self._at,
             ': '.join([self._at, self.desc]),
             max_len,
@@ -1251,7 +1262,7 @@ class OID(IA5String):
         attrValue = attrValue.strip()
         if attrValue.startswith(b'{') and attrValue.endswith(b'}'):
             try:
-                attrValue = web2ldap.ldaputil.ietf_oid_str(attrValue)
+                attrValue = ietf_oid_str(attrValue)
             except ValueError:
                 pass
         return attrValue
@@ -1315,7 +1326,7 @@ class LDAPUrl(Uri):
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             if commandbutton:
-                commandbuttonstr = web2ldap.app.gui.ldap_url_anchor(
+                commandbuttonstr = ldap_url_anchor(
                     self._app,
                     self._command_ldap_url(self.av_u),
                 )
@@ -1379,9 +1390,9 @@ class OctetString(Binary):
             )
         ))
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def formField(self) -> web_forms.Field:
         form_value = self.formValue()
-        return web2ldap.web.forms.Textarea(
+        return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
             10000, 1,
@@ -1430,9 +1441,9 @@ class MultilineText(DirectoryString):
         ]
         return '\r\n'.join(splitted_lines)
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def formField(self) -> web_forms.Field:
         form_value = self.formValue()
-        return web2ldap.web.forms.Textarea(
+        return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues,
@@ -1743,7 +1754,7 @@ class Timespan(Integer):
         if not attrValue:
             return attrValue
         try:
-            result = web2ldap.app.gui.repr2ts(
+            result = repr2ts(
                 self.time_divisors,
                 self.sep,
                 attrValue.decode('ascii')
@@ -1756,18 +1767,18 @@ class Timespan(Integer):
         if not self._av:
             return ''
         try:
-            result = web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, self._av)
+            result = ts2repr(self.time_divisors, self.sep, self._av)
         except ValueError:
             result = Integer.formValue(self)
         return result
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def formField(self) -> web_forms.Field:
         return IA5String.formField(self)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
             result = self._app.form.utf2display('%s (%s)' % (
-                web2ldap.app.gui.ts2repr(self.time_divisors, self.sep, self.av_u),
+                ts2repr(self.time_divisors, self.sep, self.av_u),
                 Integer.display(self, valueindex, commandbutton)
             ))
         except ValueError:
@@ -1847,12 +1858,12 @@ class SelectList(DirectoryString):
             attr_title=self._app.form.utf2display(attr_title or '')
         )
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def formField(self) -> web_forms.Field:
         attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
         if self.input_fallback and \
            (not attr_value_dict or not list(filter(None, attr_value_dict.keys()))):
             return DirectoryString.formField(self)
-        field = web2ldap.web.forms.Select(
+        field = web_forms.Select(
             self._at,
             ': '.join([self._at, self.desc]),
             1,
@@ -1876,7 +1887,7 @@ class PropertiesSelectList(SelectList):
 
     def _get_attr_value_dict(self):
         attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
-        real_path_name = web2ldap.app.gui.get_variant_filename(
+        real_path_name = get_variant_filename(
             self.properties_pathname,
             self._app.form.accept_language
         )
@@ -2285,9 +2296,9 @@ class BitArrayInteger(MultilineText, Integer):
         ]
         return '\r\n'.join(flag_lines)
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def formField(self) -> web_forms.Field:
         form_value = self.formValue()
-        return web2ldap.web.forms.Textarea(
+        return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen, self.maxValues,
@@ -2594,11 +2605,11 @@ class ComposedAttribute(LDAPSyntax):
             return attrValues
         return attr_values
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def formField(self) -> web_forms.Field:
         """
         composed attributes must only have hidden input field
         """
-        input_field = web2ldap.web.forms.HiddenInput(
+        input_field = web_forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.maxLen,
