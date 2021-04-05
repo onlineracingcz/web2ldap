@@ -346,14 +346,19 @@ class SSHFPRecord(IA5String):
         if not attr_value:
             return attr_value
         try:
-            key_algo, fp_algo, fp_value = filter(None, map(bytes.strip, attr_value.lower().split(b' ')))
+            key_algo, fp_algo, fp_value = filter(
+                None,
+                map(bytes.strip, attr_value.lower().split(b' '))
+            )
         except ValueError:
             return attr_value
         return b' '.join((key_algo, fp_algo, fp_value))
 
     def _validate(self, attr_value: bytes) -> bool:
         try:
-            key_algo, fp_algo, fp_value = tuple(filter(None, map(bytes.strip, attr_value.split(b' '))))
+            key_algo, fp_algo, fp_value = tuple(
+                filter(None, map(bytes.strip, attr_value.split(b' ')))
+            )
         except ValueError:
             return False
         else:
@@ -381,7 +386,11 @@ class SSHFPRecord(IA5String):
                 fp_algo_name = self.fp_algo_dict[fp_algo]
             except KeyError:
                 fp_algo_name = '?'
-            res = 'key_algo={key_algo_name} fp_algo={fp_algo_name}:<br><code>{display_value}</code>'.format(
+            res = (
+                'key_algo={key_algo_name} '
+                'fp_algo={fp_algo_name}:<br>'
+                '<code>{display_value}</code>'
+            ).format(
                 key_algo_name=key_algo_name,
                 fp_algo_name=fp_algo_name,
                 display_value=display_value,
