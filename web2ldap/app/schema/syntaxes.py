@@ -199,7 +199,7 @@ class SyntaxRegistry:
             syntax_class = LDAPSyntax
         return syntax_class
 
-    def get_at(self, app, dn, schema, attrType, attr_value, entry=None):
+    def get_at(self, app, dn, schema, attr_type, attr_value, entry=None):
         """
         returns LDAPSyntax instance fully initialized for given attribute
         """
@@ -207,8 +207,8 @@ class SyntaxRegistry:
             structural_oc = entry.get_structural_oc()
         else:
             structural_oc = None
-        syntax_class = self.get_syntax(schema, attrType, structural_oc)
-        attr_instance = syntax_class(app, dn, schema, attrType, attr_value, entry)
+        syntax_class = self.get_syntax(schema, attr_type, structural_oc)
+        attr_instance = syntax_class(app, dn, schema, attr_type, attr_value, entry)
         return attr_instance
 
     def check(self):
