@@ -20,16 +20,11 @@ from ldap0.ldapurl import LDAPUrlExtension, LDAPUrlExtensions
 
 from ..ldaputil.extldapurl import ExtendedLDAPUrl
 from ..log import logger
-try:
-    from ..ldaputil.dns import srv_lookup
-except ImportError:
-    srv_lookup = None
-else:
-    # from dnspython
-    from dns.exception import DNSException
-
 from . import ErrorExit
-from .gui import simple_main_menu
+from .gui import simple_main_menu, DNS_AVAIL
+if DNS_AVAIL:
+    from dns.exception import DNSException
+    from ..ldaputil.dns import srv_lookup
 
 
 LDAP_HOSTNAME_ALIASES = (
@@ -86,7 +81,7 @@ def w2l_locate(app):
     Try to locate a LDAP server in DNS by several heuristics
     """
 
-    if srv_lookup is None:
+    if not DNS_AVAIL:
         logger.warning('Module package dnspython not installed!')
         raise ErrorExit('No DNS support!')
 

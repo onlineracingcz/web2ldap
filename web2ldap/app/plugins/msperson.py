@@ -19,7 +19,9 @@ from web2ldap.app.schema.syntaxes import \
 try:
     import vatnumber
 except ImportError:
-    vatnumber = None
+    VATNUMBER_AVAIL = False
+else:
+    VATNUMBER_AVAIL = True
 
 
 class Gender(PropertiesSelectList):
@@ -98,7 +100,7 @@ class EuVATId(IA5String):
     )
 
     def _validate(self, attr_value: bytes) -> bool:
-        if vatnumber:
+        if VATNUMBER_AVAIL:
             return vatnumber.check_vat(attr_value)
         return IA5String._validate(self, attr_value)
 

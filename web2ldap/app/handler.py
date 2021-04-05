@@ -56,7 +56,7 @@ from .gui import (
 from .cnf import LDAP_DEF, LDAP_URI_LIST_CHECK_DICT
 from . import passwd
 from .entry import DisplayEntry
-from .gui import exception_message, dns_available
+from .gui import exception_message, DNS_AVAIL
 from .form import Web2LDAPForm
 from .session import (
     InvalidSessionInstance,
@@ -92,7 +92,7 @@ from .referral import w2l_chasereferral
 from .login import w2l_login
 from .schema.syntaxes import Timespan
 
-if dns_available:
+if DNS_AVAIL:
     from ..ldaputil.dns import dc_dn_lookup
 
 SCOPE2COMMAND = {
@@ -836,7 +836,7 @@ class AppHandler(LogHelper):
             #-------------------------------------------------
 
             if (
-                    dns_available
+                    DNS_AVAIL
                     and self.ldap_url.hostport == ''
                     and self.ldap_url.urlscheme == 'ldap'
                     and (self.ls is None or self.ls.uri is None)
@@ -1030,7 +1030,7 @@ class AppHandler(LogHelper):
 
         except ldap0.NO_SUCH_OBJECT as ldap_err:
 
-            if dns_available:
+            if DNS_AVAIL:
                 # first try to lookup dc-style DN via DNS
                 host_list = dc_dn_lookup(self.dn)
                 self.log(logging.DEBUG, 'host_list = %r', host_list)

@@ -38,8 +38,9 @@ from typing import (
 try:
     import defusedxml.ElementTree
 except ImportError:
-    defusedxml = None
+    DEFUSEDXML_AVAIL = False
 else:
+    DEFUSEDXML_AVAIL = True
     from xml.etree.ElementTree import ParseError as XMLParseError
 
 from collections import defaultdict
@@ -49,8 +50,9 @@ from io import BytesIO
 try:
     from PIL import Image as PILImage
 except ImportError:
-    PILImage = None
+    PIL_AVAIL = False
 else:
+    PIL_AVAIL = True
     warnings.simplefilter('error', PILImage.DecompressionBombWarning)
 
 import ipaddress
@@ -1136,7 +1138,7 @@ class Image(Binary):
         return imghdr.what(None, attr_value) == self.imageFormat.lower()
 
     def sanitize(self, attr_value: bytes) -> bytes:
-        if not self._validate(attr_value) and PILImage:
+        if not self._validate(attr_value) and PIL_AVAIL:
             try:
                 with BytesIO(attr_value) as imgfile:
                     img = PILImage.open(imgfile)
@@ -1156,7 +1158,7 @@ class Image(Binary):
         maxwidth, maxheight = 100, 150
         width, height = None, None
         size_attr_html = ''
-        if PILImage:
+        if PIL_AVAIL:
             try:
                 with BytesIO(self._av) as imgfile:
                     img = PILImage.open(imgfile)
@@ -2483,7 +2485,7 @@ class XmlValue(PreformattedMultilineText):
     mime_type: str = 'text/xml'
 
     def _validate(self, attr_value: bytes) -> bool:
-        if defusedxml is None:
+        if not DEFUSEDXML_AVAIL:
             return PreformattedMultilineText._validate(self, attr_value)
         try:
             defusedxml.ElementTree.XML(attr_value)

@@ -24,19 +24,17 @@ from ldap0.res import SearchResultEntry
 try:
     import dns
 except ImportError:
-    dns_available = False
+    DNS_AVAIL = False
 else:
-    dns_available = True
+    DNS_AVAIL = True
 
 import web2ldapcnf
 
 from ..web.forms import Select as SelectField
-from  ..__about__ import __version__
+from ..__about__ import __version__
 from ..web import escape_html
 from ..ldaputil import logdb_filter
 from ..log import logger
-logger.debug('dns_available = %r', dns_available)
-
 from .tmpl import read_template
 
 
@@ -94,7 +92,7 @@ def simple_main_menu(app):
     main_menu = [app.anchor('', 'Connect', [])]
     if app.check_access('monitor'):
         main_menu.append(app.anchor('monitor', 'Monitor', []))
-    if dns_available and app.check_access('locate'):
+    if DNS_AVAIL and app.check_access('locate'):
         main_menu.append(app.anchor('locate', 'DNS lookup', []))
     return main_menu
 
