@@ -34,6 +34,8 @@ from .web.wsgi import (
     W2lWSGIRequestHandler,
 )
 from .checkinst import check_inst
+from .app.handler import AppHandler
+from .app.session import session_store
 
 check_inst()
 
@@ -57,7 +59,6 @@ def application(environ, start_response):
     """
     the main WSGI application function
     """
-    from .app.handler import AppHandler
     # check whether HTTP request method is valid
     if environ['REQUEST_METHOD'] not in {'POST', 'GET'}:
         logger.error('Invalid HTTP request method %r', environ['REQUEST_METHOD'])
@@ -104,7 +105,6 @@ def run_standalone():
     """
     start a simple stand-alone web server
     """
-    from .app.session import session_store
     logger.debug('Start stand-alone WSGI server')
     if len(sys.argv) == 1:
         host_arg = '127.0.0.1'
