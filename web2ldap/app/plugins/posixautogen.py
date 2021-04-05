@@ -23,7 +23,9 @@ class HomeDirectory(IA5String):
         if (
                 not attr_values or
                 not attr_values[0] or
-                attr_values[0].decode(self._app.ls.charset) == self.homeDirectoryTemplate.format(**{self.uid_attr:''})
+                attr_values[0].decode(self._app.ls.charset) == self.homeDirectoryTemplate.format(
+                    **{self.uid_attr:''}
+                )
             ):
             fmt_dict = {self.uid_attr:self._entry[self.uid_attr][0].decode(self._app.ls.charset)}
             attr_values = [
@@ -45,7 +47,11 @@ class AutogenNumberMixIn:
     object_class = 'posixAccount'
 
     def formValue(self) -> str:
-        if self.object_class.lower() not in {oc.lower().decode('ascii') for oc in self._entry['objectClass']}:
+        oc_set = {
+            oc.lower().decode('ascii')
+            for oc in self._entry['objectClass']
+        }
+        if self.object_class.lower() not in oc_set:
             return ''
         try:
             ldap_results = self._app.ls.l.search_s(
