@@ -95,7 +95,7 @@ class PwdMaxAge(Timespan):
         ts_dv = Timespan.display(self, valueindex, commandbutton)
         # Possibly display a link
         ocs = self._entry.object_class_oid_set()
-        if not commandbutton or not 'pwdPolicy' in ocs:
+        if not commandbutton or 'pwdPolicy' not in ocs:
             return ts_dv
         try:
             ts_search_params = self._timespan_search_params()
