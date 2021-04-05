@@ -934,20 +934,20 @@ class Integer(IA5String):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.27'
     desc: str = 'Integer'
     input_size: int = 12
-    minValue = None
-    maxValue = None
+    min_value = None
+    max_value = None
 
     def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
         IA5String.__init__(self, app, dn, schema, attrType, attr_value, entry)
-        if self.maxValue is not None:
-            self.max_len = len(str(self.maxValue))
+        if self.max_value is not None:
+            self.max_len = len(str(self.max_value))
 
     def _maxlen(self, form_value):
         min_value_len = max_value_len = form_value_len = 0
-        if self.minValue is not None:
-            min_value_len = len(str(self.minValue))
-        if self.maxValue is not None:
-            max_value_len = len(str(self.maxValue))
+        if self.min_value is not None:
+            min_value_len = len(str(self.min_value))
+        if self.max_value is not None:
+            max_value_len = len(str(self.max_value))
         if form_value is not None:
             form_value_len = len(form_value.encode(self._app.ls.charset))
         return max(self.input_size, form_value_len, min_value_len, max_value_len)
@@ -957,7 +957,7 @@ class Integer(IA5String):
             val = int(attr_value)
         except ValueError:
             return False
-        min_value, max_value = self.minValue, self.maxValue
+        min_value, max_value = self.min_value, self.max_value
         return (
             (min_value is None or val >= min_value) and
             (max_value is None or val <= max_value)
@@ -1062,8 +1062,8 @@ class IPServicePortNumber(Integer):
     """
     oid: str = 'IPServicePortNumber-oid'
     desc: str = 'Port number for an UDP- or TCP-based service'
-    minValue = 0
-    maxValue = 65535
+    min_value = 0
+    max_value = 65535
 
 
 class MacAddress(IA5String):
@@ -1696,7 +1696,7 @@ class SecondsSinceEpoch(Integer):
     """
     oid: str = 'SecondsSinceEpoch-oid'
     desc: str = 'Seconds since epoch (1970-01-01 00:00:00)'
-    minValue = 0
+    min_value = 0
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         int_str = Integer.display(self, valueindex, commandbutton)
@@ -1715,7 +1715,7 @@ class DaysSinceEpoch(Integer):
     """
     oid: str = 'DaysSinceEpoch-oid'
     desc: str = 'Days since epoch (1970-01-01)'
-    minValue = 0
+    min_value = 0
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         int_str = Integer.display(self, valueindex, commandbutton)
@@ -1732,7 +1732,7 @@ class Timespan(Integer):
     oid: str = 'Timespan-oid'
     desc: str = 'Time span in seconds'
     input_size: int = LDAPSyntax.input_size
-    minValue = 0
+    min_value = 0
     time_divisors = (
         ('weeks', 604800),
         ('days', 86400),
@@ -2251,7 +2251,7 @@ class BitArrayInteger(MultilineText, Integer):
             j: i
             for i, j in self.flag_desc_table
         }
-        self.maxValue = sum([j for i, j in self.flag_desc_table])
+        self.max_value = sum([j for i, j in self.flag_desc_table])
         self.min_input_rows = self.max_input_rows = max(len(self.flag_desc_table), 1)
 
     def sanitize(self, attr_value: bytes) -> bytes:

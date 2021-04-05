@@ -259,8 +259,8 @@ syntax_registry.reg_at(
 class DHCPNetMask(Integer):
     oid: str = 'DHCPNetMask-oid'
     desc: str = 'Network address mask bits'
-    maxValue = 0
-    maxValue = 32
+    min_value = 0
+    max_value = 32
     input_size = 15
 
     def _maxlen(self, form_value):

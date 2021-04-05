@@ -30,8 +30,8 @@ class RFC2307BootParameter(IA5String):
 class GidNumber(DynamicValueSelectList, Integer):
     oid: str = 'GidNumber-oid'
     desc: str = 'RFC2307: An integer uniquely identifying a group in an administrative domain'
-    minValue = 0
-    maxValue = 4294967295
+    min_value = 0
+    max_value = 4294967295
     ldap_url = 'ldap:///_?gidNumber,cn?sub?(objectClass=posixGroup)'
 
     def _validate(self, attr_value: bytes) -> bool:
@@ -136,8 +136,8 @@ class RFC2307NISNetgroupTriple(IA5String):
 class UidNumber(Integer):
     oid: str = 'UidNumber-oid'
     desc: str = 'Numerical user ID for Posix systems'
-    minValue = 0
-    maxValue = 4294967295
+    min_value = 0
+    max_value = 4294967295
 
 syntax_registry.reg_at(
     UidNumber.oid, [
