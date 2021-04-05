@@ -613,10 +613,10 @@ class DistinguishedName(DirectoryString):
         return res
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        r = [self._app.form.utf2display(self.av_u or '- World -')]
+        res = [self._app.form.utf2display(self.av_u or '- World -')]
         if commandbutton:
-            r.extend(self._additional_links())
-        return web2ldapcnf.command_link_separator.join(r)
+            res.extend(self._additional_links())
+        return web2ldapcnf.command_link_separator.join(res)
 
 
 class BindDN(DistinguishedName):
