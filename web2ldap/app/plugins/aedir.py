@@ -1087,7 +1087,11 @@ class AEEntryDNAEMailGroup(GroupEntryDN):
     desc: str = 'AE-DIR: entryDN of aeGroup entry'
     ref_attrs = (
         ('memberOf', 'Members', None, 'Search all member entries of this mail group'),
-        ('aeVisibleGroups', 'Visible', None, 'Search all server/service groups (aeSrvGroup)\non which this mail group is visible'),
+        (
+            'aeVisibleGroups', 'Visible', None,
+            'Search all server/service groups (aeSrvGroup)\n'
+            'on which this mail group is visible'
+        ),
     )
 
 syntax_registry.reg_at(
@@ -1105,10 +1109,26 @@ class AEEntryDNAEGroup(GroupEntryDN):
     desc: str = 'AE-DIR: entryDN of aeGroup entry'
     ref_attrs = (
         ('memberOf', 'Members', None, 'Search all member entries of this user group'),
-        ('aeLoginGroups', 'Login', None, 'Search all server/service groups (aeSrvGroup)\non which this user group has login right'),
-        ('aeLogStoreGroups', 'View Logs', None, 'Search all server/service groups (aeSrvGroup)\non which this user group has log view right'),
-        ('aeSetupGroups', 'Setup', None, 'Search all server/service groups (aeSrvGroup)\non which this user group has setup/installation rights'),
-        ('aeVisibleGroups', 'Visible', None, 'Search all server/service groups (aeSrvGroup)\non which this user group is at least visible'),
+        (
+            'aeLoginGroups', 'Login', None,
+            'Search all server/service groups (aeSrvGroup)\n'
+            'on which this user group has login right'
+        ),
+        (
+            'aeLogStoreGroups', 'View Logs', None,
+            'Search all server/service groups (aeSrvGroup)\n'
+            'on which this user group has log view right'
+        ),
+        (
+            'aeSetupGroups', 'Setup', None,
+            'Search all server/service groups (aeSrvGroup)\n'
+            'on which this user group has setup/installation rights'
+        ),
+        (
+            'aeVisibleGroups', 'Visible', None,
+            'Search all server/service groups (aeSrvGroup)\n'
+            'on which this user group is at least visible'
+        ),
     )
 
     def _additional_links(self):
@@ -1118,18 +1138,21 @@ class AEEntryDNAEGroup(GroupEntryDN):
             ref_attrs.extend([
                 (
                     'aeZoneAdmins', 'Zone Admins', None,
-                    'Search all zones (aeZone)\nfor which members of this user group act as zone admins'
+                    'Search all zones (aeZone)\n'
+                    'for which members of this user group act as zone admins'
                 ),
                 (
                     'aePasswordAdmins', 'Password Admins', None,
-                    'Search all zones (aeZone)\nfor which members of this user group act as password admins'
+                    'Search all zones (aeZone)\n'
+                    'for which members of this user group act as password admins'
                 ),
             ])
         if aegroup_cn.endswith('zone-auditors') or aegroup_cn.endswith('zone-admins'):
             ref_attrs.append(
                 (
                     'aeZoneAuditors', 'Zone Auditors', None,
-                    'Search all zones (aeZone)\nfor which members of this user group act as zone auditors'
+                    'Search all zones (aeZone)\n'
+                    'for which members of this user group act as zone auditors'
                 ),
             )
         self.ref_attrs = tuple(ref_attrs)
@@ -1188,7 +1211,10 @@ class AEEntryDNAESrvGroup(DistinguishedName):
                         ).format(self.av_u)
                     ),
                 ),
-                title='Search all service and host entries which are member in this service/host group {0}'.format(self.av_u),
+                title=(
+                    'Search all service and host entries '
+                    'which are member in this service/host group {0}'
+                ).format(self.av_u),
             )
         )
         return res
@@ -1207,7 +1233,10 @@ class AEEntryDNSudoRule(DistinguishedName):
     oid: str = 'AEEntryDNSudoRule-oid'
     desc: str = 'AE-DIR: entryDN'
     ref_attrs = (
-        ('aeVisibleSudoers', 'Used on', None, 'Search all server groups (aeSrvGroup entries) referencing this SUDO rule'),
+        (
+            'aeVisibleSudoers', 'Used on', None,
+            'Search all server groups (aeSrvGroup entries) referencing this SUDO rule'
+        ),
     )
 
 syntax_registry.reg_at(
@@ -1224,9 +1253,18 @@ class AEEntryDNAELocation(DistinguishedName):
     oid: str = 'AEEntryDNAELocation-oid'
     desc: str = 'AE-DIR: entryDN of aeLocation entry'
     ref_attrs = (
-        ('aeLocation', 'Persons', None, 'aePerson', 'Search all persons assigned to this location.'),
-        ('aeLocation', 'Zones', None, 'aeZone', 'Search all location-based zones associated with this location.'),
-        ('aeLocation', 'Groups', None, 'groupOfEntries', 'Search all location-based zones associated with this location.'),
+        (
+            'aeLocation', 'Persons', None, 'aePerson',
+            'Search all persons assigned to this location.'
+        ),
+        (
+            'aeLocation', 'Zones', None, 'aeZone',
+            'Search all location-based zones associated with this location.'
+        ),
+        (
+            'aeLocation', 'Groups', None, 'groupOfEntries',
+            'Search all location-based zones associated with this location.'
+        ),
     )
 
 syntax_registry.reg_at(
@@ -1258,9 +1296,18 @@ class AEEntryDNAEDept(DistinguishedName):
     oid: str = 'AEEntryDNAEDept-oid'
     desc: str = 'AE-DIR: entryDN of aePerson entry'
     ref_attrs = (
-        ('aeDept', 'Persons', None, 'aePerson', 'Search all persons assigned to this department.'),
-        ('aeDept', 'Zones', None, 'aeZone', 'Search all team-related zones associated with this department.'),
-        ('aeDept', 'Groups', None, 'groupOfEntries', 'Search all team-related groups associated with this department.'),
+        (
+            'aeDept', 'Persons', None, 'aePerson',
+            'Search all persons assigned to this department.'
+        ),
+        (
+            'aeDept', 'Zones', None, 'aeZone',
+            'Search all team-related zones associated with this department.'
+        ),
+        (
+            'aeDept', 'Groups', None, 'groupOfEntries',
+            'Search all team-related groups associated with this department.'
+        ),
     )
 
 syntax_registry.reg_at(
@@ -1293,7 +1340,10 @@ class AEOwner(DerefDynamicDNSelectList):
     desc: str = 'AE-DIR: DN of owner entry'
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
     ref_attrs = (
-        ('aeOwner', 'Devices', None, 'aeDevice', 'Search all devices (aeDevice entries) assigned to same owner.'),
+        (
+            'aeOwner', 'Devices', None, 'aeDevice',
+            'Search all devices (aeDevice entries) assigned to same owner.'
+        ),
     )
     desc_sep: str = '<br>'
 
@@ -1309,7 +1359,10 @@ class AEPerson(DerefDynamicDNSelectList, AEObjectMixIn):
     desc: str = 'AE-DIR: DN of person entry'
     ldap_url = 'ldap:///_?displayName?sub?(objectClass=aePerson)'
     ref_attrs = (
-        ('aePerson', 'Users', None, 'aeUser', 'Search all personal AE-DIR user accounts (aeUser entries) of this person.'),
+        (
+            'aePerson', 'Users', None, 'aeUser',
+            'Search all personal AE-DIR user accounts (aeUser entries) of this person.'
+        ),
     )
     desc_sep: str = '<br>'
     ae_status_map = {
@@ -1392,7 +1445,9 @@ class AEDerefAttribute(DirectoryString):
     max_values: int = 1
     deref_object_class: Optional[str] = None
     deref_attribute_type: Optional[str] = None
-    deref_filter_tmpl: str = '(&(objectClass={deref_object_class})(aeStatus<=0)({attribute_type}=*))'
+    deref_filter_tmpl: str = (
+        '(&(objectClass={deref_object_class})(aeStatus<=0)({attribute_type}=*))'
+    )
 
     def _read_person_attr(self):
         try:
@@ -1859,7 +1914,10 @@ class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
             zone_cn = self._get_zone_name()
             result = (
                 zone_cn and
-                (zone_cn == 'pub' or attr_value.decode(self._app.ls.charset).startswith(zone_cn+'-'))
+                (
+                    zone_cn == 'pub'
+                    or attr_value.decode(self._app.ls.charset).startswith(zone_cn+'-')
+                )
             )
         return result
 
@@ -2031,11 +2089,17 @@ class AEStatus(SelectList, Integer):
         ae_status = int(attr_value)
         current_time = time.gmtime(time.time())
         try:
-            ae_not_before = time.strptime(self._entry['aeNotBefore'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
+            ae_not_before = time.strptime(
+                self._entry['aeNotBefore'][0].decode('ascii'),
+                '%Y%m%d%H%M%SZ',
+            )
         except (KeyError, IndexError, ValueError, UnicodeDecodeError):
             ae_not_before = time.strptime('19700101000000Z', '%Y%m%d%H%M%SZ')
         try:
-            ae_not_after = time.strptime(self._entry['aeNotAfter'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
+            ae_not_after = time.strptime(
+                self._entry['aeNotAfter'][0].decode('ascii'),
+                '%Y%m%d%H%M%SZ',
+            )
         except (KeyError, IndexError, ValueError, UnicodeDecodeError):
             ae_not_after = current_time
         # see https://www.ae-dir.com/docs.html#schema-validity-period
@@ -2053,20 +2117,28 @@ class AEStatus(SelectList, Integer):
         ae_status = int(attr_values[0].decode('ascii'))
         current_time = time.gmtime(time.time())
         try:
-            ae_not_before = time.strptime(self._entry['aeNotBefore'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
+            ae_not_before = time.strptime(
+                self._entry['aeNotBefore'][0].decode('ascii'),
+                '%Y%m%d%H%M%SZ',
+            )
         except (KeyError, IndexError, ValueError):
             pass
         else:
             if ae_status == 0 and current_time < ae_not_before:
                 ae_status = -1
         try:
-            ae_not_after = time.strptime(self._entry['aeNotAfter'][0].decode('ascii'), '%Y%m%d%H%M%SZ')
+            ae_not_after = time.strptime(
+                self._entry['aeNotAfter'][0].decode('ascii'),
+                '%Y%m%d%H%M%SZ',
+            )
         except (KeyError, IndexError, ValueError):
             ae_not_after = None
         else:
             if current_time > ae_not_after:
                 try:
-                    ae_expiry_status = int(self._entry.get('aeExpiryStatus', ['1'])[0].decode('ascii'))
+                    ae_expiry_status = int(
+                        self._entry.get('aeExpiryStatus', ['1'])[0].decode('ascii')
+                    )
                 except (KeyError, IndexError, ValueError):
                     pass
                 else:
@@ -2150,7 +2222,10 @@ class AEEntryDNAEAuthcToken(DistinguishedName):
     oid: str = 'AEEntryDNAEAuthcToken-oid'
     desc: str = 'AE-DIR: entryDN of aeAuthcToken entry'
     ref_attrs = (
-        ('oathToken', 'Users', None, 'aeUser', 'Search all personal user accounts using this OATH token.'),
+        (
+            'oathToken', 'Users', None, 'aeUser',
+            'Search all personal user accounts using this OATH token.'
+        ),
     )
 
 syntax_registry.reg_at(
@@ -2167,11 +2242,26 @@ class AEEntryDNAEPolicy(DistinguishedName):
     oid: str = 'AEEntryDNAEPolicy-oid'
     desc: str = 'AE-DIR: entryDN of aePolicy entry'
     ref_attrs = (
-        ('pwdPolicySubentry', 'Users', None, 'aeUser', 'Search all personal user accounts restricted by this password policy.'),
-        ('pwdPolicySubentry', 'Services', None, 'aeService', 'Search all service accounts restricted by this password policy.'),
-        ('pwdPolicySubentry', 'Tokens', None, 'aeAuthcToken', 'Search all authentication tokens restricted by this password policy.'),
-        ('oathHOTPParams', 'HOTP Tokens', None, 'oathHOTPToken', 'Search all HOTP tokens affected by this HOTP parameters.'),
-        ('oathTOTPParams', 'TOTP Tokens', None, 'oathTOTPToken', 'Search all TOTP tokens affected by this TOTP parameters.'),
+        (
+            'pwdPolicySubentry', 'Users', None, 'aeUser',
+            'Search all personal user accounts restricted by this password policy.'
+        ),
+        (
+            'pwdPolicySubentry', 'Services', None, 'aeService',
+            'Search all service accounts restricted by this password policy.'
+        ),
+        (
+            'pwdPolicySubentry', 'Tokens', None, 'aeAuthcToken',
+            'Search all authentication tokens restricted by this password policy.'
+        ),
+        (
+            'oathHOTPParams', 'HOTP Tokens', None, 'oathHOTPToken',
+            'Search all HOTP tokens affected by this HOTP parameters.'
+        ),
+        (
+            'oathTOTPParams', 'TOTP Tokens', None, 'oathTOTPToken',
+            'Search all TOTP tokens affected by this TOTP parameters.'
+        ),
     )
 
 syntax_registry.reg_at(
@@ -2201,7 +2291,10 @@ syntax_registry.reg_at(
 class AERFC822MailMember(DynamicValueSelectList, AEObjectMixIn):
     oid: str = 'AERFC822MailMember-oid'
     desc: str = 'AE-DIR: rfc822MailMember'
-    ldap_url = 'ldap:///_?mail,displayName?sub?(&(|(objectClass=inetLocalMailRecipient)(objectClass=aeContact))(mail=*)(aeStatus=0))'
+    ldap_url = (
+        'ldap:///_?mail,displayName?sub?'
+        '(&(|(objectClass=inetLocalMailRecipient)(objectClass=aeContact))(mail=*)(aeStatus=0))'
+    )
     html_tmpl = RFC822Address.html_tmpl
     show_val_button = False
 
