@@ -263,7 +263,7 @@ class DHCPNetMask(Integer):
     max_value = 32
     input_size = 15
 
-    def _maxlen(self, form_value):
+    def _maxlen(self, fval):
         return self.input_size
 
 syntax_registry.reg_at(
@@ -283,8 +283,8 @@ class DHCPRange(IA5String):
         return ipaddress.ip_network(('%s/%s' % (cn, net_mask)), strict=False)
 
     def formValue(self) -> str:
-        form_value = IA5String.formValue(self)
-        if not form_value:
+        fval = IA5String.formValue(self)
+        if not fval:
             try:
                 ipv4_hosts = self._get_ipnetwork().hosts()
                 first_address = next(ipv4_hosts)
@@ -293,10 +293,10 @@ class DHCPRange(IA5String):
                         last_address = next(ipv4_hosts)
                 except StopIteration:
                     pass
-                form_value = '{0} {1}'.format(first_address, last_address)
+                fval = '{0} {1}'.format(first_address, last_address)
             except ipaddress.AddressValueError:
                 pass
-        return form_value
+        return fval
 
     def sanitize(self, attr_value: bytes) -> bytes:
         return attr_value.strip().replace(b'  ', b' ').replace(b'-', b' ').replace(b'..', b' ')

@@ -356,7 +356,7 @@ class InputFormEntry(DisplayEntry):
                         self._app.form.utf2display(attr_inst.formValue(), sp_entity='  '),
                         self._app.form.utf2display(attr_inst.formValue(), sp_entity='&nbsp;&nbsp;')
                     ),
-                    attr_inst.valueButton(self._app.command, self.row_counter, '+'),
+                    attr_inst.value_button(self._app.command, self.row_counter, '+'),
                     '</span>'*highlight_invalid,
                 )))
                 self.row_counter += 1
@@ -379,7 +379,7 @@ class InputFormEntry(DisplayEntry):
                             nameoroid_se.syntax in NEEDS_BINARY_TAG
                         ):
                         attr_type_tags.append('binary')
-                input_fields = attr_inst.formFields()
+                input_fields = attr_inst.input_fields()
                 for input_field in input_fields:
                     input_field.name = 'in_av'
                     input_field.charset = self._app.form.accept_charset
@@ -398,8 +398,8 @@ class InputFormEntry(DisplayEntry):
                             )),
                             title=attr_title
                         ),
-                        attr_inst.valueButton(self._app.command, self.row_counter, '+'),
-                        attr_inst.valueButton(self._app.command, self.row_counter, '-'),
+                        attr_inst.value_button(self._app.command, self.row_counter, '+'),
+                        attr_inst.value_button(self._app.command, self.row_counter, '-'),
                         '</span>'*highlight_invalid,
                     ]))
                     self.row_counter += 1

@@ -37,8 +37,8 @@ class UUIDReference(DynamicValueSelectList, UUID):
             )
         ))
 
-    def formField(self) -> web2ldap.web.forms.Field:
-        return DynamicValueSelectList.formField(self)
+    def input_field(self) -> web2ldap.web.forms.Field:
+        return DynamicValueSelectList.input_field(self)
 
 syntax_registry.reg_at(
     UUIDReference.oid, [

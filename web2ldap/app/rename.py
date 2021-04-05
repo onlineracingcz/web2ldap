@@ -55,7 +55,7 @@ def new_superior_field(app, sup_search_url, old_superior_dn):
             app, app.dn,
             app.schema, 'rdn', old_superior_dn.encode(app.ls.charset), str(sup_search_url),
         )
-        nssf = attr_inst.formField()
+        nssf = attr_inst.input_field()
         nssf.name = 'rename_newsuperior'
         nssf.text = 'New Superior DN'
     else:

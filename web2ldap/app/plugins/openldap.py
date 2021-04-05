@@ -113,18 +113,18 @@ class OlcRootDN(BindDN):
     default_rdn = u'cn=admin'
 
     def formValue(self) -> str:
-        form_value = BindDN.formValue(self)
+        fval = BindDN.formValue(self)
         try:
             olc_suffix = self._entry['olcSuffix'][0].decode()
         except KeyError:
             pass
         else:
-            if not form_value or not form_value.endswith(olc_suffix):
+            if not fval or not fval.endswith(olc_suffix):
                 try:
-                    form_value = u','.join((self.default_rdn, olc_suffix))
+                    fval = u','.join((self.default_rdn, olc_suffix))
                 except KeyError:
                     pass
-        return form_value
+        return fval
 
 syntax_registry.reg_at(
     OlcRootDN.oid, [

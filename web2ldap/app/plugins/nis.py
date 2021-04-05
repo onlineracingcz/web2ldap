@@ -68,11 +68,11 @@ class GidNumber(DynamicValueSelectList, Integer):
             ))
         return ' '.join(res)
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         ocs = self._entry.object_class_oid_set()
         if 'posixAccount' in ocs or 'shadowAccount' in ocs:
-            return DynamicValueSelectList.formField(self)
-        return Integer.formField(self)
+            return DynamicValueSelectList.input_field(self)
+        return Integer.input_field(self)
 
 syntax_registry.reg_at(
     GidNumber.oid, [
@@ -97,10 +97,10 @@ class MemberUID(IA5String, DynamicValueSelectList):
             return DynamicValueSelectList._validate(self, attr_value)
         return IA5String._validate(self, attr_value)
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         if self.ldap_url:
-            return DynamicValueSelectList.formField(self)
-        return IA5String.formField(self)
+            return DynamicValueSelectList.input_field(self)
+        return IA5String.input_field(self)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         res = [IA5String.display(self, valueindex, commandbutton=False)]

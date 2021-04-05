@@ -98,10 +98,10 @@ class AutogenUIDNumber(UidNumber, AutogenNumberMixIn):
     object_class = 'posixAccount'
 
     def formValue(self) -> str:
-        form_value = UidNumber.formValue(self)
-        if not form_value:
-            form_value = AutogenNumberMixIn.formValue(self)
-        return form_value # formValue()
+        fval = UidNumber.formValue(self)
+        if not fval:
+            fval = AutogenNumberMixIn.formValue(self)
+        return fval # formValue()
 
 syntax_registry.reg_at(
     AutogenUIDNumber.oid, [
@@ -116,10 +116,10 @@ class AutogenGIDNumber(GidNumber, AutogenNumberMixIn):
     object_class = 'posixGroup'
 
     def formValue(self) -> str:
-        form_value = GidNumber.formValue(self)
-        if not form_value:
-            form_value = AutogenNumberMixIn.formValue(self)
-        return form_value # formValue()
+        fval = GidNumber.formValue(self)
+        if not fval:
+            fval = AutogenNumberMixIn.formValue(self)
+        return fval # formValue()
 
 syntax_registry.reg_at(
     AutogenGIDNumber.oid, [

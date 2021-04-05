@@ -377,7 +377,7 @@ class LDAPSyntax:
             )
         # end of validate()
 
-    def valueButton(self, command, row, mode, link_text=None):
+    def value_button(self, command, row, mode, link_text=None):
         """
         return HTML markup of [+] or [-] submit buttons for adding/removing
         attribute values
@@ -426,10 +426,10 @@ class LDAPSyntax:
             result = '!!!snipped because of UnicodeDecodeError!!!'
         return result
 
-    def formFields(self):
-        return (self.formField(),)
+    def input_fields(self):
+        return (self.input_field(),)
 
-    def formField(self) -> web_forms.Field:
+    def input_field(self) -> web_forms.Field:
         input_field = web_forms.Input(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -455,7 +455,7 @@ class Binary(LDAPSyntax):
     desc: str = 'Binary'
     editable: bool = False
 
-    def formField(self) -> web_forms.Field:
+    def input_field(self) -> web_forms.Field:
         field = web_forms.File(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -942,15 +942,15 @@ class Integer(IA5String):
         if self.max_value is not None:
             self.max_len = len(str(self.max_value))
 
-    def _maxlen(self, form_value):
-        min_value_len = max_value_len = form_value_len = 0
+    def _maxlen(self, fval):
+        min_value_len = max_value_len = fval_len = 0
         if self.min_value is not None:
             min_value_len = len(str(self.min_value))
         if self.max_value is not None:
             max_value_len = len(str(self.max_value))
-        if form_value is not None:
-            form_value_len = len(form_value.encode(self._app.ls.charset))
-        return max(self.input_size, form_value_len, min_value_len, max_value_len)
+        if fval is not None:
+            fval_len = len(fval.encode(self._app.ls.charset))
+        return max(self.input_size, fval_len, min_value_len, max_value_len)
 
     def _validate(self, attr_value: bytes) -> bool:
         try:
@@ -969,16 +969,16 @@ class Integer(IA5String):
         except ValueError:
             return attr_value
 
-    def formField(self) -> web_forms.Field:
-        form_value = self.formValue()
-        max_len = self._maxlen(form_value)
+    def input_field(self) -> web_forms.Field:
+        fval = self.formValue()
+        max_len = self._maxlen(fval)
         input_field = web_forms.Input(
             self._at,
             ': '.join([self._at, self.desc]),
             max_len,
             self.max_values,
             self.input_pattern,
-            default=form_value,
+            default=fval,
             size=min(self.input_size, max_len),
         )
         input_field.input_type = 'number'
@@ -1246,10 +1246,10 @@ class OID(IA5String):
         '2.5.21.9',
     ))
 
-    def valueButton(self, command, row, mode, link_text=None):
+    def value_button(self, command, row, mode, link_text=None):
         if self._at.lower() in self.no_val_button_attrs:
             return ''
-        return IA5String.valueButton(self, command, row, mode, link_text=link_text)
+        return IA5String.value_button(self, command, row, mode, link_text=link_text)
 
     def sanitize(self, attr_value: bytes) -> bytes:
         attr_value = attr_value.strip()
@@ -1382,15 +1382,15 @@ class OctetString(Binary):
             )
         ))
 
-    def formField(self) -> web_forms.Field:
-        form_value = self.formValue()
+    def input_field(self) -> web_forms.Field:
+        fval = self.formValue()
         return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
             10000, 1,
             None,
-            default=form_value,
-            rows=max(self.min_input_rows, min(self.max_input_rows, form_value.count('\r\n'))),
+            default=fval,
+            rows=max(self.min_input_rows, min(self.max_input_rows, fval.count('\r\n'))),
             cols=49
         )
 
@@ -1433,15 +1433,15 @@ class MultilineText(DirectoryString):
         ]
         return '\r\n'.join(splitted_lines)
 
-    def formField(self) -> web_forms.Field:
-        form_value = self.formValue()
+    def input_field(self) -> web_forms.Field:
+        fval = self.formValue()
         return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values,
             None,
-            default=form_value,
-            rows=max(self.min_input_rows, min(self.max_input_rows, form_value.count('\r\n'))),
+            default=fval,
+            rows=max(self.min_input_rows, min(self.max_input_rows, fval.count('\r\n'))),
             cols=self.cols
         )
 
@@ -1764,8 +1764,8 @@ class Timespan(Integer):
             result = Integer.formValue(self)
         return result
 
-    def formField(self) -> web_forms.Field:
-        return IA5String.formField(self)
+    def input_field(self) -> web_forms.Field:
+        return IA5String.input_field(self)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
@@ -1800,20 +1800,20 @@ class SelectList(DirectoryString):
 
     def _sorted_select_options(self):
         # First generate a set of all other currently available attribute values
-        form_value = DirectoryString.formValue(self)
+        fval = DirectoryString.formValue(self)
         # Initialize a dictionary with all options
         vdict = self._get_attr_value_dict()
         # Remove other existing values from the options dict
         for val in self._entry.get(self._at, []):
             val = self._app.ls.uc_decode(val)[0]
-            if val != form_value:
+            if val != fval:
                 try:
                     del vdict[val]
                 except KeyError:
                     pass
         # Add the current attribute value if needed
-        if form_value not in vdict:
-            vdict[form_value] = form_value
+        if fval not in vdict:
+            vdict[fval] = fval
         # Finally return the sorted option list
         result = []
         for key, val in vdict.items():
@@ -1850,11 +1850,11 @@ class SelectList(DirectoryString):
             attr_title=self._app.form.utf2display(attr_title or '')
         )
 
-    def formField(self) -> web_forms.Field:
+    def input_field(self) -> web_forms.Field:
         attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
         if self.input_fallback and \
            (not attr_value_dict or not list(filter(None, attr_value_dict.keys()))):
-            return DirectoryString.formField(self)
+            return DirectoryString.input_field(self)
         field = web_forms.Select(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -2288,15 +2288,15 @@ class BitArrayInteger(MultilineText, Integer):
         ]
         return '\r\n'.join(flag_lines)
 
-    def formField(self) -> web_forms.Field:
-        form_value = self.formValue()
+    def input_field(self) -> web_forms.Field:
+        fval = self.formValue()
         return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values,
             None,
-            default=form_value,
-            rows=max(self.min_input_rows, min(self.max_input_rows, form_value.count('\n'))),
+            default=fval,
+            rows=max(self.min_input_rows, min(self.max_input_rows, fval.count('\n'))),
             cols=max([len(desc) for desc, _ in self.flag_desc_table])+1
         )
 
@@ -2598,7 +2598,7 @@ class ComposedAttribute(LDAPSyntax):
             return attr_values
         return attr_values
 
-    def formField(self) -> web_forms.Field:
+    def input_field(self) -> web_forms.Field:
         """
         composed attributes must only have hidden input field
         """

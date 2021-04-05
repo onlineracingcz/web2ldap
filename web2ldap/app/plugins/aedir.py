@@ -180,7 +180,7 @@ class AEHomeDirectory(HomeDirectory):
             prefix = self.homeDirectoryPrefixes[0]
         return [self._app.ls.uc_encode('/'.join((prefix, uid)))[0]]
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -207,7 +207,7 @@ class AEUIDNumber(UidNumber):
     def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         return self._entry.get('gidNumber', [b''])
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -279,8 +279,8 @@ class AEGIDNumber(GidNumber):
     def formValue(self) -> str:
         return Integer.formValue(self)
 
-    def formField(self) -> web2ldap.web.forms.Field:
-        return Integer.formField(self)
+    def input_field(self) -> web2ldap.web.forms.Field:
+        return Integer.input_field(self)
 
 syntax_registry.reg_at(
     AEGIDNumber.oid, [
@@ -344,12 +344,12 @@ class AEUserUid(AEUid):
         # end of _gen_uid()
 
     def formValue(self) -> str:
-        form_value = IA5String.formValue(self)
+        fval = IA5String.formValue(self)
         if not self._av:
-            form_value = self._gen_uid()
-        return form_value
+            fval = self._gen_uid()
+        return fval
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         return web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -637,7 +637,7 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
     def formValue(self) -> str:
         return ''
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -1479,7 +1479,7 @@ class AEDerefAttribute(DirectoryString):
     def formValue(self) -> str:
         return ''
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -1574,10 +1574,10 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
             attr_values = AEPersonAttribute.transmute(self, attr_values)
         return attr_values
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         if self._is_mail_account():
-            return SelectList.formField(self)
-        return AEPersonAttribute.formField(self)
+            return SelectList.input_field(self)
+        return AEPersonAttribute.input_field(self)
 
 syntax_registry.reg_at(
     AEUserMailaddress.oid, [
@@ -1792,7 +1792,7 @@ class AEUniqueIdentifier(DirectoryString):
             return [self.gen_template.format(timestamp=time.time()).encode(self._app.ls.charset)]
         return attr_values
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -2321,7 +2321,7 @@ class AERFC822MailMember(DynamicValueSelectList, AEObjectMixIn):
             mail_addresses.extend(res.entry_as['mail'])
         return sorted(mail_addresses)
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -2367,7 +2367,7 @@ class AESudoHost(IA5String):
     def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         return [b'ALL']
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         input_field = web2ldap.web.forms.HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),

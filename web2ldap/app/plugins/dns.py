@@ -81,16 +81,16 @@ class AssociatedDomain(DNSDomain):
         return attr_value
 
     def formValue(self) -> str:
-        form_value = DNSDomain.formValue(self)
+        fval = DNSDomain.formValue(self)
         parent_domain = self._parent_domain() or ''
-        if not form_value:
+        if not fval:
             try:
                 dc_value = self._entry['dc'][0].decode(self._app.ls.charset)
             except (KeyError, IndexError):
                 pass
             else:
-                form_value = '.'.join((dc_value, parent_domain))
-        return form_value
+                fval = '.'.join((dc_value, parent_domain))
+        return fval
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         res = [DNSDomain.display(self, valueindex, commandbutton)]

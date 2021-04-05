@@ -110,8 +110,8 @@ class ObjectSID(OctetString, IA5String):
             return ''
         return sid2sddl(self._av)
 
-    def formField(self) -> web2ldap.web.forms.Field:
-        return IA5String.formField(self)
+    def input_field(self) -> web2ldap.web.forms.Field:
+        return IA5String.input_field(self)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return '%s<br>%s' % (
@@ -447,7 +447,7 @@ class LogonHours(OctetString):
             day_bits = []
         return '\r\n'.join(day_bits)
 
-    def formField(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> web2ldap.web.forms.Field:
         return web2ldap.web.forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
