@@ -46,7 +46,7 @@ class AutogenNumberMixIn:
     maxNewValue = 19999
     object_class = 'posixAccount'
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         oc_set = {
             oc.lower().decode('ascii')
             for oc in self._entry['objectClass']
@@ -97,11 +97,11 @@ class AutogenUIDNumber(UidNumber, AutogenNumberMixIn):
     maxNewValue = 19999
     object_class = 'posixAccount'
 
-    def formValue(self) -> str:
-        fval = UidNumber.formValue(self)
+    def form_value(self) -> str:
+        fval = UidNumber.form_value(self)
         if not fval:
-            fval = AutogenNumberMixIn.formValue(self)
-        return fval # formValue()
+            fval = AutogenNumberMixIn.form_value(self)
+        return fval # form_value()
 
 syntax_registry.reg_at(
     AutogenUIDNumber.oid, [
@@ -115,11 +115,11 @@ class AutogenGIDNumber(GidNumber, AutogenNumberMixIn):
     desc: str = 'numeric Unix-GID'
     object_class = 'posixGroup'
 
-    def formValue(self) -> str:
-        fval = GidNumber.formValue(self)
+    def form_value(self) -> str:
+        fval = GidNumber.form_value(self)
         if not fval:
-            fval = AutogenNumberMixIn.formValue(self)
-        return fval # formValue()
+            fval = AutogenNumberMixIn.form_value(self)
+        return fval # form_value()
 
 syntax_registry.reg_at(
     AutogenGIDNumber.oid, [

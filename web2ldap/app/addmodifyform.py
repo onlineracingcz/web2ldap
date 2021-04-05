@@ -353,8 +353,8 @@ class InputFormEntry(DisplayEntry):
                     HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
                     HIDDEN_FIELD % (
                         'in_av',
-                        self._app.form.utf2display(attr_inst.formValue(), sp_entity='  '),
-                        self._app.form.utf2display(attr_inst.formValue(), sp_entity='&nbsp;&nbsp;')
+                        self._app.form.utf2display(attr_inst.form_value(), sp_entity='  '),
+                        self._app.form.utf2display(attr_inst.form_value(), sp_entity='&nbsp;&nbsp;')
                     ),
                     attr_inst.value_button(self._app.command, self.row_counter, '+'),
                     '</span>'*highlight_invalid,
@@ -510,7 +510,7 @@ class InputFormEntry(DisplayEntry):
                     self._app.outf.write(self._app.form.hiddenFieldHTML('in_at', attr_type, ''))
                     self._app.outf.write(HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''))
                     try:
-                        attr_value_html = self._app.form.utf2display(attr_inst.formValue(), sp_entity='  ')
+                        attr_value_html = self._app.form.utf2display(attr_inst.form_value(), sp_entity='  ')
                     except UnicodeDecodeError:
                         # Simply display an empty string if anything goes wrong with Unicode decoding (e.g. with binary attributes)
                         attr_value_html = ''

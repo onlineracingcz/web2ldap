@@ -187,7 +187,7 @@ class AEHomeDirectory(HomeDirectory):
             self.max_len,
             self.max_values,
             None,
-            default=self.formValue()
+            default=self.form_value()
         )
         input_field.charset = self._app.form.accept_charset
         return input_field
@@ -212,7 +212,7 @@ class AEUIDNumber(UidNumber):
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
-            default=self.formValue()
+            default=self.form_value()
         )
         input_field.charset = self._app.form.accept_charset
         return input_field
@@ -276,8 +276,8 @@ class AEGIDNumber(GidNumber):
         # return next ID from pool entry
         return [str(self._get_next_gid()).encode('ascii')]
 
-    def formValue(self) -> str:
-        return Integer.formValue(self)
+    def form_value(self) -> str:
+        return Integer.form_value(self)
 
     def input_field(self) -> web2ldap.web.forms.Field:
         return Integer.input_field(self)
@@ -343,8 +343,8 @@ class AEUserUid(AEUid):
         )
         # end of _gen_uid()
 
-    def formValue(self) -> str:
-        fval = IA5String.formValue(self)
+    def form_value(self) -> str:
+        fval = IA5String.form_value(self)
         if not self._av:
             fval = self._gen_uid()
         return fval
@@ -354,7 +354,7 @@ class AEUserUid(AEUid):
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
-            default=self.formValue()
+            default=self.form_value()
         )
 
     def sanitize(self, attr_value: bytes) -> bytes:
@@ -634,7 +634,7 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
             return []
         return list(filter(None, self._member_uids_from_member()))
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         return ''
 
     def input_field(self) -> web2ldap.web.forms.Field:
@@ -644,7 +644,7 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
             self.max_len, self.max_values, None,
         )
         input_field.charset = self._app.form.accept_charset
-        input_field.set_default(self.formValue())
+        input_field.set_default(self.form_value())
         return input_field
 
 syntax_registry.reg_at(
@@ -1476,7 +1476,7 @@ class AEDerefAttribute(DirectoryString):
             result = attr_values
         return result
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         return ''
 
     def input_field(self) -> web2ldap.web.forms.Field:
@@ -1486,7 +1486,7 @@ class AEDerefAttribute(DirectoryString):
             self.max_len, self.max_values, None,
         )
         input_field.charset = self._app.form.accept_charset
-        input_field.set_default(self.formValue())
+        input_field.set_default(self.form_value())
         return input_field
 
 
@@ -1557,10 +1557,10 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
             return SelectList._validate(self, attr_value)
         return AEPersonAttribute._validate(self, attr_value)
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         if self._is_mail_account():
-            return SelectList.formValue(self)
-        return AEPersonAttribute.formValue(self)
+            return SelectList.form_value(self)
+        return AEPersonAttribute.form_value(self)
 
     def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         if self._is_mail_account():
@@ -1797,7 +1797,7 @@ class AEUniqueIdentifier(DirectoryString):
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
-            default=self.formValue(),
+            default=self.form_value(),
         )
         input_field.charset = self._app.form.accept_charset
         return input_field
@@ -1921,8 +1921,8 @@ class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
             )
         return result
 
-    def formValue(self) -> str:
-        result = DirectoryString.formValue(self)
+    def form_value(self) -> str:
+        result = DirectoryString.form_value(self)
         zone_cn = self._get_zone_name()
         if zone_cn:
             if not self._av:
@@ -2328,7 +2328,7 @@ class AERFC822MailMember(DynamicValueSelectList, AEObjectMixIn):
             self.max_len, self.max_values, None,
         )
         input_field.charset = self._app.form.accept_charset
-        input_field.set_default(self.formValue())
+        input_field.set_default(self.form_value())
         return input_field
 
 syntax_registry.reg_at(
@@ -2372,7 +2372,7 @@ class AESudoHost(IA5String):
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
-            default=self.formValue()
+            default=self.form_value()
         )
         input_field.charset = self._app.form.accept_charset
         return input_field

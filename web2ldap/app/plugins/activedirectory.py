@@ -105,7 +105,7 @@ class ObjectSID(OctetString, IA5String):
             return b''
         return sddl2sid(attr_value.decode('ascii'))
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         if not self._av:
             return ''
         return sid2sddl(self._av)
@@ -436,7 +436,7 @@ class LogonHours(OctetString):
     def _validate(self, attr_value: bytes) -> bool:
         return len(attr_value) == 21
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         hour_flags = self._extract_hours(self._av)
         if hour_flags:
             day_bits = [
@@ -454,7 +454,7 @@ class LogonHours(OctetString):
             self.max_len,
             1,
             None,
-            default=self.formValue(),
+            default=self.form_value(),
             rows=7,
             cols=24,
         )

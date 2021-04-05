@@ -112,8 +112,8 @@ class OlcRootDN(BindDN):
     desc: str = 'The rootdn in the database'
     default_rdn = u'cn=admin'
 
-    def formValue(self) -> str:
-        fval = BindDN.formValue(self)
+    def form_value(self) -> str:
+        fval = BindDN.form_value(self)
         try:
             olc_suffix = self._entry['olcSuffix'][0].decode()
         except KeyError:

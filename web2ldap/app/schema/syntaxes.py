@@ -323,7 +323,7 @@ class LDAPSyntax:
         Transforms the HTML form input field values into LDAP string
         representations and returns raw binary string.
 
-        This is the inverse of LDAPSyntax.formValue().
+        This is the inverse of LDAPSyntax.form_value().
 
         When using this method one MUST NOT assume that the whole entry is
         present.
@@ -412,7 +412,7 @@ class LDAPSyntax:
             mode, row, link_text
         )
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         """
         Transform LDAP string representations to HTML form input field
         values. Returns Unicode string to be encoded with the browser's
@@ -440,7 +440,7 @@ class LDAPSyntax:
             size=min(self.max_len, self.input_size),
         )
         input_field.charset = self._app.form.accept_charset
-        input_field.set_default(self.formValue())
+        input_field.set_default(self.form_value())
         return input_field
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -725,7 +725,7 @@ class GeneralizedTime(IA5String):
     timeDefault = None
     notBefore = None
     notAfter = None
-    formValueFormat = '%Y-%m-%dT%H:%M:%SZ'
+    form_value_fmt = '%Y-%m-%dT%H:%M:%SZ'
     dtFormats = (
         '%Y%m%d%H%M%SZ',
         '%Y-%m-%dT%H:%M:%SZ',
@@ -768,15 +768,15 @@ class GeneralizedTime(IA5String):
             and (self.notAfter is None or self.notAfter >= d_t)
         )
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         if not self._av:
             return ''
         try:
             d_t = datetime.datetime.strptime(self.av_u, r'%Y%m%d%H%M%SZ')
         except ValueError:
-            result = IA5String.formValue(self)
+            result = IA5String.form_value(self)
         else:
-            result = str(datetime.datetime.strftime(d_t, self.formValueFormat))
+            result = str(datetime.datetime.strftime(d_t, self.form_value_fmt))
         return result
 
     def sanitize(self, attr_value: bytes) -> bytes:
@@ -907,7 +907,7 @@ class NullTerminatedDirectoryString(DirectoryString):
     def _validate(self, attr_value: bytes) -> bool:
         return attr_value.endswith(b'\x00')
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         return self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -970,7 +970,7 @@ class Integer(IA5String):
             return attr_value
 
     def input_field(self) -> web_forms.Field:
-        fval = self.formValue()
+        fval = self.form_value()
         max_len = self._maxlen(fval)
         input_field = web_forms.Input(
             self._at,
@@ -1372,7 +1372,7 @@ class OctetString(Binary):
         ]
         return '\n<table class="HexDump">\n%s\n</table>\n' % ('\n'.join(lines))
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         hex_av = (self._av or b'').hex().upper()
         hex_range = range(0, len(hex_av), 2)
         return str('\r\n'.join(
@@ -1383,7 +1383,7 @@ class OctetString(Binary):
         ))
 
     def input_field(self) -> web_forms.Field:
-        fval = self.formValue()
+        fval = self.form_value()
         return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -1426,7 +1426,7 @@ class MultilineText(DirectoryString):
             for line_b in self._split_lines(self._av)
         ])
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         splitted_lines = [
             self._app.ls.uc_decode(line_b)[0]
             for line_b in self._split_lines(self._av or b'')
@@ -1434,7 +1434,7 @@ class MultilineText(DirectoryString):
         return '\r\n'.join(splitted_lines)
 
     def input_field(self) -> web_forms.Field:
-        fval = self.formValue()
+        fval = self.form_value()
         return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -1755,13 +1755,13 @@ class Timespan(Integer):
             result = Integer.sanitize(self, attr_value)
         return result
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         if not self._av:
             return ''
         try:
             result = ts2repr(self.time_divisors, self.sep, self._av)
         except ValueError:
-            result = Integer.formValue(self)
+            result = Integer.form_value(self)
         return result
 
     def input_field(self) -> web_forms.Field:
@@ -1800,7 +1800,7 @@ class SelectList(DirectoryString):
 
     def _sorted_select_options(self):
         # First generate a set of all other currently available attribute values
-        fval = DirectoryString.formValue(self)
+        fval = DirectoryString.form_value(self)
         # Initialize a dictionary with all options
         vdict = self._get_attr_value_dict()
         # Remove other existing values from the options dict
@@ -1860,7 +1860,7 @@ class SelectList(DirectoryString):
             ': '.join([self._at, self.desc]),
             1,
             options=self._sorted_select_options(),
-            default=self.formValue(),
+            default=self.form_value(),
             required=0
         )
         field.charset = self._app.form.accept_charset
@@ -2277,7 +2277,7 @@ class BitArrayInteger(MultilineText, Integer):
                             pass
         return str(result).encode('ascii')
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         attr_value_int = int(self.av_u or 0)
         flag_lines = [
             ''.join((
@@ -2289,7 +2289,7 @@ class BitArrayInteger(MultilineText, Integer):
         return '\r\n'.join(flag_lines)
 
     def input_field(self) -> web_forms.Field:
-        fval = self.formValue()
+        fval = self.form_value()
         return web_forms.Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
@@ -2367,7 +2367,7 @@ class DNSDomain(IA5String):
             for dc in attr_value.decode(self._app.form.accept_charset).split('.')
         ])
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         try:
             result = '.'.join([
                 dc.decode('idna')
@@ -2381,7 +2381,7 @@ class DNSDomain(IA5String):
         if self.av_u != self._av.decode('idna'):
             return '%s (%s)' % (
                 IA5String.display(self, valueindex, commandbutton),
-                self._app.form.utf2display(self.formValue())
+                self._app.form.utf2display(self.form_value())
             )
         return IA5String.display(self, valueindex, commandbutton)
 
@@ -2398,17 +2398,17 @@ class RFC822Address(DNSDomain, IA5String):
     def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
         IA5String.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         if not self._av:
-            return IA5String.formValue(self)
+            return IA5String.form_value(self)
         try:
             localpart, domainpart = self._av.rsplit(b'@')
         except ValueError:
-            return IA5String.formValue(self)
+            return IA5String.form_value(self)
         dns_domain = DNSDomain(self._app, self._dn, self._schema, None, domainpart)
         return '@'.join((
             localpart.decode(self._app.ls.charset),
-            dns_domain.formValue()
+            dns_domain.form_value()
         ))
 
     def sanitize(self, attr_value: bytes) -> bytes:
@@ -2574,7 +2574,7 @@ class ComposedAttribute(LDAPSyntax):
             if val and val[0]:
                 dict.__setitem__(self, key, val[0].decode(self._encoding))
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         """
         Return a dummy value that attribute is returned from input form and
         then seen by .transmute()
@@ -2608,7 +2608,7 @@ class ComposedAttribute(LDAPSyntax):
             self.max_len,
             self.max_values,
             None,
-            default=self.formValue(),
+            default=self.form_value(),
         )
         input_field.charset = self._app.form.accept_charset
         return input_field

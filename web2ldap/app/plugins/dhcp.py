@@ -282,8 +282,8 @@ class DHCPRange(IA5String):
         net_mask = self._entry['dhcpNetMask'][0].strip().decode('ascii')
         return ipaddress.ip_network(('%s/%s' % (cn, net_mask)), strict=False)
 
-    def formValue(self) -> str:
-        fval = IA5String.formValue(self)
+    def form_value(self) -> str:
+        fval = IA5String.form_value(self)
         if not fval:
             try:
                 ipv4_hosts = self._get_ipnetwork().hosts()

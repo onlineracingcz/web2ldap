@@ -80,8 +80,8 @@ class AssociatedDomain(DNSDomain):
                 attr_value = DNSDomain.sanitize(self, b'.'.join((dc_value, parent_domain)))
         return attr_value
 
-    def formValue(self) -> str:
-        fval = DNSDomain.formValue(self)
+    def form_value(self) -> str:
+        fval = DNSDomain.form_value(self)
         parent_domain = self._parent_domain() or ''
         if not fval:
             try:

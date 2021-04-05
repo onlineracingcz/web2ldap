@@ -417,13 +417,13 @@ class OpenDSdsCfgAlternatebindDn(BindDN):
     oid: str = 'OpenDSdsCfgAlternatebindDn-oid'
     desc: str = 'OpenDS/OpenDJ alternative bind DN'
 
-    def formValue(self) -> str:
+    def form_value(self) -> str:
         if not self._av:
             return ''
         try:
             dn_obj = DNObj(self.av_u)
         except ldap0.DECODING_ERROR:
-            return BindDN.formValue(self)
+            return BindDN.form_value(self)
         new_rdn = DNObj(tuple([
             (
                 rdn_attr,
