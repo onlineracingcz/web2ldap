@@ -101,7 +101,11 @@ class EuVATId(IA5String):
 
     def _validate(self, attr_value: bytes) -> bool:
         if VATNUMBER_AVAIL:
-            return vatnumber.check_vat(attr_value)
+            try:
+                av_u = self._app.ls.uc_decode(attr_value)[0]
+            except UnicodeDecodeError:
+                return False
+            return vatnumber.check_vat(av_u)
         return IA5String._validate(self, attr_value)
 
     def sanitize(self, attr_value: bytes) -> bytes:
