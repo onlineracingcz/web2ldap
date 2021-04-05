@@ -36,6 +36,7 @@ elif os.name == 'posix' and sys.prefix in OS_SYS_PREFIXES:
 else:
     # virtual env
     etc_dir = os.path.join(sys.prefix, 'etc', 'web2ldap')
+sys.path.append(etc_dir)
 
 # Default directory for [web2ldap]/etc/web2ldap/templates
 templates_dir = os.path.join(etc_dir, 'templates')

@@ -19,6 +19,13 @@ import warnings
 import wsgiref.util
 import wsgiref.simple_server
 
+# this has to be done before import module package ldap0
+os.environ['LDAPNOINIT'] = '1'
+import ldap0
+
+# import config after extending Python module path
+import web2ldapcnf
+
 from . import etc_dir
 from .log import logger
 from .web.wsgi import (
@@ -26,18 +33,9 @@ from .web.wsgi import (
     W2lWSGIServer,
     W2lWSGIRequestHandler,
 )
-
-# this has to be done before import module package ldap0
-os.environ['LDAPNOINIT'] = '1'
-logger.debug('Disabled processing .ldaprc or ldap.conf (LDAPNOINIT=%s)', os.environ['LDAPNOINIT'])
-import ldap0
-
 from .checkinst import check_inst
-check_inst()
 
-sys.path.append(etc_dir)
-# import config after extending Python module path
-import web2ldapcnf
+check_inst()
 
 ########################################################################
 # Initialize some constants
@@ -68,7 +66,7 @@ def application(environ, start_response):
     # check URL path whether to deliver a static file
     if environ['PATH_INFO'].startswith('/css/web2ldap'):
         css_filename = os.path.join(
-            web2ldapcnf.etc_dir,
+            etc_dir,
             'css',
             os.path.basename(environ['PATH_INFO'])
         )
