@@ -18,7 +18,6 @@ import ldap0.dn
 from ldap0.cidict import CIDict
 from ldap0.schema.models import SchemaElementOIDSet, AttributeType
 
-from ..msbase import GrabKeys
 from .schema import no_humanreadable_attr, no_userapp_attr
 from .schema.syntaxes import syntax_registry
 from .schema.viewer import schema_anchor
