@@ -1265,14 +1265,14 @@ class OID(IA5String):
             name, description, reference = OID_REG[self.av_u]
         except (KeyError, ValueError):
             try:
-                se = self._schema.get_obj(
+                se_obj = self._schema.get_obj(
                     ObjectClass,
                     self.av_u,
                     raise_keyerror=1,
                 )
             except KeyError:
                 try:
-                    se = self._schema.get_obj(
+                    se_obj = self._schema.get_obj(
                         AttributeType,
                         self.av_u,
                         raise_keyerror=1,
@@ -1289,7 +1289,7 @@ class OID(IA5String):
             if self._at.lower() == 'structuralobjectclass':
                 name_template = '{name}\n{anchor}'
             else:
-                name_template = '{name}\n (%s){anchor}' % (OBJECTCLASS_KIND_STR[se.kind],)
+                name_template = '{name}\n (%s){anchor}' % (OBJECTCLASS_KIND_STR[se_obj.kind],)
             # objectClass attribute is displayed with different function
             return schema_anchor(
                 self._app,
