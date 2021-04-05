@@ -114,8 +114,12 @@ class Certificate(Binary):
             return ''.join(html)
         html.append(
             self.cert_display_template.format(
-                cert_issuer_dn=self._app.form.utf2display(x509name2ldapdn(x509.issuer, self._schema)),
-                cert_subject_dn=self._app.form.utf2display(x509name2ldapdn(x509.subject, self._schema)),
+                cert_issuer_dn=self._app.form.utf2display(
+                    x509name2ldapdn(x509.issuer, self._schema)
+                ),
+                cert_subject_dn=self._app.form.utf2display(
+                    x509name2ldapdn(x509.subject, self._schema)
+                ),
                 cert_serial_number_dec=str(x509.serial_number),
                 cert_serial_number_hex=hex(x509.serial_number),
                 cert_not_before=x509['tbs_certificate']['validity']['not_before'].native,
@@ -168,7 +172,9 @@ class CertificateList(Binary):
             crl_html = ''
         else:
             crl_html = self.crl_display_template.format(
-                crl_issuer_dn=self._app.form.utf2display(x509name2ldapdn(x509.issuer, self._schema)),
+                crl_issuer_dn=self._app.form.utf2display(
+                    x509name2ldapdn(x509.issuer, self._schema)
+                ),
                 crl_this_update=x509['tbs_cert_list']['this_update'].native,
                 crl_next_update=x509['tbs_cert_list']['next_update'].native,
             )
