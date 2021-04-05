@@ -34,7 +34,6 @@ from ..web.forms import Select as SelectField
 from ..__about__ import __version__
 from ..web import escape_html
 from ..ldaputil import logdb_filter
-from ..log import logger
 from .tmpl import read_template
 
 
