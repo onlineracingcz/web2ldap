@@ -1000,7 +1000,7 @@ class IPHostAddress(IA5String):
     def _validate(self, attr_value: bytes) -> bool:
         try:
             addr = ipaddress.ip_address(attr_value.decode('ascii'))
-        except Exception:
+        except ValueError:
             return False
         return self.addr_class is None or isinstance(addr, self.addr_class)
 
@@ -1033,7 +1033,7 @@ class IPNetworkAddress(IPHostAddress):
     def _validate(self, attr_value: bytes) -> bool:
         try:
             addr = ipaddress.ip_network(attr_value.decode('ascii'), strict=False)
-        except Exception:
+        except ValueError:
             return False
         return self.addr_class is None or isinstance(addr, self.addr_class)
 
