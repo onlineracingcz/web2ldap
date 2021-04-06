@@ -39,11 +39,11 @@ class AssociatedDomain(DNSDomain):
         ocs = self._entry.object_class_oid_set()
         if 'dNSDomain' in ocs or 'dNSDomain2' in ocs:
             try:
-                dc = self._entry['dc'][0]
+                dc_aval = self._entry['dc'][0]
             except KeyError:
                 pass
             else:
-                result = result and (attr_value == dc or attr_value.startswith(dc+b'.'))
+                result = result and (attr_value == dc_aval or attr_value.startswith(dc_aval+b'.'))
         return result
 
     def _parent_domain(self):
