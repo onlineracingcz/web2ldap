@@ -69,8 +69,8 @@ class Web2LDAPForm(Form):
             self.cookies = http.cookies.SimpleCookie()
         self.next_cookie = http.cookies.SimpleCookie()
 
+    @staticmethod
     def utf2display(
-            self,
             value,
             tab_identiation='',
             sp_entity='&nbsp;&nbsp;',
