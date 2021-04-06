@@ -6,19 +6,20 @@ web2ldap plugin classes for schema elements defined in RFC2307
 import re
 from typing import Dict
 
-import web2ldap.web.forms
-import web2ldap.app.searchform
-from web2ldap.app.schema.syntaxes import \
-    DaysSinceEpoch, \
-    DNSDomain, \
-    DynamicValueSelectList, \
-    IA5String, \
-    Integer, \
-    IPHostAddress, \
-    IPServicePortNumber, \
-    MacAddress, \
-    SelectList, \
-    syntax_registry
+from ...web.forms import Field
+from ..searchform import SEARCH_OPT_IS_EQUAL
+from ..schema.syntaxes import (
+    DaysSinceEpoch,
+    DNSDomain,
+    DynamicValueSelectList,
+    IA5String,
+    Integer,
+    IPHostAddress,
+    IPServicePortNumber,
+    MacAddress,
+    SelectList,
+    syntax_registry,
+)
 
 
 class RFC2307BootParameter(IA5String):
@@ -51,10 +52,10 @@ class GidNumber(DynamicValueSelectList, Integer):
                 ('dn', self._dn),
                 ('searchform_mode', 'adv'),
                 ('search_attr', 'objectClass'),
-                ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                ('search_option', SEARCH_OPT_IS_EQUAL),
                 ('search_string', 'posixAccount'),
                 ('search_attr', 'gidNumber'),
-                ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                ('search_option', SEARCH_OPT_IS_EQUAL),
                 ('search_string', self.av_u),
             ]
         else:
@@ -68,7 +69,7 @@ class GidNumber(DynamicValueSelectList, Integer):
             ))
         return ' '.join(res)
 
-    def input_field(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> Field:
         ocs = self._entry.object_class_oid_set()
         if 'posixAccount' in ocs or 'shadowAccount' in ocs:
             return DynamicValueSelectList.input_field(self)
@@ -97,7 +98,7 @@ class MemberUID(IA5String, DynamicValueSelectList):
             return DynamicValueSelectList._validate(self, attr_value)
         return IA5String._validate(self, attr_value)
 
-    def input_field(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> Field:
         if self.ldap_url:
             return DynamicValueSelectList.input_field(self)
         return IA5String.input_field(self)
