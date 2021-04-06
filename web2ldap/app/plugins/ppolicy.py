@@ -182,12 +182,12 @@ class PwdChangedTime(GeneralizedTime):
         except ValueError:
             return gt_disp_html
         try:
-            pwd_policy_subentry_dn = self._entry['pwdPolicySubentry'][0].decode(self._app.ls.charset)
+            pwdpolicysubentry_dn = self._entry['pwdPolicySubentry'][0].decode(self._app.ls.charset)
         except KeyError:
             return gt_disp_html
         try:
             pwd_policy = self._app.ls.l.read_s(
-                pwd_policy_subentry_dn,
+                pwdpolicysubentry_dn,
                 filterstr='(objectClass=pwdPolicy)',
                 attrlist=['pwdMaxAge', 'pwdExpireWarning'],
             )
