@@ -13,11 +13,11 @@ from ldap0.msad import sid2sddl, sddl2sid
 
 import web2ldapcnf
 
-import web2ldap.web.forms
-import web2ldap.app.searchform
-from web2ldap.utctime import strftimeiso8601
-from web2ldap.app.plugins.groups import GroupEntryDN
-from web2ldap.app.schema.syntaxes import (
+from ...web.forms import Field, Textarea
+from ...utctime import strftimeiso8601
+from ..searchform import SEARCH_OPT_IS_EQUAL
+from .groups import GroupEntryDN
+from ..schema.syntaxes import (
     Binary,
     BitArrayInteger,
     Boolean,
@@ -110,7 +110,7 @@ class ObjectSID(OctetString, IA5String):
             return ''
         return sid2sddl(self._av)
 
-    def input_field(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> Field:
         return IA5String.input_field(self)
 
     def display(self, valueindex=0, commandbutton=False) -> str:
@@ -189,7 +189,7 @@ class OtherSID(ObjectSID):
                     ('dn', self._dn),
                     ('searchform_mode', 'adv'),
                     ('search_attr', 'objectSid'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', sddl_str),
                 ],
                 title='Search by SID',
@@ -447,8 +447,8 @@ class LogonHours(OctetString):
             day_bits = []
         return '\r\n'.join(day_bits)
 
-    def input_field(self) -> web2ldap.web.forms.Field:
-        return web2ldap.web.forms.Textarea(
+    def input_field(self) -> Field:
+        return Textarea(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len,
