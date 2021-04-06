@@ -95,7 +95,7 @@ class AssociatedDomain(DNSDomain):
     def display(self, valueindex=0, commandbutton=False) -> str:
         res = [DNSDomain.display(self, valueindex, commandbutton)]
         if commandbutton:
-            av = self.av_u.lower()
+            aval = self.av_u.lower()
             res.append(self._app.anchor(
                 'search', 'Ref. RRs',
                 (
@@ -104,17 +104,17 @@ class AssociatedDomain(DNSDomain):
                     ('search_mode', '(|%s)'),
                     ('search_attr', 'cNAMERecord'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', av),
+                    ('search_string', aval),
                     ('search_attr', 'nSRecord'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', av),
+                    ('search_string', aval),
                     ('search_attr', 'pTRRecord'),
                     ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
-                    ('search_string', av),
+                    ('search_string', aval),
                 ),
                 title='Search referencing DNS RR entries',
             ))
-            parent_domain = '.'.join(av.strip().split('.')[1:])
+            parent_domain = '.'.join(aval.strip().split('.')[1:])
             if parent_domain and 'sOARecord' not in self._entry:
                 res.append(self._app.anchor(
                     'search', 'SOA RR',
@@ -130,10 +130,10 @@ class AssociatedDomain(DNSDomain):
                     ),
                     title='Search SOA RR entry of parent domain',
                 ))
-            if av.endswith('.in-addr.arpa'):
+            if aval.endswith('.in-addr.arpa'):
                 try:
                     ip_addr_u = '.'.join(
-                        map(str, reversed(list(map(int, av.split('.')[0:4]))))
+                        map(str, reversed(list(map(int, aval.split('.')[0:4]))))
                     )
                 except ValueError:
                     pass
