@@ -20,18 +20,18 @@ from ldap0.pw import random_string
 
 import web2ldapcnf
 
-from web2ldap.web import HTML_ESCAPE_MAP
-import web2ldap.ldaputil
-from web2ldap.ldaputil.oidreg import OID_REG
-import web2ldap.ldapsession
-import web2ldap.ldaputil.passwd
-import web2ldap.app.gui
-import web2ldap.app.searchform
-import web2ldap.app.params
-import web2ldap.app.session
-from web2ldap.ldapsession import AVAILABLE_BOOLEAN_CONTROLS
-import web2ldap.web.forms
-from web2ldap.web.forms import (
+from ..ldapsession import CONTROL_TREEDELETE
+from ..web import HTML_ESCAPE_MAP
+from ..ldaputil import rdn_pattern, attr_type_pattern
+from ..ldaputil.oidreg import OID_REG
+from ..ldaputil.passwd import AVAIL_USERPASSWORD_SCHEMES
+from .gui import host_pattern, HIDDEN_FIELD
+from .searchform import (
+    SEARCH_OPTIONS,
+    SEARCH_SCOPE_OPTIONS,
+    SEARCH_SCOPE_STR_SUBTREE,
+)
+from ..web.forms import (
     Input,
     Field,
     Textarea,
@@ -41,6 +41,8 @@ from web2ldap.web.forms import (
     Form,
     InvalidValueFormat,
 )
+from ..ldapsession import AVAILABLE_BOOLEAN_CONTROLS, CONTROL_TREEDELETE
+from ..web.session import SESSION_ID_CHARS, SESSION_ID_LENGTH, SESSION_ID_REGEX
 
 
 # Work around https://bugs.python.org/issue29613
@@ -106,7 +108,7 @@ class Web2LDAPForm(Form):
     def set_cookie(self, name_suffix):
         # Generate a randomized key and value
         cookie_key = random_string(
-            alphabet=web2ldap.web.session.SESSION_ID_CHARS,
+            alphabet=SESSION_ID_CHARS,
             length=self.cookie_length,
         )
         cookie_name = ''.join((self.cookie_name_prefix, name_suffix))
@@ -128,9 +130,9 @@ class Web2LDAPForm(Form):
             Input(
                 'delsid',
                 'Old SID to be deleted',
-                web2ldap.web.session.SESSION_ID_LENGTH,
+                SESSION_ID_LENGTH,
                 1,
-                web2ldap.web.session.SESSION_ID_REGEX,
+                SESSION_ID_REGEX,
             ),
             Input('who', 'Bind DN/AuthcID', 1000, 1, '.*', size=40),
             Input('cred', 'with Password', 200, 1, '.*', size=15),
@@ -148,14 +150,14 @@ class Web2LDAPForm(Form):
             Input(
                 'host', 'Host:Port',
                 255, 1,
-                '(%s|[a-zA-Z0-9/._-]+)' % web2ldap.app.gui.host_pattern,
+                '(%s|[a-zA-Z0-9/._-]+)' % host_pattern,
                 size=30,
             ),
             DistinguishedNameInput('dn', 'Distinguished Name'),
             Select(
                 'scope', 'Scope', 1,
-                options=web2ldap.app.searchform.SEARCH_SCOPE_OPTIONS,
-                default=web2ldap.app.searchform.SEARCH_SCOPE_STR_SUBTREE,
+                options=SEARCH_SCOPE_OPTIONS,
+                default=SEARCH_SCOPE_STR_SUBTREE,
             ),
             DistinguishedNameInput('login_search_root', 'Login search root'),
             Select(
@@ -206,7 +208,7 @@ class Web2LDAPForm(Form):
           )
 
     def hiddenFieldHTML(self, name, value, desc):
-        return web2ldap.app.gui.HIDDEN_FIELD % (
+        return HIDDEN_FIELD % (
             name,
             self.utf2display(value, sp_entity='  '),
             self.utf2display(desc, sp_entity='&nbsp;&nbsp;'),
@@ -327,7 +329,7 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
             Select(
                 'search_option', 'Search option',
                 web2ldapcnf.max_searchparams,
-                options=web2ldap.app.searchform.SEARCH_OPTIONS,
+                options=SEARCH_OPTIONS,
             ),
             Input(
                 'search_string', 'Search string',
@@ -627,7 +629,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
                 or 'delete' in control_spec[0]
             )
         ]
-        delete_ctrl_options.append((web2ldap.ldapsession.CONTROL_TREEDELETE, 'Tree Deletion'))
+        delete_ctrl_options.append((CONTROL_TREEDELETE, 'Tree Deletion'))
         res.extend([
             Select(
                 'delete_confirm', 'Confirmation',
@@ -665,7 +667,7 @@ class Web2LDAPForm_rename(Web2LDAPForm):
                 'rename_newrdn',
                 'New RDN',
                 255, 1,
-                web2ldap.ldaputil.rdn_pattern,
+                rdn_pattern,
                 size=50,
             ),
             DistinguishedNameInput('rename_newsuperior', 'New superior DN'),
@@ -725,7 +727,7 @@ class Web2LDAPForm_passwd(Web2LDAPForm):
             Field('passwd_newpasswd', 'New password', 100, 2, '.*'),
             Select(
                 'passwd_scheme', 'Password hash scheme', 1,
-                options=web2ldap.ldaputil.passwd.AVAIL_USERPASSWORD_SCHEMES.items(),
+                options=AVAIL_USERPASSWORD_SCHEMES.items(),
                 default=None,
             ),
             Checkbox(
@@ -1005,7 +1007,7 @@ class AttributeType(Input):
             text,
             500,
             maxValues,
-            web2ldap.ldaputil.attr_type_pattern,
+            attr_type_pattern,
             required=False,
             size=30
         )
