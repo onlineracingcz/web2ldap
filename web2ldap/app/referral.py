@@ -17,7 +17,6 @@ import time
 from ldap0.ldapurl import LDAPUrl
 
 import web2ldap.app.gui
-import web2ldap.app.cnf
 
 ERR_MSG_DIV = """
 <h1>Error</h1>

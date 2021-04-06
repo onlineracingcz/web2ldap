@@ -15,7 +15,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 import time
 
 import web2ldap.app.gui
-import web2ldap.app.cnf
 from web2ldap.log import logger
 
 
