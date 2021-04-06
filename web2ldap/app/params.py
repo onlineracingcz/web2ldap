@@ -12,10 +12,13 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
-import web2ldap.ldapsession
-import web2ldap.app.gui
-from web2ldap.ldaputil.oidreg import OID_REG
-from web2ldap.ldapsession import AVAILABLE_BOOLEAN_CONTROLS
+from ..ldaputil.oidreg import OID_REG
+from ..ldapsession import AVAILABLE_BOOLEAN_CONTROLS
+from .gui import (
+    footer,
+    main_menu,
+    top_section,
+)
 
 
 ##############################################################################
@@ -29,10 +32,10 @@ def w2l_params(app):
     if ldap_deref:
         app.ls.l.deref = int(ldap_deref[0])
 
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         'LDAP Connection Parameters',
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=[]
     )
 
@@ -156,4 +159,4 @@ def w2l_params(app):
         )
     )
 
-    web2ldap.app.gui.footer(app)
+    footer(app)
