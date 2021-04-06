@@ -9,18 +9,19 @@ from typing import Dict
 import ldap0
 from ldap0.dn import DNObj
 
-from web2ldap.app.schema.syntaxes import \
-    BindDN, \
-    DirectoryString, \
-    DynamicDNSelectList, \
-    MultilineText, \
-    OctetString, \
-    SelectList, \
-    syntax_registry
-from web2ldap.app.plugins.x509 import Certificate
-from web2ldap.app.plugins.groups import MemberOf
-from web2ldap.app.plugins.quirks import NamingContexts
-from web2ldap.app.schema import no_humanreadable_attr
+from ..schema.syntaxes import (
+    BindDN,
+    DirectoryString,
+    DynamicDNSelectList,
+    MultilineText,
+    OctetString,
+    SelectList,
+    syntax_registry,
+)
+from .x509 import Certificate
+from .groups import MemberOf
+from .quirks import NamingContexts
+from ..schema import no_humanreadable_attr
 
 
 syntax_registry.reg_at(
@@ -53,6 +54,7 @@ syntax_registry.reg_at(
         '1.3.6.1.4.1.26027.1.1.137', # ds-cfg-default-password-storage-scheme
     ]
 )
+
 
 class OpenDSCfgPasswordGenerator(DynamicDNSelectList):
     oid: str = 'OpenDSCfgPasswordGenerator-oid'
