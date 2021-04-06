@@ -27,13 +27,17 @@ from ldap0.schema.models import \
 
 import web2ldapcnf
 
-import web2ldap.web
 from ..msbase import GrabKeys
 from ..web import escape_html
 from ..web.forms import Select as SelectField
 from . import ErrorExit
 
-from .schema import no_userapp_attr, NEEDS_BINARY_TAG
+from .schema import (
+    NEEDS_BINARY_TAG, 
+    no_humanreadable_attr,
+    no_userapp_attr, 
+    object_class_categories, 
+)
 from .schema.viewer import schema_anchors
 from .schema.syntaxes import syntax_registry
 from .schema.syntaxes import LDAPSyntaxValueError
@@ -467,7 +471,7 @@ class InputFormEntry(DisplayEntry):
             if (
                     at_se and
                     at_oid not in seen_attr_type_oids and
-                    not web2ldap.app.schema.no_userapp_attr(self.entry._s, at_oid)
+                    not no_userapp_attr(self.entry._s, at_oid)
                 ):
                 attr_type_names[(at_se.names or (at_se.oid,))[0]] = None
         attr_types = list(attr_type_names.keys())
@@ -501,7 +505,7 @@ class InputFormEntry(DisplayEntry):
             at_oid = self.entry.name2key(attr_type)[0]
             syntax_class = syntax_registry.get_syntax(self.entry._s, attr_type, self.soc)
             if syntax_class.editable and \
-               not web2ldap.app.schema.no_userapp_attr(self.entry._s, attr_type) and \
+               not no_userapp_attr(self.entry._s, attr_type) and \
                not at_oid in displayed_attrs:
                 for attr_value in attr_values:
                     attr_inst = syntax_class(
@@ -526,7 +530,7 @@ class InputFormEntry(DisplayEntry):
         ldap_entry = {}
         for attr_type in self.entry.keys():
             attr_values = self.entry.__getitem__(attr_type)
-            if not web2ldap.app.schema.no_userapp_attr(self.entry._s, attr_type):
+            if not no_userapp_attr(self.entry._s, attr_type):
                 ldap_entry[attr_type.encode('ascii')] = [
                     attr_value
                     for attr_value in attr_values
@@ -662,7 +666,7 @@ def object_class_form(
 
     def object_class_select_fields(app, parent_dn):
 
-        all_structural_oc, all_abstract_oc, all_auxiliary_oc = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
+        all_structural_oc, all_abstract_oc, all_auxiliary_oc = object_class_categories(app.schema, all_oc)
         dit_structure_rule_html = ''
 
         restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, parent_dn)
@@ -809,7 +813,7 @@ def object_class_form(
 
 
     def ldif_template_select_html(app, parent_dn):
-        all_structural_oc, _, _ = web2ldap.app.schema.object_class_categories(app.schema, all_oc)
+        all_structural_oc, _, _ = object_class_categories(app.schema, all_oc)
         addform_entry_templates_keys = list(app.cfg_param('addform_entry_templates', {}).keys())
         addform_parent_attrs = app.cfg_param('addform_parent_attrs', [])
         addform_entry_templates_keys.sort()
@@ -908,7 +912,7 @@ def object_class_form(
 
     command_hidden_fields = [('dn', app.dn)]
 
-    existing_structural_oc, existing_abstract_oc, existing_auxiliary_oc = web2ldap.app.schema.object_class_categories(
+    existing_structural_oc, existing_abstract_oc, existing_auxiliary_oc = object_class_categories(
         app.schema,
         existing_object_classes,
     )
@@ -1184,7 +1188,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
         rdn_candidate_attr_nameoroids = [
             (required_attrs_dict[at_oid].names or (at_oid,))[0]
             for at_oid in required_attrs_dict.keys()
-            if at_oid != '2.5.4.0' and not web2ldap.app.schema.no_humanreadable_attr(app.schema, at_oid)
+            if at_oid != '2.5.4.0' and not no_humanreadable_attr(app.schema, at_oid)
         ]
         if len(rdn_candidate_attr_nameoroids) == 1:
             rdn_input_field.set_default(rdn_candidate_attr_nameoroids[0]+'=')
