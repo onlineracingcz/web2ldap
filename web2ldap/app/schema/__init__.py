@@ -174,6 +174,9 @@ def parse_fake_schema(ldap_def):
 
 
 def schema_link_text(se_obj):
+    """
+    Return link text for a schema object
+    """
     names = [
         escape_html(name)
         for name in getattr(se_obj, 'names', (()))
