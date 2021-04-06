@@ -24,20 +24,21 @@ from ldap0.base import decode_list
 
 import web2ldapcnf
 
-from web2ldap.log import logger
-import web2ldap.web.forms
-import web2ldap.ldaputil
-import web2ldap.app.searchform
-import web2ldap.app.plugins.inetorgperson
-import web2ldap.app.plugins.sudoers
-import web2ldap.app.plugins.ppolicy
-from web2ldap.app.plugins.nis import UidNumber, GidNumber, MemberUID, Shell
-from web2ldap.app.plugins.inetorgperson import DisplayNameInetOrgPerson
-from web2ldap.app.plugins.groups import GroupEntryDN
-from web2ldap.app.plugins.oath import OathHOTPToken
-from web2ldap.app.plugins.opensshlpk import SshPublicKey
-from web2ldap.app.plugins.posixautogen import HomeDirectory
-from web2ldap.app.schema.syntaxes import (
+from ...log import logger
+from ...web.forms import HiddenInput, Field
+from ..searchform import (
+    SEARCH_OPT_IS_EQUAL,
+    SEARCH_OPT_DN_SUBTREE,
+)
+from .nis import UidNumber, GidNumber, MemberUID, Shell
+from .inetorgperson import DisplayNameInetOrgPerson, CNInetOrgPerson
+from .groups import GroupEntryDN
+from .oath import OathHOTPToken
+from .opensshlpk import SshPublicKey
+from .posixautogen import HomeDirectory
+from .ppolicy import PwdPolicySubentry
+from .sudoers import SudoUserGroup
+from ..schema.syntaxes import (
     ComposedAttribute,
     DirectoryString,
     DistinguishedName,
@@ -180,8 +181,8 @@ class AEHomeDirectory(HomeDirectory):
             prefix = self.homeDirectoryPrefixes[0]
         return [self._app.ls.uc_encode('/'.join((prefix, uid)))[0]]
 
-    def input_field(self) -> web2ldap.web.forms.Field:
-        input_field = web2ldap.web.forms.HiddenInput(
+    def input_field(self) -> Field:
+        input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len,
@@ -207,8 +208,8 @@ class AEUIDNumber(UidNumber):
     def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         return self._entry.get('gidNumber', [b''])
 
-    def input_field(self) -> web2ldap.web.forms.Field:
-        input_field = web2ldap.web.forms.HiddenInput(
+    def input_field(self) -> Field:
+        input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
@@ -279,7 +280,7 @@ class AEGIDNumber(GidNumber):
     def form_value(self) -> str:
         return Integer.form_value(self)
 
-    def input_field(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> Field:
         return Integer.input_field(self)
 
 syntax_registry.reg_at(
@@ -349,8 +350,8 @@ class AEUserUid(AEUid):
             fval = self._gen_uid()
         return fval
 
-    def input_field(self) -> web2ldap.web.forms.Field:
-        return web2ldap.web.forms.HiddenInput(
+    def input_field(self) -> Field:
+        return HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
@@ -637,8 +638,8 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
     def form_value(self) -> str:
         return ''
 
-    def input_field(self) -> web2ldap.web.forms.Field:
-        input_field = web2ldap.web.forms.HiddenInput(
+    def input_field(self) -> Field:
+        input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
@@ -948,10 +949,10 @@ class AEEntryDNAEUser(DistinguishedName):
                 ('searchform_mode', 'adv'),
                 ('search_mode', '(|%s)'),
                 ('search_attr', 'creatorsName'),
-                ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                ('search_option', SEARCH_OPT_IS_EQUAL),
                 ('search_string', self.av_u),
                 ('search_attr', 'modifiersName'),
-                ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                ('search_option', SEARCH_OPT_IS_EQUAL),
                 ('search_string', self.av_u),
             ),
             title='Search entries created or modified by %s' % (self.av_u),
@@ -963,10 +964,10 @@ class AEEntryDNAEUser(DistinguishedName):
                     ('dn', self._app.audit_context),
                     ('searchform_mode', 'adv'),
                     ('search_attr', 'objectClass'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', 'auditObject'),
                     ('search_attr', 'reqAuthzID'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
                 ),
                 title='Search modifications made by %s in accesslog DB' % (self.av_u),
@@ -1046,10 +1047,10 @@ class AEEntryDNAEZone(DistinguishedName):
                     ('dn', self._app.audit_context),
                     ('searchform_mode', 'adv'),
                     ('search_attr', 'objectClass'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', 'auditObject'),
                     ('search_attr', 'reqDN'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_DN_SUBTREE),
+                    ('search_option', SEARCH_OPT_DN_SUBTREE),
                     ('search_string', self.av_u),
                 ),
                 title='Search all audit log entries for sub-tree %s' % (self.av_u),
@@ -1060,10 +1061,10 @@ class AEEntryDNAEZone(DistinguishedName):
                     ('dn', self._app.audit_context),
                     ('searchform_mode', 'adv'),
                     ('search_attr', 'objectClass'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', 'auditObject'),
                     ('search_attr', 'reqDN'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_DN_SUBTREE),
+                    ('search_option', SEARCH_OPT_DN_SUBTREE),
                     ('search_string', self.av_u),
                 ),
                 title='Search audit log entries for write operation within sub-tree %s' % (
@@ -1164,7 +1165,7 @@ class AEEntryDNAEGroup(GroupEntryDN):
                 ('search_root', str(self._app.naming_context)),
                 ('searchform_mode', 'adv'),
                 ('search_attr', 'sudoUser'),
-                ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                ('search_option', SEARCH_OPT_IS_EQUAL),
                 ('search_string', '%'+self._entry['cn'][0].decode(self._app.ls.charset)),
             ),
             title='Search for SUDO rules\napplicable with this user group',
@@ -1479,8 +1480,8 @@ class AEDerefAttribute(DirectoryString):
     def form_value(self) -> str:
         return ''
 
-    def input_field(self) -> web2ldap.web.forms.Field:
-        input_field = web2ldap.web.forms.HiddenInput(
+    def input_field(self) -> Field:
+        input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
@@ -1574,7 +1575,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
             attr_values = AEPersonAttribute.transmute(self, attr_values)
         return attr_values
 
-    def input_field(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> Field:
         if self._is_mail_account():
             return SelectList.input_field(self)
         return AEPersonAttribute.input_field(self)
@@ -1792,8 +1793,8 @@ class AEUniqueIdentifier(DirectoryString):
             return [self.gen_template.format(timestamp=time.time()).encode(self._app.ls.charset)]
         return attr_values
 
-    def input_field(self) -> web2ldap.web.forms.Field:
-        input_field = web2ldap.web.forms.HiddenInput(
+    def input_field(self) -> Field:
+        input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
@@ -1972,7 +1973,7 @@ class AECommonNameAETag(AEZonePrefixCommonName):
                     ('search_root', str(self._app.naming_context)),
                     ('searchform_mode', 'adv'),
                     ('search_attr', 'aeTag'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
                 ),
                 title='Search all entries tagged with this tag',
@@ -2004,7 +2005,7 @@ syntax_registry.reg_at(
 )
 
 syntax_registry.reg_at(
-    web2ldap.app.plugins.inetorgperson.CNInetOrgPerson.oid, [
+    CNInetOrgPerson.oid, [
         '2.5.4.3', # commonName
     ],
     structural_oc_oids=[
@@ -2174,7 +2175,7 @@ syntax_registry.reg_at(
 )
 
 
-class AESudoUser(web2ldap.app.plugins.sudoers.SudoUserGroup):
+class AESudoUser(SudoUserGroup):
     oid: str = 'AESudoUser-oid'
     desc: str = 'AE-DIR: sudoUser'
     ldap_url = (
@@ -2321,8 +2322,8 @@ class AERFC822MailMember(DynamicValueSelectList, AEObjectMixIn):
             mail_addresses.extend(res.entry_as['mail'])
         return sorted(mail_addresses)
 
-    def input_field(self) -> web2ldap.web.forms.Field:
-        input_field = web2ldap.web.forms.HiddenInput(
+    def input_field(self) -> Field:
+        input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
@@ -2341,7 +2342,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEPwdPolicy(web2ldap.app.plugins.ppolicy.PwdPolicySubentry):
+class AEPwdPolicy(PwdPolicySubentry):
     oid: str = 'AEPwdPolicy-oid'
     desc: str = 'AE-DIR: pwdPolicySubentry'
     ldap_url = 'ldap:///_??sub?(&(objectClass=aePolicy)(objectClass=pwdPolicy)(aeStatus=0))'
@@ -2367,8 +2368,8 @@ class AESudoHost(IA5String):
     def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         return [b'ALL']
 
-    def input_field(self) -> web2ldap.web.forms.Field:
-        input_field = web2ldap.web.forms.HiddenInput(
+    def input_field(self) -> Field:
+        input_field = HiddenInput(
             self._at,
             ': '.join([self._at, self.desc]),
             self.max_len, self.max_values, None,
