@@ -3,10 +3,14 @@
 web2ldap plugin classes for attributes defined in apple.schema
 """
 
-import web2ldap.web.forms
-import web2ldap.app.searchform
-
-from web2ldap.app.schema.syntaxes import XmlValue, UUID, DynamicValueSelectList, syntax_registry
+from ...web.forms import Field
+from ..searchform import SEARCH_OPT_IS_EQUAL
+from ..schema.syntaxes import (
+    XmlValue,
+    UUID,
+    DynamicValueSelectList,
+    syntax_registry,
+)
 
 
 syntax_registry.reg_at(
@@ -30,14 +34,14 @@ class UUIDReference(DynamicValueSelectList, UUID):
                     ('dn', self._dn),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'apple-generateduid'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', value_disp),
                 ),
                 title=u'Search entry by UUID',
             )
         ))
 
-    def input_field(self) -> web2ldap.web.forms.Field:
+    def input_field(self) -> Field:
         return DynamicValueSelectList.input_field(self)
 
 syntax_registry.reg_at(
