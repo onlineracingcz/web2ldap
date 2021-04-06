@@ -657,7 +657,8 @@ class NameAndOptionalUID(DistinguishedName):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.34'
     desc: str = 'Name And Optional UID'
 
-    def _split_dn_and_uid(self, val):
+    @staticmethod
+    def _split_dn_and_uid(val):
         try:
             sep_ind = val.rindex('#')
         except ValueError:
