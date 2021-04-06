@@ -40,7 +40,7 @@ from ..gui import (
 from ..form import OIDInput
 from ..searchform import SEARCH_OPT_ATTR_EXISTS, SEARCH_OPT_IS_EQUAL
 from . import OBSOLETE_TEMPL, schema_link_text, schema_anchor
-from .syntaxes import syntax_registry, LDAPSyntax
+from .syntaxes import syntax_registry
 
 SCHEMA_VIEWER_USAGE = """
 <p>Hints:</p>
