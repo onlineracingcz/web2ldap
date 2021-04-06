@@ -20,13 +20,15 @@ import ldap0.schema
 from ldap0.schema.models import AttributeType
 from ldap0.schema.util import modify_modlist
 
-import web2ldap.ldapsession
-import web2ldap.app.gui
-import web2ldap.app.add
-import web2ldap.app.schema
-from web2ldap.app.schema.syntaxes import syntax_registry
-from .addmodifyform import w2l_modifyform, get_entry_input, read_old_entry
 from . import ErrorExit
+from .schema.syntaxes import syntax_registry
+from .add import ADD_IGNORE_ATTR_TYPES
+from .addmodifyform import ConfiguredConstantAttributes, w2l_modifyform, get_entry_input, read_old_entry
+from .gui import (
+    context_menu_single_entry,
+    invalid_syntax_message,
+    main_menu,
+)
 
 
 def modlist_ldif(dn, form, modlist):
@@ -76,7 +78,7 @@ def w2l_modify(app):
     new_entry, invalid_attrs = get_entry_input(app)
 
     if invalid_attrs:
-        error_msg = web2ldap.app.gui.invalid_syntax_message(app, invalid_attrs)
+        error_msg = invalid_syntax_message(app, invalid_attrs)
     else:
         error_msg = ''
 
@@ -111,7 +113,7 @@ def w2l_modify(app):
     ignore_attr_types = ldap0.schema.models.SchemaElementOIDSet(
         app.schema,
         AttributeType,
-        web2ldap.app.add.ADD_IGNORE_ATTR_TYPES,
+        ADD_IGNORE_ATTR_TYPES,
     )
 
     if not app.ls.relax_rules:
@@ -119,7 +121,7 @@ def w2l_modify(app):
         # ignore all attributes which have NO-USER-MODIFICATION set
         ignore_attr_types.update(app.schema.no_user_mod_attr_oids)
         # Ignore attributes which are assumed to be constant (some operational attributes)
-        ignore_attr_types.update(web2ldap.app.addmodifyform.ConfiguredConstantAttributes(app).values())
+        ignore_attr_types.update(ConfiguredConstantAttributes(app).values())
 
     # All attributes currently read which were not visible before
     # must be ignored to avoid problems with different access rights
@@ -164,8 +166,8 @@ def w2l_modify(app):
             '<p class="SuccessMessage">No attributes modified of entry %s</p>' % (
                 app.display_dn(app.dn, commandbutton=True),
             ),
-            main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.context_menu_single_entry(app)
+            main_menu_list=main_menu(app),
+            context_menu_list=context_menu_single_entry(app)
         )
         return
 
@@ -205,6 +207,6 @@ def w2l_modify(app):
             app.display_dn(app.dn, commandbutton=True),
             modlist_ldif(app.dn, app.form, modlist),
         ),
-        main_menu_list=web2ldap.app.gui.main_menu(app),
-        context_menu_list=web2ldap.app.gui.context_menu_single_entry(app)
+        main_menu_list=main_menu(app),
+        context_menu_list=context_menu_single_entry(app)
     )
