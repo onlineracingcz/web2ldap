@@ -223,7 +223,11 @@ def w2l_read(app):
 
     entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
 
-    requested_attrs = SchemaElementOIDSet(app.schema, AttributeType, app.cfg_param('requested_attrs', []))
+    requested_attrs = SchemaElementOIDSet(
+        app.schema,
+        AttributeType,
+        app.cfg_param('requested_attrs', []),
+    )
     if not wanted_attrs and requested_attrs:
         try:
             search_result = app.ls.l.read_s(
@@ -303,7 +307,11 @@ def w2l_read(app):
                 app,
                 vcard_link=not get_vcard_template(app, entry.get('objectClass', [])) is None,
                 dds_link=b'dynamicObject' in entry.get('objectClass', []),
-                entry_uuid=entry['entryUUID'][0].decode(app.ls.charset) if 'entryUUID' in entry else None
+                entry_uuid=(
+                    entry['entryUUID'][0].decode(app.ls.charset)
+                    if 'entryUUID' in entry
+                    else None
+                )
             )
         )
 

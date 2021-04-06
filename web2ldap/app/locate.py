@@ -174,7 +174,11 @@ def w2l_locate(app):
                                 host_address = socket.gethostbyname(hostname)
                             except socket.error:
                                 outf_lines.append(
-                                    '<p class="ErrorMessage">Did not find IP address for hostname <em>%s</em>.</p>' % (
+                                    (
+                                        '<p class="ErrorMessage">'
+                                        'Did not find IP address for hostname <em>%s</em>.'
+                                        '</p>'
+                                    ) % (
                                         app.form.s2d(hostname.decode('ascii'))
                                     )
                                 )

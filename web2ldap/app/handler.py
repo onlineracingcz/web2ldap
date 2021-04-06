@@ -24,6 +24,7 @@ import ldap0
 from ldap0.ldapurl import LDAPUrl, is_ldapurl
 from ldap0.dn import DNObj
 from ldap0.err import PasswordPolicyException, PasswordPolicyExpirationWarning
+from ldap0.schema.models import ObjectClass
 
 import web2ldapcnf
 import web2ldapcnf.hosts
@@ -478,7 +479,7 @@ class AppHandler(LogHelper):
                 display_entry = DisplayEntry(self, self.dn, self.schema, entry, 'read_sep', True)
                 user_structural_oc = display_entry.entry.get_structural_oc()
                 for oc in bound_as_templates.keys():
-                    if self.schema.get_oid(ldap0.schema.models.ObjectClass, oc) == user_structural_oc:
+                    if self.schema.get_oid(ObjectClass, oc) == user_structural_oc:
                         try:
                             result = bound_as_templates[oc] % display_entry
                         except KeyError:

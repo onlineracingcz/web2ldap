@@ -78,7 +78,11 @@ def w2l_params(app):
     control_table_rows = []
     for control_oid in AVAILABLE_BOOLEAN_CONTROLS:
         control_enabled = (control_oid in enabled_controls)
-        if not (control_enabled or ldapparam_all_controls or control_oid in app.ls.supportedControl):
+        if not (
+                control_enabled
+                or ldapparam_all_controls
+                or control_oid in app.ls.supportedControl
+            ):
             continue
         name, description, _ = OID_REG[control_oid]
         control_table_rows.append(

@@ -369,7 +369,12 @@ def w2l_delete(app):
     if delete_attr:
         scope = ldap0.SCOPE_BASE
     else:
-        scope = int(app.form.getInputValue('scope', [str(app.ldap_url.scope or ldap0.SCOPE_BASE)])[0])
+        scope = int(
+            app.form.getInputValue(
+                'scope',
+                [str(app.ldap_url.scope or ldap0.SCOPE_BASE)],
+            )[0]
+        )
 
     # Generate a list of requested LDAPv3 extended controls to be sent along
     # with a modify or delete request
@@ -403,7 +408,9 @@ def w2l_delete(app):
             DELETE_FORM_TEMPLATE.format(
                 form_begin=app.begin_form('delete', 'POST'),
                 inner_form=inner_form,
-                field_delete_ctrl=app.form.field['delete_ctrl'].input_html(default=delete_ctrl_oids),
+                field_delete_ctrl=app.form.field['delete_ctrl'].input_html(
+                    default=delete_ctrl_oids
+                ),
                 field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
             )
         )

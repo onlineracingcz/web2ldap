@@ -124,11 +124,31 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
                 ],
                 title=u'Connect and bind new session as\r\n%s' % (app.dn)
             ),
-            app.anchor('modify', 'Modify', [('dn', app.dn)], title=u'Modify entry\r\n%s' % (app.dn)),
-            app.anchor('rename', 'Rename', [('dn', app.dn)], title=u'Rename/move entry\r\n%s' % (app.dn)),
-            app.anchor('delete', 'Delete', [('dn', app.dn)], title=u'Delete entry and/or subtree\r\n%s' % (app.dn)),
-            app.anchor('passwd', 'Password', [('dn', app.dn), ('passwd_who', app.dn)], title=u'Set password for entry\r\n%s' % (app.dn)),
-            app.anchor('groupadm', 'Groups', [('dn', app.dn)], title=u'Change group membership of entry\r\n%s' % (app.dn)),
+            app.anchor(
+                'modify', 'Modify',
+                [('dn', app.dn)],
+                title=u'Modify entry\r\n%s' % (app.dn)
+            ),
+            app.anchor(
+                'rename', 'Rename',
+                [('dn', app.dn)],
+                title=u'Rename/move entry\r\n%s' % (app.dn)
+            ),
+            app.anchor(
+                'delete', 'Delete',
+                [('dn', app.dn)],
+                title=u'Delete entry and/or subtree\r\n%s' % (app.dn)
+            ),
+            app.anchor(
+                'passwd', 'Password',
+                [('dn', app.dn), ('passwd_who', app.dn)],
+                title=u'Set password for entry\r\n%s' % (app.dn)
+            ),
+            app.anchor(
+                'groupadm', 'Groups',
+                [('dn', app.dn)],
+                title=u'Change group membership of entry\r\n%s' % (app.dn)
+            ),
             app.anchor(
                 'add', 'Clone',
                 [
@@ -291,8 +311,16 @@ def main_menu(app):
                 [('dn', app.dn)],
                 title=u'Add a new entry below of %s' % (app.dn or u'Root DSE')
             ),
-            app.anchor('conninfo', 'ConnInfo', [('dn', app.dn)], title=u'Show information about HTTP and LDAP connections'),
-            app.anchor('params', 'Params', [('dn', app.dn)], title=u'Tweak parameters used for LDAP operations (controls etc.)'),
+            app.anchor(
+                'conninfo', 'ConnInfo',
+                [('dn', app.dn)],
+                title=u'Show information about HTTP and LDAP connections'
+            ),
+            app.anchor(
+                'params', 'Params',
+                [('dn', app.dn)],
+                title=u'Tweak parameters used for LDAP operations (controls etc.)'
+            ),
             app.anchor('login', 'Bind', [('dn', app.dn)], title=u'Login to directory'),
             app.anchor('oid', 'Schema', [('dn', app.dn)], title=u'Browse/view subschema'),
         ))
@@ -400,7 +428,10 @@ def attrtype_select_field(
     Return web2ldap.web.forms.Select instance for choosing attribute type names
     """
     attr_options_dict = {}
-    for attr_type in default_attr_options or list(app.schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list:
+    for attr_type in (
+            default_attr_options
+            or list(app.schema.sed[ldap0.schema.models.AttributeType].keys())+attr_list
+        ):
         attr_type_se = app.schema.get_obj(ldap0.schema.models.AttributeType, attr_type)
         if attr_type_se:
             if attr_type_se.names:

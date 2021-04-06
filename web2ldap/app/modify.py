@@ -23,7 +23,12 @@ from ldap0.schema.util import modify_modlist
 from . import ErrorExit
 from .schema.syntaxes import syntax_registry
 from .add import ADD_IGNORE_ATTR_TYPES
-from .addmodifyform import ConfiguredConstantAttributes, w2l_modifyform, get_entry_input, read_old_entry
+from .addmodifyform import (
+    ConfiguredConstantAttributes,
+    w2l_modifyform,
+    get_entry_input,
+    read_old_entry,
+)
 from .gui import (
     context_menu_single_entry,
     invalid_syntax_message,
@@ -71,7 +76,9 @@ def w2l_modify(app):
         app.form.field['in_avi'].value = map(str, range(0, len(app.form.field['in_av'].value)))
     elif input_modrow[0] == '+':
         insert_row_num = int(input_modrow[1:])
-        app.form.field['in_at'].value.insert(insert_row_num+1, app.form.field['in_at'].value[insert_row_num])
+        app.form.field['in_at'].value.insert(
+            insert_row_num+1, app.form.field['in_at'].value[insert_row_num]
+        )
         app.form.field['in_av'].value.insert(insert_row_num+1, '')
         app.form.field['in_avi'].value = map(str, range(0, len(app.form.field['in_av'].value)))
 
@@ -203,7 +210,11 @@ def w2l_modify(app):
     # Display success message
     app.simple_message(
         'Modify result',
-        '<p class="SuccessMessage">Modified entry %s</p><dt>LDIF change record:</dt>\n<dd>%s</dd>' % (
+        (
+            '<p class="SuccessMessage">Modified entry %s</p>\n'
+            '<dt>LDIF change record:</dt>\n'
+            '<dd>%s</dd>\n'
+        ) % (
             app.display_dn(app.dn, commandbutton=True),
             modlist_ldif(app.dn, app.form, modlist),
         ),

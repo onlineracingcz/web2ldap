@@ -346,7 +346,7 @@ class DHCPAddressState(SelectList):
         'ABANDONED': 'ABANDONED',
         'BACKUP': 'BACKUP',
         'UNKNOWN': 'UNKNOWN',
-        'RESERVED': 'RESERVED (an address that is managed by DHCP that is reserved for a specific client)',
+        'RESERVED': 'RESERVED (address managed by DHCP that is reserved for a specific client)',
         'RESERVED-ACTIVE': 'RESERVED-ACTIVE (same as reserved, but address is currently in use)',
         'ASSIGNED': 'ASSIGNED (assigned manually or by some other mechanism)',
         'UNASSIGNED': 'UNASSIGNED',

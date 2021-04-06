@@ -110,7 +110,10 @@ def SearchForm_base(app, searchform_template_name):
     """
     searchform_template_cfg = app.cfg_param('searchform_template', '')
     searchform_template = searchform_template_cfg.get(searchform_template_name, None)
-    searchform_template_filename = get_variant_filename(searchform_template, app.form.accept_language)
+    searchform_template_filename = get_variant_filename(
+        searchform_template,
+        app.form.accept_language,
+    )
     with open(searchform_template_filename, 'rb') as fileobj:
         template_str = fileobj.read().decode('utf-8')
     return template_str # SearchForm_base()

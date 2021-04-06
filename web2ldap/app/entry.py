@@ -194,7 +194,10 @@ class DisplayEntry(UserDict):
                     self.entry._s.get_oid(ldap0.schema.models.AttributeType, attr_type_name)
                     for attr_type_name in GrabKeys(template_str)()
                 }
-                if display_duplicate_attrs or not displayed_attrs.intersection(template_attr_oid_set):
+                if (
+                        display_duplicate_attrs
+                        or not displayed_attrs.intersection(template_attr_oid_set)
+                    ):
                     self._app.outf.write(template_str % self)
                     displayed_attrs.update(template_attr_oid_set)
         return displayed_attrs
