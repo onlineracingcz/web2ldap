@@ -88,7 +88,11 @@ class Field:
             return ''
         return 'accesskey="%s" ' % (self.accesskey)
 
-    def id_attr(self, id_value):
+    @staticmethod
+    def id_attr(id_value):
+        """
+        return id attribute if id_value is non-empty, else returns empty string
+        """
         if id_value is None:
             return ''
         return 'id="%s" ' % (id_value)
@@ -104,7 +108,8 @@ class Field:
             self.default = [i for i in default if i is not None]
         self.default = default or ''
 
-    def _regex_with_options(self, pattern):
+    @staticmethod
+    def _regex_with_options(pattern):
         """
         The result is a tuple (pattern string, pattern options).
 
