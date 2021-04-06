@@ -25,7 +25,6 @@ import web2ldap.ldaputil
 from web2ldap.ldaputil.oidreg import OID_REG
 import web2ldap.ldapsession
 import web2ldap.ldaputil.passwd
-import web2ldap.app.core
 import web2ldap.app.gui
 import web2ldap.app.searchform
 import web2ldap.app.params

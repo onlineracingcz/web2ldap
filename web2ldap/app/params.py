@@ -14,7 +14,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import web2ldap.ldapsession
 import web2ldap.app.cnf
-import web2ldap.app.core
 import web2ldap.app.gui
 from web2ldap.ldaputil.oidreg import OID_REG
 from web2ldap.ldapsession import AVAILABLE_BOOLEAN_CONTROLS

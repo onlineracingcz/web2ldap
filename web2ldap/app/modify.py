@@ -21,7 +21,6 @@ from ldap0.schema.models import AttributeType
 from ldap0.schema.util import modify_modlist
 
 import web2ldap.ldapsession
-import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
 import web2ldap.app.add

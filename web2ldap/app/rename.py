@@ -21,7 +21,6 @@ import ldap0.filter
 import web2ldap.web.forms
 
 import web2ldap.ldaputil
-import web2ldap.app.core
 import web2ldap.app.cnf
 import web2ldap.app.gui
 import web2ldap.app.form
