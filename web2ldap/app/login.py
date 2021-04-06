@@ -14,8 +14,14 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import time
 
-import web2ldap.app.gui
-from web2ldap.log import logger
+from ..log import logger
+from .gui import (
+    footer,
+    main_menu,
+    read_template,
+    search_root_field,
+    top_section,
+)
 
 
 def w2l_login(
@@ -39,20 +45,20 @@ def w2l_login(
     if 'login_who' in app.form.input_field_names:
         who = app.form.field['login_who'].value[0]
 
-    login_search_root_field = web2ldap.app.gui.search_root_field(
+    login_search_root_field = search_root_field(
         app,
         name='login_search_root',
         default=str(login_search_root),
     )
 
-    login_template_str = web2ldap.app.gui.read_template(app, 'login_template', u'login form')
+    login_template_str = read_template(app, 'login_template', u'login form')
 
     if nomenu:
         main_menu_list = []
     else:
-        main_menu_list = web2ldap.app.gui.main_menu(app)
+        main_menu_list = main_menu(app)
 
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         login_msg,
         main_menu_list,
@@ -106,7 +112,9 @@ def w2l_login(
 
     search_attrs_hidden_field = ''
     if 'search_attrs' in app.form.field:
-        search_attrs = app.form.getInputValue('search_attrs', [u','.join(app.ldap_url.attrs or [])])[0]
+        search_attrs = app.form.getInputValue(
+            'search_attrs', [u','.join(app.ldap_url.attrs or [])]
+        )[0]
         if search_attrs:
             search_attrs_hidden_field = app.form.hiddenFieldHTML('search_attrs', search_attrs, u'')
 
@@ -144,4 +152,4 @@ def w2l_login(
             )
         )
     app.outf.write('</form>\n')
-    web2ldap.app.gui.footer(app)
+    footer(app)
