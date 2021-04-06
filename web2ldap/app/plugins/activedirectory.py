@@ -530,7 +530,11 @@ class InstanceType(BitArrayInteger):
         ('This replica is not instantiated.', 0x00000002),
         ('The object is writable on this directory.', 0x00000004),
         ('The naming context above this one on this directory is held.', 0x00000008),
-        ('The naming context is in the process of being constructed for the first time via replication.', 0x00000010),
+        (
+            'The naming context is in the process of being '
+            'constructed for the first time via replication.',
+            0x00000010
+        ),
         ('The naming context is in the process of being removed from the local DSA.', 0x00000020),
     )
 
@@ -644,7 +648,9 @@ class LockoutTime(Interval):
     def display(self, valueindex=0, commandbutton=False) -> str:
         delta = self._delta(self._av)
         if delta == 0:
-            return '%s (not locked)' % (MicrosoftLargeInteger.display(self, valueindex, commandbutton))
+            return '%s (not locked)' % (
+                MicrosoftLargeInteger.display(self, valueindex, commandbutton)
+            )
         if delta < 0:
             return MicrosoftLargeInteger.display(self, valueindex, commandbutton)
         return '%s (locked since %s)' % (
