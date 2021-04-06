@@ -18,15 +18,19 @@ import ldap0
 import ldap0.ldapurl
 import ldap0.filter
 
-import web2ldap.web.forms
-
-import web2ldap.ldaputil
-import web2ldap.app.gui
-import web2ldap.app.form
-import web2ldap.app.schema
-import web2ldap.app.schema.syntaxes
+from ..web import forms
 from .schema.viewer import schema_anchors
 from . import ErrorExit
+from .form import DistinguishedNameInput
+from .schema.syntaxes import DynamicDNSelectList
+from .gui import (
+    context_menu_single_entry,
+    footer,
+    main_menu,
+    read_template,
+    search_root_field,
+    top_section,
+)
 
 
 def new_superior_field(app, sup_search_url, old_superior_dn):
@@ -34,7 +38,7 @@ def new_superior_field(app, sup_search_url, old_superior_dn):
     returns Select field for choosing a new superior entry
     """
 
-    class NewSuperiorSelectList(web2ldap.app.schema.syntaxes.DynamicDNSelectList):
+    class NewSuperiorSelectList(DynamicDNSelectList):
         """
         plugin class for choosing a new superior entry
         """
@@ -44,9 +48,7 @@ def new_superior_field(app, sup_search_url, old_superior_dn):
 
         def __init__(self, app, dn, schema, attr_type, attr_value, ldap_url):
             self.ldap_url = ldap_url
-            web2ldap.app.schema.syntaxes.DynamicDNSelectList.__init__(
-                self, app, dn, schema, attr_type, attr_value, entry=None,
-            )
+            DynamicDNSelectList.__init__(self, app, dn, schema, attr_type, attr_value, entry=None)
 
     if not sup_search_url is None:
         attr_inst = NewSuperiorSelectList(
@@ -57,7 +59,7 @@ def new_superior_field(app, sup_search_url, old_superior_dn):
         nssf.name = 'rename_newsuperior'
         nssf.text = 'New Superior DN'
     else:
-        nssf = web2ldap.app.form.DistinguishedNameInput('rename_newsuperior', 'New Superior DN')
+        nssf = DistinguishedNameInput('rename_newsuperior', 'New Superior DN')
     nssf.charset = app.form.accept_charset
     nssf.set_default(old_superior_dn)
     return nssf # new_superior_field()
@@ -99,8 +101,8 @@ def w2l_rename(app):
                 app.display_dn(old_dn),
                 app.display_dn(app.dn)
             ),
-            main_menu_list=web2ldap.app.gui.main_menu(app),
-            context_menu_list=web2ldap.app.gui.context_menu_single_entry(
+            main_menu_list=main_menu(app),
+            context_menu_list=context_menu_single_entry(
                 app, entry_uuid=entry_uuid
             ),
         )
@@ -114,7 +116,7 @@ def w2l_rename(app):
 
     app.form.field['rename_newrdn'].set_default(old_rdn)
 
-    rename_template_str = web2ldap.app.gui.read_template(app, 'rename_template', u'rename form')
+    rename_template_str = read_template(app, 'rename_template', u'rename form')
 
     rename_supsearchurl = app.form.getInputValue('rename_supsearchurl', [None])[0]
     try:
@@ -149,7 +151,7 @@ def w2l_rename(app):
         rename_newsupfilter_default = app.form.field['rename_newsupfilter'].default
         scope_default = str(ldap0.SCOPE_SUBTREE)
 
-    rename_search_root_field = web2ldap.app.gui.search_root_field(app, name='rename_searchroot')
+    rename_search_root_field = search_root_field(app, name='rename_searchroot')
     rename_new_superior_field = new_superior_field(app, sup_search_url, old_superior)
 
     name_forms_text = ''
@@ -201,7 +203,7 @@ def w2l_rename(app):
                 )
 
     if rename_supsearchurl_cfg:
-        rename_supsearchurl_field = web2ldap.web.forms.Select(
+        rename_supsearchurl_field = forms.Select(
             'rename_supsearchurl',
             u'LDAP URL for searching new superior entry',
             1,
@@ -210,10 +212,10 @@ def w2l_rename(app):
         rename_supsearchurl_field.setOptions(rename_supsearchurl_cfg.keys())
 
     # Output empty input form for new RDN
-    web2ldap.app.gui.top_section(
+    top_section(
         app,
         'Rename Entry',
-        web2ldap.app.gui.main_menu(app),
+        main_menu(app),
         context_menu_list=[],
     )
 
@@ -234,4 +236,4 @@ def w2l_rename(app):
         )
     )
 
-    web2ldap.app.gui.footer(app)
+    footer(app)
