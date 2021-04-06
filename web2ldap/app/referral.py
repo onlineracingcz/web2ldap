@@ -16,7 +16,13 @@ import time
 
 from ldap0.ldapurl import LDAPUrl
 
-import web2ldap.app.gui
+from .gui import (
+    footer,
+    main_menu,
+    read_template,
+    search_root_field,
+    top_section,
+)
 
 ERR_MSG_DIV = """
 <h1>Error</h1>
@@ -30,12 +36,7 @@ def w2l_chasereferral(app, ref_exc):
     Present an input form to change to a server referenced by referral
     """
 
-    web2ldap.app.gui.top_section(
-        app,
-        'Referral received',
-        web2ldap.app.gui.main_menu(app),
-        context_menu_list=[]
-    )
+    top_section(app, 'Referral received', main_menu(app), context_menu_list=[])
 
     # Pull out referral LDAP URL
     try:
@@ -51,7 +52,7 @@ def w2l_chasereferral(app, ref_exc):
                 )
             )
         )
-        web2ldap.app.gui.footer(app)
+        footer(app)
         return
 
     try:
@@ -64,7 +65,7 @@ def w2l_chasereferral(app, ref_exc):
                 )
             )
         )
-        web2ldap.app.gui.footer(app)
+        footer(app)
         return
 
     # Parse the referral LDAP URL
@@ -79,14 +80,14 @@ def w2l_chasereferral(app, ref_exc):
                 )
             )
         )
-        web2ldap.app.gui.footer(app)
+        footer(app)
         return
 
-    login_template_str = web2ldap.app.gui.read_template(
+    login_template_str = read_template(
         app, 'login_template', u'referral login form'
     )
 
-    login_search_root_field = web2ldap.app.gui.search_root_field(
+    login_search_root_field = search_root_field(
         app,
         name='login_search_root',
     )
@@ -121,4 +122,4 @@ def w2l_chasereferral(app, ref_exc):
     )
     app.outf.write('</form>\n')
 
-    web2ldap.app.gui.footer(app)
+    footer(app)
