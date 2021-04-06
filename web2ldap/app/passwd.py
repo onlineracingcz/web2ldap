@@ -21,7 +21,7 @@ from ldap0.extop.passmod import PassmodRequest
 
 from ..ldapsession import CONTROL_RELAXRULES
 from ..ldaputil.passwd import user_password_hash, AVAIL_USERPASSWORD_SCHEMES
-from .form import Web2LDAPForm_passwd
+from .form import Web2LDAPFormPasswd
 from . import ErrorExit
 from .gui import (
     context_menu_single_entry,
@@ -35,7 +35,7 @@ from .login import w2l_login
 
 PASSWD_ACTIONS_DICT = {
     action: (short_desc, long_desc)
-    for action, short_desc, long_desc in Web2LDAPForm_passwd.passwd_actions
+    for action, short_desc, long_desc in Web2LDAPFormPasswd.passwd_actions
 }
 
 PASSWD_GEN_DEFAULT_LENGTH = 20
@@ -90,7 +90,7 @@ def passwd_context_menu(app):
             ],
             title=long_desc
         )
-        for pa, short_desc, long_desc in Web2LDAPForm_passwd.passwd_actions
+        for pa, short_desc, long_desc in Web2LDAPFormPasswd.passwd_actions
     ]
     # Menu entry for unlocking entry
     delete_param_list = [
@@ -169,7 +169,7 @@ def passwd_form(
 
     # depending on the calling code part the necessary
     # input fields must be added to the form
-    for field in Web2LDAPForm_passwd.passwd_fields():
+    for field in Web2LDAPFormPasswd.passwd_fields():
         if field.name not in app.form.field:
             app.form.add_field(field)
 

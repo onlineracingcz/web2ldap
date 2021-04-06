@@ -114,7 +114,7 @@ CONNTYPE2URLSCHEME = {
 FORM_CLASS = {}
 logger.debug('Registering Form classes')
 for _, cls in inspect.getmembers(sys.modules['web2ldap.app.form'], inspect.isclass):
-    if cls.__name__.startswith('Web2LDAPForm_') and cls.command is not None:
+    if issubclass(cls, Web2LDAPForm) and cls.command is not None:
         logger.debug('Register class %s for command %r', cls.__name__, cls.command)
         FORM_CLASS[cls.command] = cls
 

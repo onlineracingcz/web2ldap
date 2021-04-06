@@ -250,7 +250,7 @@ class SearchAttrs(Input):
         Input.set_value(self, value)
 
 
-class Web2LDAPForm_searchform(Web2LDAPForm):
+class Web2LDAPFormSearchform(Web2LDAPForm):
     command = 'searchform'
 
     def fields(self):
@@ -344,11 +344,11 @@ class Web2LDAPForm_searchform(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_search(Web2LDAPForm_searchform):
+class Web2LDAPFormSearch(Web2LDAPFormSearchform):
     command = 'search'
 
     def fields(self):
-        res = Web2LDAPForm_searchform.fields(self)
+        res = Web2LDAPFormSearchform.fields(self)
         res.extend([
             Input(
                 'search_resminindex',
@@ -366,7 +366,7 @@ class Web2LDAPForm_search(Web2LDAPForm_searchform):
         return res
 
 
-class Web2LDAPForm_conninfo(Web2LDAPForm):
+class Web2LDAPFormConninfo(Web2LDAPForm):
     command = 'conninfo'
 
     def fields(self):
@@ -383,7 +383,7 @@ class Web2LDAPForm_conninfo(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_params(Web2LDAPForm):
+class Web2LDAPFormParams(Web2LDAPForm):
     command = 'params'
 
     def fields(self):
@@ -424,7 +424,7 @@ class Web2LDAPForm_params(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_input(Web2LDAPForm):
+class Web2LDAPFormInput(Web2LDAPForm):
 
     """Base class for entry data input not directly used"""
     def fields(self):
@@ -470,11 +470,11 @@ class Web2LDAPForm_input(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_add(Web2LDAPForm_input):
+class Web2LDAPFormAdd(Web2LDAPFormInput):
     command = 'add'
 
     def fields(self):
-        res = Web2LDAPForm_input.fields(self)
+        res = Web2LDAPFormInput.fields(self)
         res.extend([
             Input('add_rdn', 'RDN of new entry', 255, 1, '.*', size=50),
             DistinguishedNameInput('add_clonedn', 'DN of template entry'),
@@ -489,11 +489,11 @@ class Web2LDAPForm_add(Web2LDAPForm_input):
         return res
 
 
-class Web2LDAPForm_modify(Web2LDAPForm_input):
+class Web2LDAPFormModify(Web2LDAPFormInput):
     command = 'modify'
 
     def fields(self):
-        res = Web2LDAPForm_input.fields(self)
+        res = Web2LDAPFormInput.fields(self)
         res.extend([
             AttributeType(
                 'in_oldattrtypes',
@@ -517,7 +517,7 @@ class Web2LDAPForm_modify(Web2LDAPForm_input):
         return res
 
 
-class Web2LDAPForm_dds(Web2LDAPForm):
+class Web2LDAPFormDds(Web2LDAPForm):
     command = 'dds'
 
     def fields(self):
@@ -546,7 +546,7 @@ class Web2LDAPForm_dds(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_bulkmod(Web2LDAPForm):
+class Web2LDAPFormBulkmod(Web2LDAPForm):
     command = 'bulkmod'
 
     def fields(self):
@@ -615,7 +615,7 @@ class Web2LDAPForm_bulkmod(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_delete(Web2LDAPForm):
+class Web2LDAPFormDelete(Web2LDAPForm):
     command = 'delete'
 
     def fields(self):
@@ -657,7 +657,7 @@ class Web2LDAPForm_delete(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_rename(Web2LDAPForm):
+class Web2LDAPFormRename(Web2LDAPForm):
     command = 'rename'
 
     def fields(self):
@@ -693,7 +693,7 @@ class Web2LDAPForm_rename(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_passwd(Web2LDAPForm):
+class Web2LDAPFormPasswd(Web2LDAPForm):
     command = 'passwd'
     passwd_actions = (
         (
@@ -718,7 +718,7 @@ class Web2LDAPForm_passwd(Web2LDAPForm):
                 'passwd_action', 'Password action', 1,
                 options=[
                     (action, short_desc)
-                    for action, short_desc, _ in Web2LDAPForm_passwd.passwd_actions
+                    for action, short_desc, _ in Web2LDAPFormPasswd.passwd_actions
                 ],
                 default='setuserpassword'
             ),
@@ -766,7 +766,7 @@ class Web2LDAPForm_passwd(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_read(Web2LDAPForm):
+class Web2LDAPFormRead(Web2LDAPForm):
     command = 'read'
 
     def fields(self):
@@ -799,7 +799,7 @@ class Web2LDAPForm_read(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_groupadm(Web2LDAPForm):
+class Web2LDAPFormGroupadm(Web2LDAPForm):
     command = 'groupadm'
 
     def fields(self):
@@ -824,7 +824,7 @@ class Web2LDAPForm_groupadm(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_login(Web2LDAPForm):
+class Web2LDAPFormLogin(Web2LDAPForm):
     command = 'login'
 
     def fields(self):
@@ -835,7 +835,7 @@ class Web2LDAPForm_login(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_locate(Web2LDAPForm):
+class Web2LDAPFormLocate(Web2LDAPForm):
     command = 'locate'
 
     def fields(self):
@@ -846,7 +846,7 @@ class Web2LDAPForm_locate(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_oid(Web2LDAPForm):
+class Web2LDAPFormOid(Web2LDAPForm):
     command = 'oid'
 
     def fields(self):
@@ -864,7 +864,7 @@ class Web2LDAPForm_oid(Web2LDAPForm):
         return res
 
 
-class Web2LDAPForm_dit(Web2LDAPForm):
+class Web2LDAPFormDit(Web2LDAPForm):
     command = 'dit'
 
 
