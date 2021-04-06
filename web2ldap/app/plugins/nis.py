@@ -112,7 +112,7 @@ class MemberUID(IA5String, DynamicValueSelectList):
                     ('dn', self._dn),
                     (
                         'filterstr', '(&(objectClass=posixAccount)(uid=%s))' % (
-                            self._app.form.utf2display(self.av_u)
+                            self._app.form.s2d(self.av_u)
                         )
                     ),
                     ('searchform_mode', 'exp'),

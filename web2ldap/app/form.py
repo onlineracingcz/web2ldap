@@ -70,7 +70,7 @@ class Web2LDAPForm(Form):
         self.next_cookie = http.cookies.SimpleCookie()
 
     @staticmethod
-    def utf2display(
+    def s2d(
             value,
             tab_identiation='',
             sp_entity='&nbsp;&nbsp;',
@@ -210,8 +210,8 @@ class Web2LDAPForm(Form):
     def hiddenFieldHTML(self, name, value, desc):
         return HIDDEN_FIELD % (
             name,
-            self.utf2display(value, sp_entity='  '),
-            self.utf2display(desc, sp_entity='&nbsp;&nbsp;'),
+            self.s2d(value, sp_entity='  '),
+            self.s2d(desc, sp_entity='&nbsp;&nbsp;'),
         )
 
     def hiddenInputHTML(self, ignoreFieldNames=None):

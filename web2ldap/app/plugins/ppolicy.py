@@ -213,7 +213,7 @@ class PwdChangedTime(GeneralizedTime):
                         1: 'will expire',
                     }[expire_cmp],
                     expire_dt.strftime('%c'),
-                    self._app.form.utf2display(
+                    self._app.form.s2d(
                         ts2repr(
                             self.time_divisors,
                             ' ',

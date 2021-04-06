@@ -107,7 +107,7 @@ def display_attribute_table(app, entry, attrs, comment):
     # Set separation of attribute values inactive
     entry.sep = None
     for attr_type_name in show_attrs:
-        attr_type_anchor_id = 'readattr_%s' % app.form.utf2display(attr_type_name)
+        attr_type_anchor_id = 'readattr_%s' % app.form.s2d(attr_type_name)
         attr_type_str = schema_anchor(
             app,
             attr_type_name,
@@ -262,7 +262,7 @@ def w2l_read(app):
             else:
                 raise ErrorExit(
                     u'Attribute <em>%s</em> not in entry.' % (
-                        app.form.utf2display(attr_type)
+                        app.form.s2d(attr_type)
                     )
                 )
 
@@ -347,7 +347,7 @@ def w2l_read(app):
                 )[0].decode(app.ls.charset) or str(app.dn_obj.slice(0, 1))
             app.outf.write(
                 '<h1>{0}</h1>\n<p class="EntryDN">{1}</p>\n'.format(
-                    app.form.utf2display(h1_display_name),
+                    app.form.s2d(h1_display_name),
                     display_entry['entryDN'],
                 )
             )
@@ -399,7 +399,7 @@ def w2l_read(app):
                 app.form.hiddenFieldHTML('dn', app.dn, u''),
                 app.form.hiddenFieldHTML('read_output', read_output, u''),
                 ','.join([
-                    app.form.utf2display(at, sp_entity='  ')
+                    app.form.s2d(at, sp_entity='  ')
                     for at in (
                         wanted_attrs
                         or {False:['*'], True:['*', '+']}[app.ls.supportsAllOpAttr]

@@ -316,9 +316,9 @@ def del_attr_form(app, entry, delete_attr):
         app.display_dn(app.dn),
         '\n'.join([
             '<input type="checkbox" name="delete_attr" value="%s"%s>%s<br>' % (
-                app.form.utf2display(attr_type, sp_entity='  '),
+                app.form.s2d(attr_type, sp_entity='  '),
                 ' checked'*(attr_type in entry),
-                app.form.utf2display(attr_type),
+                app.form.s2d(attr_type),
             )
             for attr_type in delete_attr
         ]),
@@ -349,8 +349,8 @@ def del_search_form(app, scope, delete_filter):
         text_scope=ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
         num_entries=num_entries,
         num_referrals=num_referrals,
-        value_delete_filter=app.form.utf2display(delete_filter),
-        value_delete_scope=app.form.utf2display(str(scope)),
+        value_delete_filter=app.form.s2d(delete_filter),
+        value_delete_scope=app.form.s2d(str(scope)),
     )
 
 

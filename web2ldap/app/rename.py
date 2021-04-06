@@ -227,7 +227,7 @@ def w2l_rename(app):
             field_rename_new_superior=rename_new_superior_field.input_html(),
             text_name_forms=name_forms_text,
             field_rename_supsearchurl=rename_supsearchurl_field.input_html(),
-            value_rename_newsupfilter=app.form.utf2display(rename_newsupfilter_default),
+            value_rename_newsupfilter=app.form.s2d(rename_newsupfilter_default),
             field_rename_search_root=rename_search_root_field.input_html(
                 default=rename_searchroot_default,
             ),

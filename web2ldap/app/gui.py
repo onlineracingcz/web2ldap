@@ -311,7 +311,7 @@ def dit_navigation(app):
     result = [
         app.anchor(
             'read',
-            app.form.utf2display(str(app.dn_obj.slice(i, i+1)) or '[Root DSE]'),
+            app.form.s2d(str(app.dn_obj.slice(i, i+1)) or '[Root DSE]'),
             [('dn', str(app.dn_obj.slice(i, None)))],
             title=u'Jump to %s' % (str(app.dn_obj.slice(i, None))),
         )
@@ -378,10 +378,10 @@ def top_section(
         # Only output something meaningful if valid connection
         template_dict.update({
             'ldap_url': app.ls.ldap_url(app.dn),
-            'ldap_uri': app.form.utf2display(app.ls.uri),
+            'ldap_uri': app.form.s2d(app.ls.uri),
             'description': escape_html(app.cfg_param('description', u'')),
             'dit_navi': ',\n'.join(dit_navigation(app)),
-            'dn': app.form.utf2display(app.dn),
+            'dn': app.form.s2d(app.dn),
         })
         template_dict['who'] = app.display_authz_dn()
 
@@ -532,7 +532,7 @@ def search_root_field(
 
 def invalid_syntax_message(app, invalid_attrs):
     invalid_attr_types_ui = [
-        app.form.utf2display(at)
+        app.form.s2d(at)
         for at in sorted(invalid_attrs.keys())
     ]
     return 'Wrong syntax in following attributes: %s' % (
@@ -559,7 +559,7 @@ def exception_message(app, h1_msg, error_msg):
           {error_msg}
         </p>
         """.format(
-            heading=app.form.utf2display(h1_msg),
+            heading=app.form.s2d(h1_msg),
             error_msg=error_msg,
         )
     )

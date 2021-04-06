@@ -177,7 +177,7 @@ class DisplaySchemaElement:
                 class_attr_value_list = [class_attr_value]
             if se_class is None:
                 value_output = ', '.join([
-                    self._app.form.utf2display(v, sp_entity=' ', lf_entity='<br>')
+                    self._app.form.s2d(v, sp_entity=' ', lf_entity='<br>')
                     for v in class_attr_value_list
                 ])
             else:
@@ -242,7 +242,7 @@ class DisplaySchemaElement:
                 self._se.oid,
                 self._app.form.script_name, self._app.sid, self._se.oid,
                 self._app.form.script_name, self._app.sid, self._se.oid,
-                self._app.form.utf2display(str(self._se)),
+                self._app.form.s2d(str(self._se)),
                 ms_ad_schema_link,
             )
         )
@@ -331,7 +331,7 @@ class DisplayObjectClass(DisplaySchemaElement):
         except KeyError as err:
             self._app.outf.write(
                 '<strong>Missing schema elements referenced:<pre>%s</pre></strong>\n' % (
-                    self._app.form.utf2display(err),
+                    self._app.form.s2d(err),
                 )
             )
         else:
@@ -344,7 +344,7 @@ class DisplayObjectClass(DisplaySchemaElement):
                 self._app.anchor(
                     'searchform',
                     '(objectClass=%s)' % (
-                        self._app.form.utf2display((self._se.names or [self._se.oid])[0]),
+                        self._app.form.s2d((self._se.names or [self._se.oid])[0]),
                     ),
                     [
                         ('dn', self._app.dn),
@@ -488,7 +488,7 @@ class DisplayAttributeType(DisplaySchemaElement):
         except KeyError as err:
             self._app.outf.write(
                 '<strong>Missing schema elements referenced:<pre>%s</pre></strong>\n' % (
-                    self._app.form.utf2display(err),
+                    self._app.form.s2d(err),
                 )
             )
         else:
@@ -500,7 +500,7 @@ class DisplayAttributeType(DisplaySchemaElement):
                 self._app.anchor(
                     'searchform',
                     '(%s=*)' % (
-                        self._app.form.utf2display((self._se.names or [self._se.oid])[0]),
+                        self._app.form.s2d((self._se.names or [self._se.oid])[0]),
                     ),
                     [
                         ('dn', self._app.dn),
@@ -534,8 +534,8 @@ class DisplayAttributeType(DisplaySchemaElement):
                 oc_text = '-any-'
             self._app.outf.write('<tr><td>%s</td><td>%s.%s</td></th>\n' % (
                 oc_text,
-                self._app.form.utf2display(syntax_class.__module__),
-                self._app.form.utf2display(syntax_class.__name__),
+                self._app.form.s2d(syntax_class.__module__),
+                self._app.form.s2d(syntax_class.__name__),
             ))
         self._app.outf.write('</table>\n</dd>\n')
         # end of disp_details()
@@ -697,7 +697,7 @@ class DisplayDITStructureRule(DisplaySchemaElement):
                     getattr(self._se, 'names', (()))
                 ),
                 self._se.ruleid,
-                self._app.form.utf2display(str(self._se)),
+                self._app.form.s2d(str(self._se)),
             )
         )
         self.disp_details()

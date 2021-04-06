@@ -115,7 +115,7 @@ class ObjectSID(OctetString, IA5String):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return '%s<br>%s' % (
-            self._app.form.utf2display(sid2sddl(self._av)),
+            self._app.form.s2d(sid2sddl(self._av)),
             OctetString.display(self, valueindex, commandbutton),
         )
 
@@ -195,7 +195,7 @@ class OtherSID(ObjectSID):
                 title='Search by SID',
             )
         return '%s %s<br>%s' % (
-            self._app.form.utf2display(sddl_str),
+            self._app.form.s2d(sddl_str),
             search_anchor,
             OctetString.display(self, valueindex, commandbutton),
         )
@@ -565,11 +565,11 @@ class DNWithOctetString(DistinguishedName):
         try:
             octet_tag, count, octet_string, dn = self.av_u.split(':')
         except ValueError:
-            return self._app.form.utf2display(self.av_u)
+            return self._app.form.s2d(self.av_u)
         return ':'.join([
-            self._app.form.utf2display(octet_tag),
-            self._app.form.utf2display(count),
-            self._app.form.utf2display(octet_string),
+            self._app.form.s2d(octet_tag),
+            self._app.form.s2d(count),
+            self._app.form.s2d(octet_string),
             self._app.display_dn(
                 dn,
                 commandbutton=commandbutton,
@@ -636,7 +636,7 @@ class Interval(MicrosoftLargeInteger):
         if delta >= 0:
             return '%s (%s)' % (
                 MicrosoftLargeInteger.display(self, valueindex, commandbutton),
-                self._app.form.utf2display(str(strftimeiso8601(time.gmtime(delta)))),
+                self._app.form.s2d(str(strftimeiso8601(time.gmtime(delta)))),
             )
         return self.av_u
 
@@ -655,7 +655,7 @@ class LockoutTime(Interval):
             return MicrosoftLargeInteger.display(self, valueindex, commandbutton)
         return '%s (locked since %s)' % (
             MicrosoftLargeInteger.display(self, valueindex, commandbutton),
-            self._app.form.utf2display(str(strftimeiso8601(time.gmtime(delta)))),
+            self._app.form.s2d(str(strftimeiso8601(time.gmtime(delta)))),
         )
 
 syntax_registry.reg_at(

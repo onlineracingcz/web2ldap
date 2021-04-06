@@ -40,7 +40,7 @@ def modlist_ldif(dn, form, modlist):
     f = BytesIO()
     ldif_writer = ldap0.ldif.LDIFWriter(f)
     ldif_writer.unparse(dn.encode('utf-8'), modlist)
-    s.append(form.utf2display(f.getvalue().decode('utf-8')).replace('\n', '<br>'))
+    s.append(form.s2d(f.getvalue().decode('utf-8')).replace('\n', '<br>'))
     s.append('</pre>')
     return ''.join(s) # modlist_ldif()
 

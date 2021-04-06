@@ -134,7 +134,7 @@ def w2l_locate(app):
                     lu_extensions = None
 
                 outf_lines.append('<h1><em>%s</em></h1>\n' % (
-                    app.form.utf2display(dns_name),
+                    app.form.s2d(dns_name),
                 ))
 
                 ldap_srv_results = []
@@ -150,7 +150,7 @@ def w2l_locate(app):
                         outf_lines.append(
                             'DNS or socket error when querying %s: %s' % (
                                 srv_prefix,
-                                app.form.utf2display(str(dns_err)),
+                                app.form.s2d(str(dns_err)),
                             )
                         )
                     else:
@@ -175,7 +175,7 @@ def w2l_locate(app):
                             except socket.error:
                                 outf_lines.append(
                                     '<p class="ErrorMessage">Did not find IP address for hostname <em>%s</em>.</p>' % (
-                                        app.form.utf2display(hostname.decode('ascii'))
+                                        app.form.s2d(hostname.decode('ascii'))
                                     )
                                 )
                             else:

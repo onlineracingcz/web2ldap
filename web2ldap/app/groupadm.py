@@ -92,15 +92,15 @@ def group_select_field(
     option_list = []
     for optgroup_dn in optgroup_list:
         if optgroup_dn:
-            option_list.append('<optgroup label="%s">' % (app.form.utf2display(optgroup_dn)))
+            option_list.append('<optgroup label="%s">' % (app.form.s2d(optgroup_dn)))
         for dn in sorted(optgroup_dict[optgroup_dn], key=str.lower):
-            option_text = app.form.utf2display(
+            option_text = app.form.s2d(
                 groups_dict[dn].get(
                     'cn',
                     [dn[:-len(group_search_root) or len(dn)]]
                 )[0],
             )
-            option_title = app.form.utf2display(
+            option_title = app.form.s2d(
                 groups_dict[dn].get(
                     'description',
                     [dn[:-len(group_search_root)]]
@@ -108,7 +108,7 @@ def group_select_field(
             )
             option_list.append((
                 '<option value="%s" title="%s">%s</option>' % (
-                    app.form.utf2display(dn),
+                    app.form.s2d(dn),
                     option_title,
                     option_text
                 )
@@ -275,7 +275,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                 info_msg_list.append('<p>Added to:</p>')
                 info_msg_list.append('<ul>')
                 info_msg_list.extend([
-                    '<li>%s</li>' % (app.form.utf2display(group_dn))
+                    '<li>%s</li>' % (app.form.s2d(group_dn))
                     for group_dn, modlist in group_add_list
                 ])
                 info_msg_list.append('</ul>')
@@ -283,7 +283,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                 info_msg_list.append('<p>Removed from:</p>')
                 info_msg_list.append('<ul>')
                 info_msg_list.extend([
-                    '<li>%s</li>' % (app.form.utf2display(group_dn))
+                    '<li>%s</li>' % (app.form.s2d(group_dn))
                     for group_dn, modlist in group_remove_list
                 ])
                 info_msg_list.append('</ul>')
@@ -293,7 +293,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             error_msg_list = [error_msg]
             error_msg_list.extend([
                 'Error while modifying {group_dn}:<br>{error_msg}'.format(
-                    group_dn=app.form.utf2display(group_dn),
+                    group_dn=app.form.s2d(group_dn),
                     error_msg=error_msg
                 )
                 for group_dn, modlist, error_msg in ldaperror_entries
@@ -441,7 +441,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                     [('dn', group_dn)],
                     title=u'Display group entry',
                 ),
-                app.form.utf2display(group_dn),
+                app.form.s2d(group_dn),
                 ', '.join(group_entry.get('objectClass', [])),
                 '<br>'.join(group_entry.get('description', []))
             ))

@@ -98,7 +98,7 @@ def SearchForm_exp(app, filterstr=''):
     result = FILTERSTR_FIELDSET_TMPL % (
         app.form.field['filterstr'].maxLen,
         app.form.field['filterstr'].size,
-        app.form.utf2display(filterstr),
+        app.form.s2d(filterstr),
     )
     return result # SearchForm_exp()
 
@@ -254,7 +254,7 @@ def w2l_searchform(
         for sftn in searchform_template_cfg.keys():
             if sftn != '_':
                 ContextMenuList.append(app.anchor(
-                    'searchform', app.form.utf2display(sftn),
+                    'searchform', app.form.s2d(sftn),
                     [
                         ('dn', app.dn),
                         ('searchform_mode', 'base'),
@@ -316,8 +316,8 @@ def w2l_searchform(
         </form>
         """.format(
             form_search_html=app.begin_form('search', 'GET'),
-            searchform_mode=app.form.utf2display(searchform_mode),
-            searchform_template=app.form.utf2display(searchform_template_name),
+            searchform_mode=app.form.s2d(searchform_mode),
+            searchform_template=app.form.s2d(searchform_template_name),
             search_output=app.form.getInputValue('search_output', [u'table'])[0],
             msg_html=msg_html,
             inner_searchform_html=inner_searchform_html,
@@ -336,7 +336,7 @@ def w2l_searchform(
                 field_search_lastmod=app.form.field['search_lastmod'].input_html(
                     default=app.form.getInputValue('search_lastmod', [str(-1)])[0]
                 ),
-                value_search_attrs=app.form.utf2display(app.form.getInputValue('search_attrs', [u''])[0]),
+                value_search_attrs=app.form.s2d(app.form.getInputValue('search_attrs', [u''])[0]),
             ),
         )
     )

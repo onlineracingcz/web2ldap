@@ -109,10 +109,10 @@ def w2l_params(app):
                     ),
                 ),
                 {False:'<strike>', True:''}[control_oid in app.ls.supportedControl],
-                app.form.utf2display(name),
+                app.form.s2d(name),
                 {False:'</strike>', True:''}[control_oid in app.ls.supportedControl],
-                app.form.utf2display(control_oid),
-                app.form.utf2display(description),
+                app.form.s2d(control_oid),
+                app.form.s2d(description),
             )
         )
 

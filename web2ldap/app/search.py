@@ -150,7 +150,7 @@ class PrintableHTMLWriter(asynch.List):
         asynch.List.process_results(self)
         #self.allResults.sort()
         # This should speed up things
-        utf2display = self._app.form.utf2display
+        s2d = self._app.form.s2d
         print_cols = self._app.cfg_param('print_cols', '4')
         table = []
         for r in self.allResults:
@@ -165,7 +165,7 @@ class PrintableHTMLWriter(asynch.List):
                 attr_list = r.entry_s.keys()
                 for attr in attr_list:
                     tableentry[attr] = ', '.join([
-                        utf2display(attr_value)
+                        s2d(attr_value)
                         for attr_value in r.entry_s[attr]
                     ])
                 table.append(self._p[template_oc[0]] % (tableentry))
@@ -346,7 +346,7 @@ def w2l_search(app):
         return
 
     # This should speed up things
-    utf2display = app.form.utf2display
+    s2d = app.form.s2d
 
     search_output = app.form.getInputValue('search_output', ['table'])[0]
     search_opattrs = app.form.getInputValue('search_opattrs', ['no'])[0] == 'yes'
@@ -562,7 +562,7 @@ def w2l_search(app):
             app,
             Msg=' '.join((
                 app.ldap_error_msg(e),
-                utf2display(filterstr2),
+                s2d(filterstr2),
             )),
             filterstr=filterstr,
             scope=scope
@@ -704,8 +704,8 @@ def w2l_search(app):
             </table>
             """ % (
                 ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
-                utf2display(search_root),
-                utf2display(filterstr2),
+                s2d(search_root),
+                s2d(filterstr2),
             )
 
         if not result_dnlist:
@@ -863,7 +863,7 @@ def w2l_search(app):
                         refUrl = ExtendedLDAPUrl(r.ref_url_strings[0])
                     except ValueError:
                         command_table = []
-                        result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (utf2display(str(r[1][1][0])))
+                        result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (s2d(str(r[1][1][0])))
                     else:
                         result_dd_str = 'Search reference =&gt; %s' % (refUrl.htmlHREF(hrefTarget=None))
                         if scope == ldap0.SCOPE_SUBTREE:
@@ -900,7 +900,7 @@ def w2l_search(app):
                     if search_output == 'raw':
 
                         # Output DN
-                        result_dd_str = utf2display(r.dn_s)
+                        result_dd_str = s2d(r.dn_s)
 
                     else:
 
@@ -933,11 +933,11 @@ def w2l_search(app):
                             result_dd_str = '<br>\n'.join(tdlist)
 
                         elif 'displayName' in entry:
-                            result_dd_str = utf2display(app.ls.uc_decode(entry['displayName'][0])[0])
+                            result_dd_str = s2d(app.ls.uc_decode(entry['displayName'][0])[0])
 
                         else:
                             # Output DN
-                            result_dd_str = utf2display(r.dn_s)
+                            result_dd_str = s2d(r.dn_s)
 
                     # Build the list for link table
                     command_table = []
@@ -1049,7 +1049,7 @@ def w2l_search(app):
                 </p>
                 """ % (
                     search_param_html,
-                    utf2display(ldap_search_command),
+                    s2d(ldap_search_command),
                 )
             )
 

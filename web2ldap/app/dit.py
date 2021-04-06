@@ -117,9 +117,9 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
         has_subordinates = hasSubordinates and subordinateCountFlag
 
         try:
-            display_name_list = [app.form.utf2display(node_entry['displayName'][0]), partial_str]
+            display_name_list = [app.form.s2d(node_entry['displayName'][0]), partial_str]
         except KeyError:
-            display_name_list = [app.form.utf2display(str(rdn)), partial_str]
+            display_name_list = [app.form.s2d(str(rdn)), partial_str]
         display_name = ''.join(display_name_list)
 
         title_msg = u'\r\n'.join(
@@ -129,7 +129,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
 
         dn_anchor_id = dn_anchor_hash(dn)
 
-        res.append('<dt id="%s">' % (app.form.utf2display(dn_anchor_id)))
+        res.append('<dt id="%s">' % (app.form.s2d(dn_anchor_id)))
         if has_subordinates:
             if dn == anchor_dn:
                 link_text = '&lsaquo;&lsaquo;'
@@ -150,7 +150,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
             # FIX ME! Better solution in pure CSS?
             res.append('&nbsp;&nbsp;&nbsp;&nbsp;')
         res.append('<span title="%s">%s</span>' % (
-            app.form.utf2display(title_msg),
+            app.form.s2d(title_msg),
             display_name
         ))
         res.append(
@@ -240,7 +240,7 @@ def w2l_dit(app):
                             (('dn', str(naming_context)),),
                             title=u'Display tree beneath %s' % (naming_context,),
                         ),
-                        app.form.utf2display(str(naming_context)),
+                        app.form.s2d(str(naming_context)),
                     )
                 )
 

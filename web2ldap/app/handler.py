@@ -303,9 +303,9 @@ class AppHandler(LogHelper):
             target_attr = ' target="%s"' % (target)
         title_attr = ''
         if title:
-            title_attr = ' title="%s"' % (self.form.utf2display(title).replace(' ', '&nbsp;'))
+            title_attr = ' title="%s"' % (self.form.s2d(title).replace(' ', '&nbsp;'))
         if anchor_id:
-            anchor_id = '#%s' % (self.form.utf2display(anchor_id))
+            anchor_id = '#%s' % (self.form.s2d(anchor_id))
         res = '<a class="CL"%s%s href="%s?%s%s">%s</a>' % (
             target_attr,
             title_attr,
@@ -439,7 +439,7 @@ class AppHandler(LogHelper):
     def display_dn(self, dn, commandbutton=False):
         """Display a DN as LDAP URL with or without button"""
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn,))
-        dn_str = self.form.utf2display(dn or u'- World -')
+        dn_str = self.form.s2d(dn or u'- World -')
         if commandbutton:
             command_buttons = [
                 dn_str,
@@ -484,7 +484,7 @@ class AppHandler(LogHelper):
                         except KeyError:
                             pass
         else:
-            result = self.form.utf2display(who)
+            result = self.form.s2d(who)
         return result
         # end of display_authz_dn()
 
@@ -542,7 +542,7 @@ class AppHandler(LogHelper):
                 refresh_time=refresh_time,
                 target_url=target_url,
                 message_class=message_class,
-                redirect_msg=self.form.utf2display(redirect_msg),
+                redirect_msg=self.form.s2d(redirect_msg),
                 link_text=link_text,
             )
         )
@@ -629,7 +629,7 @@ class AppHandler(LogHelper):
                 input_ldapurl = ExtendedLDAPUrl(self.form.query_string)
             except ValueError as err:
                 raise ErrorExit('Error parsing LDAP URL: %s.' % (
-                    self.form.utf2display(str(err))
+                    self.form.s2d(str(err))
                 ))
             else:
                 self.command = self.command or SCOPE2COMMAND[input_ldapurl.scope]
@@ -755,10 +755,10 @@ class AppHandler(LogHelper):
             except AttributeError:
                 matched_dn = None
         error_msg = error_msg.replace('\r', '').replace('\t', '')
-        error_msg_html = self.form.utf2display(error_msg, lf_entity='<br>')
+        error_msg_html = self.form.s2d(error_msg, lf_entity='<br>')
         # Add matchedDN to error message HTML if needed
         if matched_dn:
-            matched_dn_html = '<br>Matched DN: %s' % (self.form.utf2display(matched_dn))
+            matched_dn_html = '<br>Matched DN: %s' % (self.form.s2d(matched_dn))
         else:
             matched_dn_html = ''
         return template.format(
@@ -1010,7 +1010,7 @@ class AppHandler(LogHelper):
                 self,
                 u'Error parsing form',
                 u'Error parsing form:<br>%s' % (
-                    self.form.utf2display(str(form_error)),
+                    self.form.s2d(str(form_error)),
                 ),
             )
 
@@ -1023,7 +1023,7 @@ class AppHandler(LogHelper):
                 self,
                 h1_msg='Connect failed',
                 error_msg='Connecting to %s impossible!<br>%s' % (
-                    self.form.utf2display(init_uri or '-'),
+                    self.form.s2d(init_uri or '-'),
                     self.ldap_error_msg(err)
                 )
             )
@@ -1083,7 +1083,7 @@ class AppHandler(LogHelper):
         except (InvalidSimpleBindDN, UsernameNotUnique) as err:
             w2l_login(
                 self,
-                login_msg=self.form.utf2display(str(err)),
+                login_msg=self.form.s2d(str(err)),
                 who=who, relogin=True,
             )
 
@@ -1097,7 +1097,7 @@ class AppHandler(LogHelper):
                 self.dn,
                 None,
                 'Password change needed',
-                self.form.utf2display(
+                self.form.s2d(
                     u'Password will expire in %s!' % (
                         ts2repr(
                             Timespan.time_divisors,
@@ -1118,7 +1118,7 @@ class AppHandler(LogHelper):
                 self.dn,
                 None,
                 'Password change needed',
-                self.form.utf2display(err.desc)
+                self.form.s2d(err.desc)
             )
 
         except (
@@ -1131,7 +1131,7 @@ class AppHandler(LogHelper):
             exception_message(
                 self,
                 u'Unhandled %s' % err.__class__.__name__,
-                self.form.utf2display(str(err)),
+                self.form.s2d(str(err)),
             )
 
         except ldap0.LDAPError as ldap_err:

@@ -408,7 +408,7 @@ class LDAPSyntax:
             '</button>'
         ) % (
             self._app.form.action_url(command, self._app.sid),
-            self._app.form.utf2display(self._at),
+            self._app.form.s2d(self._at),
             mode, row, link_text
         )
 
@@ -444,7 +444,7 @@ class LDAPSyntax:
         return input_field
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        return self._app.form.utf2display(repr(self._av))
+        return self._app.form.s2d(repr(self._av))
 
 
 class Binary(LDAPSyntax):
@@ -527,7 +527,7 @@ class DirectoryString(LDAPSyntax):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return self.html_tmpl.format(
-            av=self._app.form.utf2display(self.av_u)
+            av=self._app.form.s2d(self.av_u)
         )
 
 
@@ -590,7 +590,7 @@ class DistinguishedName(DirectoryString):
                 ref_oc, self.av_u, ref_attr,
             )
             res.append(self._app.anchor(
-                'search', self._app.form.utf2display(ref_text),
+                'search', self._app.form.s2d(ref_text),
                 (
                     ('dn', ref_dn),
                     ('search_root', str(self._app.naming_context)),
@@ -613,7 +613,7 @@ class DistinguishedName(DirectoryString):
         return res
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        res = [self._app.form.utf2display(self.av_u or '- World -')]
+        res = [self._app.form.s2d(self.av_u or '- World -')]
         if commandbutton:
             res.extend(self._additional_links())
         return web2ldapcnf.command_link_separator.join(res)
@@ -682,7 +682,7 @@ class NameAndOptionalUID(DistinguishedName):
         if len(value) == 1 or not value[1]:
             return dn_str
         return web2ldapcnf.command_link_separator.join([
-            self._app.form.utf2display(value[1]),
+            self._app.form.s2d(value[1]),
             dn_str,
         ])
 
@@ -856,8 +856,8 @@ class GeneralizedTime(IA5String):
         time_span = (current_time - dt_utc).total_seconds()
         return '{dt_utc} ({av})<br>{timespan_disp} {timespan_comment}'.format(
             dt_utc=dt_utc_str,
-            av=self._app.form.utf2display(self.av_u),
-            timespan_disp=self._app.form.utf2display(
+            av=self._app.form.s2d(self.av_u),
+            timespan_disp=self._app.form.s2d(
                 ts2repr(Timespan.time_divisors, ' ', abs(time_span))
             ),
             timespan_comment={
@@ -912,7 +912,7 @@ class NullTerminatedDirectoryString(DirectoryString):
         return self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        return self._app.form.utf2display(
+        return self._app.form.s2d(
             self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
         )
 
@@ -1107,9 +1107,9 @@ class Uri(DirectoryString):
         if ldap0.ldapurl.is_ldapurl(url):
             return '<a href="%s?%s">%s%s</a>' % (
                 self._app.form.script_name,
-                self._app.form.utf2display(url),
-                self._app.form.utf2display(label),
-                self._app.form.utf2display(display_url),
+                self._app.form.s2d(url),
+                self._app.form.s2d(label),
+                self._app.form.s2d(display_url),
             )
         if url.lower().find('javascript:') >= 0:
             return '<code>%s</code>' % (
@@ -1118,9 +1118,9 @@ class Uri(DirectoryString):
         return '<a href="%s/urlredirect/%s?%s">%s%s</a>' % (
             self._app.form.script_name,
             self._app.sid,
-            self._app.form.utf2display(url),
-            self._app.form.utf2display(label),
-            self._app.form.utf2display(display_url),
+            self._app.form.s2d(url),
+            self._app.form.s2d(label),
+            self._app.form.s2d(display_url),
         )
 
 
@@ -1300,10 +1300,10 @@ class OID(IA5String):
                 link_text='&raquo',
             )
         return '<strong>%s</strong> (%s):<br>%s (see %s)' % (
-            self._app.form.utf2display(name),
+            self._app.form.s2d(name),
             IA5String.display(self, valueindex, commandbutton),
-            self._app.form.utf2display(description),
-            self._app.form.utf2display(reference)
+            self._app.form.s2d(description),
+            self._app.form.s2d(reference)
         )
 
 
@@ -1327,12 +1327,12 @@ class LDAPUrl(Uri):
                 commandbuttonstr = ''
         except ValueError:
             return '<strong>Not a valid LDAP URL:</strong> %s' % (
-                self._app.form.utf2display(repr(self._av))
+                self._app.form.s2d(repr(self._av))
             )
         return '<table><tr><td>%s</td><td><a href="%s">%s</a></td></tr></table>' % (
             commandbuttonstr,
-            self._app.form.utf2display(self.av_u),
-            self._app.form.utf2display(self.av_u)
+            self._app.form.s2d(self.av_u),
+            self._app.form.s2d(self.av_u)
         )
 
 
@@ -1367,7 +1367,7 @@ class OctetString(Binary):
             ) % (
                 i*self.bytes_split,
                 ':'.join(c[j:j+1].hex().upper() for j in range(len(c))),
-                self._app.form.utf2display(msbase.ascii_dump(c), 'ascii'),
+                self._app.form.s2d(msbase.ascii_dump(c), 'ascii'),
             )
             for i, c in enumerate(msbase.chunks(self._av, self.bytes_split))
         ]
@@ -1423,7 +1423,7 @@ class MultilineText(DirectoryString):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return '<br>'.join([
-            self._app.form.utf2display(self._app.ls.uc_decode(line_b)[0])
+            self._app.form.s2d(self._app.ls.uc_decode(line_b)[0])
             for line_b in self._split_lines(self._av)
         ])
 
@@ -1458,7 +1458,7 @@ class PreformattedMultilineText(MultilineText):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         lines = [
-            self._app.form.utf2display(
+            self._app.form.s2d(
                 self._app.ls.uc_decode(line_b)[0],
                 self.tab_identiation,
             )
@@ -1770,7 +1770,7 @@ class Timespan(Integer):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         try:
-            result = self._app.form.utf2display('%s (%s)' % (
+            result = self._app.form.s2d('%s (%s)' % (
                 ts2repr(self.time_divisors, self.sep, self.av_u),
                 Integer.display(self, valueindex, commandbutton)
             ))
@@ -1847,8 +1847,8 @@ class SelectList(DirectoryString):
         return self.tag_tmpl[bool(attr_title)].format(
             attr_value=attr_value_str,
             sep=self.desc_sep,
-            attr_text=self._app.form.utf2display(attr_text),
-            attr_title=self._app.form.utf2display(attr_title or '')
+            attr_text=self._app.form.s2d(attr_text),
+            attr_title=self._app.form.s2d(attr_title or '')
         )
 
     def input_field(self) -> web_forms.Field:
@@ -1970,7 +1970,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                     if self.lu_obj.attrs[0].lower() == self.lu_obj.attrs[1].lower():
                         display_text = ''
                     else:
-                        display_text = self._app.form.utf2display(attr_value_desc+':')
+                        display_text = self._app.form.s2d(attr_value_desc+':')
                     if commandbutton:
                         link_html = self._app.anchor(
                             'read', '&raquo;',
@@ -2131,7 +2131,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
             except (KeyError, IndexError):
                 display_text = ''
             else:
-                display_text = self._app.form.utf2display(attr_value_desc+': ')
+                display_text = self._app.form.s2d(attr_value_desc+': ')
         else:
             display_text = ''
         return self.desc_sep.join((
@@ -2313,7 +2313,7 @@ class BitArrayInteger(MultilineText, Integer):
             Integer.display(self, valueindex, commandbutton),
             '\n'.join([
                 '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
-                    self._app.form.utf2display(desc),
+                    self._app.form.s2d(desc),
                     hex(flag_value),
                     {False: '-', True: 'on'}[(av_i & flag_value) > 0]
                 )
@@ -2382,7 +2382,7 @@ class DNSDomain(IA5String):
         if self.av_u != self._av.decode('idna'):
             return '%s (%s)' % (
                 IA5String.display(self, valueindex, commandbutton),
-                self._app.form.utf2display(self.form_value())
+                self._app.form.s2d(self.form_value())
             )
         return IA5String.display(self, valueindex, commandbutton)
 

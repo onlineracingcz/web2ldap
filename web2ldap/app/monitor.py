@@ -194,7 +194,7 @@ def w2l_monitor(app):
         text_sysfqdn=socket.getfqdn(),
         int_pid=os.getpid(),
         int_ppid=os.getppid(),
-        text_username=app.form.utf2display(posix_username or '-/-'),
+        text_username=app.form.s2d(posix_username or '-/-'),
         int_uid=posix_uid,
         text_currenttime=strftimeiso8601(time.gmtime(time.time())),
         text_startuptime=strftimeiso8601(time.gmtime(STARTUP_TIME)),
@@ -204,7 +204,7 @@ def w2l_monitor(app):
             [
                 '<li>%s</li>' % ''.join(
                     [
-                        app.form.utf2display(str(repr(t))),
+                        app.form.s2d(str(repr(t))),
                         ', alive'*t.is_alive(),
                         ', daemon'*t.isDaemon(),
                     ]
@@ -223,7 +223,7 @@ def w2l_monitor(app):
         text_remoteiphitlist='\n'.join(
             [
                 '<tr><td>%s</td><td>%d</td></tr>' % (
-                    app.form.utf2display((ip or '-')),
+                    app.form.s2d((ip or '-')),
                     count,
                 )
                 for ip, count in _session_store.remote_ip_counter.most_common()
@@ -232,7 +232,7 @@ def w2l_monitor(app):
         text_cmd_counters='\n'.join(
             [
                 '<tr><td>%s</td><td>%d</td></tr>' % (
-                    app.form.utf2display(cmd),
+                    app.form.s2d(cmd),
                     ctr,
                 )
                 for cmd, ctr in sorted(COMMAND_COUNT.items())
@@ -241,7 +241,7 @@ def w2l_monitor(app):
         text_exc_counters='\n'.join(
             [
                 '<tr><td>%s</td><td>%d</td></tr>' % (
-                    app.form.utf2display(str(exc_type)),
+                    app.form.s2d(str(exc_type)),
                     exc_ctr,
                 )
                 for exc_type, exc_ctr in EXC_TYPE_COUNTER.items()
@@ -267,10 +267,10 @@ def w2l_monitor(app):
                     len(real_ldap_sessions),
                     '\n'.join([
                         '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(
-                            app.form.utf2display((i[1].onBehalf or '') or u'unknown'),
+                            app.form.s2d((i[1].onBehalf or '') or u'unknown'),
                             strftimeiso8601(time.gmtime(i[0])),
-                            app.form.utf2display(i[1].uri or u'no connection'),
-                            app.form.utf2display(i[1].who or u'anonymous'),
+                            app.form.s2d(i[1].uri or u'no connection'),
+                            app.form.s2d(i[1].who or u'anonymous'),
                         )
                         for k, i in real_ldap_sessions
                     ]),

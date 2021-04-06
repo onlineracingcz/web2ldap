@@ -672,8 +672,8 @@ class AEGroupDN(DerefDynamicDNSelectList):
         group_cn = group_dn[0][0][1]
         res = [
             'cn=<strong>{0}</strong>,{1}'.format(
-                self._app.form.utf2display(group_cn),
-                self._app.form.utf2display(str(group_dn.parent())),
+                self._app.form.s2d(group_cn),
+                self._app.form.s2d(str(group_dn.parent())),
             )
         ]
         if commandbutton:

@@ -215,7 +215,7 @@ def passwd_form(
 
     app.outf.write(passwd_template_str.format(
         text_heading=heading,
-        text_msg=error_msg or app.form.utf2display(PASSWD_ACTIONS_DICT[passwd_action][1]),
+        text_msg=error_msg or app.form.s2d(PASSWD_ACTIONS_DICT[passwd_action][1]),
         form_begin=app.begin_form('passwd', 'POST'),
         value_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
         value_passwd_action=app.form.hiddenFieldHTML('passwd_action', passwd_action, ''),
@@ -346,7 +346,7 @@ def w2l_passwd(app):
                 app.ls.modify(passwd_who, passwd_modlist)
             if no_passwd_input:
                 password_attr_types_msg = 'Generated password set by the server: %s' % (
-                    app.form.utf2display(passwd_input)
+                    app.form.s2d(passwd_input)
                 )
             else:
                 password_attr_types_msg = 'Password set by the server.'
@@ -455,13 +455,13 @@ def w2l_passwd(app):
 
         password_attr_types_msg = 'Password-related attributes set: %s' % (', '.join(
             [
-                app.form.utf2display(attr_type.decode('ascii'))
+                app.form.s2d(attr_type.decode('ascii'))
                 for _, attr_type, _ in passwd_modlist
             ]
         ))
         if no_passwd_input:
             password_attr_types_msg += '<br>Generated password is: %s' % (
-                app.form.utf2display(passwd_input)
+                app.form.s2d(passwd_input)
             )
 
         # Modify password

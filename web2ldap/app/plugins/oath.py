@@ -172,7 +172,7 @@ class OathSecret(OctetString):
 
     def display(self, valueindex=0, commandbutton=False) -> str:
         return '<br>'.join((
-            self._app.form.utf2display(base64.b32encode(self._av).decode('ascii')),
+            self._app.form.s2d(base64.b32encode(self._av).decode('ascii')),
             OctetString.display(self, valueindex, commandbutton),
         ))
 
@@ -229,7 +229,7 @@ class OathSecretTime(GeneralizedTime):
                         1: 'will expire',
                     }[expire_cmp],
                     expire_dt.strftime('%c'),
-                    self._app.form.utf2display(
+                    self._app.form.s2d(
                         ts2repr(
                             self.time_divisors,
                             ' ',

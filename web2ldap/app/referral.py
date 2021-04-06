@@ -48,7 +48,7 @@ def w2l_chasereferral(app, ref_exc):
         app.outf.write(
             ERR_MSG_DIV % (
                 'Error extracting referral LDAP URL from %s.' % (
-                    app.form.utf2display(str(repr(ref_exc), 'ascii'))
+                    app.form.s2d(str(repr(ref_exc), 'ascii'))
                 )
             )
         )
@@ -61,7 +61,7 @@ def w2l_chasereferral(app, ref_exc):
         app.outf.write(
             ERR_MSG_DIV % (
                 'Error extracting referral LDAP URL from %s.' % (
-                    app.form.utf2display(repr(ldap_url_info).decode('ascii'))
+                    app.form.s2d(repr(ldap_url_info).decode('ascii'))
                 )
             )
         )
@@ -75,8 +75,8 @@ def w2l_chasereferral(app, ref_exc):
         app.outf.write(
             ERR_MSG_DIV % (
                 'Error parsing referral URL %s: %s' % (
-                    app.form.utf2display(repr(ldap_url_info).decode('ascii')),
-                    app.form.utf2display(str(value_error).decode('ascii'))
+                    app.form.s2d(repr(ldap_url_info).decode('ascii')),
+                    app.form.s2d(str(value_error).decode('ascii'))
                 )
             )
         )
@@ -93,8 +93,8 @@ def w2l_chasereferral(app, ref_exc):
     )
     login_fields = login_template_str.format(
         field_login_mech=app.form.field['login_mech'].input_html(),
-        value_ldap_who=app.form.utf2display(app.ls.who),
-        value_ldap_mapping=app.form.utf2display(app.binddn_mapping),
+        value_ldap_who=app.form.s2d(app.ls.who),
+        value_ldap_mapping=app.form.s2d(app.binddn_mapping),
         field_login_search_root=login_search_root_field.input_html(),
         field_login_authzid_prefix=app.form.field['login_authzid_prefix'].input_html(),
         value_submit='Chase Referral',
@@ -109,7 +109,7 @@ def w2l_chasereferral(app, ref_exc):
         </p>
         %s\n%s\n%s\n%s
         """  % (
-            app.form.utf2display(ref_url.unparse()),
+            app.form.s2d(ref_url.unparse()),
             app.begin_form(app.command, 'POST'),
             app.form.hiddenFieldHTML('host', ref_url.hostport, u''),
             app.form.hiddenFieldHTML('dn', ref_url.dn, u''),

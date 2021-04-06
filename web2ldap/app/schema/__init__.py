@@ -221,7 +221,7 @@ def schema_anchor(
             ]
         )
     return name_template.format(
-        name=app.form.utf2display(se_nameoroid),
+        name=app.form.s2d(se_nameoroid),
         anchor=anchor,
     )
     # end of schema_anchor()

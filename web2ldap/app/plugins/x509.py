@@ -97,10 +97,10 @@ class Certificate(Binary):
             ext_oid = str(ext['extn_id'])
             html.append(
                 self.cert_extn_display_template.format(
-                    ext_id=self._app.form.utf2display(ext_oid),
+                    ext_id=self._app.form.s2d(ext_oid),
                     ext_name=asn1crypto.x509.ExtensionId._map.get(ext_oid, ext_oid),
                     ext_crit={False:'', True:'critical: '}[ext['critical'].native],
-                    extn_value=self._app.form.utf2display(str(ext['extn_value'].parsed)),
+                    extn_value=self._app.form.s2d(str(ext['extn_value'].parsed)),
                 )
             )
         html.append('</dl>')
@@ -114,10 +114,10 @@ class Certificate(Binary):
             return ''.join(html)
         html.append(
             self.cert_display_template.format(
-                cert_issuer_dn=self._app.form.utf2display(
+                cert_issuer_dn=self._app.form.s2d(
                     x509name2ldapdn(x509.issuer, self._schema)
                 ),
-                cert_subject_dn=self._app.form.utf2display(
+                cert_subject_dn=self._app.form.s2d(
                     x509name2ldapdn(x509.subject, self._schema)
                 ),
                 cert_serial_number_dec=str(x509.serial_number),
@@ -172,7 +172,7 @@ class CertificateList(Binary):
             crl_html = ''
         else:
             crl_html = self.crl_display_template.format(
-                crl_issuer_dn=self._app.form.utf2display(
+                crl_issuer_dn=self._app.form.s2d(
                     x509name2ldapdn(x509.issuer, self._schema)
                 ),
                 crl_this_update=x509['tbs_cert_list']['this_update'].native,

@@ -199,7 +199,7 @@ def get_entry_input(app):
         in_ldif = app.form.field['in_ldif'].getLDIFRecords()
     except ValueError as e:
         raise ErrorExit(
-            'LDIF parsing error: %s' % (app.form.utf2display(str(e)))
+            'LDIF parsing error: %s' % (app.form.s2d(str(e)))
         )
     else:
         if in_ldif:
@@ -357,8 +357,8 @@ class InputFormEntry(DisplayEntry):
                     HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
                     HIDDEN_FIELD % (
                         'in_av',
-                        self._app.form.utf2display(attr_inst.form_value(), sp_entity='  '),
-                        self._app.form.utf2display(attr_inst.form_value(), sp_entity='&nbsp;&nbsp;')
+                        self._app.form.s2d(attr_inst.form_value(), sp_entity='  '),
+                        self._app.form.s2d(attr_inst.form_value(), sp_entity='&nbsp;&nbsp;')
                     ),
                     attr_inst.value_button(self._app.command, self.row_counter, '+'),
                     '</span>'*highlight_invalid,
@@ -411,7 +411,7 @@ class InputFormEntry(DisplayEntry):
             self.attr_counter += 1
 
         return '<a class="hide" id="in_a_%s"></a>%s' % (
-            self._app.form.utf2display(nameoroid),
+            self._app.form.s2d(nameoroid),
             '\n<br>\n'.join(result),
         )
 
@@ -514,7 +514,7 @@ class InputFormEntry(DisplayEntry):
                     self._app.outf.write(self._app.form.hiddenFieldHTML('in_at', attr_type, ''))
                     self._app.outf.write(HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''))
                     try:
-                        attr_value_html = self._app.form.utf2display(attr_inst.form_value(), sp_entity='  ')
+                        attr_value_html = self._app.form.s2d(attr_inst.form_value(), sp_entity='  ')
                     except UnicodeDecodeError:
                         # Simply display an empty string if anything goes wrong with Unicode decoding (e.g. with binary attributes)
                         attr_value_html = ''
@@ -539,7 +539,7 @@ class InputFormEntry(DisplayEntry):
         ldif_writer.unparse(self.dn.encode(self._app.ls.charset), ldap_entry)
         self._app.outf.write(
             INPUT_FORM_LDIF_TMPL.format(
-                value_ldif=self._app.form.utf2display(
+                value_ldif=self._app.form.s2d(
                     f.getvalue().decode('utf-8'),
                     sp_entity='  ',
                     lf_entity='\n',
@@ -596,7 +596,7 @@ def superior_display_html(
                         supentry_display_strings.append(inputform_supentrytemplate[oc] % parent_entry)
     if supentry_display_strings:
         return supentry_display_tmpl.format('\n'.join(supentry_display_strings))
-    return app.form.utf2display(parent_dn)
+    return app.form.s2d(parent_dn)
 
 
 def object_class_form(
@@ -890,7 +890,7 @@ def object_class_form(
                 add_template_html_list.append(
                     '<li>%s</li>' % (
                         app.anchor(
-                            'add', app.form.utf2display(tmpl_name),
+                            'add', app.form.s2d(tmpl_name),
                             [
                                 ('dn', pdn),
                                 ('add_template', tmpl_name),

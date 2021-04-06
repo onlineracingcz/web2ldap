@@ -399,13 +399,13 @@ class OpenDSSyncHist(OctetString, DirectoryString):
             mod_attr_type, mod_number, mod_type, mod_value = self._av.split(':', 3)
         except ValueError:
             return OctetString.display(self, valueindex, commandbutton)
-        first_str = self._app.form.utf2display(
+        first_str = self._app.form.s2d(
             ':'.join((mod_attr_type, mod_number, mod_type)).decode(self._app.ls.charset)
         )
         if no_humanreadable_attr(self._schema, mod_attr_type):
             mod_value_html = mod_value.hex().upper()
         else:
-            mod_value_html = self._app.form.utf2display(mod_value.decode(self._app.ls.charset))
+            mod_value_html = self._app.form.s2d(mod_value.decode(self._app.ls.charset))
         return ':<br>'.join((first_str, mod_value_html))
 
 syntax_registry.reg_at(

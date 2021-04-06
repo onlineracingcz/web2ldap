@@ -334,8 +334,8 @@ class ReqMod(OctetString, DirectoryString):
             mod_attr_value.decode(self._app.ls.charset)
         except UnicodeDecodeError:
             return '%s:%s<br>\n<code>\n%s\n</code>\n' % (
-                self._app.form.utf2display(mod_attr_type_u),
-                self._app.form.utf2display(mod_type_u),
+                self._app.form.s2d(mod_attr_type_u),
+                self._app.form.s2d(mod_type_u),
                 mod_attr_value.hex().upper(),
             )
         else:
@@ -375,7 +375,7 @@ class ReqControls(IA5String):
                 except KeyError:
                     ctrl_name = None
             if ctrl_name:
-                result_lines.append(self._app.form.utf2display(ctrl_name))
+                result_lines.append(self._app.form.s2d(ctrl_name))
             # Extract criticality
             try:
                 ctrl_criticality = {
@@ -399,7 +399,7 @@ class ReqControls(IA5String):
                     decoded_control_value = ctrl_value
                 result_lines.append(
                     'controlValue %s' % (
-                        self._app.form.utf2display(
+                        self._app.form.s2d(
                             repr(decoded_control_value)
                         ).replace('\n', '<br>')
                     )

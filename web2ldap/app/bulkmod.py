@@ -146,7 +146,7 @@ def bulkmod_input_form(
     error_attrs = sorted({bulkmod_at[i] for i in input_errors})
     if error_attrs:
         Msg = '<p class="ErrorMessage">Invalid input: %s</p>' % (
-            ', '.join(map(app.form.utf2display, error_attrs))
+            ', '.join(map(app.form.s2d, error_attrs))
         )
     else:
         Msg = '<p class="WarningMessage">Input bulk modify parameters here.</p>'
@@ -288,8 +288,8 @@ def bulkmod_confirmation_form(
             form_begin=app.begin_form('bulkmod', 'POST'),
             field_bulkmod_ctrl='\n'.join([
                 '<li>%s (%s)</li>' % (
-                    app.form.utf2display(OID_REG.get(ctrl_oid, (ctrl_oid,))[0]),
-                    app.form.utf2display(ctrl_oid),
+                    app.form.s2d(OID_REG.get(ctrl_oid, (ctrl_oid,))[0]),
+                    app.form.s2d(ctrl_oid),
                 )
                 for ctrl_oid in app.form.field['bulkmod_ctrl'].value or []
             ]) or '- none -',
@@ -424,7 +424,7 @@ def w2l_bulkmod(app):
                     except ldap0.LDAPError as e:
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
-                                app.form.utf2display(rdat.dn_s),
+                                app.form.s2d(rdat.dn_s),
                                 app.ldap_error_msg(e),
                             )
                         )
@@ -455,16 +455,16 @@ def w2l_bulkmod(app):
                     except ldap0.LDAPError as e:
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
-                                app.form.utf2display(rdat.dn_s),
-                                app.form.utf2display(str(e)),
+                                app.form.s2d(rdat.dn_s),
+                                app.form.s2d(str(e)),
                             )
                         )
                     else:
                         result_ldif_html.append(
                             '<p>%s %s beneath %s</p>' % (
                                 {False:'Moved', True:'Copied'}[bulkmod_cp],
-                                app.form.utf2display(rdat.dn_s),
-                                app.form.utf2display(bulkmod_newsuperior),
+                                app.form.s2d(rdat.dn_s),
+                                app.form.s2d(bulkmod_newsuperior),
                             )
                         )
 

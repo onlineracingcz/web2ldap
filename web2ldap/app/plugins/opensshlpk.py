@@ -110,7 +110,7 @@ class SshPublicKey(DirectoryString):
         ))
         if pk_comment:
             result.append(
-                '<dt>Key comment:</dt><dd>{}</dd>'.format(self._app.form.utf2display(pk_comment))
+                '<dt>Key comment:</dt><dd>{}</dd>'.format(self._app.form.s2d(pk_comment))
             )
         if pk_fingerprints:
             result.append('<dt>Fingerprints:</dt><dd><dl>')
@@ -125,7 +125,7 @@ class SshPublicKey(DirectoryString):
                 result.append(
                     '<dt>ssh-keygen -l -E {0}</dt><dd>{1}</dd>'.format(
                         hash_algo,
-                        self._app.form.utf2display(
+                        self._app.form.s2d(
                             self._strip_padding(
                                 binascii.b2a_base64(pk_fingerprints[hash_algo]).strip()
                             ).decode('ascii')

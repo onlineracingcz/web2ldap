@@ -72,7 +72,7 @@ class SambaAcctFlags(IA5String):
             for f, d in self.flags_dict.items()
         ]
         return '<pre>%s</pre><table>\n%s\n</table>\n' % (
-            self._app.form.utf2display(self.av_u),
+            self._app.form.s2d(self.av_u),
             ''.join(table_rows)
         )
 

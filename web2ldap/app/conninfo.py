@@ -307,7 +307,7 @@ def w2l_conninfo(app):
         who_html = 'anonymous'
 
     try:
-        whoami_result = '%s' % (app.form.utf2display(repr(app.ls.l.whoami_s())))
+        whoami_result = '%s' % (app.form.s2d(repr(app.ls.l.whoami_s())))
     except ldap0.LDAPError as ldap_err:
         whoami_result = '<strong>Failed:</strong> %s' % (app.ldap_error_msg(ldap_err))
 
@@ -315,8 +315,8 @@ def w2l_conninfo(app):
         sasl_mech = u'SASL/%s' % (app.ls.sasl_mech)
         sasl_auth_info = '<table>%s</table>' % '\n'.join([
             '<tr><td>%s</td><td>%s</td></tr>' % (
-                app.form.utf2display(ldap0.OPT_NAMES.get(key, str(key))),
-                app.form.utf2display(repr(val))
+                app.form.s2d(ldap0.OPT_NAMES.get(key, str(key))),
+                app.form.s2d(repr(val))
             )
             for key, val in app.ls.sasl_auth.cb_value_dict.items()
             if val
@@ -348,22 +348,22 @@ def w2l_conninfo(app):
             strftimeiso8601(time.gmtime(app.ls.connStartTime)),
             time.time()-app.ls.connStartTime,
             app.ls.l._reconnects_done,
-            app.form.utf2display(
+            app.form.s2d(
                 app.ls.vendorName
                 or monitored_info
                 or {True:'OpenLDAP', False:''}[app.ls.is_openldap]
                 or 'unknown'
             ),
-            app.form.utf2display(app.ls.vendorVersion or ''),
+            app.form.s2d(app.ls.vendorVersion or ''),
             who_html,
             whoami_result,
-            app.form.utf2display(sasl_mech),
+            app.form.s2d(sasl_mech),
             sasl_auth_info,
             sasl_user_name,
-            app.form.utf2display(sasl_ssf),
-            app.form.utf2display(app.dn or u'- World -'),
-            app.form.utf2display(app.parent_dn if app.parent_dn is not None else u''),
-            app.form.utf2display(str(app.naming_context)),
+            app.form.s2d(sasl_ssf),
+            app.form.s2d(app.dn or u'- World -'),
+            app.form.s2d(app.parent_dn if app.parent_dn is not None else u''),
+            app.form.s2d(str(app.naming_context)),
             min(len(app.ls.l.last_search_bases), app.ls.l.last_search_bases.maxlen),
             '<br>'.join([
                 app.display_dn(search_base, commandbutton=True)
@@ -389,8 +389,8 @@ def w2l_conninfo(app):
     cross_check_vars = session_store().sessiondict['__session_checkvars__'+app.sid].items()
     cross_check_vars_html = '\n'.join([
         '<tr><td>%s</td><td>%s</td></tr>' % (
-            app.form.utf2display(k),
-            app.form.utf2display(v),
+            app.form.s2d(k),
+            app.form.s2d(v),
         )
         for k, v in sorted(cross_check_vars)
     ])
@@ -398,13 +398,13 @@ def w2l_conninfo(app):
     app.outf.write(
         CONNINFO_HTTP_TEMPLATE % (
             app.ls.onBehalf,
-            app.form.utf2display(str(app.env.get('REMOTE_ADDR', ''))),
-            app.form.utf2display(str(app.env.get('REMOTE_PORT', ''))),
+            app.form.s2d(str(app.env.get('REMOTE_ADDR', ''))),
+            app.form.s2d(str(app.env.get('REMOTE_PORT', ''))),
             app.env.get('SERVER_SIGNATURE', ''),
-            app.form.utf2display(str(', '.join(app.form.accept_language))),
-            app.form.utf2display(app.form.accept_charset.upper()),
+            app.form.s2d(str(', '.join(app.form.accept_language))),
+            app.form.s2d(app.form.accept_charset.upper()),
             cross_check_vars_html,
-            app.form.utf2display(app.env.get('HTTP_USER_AGENT', '')),
+            app.form.s2d(app.env.get('HTTP_USER_AGENT', '')),
         )
     )
     footer(app)

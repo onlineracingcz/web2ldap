@@ -71,7 +71,7 @@ def w2l_chasesrvrecord(app, host_list):
         SRVRR_TMPL % (
             app.begin_form(app.command, 'POST'),
             app.form.hiddenFieldHTML('dn', app.dn, u''),
-            app.form.utf2display(app.dn),
+            app.form.s2d(app.dn),
             host_select_field.input_html(),
             '', '', '', ''
             '',
