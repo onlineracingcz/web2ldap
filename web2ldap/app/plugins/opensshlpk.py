@@ -76,12 +76,10 @@ class SshPublicKey(DirectoryString):
     @staticmethod
     def _get_key_size(pk_type, pk_bin):
         try:
-            p = PARAMIKO_KEYCLASS[pk_type](data=pk_bin)
+            pkey = PARAMIKO_KEYCLASS[pk_type](data=pk_bin)
         except (KeyError, paramiko.SSHException):
-            pk_size = None
-        else:
-            pk_size = p.get_bits()
-        return pk_size
+            return None
+        return pkey.get_bits()
 
     def _validate(self, attr_value: bytes) -> bool:
         valid = DirectoryString._validate(self, attr_value)
