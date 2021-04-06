@@ -14,13 +14,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import threading
 
-import web2ldap.__about__
-import web2ldap.app.gui
-
-from ..ldapsession import LDAPSession
 from ..log import logger, EXC_TYPE_COUNTER
-from .stats import COMMAND_COUNT
-from .session import session_store
 
 try:
     import prometheus_client.core
@@ -30,6 +24,11 @@ except ImportError:
 else:
     METRICS_AVAIL = True
 
+from ..__about__ import __version__, __version_info__
+from ..ldapsession import LDAPSession
+from .stats import COMMAND_COUNT
+from .session import session_store
+from .gui import gen_headers
 
 if METRICS_AVAIL:
 
@@ -58,10 +57,10 @@ if METRICS_AVAIL:
             )
             info.add_metric(
                 (
-                    web2ldap.__about__.__version__,
-                    str(web2ldap.__about__.__version_info__.major),
-                    str(web2ldap.__about__.__version_info__.minor),
-                    str(web2ldap.__about__.__version_info__.micro),
+                    __version__,
+                    str(__version_info__.major),
+                    str(__version_info__.minor),
+                    str(__version_info__.micro),
                 ),
                 1,
             )
@@ -152,7 +151,7 @@ def w2l_metrics(app):
         REGISTRY.register(MetricsCollector())
         METRICS_REGISTERED = True
     app.outf.set_headers(
-        web2ldap.app.gui.gen_headers(
+        gen_headers(
             content_type=METRICS_CONTENT_TYPE,
             charset=METRICS_CHARSET,
         )
