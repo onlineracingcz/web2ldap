@@ -16,26 +16,27 @@ from ldap0.controls import KNOWN_RESPONSE_CONTROLS
 
 import web2ldapcnf
 
-import web2ldap.app.gui
-from web2ldap.app.schema.syntaxes import \
-    AuthzDN, \
-    BindDN, \
-    DirectoryString, \
-    DistinguishedName, \
-    DynamicDNSelectList, \
-    IA5String, \
-    Integer, \
-    LDAPUrl, \
-    LDAPv3ResultCode, \
-    MultilineText, \
-    NotBefore, \
-    OctetString, \
-    SelectList, \
-    Uri, \
-    UUID, \
-    syntax_registry
-from web2ldap.ldaputil.oidreg import OID_REG
-from web2ldap.app.plugins.quirks import NamingContexts
+from ..searchform import SEARCH_OPT_IS_EQUAL, SEARCH_SCOPE_STR_ONELEVEL
+from ..schema.syntaxes import (
+    AuthzDN,
+    BindDN,
+    DirectoryString,
+    DistinguishedName,
+    DynamicDNSelectList,
+    IA5String,
+    Integer,
+    LDAPUrl,
+    LDAPv3ResultCode,
+    MultilineText,
+    NotBefore,
+    OctetString,
+    SelectList,
+    Uri,
+    UUID,
+    syntax_registry,
+)
+from ...ldaputil.oidreg import OID_REG
+from .quirks import NamingContexts
 
 #---------------------------------------------------------------------------
 # slapo-syncprov
@@ -466,7 +467,7 @@ class ReqSession(Integer):
                     ('search_root', str(self._app.naming_context)),
                     ('searchform_mode', u'adv'),
                     ('search_attr', u'reqSession'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
                 ),
                 title='Search all audit entries with same session number',
@@ -548,7 +549,7 @@ class OpenLDAPSpecialBackendSuffix(NamingContexts):
             'search', 'Config',
             (
                 ('dn', config_context),
-                ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
+                ('scope', SEARCH_SCOPE_STR_ONELEVEL),
                 (
                     'filterstr',
                     u'(&(objectClass=olcDatabaseConfig)(olcDatabase=%s))' % (attr_type_u),
