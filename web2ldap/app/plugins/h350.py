@@ -3,7 +3,7 @@
 web2ldap plugin classes for H.350 Directory Services (see RFC 3944)
 """
 
-from web2ldap.app.schema.syntaxes import Uri, LDAPUrl, syntax_registry
+from ..schema.syntaxes import Uri, LDAPUrl, syntax_registry
 
 
 class CommURI(LDAPUrl):

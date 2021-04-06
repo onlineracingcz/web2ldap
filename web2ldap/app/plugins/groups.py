@@ -2,7 +2,7 @@
 web2ldap plugin classes for group related attributes
 """
 
-from web2ldap.app.schema.syntaxes import DistinguishedName, syntax_registry
+from ..schema.syntaxes import DistinguishedName, syntax_registry
 
 
 class Member(DistinguishedName):

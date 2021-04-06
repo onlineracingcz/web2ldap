@@ -10,10 +10,11 @@ from typing import Dict
 
 import ldap0.filter
 
-from web2ldap.app.schema.syntaxes import \
-    DistinguishedName, \
-    SelectList, \
-    syntax_registry
+from ..schema.syntaxes import (
+    DistinguishedName,
+    SelectList,
+    syntax_registry,
+)
 
 
 class PkcX509Issuer(DistinguishedName):

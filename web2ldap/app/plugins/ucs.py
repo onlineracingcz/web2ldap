@@ -5,14 +5,14 @@ web2ldap plugin classes for Univention Corporate Server
 
 import bz2
 
-from web2ldap.app.schema.syntaxes import \
-    Binary, \
-    RFC822Address, \
-    DynamicDNSelectList, \
-    MultilineText, \
-    syntax_registry
-
-from web2ldap.app.plugins.msperson import DateOfBirth
+from ..schema.syntaxes import (
+    Binary,
+    RFC822Address,
+    DynamicDNSelectList,
+    MultilineText,
+    syntax_registry,
+)
+from .msperson import DateOfBirth
 
 
 class UniventionPolicyReference(DynamicDNSelectList):

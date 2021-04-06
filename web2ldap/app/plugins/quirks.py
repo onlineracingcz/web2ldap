@@ -7,27 +7,28 @@ a server is erroneous or could not be retrieved.
 
 import ldap0.ldapurl
 
-import web2ldap.app.searchform
-from web2ldap.app.schema.syntaxes import \
-    syntax_registry, \
-    Audio, \
-    AuthzDN, \
-    Binary, \
-    Boolean, \
-    CountryString, \
-    DirectoryString, \
-    DistinguishedName, \
-    DomainComponent, \
-    Integer, \
-    JPEGImage, \
-    LDAPUrl, \
-    OctetString, \
-    OID, \
-    PhotoG3Fax, \
-    PostalAddress, \
-    RFC822Address, \
-    Uri, \
-    UTCTime
+from ..searchform import SEARCH_SCOPE_STR_ONELEVEL
+from ..schema.syntaxes import (
+    syntax_registry,
+    Audio,
+    AuthzDN,
+    Binary,
+    Boolean,
+    CountryString,
+    DirectoryString,
+    DistinguishedName,
+    DomainComponent,
+    Integer,
+    JPEGImage,
+    LDAPUrl,
+    OctetString,
+    OID,
+    PhotoG3Fax,
+    PostalAddress,
+    RFC822Address,
+    Uri,
+    UTCTime,
+)
 
 
 syntax_registry.reg_at(
@@ -193,10 +194,10 @@ class NamingContexts(DistinguishedName):
             else:
                 config_context = 'cn=Backends,cn=config'
                 config_filter = '(&(objectClass=ds-cfg-backend)(ds-cfg-base-dn=%s))' % (self.av_u)
-                config_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
+                config_scope_str = SEARCH_SCOPE_STR_ONELEVEL
         else:
             config_filter = '(&(objectClass=olcDatabaseConfig)(olcSuffix=%s))' % (self.av_u)
-            config_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
+            config_scope_str = SEARCH_SCOPE_STR_ONELEVEL
         if config_context and config_scope_str and config_filter:
             return self._app.anchor(
                 'search', 'Config',
@@ -232,11 +233,11 @@ class NamingContexts(DistinguishedName):
                 ) % (
                     self.av_u
                 )
-                monitor_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
+                monitor_scope_str = SEARCH_SCOPE_STR_ONELEVEL
         else:
             monitor_context = 'cn=Databases,cn=Monitor'
             monitor_filter = '(&(objectClass=monitoredObject)(namingContexts=%s))' % (self.av_u)
-            monitor_scope_str = web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL
+            monitor_scope_str = SEARCH_SCOPE_STR_ONELEVEL
         if monitor_context and monitor_scope_str and monitor_filter:
             return self._app.anchor(
                 'search', 'Monitor',
@@ -255,7 +256,7 @@ class NamingContexts(DistinguishedName):
             'search', 'Down',
             (
                 ('dn', self.av_u),
-                ('scope', web2ldap.app.searchform.SEARCH_SCOPE_STR_ONELEVEL),
+                ('scope', SEARCH_SCOPE_STR_ONELEVEL),
                 ('filterstr', '(objectClass=*)'),
             )
         ))

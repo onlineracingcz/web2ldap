@@ -7,7 +7,7 @@ see also RFC1274
 
 from typing import Dict
 
-from web2ldap.app.schema.syntaxes import SelectList, syntax_registry
+from ..schema.syntaxes import SelectList, syntax_registry
 
 
 class MailPreferenceOption(SelectList):

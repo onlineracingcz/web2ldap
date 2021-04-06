@@ -10,14 +10,15 @@ from typing import Dict
 import ldap0
 import ldap0.filter
 
-from web2ldap.app.schema.syntaxes import \
-    DirectoryString, \
-    SelectList, \
-    SecondsSinceEpoch, \
-    IA5String, \
-    DynamicValueSelectList, \
-    syntax_registry
-from web2ldap.app.plugins.activedirectory import LogonHours
+from ..schema.syntaxes import (
+    DirectoryString,
+    SelectList,
+    SecondsSinceEpoch,
+    IA5String,
+    DynamicValueSelectList,
+    syntax_registry,
+)
+from .activedirectory import LogonHours
 
 
 syntax_registry.reg_at(

@@ -7,7 +7,7 @@ Basically some attribute values are composed from other attributes
 but only if the structural object class of the entry is inetOrgPerson.
 """
 
-from web2ldap.app.schema.syntaxes import ComposedAttribute, DirectoryString, syntax_registry
+from ..schema.syntaxes import ComposedAttribute, DirectoryString, syntax_registry
 
 
 class CNInetOrgPerson(ComposedAttribute, DirectoryString):

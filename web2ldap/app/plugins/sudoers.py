@@ -4,11 +4,12 @@ web2ldap plugin classes for sudo-ldap
 (see http://www.sudo.ws/sudoers.ldap.man.html)
 """
 
-from web2ldap.app.schema.syntaxes import \
-    DynamicValueSelectList, \
-    NotBefore, \
-    NotAfter, \
-    syntax_registry
+from ..schema.syntaxes import (
+    DynamicValueSelectList,
+    NotBefore,
+    NotAfter,
+    syntax_registry,
+)
 
 
 class SudoUserGroup(DynamicValueSelectList):

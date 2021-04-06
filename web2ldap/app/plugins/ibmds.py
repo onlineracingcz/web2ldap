@@ -3,7 +3,7 @@
 web2ldap plugin classes for IBM Tivoliy Directory Server
 """
 
-from web2ldap.app.schema.syntaxes import syntax_registry, OID, DistinguishedName, OctetString
+from ..schema.syntaxes import syntax_registry, OID, DistinguishedName, OctetString
 
 syntax_registry.reg_at(
     OID.oid, [

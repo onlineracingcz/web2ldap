@@ -3,7 +3,7 @@
 web2ldap plugin classes for FreeRADIUS/LDAP schema
 """
 
-from web2ldap.app.schema.syntaxes import DynamicDNSelectList, syntax_registry
+from ..schema.syntaxes import DynamicDNSelectList, syntax_registry
 
 
 class RadiusProfileDN(DynamicDNSelectList):

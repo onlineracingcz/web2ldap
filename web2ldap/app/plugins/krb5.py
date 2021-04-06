@@ -5,14 +5,15 @@ web2ldap plugin classes for Kerberos (see krb5-kdc.schema)
 
 from typing import Dict
 
-from web2ldap.app.schema.syntaxes import \
-    BitArrayInteger, \
-    DirectoryString, \
-    OctetString, \
-    SelectList, \
-    DynamicDNSelectList, \
-    Timespan, \
-    syntax_registry
+from ..schema.syntaxes import (
+    BitArrayInteger,
+    DirectoryString,
+    OctetString,
+    SelectList,
+    DynamicDNSelectList,
+    Timespan,
+    syntax_registry,
+)
 
 
 #-----------------------------------------------------------------

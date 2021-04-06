@@ -6,7 +6,7 @@ import ldap0
 import ldap0.ldapurl
 from ldap0.dn import is_dn
 
-from web2ldap.app.schema.syntaxes import LDAPUrl, syntax_registry
+from ..schema.syntaxes import LDAPUrl, syntax_registry
 
 
 class MemberUrl(LDAPUrl):

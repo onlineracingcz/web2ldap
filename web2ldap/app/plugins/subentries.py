@@ -5,7 +5,7 @@ web2ldap plugin classes for attributes defined for subentries (see RFC 3672)
 
 from typing import Dict
 
-from web2ldap.app.schema.syntaxes import GSER, SelectList, syntax_registry
+from ..schema.syntaxes import GSER, SelectList, syntax_registry
 
 
 class SubtreeSpecification(GSER):

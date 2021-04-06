@@ -5,7 +5,7 @@ web2ldap plugin classes for LDAP-based naming service (ldapns.schema)
 
 from typing import Dict
 
-from web2ldap.app.schema.syntaxes import SelectList, syntax_registry
+from ..schema.syntaxes import SelectList, syntax_registry
 
 
 class AuthorizedService(SelectList):

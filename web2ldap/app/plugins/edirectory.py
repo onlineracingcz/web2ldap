@@ -12,23 +12,24 @@ import ldap0.filter
 
 import web2ldapcnf
 
-from web2ldap.app.schema.syntaxes import \
-    Binary, \
-    BitArrayInteger, \
-    DirectoryString, \
-    DynamicDNSelectList, \
-    Integer, \
-    MultilineText, \
-    NullTerminatedDirectoryString, \
-    OctetString, \
-    OID, \
-    PostalAddress, \
-    PreformattedMultilineText, \
-    PrintableString, \
-    SelectList, \
-    XmlValue, \
-    syntax_registry
-from web2ldap.app.plugins.x509 import Certificate, CertificateList
+from ..schema.syntaxes import (
+    Binary,
+    BitArrayInteger,
+    DirectoryString,
+    DynamicDNSelectList,
+    Integer,
+    MultilineText,
+    NullTerminatedDirectoryString,
+    OctetString,
+    OID,
+    PostalAddress,
+    PreformattedMultilineText,
+    PrintableString,
+    SelectList,
+    XmlValue,
+    syntax_registry,
+)
+from .x509 import Certificate, CertificateList
 
 
 # FIX ME! Disabled this because of double OID which eDirectory is famous for. :-(

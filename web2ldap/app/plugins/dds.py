@@ -5,9 +5,9 @@ web2ldap plugin classes for dynamic entries (see RFC 2589)
 
 import time
 
-from web2ldap.utctime import strftimeiso8601
+from ...utctime import strftimeiso8601
 
-from web2ldap.app.schema.syntaxes import Timespan, DistinguishedName, syntax_registry
+from ..schema.syntaxes import Timespan, DistinguishedName, syntax_registry
 
 
 class EntryTTL(Timespan):

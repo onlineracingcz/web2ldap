@@ -5,12 +5,13 @@ web2ldap plugin classes for PGP key server
 
 import re
 
-from web2ldap.app.schema.syntaxes import \
-    DirectoryString, \
-    GeneralizedTime, \
-    PreformattedMultilineText, \
-    DynamicValueSelectList, \
-    syntax_registry
+from ..schema.syntaxes import (
+    DirectoryString,
+    GeneralizedTime,
+    PreformattedMultilineText,
+    DynamicValueSelectList,
+    syntax_registry,
+)
 
 
 syntax_registry.reg_at(

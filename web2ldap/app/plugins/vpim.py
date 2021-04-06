@@ -5,7 +5,7 @@ web2ldap plugin classes for attributes defined in VPIM (see RFC 4237)
 
 from typing import Dict
 
-from web2ldap.app.schema.syntaxes import SelectList, RFC822Address, syntax_registry
+from ..schema.syntaxes import SelectList, RFC822Address, syntax_registry
 
 
 syntax_registry.reg_at(

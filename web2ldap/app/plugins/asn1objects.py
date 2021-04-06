@@ -3,7 +3,7 @@
 web2ldap plugin classes for ASN.1 objects
 """
 
-from web2ldap.app.schema.syntaxes import ASN1Object, syntax_registry
+from ..schema.syntaxes import ASN1Object, syntax_registry
 
 
 syntax_registry.reg_at(

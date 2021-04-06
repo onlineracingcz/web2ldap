@@ -7,7 +7,7 @@ import os.path
 
 import web2ldapcnf
 
-from web2ldap.app.schema.syntaxes import PropertiesSelectList, syntax_registry
+from ..schema.syntaxes import PropertiesSelectList, syntax_registry
 
 
 class DemailMaxAuthLevel(PropertiesSelectList):

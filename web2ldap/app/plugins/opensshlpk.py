@@ -10,8 +10,8 @@ import binascii
 
 import paramiko
 
-from web2ldap.log import logger
-from web2ldap.app.schema.syntaxes import DirectoryString, syntax_registry
+from ...log import logger
+from ..schema.syntaxes import DirectoryString, syntax_registry
 
 PARAMIKO_KEYCLASS = {
     'ssh-rsa': paramiko.RSAKey,

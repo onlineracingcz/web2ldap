@@ -2,9 +2,9 @@
 web2ldap plugin classes for FreeIPA
 """
 
-from web2ldap.app.schema.syntaxes import UUID, DNSDomain, syntax_registry
-from web2ldap.app.plugins.samba import SambaSID
-from web2ldap.app.plugins.opensshlpk import SshPublicKey
+from ..schema.syntaxes import UUID, DNSDomain, syntax_registry
+from .samba import SambaSID
+from .opensshlpk import SshPublicKey
 
 
 syntax_registry.reg_at(

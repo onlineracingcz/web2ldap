@@ -8,7 +8,7 @@ Experimental => you have to understand what it internally does when enabling it!
 import ldap0
 from ldap0.res import SearchReference
 
-from web2ldap.app.plugins.nis import syntax_registry, UidNumber, GidNumber, IA5String
+from .nis import syntax_registry, UidNumber, GidNumber, IA5String
 
 
 class HomeDirectory(IA5String):

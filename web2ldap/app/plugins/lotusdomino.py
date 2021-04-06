@@ -6,11 +6,12 @@ web2ldap plugin classes for PGP key server
 import re
 from typing import Dict
 
-from web2ldap.app.schema.syntaxes import \
-    DynamicDNSelectList, \
-    MultilineText, \
-    SelectList, \
-    syntax_registry
+from ..schema.syntaxes import (
+    DynamicDNSelectList,
+    MultilineText,
+    SelectList,
+    syntax_registry,
+)
 
 
 class YesNoIntegerFlag(SelectList):

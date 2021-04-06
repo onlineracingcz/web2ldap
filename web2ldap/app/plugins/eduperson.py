@@ -8,7 +8,7 @@ See http://middleware.internet2.edu/eduperson/
 import re
 from typing import Dict
 
-from web2ldap.app.schema.syntaxes import IA5String, SelectList, DynamicDNSelectList, syntax_registry
+from ..schema.syntaxes import IA5String, SelectList, DynamicDNSelectList, syntax_registry
 
 
 class EduPersonAffiliation(SelectList):

@@ -8,15 +8,16 @@ See https://www.terena.org/activities/tf-emc2/schac.html
 import re
 import datetime
 
-from web2ldap.app.schema.syntaxes import \
-    DateOfBirth, \
-    DirectoryString, \
-    IA5String, \
-    NumericString, \
-    CountryString, \
-    DNSDomain, \
-    syntax_registry
-from web2ldap.app.plugins.msperson import Gender
+from ..schema.syntaxes import (
+    DateOfBirth,
+    DirectoryString,
+    IA5String,
+    NumericString,
+    CountryString,
+    DNSDomain,
+    syntax_registry,
+)
+from .msperson import Gender
 
 
 syntax_registry.reg_at(

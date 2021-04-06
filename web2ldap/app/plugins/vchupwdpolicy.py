@@ -5,7 +5,7 @@ web2ldap plugin classes for attributes defined in draft-vchu-ldap-pwd-policy
 
 from typing import Dict
 
-from web2ldap.app.schema.syntaxes import SelectList, syntax_registry
+from ..schema.syntaxes import SelectList, syntax_registry
 
 
 class OnOffFlag(SelectList):

@@ -11,17 +11,21 @@ from typing import Dict
 
 import web2ldapcnf
 
-import web2ldap.app.searchform
-from web2ldap.app.schema.syntaxes import \
-    MultilineText, \
-    IA5String, \
-    SelectList, \
-    Integer, \
-    BitArrayInteger, \
-    MacAddress, \
-    DynamicDNSelectList, \
-    DNSDomain, \
-    syntax_registry
+from ..searchform import (
+    SEARCH_OPT_IS_EQUAL,
+    SEARCH_OPT_BEGINS_WITH,
+)
+from ..schema.syntaxes import (
+    MultilineText,
+    IA5String,
+    SelectList,
+    Integer,
+    BitArrayInteger,
+    MacAddress,
+    DynamicDNSelectList,
+    DNSDomain,
+    syntax_registry,
+)
 
 
 class DHCPConfigStatement(MultilineText):
@@ -49,13 +53,13 @@ class DHCPConfigStatement(MultilineText):
                         ('searchform_mode', 'adv'),
                         ('search_mode', '(|%s)'),
                         ('search_attr', 'dc'),
-                        ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                        ('search_option', SEARCH_OPT_IS_EQUAL),
                         ('search_string', host_name),
                         ('search_attr', 'pTRRecord'),
-                        ('search_option', web2ldap.app.searchform.SEARCH_OPT_BEGINS_WITH),
+                        ('search_option', SEARCH_OPT_BEGINS_WITH),
                         ('search_string', host_name+'.'),
                         ('search_attr', 'associatedDomain'),
-                        ('search_option', web2ldap.app.searchform.SEARCH_OPT_BEGINS_WITH),
+                        ('search_option', SEARCH_OPT_BEGINS_WITH),
                         ('search_string', host_name+'.'),
                     ),
                     title='Search related DNS RR entry',
@@ -66,10 +70,10 @@ class DHCPConfigStatement(MultilineText):
                     ('searchform_mode', 'adv'),
                     ('search_mode', '(|%s)'),
                     ('search_attr', 'aRecord'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', dhcp_value),
                     ('search_attr', 'aAAARecord'),
-                    ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', dhcp_value),
                 ]
                 try:
@@ -79,7 +83,7 @@ class DHCPConfigStatement(MultilineText):
                 else:
                     search_params.extend((
                         ('search_attr', 'associatedDomain'),
-                        ('search_option', web2ldap.app.searchform.SEARCH_OPT_IS_EQUAL),
+                        ('search_option', SEARCH_OPT_IS_EQUAL),
                         ('search_string', reverse_dns),
                     ))
                 res.append(

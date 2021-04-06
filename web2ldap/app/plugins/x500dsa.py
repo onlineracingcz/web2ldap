@@ -3,7 +3,7 @@
 web2ldap plugin classes for X.500 DSAs
 """
 
-from web2ldap.app.schema.syntaxes import OctetString, syntax_registry
+from ..schema.syntaxes import OctetString, syntax_registry
 
 
 class AccessControlInformation(OctetString):
