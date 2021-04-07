@@ -184,11 +184,11 @@ class NamingContexts(DistinguishedName):
         config_filter = None
         # Check for OpenLDAP's config context attribute
         try:
-            config_context = self._app.ls.uc_decode(self._app.ls.rootDSE['configContext'][0])[0]
+            config_context = self._app.ls.uc_decode(self._app.ls.root_dse['configContext'][0])[0]
         except KeyError:
             # Check for OpenDJ's config context attribute
             try:
-                _ = self._app.ls.rootDSE['ds-private-naming-contexts']
+                _ = self._app.ls.root_dse['ds-private-naming-contexts']
             except KeyError:
                 pass
             else:
@@ -216,11 +216,11 @@ class NamingContexts(DistinguishedName):
         monitor_filter = None
         # Check for OpenLDAP's config context attribute
         try:
-            _ = self._app.ls.rootDSE['monitorContext']
+            _ = self._app.ls.root_dse['monitorContext']
         except KeyError:
             # Check for OpenDJ's config context attribute
             try:
-                _ = self._app.ls.rootDSE['ds-private-naming-contexts']
+                _ = self._app.ls.root_dse['ds-private-naming-contexts']
             except KeyError:
                 pass
             else:

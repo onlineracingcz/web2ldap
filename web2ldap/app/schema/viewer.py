@@ -189,10 +189,10 @@ class DisplaySchemaElement:
 
     def display(self):
         ms_ad_schema_link = ''
-        if 'schemaNamingContext' in self._app.ls.rootDSE:
+        if 'schemaNamingContext' in self._app.ls.root_dse:
             try:
                 result = self._app.ls.l.search_s(
-                    self._app.ls.rootDSE['schemaNamingContext'][0].decode(self._app.ls.charset),
+                    self._app.ls.root_dse['schemaNamingContext'][0].decode(self._app.ls.charset),
                     ldap0.SCOPE_SUBTREE,
                     (
                         '(|'

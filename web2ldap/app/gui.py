@@ -203,7 +203,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
         ])
 
     try:
-        changelog_dn = app.ls.rootDSE['changelog'][0].decode(app.ls.charset)
+        changelog_dn = app.ls.root_dse['changelog'][0].decode(app.ls.charset)
     except KeyError:
         pass
     else:
@@ -221,7 +221,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
         )
 
     try:
-        monitor_context_dn = app.ls.rootDSE['monitorContext'][0].decode(app.ls.charset)
+        monitor_context_dn = app.ls.root_dse['monitorContext'][0].decode(app.ls.charset)
     except KeyError:
         pass
     else:

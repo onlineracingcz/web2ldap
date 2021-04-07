@@ -525,7 +525,7 @@ class LDAPSession:
         'l',
         'namingContexts',
         'onBehalf',
-        'rootDSE',
+        'root_dse',
         'sasl_auth',
         'sasl_mech',
         '_schema_cache',
@@ -735,7 +735,7 @@ class LDAPSession:
         """Forget all old RootDSE values"""
         self.supportsAllOpAttr = False
         self.namingContexts = set()
-        self.rootDSE = ldap0.cidict.CIDict()
+        self.root_dse = ldap0.cidict.CIDict()
         # some rootDSE attributes made available as class attributes
         self.supportedLDAPVersion = frozenset([])
         self.supportedControl = frozenset([])
@@ -746,7 +746,7 @@ class LDAPSession:
 
     @property
     def is_openldap(self):
-        return b'OpenLDAProotDSE' in self.rootDSE.get('objectClass', [])
+        return b'OpenLDAProotDSE' in self.root_dse.get('objectClass', [])
 
     def _update_rootdse_attrs(self):
         """
@@ -761,7 +761,7 @@ class LDAPSession:
             ):
             self.namingContexts.update([
                 DNObj.from_str('' if val == b'\x00' else val.decode(self.charset))
-                for val in self.rootDSE.get(rootdse_naming_attrtype, [])
+                for val in self.root_dse.get(rootdse_naming_attrtype, [])
             ])
         for attr_type in (
                 'supportedLDAPVersion',
@@ -775,14 +775,14 @@ class LDAPSession:
                 attr_type,
                 frozenset(
                     decode_list(
-                        self.rootDSE.get(attr_type, []),
+                        self.root_dse.get(attr_type, []),
                         encoding='ascii'
                     )
                 )
             )
         for attr_type in ('vendorName', 'vendorVersion'):
-            if attr_type in self.rootDSE:
-                setattr(self, attr_type, self.rootDSE[attr_type][0].decode(self.charset))
+            if attr_type in self.root_dse:
+                setattr(self, attr_type, self.root_dse[attr_type][0].decode(self.charset))
             else:
                 setattr(self, attr_type, None)
         # determine whether server returns all operational attributes (RFC 3673)
@@ -813,12 +813,12 @@ class LDAPSession:
                 ldap0.PROTOCOL_ERROR,
                 ldap0.UNAVAILABLE_CRITICAL_EXTENSION,
             ):
-            self.rootDSE = {}
+            self.root_dse = {}
         else:
             if ldap_res is None:
-                self.rootDSE = {}
+                self.root_dse = {}
             else:
-                self.rootDSE = ldap_res.entry_as
+                self.root_dse = ldap_res.entry_as
         self._update_rootdse_attrs()
         # end of init_rootdse()
 
@@ -1138,7 +1138,7 @@ class LDAPSession:
             binddn_mapping,
             search_root,
         )
-        search_root = search_root or self.rootDSE.get(
+        search_root = search_root or self.root_dse.get(
             'defaultNamingContext',
             [b''],
         )[0].decode(self.charset) or ''

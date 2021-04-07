@@ -542,7 +542,7 @@ class OpenLDAPSpecialBackendSuffix(NamingContexts):
     def _config_link(self):
         attr_type_u = self._at[:-7]
         try:
-            config_context = self._app.ls.uc_decode(self._app.ls.rootDSE['configContext'][0])[0]
+            config_context = self._app.ls.uc_decode(self._app.ls.root_dse['configContext'][0])[0]
         except KeyError:
             return None
         return self._app.anchor(

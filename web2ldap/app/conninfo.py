@@ -148,9 +148,9 @@ def w2l_conninfo(app):
     config_dn_list = []
 
     monitored_info = None
-    if 'monitorContext' in app.ls.rootDSE:
+    if 'monitorContext' in app.ls.root_dse:
         # seems to be OpenLDAP's back-monitor
-        monitor_context_dn = app.ls.rootDSE['monitorContext'][0].decode(app.ls.charset)
+        monitor_context_dn = app.ls.root_dse['monitorContext'][0].decode(app.ls.charset)
         context_menu_list.append(
             app.anchor(
                 'read', 'Monitor',
@@ -182,37 +182,37 @@ def w2l_conninfo(app):
     else:
         config_dn_list.append(('CN=MONITOR', 'Monitor'))
 
-    if 'changelog' in app.ls.rootDSE:
+    if 'changelog' in app.ls.root_dse:
         context_menu_list.append(
             app.anchor(
                 'read', 'Change log',
-                [('dn', app.ls.rootDSE['changelog'][0])],
+                [('dn', app.ls.root_dse['changelog'][0])],
             )
         )
     else:
         config_dn_list.append(('cn=changelog', 'Change log'))
 
-    if 'configContext' in app.ls.rootDSE:
+    if 'configContext' in app.ls.root_dse:
         context_menu_list.append(
             app.anchor(
                 'read', 'Config',
-                [('dn', app.ls.rootDSE['configContext'][0])],
+                [('dn', app.ls.root_dse['configContext'][0])],
             )
         )
-    elif 'configurationNamingContext' in app.ls.rootDSE:
+    elif 'configurationNamingContext' in app.ls.root_dse:
         # MS AD
         context_menu_list.append(
             app.anchor(
                 'read', 'AD Configuration',
-                [('dn', app.ls.rootDSE['configurationNamingContext'][0])]
+                [('dn', app.ls.root_dse['configurationNamingContext'][0])]
             )
         )
-    elif 'ibm-configurationnamingcontext' in app.ls.rootDSE:
+    elif 'ibm-configurationnamingcontext' in app.ls.root_dse:
         # IBM Directory Server
         context_menu_list.append(
             app.anchor(
                 'read', 'IBM DS Configuration',
-                [('dn', app.ls.rootDSE['ibm-configurationnamingcontext'][0])]
+                [('dn', app.ls.root_dse['ibm-configurationnamingcontext'][0])]
             )
         )
     else:
@@ -271,12 +271,12 @@ def w2l_conninfo(app):
                 )
             )
 
-    if 'schemaNamingContext' in app.ls.rootDSE:
+    if 'schemaNamingContext' in app.ls.root_dse:
         # MS AD schema configuration
         context_menu_list.append(
             app.anchor(
                 'read', 'AD Schema Configuration',
-                [('dn', app.ls.rootDSE['schemaNamingContext'][0])],
+                [('dn', app.ls.root_dse['schemaNamingContext'][0])],
             )
         )
 

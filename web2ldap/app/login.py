@@ -66,7 +66,7 @@ def w2l_login(
         main_div_id='Input',
     )
 
-    if app.ls.rootDSE:
+    if app.ls.root_dse:
         app.form.field['login_mech'].setOptions(app.ls.supportedSASLMechanisms or [])
 
     # Determine the bind mech to be used from the
