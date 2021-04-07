@@ -33,10 +33,10 @@ from ..web.forms import Select as SelectField
 from . import ErrorExit
 
 from .schema import (
-    NEEDS_BINARY_TAG, 
+    NEEDS_BINARY_TAG,
     no_humanreadable_attr,
-    no_userapp_attr, 
-    object_class_categories, 
+    no_userapp_attr,
+    object_class_categories,
 )
 from .schema.viewer import schema_anchors
 from .schema.syntaxes import syntax_registry
@@ -336,7 +336,8 @@ class InputFormEntry(DisplayEntry):
                     # Attribute type 'structuralObjectClass' always read-only no matter what
                     oid == '2.5.21.9'
                 ) or (
-                    # Check whether the server indicated this attribute not to be writeable by bound identity
+                    # Check whether the server indicated this attribute
+                    # not to be writeable by bound identity
                     not self.writeable_attr_oids is None and \
                     not oid in self.writeable_attr_oids and \
                     not oid in self.new_attribute_types_oids
@@ -347,7 +348,8 @@ class InputFormEntry(DisplayEntry):
                     nameoroid in self.rdn_dict and \
                     attr_value in self.rdn_dict[nameoroid]
                 ) or (
-                    # Set to writeable if relax rules control is in effect and attribute is NO-USER-APP in subschema
+                    # Set to writeable if relax rules control is in effect
+                    # and attribute is NO-USER-APP in subschema
                     not self._app.ls.relax_rules and \
                     no_userapp_attr(self.entry._s, oid)
                 ):
@@ -516,7 +518,8 @@ class InputFormEntry(DisplayEntry):
                     try:
                         attr_value_html = self._app.form.s2d(attr_inst.form_value(), sp_entity='  ')
                     except UnicodeDecodeError:
-                        # Simply display an empty string if anything goes wrong with Unicode decoding (e.g. with binary attributes)
+                        # Simply display an empty string if anything goes wrong with Unicode
+                        # decoding (e.g. with binary attributes)
                         attr_value_html = ''
                     self._app.outf.write(HIDDEN_FIELD % (
                         'in_av', attr_value_html, ''
@@ -561,7 +564,9 @@ def superior_display_html(
             '</p>'
         ),
     ):
-    assert isinstance(parent_dn, str), TypeError("Argument 'parent_dn' must be str, was %r" % (parent_dn))
+    assert isinstance(parent_dn, str), TypeError(
+        "Argument 'parent_dn' must be str, was %r" % (parent_dn)
+    )
     if parent_dn is None:
         return ''
     supentry_display_strings = []
@@ -569,7 +574,9 @@ def superior_display_html(
     if inputform_supentrytemplate:
         inputform_supentrytemplate_attrtypes = set(['objectClass'])
         for oc in inputform_supentrytemplate.keys():
-            inputform_supentrytemplate_attrtypes.update(GrabKeys(inputform_supentrytemplate[oc]).keys)
+            inputform_supentrytemplate_attrtypes.update(
+                GrabKeys(inputform_supentrytemplate[oc]).keys
+            )
         try:
             parent_search_result = app.ls.l.read_s(
                 parent_dn,
@@ -593,7 +600,9 @@ def superior_display_html(
                     except KeyError:
                         pass
                     else:
-                        supentry_display_strings.append(inputform_supentrytemplate[oc] % parent_entry)
+                        supentry_display_strings.append(
+                            inputform_supentrytemplate[oc] % parent_entry
+                        )
     if supentry_display_strings:
         return supentry_display_tmpl.format('\n'.join(supentry_display_strings))
     return app.form.s2d(parent_dn)
@@ -618,7 +627,8 @@ def object_class_form(
         if app.schema.sed[DITStructureRule]:
             dit_structure_ruleid = app.ls.get_governing_structure_rule(parent_dn, app.schema)
             if dit_structure_ruleid is not None:
-                subord_structural_ruleids, subord_structural_oc = app.schema.get_subord_structural_oc_names(dit_structure_ruleid)
+                subord_structural_ruleids, subord_structural_oc = \
+                    app.schema.get_subord_structural_oc_names(dit_structure_ruleid)
                 if subord_structural_oc:
                     all_structural_oc = subord_structural_oc
                     dit_structure_rule_html = 'DIT structure rules:<br>%s' % ('<br>'.join(
@@ -666,7 +676,10 @@ def object_class_form(
 
     def object_class_select_fields(app, parent_dn):
 
-        all_structural_oc, all_abstract_oc, all_auxiliary_oc = object_class_categories(app.schema, all_oc)
+        all_structural_oc, all_abstract_oc, all_auxiliary_oc = object_class_categories(
+            app.schema,
+            all_oc,
+        )
         dit_structure_rule_html = ''
 
         restricted_structural_oc, dit_structure_rule_html = get_possible_soc(app, parent_dn)
@@ -681,7 +694,10 @@ def object_class_form(
         # Try to look up a DIT content rule
         if existing_object_classes and structural_object_class:
             # Determine OID of structural object class
-            soc_oid = app.schema.name2oid[ObjectClass].get(structural_object_class, structural_object_class)
+            soc_oid = app.schema.name2oid[ObjectClass].get(
+                structural_object_class,
+                structural_object_class,
+            )
             dit_content_rule = app.schema.get_obj(DITContentRule, soc_oid, None)
             if dit_content_rule is not None:
                 if dit_content_rule.obsolete:
@@ -739,7 +755,9 @@ def object_class_form(
         )
         if existing_misc_oc:
             misc_select_field_th = '<th><label for="add_misc_oc">Misc.<label></th>'
-            misc_select_field_td = '<td>%s</td>' % (misc_select_field.input_html(id_value='add_misc_oc'))
+            misc_select_field_td = '<td>%s</td>' % (
+                misc_select_field.input_html(id_value='add_misc_oc')
+            )
         else:
             misc_select_field_th = ''
             misc_select_field_td = ''
@@ -820,7 +838,10 @@ def object_class_form(
         add_tmpl_dict = {}
         for template_name in addform_entry_templates_keys:
             ldif_dn, ldif_entry = read_ldif_template(app, template_name)
-            tmpl_parent_dn = str(DNObj.from_str(ldif_dn.decode(app.ls.charset)).parent()) or parent_dn
+            tmpl_parent_dn = (
+                str(DNObj.from_str(ldif_dn.decode(app.ls.charset)).parent())
+                or parent_dn
+            )
             # first check whether mandatory attributes in parent entry are readable
             if addform_parent_attrs:
                 try:
@@ -846,7 +867,10 @@ def object_class_form(
                     continue
             restricted_structural_oc, _ = get_possible_soc(app, tmpl_parent_dn)
             if app.schema.sed[DITStructureRule]:
-                parent_gov_structure_rule = app.ls.get_governing_structure_rule(tmpl_parent_dn, app.schema)
+                parent_gov_structure_rule = app.ls.get_governing_structure_rule(
+                    tmpl_parent_dn,
+                    app.schema,
+                )
                 if parent_gov_structure_rule is None:
                     restricted_structural_oc = restricted_structural_oc or all_structural_oc
                 else:
@@ -977,7 +1001,9 @@ def read_ldif_template(app, template_name):
         try:
             ldif_file = open(ldif_file_name, 'rb')
         except IOError:
-            raise ErrorExit('I/O error opening LDIF template for &quot;%s&quot;.' % (template_name_html))
+            raise ErrorExit(
+                'I/O error opening LDIF template for &quot;%s&quot;.' % (template_name_html)
+            )
         try:
             dn, entry = list(ldap0.ldif.LDIFParser(
                 ldif_file,
@@ -985,9 +1011,17 @@ def read_ldif_template(app, template_name):
                 process_url_schemes=web2ldapcnf.ldif_url_schemes
             ).parse(max_entries=1))[0]
         except (IOError, ValueError):
-            raise ErrorExit('Value error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
+            raise ErrorExit(
+                'Value error reading/parsing LDIF template for &quot;%s&quot;.' % (
+                    template_name_html
+                )
+            )
         except Exception:
-            raise ErrorExit('Other error reading/parsing LDIF template for &quot;%s&quot;.' % (template_name_html))
+            raise ErrorExit(
+                'Other error reading/parsing LDIF template for &quot;%s&quot;.' % (
+                    template_name_html
+                )
+            )
     finally:
         if ldif_file is not None:
             ldif_file.close()
@@ -996,7 +1030,8 @@ def read_ldif_template(app, template_name):
 
 def AttributeTypeDict(app, param_name, param_default):
     """
-    Build a list of attributes assumed in configuration to be constant while editing entry
+    Build a list of attributes assumed in configuration
+    to be constant while editing entry
     """
     attrs = ldap0.cidict.CIDict()
     for attr_type in app.cfg_param(param_name, param_default):
@@ -1006,7 +1041,8 @@ def AttributeTypeDict(app, param_name, param_default):
 
 def ConfiguredConstantAttributes(app):
     """
-    Build a list of attributes assumed in configuration to be constant while editing entry
+    Build a list of attributes assumed in configuration
+    to be constant while editing entry
     """
     return AttributeTypeDict(
         app,
@@ -1083,15 +1119,17 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
 
     # Try to query attribute allowedAttributesEffective
     if '1.2.840.113556.1.4.914' in sub_schema.sed[AttributeType]:
-        # Query with attribute 'allowedAttributesEffective' e.g. on MS AD or OpenLDAP with slapo-allowed
+        # Query with attribute 'allowedAttributesEffective'
+        # e.g. on MS AD or OpenLDAP with slapo-allowed
         read_attrs['allowedAttributesEffective'] = 'allowedAttributesEffective'
         write_attrs_method = WRITEABLE_ATTRS_SLAPO_ALLOWED
 
     else:
         write_attrs_method = WRITEABLE_ATTRS_NONE
 
-    assert write_attrs_method in {WRITEABLE_ATTRS_NONE, WRITEABLE_ATTRS_SLAPO_ALLOWED, WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS}, \
-        ValueError('Invalid value for write_attrs_method')
+    assert write_attrs_method in {
+        WRITEABLE_ATTRS_NONE, WRITEABLE_ATTRS_SLAPO_ALLOWED, WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS
+    }, ValueError('Invalid value for write_attrs_method')
 
     # Explicitly request attribute 'ref' if in manage DSA IT mode
     if app.ls.manage_dsa_it:
@@ -1119,7 +1157,10 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
         try:
             writeable_attr_oids = ldap0.schema.models.SchemaElementOIDSet(
                 sub_schema, AttributeType,
-                [aval.decode('ascii') for aval in ldap_res.entry_as.get('allowedAttributesEffective', [])]
+                [
+                    aval.decode('ascii')
+                    for aval in ldap_res.entry_as.get('allowedAttributesEffective', [])
+                ]
             )
         except KeyError:
             writeable_attr_oids = set([])
@@ -1170,9 +1211,21 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
         object_class_form(app, decode_list(entry.get('objectClass', []), 'ascii'), None)
         return
 
-    input_form_entry = InputFormEntry(app, app.dn, app.schema, entry, None, invalid_attrs=invalid_attrs)
+    input_form_entry = InputFormEntry(
+        app,
+        app.dn,
+        app.schema,
+        entry,
+        None,
+        invalid_attrs=invalid_attrs
+    )
     required_attrs_dict, allowed_attrs_dict = input_form_entry.attribute_types()
-    nomatching_attrs_dict = nomatching_attrs(app.schema, input_form_entry, allowed_attrs_dict, required_attrs_dict)
+    nomatching_attrs_dict = nomatching_attrs(
+        app.schema,
+        input_form_entry,
+        allowed_attrs_dict,
+        required_attrs_dict,
+    )
 
     rdn_options = input_form_entry.entry.get_rdn_templates()
 
@@ -1196,7 +1249,9 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
     if app.ls.relax_rules:
         msg = ''.join((
             msg,
-            '<p class="WarningMessage">Relax Rules Control enabled! Be sure you know what you are doing!</p>',
+            '<p class="WarningMessage">'
+            'Relax Rules Control enabled! Be sure you know what you are doing!'
+            '</p>',
         ))
 
     # Check whether to fall back to table input mode
@@ -1211,7 +1266,9 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
         elif app.ls.relax_rules:
             msg = ''.join((
                 msg,
-                '<p class="WarningMessage">Forced to table input because Relax Rules Control is enabled.</p>'
+                '<p class="WarningMessage">'
+                'Forced to table input because Relax Rules Control is enabled.'
+                '</p>'
             ))
             input_formtype = 'Table'
 
@@ -1290,7 +1347,10 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
     if input_formtype == 'OC':
         # Output the web page with object class input form
-        object_class_form(app, decode_list(entry['objectClass'], 'ascii'), entry.get_structural_oc())
+        object_class_form(
+            app,
+            decode_list(entry['objectClass'], 'ascii'), entry.get_structural_oc(),
+        )
         return
 
     existing_object_classes = decode_list(entry['objectClass'][:], encoding='ascii')
@@ -1300,7 +1360,12 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         entry, writeable_attr_oids, existing_object_classes, invalid_attrs=invalid_attrs
     )
     required_attrs_dict, allowed_attrs_dict = input_form_entry.attribute_types()
-    nomatching_attrs_dict = nomatching_attrs(app.schema, input_form_entry, allowed_attrs_dict, required_attrs_dict)
+    nomatching_attrs_dict = nomatching_attrs(
+        app.schema,
+        input_form_entry,
+        allowed_attrs_dict,
+        required_attrs_dict,
+    )
 
     in_wrtattroids_fields_html = '\n'.join([
         app.form.hiddenFieldHTML('in_wrtattroids', at_name, '')
@@ -1314,7 +1379,9 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
     if app.ls.relax_rules:
         msg = ''.join((
             msg,
-            '<p class="WarningMessage">Relax Rules Control enabled! Be sure you know what you are doing!</p>',
+            '<p class="WarningMessage">'
+            'Relax Rules Control enabled! Be sure you know what you are doing!'
+            '</p>',
         ))
 
     # Check whether to fall back to table input mode
@@ -1329,7 +1396,9 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         elif app.ls.relax_rules:
             msg = ''.join((
                 msg,
-                '<p class="WarningMessage">Forced to table input because Relax Rules Control is enabled.</p>',
+                '<p class="WarningMessage">'
+                'Forced to table input because Relax Rules Control is enabled.'
+                '</p>',
             ))
             input_formtype = 'Table'
 
