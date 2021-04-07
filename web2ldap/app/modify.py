@@ -24,7 +24,7 @@ from . import ErrorExit
 from .schema.syntaxes import syntax_registry
 from .add import ADD_IGNORE_ATTR_TYPES
 from .addmodifyform import (
-    ConfiguredConstantAttributes,
+    cfg_constant_attributes,
     w2l_modifyform,
     get_entry_input,
     read_old_entry,
@@ -128,7 +128,7 @@ def w2l_modify(app):
         # ignore all attributes which have NO-USER-MODIFICATION set
         ignore_attr_types.update(app.schema.no_user_mod_attr_oids)
         # Ignore attributes which are assumed to be constant (some operational attributes)
-        ignore_attr_types.update(ConfiguredConstantAttributes(app).values())
+        ignore_attr_types.update(cfg_constant_attributes(app).values())
 
     # All attributes currently read which were not visible before
     # must be ignored to avoid problems with different access rights

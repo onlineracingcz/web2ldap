@@ -671,7 +671,8 @@ def object_class_form(
                         #all_abstract_oc = allowed_child_classes_kind_dict[1]
                         #all_auxiliary_oc = allowed_child_classes_kind_dict[2]
                         dit_structure_rule_html = 'Governed by <var>allowedChildClasses</var>.'
-        return all_structural_oc, dit_structure_rule_html # get_possible_soc()
+        return all_structural_oc, dit_structure_rule_html
+        # get_possible_soc()
 
 
     def object_class_select_fields(app, parent_dn):
@@ -821,12 +822,12 @@ def object_class_form(
                 )
             ),
         )
-        Msg = {
+        msg = {
             'add': 'Choose object class(es) for new entry.',
             'modify': 'You may change the object class(es) for the entry.',
         }[app.command]
-        Msg = '<p class="WarningMessage">%s</p>' % (Msg)
-        return Msg, add_template_field_html
+        msg = '<p class="WarningMessage">%s</p>' % (msg)
+        return msg, add_template_field_html
         # end of object_class_select_fields()
 
 
@@ -927,8 +928,8 @@ def object_class_form(
             add_template_html_list.append('</ul></dd>')
         add_template_html_list.append('</dl>')
         add_template_field_html = '\n'.join(add_template_html_list)
-        Msg = '<p class="WarningMessage">Choose a LDIF template and base DN for new entry</p>'
-        return Msg, add_template_field_html
+        msg = '<p class="WarningMessage">Choose a LDIF template and base DN for new entry</p>'
+        return msg, add_template_field_html
         # end of ldif_template_select_html()
 
 
@@ -952,9 +953,9 @@ def object_class_form(
 
     # Build an select field based on config param 'addform_entry_templates'
     if app.command == 'add' and in_ocf == 'tmpl':
-        Msg, add_template_field_html = ldif_template_select_html(app, parent_dn)
+        msg, add_template_field_html = ldif_template_select_html(app, parent_dn)
     else:
-        Msg, add_template_field_html = object_class_select_fields(app, parent_dn)
+        msg, add_template_field_html = object_class_select_fields(app, parent_dn)
 
     context_menu_list = []
     if app.command == 'add':
@@ -981,7 +982,7 @@ def object_class_form(
                     app.form.hiddenFieldHTML(param_name, param_value, '')
                     for param_name, param_value in command_hidden_fields
                 ]),
-                Msg,
+                msg,
                 add_template_field_html,
             ))
         )
@@ -1028,7 +1029,7 @@ def read_ldif_template(app, template_name):
     return dn, entry # read_ldif_template()
 
 
-def AttributeTypeDict(app, param_name, param_default):
+def gen_attribute_type_dict(app, param_name, param_default):
     """
     Build a list of attributes assumed in configuration
     to be constant while editing entry
@@ -1036,24 +1037,25 @@ def AttributeTypeDict(app, param_name, param_default):
     attrs = ldap0.cidict.CIDict()
     for attr_type in app.cfg_param(param_name, param_default):
         attrs[attr_type] = attr_type
-    return attrs # AttributeTypeDict()
+    return attrs
+    # gen_attribute_type_dict()
 
 
-def ConfiguredConstantAttributes(app):
+def cfg_constant_attributes(app):
     """
     Build a list of attributes assumed in configuration
     to be constant while editing entry
     """
-    return AttributeTypeDict(
+    return gen_attribute_type_dict(
         app,
         'modify_constant_attrs',
         ['createTimestamp', 'modifyTimestamp', 'creatorsName', 'modifiersName'],
     )
 
 
-def assertion_filter(app, entry):
+def gen_assertion_filter(app, entry):
     filter_list = []
-    for attr_type in ConfiguredConstantAttributes(app).values():
+    for attr_type in cfg_constant_attributes(app).values():
         try:
             attr_values = entry[attr_type]
         except KeyError:
@@ -1074,7 +1076,7 @@ def assertion_filter(app, entry):
     else:
         res = '(objectClass=*)'
     return res
-    # end of assertion_filter()
+    # end of gen_assertion_filter()
 
 
 def nomatching_attrs(sub_schema, entry, allowed_attrs_dict, required_attrs_dict):
@@ -1112,8 +1114,8 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
     # Build a list of attributes to be requested
     if not read_attrs:
         read_attrs = ldap0.cidict.CIDict({'*': '*'})
-        read_attrs.update(ConfiguredConstantAttributes(app))
-        read_attrs.update(AttributeTypeDict(app, 'requested_attrs', []))
+        read_attrs.update(cfg_constant_attributes(app))
+        read_attrs.update(gen_attribute_type_dict(app, 'requested_attrs', []))
 
     # Try to request information about which attributes are writeable by the bound identity
 
@@ -1422,7 +1424,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
     app.outf.write(
         '\n'.join((
-            app.form.hiddenFieldHTML('in_assertion', assertion_filter(app, entry), ''),
+            app.form.hiddenFieldHTML('in_assertion', gen_assertion_filter(app, entry), ''),
             '\n'.join([
                 app.form.hiddenFieldHTML('in_oldattrtypes', at_name, '')
                 for at_name in app.form.getInputValue('in_oldattrtypes', entry.keys())
