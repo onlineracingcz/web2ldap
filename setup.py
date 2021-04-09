@@ -20,7 +20,7 @@ DATA_FILES = sorted([
             for filename in filenames
         ]
     )
-    for root_dir, _, filenames in os.walk(os.path.join(BASEDIR, 'etc/web2ldap'))
+    for root_dir, _, filenames in os.walk(os.path.join(BASEDIR, 'etc', 'web2ldap'))
 ])
 
 sys.path.insert(0, os.path.join(BASEDIR, 'web2ldap'))
