@@ -260,7 +260,6 @@ class MyLDAPObject(ReconnectLDAPObject):
             'sasl_interactive_bind_s': [],
             'simple_bind': [],
         }
-        self.flush_cache()
         ReconnectLDAPObject.__init__(
             self,
             uri,
