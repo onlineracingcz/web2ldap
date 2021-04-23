@@ -904,7 +904,8 @@ class LDIFTextArea(Textarea):
         self._max_entries = max_entries
         self.allRecords = []
 
-    def getLDIFRecords(self):
+    @property
+    def ldif_records(self):
         if self.value:
             return list(
                 ldap0.ldif.LDIFParser.frombuf(
