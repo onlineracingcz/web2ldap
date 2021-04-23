@@ -29,23 +29,23 @@ OS_SYS_PREFIXES = {
 # Path name of [web2ldap]/etc/web2ldap
 if 'WEB2LDAP_HOME' in os.environ:
     # env var points to web2ldap root directory
-    etc_dir = os.path.join(os.environ['WEB2LDAP_HOME'], 'etc', 'web2ldap')
+    ETC_DIR = os.path.join(os.environ['WEB2LDAP_HOME'], 'etc', 'web2ldap')
 elif os.name == 'posix' and sys.prefix in OS_SYS_PREFIXES:
     # assume OS-wide installation on POSIX platform (Linux, BSD, etc.)
-    etc_dir = '/etc/web2ldap'
+    ETC_DIR = '/etc/web2ldap'
 else:
     # virtual env
-    etc_dir = os.path.join(sys.prefix, 'etc', 'web2ldap')
-sys.path.append(etc_dir)
+    ETC_DIR = os.path.join(sys.prefix, 'etc', 'web2ldap')
+sys.path.append(ETC_DIR)
 
 # Default directory for [web2ldap]/etc/web2ldap/templates
-templates_dir = os.path.join(etc_dir, 'templates')
+TEMPLATES_DIR = os.path.join(ETC_DIR, 'templates')
 
 STARTUP_TIME = time.time()
 
 logger.info('Starting web2ldap %s', __version__)
-logger.debug('etc_dir = %r', etc_dir)
-logger.debug('templates_dir = %r', templates_dir)
+logger.debug('ETC_DIR = %r', ETC_DIR)
+logger.debug('TEMPLATES_DIR = %r', TEMPLATES_DIR)
 
 
 def cmp(val1, val2):

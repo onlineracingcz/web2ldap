@@ -6,16 +6,6 @@ web2ldap plugin classes for attributes defined for msPerson
 import re
 import os.path
 
-import web2ldapcnf
-
-from ..schema.syntaxes import (
-    DateOfBirth,
-    DirectoryString,
-    IA5String,
-    PropertiesSelectList,
-    syntax_registry,
-)
-
 # try to import vatnumber module
 try:
     import vatnumber
@@ -24,12 +14,21 @@ except ImportError:
 else:
     VATNUMBER_AVAIL = True
 
+from ... import ETC_DIR
+from ..schema.syntaxes import (
+    DateOfBirth,
+    DirectoryString,
+    IA5String,
+    PropertiesSelectList,
+    syntax_registry,
+)
+
 
 class Gender(PropertiesSelectList):
     oid: str = 'Gender-oid'
     desc: str = 'Representation of human sex (see ISO 5218)'
     properties_pathname = os.path.join(
-        web2ldapcnf.etc_dir, 'properties', 'attribute_select_gender.properties'
+        ETC_DIR, 'properties', 'attribute_select_gender.properties'
     )
 
 syntax_registry.reg_at(

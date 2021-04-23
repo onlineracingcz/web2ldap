@@ -11,8 +11,7 @@ from typing import Dict
 from ldap0.dn import is_dn
 from ldap0.msad import sid2sddl, sddl2sid
 
-import web2ldapcnf
-
+from ... import ETC_DIR
 from ...web.forms import Field, Textarea
 from ...utctime import strftimeiso8601
 from ..searchform import SEARCH_OPT_IS_EQUAL
@@ -499,7 +498,7 @@ class CountryCode(PropertiesSelectList):
     oid: str = 'CountryCode-oid'
     desc: str = 'Numerical country code'
     properties_pathname = os.path.join(
-        web2ldapcnf.etc_dir, 'properties', 'attribute_select_countryCode.properties'
+        ETC_DIR, 'properties', 'attribute_select_countryCode.properties'
     )
     sani_funcs = (
         bytes.strip,

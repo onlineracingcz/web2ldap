@@ -67,6 +67,7 @@ from ldap0.schema.subentry import SubSchema
 
 import web2ldapcnf
 
+from ... import ETC_DIR
 from ...web import forms as web_forms
 from ... import msbase
 from ...utctime import repr2ts, ts2repr, strftimeiso8601
@@ -2215,7 +2216,7 @@ class CountryString(PropertiesSelectList):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.11'
     desc: str = 'Two letter country string as listed in ISO 3166-2'
     properties_pathname = os.path.join(
-        web2ldapcnf.etc_dir, 'properties', 'attribute_select_c.properties'
+        ETC_DIR, 'properties', 'attribute_select_c.properties'
     )
     sani_funcs = (
         bytes.strip,

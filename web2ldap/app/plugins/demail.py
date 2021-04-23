@@ -5,8 +5,7 @@ web2ldap plugin classes for attributes defined for DE-Mail
 
 import os.path
 
-import web2ldapcnf
-
+from ... import ETC_DIR
 from ..schema.syntaxes import PropertiesSelectList, syntax_registry
 
 
@@ -14,7 +13,7 @@ class DemailMaxAuthLevel(PropertiesSelectList):
     oid: str = 'DemailMaxAuthLevel-oid'
     desc: str = 'Maximum authentication level of person/user in DE-Mail'
     properties_pathname = os.path.join(
-        web2ldapcnf.etc_dir, 'properties', 'attribute_select_demailMaxAuthLevel.properties'
+        ETC_DIR, 'properties', 'attribute_select_demailMaxAuthLevel.properties'
     )
 
 syntax_registry.reg_at(

@@ -26,7 +26,7 @@ import ldap0
 # import config after extending Python module path
 import web2ldapcnf
 
-from . import etc_dir
+from . import ETC_DIR
 from .log import logger
 from .web.wsgi import (
     AppResponse,
@@ -67,7 +67,7 @@ def application(environ, start_response):
     # check URL path whether to deliver a static file
     if environ['PATH_INFO'].startswith('/css/web2ldap'):
         css_filename = os.path.join(
-            etc_dir,
+            ETC_DIR,
             'css',
             os.path.basename(environ['PATH_INFO'])
         )
