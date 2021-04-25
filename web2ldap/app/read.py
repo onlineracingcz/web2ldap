@@ -403,9 +403,9 @@ def w2l_read(app):
             </p></form>
             """ % (
                 app.begin_form('read', 'GET'),
-                app.form.hiddenFieldHTML('read_nocache', u'1', u''),
-                app.form.hiddenFieldHTML('dn', app.dn, u''),
-                app.form.hiddenFieldHTML('read_output', read_output, u''),
+                app.form.hidden_field_html('read_nocache', u'1', u''),
+                app.form.hidden_field_html('dn', app.dn, u''),
+                app.form.hidden_field_html('read_output', read_output, u''),
                 ','.join([
                     app.form.s2d(at, sp_entity='  ')
                     for at in (

@@ -378,7 +378,7 @@ class AppHandler(LogHelper):
         """
         form_str = [self.begin_form(command, method, target)]
         for param_name, param_value in form_parameters:
-            form_str.append(self.form.hiddenFieldHTML(param_name, param_value, u''))
+            form_str.append(self.form.hidden_field_html(param_name, param_value, u''))
         form_str.append(
             '<p>\n<input type="submit" value="%s">\n%s\n</p>\n</form>' % (
                 submitstr,

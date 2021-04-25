@@ -232,9 +232,9 @@ def bulkmod_input_form(
             form_begin=app.begin_form('bulkmod', 'POST'),
             field_bulkmod_ctrl=app.form.field['bulkmod_ctrl'].input_html(default=app.form.field['bulkmod_ctrl'].value),
             input_fields=input_fields,
-            field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, app.dn),
-            field_hidden_filterstr=app.form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
-            field_hidden_scope=app.form.hiddenFieldHTML(
+            field_hidden_dn=app.form.hidden_field_html('dn', app.dn, app.dn),
+            field_hidden_filterstr=app.form.hidden_field_html('filterstr', bulkmod_filter, bulkmod_filter),
+            field_hidden_scope=app.form.hidden_field_html(
                 'scope',
                 str(scope),
                 str(ldap0.ldapurl.SEARCH_SCOPE_STR[scope]),
@@ -293,10 +293,10 @@ def bulkmod_confirmation_form(
                 )
                 for ctrl_oid in app.form.field['bulkmod_ctrl'].value or []
             ]) or '- none -',
-            field_hidden_dn=app.form.hiddenFieldHTML('dn', dn, dn),
-            field_hidden_filterstr=app.form.hiddenFieldHTML('filterstr', bulkmod_filter, bulkmod_filter),
-            field_hidden_scope=app.form.hiddenFieldHTML('scope', str(scope), str(ldap0.ldapurl.SEARCH_SCOPE_STR[scope])),
-            field_bulkmod_newsuperior=app.form.hiddenFieldHTML(
+            field_hidden_dn=app.form.hidden_field_html('dn', dn, dn),
+            field_hidden_filterstr=app.form.hidden_field_html('filterstr', bulkmod_filter, bulkmod_filter),
+            field_hidden_scope=app.form.hidden_field_html('scope', str(scope), str(ldap0.ldapurl.SEARCH_SCOPE_STR[scope])),
+            field_bulkmod_newsuperior=app.form.hidden_field_html(
                 'bulkmod_newsuperior',
                 bulkmod_newsuperior,
                 bulkmod_newsuperior
@@ -305,7 +305,7 @@ def bulkmod_confirmation_form(
             num_entries=num_entries,
             num_referrals=num_referrals,
             text_ldifchangerecord=bulk_mod_list_ldif,
-            hidden_fields=app.form.hiddenInputHTML(ignoreFieldNames=[
+            hidden_fields=app.form.hidden_input_html(ignoreFieldNames=[
                 'dn', 'scope', 'filterstr', 'bulkmod_submit', 'bulkmod_newsuperior',
             ]),
         )
@@ -522,7 +522,7 @@ def w2l_bulkmod(app):
                 ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
                 app.begin_form('bulkmod', 'POST'),
-                app.form.hiddenInputHTML(ignoreFieldNames=['bulkmod_submit']),
+                app.form.hidden_input_html(ignoreFieldNames=['bulkmod_submit']),
                 error_messages,
                 change_records,
             ),

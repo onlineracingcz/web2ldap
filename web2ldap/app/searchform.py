@@ -324,7 +324,7 @@ def w2l_searchform(
             search_output=app.form.getInputValue('search_output', [u'table'])[0],
             msg_html=msg_html,
             inner_searchform_html=inner_searchform_html,
-            form_dn_html=app.form.hiddenFieldHTML('dn', app.dn, u''),
+            form_dn_html=app.form.hidden_field_html('dn', app.dn, u''),
             searchoptions_template_str=searchoptions_template_str.format(
                 field_search_root=srf.input_html(),
                 field_search_scope=app.form.field['scope'].input_html(

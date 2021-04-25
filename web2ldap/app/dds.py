@@ -60,7 +60,7 @@ def dds_form(app, msg):
         DDS_FORM_TMPL.format(
             text_info_message=msg,
             form_begin=app.begin_form('dds', 'POST'),
-            field_dn=app.form.hiddenFieldHTML('dn', app.dn, u''),
+            field_dn=app.form.hidden_field_html('dn', app.dn, u''),
             text_dn=app.display_dn(app.dn),
             field_dds_renewttlnum=app.form.field['dds_renewttlnum'].input_html(),
             field_dds_renewttlfac=app.form.field['dds_renewttlfac'].input_html(),

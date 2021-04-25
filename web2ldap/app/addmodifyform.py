@@ -355,7 +355,7 @@ class InputFormEntry(DisplayEntry):
                 ):
                 result.append('\n'.join((
                     '<span class="InvalidInput">'*highlight_invalid,
-                    self._app.form.hiddenFieldHTML('in_at', nameoroid, ''),
+                    self._app.form.hidden_field_html('in_at', nameoroid, ''),
                     HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''),
                     HIDDEN_FIELD % (
                         'in_av',
@@ -513,7 +513,7 @@ class InputFormEntry(DisplayEntry):
                     attr_inst = syntax_class(
                         self._app, self.dn, self.entry._s, attr_type, attr_value, self.entry
                     )
-                    self._app.outf.write(self._app.form.hiddenFieldHTML('in_at', attr_type, ''))
+                    self._app.outf.write(self._app.form.hidden_field_html('in_at', attr_type, ''))
                     self._app.outf.write(HIDDEN_FIELD % ('in_avi', str(self.attr_counter), ''))
                     try:
                         attr_value_html = self._app.form.s2d(attr_inst.form_value(), sp_entity='  ')
@@ -811,7 +811,7 @@ def object_class_form(
             misc_select_field_td,
             dit_structure_rule_html,
             dit_content_rule_html,
-            app.form.hiddenInputHTML(
+            app.form.hidden_input_html(
                 ignoreFieldNames=(
                     'dn',
                     'add_clonedn',
@@ -979,7 +979,7 @@ def object_class_form(
             '\n'.join((
                 app.begin_form(app.command, 'POST'),
                 ''.join([
-                    app.form.hiddenFieldHTML(param_name, param_value, '')
+                    app.form.hidden_field_html(param_name, param_value, '')
                     for param_name, param_value in command_hidden_fields
                 ]),
                 msg,
@@ -1287,16 +1287,16 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
             text_msg=msg,
             text_supentry=superior_display_html(app, add_basedn),
             form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
-            field_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
-            field_currentformtype=app.form.hiddenFieldHTML('in_oft', str(input_formtype), ''),
+            field_dn=app.form.hidden_field_html('dn', app.dn, ''),
+            field_currentformtype=app.form.hidden_field_html('in_oft', str(input_formtype), ''),
         )
     )
 
     app.outf.write(
         '%s\n<p>RDN: %s</p>\n%s' % (
-            app.form.hiddenFieldHTML('add_basedn', add_basedn, ''),
+            app.form.hidden_field_html('add_basedn', add_basedn, ''),
             rdn_input_field.input_html(),
-            app.form.hiddenFieldHTML('in_ocf', 'exp', ''),
+            app.form.hidden_field_html('in_ocf', 'exp', ''),
         )
     )
 
@@ -1370,7 +1370,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
     )
 
     in_wrtattroids_fields_html = '\n'.join([
-        app.form.hiddenFieldHTML('in_wrtattroids', at_name, '')
+        app.form.hidden_field_html('in_wrtattroids', at_name, '')
         for at_name in (
             writeable_attr_oids
             if writeable_attr_oids is not None
@@ -1417,16 +1417,16 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
             text_msg=msg,
             text_supentry=superior_display_html(app, app.parent_dn),
             form_begin=app.begin_form(app.command, 'POST', enctype='multipart/form-data'),
-            field_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
-            field_currentformtype=app.form.hiddenFieldHTML('in_oft', input_formtype, ''),
+            field_dn=app.form.hidden_field_html('dn', app.dn, ''),
+            field_currentformtype=app.form.hidden_field_html('in_oft', input_formtype, ''),
         )
     )
 
     app.outf.write(
         '\n'.join((
-            app.form.hiddenFieldHTML('in_assertion', gen_assertion_filter(app, entry), ''),
+            app.form.hidden_field_html('in_assertion', gen_assertion_filter(app, entry), ''),
             '\n'.join([
-                app.form.hiddenFieldHTML('in_oldattrtypes', at_name, '')
+                app.form.hidden_field_html('in_oldattrtypes', at_name, '')
                 for at_name in app.form.getInputValue('in_oldattrtypes', entry.keys())
             ]),
         ))

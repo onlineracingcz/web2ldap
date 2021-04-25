@@ -207,14 +207,14 @@ class Web2LDAPForm(Form):
               self.accept_charset
           )
 
-    def hiddenFieldHTML(self, name, value, desc):
+    def hidden_field_html(self, name, value, desc):
         return HIDDEN_FIELD % (
             name,
             self.s2d(value, sp_entity='  '),
             self.s2d(desc, sp_entity='&nbsp;&nbsp;'),
         )
 
-    def hiddenInputHTML(self, ignoreFieldNames=None):
+    def hidden_input_html(self, ignoreFieldNames=None):
         """
         Return all input parameters as hidden fields in one HTML string.
 
@@ -231,7 +231,7 @@ class Web2LDAPForm(Form):
             for val in f.value:
                 if not isinstance(val, str):
                     val = self.uc_decode(val)[0]
-                result.append(self.hiddenFieldHTML(f.name, val, ''))
+                result.append(self.hidden_field_html(f.name, val, ''))
         return '\n'.join(result) # hiddenInputFieldString()
 
 

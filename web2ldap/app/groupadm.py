@@ -387,8 +387,8 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             """ % (
                 # form for changing group membership
                 app.begin_form('groupadm', 'POST'),
-                app.form.hiddenFieldHTML('dn', app.dn, u''),
-                app.form.hiddenFieldHTML('groupadm_searchroot', str(group_search_root), u''),
+                app.form.hidden_field_html('dn', app.dn, u''),
+                app.form.hidden_field_html('groupadm_searchroot', str(group_search_root), u''),
                 group_select_field(
                     app,
                     all_groups_dict,
@@ -419,7 +419,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         """ % (
             # form for searching group entries
             app.begin_form('groupadm', 'GET'),
-            app.form.hiddenFieldHTML('dn', app.dn, u''),
+            app.form.hidden_field_html('dn', app.dn, u''),
             group_search_root_field.input_html(title='Search root for searching group entries'),
             app.form.field['groupadm_name'].input_html(),
             app.form.field['groupadm_view'].input_html(

@@ -94,7 +94,7 @@ def w2l_login(
     if not scope_str and app.ldap_url.scope is not None:
         scope_str = str(app.ldap_url.scope)
     if scope_str:
-        scope_hidden_field = app.form.hiddenFieldHTML('scope', scope_str, u'')
+        scope_hidden_field = app.form.hidden_field_html('scope', scope_str, u'')
     else:
         scope_hidden_field = ''
 
@@ -106,7 +106,7 @@ def w2l_login(
     else:
         filterstr = app.ldap_url.filterstr or ''
     if filterstr:
-        filterstr_hidden_field = app.form.hiddenFieldHTML('filterstr', filterstr, u'')
+        filterstr_hidden_field = app.form.hidden_field_html('filterstr', filterstr, u'')
     else:
         filterstr_hidden_field = ''
 
@@ -116,7 +116,7 @@ def w2l_login(
             'search_attrs', [u','.join(app.ldap_url.attrs or [])]
         )[0]
         if search_attrs:
-            search_attrs_hidden_field = app.form.hiddenFieldHTML('search_attrs', search_attrs, u'')
+            search_attrs_hidden_field = app.form.hidden_field_html('search_attrs', search_attrs, u'')
 
     # determine which command will be put in form's action attribute
     if not app.command or app.command == 'login':
@@ -129,10 +129,10 @@ def w2l_login(
     app.outf.write(
         '\n'.join((
             app.form.begin_form(action_command, None, 'POST', None),
-            app.form.hiddenFieldHTML('ldapurl', str(app.ls.ldap_url('')), u''),
-            app.form.hiddenFieldHTML('dn', app.dn, u''),
-            app.form.hiddenFieldHTML('delsid', app.sid, u''),
-            app.form.hiddenFieldHTML('conntype', str(int(app.ls.startTLSOption > 0)), u''),
+            app.form.hidden_field_html('ldapurl', str(app.ls.ldap_url('')), u''),
+            app.form.hidden_field_html('dn', app.dn, u''),
+            app.form.hidden_field_html('delsid', app.sid, u''),
+            app.form.hidden_field_html('conntype', str(int(app.ls.startTLSOption > 0)), u''),
             scope_hidden_field,
             filterstr_hidden_field,
             login_form_html,
@@ -141,7 +141,7 @@ def w2l_login(
     )
     if relogin:
         app.outf.write(
-            app.form.hiddenInputHTML(
+            app.form.hidden_input_html(
                 ignoreFieldNames=set([
                     'sid', 'delsid',
                     'ldapurl', 'conntype', 'host', 'who', 'cred',

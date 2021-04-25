@@ -411,7 +411,7 @@ def w2l_delete(app):
                 field_delete_ctrl=app.form.field['delete_ctrl'].input_html(
                     default=delete_ctrl_oids
                 ),
-                field_hidden_dn=app.form.hiddenFieldHTML('dn', app.dn, ''),
+                field_hidden_dn=app.form.hidden_field_html('dn', app.dn, ''),
             )
         )
         footer(app)
@@ -494,7 +494,7 @@ def w2l_delete(app):
             """ % (
                 app.display_dn(app.dn),
                 '</li>\n<li>'.join([
-                    app.form.hiddenFieldHTML('delete_attr', attr_type, attr_type)
+                    app.form.hidden_field_html('delete_attr', attr_type, attr_type)
                     for attr_type in delete_attr
                 ]),
             ),
