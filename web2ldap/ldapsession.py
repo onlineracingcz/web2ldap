@@ -276,9 +276,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             all_s_ctrls[ctrl.controlType] = ctrl
         return all_s_ctrls
 
-    def add_server_control(self, method, lc):
+    def add_server_control(self, method, ctrl):
         _s_ctrls = self.get_ctrls(method)
-        _s_ctrls[lc.controlType] = lc
+        _s_ctrls[ctrl.controlType] = ctrl
         self._req_ctrls[method] = list(_s_ctrls.values())
 
     def del_server_control(self, method, control_type):
