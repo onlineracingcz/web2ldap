@@ -113,7 +113,7 @@ class DeleteLeafs(AsyncSearchHandler):
     """
     Class for deleting entries which are results of a search.
 
-    DNs of Non-leaf entries are collected in DeleteLeafs.nonLeafEntries.
+    DNs of Non-leaf entries are collected in DeleteLeafs.non_leaf_entries.
     """
     _entryResultTypes = {
         ldap0.RES_SEARCH_ENTRY,
@@ -128,10 +128,10 @@ class DeleteLeafs(AsyncSearchHandler):
     def start_search(self, searchRoot, searchScope, filterStr):
         if searchScope == ldap0.SCOPE_BASE:
             raise ValueError('Parameter searchScope must not be ldap0.SCOPE_BASE.')
-        self.nonLeafEntries = []
-        self.nonDeletableEntries = []
-        self.deletedEntries = 0
-        self.noSuchObjectCounter = 0
+        self.non_leaf_entries = []
+        self.non_deletable_entries = []
+        self.deleted_entries = 0
+        self.no_such_object_count = 0
         AsyncSearchHandler.start_search(
             self,
             searchRoot,
@@ -175,7 +175,7 @@ class DeleteLeafs(AsyncSearchHandler):
                 (hasSubordinates or (subordinateCount or 0) > 0)
             ):
             logger.debug('Skipping deletion of non-leaf entry %r', dn)
-            self.nonLeafEntries.append(dn)
+            self.non_leaf_entries.append(dn)
             return
         logger.debug('Deleting entry %r', dn)
         try:
@@ -183,12 +183,12 @@ class DeleteLeafs(AsyncSearchHandler):
         except ldap0.NO_SUCH_OBJECT:
             # Don't do anything if the entry is already gone except counting
             # these sub-optimal cases
-            self.noSuchObjectCounter += 1
+            self.no_such_object_count += 1
         except ldap0.INSUFFICIENT_ACCESS:
-            self.nonDeletableEntries.append(dn)
+            self.non_deletable_entries.append(dn)
         except ldap0.NOT_ALLOWED_ON_NONLEAF:
             if hasSubordinates is None and subordinateCount is None:
-                self.nonLeafEntries.append(dn)
+                self.non_leaf_entries.append(dn)
             # Next statements are kind of a safety net and should never be executed
             else:
                 raise ValueError(
@@ -198,7 +198,7 @@ class DeleteLeafs(AsyncSearchHandler):
                 )
         else:
             # The entry was correctly deleted
-            self.deletedEntries += 1
+            self.deleted_entries += 1
         # end of _process_result()
 
 
@@ -232,13 +232,13 @@ def delete_entries(
         except ldap0.NO_SUCH_OBJECT:
             break
         except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
-            deleted_entries_count += leafs_deleter.deletedEntries
-            non_leaf_entries.update(leafs_deleter.nonLeafEntries)
-            non_deletable_entries.update(leafs_deleter.nonDeletableEntries)
+            deleted_entries_count += leafs_deleter.deleted_entries
+            non_leaf_entries.update(leafs_deleter.non_leaf_entries)
+            non_deletable_entries.update(leafs_deleter.non_deletable_entries)
         else:
-            deleted_entries_count += leafs_deleter.deletedEntries
-            non_leaf_entries.update(leafs_deleter.nonLeafEntries)
-            non_deletable_entries.update(leafs_deleter.nonDeletableEntries)
+            deleted_entries_count += leafs_deleter.deleted_entries
+            non_leaf_entries.update(leafs_deleter.non_leaf_entries)
+            non_deletable_entries.update(leafs_deleter.non_deletable_entries)
             break
     else:
         non_deletable_entries.update(non_leaf_entries)
@@ -250,15 +250,15 @@ def delete_entries(
             leafs_deleter.start_search(dn, ldap0.SCOPE_SUBTREE, filterStr=delete_filter)
             leafs_deleter.process_results()
         except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED):
-            deleted_entries_count += leafs_deleter.deletedEntries
+            deleted_entries_count += leafs_deleter.deleted_entries
             non_leaf_entries.add(dn)
-            non_leaf_entries.update(leafs_deleter.nonLeafEntries)
+            non_leaf_entries.update(leafs_deleter.non_leaf_entries)
         else:
-            deleted_entries_count += leafs_deleter.deletedEntries
-            if leafs_deleter.deletedEntries == 0:
+            deleted_entries_count += leafs_deleter.deleted_entries
+            if leafs_deleter.deleted_entries == 0:
                 non_deletable_entries.add(dn)
                 continue
-            non_leaf_entries.update(leafs_deleter.nonLeafEntries)
+            non_leaf_entries.update(leafs_deleter.non_leaf_entries)
         if time.time() > end_time:
             non_deletable_entries.update(non_leaf_entries)
             break
