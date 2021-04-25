@@ -902,7 +902,6 @@ class LDIFTextArea(Textarea):
             required=required,
         )
         self._max_entries = max_entries
-        self.allRecords = []
 
     @property
     def ldif_records(self):
