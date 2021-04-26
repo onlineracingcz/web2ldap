@@ -749,12 +749,12 @@ class GeneralizedTime(IA5String):
         '%d.%m.%Y %H:%M:%S+00:00',
         '%d.%m.%Y %H:%M:%S-00:00',
     )
-    acceptableDateformats = (
+    acceptable_formats = (
         '%Y-%m-%d',
         '%d.%m.%Y',
         '%m/%d/%Y',
     )
-    dtDisplayFormat = (
+    dt_display_format = (
         '<time datetime="%Y-%m-%dT%H:%M:%SZ">'
         '%A (%W. week) %Y-%m-%d %H:%M:%S+00:00'
         '</time>'
@@ -827,7 +827,7 @@ class GeneralizedTime(IA5String):
                 break
         if result is None:
             if self.timeDefault:
-                for time_format in self.acceptableDateformats or []:
+                for time_format in self.acceptable_formats or []:
                     try:
                         d_t = datetime.datetime.strptime(av_u, time_format)
                     except ValueError:
@@ -848,7 +848,7 @@ class GeneralizedTime(IA5String):
         except ValueError:
             return IA5String.display(self, valueindex, commandbutton)
         try:
-            dt_utc_str = dt_utc.strftime(self.dtDisplayFormat)
+            dt_utc_str = dt_utc.strftime(self.dt_display_format)
         except ValueError:
             return IA5String.display(self, valueindex, commandbutton)
         if not commandbutton:
@@ -1596,10 +1596,10 @@ class Date(IA5String):
     Plugin base class for a date without(!) time component.
     """
     oid: str = 'Date-oid'
-    desc: str = 'Date in syntax specified by class attribute storageFormat'
+    desc: str = 'Date in syntax specified by class attribute storage_format'
     max_len: int = 10
-    storageFormat = '%Y-%m-%d'
-    acceptableDateformats = (
+    storage_format = '%Y-%m-%d'
+    acceptable_formats = (
         '%Y-%m-%d',
         '%d.%m.%Y',
         '%m/%d/%Y',
@@ -1609,7 +1609,7 @@ class Date(IA5String):
         try:
             datetime.datetime.strptime(
                 self._app.ls.uc_decode(attr_value)[0],
-                self.storageFormat
+                self.storage_format
             )
         except (UnicodeDecodeError, ValueError):
             return False
@@ -1618,13 +1618,13 @@ class Date(IA5String):
     def sanitize(self, attr_value: bytes) -> bytes:
         av_u = attr_value.strip().decode(self._app.ls.charset)
         result = attr_value
-        for time_format in self.acceptableDateformats:
+        for time_format in self.acceptable_formats:
             try:
                 time_tuple = datetime.datetime.strptime(av_u, time_format)
             except ValueError:
                 pass
             else:
-                result = datetime.datetime.strftime(time_tuple, self.storageFormat).encode('ascii')
+                result = datetime.datetime.strftime(time_tuple, self.storage_format).encode('ascii')
                 break
         return result # sanitize()
 
@@ -1637,7 +1637,7 @@ class NumstringDate(Date):
     oid: str = 'NumstringDate-oid'
     desc: str = 'Date in syntax YYYYMMDD'
     pattern = re.compile('^[0-9]{4}[0-1][0-9][0-3][0-9]$')
-    storageFormat = '%Y%m%d'
+    storage_format = '%Y%m%d'
 
 
 class ISO8601Date(Date):
@@ -1647,7 +1647,7 @@ class ISO8601Date(Date):
     oid: str = 'ISO8601Date-oid'
     desc: str = 'Date in syntax YYYY-MM-DD (see ISO 8601)'
     pattern = re.compile('^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$')
-    storageFormat = '%Y-%m-%d'
+    storage_format = '%Y-%m-%d'
 
 
 class DateOfBirth(ISO8601Date):
@@ -1677,7 +1677,7 @@ class DateOfBirth(ISO8601Date):
         try:
             birth_dt = datetime.datetime.strptime(
                 self._app.ls.uc_decode(attr_value)[0],
-                self.storageFormat
+                self.storage_format
             )
         except ValueError:
             return False
@@ -1686,7 +1686,7 @@ class DateOfBirth(ISO8601Date):
     def display(self, valueindex=0, commandbutton=False) -> str:
         raw_date = ISO8601Date.display(self, valueindex, commandbutton)
         try:
-            birth_dt = datetime.datetime.strptime(self.av_u, self.storageFormat)
+            birth_dt = datetime.datetime.strptime(self.av_u, self.storage_format)
         except ValueError:
             return raw_date
         return '%s (%s years old)' % (raw_date, self._age(birth_dt))

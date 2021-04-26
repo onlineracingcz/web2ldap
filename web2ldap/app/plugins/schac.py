@@ -55,7 +55,7 @@ syntax_registry.reg_at(
 class SchacDateOfBirth(DateOfBirth):
     oid: str = 'SchacDateOfBirth-oid'
     desc: str = 'Date of birth: syntax YYYYMMDD'
-    storageFormat = '%Y%m%d'
+    storage_format = '%Y%m%d'
 
 syntax_registry.reg_at(
     SchacDateOfBirth.oid, [
