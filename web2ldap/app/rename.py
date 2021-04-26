@@ -23,14 +23,8 @@ from .schema.viewer import schema_anchors
 from . import ErrorExit
 from .form import DistinguishedNameInput
 from .schema.syntaxes import DynamicDNSelectList
-from .gui import (
-    context_menu_single_entry,
-    footer,
-    main_menu,
-    read_template,
-    search_root_field,
-    top_section,
-)
+from .gui import context_menu_single_entry, footer, main_menu, top_section
+from .gui import read_template, search_root_field
 
 
 def new_superior_field(app, sup_search_url, old_superior_dn):

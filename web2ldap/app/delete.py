@@ -20,12 +20,7 @@ from ldap0.res import SearchResultEntry
 from ..web.forms import Select as SelectField
 from ..ldaputil.asynch import AsyncSearchHandler
 from ..ldapsession import CONTROL_TREEDELETE, LDAPLimitErrors
-from .gui import (
-    context_menu_single_entry,
-    footer,
-    main_menu,
-    top_section,
-)
+from .gui import context_menu_single_entry, footer, main_menu, top_section
 from ..log import logger
 
 

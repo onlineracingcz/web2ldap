@@ -15,12 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import ldap0
 from ldap0.extop.dds import RefreshRequest, RefreshResponse
 
-from .gui import (
-    context_menu_single_entry,
-    footer,
-    main_menu,
-    top_section,
-)
+from .gui import context_menu_single_entry, footer, main_menu, top_section
 
 
 DDS_FORM_TMPL = """

@@ -15,13 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import time
 
 from ..log import logger
-from .gui import (
-    footer,
-    main_menu,
-    read_template,
-    search_root_field,
-    top_section,
-)
+from .gui import footer, main_menu, read_template, search_root_field, top_section
 
 
 def w2l_login(

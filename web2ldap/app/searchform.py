@@ -20,13 +20,8 @@ from ..web.forms import Select as SelectField
 from ..log import logger
 
 from . import ErrorExit
-from .gui import (
-    attrtype_select_field,
-    footer,
-    main_menu,
-    search_root_field,
-    top_section,
-)
+from .gui import attrtype_select_field, search_root_field
+from .gui import footer, main_menu, top_section
 from .tmpl import get_variant_filename
 
 

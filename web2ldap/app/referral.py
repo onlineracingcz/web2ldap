@@ -16,13 +16,7 @@ import time
 
 from ldap0.ldapurl import LDAPUrl
 
-from .gui import (
-    footer,
-    main_menu,
-    read_template,
-    search_root_field,
-    top_section,
-)
+from .gui import footer, main_menu, read_template, search_root_field, top_section
 
 ERR_MSG_DIV = """
 <h1>Error</h1>

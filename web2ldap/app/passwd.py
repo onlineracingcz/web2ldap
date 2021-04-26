@@ -23,13 +23,7 @@ from ..ldapsession import CONTROL_RELAXRULES
 from ..ldaputil.passwd import user_password_hash, AVAIL_USERPASSWORD_SCHEMES
 from .form import Web2LDAPFormPasswd
 from . import ErrorExit
-from .gui import (
-    context_menu_single_entry,
-    footer,
-    main_menu,
-    read_template,
-    top_section,
-)
+from .gui import context_menu_single_entry, footer, main_menu, read_template, top_section
 from .login import w2l_login
 
 

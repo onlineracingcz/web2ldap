@@ -23,12 +23,7 @@ from ..ldaputil.oidreg import OID_REG
 from ..ldapsession import LDAPLimitErrors
 
 from . import ErrorExit
-from .gui import (
-    attrtype_select_field,
-    footer,
-    main_menu,
-    top_section,
-)
+from .gui import attrtype_select_field, footer, main_menu, top_section
 from .schema.syntaxes import syntax_registry, LDAPSyntaxValueError
 from .modify import modlist_ldif
 
