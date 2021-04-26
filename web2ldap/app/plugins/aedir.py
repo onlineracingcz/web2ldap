@@ -515,7 +515,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
                 filterstr=member_filter,
                 attrlist=self.lu_obj.attrs+['description'],
                 req_ctrls=srv_ctrls,
-                cache_ttl=7*self._app.ls.l.cache_ttl,
+                cache_ttl=min(30, 5*web2ldapcnf.ldap_cache_ttl),
             )
             for ldap_res in ldap_result:
                 if not isinstance(ldap_res, SearchResultEntry):
