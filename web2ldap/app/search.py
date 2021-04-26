@@ -642,7 +642,7 @@ def w2l_search(app):
 
 #        result_dnlist.sort(key=lambda x: x.dn_s)
 
-        ContextMenuList = [
+        ctx_menu_items = [
             app.anchor(
                 'searchform', 'Edit Filter',
                 [
@@ -673,7 +673,7 @@ def w2l_search(app):
         ]
 
         if searchform_mode in {'base', 'adv'}:
-            ContextMenuList.append(
+            ctx_menu_items.append(
                 app.anchor(
                     'searchform', 'Modify Search',
                     app.form.allInputFields(
@@ -716,7 +716,7 @@ def w2l_search(app):
                 'No Search Results',
                 '<p class="WarningMessage">No entries found.</p>%s' % (search_param_html),
                 main_menu_list=main_menu(app),
-                context_menu_list=ContextMenuList
+                context_menu_list=ctx_menu_items
             )
 
         else:
@@ -726,7 +726,7 @@ def w2l_search(app):
 
             page_command_list = None
 
-            ContextMenuList.extend([
+            ctx_menu_items.extend([
                 app.anchor(
                     'search',
                     {False:'Raw', True:'Table'}[search_output == 'raw'],
@@ -827,7 +827,7 @@ def w2l_search(app):
                 search_bookmark,
             )
 
-            top_section(app, 'Search Results', main_menu(app), context_menu_list=ContextMenuList)
+            top_section(app, 'Search Results', main_menu(app), context_menu_list=ctx_menu_items)
 
             export_field = ExportFormatSelect()
             export_field.charset = app.form.accept_charset

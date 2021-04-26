@@ -232,7 +232,7 @@ def w2l_searchform(
         search_root_searchurl=app.cfg_param('searchform_search_root_url', None),
     )
 
-    ContextMenuList = [
+    ctx_menu_items = [
         app.anchor(
             'searchform', SEARCHFORM_MODE_TEXT[mode],
             [
@@ -251,7 +251,7 @@ def w2l_searchform(
     if isinstance(searchform_template_cfg, dict):
         for sftn in searchform_template_cfg.keys():
             if sftn != '_':
-                ContextMenuList.append(app.anchor(
+                ctx_menu_items.append(app.anchor(
                     'searchform', app.form.s2d(sftn),
                     [
                         ('dn', app.dn),
@@ -293,7 +293,7 @@ def w2l_searchform(
         app,
         '%s Search Form' % SEARCHFORM_MODE_TEXT[searchform_mode],
         main_menu(app),
-        context_menu_list=ContextMenuList,
+        context_menu_list=ctx_menu_items,
         main_div_id='Input'
     )
 
