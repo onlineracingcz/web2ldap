@@ -397,8 +397,8 @@ class LDAPSyntax:
                 len(self._entry.get(self._at, [])) >= self.max_values
             ):
             return ''
-        se = self._schema.get_obj(AttributeType, self._at)
-        if se and se.single_value:
+        se_obj = self._schema.get_obj(AttributeType, self._at)
+        if se_obj and se_obj.single_value:
             return ''
         return (
             '<button'
