@@ -500,72 +500,68 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
             self._zone_filter(),
         )
 
+    def _extract_attr_value_dict(self, ldap_result, deref_person_attrset):
+        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
+        for ldap_res in ldap_result:
+            if not isinstance(ldap_res, SearchResultEntry):
+                # ignore search continuations
+                continue
+            # process dn and entry
+            if ldap_res.ctrls:
+                deref_control = ldap_res.ctrls[0]
+                deref_entry = deref_control.derefRes['aePerson'][0].entry_as
+            elif deref_person_attrset:
+                # if we have constrained attributes, no deref response control
+                # means constraint not valid
+                continue
+            # check constrained values here
+            valid = True
+            for attr_type, attr_values in deref_person_attrset.items():
+                if (
+                        attr_type not in deref_entry
+                        or deref_entry[attr_type][0] not in attr_values
+                    ):
+                    valid = False
+                    break
+            if valid:
+                option_value = ldap_res.dn_s
+                try:
+                    option_text = ldap_res.entry_s['displayName'][0]
+                except KeyError:
+                    option_text = option_value
+                try:
+                    option_title = ldap_res.entry_s['description'][0]
+                except KeyError:
+                    option_title = option_value
+                attr_value_dict[option_value] = (option_text, option_title)
+        return attr_value_dict
+
     def _get_attr_value_dict(self):
         deref_person_attrset = self._deref_person_attrset()
         if not deref_person_attrset:
             return DerefDynamicDNSelectList._get_attr_value_dict(self)
-        if deref_person_attrset:
-            srv_ctrls = [DereferenceControl(True, {'aePerson': deref_person_attrset.keys()})]
-        else:
-            srv_ctrls = None
-        # Use the existing LDAP connection as current user
-        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
         member_filter = self._filterstr()
         try:
+            # Use the existing LDAP connection as current user
             ldap_result = self._app.ls.l.search_s(
                 self._search_root(),
                 self.lu_obj.scope or ldap0.SCOPE_SUBTREE,
                 filterstr=member_filter,
                 attrlist=self.lu_obj.attrs+['description'],
-                req_ctrls=srv_ctrls,
+                req_ctrls=[
+                    DereferenceControl(True, {'aePerson': deref_person_attrset.keys()})
+                ],
                 cache_ttl=min(30, 5*web2ldapcnf.ldap_cache_ttl),
             )
-            for ldap_res in ldap_result:
-                if not isinstance(ldap_res, SearchResultEntry):
-                    # ignore search continuations
-                    continue
-                # process dn and entry
-                if ldap_res.ctrls:
-                    deref_control = ldap_res.ctrls[0]
-                    deref_entry = deref_control.derefRes['aePerson'][0].entry_as
-                elif deref_person_attrset:
-                    # if we have constrained attributes, no deref response control
-                    # means constraint not valid
-                    continue
-                # check constrained values here
-                valid = True
-                for attr_type, attr_values in deref_person_attrset.items():
-                    if (
-                            attr_type not in deref_entry
-                            or deref_entry[attr_type][0] not in attr_values
-                        ):
-                        valid = False
-                        break
-                if valid:
-                    option_value = ldap_res.dn_s
-                    try:
-                        option_text = ldap_res.entry_s['displayName'][0]
-                    except KeyError:
-                        option_text = option_value
-                    try:
-                        option_title = ldap_res.entry_s['description'][0]
-                    except KeyError:
-                        option_title = option_value
-                    attr_value_dict[option_value] = (option_text, option_title)
-        except (
-                ldap0.NO_SUCH_OBJECT,
-                ldap0.SIZELIMIT_EXCEEDED,
-                ldap0.TIMELIMIT_EXCEEDED,
-                ldap0.PARTIAL_RESULTS,
-                ldap0.INSUFFICIENT_ACCESS,
-            ) as ldap_err:
+        except self.ignored_errors as ldap_err:
             logger.warning(
                 '%s._get_attr_value_dict() searching %r failed: %s',
                 self.__class__.__name__,
                 member_filter,
                 ldap_err,
             )
-        return attr_value_dict
+            return SelectList._get_attr_value_dict(self)
+        return self._extract_attr_value_dict(ldap_result, deref_person_attrset)
         # _get_attr_value_dict()
 
     def _validate(self, attr_value: bytes) -> bool:

@@ -1904,6 +1904,15 @@ class DynamicValueSelectList(SelectList, DirectoryString):
     ldap_url: Optional[str] = None
     value_prefix: str = ''
     value_suffix: str = ''
+    ignored_errors = (
+        ldap0.NO_SUCH_OBJECT,
+        ldap0.SIZELIMIT_EXCEEDED,
+        ldap0.TIMELIMIT_EXCEEDED,
+        ldap0.PARTIAL_RESULTS,
+        ldap0.INSUFFICIENT_ACCESS,
+        ldap0.CONSTRAINT_VIOLATION,
+        ldap0.REFERRAL,
+    )
 
     def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
         self.lu_obj = ldap0.ldapurl.LDAPUrl(self.ldap_url)
@@ -2028,15 +2037,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                 filterstr=self._filterstr(),
                 attrlist=search_attrs,
             )
-        except (
-                ldap0.NO_SUCH_OBJECT,
-                ldap0.SIZELIMIT_EXCEEDED,
-                ldap0.TIMELIMIT_EXCEEDED,
-                ldap0.PARTIAL_RESULTS,
-                ldap0.INSUFFICIENT_ACCESS,
-                ldap0.CONSTRAINT_VIOLATION,
-                ldap0.REFERRAL,
-            ):
+        except self.ignored_errors:
             return {}
         if search_scope == ldap0.SCOPE_BASE:
             # When reading a single entry we build the map from a single multi-valued attribute
