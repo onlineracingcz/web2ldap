@@ -69,7 +69,7 @@ import web2ldapcnf
 
 from ... import ETC_DIR
 from ...web import forms as web_forms
-from ... import msbase
+from ...msbase import ascii_dump, chunks
 from ...utctime import repr2ts, ts2repr, strftimeiso8601
 from ...ldaputil.oidreg import OID_REG
 from ...log import logger
@@ -1368,9 +1368,9 @@ class OctetString(Binary):
             ) % (
                 i*self.bytes_split,
                 ':'.join(c[j:j+1].hex().upper() for j in range(len(c))),
-                self._app.form.s2d(msbase.ascii_dump(c), 'ascii'),
+                self._app.form.s2d(ascii_dump(c), 'ascii'),
             )
-            for i, c in enumerate(msbase.chunks(self._av, self.bytes_split))
+            for i, c in enumerate(chunks(self._av, self.bytes_split))
         ]
         return '\n<table class="HexDump">\n%s\n</table>\n' % ('\n'.join(lines))
 
@@ -1378,7 +1378,7 @@ class OctetString(Binary):
         hex_av = (self._av or b'').hex().upper()
         hex_range = range(0, len(hex_av), 2)
         return str('\r\n'.join(
-            msbase.chunks(
+            chunks(
                 ':'.join([hex_av[i:i+2] for i in hex_range]),
                 self.bytes_split*3
             )
