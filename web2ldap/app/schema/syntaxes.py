@@ -659,7 +659,7 @@ class NameAndOptionalUID(DistinguishedName):
     desc: str = 'Name And Optional UID'
 
     @staticmethod
-    def _split_dn_and_uid(val):
+    def _split_dn_and_uid(val: str) -> Tuple[str, Optional[str]]:
         try:
             sep_ind = val.rindex('#')
         except ValueError:
