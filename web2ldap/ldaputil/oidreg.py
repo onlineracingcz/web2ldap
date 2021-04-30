@@ -221,6 +221,23 @@ OID_LIST = (
         "Control for simple paging of search results",
         "RFC 2696"),
 
+    # Transaction Control (see RFC 5805)
+    (
+        "1.3.6.1.1.21.1",
+        "Start Transaction Request",
+        "",
+        "RFC 5805"),
+    (
+        "1.3.6.1.1.21.2",
+        "Transaction Specification Request Control",
+        "",
+        "RFC 5805"),
+    (
+        "1.3.6.1.1.21.3",
+        "End Transactions Request and Response",
+        "",
+        "RFC 5805"),
+
     # MS Active Directory and ADAM
 
     (
