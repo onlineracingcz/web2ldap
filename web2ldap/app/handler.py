@@ -1072,9 +1072,7 @@ class AppHandler(LogHelper):
                 relogin=True,
             )
 
-        except (
-                ldap0.INVALID_CREDENTIALS,
-            ) as err:
+        except ldap0.INVALID_CREDENTIALS as err:
             w2l_login(
                 self,
                 login_msg=self.ldap_error_msg(err),
