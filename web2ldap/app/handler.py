@@ -1122,12 +1122,7 @@ class AppHandler(LogHelper):
                 self.form.s2d(err.desc)
             )
 
-        except (
-                socket.error,
-                socket.gaierror,
-                IOError,
-                UnicodeError,
-            ) as err:
+        except (socket.error, socket.gaierror, IOError, UnicodeError) as err:
             log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
             exception_message(
                 self,
