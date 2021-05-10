@@ -15,15 +15,17 @@ https://www.apache.org/licenses/LICENSE-2.0
 from io import BytesIO
 
 import ldap0
-import ldap0.ldif
-import ldap0.schema
+from ldap0.ldif import LDIFWriter, LDIFParser
 from ldap0.dn import DNObj
 from ldap0.base import decode_list
-from ldap0.schema.models import \
-    AttributeType, \
-    ObjectClass, \
-    DITStructureRule,  \
-    DITContentRule
+from ldap0.schema.models import (
+    AttributeType,
+    ObjectClass,
+    DITStructureRule,
+    DITContentRule,
+    Entry,
+    SchemaElementOIDSet,
+)
 
 import web2ldapcnf
 
@@ -39,8 +41,7 @@ from .schema import (
     object_class_categories,
 )
 from .schema.viewer import schema_anchors
-from .schema.syntaxes import syntax_registry
-from .schema.syntaxes import LDAPSyntaxValueError
+from .schema.syntaxes import syntax_registry, LDAPSyntaxValueError
 from .schema.viewer import schema_anchor
 from .form import ObjectClassSelect
 from .gui import (
@@ -144,7 +145,7 @@ def get_entry_input(app):
     if not len(in_attrtype_list) == len(in_value_list):
         raise ErrorExit('Different count of attribute types and values input.')
 
-    entry = ldap0.schema.models.Entry(app.schema, app.dn, {})
+    entry = Entry(app.schema, app.dn, {})
 
     # Stuff input field lists into raw dictionary
     for i, attr_type in enumerate(in_attrtype_list):
@@ -346,7 +347,7 @@ class InputFormEntry(DisplayEntry):
                     self.existing_object_classes and \
                     attr_value and \
                     nameoroid in self.rdn_dict and \
-                    attr_value in self.rdn_dict[nameoroid]
+                    self.rdn_dict[nameoroid].encode('utf-8') == attr_value
                 ) or (
                     # Set to writeable if relax rules control is in effect
                     # and attribute is NO-USER-APP in subschema
@@ -529,7 +530,7 @@ class InputFormEntry(DisplayEntry):
 
     def ldif_input(self):
         f = BytesIO()
-        ldif_writer = ldap0.ldif.LDIFWriter(f)
+        ldif_writer = LDIFWriter(f)
         ldap_entry = {}
         for attr_type in self.entry.keys():
             attr_values = self.entry.__getitem__(attr_type)
@@ -854,7 +855,7 @@ def object_class_form(
                     continue
                 if not parent_result:
                     continue
-                parent_entry = ldap0.schema.models.Entry(
+                parent_entry = Entry(
                     app.schema,
                     tmpl_parent_dn,
                     parent_result.entry_as,
@@ -878,12 +879,12 @@ def object_class_form(
                     restricted_structural_oc = restricted_structural_oc or []
             else:
                 restricted_structural_oc = all_structural_oc
-            restricted_structural_oc_set = ldap0.schema.models.SchemaElementOIDSet(
+            restricted_structural_oc_set = SchemaElementOIDSet(
                 app.schema,
                 ObjectClass,
                 restricted_structural_oc
             )
-            entry = ldap0.schema.models.Entry(
+            entry = Entry(
                 app.schema,
                 ldif_dn.decode(app.ls.charset),
                 {at.decode('ascii'): avs for at, avs in ldif_entry.items()}
@@ -1006,7 +1007,7 @@ def read_ldif_template(app, template_name):
                 'I/O error opening LDIF template for &quot;%s&quot;.' % (template_name_html)
             )
         try:
-            dn, entry = list(ldap0.ldif.LDIFParser(
+            dn, entry = list(LDIFParser(
                 ldif_file,
                 ignored_attr_types=[],
                 process_url_schemes=web2ldapcnf.ldif_url_schemes
@@ -1148,7 +1149,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
     if ldap_res is None:
         raise ldap0.NO_SUCH_OBJECT('Empty search result.')
 
-    entry = ldap0.schema.models.Entry(sub_schema, ldap_res.dn_s, ldap_res.entry_as)
+    entry = Entry(sub_schema, ldap_res.dn_s, ldap_res.entry_as)
 
     if write_attrs_method == WRITEABLE_ATTRS_NONE:
         # No method to determine writeable attributes was used
@@ -1157,7 +1158,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
     elif write_attrs_method == WRITEABLE_ATTRS_SLAPO_ALLOWED:
         # Determine writeable attributes from attribute 'allowedAttributesEffective'
         try:
-            writeable_attr_oids = ldap0.schema.models.SchemaElementOIDSet(
+            writeable_attr_oids = SchemaElementOIDSet(
                 sub_schema, AttributeType,
                 [
                     aval.decode('ascii')

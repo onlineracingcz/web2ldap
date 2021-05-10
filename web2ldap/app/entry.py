@@ -42,7 +42,7 @@ class DisplayEntry(UserDict):
             TypeError('Expected schema to be instance of SubSchema, was %r' % (schema))
         self._app = app
         self.schema = schema
-        self._set_dn(dn)
+        self.dn = dn
         if isinstance(entry, dict):
             self.entry = ldap0.schema.models.Entry(schema, dn, entry)
         elif isinstance(entry, ldap0.schema.models.Entry):
@@ -106,27 +106,9 @@ class DisplayEntry(UserDict):
             return value_sep.join(result)
         return result
 
-    def _get_rdn_dict(self, dn):
-        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
-        entry_rdn_dict = ldap0.schema.models.Entry(
-            self.schema,
-            dn,
-            encode_entry_dict(DNObj.from_str(dn).rdn_attrs()),
-        )
-        for attr_type, attr_values in list(entry_rdn_dict.items()):
-            del entry_rdn_dict[attr_type]
-            d = ldap0.cidict.CIDict()
-            for attr_value in attr_values:
-                assert isinstance(attr_value, bytes), \
-                    TypeError("Var 'attr_value' must be bytes, was %r" % (attr_value))
-                d[attr_value] = None
-            entry_rdn_dict[attr_type] = d
-        return entry_rdn_dict
-
-    def _set_dn(self, dn):
-        self.dn = dn
-        self.rdn_dict = self._get_rdn_dict(dn)
-        # end of _set_dn()
+    @property
+    def rdn_dict(self):
+        return DNObj.from_str(self.dn).rdn_attrs()
 
     def get_html_templates(self, cnf_key):
         read_template_dict = CIDict(self._app.cfg_param(cnf_key, {}))

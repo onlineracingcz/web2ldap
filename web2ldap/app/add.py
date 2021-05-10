@@ -19,10 +19,8 @@ from ldap0.dn import DNObj
 
 from .addmodifyform import w2l_addform, get_entry_input, read_old_entry, read_ldif_template
 from . import ErrorExit
-from .gui import (
-    invalid_syntax_message,
-    main_menu,
-)
+from .gui import invalid_syntax_message, main_menu
+
 
 # Attribute types always ignored for add requests
 ADD_IGNORE_ATTR_TYPES = {
