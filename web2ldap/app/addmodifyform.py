@@ -264,7 +264,7 @@ class InputFormEntry(DisplayEntry):
             existing_object_classes=None,
             invalid_attrs=None
         ):
-        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
+        assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was {!r}".format(dn))
         DisplayEntry.__init__(self, app, dn, schema, entry, 'field_sep', False)
         self.existing_object_classes = existing_object_classes
         self.writeable_attr_oids = writeable_attr_oids
