@@ -339,19 +339,19 @@ class InputFormEntry(DisplayEntry):
                 ) or (
                     # Check whether the server indicated this attribute
                     # not to be writeable by bound identity
-                    not self.writeable_attr_oids is None and \
-                    not oid in self.writeable_attr_oids and \
+                    not self.writeable_attr_oids is None and
+                    not oid in self.writeable_attr_oids and
                     not oid in self.new_attribute_types_oids
                 ) or (
                     # Check whether attribute type/value is used in the RDN => not writeable
-                    self.existing_object_classes and \
-                    attr_value and \
-                    nameoroid in self.rdn_dict and \
+                    self.existing_object_classes and
+                    attr_value and
+                    nameoroid in self.rdn_dict and
                     self.rdn_dict[nameoroid].encode('utf-8') == attr_value
                 ) or (
                     # Set to writeable if relax rules control is in effect
                     # and attribute is NO-USER-APP in subschema
-                    not self._app.ls.relax_rules and \
+                    not self._app.ls.relax_rules and
                     no_userapp_attr(self.entry._s, oid)
                 ):
                 result.append('\n'.join((
