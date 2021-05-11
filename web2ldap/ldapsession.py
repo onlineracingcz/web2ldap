@@ -1410,7 +1410,7 @@ class LDAPSession:
             lu.x_startTLS = str(START_TLS_REQUIRED * (self.startTLSOption > 0))
         if add_login:
             if self.sasl_auth:
-                lu.saslMech = self.sasl_mech
+                lu.sasl_mech = self.sasl_mech
                 if self.sasl_mech.encode('ascii') in ldap0.sasl.SASL_PASSWORD_MECHS:
                     lu.who = self.sasl_auth.cb_value_dict.get(
                         ldap0.sasl.CB_AUTHNAME,

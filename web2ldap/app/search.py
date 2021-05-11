@@ -27,6 +27,7 @@ from ldap0.controls.openldap import SearchNoOpControl
 from ldap0.schema.models import AttributeType
 from ldap0.base import decode_list
 from ldap0.res import SearchReference, SearchResultEntry
+from ldap0.openldap import ldapsearch_cmd
 
 from ..__about__ import __version__
 from ..web import escape_html
@@ -449,7 +450,7 @@ def w2l_search(app):
     search_ldap_url.scope = scope
     search_ldap_url.attrs = search_attrs
 
-    ldap_search_command = search_ldap_url.ldapsearch_cmd()
+    ldap_search_command = ldapsearch_cmd(search_ldap_url)
 
     read_attr_set = ldap0.schema.models.SchemaElementOIDSet(app.schema, AttributeType, search_attrs)
     if search_output in {'table', 'print'}:

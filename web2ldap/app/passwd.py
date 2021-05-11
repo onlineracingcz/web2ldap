@@ -63,7 +63,7 @@ def password_change_url(app, passwd_who, passwd_input):
     passwd_who_ldapurl_obj.scope = ldap0.SCOPE_BASE
     passwd_who_ldapurl_obj.who = passwd_who
     passwd_who_ldapurl_obj.cred = passwd_input
-    passwd_who_ldapurl_obj.saslMech = None
+    passwd_who_ldapurl_obj.sasl_mech = None
     return '?'.join((
         app.form.action_url('passwd', None),
         str(passwd_who_ldapurl_obj),

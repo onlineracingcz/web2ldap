@@ -922,7 +922,7 @@ class AppHandler(LogHelper):
 
             login_mech = self.form.getInputValue(
                 'login_mech',
-                [self.ldap_url.saslMech or '']
+                [self.ldap_url.sasl_mech or '']
             )[0].upper() or None
 
             if (
@@ -935,7 +935,7 @@ class AppHandler(LogHelper):
                     self,
                     login_msg='',
                     who=who, relogin=0, nomenu=1,
-                    login_default_mech=self.ldap_url.saslMech
+                    login_default_mech=self.ldap_url.sasl_mech
                 )
                 return
 
@@ -963,10 +963,10 @@ class AppHandler(LogHelper):
                             self.form.getInputValue('login_authzid_prefix', [''])[0],
                             self.form.getInputValue(
                                 'login_authzid',
-                                [self.ldap_url.saslAuthzId or ''],
+                                [self.ldap_url.sasl_authzid or ''],
                             )[0],
                         )) or None,
-                        self.form.getInputValue('login_realm', [self.ldap_url.saslRealm])[0],
+                        self.form.getInputValue('login_realm', [self.ldap_url.sasl_realm])[0],
                         self.binddn_mapping,
                         loginSearchRoot=login_search_root,
                     )
