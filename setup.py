@@ -46,7 +46,7 @@ setup(
     data_files=DATA_FILES,
     install_requires=[
         'setuptools',
-        'ldap0>=1.2.3',
+        'ldap0>=1.2.7',
         'asn1crypto',
         'xlwt',
         'paramiko',
