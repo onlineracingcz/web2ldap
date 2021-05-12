@@ -175,7 +175,7 @@ def w2l_add(app):
             Maybe wrong base DN in LDIF template?<br>
             """ % (
                 app.ldap_error_msg(e),
-                app.display_dn(add_basedn.decode(app.ls.charset), commandbutton=0),
+                app.display_dn(add_basedn.decode(app.ls.charset), links=False),
             )
         )
     except (
@@ -216,7 +216,7 @@ def w2l_add(app):
                     [('dn', str(new_dn))],
                     title=u'Display added entry %s' % (new_dn,),
                 ),
-                app.display_dn(str(new_dn), commandbutton=0),
+                app.display_dn(str(new_dn), links=False),
             ),
             main_menu_list=main_menu(app),
             context_menu_list=[]

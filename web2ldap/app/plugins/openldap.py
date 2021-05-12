@@ -140,8 +140,8 @@ class OlcMultilineText(MultilineText):
     cols = 90
     min_input_rows = 3
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        return '<code>%s</code>' % MultilineText.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        return '<code>%s</code>' % MultilineText.display(self, vidx, links)
 
 syntax_registry.reg_at(
     OlcMultilineText.oid, [
@@ -159,12 +159,12 @@ class OlcSyncRepl(OlcMultilineText, LDAPUrl):
     def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
         OlcMultilineText.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        if not commandbutton or not self._av:
-            return OlcMultilineText.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        if not links or not self._av:
+            return OlcMultilineText.display(self, vidx, links)
         srd = ldap0.openldap.SyncReplDesc(self.av_u)
         return ' '.join((
-            OlcMultilineText.display(self, valueindex, commandbutton),
+            OlcMultilineText.display(self, vidx, links),
             self._app.ldap_url_anchor(srd.ldap_url()),
         ))
 
@@ -250,9 +250,9 @@ class AuditContext(NamingContexts):
     oid: str = 'AuditContext'
     desc: str = 'OpenLDAP DN pointing to audit naming context'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        res = [DistinguishedName.display(self, valueindex, commandbutton)]
-        if commandbutton:
+    def display(self, vidx, links) -> str:
+        res = [DistinguishedName.display(self, vidx, links)]
+        if links:
             res.extend([
                 self._app.anchor(
                     'searchform', 'Search',
@@ -310,7 +310,7 @@ class ReqMod(OctetString, DirectoryString):
     def _validate(self, attr_value: bytes) -> bool:
         return OctetString._validate(self, attr_value)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         if self._av == b':':
             # magic value used for fixing OpenLDAP ITS#6545
             return ':'
@@ -318,14 +318,14 @@ class ReqMod(OctetString, DirectoryString):
             mod_attr_type, mod_attr_rest = self._av.split(b':', 1)
             mod_type = mod_attr_rest[0:1].strip()
         except (ValueError, IndexError):
-            return OctetString.display(self, valueindex, commandbutton)
+            return OctetString.display(self, vidx, links)
         if not mod_type in self.known_modtypes:
-            return OctetString.display(self, valueindex, commandbutton)
+            return OctetString.display(self, vidx, links)
         if len(mod_attr_rest) > 1:
             try:
                 mod_type, mod_attr_value = mod_attr_rest.split(b' ', 1)
             except ValueError:
-                return OctetString.display(self, valueindex, commandbutton)
+                return OctetString.display(self, vidx, links)
         else:
             mod_attr_value = b''
         mod_attr_type_u = mod_attr_type.decode(self._app.ls.charset)
@@ -339,7 +339,7 @@ class ReqMod(OctetString, DirectoryString):
                 mod_attr_value.hex().upper(),
             )
         else:
-            return DirectoryString.display(self, valueindex, commandbutton)
+            return DirectoryString.display(self, vidx, links)
         raise ValueError
 
 syntax_registry.reg_at(
@@ -354,8 +354,8 @@ class ReqControls(IA5String):
     oid: str = '1.3.6.1.4.1.4203.666.11.5.3.1'
     desc: str = 'List of LDAPv3 extended controls sent along with a request'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        result_lines = [IA5String.display(self, valueindex, commandbutton)]
+    def display(self, vidx, links) -> str:
+        result_lines = [IA5String.display(self, vidx, links)]
         # Eliminate X-ORDERED prefix
         _, rest = self.av_u.strip().split('}{', 1)
         # check whether it ends with }
@@ -417,9 +417,9 @@ syntax_registry.reg_at(
 class ReqEntryUUID(UUID):
     oid: str = 'ReqEntryUUID-oid'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        display_value = UUID.display(self, valueindex, commandbutton)
-        if not commandbutton:
+    def display(self, vidx, links) -> str:
+        display_value = UUID.display(self, vidx, links)
+        if not links:
             return display_value
         return web2ldapcnf.command_link_separator.join((
             display_value,
@@ -454,9 +454,9 @@ syntax_registry.reg_at(
 class ReqSession(Integer):
     oid: str = 'ReqSession-oid'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        display_value = Integer.display(self, valueindex, commandbutton)
-        if not commandbutton:
+    def display(self, vidx, links) -> str:
+        display_value = Integer.display(self, vidx, links)
+        if not links:
             return display_value
         return web2ldapcnf.command_link_separator.join((
             display_value,

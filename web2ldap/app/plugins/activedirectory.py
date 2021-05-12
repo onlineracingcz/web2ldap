@@ -72,8 +72,8 @@ class ObjectVersion(Integer, SelectList):
         '14247': 'Exchange 2010 SP2',
     }
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        return SelectList.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        return SelectList.display(self, vidx, links)
 
 # Register certain attribute types for syntax classes
 syntax_registry.reg_at(
@@ -112,10 +112,10 @@ class ObjectSID(OctetString, IA5String):
     def input_field(self) -> Field:
         return IA5String.input_field(self)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         return '%s<br>%s' % (
             self._app.form.s2d(sid2sddl(self._av)),
-            OctetString.display(self, valueindex, commandbutton),
+            OctetString.display(self, vidx, links),
         )
 
 syntax_registry.reg_at(
@@ -178,10 +178,10 @@ class OtherSID(ObjectSID):
         'S-1-5-32-556': 'BUILTIN_NETWORK_CONF_OPERATORS',
     }
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         sddl_str = sid2sddl(self._av)
         search_anchor = self.well_known_sids.get(sddl_str, '')
-        if commandbutton and sddl_str not in self.well_known_sids:
+        if links and sddl_str not in self.well_known_sids:
             search_anchor = self._app.anchor(
                 'searchform', '&raquo;',
                 [
@@ -196,7 +196,7 @@ class OtherSID(ObjectSID):
         return '%s %s<br>%s' % (
             self._app.form.s2d(sddl_str),
             search_anchor,
-            OctetString.display(self, valueindex, commandbutton),
+            OctetString.display(self, vidx, links),
         )
 
 syntax_registry.reg_at(
@@ -458,7 +458,7 @@ class LogonHours(OctetString):
             cols=24,
         )
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         hour_flags = self._extract_hours(self._av)
         result_lines = [
             """<tr>
@@ -482,7 +482,7 @@ class LogonHours(OctetString):
                 )
             )
         return '<p>%s</p><table>%s</table>' % (
-            OctetString.display(self, valueindex, commandbutton),
+            OctetString.display(self, vidx, links),
             '\n'.join(result_lines)
         )
 
@@ -560,7 +560,7 @@ class DNWithOctetString(DistinguishedName):
             return False
         return len(octet_string) == count and octet_tag.upper() == self.octetTag and is_dn(dn)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         try:
             octet_tag, count, octet_string, dn = self.av_u.split(':')
         except ValueError:
@@ -569,10 +569,7 @@ class DNWithOctetString(DistinguishedName):
             self._app.form.s2d(octet_tag),
             self._app.form.s2d(count),
             self._app.form.s2d(octet_string),
-            self._app.display_dn(
-                dn,
-                commandbutton=commandbutton,
-            )
+            self._app.display_dn(dn, links=links),
         ])
 
 
@@ -603,11 +600,11 @@ class MsAdGUID(OctetString):
             return OctetString.sanitize(self, attr_value)
         return object_guid_uuid.bytes
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         object_guid_uuid = uuid.UUID(bytes=self._av)
         return '{%s}<br>%s' % (
             str(object_guid_uuid),
-            OctetString.display(self, valueindex=0, commandbutton=False),
+            OctetString.display(self, vidx, links),
         )
 
 syntax_registry.reg_at(
@@ -628,13 +625,13 @@ class Interval(MicrosoftLargeInteger):
     def _delta(attr_value):
         return (int(attr_value)-116444736000000000)/10000000
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         if self.av_u == '9223372036854775807':
             return '-1: unlimited/off'
         delta = self._delta(self.av_u)
         if delta >= 0:
             return '%s (%s)' % (
-                MicrosoftLargeInteger.display(self, valueindex, commandbutton),
+                MicrosoftLargeInteger.display(self, vidx, links),
                 self._app.form.s2d(str(strftimeiso8601(time.gmtime(delta)))),
             )
         return self.av_u
@@ -644,16 +641,16 @@ class LockoutTime(Interval):
     oid: str = 'LockoutTime-oid'
     desc: str = 'Timestamp of password failure lockout'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         delta = self._delta(self._av)
         if delta == 0:
             return '%s (not locked)' % (
-                MicrosoftLargeInteger.display(self, valueindex, commandbutton)
+                MicrosoftLargeInteger.display(self, vidx, links)
             )
         if delta < 0:
-            return MicrosoftLargeInteger.display(self, valueindex, commandbutton)
+            return MicrosoftLargeInteger.display(self, vidx, links)
         return '%s (locked since %s)' % (
-            MicrosoftLargeInteger.display(self, valueindex, commandbutton),
+            MicrosoftLargeInteger.display(self, vidx, links),
             self._app.form.s2d(str(strftimeiso8601(time.gmtime(delta)))),
         )
 
@@ -757,8 +754,8 @@ class ClassSchemaLDAPName(DynamicValueSelectList, OID):
     desc: str = 'lDAPDisplayName of the classSchema entry'
     ldap_url = 'ldap:///_?lDAPDisplayName,lDAPDisplayName?one?(objectClass=classSchema)'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        return OID.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        return OID.display(self, vidx, links)
 
 syntax_registry.reg_at(
     ClassSchemaLDAPName.oid, [
@@ -775,8 +772,8 @@ class AttributeSchemaLDAPName(DynamicValueSelectList, OID):
     desc: str = 'lDAPDisplayName of the classSchema entry'
     ldap_url = 'ldap:///_?lDAPDisplayName,lDAPDisplayName?one?(objectClass=attributeSchema)'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        return OID.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        return OID.display(self, vidx, links)
 
 syntax_registry.reg_at(
     AttributeSchemaLDAPName.oid, [

@@ -394,11 +394,11 @@ class OpenDSSyncHist(OctetString, DirectoryString):
     oid: str = 'OpenDSSyncHist-oid'
     desc: str = 'List of modifications'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         try:
             mod_attr_type, mod_number, mod_type, mod_value = self._av.split(':', 3)
         except ValueError:
-            return OctetString.display(self, valueindex, commandbutton)
+            return OctetString.display(self, vidx, links)
         first_str = self._app.form.s2d(
             ':'.join((mod_attr_type, mod_number, mod_type)).decode(self._app.ls.charset)
         )

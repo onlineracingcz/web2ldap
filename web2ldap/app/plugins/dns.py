@@ -97,9 +97,9 @@ class AssociatedDomain(DNSDomain):
                 fval = '.'.join((dc_value, parent_domain))
         return fval
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        res = [DNSDomain.display(self, valueindex, commandbutton)]
-        if commandbutton:
+    def display(self, vidx, links) -> str:
+        res = [DNSDomain.display(self, vidx, links)]
+        if links:
             aval = self.av_u.lower()
             res.append(self._app.anchor(
                 'search', 'Ref. RRs',
@@ -199,8 +199,8 @@ class ResourceRecord(DNSDomain, DynamicValueSelectList):
     def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
         DynamicValueSelectList.__init__(self, app, dn, schema, attrType, attr_value, entry)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        return DynamicValueSelectList.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        return DynamicValueSelectList.display(self, vidx, links)
 
 syntax_registry.reg_at(
     ResourceRecord.oid, [
@@ -245,9 +245,9 @@ class ARecord(IPv4HostAddress):
     oid: str = 'ARecord-oid'
     desc: str = 'A resource record pointing to IPv4 address'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        res = [IPv4HostAddress.display(self, valueindex, commandbutton)]
-        if commandbutton:
+    def display(self, vidx, links) -> str:
+        res = [IPv4HostAddress.display(self, vidx, links)]
+        if links:
             ip_addr = self.addr_class(self.av_u)
             res.append(self._app.anchor(
                 'search', 'PTR RR',
@@ -297,9 +297,9 @@ class AAAARecord(IPv6HostAddress):
     oid: str = 'AAAARecord-oid'
     desc: str = 'AAAA resource record pointing to IPv6 address'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        res = [IPv6HostAddress.display(self, valueindex, commandbutton)]
-        if commandbutton:
+    def display(self, vidx, links) -> str:
+        res = [IPv6HostAddress.display(self, vidx, links)]
+        if links:
             ip_addr = self.addr_class(self.av_u)
             try:
                 ip_addr.reverse_dns
@@ -376,8 +376,8 @@ class SSHFPRecord(IA5String):
                 result = result and len(fp_value) == fp_algo_len
         return result
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        display_value = IA5String.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        display_value = IA5String.display(self, vidx, links)
         try:
             key_algo, fp_algo, _ = tuple(filter(None, map(bytes.strip, self._av.split(b' '))))
         except ValueError:

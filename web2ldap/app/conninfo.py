@@ -289,7 +289,7 @@ def w2l_conninfo(app):
 
     if app.ls.who:
         who_html = '%s<br>( %s )' % (
-            app.display_dn(app.ls.who, commandbutton=False),
+            app.display_dn(app.ls.who, links=False),
             web2ldapcnf.command_link_separator.join((
                 app.anchor(
                     'read', 'Read',
@@ -366,7 +366,7 @@ def w2l_conninfo(app):
             app.form.s2d(str(app.naming_context)),
             min(len(app.ls.l.last_search_bases), app.ls.l.last_search_bases.maxlen),
             '<br>'.join([
-                app.display_dn(search_base, commandbutton=True)
+                app.display_dn(search_base, links=True)
                 for search_base in app.ls.l.last_search_bases
             ])
         )

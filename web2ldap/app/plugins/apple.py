@@ -24,7 +24,7 @@ class UUIDReference(DynamicValueSelectList, UUID):
     oid: str = 'UUIDReference-oid'
     ldap_url = 'ldap:///_?apple-generateduid,entryDN?sub?(apple-generateduid=*)'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         value_disp = self._app.form.s2d(self.av_u)
         return ' '.join((
             value_disp,

@@ -38,13 +38,13 @@ class GidNumber(DynamicValueSelectList, Integer):
     def _validate(self, attr_value: bytes) -> bool:
         return Integer._validate(self, attr_value)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         # Possibly display a link
         ocs = self._entry.object_class_oid_set()
         if 'posixAccount' in ocs or 'shadowAccount' in ocs:
-            return DynamicValueSelectList.display(self, valueindex, commandbutton)
-        res = [Integer.display(self, valueindex, commandbutton=False)]
-        if not commandbutton:
+            return DynamicValueSelectList.display(self, vidx, links)
+        res = [Integer.display(self, vidx, False)]
+        if not links:
             return res[0]
         if 'posixGroup' in ocs:
             title = 'Search primary group members'
@@ -103,9 +103,9 @@ class MemberUID(IA5String, DynamicValueSelectList):
             return DynamicValueSelectList.input_field(self)
         return IA5String.input_field(self)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        res = [IA5String.display(self, valueindex, commandbutton=False)]
-        if commandbutton:
+    def display(self, vidx, links) -> str:
+        res = [IA5String.display(self, vidx, False)]
+        if links:
             res.append(self._app.anchor(
                 'searchform', '&raquo;',
                 [

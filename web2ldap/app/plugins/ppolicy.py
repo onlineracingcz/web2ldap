@@ -91,11 +91,11 @@ class PwdMaxAge(Timespan):
             ('search_string', self._search_timestamp(int(self.av_u.strip()))),
         )
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        ts_dv = Timespan.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        ts_dv = Timespan.display(self, vidx, links)
         # Possibly display a link
         ocs = self._entry.object_class_oid_set()
-        if not commandbutton or 'pwdPolicy' not in ocs:
+        if not links or 'pwdPolicy' not in ocs:
             return ts_dv
         try:
             ts_search_params = self._timespan_search_params()
@@ -157,8 +157,8 @@ class PwdAccountLockedTime(GeneralizedTime):
     def _validate(self, attr_value: bytes) -> bool:
         return attr_value in self.magic_values or GeneralizedTime._validate(self, attr_value)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        gt_disp_html = GeneralizedTime.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        gt_disp_html = GeneralizedTime.display(self, vidx, links)
         if self._av in self.magic_values:
             return '%s (%s)' % (gt_disp_html, self.magic_values[self._av])
         return gt_disp_html
@@ -175,8 +175,8 @@ class PwdChangedTime(GeneralizedTime):
     desc: str = 'user entry: Last password change time'
     time_divisors = Timespan.time_divisors
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        gt_disp_html = GeneralizedTime.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        gt_disp_html = GeneralizedTime.display(self, vidx, links)
         try:
             pwd_changed_dt = strptime(self._av)
         except ValueError:

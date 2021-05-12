@@ -159,11 +159,11 @@ syntax_registry.reg_at(
 class UserPassword(OctetString, DirectoryString):
     oid: str = 'UserPassword-oid'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         try:
-            result = DirectoryString.display(self, valueindex, commandbutton)
+            result = DirectoryString.display(self, vidx, links)
         except UnicodeDecodeError:
-            result = OctetString.display(self, valueindex, commandbutton)
+            result = OctetString.display(self, vidx, links)
         return result
 
 syntax_registry.reg_at(

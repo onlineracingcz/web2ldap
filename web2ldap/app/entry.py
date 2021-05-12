@@ -65,7 +65,7 @@ INPUT_FORM_LDIF_TMPL = """
 
 class DisplayEntry(UserDict):
 
-    def __init__(self, app, dn, schema, entry, sep_attr, commandbutton):
+    def __init__(self, app, dn, schema, entry, sep_attr, links):
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn))
         assert isinstance(schema, SubSchema), \
             TypeError('Expected schema to be instance of SubSchema, was %r' % (schema))
@@ -87,7 +87,7 @@ class DisplayEntry(UserDict):
         self.soc = self.entry.get_structural_oc()
         self.invalid_attrs = set()
         self.sep_attr = sep_attr
-        self.commandbutton = commandbutton
+        self.links = links
 
     def __getitem__(self, nameoroid):
         try:
@@ -106,10 +106,7 @@ class DisplayEntry(UserDict):
                 self.entry,
             )
             try:
-                attr_value_html = attr_instance.display(
-                    valueindex=i,
-                    commandbutton=self.commandbutton,
-                )
+                attr_value_html = attr_instance.display(i, self.links)
             except UnicodeError:
                 # Fall back to hex-dump output
                 attr_instance = OctetString(
@@ -120,10 +117,7 @@ class DisplayEntry(UserDict):
                     value,
                     self.entry,
                 )
-                attr_value_html = attr_instance.display(
-                    valueindex=i,
-                    commandbutton=self.commandbutton,
-                )
+                attr_value_html = attr_instance.display(i, self.links)
             try:
                 attr_instance.validate(value)
             except LDAPSyntaxValueError:

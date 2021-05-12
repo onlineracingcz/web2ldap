@@ -97,8 +97,8 @@ class SshPublicKey(DirectoryString):
 
     def _display_lines(
             self,
-            valueindex,
-            commandbutton,
+            vidx,
+            links,
             pk_type,
             pk_comment,
             pk_bin,
@@ -106,7 +106,7 @@ class SshPublicKey(DirectoryString):
         ):
         result = []
         result.append('<dt>SSH Key:</dt><dd><input readonly size="70" value="{}"></dd>'.format(
-            DirectoryString.display(self, valueindex, commandbutton)
+            DirectoryString.display(self, vidx, links)
         ))
         if pk_comment:
             result.append(
@@ -141,13 +141,13 @@ class SshPublicKey(DirectoryString):
                 result.append('<dt>Key size:</dt><dd>%d</dd>' % (pk_size))
         return result
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         pk_type, pk_comment, pk_bin, pk_fingerprints = self._extract_pk_params(self._av)
         result = ['<dl>']
         result.extend(
             self._display_lines(
-                valueindex,
-                commandbutton,
+                vidx,
+                links,
                 pk_type,
                 pk_comment,
                 pk_bin,

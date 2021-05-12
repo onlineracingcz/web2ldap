@@ -33,11 +33,11 @@ class DHCPConfigStatement(MultilineText):
     desc: str = 'DHCP configuration statement'
     lineSep = b''
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         res = ['<code>%s</code>' % (
-            MultilineText.display(self, valueindex, commandbutton)
+            MultilineText.display(self, vidx, links)
         )]
-        if commandbutton:
+        if links:
             try:
                 dhcp_type, dhcp_value = self.av_u.split(' ', 1)
             except ValueError:

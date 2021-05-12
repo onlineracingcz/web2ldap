@@ -663,7 +663,7 @@ class AEGroupDN(DerefDynamicDNSelectList):
         ('memberOf', 'Members', None, 'Search all member entries of this user group'),
     )
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         group_dn = DNObj.from_str(self.av_u)
         group_cn = group_dn[0][0][1]
         res = [
@@ -672,7 +672,7 @@ class AEGroupDN(DerefDynamicDNSelectList):
                 self._app.form.s2d(str(group_dn.parent())),
             )
         ]
-        if commandbutton:
+        if links:
             res.extend(self._additional_links())
         return web2ldapcnf.command_link_separator.join(res)
 
@@ -1959,9 +1959,9 @@ syntax_registry.reg_at(
 class AECommonNameAETag(AEZonePrefixCommonName):
     oid: str = 'AECommonNameAETag-oid'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        display_value = AEZonePrefixCommonName.display(self, valueindex, commandbutton)
-        if commandbutton:
+    def display(self, vidx, links) -> str:
+        display_value = AEZonePrefixCommonName.display(self, vidx, links)
+        if links:
             search_anchor = self._app.anchor(
                 'searchform', '&raquo;',
                 (
@@ -2143,10 +2143,10 @@ class AEStatus(SelectList, Integer):
                         ae_status = ae_expiry_status
         return [str(ae_status).encode('ascii')]
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        if not commandbutton:
-            return Integer.display(self, valueindex)
-        return SelectList.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        if not links:
+            return Integer.display(self, vidx, links)
+        return SelectList.display(self, vidx, links)
 
 syntax_registry.reg_at(
     AEStatus.oid, [

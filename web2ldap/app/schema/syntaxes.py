@@ -444,7 +444,7 @@ class LDAPSyntax:
         input_field.set_default(self.form_value())
         return input_field
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         try:
             res = self._app.form.s2d(self.av_u)
         except UnicodeDecodeError:
@@ -469,7 +469,7 @@ class Binary(LDAPSyntax):
         field.mime_type = self.mime_type
         return field
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         return '%d bytes | %s' % (
             len(self._av),
             self._app.anchor(
@@ -477,7 +477,7 @@ class Binary(LDAPSyntax):
                 [
                     ('dn', self._dn),
                     ('read_attr', self._at),
-                    ('read_attrindex', str(valueindex)),
+                    ('read_attrindex', str(vidx)),
                 ],
             )
         )
@@ -497,7 +497,7 @@ class Audio(Binary):
             res = sndhdr.test_au(attr_value, fileobj)
         return res is not None
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         mimetype = self.mime_type
         return (
             '<embed type="%s" autostart="false" '
@@ -508,7 +508,7 @@ class Audio(Binary):
             self._app.form.script_name, self._app.sid,
             urllib.parse.quote(self._dn.encode(self._app.form.accept_charset)),
             urllib.parse.quote(self._at),
-            valueindex,
+            vidx,
             len(self._av),
             mimetype
         )
@@ -530,7 +530,7 @@ class DirectoryString(LDAPSyntax):
             return False
         return True
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         return self.html_tmpl.format(
             av=self._app.form.s2d(self.av_u)
         )
@@ -617,9 +617,9 @@ class DistinguishedName(DirectoryString):
             ))
         return res
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         res = [self._app.form.s2d(self.av_u or '- World -')]
-        if commandbutton:
+        if links:
             res.extend(self._additional_links())
         return web2ldapcnf.command_link_separator.join(res)
 
@@ -640,13 +640,13 @@ class AuthzDN(DistinguishedName):
     oid: str = 'AuthzDN-oid'
     desc: str = 'Authz Distinguished Name'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        result = DistinguishedName.display(self, valueindex, commandbutton)
-        if commandbutton:
+    def display(self, vidx, links) -> str:
+        result = DistinguishedName.display(self, vidx, links)
+        if links:
             simple_display_str = DistinguishedName.display(
                 self,
-                valueindex,
-                commandbutton=False,
+                vidx,
+                links=False,
             )
             whoami_display_str = self._app.display_authz_dn(who=self.av_u)
             if whoami_display_str != simple_display_str:
@@ -678,11 +678,11 @@ class NameAndOptionalUID(DistinguishedName):
         dn, _ = self._split_dn_and_uid(self._app.ls.uc_decode(attr_value)[0])
         return is_dn(dn)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         value = self.av_u.split('#')
         dn_str = self._app.display_dn(
             self.av_u,
-            commandbutton=commandbutton,
+            links=links,
         )
         if len(value) == 1 or not value[1]:
             return dn_str
@@ -846,16 +846,16 @@ class GeneralizedTime(IA5String):
         return result.encode('ascii')
         # end of GeneralizedTime.sanitize()
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         try:
             dt_utc = utc_strptime(self.av_u)
         except ValueError:
-            return IA5String.display(self, valueindex, commandbutton)
+            return IA5String.display(self, vidx, links)
         try:
             dt_utc_str = dt_utc.strftime(self.dt_display_format)
         except ValueError:
-            return IA5String.display(self, valueindex, commandbutton)
-        if not commandbutton:
+            return IA5String.display(self, vidx, links)
+        if not links:
             return dt_utc_str
         current_time = datetime.datetime.utcnow()
         time_span = (current_time - dt_utc).total_seconds()
@@ -916,7 +916,7 @@ class NullTerminatedDirectoryString(DirectoryString):
     def form_value(self) -> str:
         return self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         return self._app.form.s2d(
             self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
         )
@@ -1100,7 +1100,7 @@ class Uri(DirectoryString):
         bytes.strip,
     )
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         attr_value = self.av_u
         try:
             url, label = attr_value.split(' ', 1)
@@ -1118,7 +1118,7 @@ class Uri(DirectoryString):
             )
         if url.lower().find('javascript:') >= 0:
             return '<code>%s</code>' % (
-                DirectoryString.display(self, valueindex=False, commandbutton=False)
+                DirectoryString.display(self, vidx=False, links=False)
             )
         return '<a href="%s/urlredirect/%s?%s">%s%s</a>' % (
             self._app.form.script_name,
@@ -1160,7 +1160,7 @@ class Image(Binary):
                 )
         return attr_value
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         maxwidth, maxheight = 100, 150
         width, height = None, None
         size_attr_html = ''
@@ -1192,7 +1192,7 @@ class Image(Binary):
             self._app.form.script_name, self._app.sid,
             urllib.parse.quote(self._dn),
             urllib.parse.quote(self._at),
-            valueindex,
+            vidx,
         )
         if attr_value_len <= self.inline_maxlen:
             return (
@@ -1266,7 +1266,7 @@ class OID(IA5String):
                 pass
         return attr_value
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         try:
             name, description, reference = OID_REG[self.av_u]
         except (KeyError, ValueError):
@@ -1284,7 +1284,7 @@ class OID(IA5String):
                         raise_keyerror=1,
                     )
                 except KeyError:
-                    return IA5String.display(self, valueindex, commandbutton)
+                    return IA5String.display(self, vidx, links)
                 return schema_anchor(
                     self._app,
                     self.av_u,
@@ -1306,7 +1306,7 @@ class OID(IA5String):
             )
         return '<strong>%s</strong> (%s):<br>%s (see %s)' % (
             self._app.form.s2d(name),
-            IA5String.display(self, valueindex, commandbutton),
+            IA5String.display(self, vidx, links),
             self._app.form.s2d(description),
             self._app.form.s2d(reference)
         )
@@ -1322,20 +1322,20 @@ class LDAPUrl(Uri):
     def _command_ldap_url(self, ldap_url):
         return ldap_url
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         try:
-            if commandbutton:
-                commandbuttonstr = self._app.ldap_url_anchor(
+            if links:
+                linksstr = self._app.ldap_url_anchor(
                     self._command_ldap_url(self.av_u),
                 )
             else:
-                commandbuttonstr = ''
+                linksstr = ''
         except ValueError:
             return '<strong>Not a valid LDAP URL:</strong> %s' % (
                 self._app.form.s2d(repr(self._av))
             )
         return '<table><tr><td>%s</td><td><a href="%s">%s</a></td></tr></table>' % (
-            commandbuttonstr,
+            linksstr,
             self._app.form.s2d(self.av_u),
             self._app.form.s2d(self.av_u)
         )
@@ -1361,7 +1361,7 @@ class OctetString(Binary):
             res = attr_value
         return res
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         lines = [
             (
                 '<tr>'
@@ -1426,7 +1426,7 @@ class MultilineText(DirectoryString):
             b'\n', self.lineSep
         )
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         return '<br>'.join([
             self._app.form.s2d(self._app.ls.uc_decode(line_b)[0])
             for line_b in self._split_lines(self._av)
@@ -1461,7 +1461,7 @@ class PreformattedMultilineText(MultilineText):
     cols = 66
     tab_identiation = '&nbsp;&nbsp;&nbsp;&nbsp;'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         lines = [
             self._app.form.s2d(
                 self._app.ls.uc_decode(line_b)[0],
@@ -1580,7 +1580,7 @@ class ObjectGUID(LDAPSyntax):
     desc: str = 'Object GUID'
     charset = 'ascii'
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         objectguid_str = ''.join([
             '%02X' % ord(c)
             for c in self._av
@@ -1687,8 +1687,8 @@ class DateOfBirth(ISO8601Date):
             return False
         return self._age(birth_dt) >= 0
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        raw_date = ISO8601Date.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        raw_date = ISO8601Date.display(self, vidx, links)
         try:
             birth_dt = datetime.datetime.strptime(self.av_u, self.storage_format)
         except ValueError:
@@ -1704,8 +1704,8 @@ class SecondsSinceEpoch(Integer):
     desc: str = 'Seconds since epoch (1970-01-01 00:00:00)'
     min_value = 0
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        int_str = Integer.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        int_str = Integer.display(self, vidx, links)
         try:
             return '%s (%s)' % (
                 strftimeiso8601(time.gmtime(float(self._av))),
@@ -1723,8 +1723,8 @@ class DaysSinceEpoch(Integer):
     desc: str = 'Days since epoch (1970-01-01)'
     min_value = 0
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        int_str = Integer.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        int_str = Integer.display(self, vidx, links)
         try:
             return '%s (%s)' % (
                 strftimeiso8601(time.gmtime(float(self._av)*86400)),
@@ -1773,14 +1773,14 @@ class Timespan(Integer):
     def input_field(self) -> web_forms.Field:
         return IA5String.input_field(self)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         try:
             result = self._app.form.s2d('%s (%s)' % (
                 ts2repr(self.time_divisors, self.sep, self.av_u),
-                Integer.display(self, valueindex, commandbutton)
+                Integer.display(self, vidx, links)
             ))
         except ValueError:
-            result = Integer.display(self, valueindex, commandbutton)
+            result = Integer.display(self, vidx, links)
         return result
 
 
@@ -1836,8 +1836,8 @@ class SelectList(DirectoryString):
         attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
         return self._app.ls.uc_decode(attr_value)[0] in attr_value_dict
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        attr_value_str = DirectoryString.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        attr_value_str = DirectoryString.display(self, vidx, links)
         attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
         try:
             attr_value_desc = attr_value_dict[self.av_u]
@@ -1971,8 +1971,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             return False
         return self._search_ref(av_u) is not None
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        if commandbutton and self.lu_obj.attrs:
+    def display(self, vidx, links) -> str:
+        if links and self.lu_obj.attrs:
             ref_result = self._search_ref(self.av_u)
             if ref_result:
                 ref_dn, ref_entry = ref_result
@@ -1985,7 +1985,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                         display_text = ''
                     else:
                         display_text = self._app.form.s2d(attr_value_desc+':')
-                    if commandbutton:
+                    if links:
                         link_html = self._app.anchor(
                             'read', '&raquo;',
                             [('dn', ref_dn)],
@@ -1998,7 +1998,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
             display_text, link_html = '', ''
         return ' '.join((
             display_text,
-            DirectoryString.display(self, valueindex, commandbutton),
+            DirectoryString.display(self, vidx, links),
             link_html,
         ))
 
@@ -2129,8 +2129,8 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
             attrlist=['1.1']
         ) is not None
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        if commandbutton and self.lu_obj.attrs:
+    def display(self, vidx, links) -> str:
+        if links and self.lu_obj.attrs:
             ref_entry = self._get_ref_entry(self.av_u) or {}
             try:
                 attr_value_desc = ref_entry[self.lu_obj.attrs[0]][0]
@@ -2142,7 +2142,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
             display_text = ''
         return self.desc_sep.join((
             display_text,
-            DistinguishedName.display(self, valueindex, commandbutton)
+            DistinguishedName.display(self, vidx, links)
         ))
 
 
@@ -2209,8 +2209,8 @@ class Boolean(SelectList, IA5String):
             return SelectList._validate(self, attr_value.upper())
         return SelectList._validate(self, attr_value)
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
-        return IA5String.display(self, valueindex, commandbutton)
+    def display(self, vidx, links) -> str:
+        return IA5String.display(self, vidx, links)
 
 
 class CountryString(PropertiesSelectList):
@@ -2307,7 +2307,7 @@ class BitArrayInteger(MultilineText, Integer):
             cols=max([len(desc) for desc, _ in self.flag_desc_table])+1
         )
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         av_i = int(self._av)
         return (
             '%s<br>'
@@ -2316,7 +2316,7 @@ class BitArrayInteger(MultilineText, Integer):
             '%s'
             '</table>'
         ) % (
-            Integer.display(self, valueindex, commandbutton),
+            Integer.display(self, vidx, links),
             '\n'.join([
                 '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
                     self._app.form.s2d(desc),
@@ -2384,13 +2384,13 @@ class DNSDomain(IA5String):
             result = '!!!snipped because of UnicodeDecodeError!!!'
         return result
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         if self.av_u != self._av.decode('idna'):
             return '%s (%s)' % (
-                IA5String.display(self, valueindex, commandbutton),
+                IA5String.display(self, vidx, links),
                 self._app.form.s2d(self.form_value())
             )
-        return IA5String.display(self, valueindex, commandbutton)
+        return IA5String.display(self, vidx, links)
 
 
 class RFC822Address(DNSDomain, IA5String):

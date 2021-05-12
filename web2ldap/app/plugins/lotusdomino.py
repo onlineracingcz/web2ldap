@@ -41,7 +41,7 @@ class DominoCertificate(MultilineText):
     mime_type = 'text/plain'
     cols = 36
 
-    def display(self, valueindex=0, commandbutton=False) -> str:
+    def display(self, vidx, links) -> str:
         lines = [
             self._app.form.s2d(l)
             for l in self._split_lines(self.av_u)

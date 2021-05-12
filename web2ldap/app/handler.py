@@ -437,11 +437,11 @@ class AppHandler(LogHelper):
         self.log(logging.DEBUG, 'split path_info to (%r, %r)', cmd, sid)
         return cmd, sid # path_info()
 
-    def display_dn(self, dn, commandbutton=False):
+    def display_dn(self, dn, links=False):
         """Display a DN as LDAP URL with or without button"""
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn,))
         dn_str = self.form.s2d(dn or u'- World -')
-        if commandbutton:
+        if links:
             command_buttons = [
                 dn_str,
                 self.anchor('read', 'Read', [('dn', dn)])
@@ -458,7 +458,7 @@ class AppHandler(LogHelper):
                 return 'anonymous'
         if ldap0.dn.is_dn(who):
             # Fall-back is to display the DN
-            result = self.display_dn(who, commandbutton=False)
+            result = self.display_dn(who, links=False)
             # Determine relevant templates dict
             bound_as_templates = ldap0.cidict.CIDict(self.cfg_param('boundas_template', {}))
             # Read entry if necessary
