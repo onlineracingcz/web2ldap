@@ -445,7 +445,11 @@ class LDAPSyntax:
         return input_field
 
     def display(self, valueindex=0, commandbutton=False) -> str:
-        return self._app.form.s2d(repr(self._av))
+        try:
+            res = self._app.form.s2d(self.av_u)
+        except UnicodeDecodeError:
+            res = self._app.form.s2d(repr(self._av))
+        return res
 
 
 class Binary(LDAPSyntax):
