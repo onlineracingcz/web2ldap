@@ -122,7 +122,7 @@ class DisplayEntry(UserDict):
                 )
                 attr_value_html = attr_instance.display(
                     valueindex=i,
-                    commandbutton=True,
+                    commandbutton=self.commandbutton,
                 )
             try:
                 attr_instance.validate(value)
