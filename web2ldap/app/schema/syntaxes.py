@@ -287,13 +287,13 @@ class LDAPSyntax:
         if not entry:
             entry = ldap0.schema.models.Entry(schema, dn, {})
         assert isinstance(dn, str), \
-            TypeError("Argument 'dn' must be str, was %r" % (dn))
+            TypeError("Argument 'dn' must be str, was %r" % (dn,))
         assert isinstance(attrType, str) or attrType is None, \
-            TypeError("Argument 'attrType' must be str or None, was %r" % (attrType))
+            TypeError("Argument 'attrType' must be str or None, was %r" % (attrType,))
         assert isinstance(attr_value, bytes) or attr_value is None, \
-            TypeError("Argument 'attr_value' must be bytes or None, was %r" % (attr_value))
+            TypeError("Argument 'attr_value' must be bytes or None, was %r" % (attr_value,))
         assert entry is None or isinstance(entry, ldap0.schema.models.Entry), \
-            TypeError('entry must be ldaputil.schema.Entry, was %r' % (entry))
+            TypeError('entry must be ldaputil.schema.Entry, was %r' % (entry,))
         self._at = attrType
         self._at_b = None
         self._av = attr_value
