@@ -45,7 +45,7 @@ class DHCPConfigStatement(MultilineText):
             dhcp_type = dhcp_type.lower().strip()
             dhcp_value = dhcp_value.replace('"', '').strip()
             if dhcp_type == 'host-name':
-                host_name = dhcp_value.lower()
+                host_name = dhcp_value.lower().split('.', 1)[0]
                 res.append(self._app.anchor(
                     'search', 'DNS RR',
                     (
