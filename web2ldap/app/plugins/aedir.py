@@ -250,7 +250,7 @@ class AEGIDNumber(GidNumber):
         prc = PreReadControl(criticality=True, attrList=[self._at])
         ldap_result = self._app.ls.l.modify_s(
             self._get_id_pool_dn(),
-            [(ldap0.MOD_INCREMENT, self.at_b, [b'1'])],
+            [(ldap0.MOD_INCREMENT, self._app.ls.uc_encode(self._at)[0], [b'1'])],
             req_ctrls=[prc],
         )
         return int(ldap_result.ctrls[0].res.entry_s[self._at][0])

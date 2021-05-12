@@ -252,7 +252,6 @@ class LDAPSyntax:
     __slots__ = (
         '_app',
         '_at',
-        '_at_b',
         '_av',
         '_av_u',
         '_dn',
@@ -295,7 +294,6 @@ class LDAPSyntax:
         assert entry is None or isinstance(entry, ldap0.schema.models.Entry), \
             TypeError('entry must be ldaputil.schema.Entry, was %r' % (entry,))
         self._at = attrType
-        self._at_b = None
         self._av = attr_value
         self._av_u = None
         self._app = app
@@ -306,12 +304,6 @@ class LDAPSyntax:
     @property
     def dn(self):
         return DNObj.from_str(self._dn)
-
-    @property
-    def at_b(self):
-        if (self._at is not None and self._at_b is None):
-            self._at_b = self._app.ls.uc_encode(self._at)[0]
-        return self._at_b
 
     @property
     def av_u(self):
