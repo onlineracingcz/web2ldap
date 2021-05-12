@@ -275,9 +275,6 @@ class InputFormEntry(DisplayEntry):
         if not syntax_class.editable:
             attr_values = [b'']
 
-        attr_inst = syntax_class(
-            self._app, self.dn, self.entry._s, nameoroid, None, self.entry
-        )
         invalid_attr_indexes = set(self.invalid_attrs.get(nameoroid, []))
 
         for attr_index, attr_value in enumerate(attr_values):
