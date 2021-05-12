@@ -1328,6 +1328,8 @@ class LDAPSession:
                     self.userEntry = {}
                 else:
                     self.userEntry = user_res.entry_as
+                    # replace DN because Who Am I? ext.op. could have returned case-folded form
+                    self.who = user_res.dn_s
         else:
             self.userEntry = {}
         # end of bind()
