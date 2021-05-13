@@ -1789,7 +1789,7 @@ class SelectList(DirectoryString):
         True: '<span title="{attr_title}">{attr_text}:{sep}{attr_value}</span>',
     }
 
-    def _get_attr_value_dict(self):
+    def _get_attr_value_dict(self) -> Dict[str, str]:
         # Enable empty value in any case
         attr_value_dict: Dict[str, str] = {'': '-/-'}
         attr_value_dict.update(self.attr_value_dict)
@@ -1874,7 +1874,7 @@ class PropertiesSelectList(SelectList):
     properties_charset: str = 'utf-8'
     properties_delimiter: str = '='
 
-    def _get_attr_value_dict(self):
+    def _get_attr_value_dict(self) -> Dict[str, str]:
         attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
         real_path_name = get_variant_filename(
             self.properties_pathname,
@@ -2014,7 +2014,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         return result_dn
         # end of _search_root()
 
-    def _get_attr_value_dict(self):
+    def _get_attr_value_dict(self) -> Dict[str, str]:
         attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
         if self.lu_obj.hostport:
             raise ValueError(
@@ -2155,6 +2155,7 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 filterstr='(objectClass=*)',
                 attrlist=['1.1'],
                 req_ctrls=[deref_crtl],
+                cache_ttl=min(30, 5*web2ldapcnf.ldap_cache_ttl),
             )[0]
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -2187,7 +2188,7 @@ class Boolean(SelectList, IA5String):
         'FALSE': 'FALSE',
     }
 
-    def _get_attr_value_dict(self):
+    def _get_attr_value_dict(self) -> Dict[str, str]:
         attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
         if self._av and self._av.lower() == self._av:
             for key, val in attr_value_dict.items():

@@ -536,7 +536,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
                 attr_value_dict[option_value] = (option_text, option_title)
         return attr_value_dict
 
-    def _get_attr_value_dict(self):
+    def _get_attr_value_dict(self) -> Dict[str, str]:
         deref_person_attrset = self._deref_person_attrset()
         if not deref_person_attrset:
             return DerefDynamicDNSelectList._get_attr_value_dict(self)
@@ -1536,7 +1536,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
         bytes.lower,
     )
 
-    def _get_attr_value_dict(self):
+    def _get_attr_value_dict(self) -> Dict[str, str]:
         attr_value_dict: Dict[str, str] = {
             '': '-/-',
         }
