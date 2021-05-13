@@ -2155,7 +2155,6 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
                 filterstr='(objectClass=*)',
                 attrlist=['1.1'],
                 req_ctrls=[deref_crtl],
-                cache_ttl=min(30, 5*web2ldapcnf.ldap_cache_ttl),
             )[0]
         except (
                 ldap0.NO_SUCH_OBJECT,
@@ -2171,9 +2170,6 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
             if ref.dn_s == dn:
                 return ref.entry_s
         return None
-
-    def _validate(self, attr_value: bytes) -> bool:
-        return SelectList._validate(self, attr_value)
 
 
 class Boolean(SelectList, IA5String):
