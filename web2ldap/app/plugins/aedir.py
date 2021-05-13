@@ -568,7 +568,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
         if 'memberURL' in self._entry:
             # reduce to simple DN syntax check for dynamic groups
             return DistinguishedName._validate(self, attr_value)
-        return SelectList._validate(self, attr_value)
+        return DerefDynamicDNSelectList._validate(self, attr_value)
 
     def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         if self.ae_status == 2:
