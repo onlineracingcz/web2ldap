@@ -370,7 +370,7 @@ class LDAPSyntax:
             )
         # end of validate()
 
-    def value_button(self, command, row, mode, link_text=None):
+    def value_button(self, command, row, mode, link_text=None) -> str:
         """
         return HTML markup of [+] or [-] submit buttons for adding/removing
         attribute values
@@ -1244,7 +1244,7 @@ class OID(IA5String):
         '2.5.21.9',
     ))
 
-    def value_button(self, command, row, mode, link_text=None):
+    def value_button(self, command, row, mode, link_text=None) -> str:
         if self._at.lower() in self.no_val_button_attrs:
             return ''
         return IA5String.value_button(self, command, row, mode, link_text=link_text)
