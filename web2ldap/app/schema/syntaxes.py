@@ -41,7 +41,6 @@ except ImportError:
     DEFUSEDXML_AVAIL = False
 else:
     DEFUSEDXML_AVAIL = True
-    from xml.etree.ElementTree import ParseError as XMLParseError
 
 from collections import defaultdict
 from io import BytesIO
@@ -2488,7 +2487,7 @@ class XmlValue(PreformattedMultilineText):
             return PreformattedMultilineText._validate(self, attr_value)
         try:
             defusedxml.ElementTree.XML(attr_value)
-        except XMLParseError:
+        except defusedxml.ElementTree.ParseError:
             return False
         return True
 
