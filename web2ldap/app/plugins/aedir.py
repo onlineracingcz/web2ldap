@@ -1540,10 +1540,9 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
         attr_value_dict: Dict[str, str] = {
             '': '-/-',
         }
-        attr_value_dict.update([
-            (addr.decode(self._app.ls.charset), addr.decode(self._app.ls.charset))
-            for addr in self._entry.get('mailLocalAddress', [])
-        ])
+        for addr in self._entry.get('mailLocalAddress', []):
+            addr_u = addr.decode(self._app.ls.charset)
+            attr_value_dict[addr_u] = addr_u
         return attr_value_dict
 
     def _is_mail_account(self):
