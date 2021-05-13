@@ -644,6 +644,9 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
         input_field.set_default(self.form_value())
         return input_field
 
+    def display(self, vidx, links) -> str:
+        return IA5String.display(self, vidx, links)
+
 syntax_registry.reg_at(
     AEMemberUid.oid, [
         '1.3.6.1.1.1.1.12', # memberUid
