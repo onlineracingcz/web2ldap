@@ -2147,7 +2147,10 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
     oid: str = 'DerefDynamicDNSelectList-oid'
 
     def _get_ref_entry(self, dn: str, attrlist=None) -> dict:
-        deref_crtl = DereferenceControl(True, {self._at: self.lu_obj.attrs})
+        deref_crtl = DereferenceControl(
+            True,
+            {self._at: self.lu_obj.attrs or ['entryDN']}
+        )
         try:
             ldap_result = self._app.ls.l.search_s(
                 self._dn,
