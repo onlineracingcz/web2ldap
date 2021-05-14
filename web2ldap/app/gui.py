@@ -41,8 +41,6 @@ from .tmpl import read_template
 # Constants
 #---------------------------------------------------------------------------
 
-host_pattern = r'[a-zA-Z0-9_.:\[\]-]+'
-
 HIDDEN_FIELD = '<input type="hidden" name="%s" value="%s">%s\n'
 
 HTML_OFF_S = {False:'', True:'<!--'}

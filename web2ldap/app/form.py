@@ -25,7 +25,7 @@ from ..web import HTML_ESCAPE_MAP
 from ..ldaputil import RDN_PATTERN, ATTR_TYPE_PATTERN
 from ..ldaputil.oidreg import OID_REG
 from ..ldaputil.passwd import AVAIL_USERPASSWORD_SCHEMES
-from .gui import host_pattern, HIDDEN_FIELD
+from .gui import HIDDEN_FIELD
 from .searchform import (
     SEARCH_OPTIONS,
     SEARCH_SCOPE_OPTIONS,
@@ -150,8 +150,8 @@ class Web2LDAPForm(Form):
             Input(
                 'host', 'Host:Port',
                 255, 1,
-                '(%s|[a-zA-Z0-9/._-]+)' % host_pattern,
-                size=30,
+                '[a-zA-Z0-9_.:\\[\\]-]+',
+                size=70,
             ),
             DistinguishedNameInput('dn', 'Distinguished Name'),
             Select(
