@@ -155,20 +155,20 @@ class PrintableHTMLWriter(asynch.List):
         s2d = self._app.form.s2d
         print_cols = self._app.cfg_param('print_cols', '4')
         table = []
-        for r in self.allResults:
-            if not isinstance(r, SearchResultEntry):
+        for res in self.allResults:
+            if not isinstance(res, SearchResultEntry):
                 continue
-            objectclasses = r.entry_s.get('objectclass', r.entry_s.get('objectClass', []))
+            objectclasses = res.entry_s.get('objectclass', res.entry_s.get('objectClass', []))
             template_oc = list(
-                {o.lower() for o in objectclasses} & {s.lower() for s in self._p.keys()}
+                {ocl.lower() for ocl in objectclasses} & {s.lower() for s in self._p.keys()}
             )
             if template_oc:
                 tableentry = CaseinsensitiveStringKeyDict(default='')
-                attr_list = r.entry_s.keys()
+                attr_list = res.entry_s.keys()
                 for attr in attr_list:
                     tableentry[attr] = ', '.join([
                         s2d(attr_value)
-                        for attr_value in r.entry_s[attr]
+                        for attr_value in res.entry_s[attr]
                     ])
                 table.append(self._p[template_oc[0]] % (tableentry))
         # Output search results as pretty-printable table without buttons
@@ -462,14 +462,14 @@ def w2l_search(app):
         if print_template_filenames_dict is None:
             raise ErrorExit(u'No templates for printing defined.')
         print_template_str_dict = CaseinsensitiveStringKeyDict()
-        for oc in print_template_filenames_dict.keys():
+        for ocl in print_template_filenames_dict.keys():
             try:
-                with open(print_template_filenames_dict[oc], 'r') as template_file:
-                    print_template_str_dict[oc] = template_file.read()
+                with open(print_template_filenames_dict[ocl], 'r') as template_file:
+                    print_template_str_dict[ocl] = template_file.read()
             except IOError:
                 pass
             else:
-                read_attr_set.update(GrabKeys(print_template_str_dict[oc]).keys)
+                read_attr_set.update(GrabKeys(print_template_str_dict[ocl]).keys)
         read_attrs = read_attr_set.names
         result_handler = PrintableHTMLWriter(app, search_root, app.schema, print_template_str_dict)
 
@@ -478,8 +478,8 @@ def w2l_search(app):
         search_tdtemplate = ldap0.cidict.CIDict(app.cfg_param('search_tdtemplate', {}))
         search_tdtemplate_keys = search_tdtemplate.keys()
         search_tdtemplate_attrs_lower = ldap0.cidict.CIDict()
-        for oc in search_tdtemplate_keys:
-            search_tdtemplate_attrs_lower[oc] = GrabKeys(search_tdtemplate[oc]).keys
+        for ocl in search_tdtemplate_keys:
+            search_tdtemplate_attrs_lower[ocl] = GrabKeys(search_tdtemplate[ocl]).keys
 
         # Start with operational attributes used to determine subordinate
         # entries existence/count
@@ -494,8 +494,8 @@ def w2l_search(app):
 
         # Extend with list of attributes to read for displaying results with templates
         if search_output == 'table':
-            for oc in search_tdtemplate_keys:
-                read_attr_set.update(GrabKeys(search_tdtemplate[oc]).keys)
+            for ocl in search_tdtemplate_keys:
+                read_attr_set.update(GrabKeys(search_tdtemplate[ocl]).keys)
         read_attr_set.discard('entryDN')
         read_attrs = read_attr_set.names
 
@@ -558,25 +558,25 @@ def w2l_search(app):
     except (
             ldap0.FILTER_ERROR,
             ldap0.INAPPROPRIATE_MATCHING,
-        ) as e:
+        ) as err:
         # Give the user a chance to edit his bad search filter
         w2l_searchform(
             app,
             Msg=' '.join((
-                app.ldap_error_msg(e),
+                app.ldap_error_msg(err),
                 s2d(filterstr2),
             )),
             filterstr=filterstr,
             scope=scope
         )
         return
-    except ldap0.NO_SUCH_OBJECT as e:
+    except ldap0.NO_SUCH_OBJECT as err:
         if app.dn:
-            raise e
+            raise err
 
     if search_output in {'table', 'raw'}:
 
-        SearchWarningMsg = ''
+        search_warning = ''
         max_result_msg = ''
         num_all_search_results, num_all_search_continuations = None, None
         num_result_all = None
@@ -586,9 +586,9 @@ def w2l_search(app):
             result_handler.process_results(
                 search_resminindex, search_resnumber+int(search_resnumber > 0)
             )
-        except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED) as e:
+        except (ldap0.SIZELIMIT_EXCEEDED, ldap0.ADMINLIMIT_EXCEEDED) as err:
             if search_size_limit < 0 or result_handler.endResultBreak < search_size_limit:
-                SearchWarningMsg = app.ldap_error_msg(e, template=LDAPERROR_SIZELIMIT_MSG)
+                search_warning = app.ldap_error_msg(err, template=LDAPERROR_SIZELIMIT_MSG)
             partial_results = 1
             resind = result_handler.endResultBreak
             # Retrieve the overall number of search results by resending the
@@ -606,22 +606,22 @@ def w2l_search(app):
                         max_result_msg = '(of %d / %d) ' % (num_all_search_results, num_all_search_continuations)
                 except LDAPLimitErrors:
                     pass
-        except (ldap0.FILTER_ERROR, ldap0.INAPPROPRIATE_MATCHING) as e:
+        except (ldap0.FILTER_ERROR, ldap0.INAPPROPRIATE_MATCHING) as err:
             # Give the user a chance to edit his bad search filter
             w2l_searchform(
                 app,
-                Msg=app.ldap_error_msg(e),
+                Msg=app.ldap_error_msg(err),
                 filterstr=filterstr,
                 scope=scope
             )
             return
-        except (ldap0.NO_SUCH_OBJECT, ldap0.UNWILLING_TO_PERFORM) as e:
+        except (ldap0.NO_SUCH_OBJECT, ldap0.UNWILLING_TO_PERFORM) as err:
             resind = result_handler.endResultBreak
             if search_root or scope != ldap0.SCOPE_ONELEVEL:
                 # Give the user a chance to edit his bad search filter
                 w2l_searchform(
                     app,
-                    Msg=app.ldap_error_msg(e),
+                    Msg=app.ldap_error_msg(err),
                     filterstr=filterstr,
                     scope=scope
                 )
@@ -834,13 +834,13 @@ def w2l_search(app):
             export_field = ExportFormatSelect()
             export_field.charset = app.form.accept_charset
 
-            app.outf.write('\n'.join((SearchWarningMsg, result_message)))
+            app.outf.write('\n'.join((search_warning, result_message)))
 
             if search_resminindex == 0 and not partial_results:
                 mailtolist = set()
-                for r in result_dnlist:
-                    if isinstance(r, SearchResultEntry):
-                        mailtolist.update(r.entry_s.get('mail', r.entry_s.get('rfc822Mailbox', [])))
+                for res in result_dnlist:
+                    if isinstance(res, SearchResultEntry):
+                        mailtolist.update(res.entry_s.get('mail', res.entry_s.get('rfc822Mailbox', [])))
                 if mailtolist:
                     mailtolist = [urllib.parse.quote(m) for m in mailtolist]
                     app.outf.write('Mail to all <a href="mailto:%s?cc=%s">Cc:-ed</a> - <a href="mailto:?bcc=%s">Bcc:-ed</a>' % (
@@ -855,54 +855,55 @@ def w2l_search(app):
 
             app.outf.write('<table id="SrchResList">\n')
 
-            for r in result_dnlist[0:resind]:
+            for res in result_dnlist[0:resind]:
 
-                if isinstance(r, SearchReference):
+                if isinstance(res, SearchReference):
 
                     # Display a search continuation (search reference)
                     entry = ldap0.cidict.CIDict({})
                     try:
-                        refUrl = ExtendedLDAPUrl(r.ref_url_strings[0])
+                        ref_url = ExtendedLDAPUrl(res.ref_url_strings[0])
                     except ValueError:
                         command_table = []
-                        result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (s2d(str(r[1][1][0])))
+                        result_dd_str = 'Search reference (NON-LDAP-URI) =&gt; %s' % (s2d(str(res[1][1][0])))
                     else:
-                        result_dd_str = 'Search reference =&gt; %s' % (refUrl.htmlHREF(hrefTarget=None))
+                        result_dd_str = 'Search reference =&gt; %s' % (ref_url.htmlHREF(hrefTarget=None))
                         if scope == ldap0.SCOPE_SUBTREE:
-                            refUrl.scope = refUrl.scope or scope
-                            refUrl.filterstr = ((refUrl.filterstr or '') or filterstr)
+                            ref_url.scope = ref_url.scope or scope
+                            ref_url.filterstr = ((ref_url.filterstr or '') or filterstr)
                             command_table = [
                                 app.anchor(
                                     'search', 'Continue search',
-                                    [('ldapurl', refUrl.unparse())],
+                                    [('ldapurl', ref_url.unparse())],
                                     title=u'Follow this search continuation',
                                 )
                             ]
                         else:
                             command_table = []
-                            refUrl.filterstr = filterstr
-                            refUrl.scope = ldap0.SCOPE_BASE
+                            ref_url.filterstr = filterstr
+                            ref_url.scope = ldap0.SCOPE_BASE
                             command_table.append(app.anchor(
                                 'read', 'Read',
-                                [('ldapurl', refUrl.unparse())],
+                                [('ldapurl', ref_url.unparse())],
                                 title=u'Display single entry following search continuation',
                             ))
-                            refUrl.scope = ldap0.SCOPE_ONELEVEL
+                            ref_url.scope = ldap0.SCOPE_ONELEVEL
                             command_table.append(app.anchor(
                                 'search', 'Down',
-                                [('ldapurl', refUrl.unparse())],
+                                [('ldapurl', ref_url.unparse())],
                                 title=u'Descend into tree following search continuation',
                             ))
 
-                elif isinstance(r, SearchResultEntry):
+                elif isinstance(res, SearchResultEntry):
 
                     # Display a search result with entry's data
-                    entry = ldap0.schema.models.Entry(app.schema, r.dn_s, r.entry_as)
+                    res_dn_s = res.dn_s
+                    entry = ldap0.schema.models.Entry(app.schema, res_dn_s, res.entry_as)
 
                     if search_output == 'raw':
 
                         # Output DN
-                        result_dd_str = s2d(r.dn_s)
+                        result_dd_str = s2d(res_dn_s)
 
                     else:
 
@@ -920,18 +921,18 @@ def w2l_search(app):
                                 AttributeType,
                                 [],
                             )
-                            for oc in tdtemplate_oc:
-                                template_attrs.update(search_tdtemplate_attrs_lower[oc])
+                            for ocl in tdtemplate_oc:
+                                template_attrs.update(search_tdtemplate_attrs_lower[ocl])
                             tableentry_attrs = template_attrs.intersection(entry.keys())
 
                         if tableentry_attrs:
                             # Output entry with the help of pre-defined templates
                             tableentry = DisplayEntry(
-                                app, r.dn_s, app.schema, entry, 'search_sep', False
+                                app, res_dn_s, app.schema, entry, 'search_sep', False
                             )
                             tdlist = []
-                            for oc in tdtemplate_oc:
-                                tdlist.append(search_tdtemplate[oc] % tableentry)
+                            for ocl in tdtemplate_oc:
+                                tdlist.append(search_tdtemplate[ocl] % tableentry)
                             result_dd_str = '<br>\n'.join(tdlist)
 
                         elif 'displayName' in entry:
@@ -939,7 +940,7 @@ def w2l_search(app):
 
                         else:
                             # Output DN
-                            result_dd_str = s2d(r.dn_s)
+                            result_dd_str = s2d(res_dn_s)
 
                     # Build the list for link table
                     command_table = []
@@ -948,14 +949,14 @@ def w2l_search(app):
                     command_table.append(
                         app.anchor(
                             'read', 'Read',
-                            [('dn', r.dn_s)],
+                            [('dn', res_dn_s)],
                         )
                     )
 
                     # If subordinates or unsure a [Down] link is added
                     if has_subordinates(entry, default=True):
 
-                        down_title_list = [u'List direct subordinates of %s' % (r.dn_s)]
+                        down_title_list = [u'List direct subordinates of %s' % (res_dn_s)]
 
                         # Determine number of direct subordinates
                         try:
@@ -988,7 +989,7 @@ def w2l_search(app):
                         command_table.append(app.anchor(
                             'search', 'Down',
                             (
-                                ('dn', r.dn_s),
+                                ('dn', res_dn_s),
                                 ('scope', SEARCH_SCOPE_STR_ONELEVEL),
                                 ('searchform_mode', u'adv'),
                                 ('search_attr', u'objectClass'),
@@ -999,7 +1000,7 @@ def w2l_search(app):
                         ))
 
                 else:
-                    raise ValueError('LDAP result of invalid type: %r' % (r,))
+                    raise ValueError('LDAP result of invalid type: %r' % (res,))
 
                 # write the search result table row
                 app.outf.write(
