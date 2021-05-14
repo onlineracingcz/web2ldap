@@ -203,14 +203,14 @@ def w2l_add(app):
             new_dn = prec_ctrls[0].res.dn_s
         app.simple_message(
             'Added Entry',
-            """
-            <p class="SuccessMessage">Successfully added new entry.</p>
-            <p>%s</p>
-            <dl>
-              <dt>Distinguished name:</dt>
-              <dd>%s</dd>
-            </dl>
-            """ % (
+            (
+                '<p class="SuccessMessage">Successfully added new entry.</p>'
+                '<p>%s</p>'
+                '<dl>'
+                '<dt>Distinguished name:</dt>'
+                '<dd>%s</dd>'
+                '</dl>'
+            ) % (
                 app.anchor(
                     'read', 'Read added entry',
                     [('dn', str(new_dn))],
