@@ -40,14 +40,14 @@ def modlist_ldif(dn, form, modlist):
     """
     Return a string containing a HTML-formatted LDIF change record
     """
-    s = []
-    s.append('<pre>')
-    f = BytesIO()
-    ldif_writer = ldap0.ldif.LDIFWriter(f)
+    lines = []
+    lines.append('<pre>')
+    bio = BytesIO()
+    ldif_writer = ldap0.ldif.LDIFWriter(bio)
     ldif_writer.unparse(dn.encode('utf-8'), modlist)
-    s.append(form.s2d(f.getvalue().decode('utf-8')).replace('\n', '<br>'))
-    s.append('</pre>')
-    return ''.join(s) # modlist_ldif()
+    lines.append(form.s2d(bio.getvalue().decode('utf-8')).replace('\n', '<br>'))
+    lines.append('</pre>')
+    return ''.join(lines)
 
 
 ##############################################################################
