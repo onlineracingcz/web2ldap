@@ -523,7 +523,7 @@ class LDAPSession:
         'cookie',
         'l',
         'namingContexts',
-        'onBehalf',
+        'on_behalf',
         'root_dse',
         'sasl_auth',
         'sasl_mech',
@@ -554,7 +554,7 @@ class LDAPSession:
         'msDS-Approx-Immed-Subordinates',
     )
 
-    def __init__(self, onBehalf, traceLevel, cache_ttl):
+    def __init__(self, on_behalf, traceLevel, cache_ttl):
         """Initialize a LDAPSession object"""
         self.l = None
         # Set to not connected
@@ -578,7 +578,7 @@ class LDAPSession:
         self._schema_cache = {}
         # IP address, host name or other free form information
         # of proxy client
-        self.onBehalf = onBehalf
+        self.on_behalf = on_behalf
         self.conn_start = None
         self._cache_ttl = cache_ttl
         # end of __init__()
@@ -691,7 +691,7 @@ class LDAPSession:
         self._initialize(uri_list, timeout, tls_options)
         if enableSessionTracking:
             session_tracking_ctrl = SessionTrackingControl(
-                self.onBehalf,
+                self.on_behalf,
                 env.get(
                     'HTTP_HOST',
                     ':'.join((
@@ -1421,7 +1421,7 @@ class LDAPSession:
             connection_str,
             ','.join([
                 '%s:%r' % (a, getattr(self, a))
-                for a in ('uri', 'who', 'dn', 'onBehalf', 'startedTLS')
+                for a in ('uri', 'who', 'dn', 'on_behalf', 'startedTLS')
                 if hasattr(self, a)
             ]),
         )

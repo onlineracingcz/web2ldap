@@ -397,7 +397,7 @@ def w2l_conninfo(app):
 
     app.outf.write(
         CONNINFO_HTTP_TEMPLATE % (
-            app.ls.onBehalf,
+            app.ls.on_behalf,
             app.form.s2d(str(app.env.get('REMOTE_ADDR', ''))),
             app.form.s2d(str(app.env.get('REMOTE_PORT', ''))),
             app.env.get('SERVER_SIGNATURE', ''),
