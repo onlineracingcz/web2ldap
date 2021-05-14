@@ -501,7 +501,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
         )
 
     def _extract_attr_value_dict(self, ldap_result, deref_person_attrset):
-        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
+        attr_value_dict: Dict[str, str] = SelectList.get_attr_value_dict(self)
         for ldap_res in ldap_result:
             if not isinstance(ldap_res, SearchResultEntry):
                 # ignore search continuations
@@ -536,10 +536,10 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
                 attr_value_dict[option_value] = (option_text, option_title)
         return attr_value_dict
 
-    def _get_attr_value_dict(self) -> Dict[str, str]:
+    def get_attr_value_dict(self) -> Dict[str, str]:
         deref_person_attrset = self._deref_person_attrset()
         if not deref_person_attrset:
-            return DerefDynamicDNSelectList._get_attr_value_dict(self)
+            return DerefDynamicDNSelectList.get_attr_value_dict(self)
         member_filter = self._filterstr()
         try:
             # Use the existing LDAP connection as current user
@@ -555,14 +555,14 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
             )
         except self.ignored_errors as ldap_err:
             logger.warning(
-                '%s._get_attr_value_dict() searching %r failed: %s',
+                '%s.get_attr_value_dict() searching %r failed: %s',
                 self.__class__.__name__,
                 member_filter,
                 ldap_err,
             )
-            return SelectList._get_attr_value_dict(self)
+            return SelectList.get_attr_value_dict(self)
         return self._extract_attr_value_dict(ldap_result, deref_person_attrset)
-        # _get_attr_value_dict()
+        # get_attr_value_dict()
 
     def _validate(self, attr_value: bytes) -> bool:
         if 'memberURL' in self._entry:
@@ -1539,7 +1539,7 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
         bytes.lower,
     )
 
-    def _get_attr_value_dict(self) -> Dict[str, str]:
+    def get_attr_value_dict(self) -> Dict[str, str]:
         attr_value_dict: Dict[str, str] = {
             '': '-/-',
         }
@@ -1598,7 +1598,7 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
     def _validate(self, attr_value: bytes) -> bool:
         if not RFC822Address._validate(self, attr_value):
             return False
-        attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
+        attr_value_dict: Dict[str, str] = self.get_attr_value_dict()
         if (
                 not attr_value_dict
                 or (

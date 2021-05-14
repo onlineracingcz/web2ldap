@@ -504,10 +504,10 @@ class CountryCode(PropertiesSelectList):
         bytes.strip,
     )
 
-    def _get_attr_value_dict(self) -> Dict[str, str]:
+    def get_attr_value_dict(self) -> Dict[str, str]:
         # Enable empty value in any case
         attr_value_dict: Dict[str, str] = {'0': '-/-'}
-        attr_value_dict.update(PropertiesSelectList._get_attr_value_dict(self))
+        attr_value_dict.update(PropertiesSelectList.get_attr_value_dict(self))
         del attr_value_dict['']
         return attr_value_dict
 

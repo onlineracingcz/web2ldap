@@ -1782,7 +1782,7 @@ class SelectList(DirectoryString):
         True: '<span title="{attr_title}">{attr_text}:{sep}{attr_value}</span>',
     }
 
-    def _get_attr_value_dict(self) -> Dict[str, str]:
+    def get_attr_value_dict(self) -> Dict[str, str]:
         # Enable empty value in any case
         attr_value_dict: Dict[str, str] = {'': '-/-'}
         attr_value_dict.update(self.attr_value_dict)
@@ -1792,7 +1792,7 @@ class SelectList(DirectoryString):
         # First generate a set of all other currently available attribute values
         fval = DirectoryString.form_value(self)
         # Initialize a dictionary with all options
-        vdict = self._get_attr_value_dict()
+        vdict = self.get_attr_value_dict()
         # Remove other existing values from the options dict
         for val in self._entry.get(self._at, []):
             val = self._app.ls.uc_decode(val)[0]
@@ -1817,12 +1817,12 @@ class SelectList(DirectoryString):
         )
 
     def _validate(self, attr_value: bytes) -> bool:
-        attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
+        attr_value_dict: Dict[str, str] = self.get_attr_value_dict()
         return self._app.ls.uc_decode(attr_value)[0] in attr_value_dict
 
     def display(self, vidx, links) -> str:
         attr_value_str = DirectoryString.display(self, vidx, links)
-        attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
+        attr_value_dict: Dict[str, str] = self.get_attr_value_dict()
         try:
             attr_value_desc = attr_value_dict[self.av_u]
         except KeyError:
@@ -1841,7 +1841,7 @@ class SelectList(DirectoryString):
         )
 
     def input_field(self) -> web_forms.Field:
-        attr_value_dict: Dict[str, str] = self._get_attr_value_dict()
+        attr_value_dict: Dict[str, str] = self.get_attr_value_dict()
         if self.input_fallback and \
            (not attr_value_dict or not list(filter(None, attr_value_dict.keys()))):
             return DirectoryString.input_field(self)
@@ -1867,8 +1867,8 @@ class PropertiesSelectList(SelectList):
     properties_charset: str = 'utf-8'
     properties_delimiter: str = '='
 
-    def _get_attr_value_dict(self) -> Dict[str, str]:
-        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
+    def get_attr_value_dict(self) -> Dict[str, str]:
+        attr_value_dict: Dict[str, str] = SelectList.get_attr_value_dict(self)
         real_path_name = get_variant_filename(
             self.properties_pathname,
             self._app.form.accept_language
@@ -1880,7 +1880,7 @@ class PropertiesSelectList(SelectList):
                     key, value = line.split(self.properties_delimiter, 1)
                     attr_value_dict[key.strip()] = value.strip()
         return attr_value_dict
-        # end of _get_attr_value_dict()
+        # end of get_attr_value_dict()
 
 
 class DynamicValueSelectList(SelectList, DirectoryString):
@@ -2007,8 +2007,8 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         return result_dn
         # end of _search_root()
 
-    def _get_attr_value_dict(self) -> Dict[str, str]:
-        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
+    def get_attr_value_dict(self) -> Dict[str, str]:
+        attr_value_dict: Dict[str, str] = SelectList.get_attr_value_dict(self)
         if self.lu_obj.hostport:
             raise ValueError(
                 'Connecting to other server not supported! hostport attribute was %r' % (
@@ -2078,7 +2078,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
                     else:
                         attr_value_dict[option_value] = option_text
         return attr_value_dict
-        # end of _get_attr_value_dict()
+        # end of get_attr_value_dict()
 
 
 class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
@@ -2180,8 +2180,8 @@ class Boolean(SelectList, IA5String):
         'FALSE': 'FALSE',
     }
 
-    def _get_attr_value_dict(self) -> Dict[str, str]:
-        attr_value_dict: Dict[str, str] = SelectList._get_attr_value_dict(self)
+    def get_attr_value_dict(self) -> Dict[str, str]:
+        attr_value_dict: Dict[str, str] = SelectList.get_attr_value_dict(self)
         if self._av and self._av.lower() == self._av:
             for key, val in attr_value_dict.items():
                 del attr_value_dict[key]
