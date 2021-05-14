@@ -20,7 +20,7 @@ from ldap0.pw import random_string
 
 import web2ldapcnf
 
-from ..ldapsession import CONTROL_TREEDELETE
+from ..ldapsession import AVAILABLE_BOOLEAN_CONTROLS, CONTROL_TREEDELETE
 from ..web import HTML_ESCAPE_MAP
 from ..ldaputil import RDN_PATTERN, ATTR_TYPE_PATTERN
 from ..ldaputil.oidreg import OID_REG
@@ -41,7 +41,6 @@ from ..web.forms import (
     Form,
     InvalidValueFormat,
 )
-from ..ldapsession import AVAILABLE_BOOLEAN_CONTROLS, CONTROL_TREEDELETE
 from ..web.session import SESSION_ID_CHARS, SESSION_ID_LENGTH, SESSION_ID_REGEX
 
 

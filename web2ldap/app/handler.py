@@ -90,7 +90,6 @@ from .schema.viewer import w2l_schema_viewer
 from .metrics import w2l_metrics, METRICS_AVAIL
 from .srvrr import w2l_chasesrvrecord
 from .referral import w2l_chasereferral
-from .login import w2l_login
 from .schema.syntaxes import Timespan
 
 if DNS_AVAIL:
