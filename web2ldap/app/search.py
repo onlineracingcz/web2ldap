@@ -32,6 +32,7 @@ from ldap0.openldap import ldapsearch_cmd
 from ..__about__ import __version__
 from ..web import escape_html
 from ..ldaputil import asynch
+from ..ldaputil import has_subordinates
 from ..ldaputil.extldapurl import ExtendedLDAPUrl
 from ..ldapsession import LDAPLimitErrors
 from ..msbase import GrabKeys, CaseinsensitiveStringKeyDict
@@ -951,45 +952,38 @@ def w2l_search(app):
                         )
                     )
 
-                    # Try to determine from entry's attributes if there are subordinates
-                    hasSubordinates = entry.get('hasSubordinates', [b'TRUE'])[0].upper() == b'TRUE'
-                    try:
-                        subordinateCountFlag = int(
-                            entry.get(
-                                'subordinateCount',
-                                entry.get(
-                                    'numAllSubordinates',
-                                    entry.get('msDS-Approx-Immed-Subordinates', [b'1'])))[0]
-                        )
-                    except ValueError:
-                        subordinateCountFlag = 1
-
                     # If subordinates or unsure a [Down] link is added
-                    if hasSubordinates and subordinateCountFlag > 0:
+                    if has_subordinates(entry, default=True):
 
                         down_title_list = [u'List direct subordinates of %s' % (r.dn_s)]
 
                         # Determine number of direct subordinates
-                        numSubOrdinates = entry.get(
-                            'numSubOrdinates',
-                            entry.get(
-                                'subordinateCount',
+                        try:
+                            num_subordinates = int(
                                 entry.get(
-                                    'countImmSubordinates',
+                                    'numSubOrdinates',
                                     entry.get(
-                                        'msDS-Approx-Immed-Subordinates',
-                                        [None]))))[0]
-                        if numSubOrdinates is not None:
-                            numSubOrdinates = int(numSubOrdinates)
-                            down_title_list.append('direct: %d' % (numSubOrdinates))
+                                        'subordinateCount',
+                                        entry.get(
+                                            'countImmSubordinates',
+                                            entry['msDS-Approx-Immed-Subordinates'])))[0]
+                            )
+                        except (KeyError, ValueError):
+                            pass
+                        else:
+                            down_title_list.append('direct: %d' % (num_subordinates))
                         # Determine total number of subordinates
-                        numAllSubOrdinates = entry.get(
-                            'numAllSubOrdinates',
-                            entry.get('countTotSubordinates', [None])
-                        )[0]
-                        if numAllSubOrdinates is not None:
-                            numAllSubOrdinates = int(numAllSubOrdinates)
-                            down_title_list.append(u'total: %d' % (numAllSubOrdinates))
+                        try:
+                            num_all_subordinates = int(
+                                entry.get(
+                                    'numAllSubOrdinates',
+                                    entry['countTotSubordinates']
+                                )[0]
+                            )
+                        except (KeyError, ValueError):
+                            pass
+                        else:
+                            down_title_list.append(u'total: %d' % (num_all_subordinates))
 
                         command_table.append(app.anchor(
                             'search', 'Down',
