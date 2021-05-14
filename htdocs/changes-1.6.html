@@ -6,13 +6,13 @@
 <!--#include file="ssi/changes_navigation.html" -->
 
 <h1 id="r1.6.0">1.6.0</h1>
-<p>Release Date: 2021-04-xx</p>
+<p>Release Date: 2021-05-14</p>
 
-<h2>Installation and configuration changes</h2>
+  <h2>Installation and configuration changes</h2>
 <ul>
   <li>
-    <code>import</code> statements in <var>web2ldapcnf/</var> have changed.
-    You have to adapt your customized config modules.
+    <code>import</code> statements / variable names in <var>web2ldapcnf/</var>
+    have changed. You have to adapt your customized config modules.
   </li>
   <li>
     Requires update of module <a href="https://pypi.org/project/ldap0">ldap0</a>.
@@ -42,19 +42,27 @@
     Fixed str/bytes regression in error handling when adding
     new entry in case the parent entry does not exist.
   </li>
+  <li>
+    Fixed error handling when user changes own password in case
+    <var>pwdReset</var> is set to <var>TRUE</var>.
+  </li>
 </ul>
 
 <h2>Code-cleaning</h2>
 <ul>
   <li>
+    Massive changes for PEP-8 compliance.
+  </li>
+  <li>
     Re-factored modules imports especially to get rid of cyclic imports.
   </li>
   <li>
-    Renamed following variables to be PEP-8 compliant which also requires
-    changes in custom plugin modules:
+    PEP-8 compliant renaming also requires changes in custom plugin modules
+    based on class <var>LDAPSyntax</var>:
     <ul>
-      <li><var>LDAPSyntax</var> class attributes</li>
-      <li><var>LDAPSyntax</var> method arguments</li>
+      <li>class attributes</li>
+      <li>methods</li>
+      <li>method arguments</li>
     </ul>
   </li>
 </ul>
