@@ -22,7 +22,7 @@ import web2ldapcnf
 
 from ..ldapsession import CONTROL_TREEDELETE
 from ..web import HTML_ESCAPE_MAP
-from ..ldaputil import rdn_pattern, attr_type_pattern
+from ..ldaputil import RDN_PATTERN, ATTR_TYPE_PATTERN
 from ..ldaputil.oidreg import OID_REG
 from ..ldaputil.passwd import AVAIL_USERPASSWORD_SCHEMES
 from .gui import host_pattern, HIDDEN_FIELD
@@ -663,7 +663,7 @@ class Web2LDAPFormRename(Web2LDAPForm):
                 'rename_newrdn',
                 'New RDN',
                 255, 1,
-                rdn_pattern,
+                RDN_PATTERN,
                 size=50,
             ),
             DistinguishedNameInput('rename_newsuperior', 'New superior DN'),
@@ -1003,7 +1003,7 @@ class AttributeType(Input):
             text,
             500,
             maxValues,
-            attr_type_pattern,
+            ATTR_TYPE_PATTERN,
             required=False,
             size=30
         )
