@@ -42,6 +42,34 @@ ATTR_VALUE_PATTERN = u'(([^,]|\\\\,)+|".*?")'
 RDN_PATTERN = ATTR_TYPE_PATTERN + u'[ ]*=[ ]*' + ATTR_VALUE_PATTERN
 
 
+def has_subordinates(entry, default=True) -> bool:
+    """
+    Try to determine from entry's attributes whether there are subordinates.
+
+    :default: will be returned if there is no operational attribute clearly
+    specifying whether there are no subordinate entries.
+    """
+    if 'hasSubordinates' in entry:
+        hs_attr = entry['hasSubordinates'][0].upper()
+        if hs_attr == 'TRUE':
+            return True
+        if hs_attr == 'FALSE':
+            return False
+        # attribute hasSubordinates contains garbage
+    try:
+        res = int(
+            entry.get(
+                'subordinateCount',
+                entry.get(
+                    'numAllSubordinates',
+                    entry['msDS-Approx-Immed-Subordinates']
+                ))[0]
+        ) > 0
+    except (ValueError, KeyError):
+        res = default
+    return res
+
+
 def logdb_filter(logdb_objectclass, dn, entry_uuid=None):
     """
     returns a filter for querying a changelog or accesslog DB for

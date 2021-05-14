@@ -15,6 +15,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 import ldap0
 from ldap0.dn import DNObj
 
+from ..ldaputil import has_subordinates
 from .gui import dn_anchor_hash, main_menu
 
 
@@ -102,20 +103,6 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
         else:
             partial_str = ''
 
-        # Try to determine from entry's attributes if there are subordinates
-        hasSubordinates = node_entry.get('hasSubordinates', ['TRUE'])[0].upper() == 'TRUE'
-        try:
-            subordinateCountFlag = int(
-                node_entry.get(
-                    'subordinateCount',
-                    node_entry.get(
-                        'numAllSubordinates',
-                        node_entry.get('msDS-Approx-Immed-Subordinates', ['1'])))[0]
-            )
-        except ValueError:
-            subordinateCountFlag = 1
-        has_subordinates = hasSubordinates and subordinateCountFlag
-
         try:
             display_name_list = [app.form.s2d(node_entry['displayName'][0]), partial_str]
         except KeyError:
@@ -130,7 +117,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
         dn_anchor_id = dn_anchor_hash(dn)
 
         res.append('<dt id="%s">' % (app.form.s2d(dn_anchor_id)))
-        if has_subordinates:
+        if has_subordinates(node_entry, default=True):
             if dn == anchor_dn:
                 link_text = '&lsaquo;&lsaquo;'
                 next_dn = dn.parent()
