@@ -51,11 +51,18 @@ def has_subordinates(entry, default=True) -> bool:
     """
     if 'hasSubordinates' in entry:
         hs_attr = entry['hasSubordinates'][0].upper()
-        if hs_attr == 'TRUE':
-            return True
-        if hs_attr == 'FALSE':
-            return False
-        # attribute hasSubordinates contains garbage
+        if isinstance(hs_attr, bytes):
+            if hs_attr == b'TRUE':
+                return True
+            if hs_attr == b'FALSE':
+                return False
+        else:
+            if hs_attr == 'TRUE':
+                return True
+            if hs_attr == 'FALSE':
+                return False
+        # when reaching here attribute hasSubordinates contains garbage
+        # => LDAP server vendor sucks, proceed
     try:
         res = int(
             entry.get(
