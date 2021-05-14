@@ -1063,8 +1063,8 @@ class AuthMechSelect(Select):
     def setOptions(self, options):
         options_dict = {}
         options_dict[''] = self.supported_bind_mechs['']
-        for o in options or self.supported_bind_mechs.keys():
-            o_upper = o.upper()
-            if o_upper in self.supported_bind_mechs:
-                options_dict[o_upper] = self.supported_bind_mechs[o_upper]
+        for sasl_mech in options or self.supported_bind_mechs.keys():
+            sasl_mech = sasl_mech.upper()
+            if sasl_mech in self.supported_bind_mechs:
+                options_dict[sasl_mech] = self.supported_bind_mechs[sasl_mech]
         Select.setOptions(self, options_dict.items())
