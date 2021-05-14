@@ -25,6 +25,10 @@ from ..schema.syntaxes import (
 
 
 class Gender(PropertiesSelectList):
+    """
+    Plugin for reading ISO 5218 standard representation of gender
+    from configured properties file
+    """
     oid: str = 'Gender-oid'
     desc: str = 'Representation of human sex (see ISO 5218)'
     properties_pathname = os.path.join(
