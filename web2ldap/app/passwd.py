@@ -341,12 +341,12 @@ def w2l_passwd(app):
         except (
                 ldap0.CONSTRAINT_VIOLATION,
                 ldap0.UNWILLING_TO_PERFORM,
-            ) as e:
+            ) as err:
             passwd_form(
                 app,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
-                error_msg=app.ldap_error_msg(e)
+                error_msg=app.ldap_error_msg(err)
             )
             return
         else:
@@ -481,21 +481,21 @@ def w2l_passwd(app):
         except (
                 ldap0.CONSTRAINT_VIOLATION,
                 ldap0.UNWILLING_TO_PERFORM,
-            ) as e:
+            ) as err:
             passwd_form(
                 app,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
-                error_msg=app.ldap_error_msg(e)
+                error_msg=app.ldap_error_msg(err)
             )
             return
-        except ldap0.NO_SUCH_ATTRIBUTE as e:
+        except ldap0.NO_SUCH_ATTRIBUTE as err:
             passwd_form(
                 app,
                 passwd_action, passwd_who, user_objectclasses,
                 heading='Password Error',
                 error_msg=app.ldap_error_msg(
-                    e, template=r"%s (Hint: Try without old password.)"
+                    err, template=r"%s (Hint: Try without old password.)"
                 )
             )
             return
