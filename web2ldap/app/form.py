@@ -222,17 +222,13 @@ class Web2LDAPForm(Form):
             Names of parameters to be excluded.
         """
         ignored_fields = set(ignored_fields or [])
-        result = []
-        for f in [
-                self.field[p]
-                for p in self.input_field_names
-                if not p in ignored_fields
-            ]:
-            for val in f.value:
-                if not isinstance(val, str):
-                    val = self.uc_decode(val)[0]
-                result.append(self.hidden_field_html(f.name, val, ''))
-        return '\n'.join(result) # hiddenInputFieldString()
+        res = []
+        for fname in self.input_field_names:
+            if fname in ignored_fields:
+                continue
+            for val in self.field[fname].value:
+                res.append(self.hidden_field_html(fname, val, ''))
+        return '\n'.join(res)
 
 
 class SearchAttrs(Input):
