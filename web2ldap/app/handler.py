@@ -50,7 +50,7 @@ from ..msbase import GrabKeys
 # Import the application modules
 from .gui import (
     footer,
-    Header,
+    header,
     read_template,
     top_section,
 )
@@ -511,7 +511,7 @@ class AppHandler(LogHelper):
         """
         Output HTML text.
         """
-        Header(self, 'text/html', self.form.accept_charset)
+        header(self, 'text/html', self.form.accept_charset)
         self.outf.write(SIMPLE_MSG_HTML.format(message=msg))
 
     def url_redirect(
@@ -535,7 +535,7 @@ class AppHandler(LogHelper):
             message_class = 'ErrorMessage'
         else:
             message_class = 'SuccessMessage'
-        Header(self, 'text/html', self.form.accept_charset)
+        header(self, 'text/html', self.form.accept_charset)
         # Write out stub body with just a short redirect HTML snippet
         self.outf.write(
             url_redirect_template_str.format(

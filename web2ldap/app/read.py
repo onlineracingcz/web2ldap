@@ -26,7 +26,7 @@ from .tmpl import get_variant_filename
 from .gui import (
     context_menu_single_entry,
     footer,
-    Header,
+    header,
     main_menu,
     top_section,
 )
@@ -277,7 +277,7 @@ def w2l_read(app):
         # We have to create an LDAPSyntax instance to be able to call its methods
         attr_instance = syntax_se(app, app.dn, app.schema, attr_type, None, entry)
         # Send HTTP header with appropriate MIME type
-        Header(
+        header(
             app,
             app.form.getInputValue(
                 'read_attrmimetype',
@@ -445,7 +445,7 @@ def w2l_read(app):
                 break
         entry['dn'] = [app.ldap_dn]
         display_entry = VCardEntry(app, entry)
-        Header(
+        header(
             app,
             'text/x-vcard',
             app.form.accept_charset,

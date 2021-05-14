@@ -102,7 +102,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     Output the context menu for a single entry
     """
     dn_disp = app.dn or u'Root DSE'
-    result = [
+    mil = [
         app.anchor(
             'read', 'Raw',
             [
@@ -115,7 +115,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     ]
     if app.dn:
         ldap_url_obj = app.ls.ldap_url('', add_login=False)
-        result.extend([
+        mil.extend([
             app.anchor(
                 'login', 'Bind as',
                 [
@@ -162,7 +162,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
         ])
 
     if vcard_link:
-        result.append(
+        mil.append(
             app.anchor(
                 'read', 'vCard',
                 [('dn', app.dn), ('read_output', 'vcard')],
@@ -171,7 +171,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
         )
 
     if dds_link:
-        result.append(
+        mil.append(
             app.anchor(
                 'dds', 'Refresh',
                 [('dn', app.dn)],
@@ -182,7 +182,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     if app.audit_context:
         accesslog_any_filterstr = logdb_filter(u'auditObject', app.dn, entry_uuid)
         accesslog_write_filterstr = logdb_filter(u'auditWriteObject', app.dn, entry_uuid)
-        result.extend([
+        mil.extend([
             app.anchor(
                 'search', 'Audit access',
                 [
@@ -209,7 +209,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
         pass
     else:
         changelog_filterstr = logdb_filter(u'changeLogEntry', app.dn, entry_uuid)
-        result.append(
+        mil.append(
             app.anchor(
                 'search', 'Change log',
                 [
@@ -226,7 +226,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     except KeyError:
         pass
     else:
-        result.append(app.anchor(
+        mil.append(app.anchor(
             'search', 'User conns',
             [
                 ('dn', monitor_context_dn),
@@ -241,7 +241,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
             title=u'Find connections of this user in monitor database',
         ))
 
-    return result
+    return mil
     # end of context_menu_single_entry()
 
 
@@ -249,12 +249,12 @@ def main_menu(app):
     """
     Returns list of main menu items
     """
-    cl = []
+    mil = []
 
     if app.ls is not None and app.ls.uri is not None:
 
         if app.dn and app.dn_obj != app.naming_context:
-            cl.append(
+            mil.append(
                 app.anchor(
                     'search', 'Up',
                     (
@@ -269,7 +269,7 @@ def main_menu(app):
                 )
             )
 
-        cl.extend((
+        mil.extend((
             app.anchor(
                 'search', 'Down',
                 (
@@ -289,7 +289,7 @@ def main_menu(app):
             ),
         ))
 
-        cl.append(
+        mil.append(
             app.anchor(
                 'dit', 'Tree',
                 [('dn', app.dn)],
@@ -298,7 +298,7 @@ def main_menu(app):
             ),
         )
 
-        cl.append(
+        mil.append(
             app.anchor(
                 'read', 'Read',
                 [('dn', app.dn), ('read_nocache', u'1')],
@@ -306,7 +306,7 @@ def main_menu(app):
             ),
         )
 
-        cl.extend((
+        mil.extend((
             app.anchor(
                 'add', 'New entry',
                 [('dn', app.dn)],
@@ -326,18 +326,18 @@ def main_menu(app):
             app.anchor('oid', 'Schema', [('dn', app.dn)], title=u'Browse/view subschema'),
         ))
 
-        cl.append(app.anchor('disconnect', 'Disconnect', (), title=u'Disconnect from LDAP server'))
+        mil.append(app.anchor('disconnect', 'Disconnect', (), title=u'Disconnect from LDAP server'))
 
     else:
 
-        cl.append(app.anchor('', 'Connect', (), title=u'New connection to LDAP server'))
+        mil.append(app.anchor('', 'Connect', (), title=u'New connection to LDAP server'))
 
-    return cl
+    return mil
     # end of main_menu()
 
 
 def dit_navigation(app):
-    result = [
+    dnil = [
         app.anchor(
             'read',
             app.form.s2d(str(app.dn_obj.slice(i, i+1)) or '[Root DSE]'),
@@ -346,14 +346,14 @@ def dit_navigation(app):
         )
         for i in range(len(app.dn_obj))
     ]
-    result.append(
+    dnil.append(
         app.anchor(
             'read', '[Root DSE]',
             [('dn', '')],
             title=u'Jump to root DSE',
         )
     )
-    return result
+    return dnil
     # end of dit_navigation()
 
 
@@ -366,7 +366,7 @@ def top_section(
     ):
 
     # First send the HTTP header
-    Header(app, 'text/html', app.form.accept_charset)
+    header(app, 'text/html', app.form.accept_charset)
 
     # Read the template file for TopSection
     top_template_str = read_template(app, 'top_template', u'top section')
@@ -468,14 +468,14 @@ def gen_headers(content_type, charset, more_headers=None):
     headers.append(('Date', current_datetime))
     headers.append(('Last-Modified', current_datetime))
     headers.append(('Expires', current_datetime))
-    for h, v in web2ldapcnf.http_headers.items():
-        headers.append((h, v))
+    for name, val in web2ldapcnf.http_headers.items():
+        headers.append((name, val))
     headers.extend(more_headers or [])
     return headers
     # end of gen_headers()
 
 
-def Header(app, content_type, charset, more_headers=None):
+def header(app, content_type, charset, more_headers=None):
     headers = gen_headers(
         content_type=content_type,
         charset=charset,
@@ -490,7 +490,7 @@ def Header(app, content_type, charset, more_headers=None):
         headers.append(('Strict-Transport-Security', 'max-age=15768000 ; includeSubDomains'))
     app.outf.set_headers(headers)
     return headers
-    # end of Header()
+    # end of header()
 
 
 def footer(app):
