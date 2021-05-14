@@ -151,6 +151,13 @@ class ExpiryThread(threading.Thread, LogHelper):
     """
     Thread class for clean-up thread
     """
+    __slots__ = (
+        '_interval',
+        '_removed',
+        'run_counter',
+        '_session_obj',
+        '_stop_event',
+    )
 
     def __init__(self, session_obj, interval=60):
         self._session_obj = session_obj
