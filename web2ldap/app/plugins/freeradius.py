@@ -7,6 +7,10 @@ from ..schema.syntaxes import DynamicDNSelectList, syntax_registry
 
 
 class RadiusProfileDN(DynamicDNSelectList):
+    """
+    Select plugin for choosing DN where rlm_ldap should find the
+    RADIUS profile associated with an entry
+    """
     oid: str = 'RadiusProfileDN-oid'
     desc: str = 'DN of a radius profile entry with real data'
     ldap_url = 'ldap:///_??sub?(&(objectClass=radiusprofile)(!(radiusProfileDn=*)))'
