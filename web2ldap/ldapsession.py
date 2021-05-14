@@ -576,8 +576,6 @@ class LDAPSession:
         self.use_start_tls = 0
         self._schema_dn_cache = {}
         self._schema_cache = {}
-        # Supports feature described in draft-zeilenga-ldap-opattrs
-        self.supports_allop_attr = 0
         # IP address, host name or other free form information
         # of proxy client
         self.onBehalf = onBehalf
@@ -730,7 +728,6 @@ class LDAPSession:
 
     def _reset_rootdse_attrs(self):
         """Forget all old RootDSE values"""
-        self.supports_allop_attr = False
         self.namingContexts = set()
         self.root_dse = ldap0.cidict.CIDict()
         # some rootDSE attributes made available as class attributes
@@ -745,10 +742,34 @@ class LDAPSession:
     def is_openldap(self):
         return b'OpenLDAProotDSE' in self.root_dse.get('objectClass', [])
 
-    def _update_rootdse_attrs(self):
-        """
-        Derive some class attributes from rootDSE attributes
-        """
+    def init_rootdse(self):
+        """Retrieve attributes from Root DSE"""
+        self._reset_rootdse_attrs()
+        try:
+            ldap_res = self.l.read_rootdse_s(attrlist=ROOTDSE_ATTRS)
+        except (
+                ldap0.CONFIDENTIALITY_REQUIRED,
+                ldap0.CONSTRAINT_VIOLATION,
+                ldap0.INAPPROPRIATE_AUTH,
+                ldap0.INAPPROPRIATE_MATCHING,
+                ldap0.INSUFFICIENT_ACCESS,
+                ldap0.INVALID_CREDENTIALS,
+                ldap0.NO_SUCH_OBJECT,
+                ldap0.OPERATIONS_ERROR,
+                ldap0.PARTIAL_RESULTS,
+                ldap0.STRONG_AUTH_REQUIRED,
+                ldap0.UNDEFINED_TYPE,
+                ldap0.UNWILLING_TO_PERFORM,
+                ldap0.PROTOCOL_ERROR,
+                ldap0.UNAVAILABLE_CRITICAL_EXTENSION,
+            ):
+            self.root_dse = {}
+        else:
+            if ldap_res is None:
+                self.root_dse = {}
+            else:
+                self.root_dse = ldap_res.entry_as
+        # Derive some class attributes from rootDSE attributes
         self.namingContexts = set()
         for rootdse_naming_attrtype in (
                 'namingContexts',
@@ -787,36 +808,6 @@ class LDAPSession:
             '1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures
             or self.is_openldap
         )
-        # end of _update_rootdse_attrs()
-
-    def init_rootdse(self):
-        """Retrieve attributes from Root DSE"""
-        self._reset_rootdse_attrs()
-        try:
-            ldap_res = self.l.read_rootdse_s(attrlist=ROOTDSE_ATTRS)
-        except (
-                ldap0.CONFIDENTIALITY_REQUIRED,
-                ldap0.CONSTRAINT_VIOLATION,
-                ldap0.INAPPROPRIATE_AUTH,
-                ldap0.INAPPROPRIATE_MATCHING,
-                ldap0.INSUFFICIENT_ACCESS,
-                ldap0.INVALID_CREDENTIALS,
-                ldap0.NO_SUCH_OBJECT,
-                ldap0.OPERATIONS_ERROR,
-                ldap0.PARTIAL_RESULTS,
-                ldap0.STRONG_AUTH_REQUIRED,
-                ldap0.UNDEFINED_TYPE,
-                ldap0.UNWILLING_TO_PERFORM,
-                ldap0.PROTOCOL_ERROR,
-                ldap0.UNAVAILABLE_CRITICAL_EXTENSION,
-            ):
-            self.root_dse = {}
-        else:
-            if ldap_res is None:
-                self.root_dse = {}
-            else:
-                self.root_dse = ldap_res.entry_as
-        self._update_rootdse_attrs()
         # end of init_rootdse()
 
     def get_search_root(self, dn, naming_contexts=None):
