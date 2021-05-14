@@ -206,7 +206,7 @@ def w2l_read(app):
 
     # Determine how to get all attributes including the operational attributes
     if not wanted_attrs:
-        if app.ls.supportsAllOpAttr:
+        if app.ls.supports_allop_attr:
             wanted_attrs = ['*', '+']
         else:
             wanted_attrs = []
@@ -410,7 +410,7 @@ def w2l_read(app):
                     app.form.s2d(at, sp_entity='  ')
                     for at in (
                         wanted_attrs
-                        or {False:['*'], True:['*', '+']}[app.ls.supportsAllOpAttr]
+                        or {False:['*'], True:['*', '+']}[app.ls.supports_allop_attr]
                     )
                 ])
             )

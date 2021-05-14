@@ -505,7 +505,7 @@ def w2l_search(app):
         # read all attributes
         read_attrs = (
             search_attrs
-            or {False:('*',), True:('*', '+')}[app.ls.supportsAllOpAttr and search_opattrs]+requested_attrs
+            or {False:('*',), True:('*', '+')}[app.ls.supports_allop_attr and search_opattrs]+requested_attrs
             or None
         )
         result_handler = LDIFWriter(app.ls.l, WSGIBytesWrapper(app.outf))

@@ -536,7 +536,7 @@ class LDAPSession:
         'supportedFeatures',
         'supportedLDAPVersion',
         'supportedSASLMechanisms',
-        'supportsAllOpAttr',
+        'supports_allop_attr',
         '_traceLevel',
         'uc_decode',
         'uc_encode',
@@ -577,7 +577,7 @@ class LDAPSession:
         self._schema_dn_cache = {}
         self._schema_cache = {}
         # Supports feature described in draft-zeilenga-ldap-opattrs
-        self.supportsAllOpAttr = 0
+        self.supports_allop_attr = 0
         # IP address, host name or other free form information
         # of proxy client
         self.onBehalf = onBehalf
@@ -730,7 +730,7 @@ class LDAPSession:
 
     def _reset_rootdse_attrs(self):
         """Forget all old RootDSE values"""
-        self.supportsAllOpAttr = False
+        self.supports_allop_attr = False
         self.namingContexts = set()
         self.root_dse = ldap0.cidict.CIDict()
         # some rootDSE attributes made available as class attributes
@@ -739,7 +739,7 @@ class LDAPSession:
         self.supportedExtension = frozenset([])
         self.supportedFeatures = frozenset([])
         self.supportedSASLMechanisms = frozenset([])
-        self.supportsAllOpAttr = False
+        self.supports_allop_attr = False
 
     @property
     def is_openldap(self):
@@ -783,7 +783,7 @@ class LDAPSession:
             else:
                 setattr(self, attr_type, None)
         # determine whether server returns all operational attributes (RFC 3673)
-        self.supportsAllOpAttr = (
+        self.supports_allop_attr = (
             '1.3.6.1.4.1.4203.1.5.1' in self.supportedFeatures
             or self.is_openldap
         )
