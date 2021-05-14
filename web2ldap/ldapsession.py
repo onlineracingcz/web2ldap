@@ -519,7 +519,7 @@ class LDAPSession:
         '_audit_context',
         '_cache_ttl',
         'charset',
-        'connStartTime',
+        'conn_start',
         'cookie',
         'l',
         'namingContexts',
@@ -581,7 +581,7 @@ class LDAPSession:
         # IP address, host name or other free form information
         # of proxy client
         self.onBehalf = onBehalf
-        self.connStartTime = None
+        self.conn_start = None
         self._cache_ttl = cache_ttl
         # end of __init__()
 
@@ -710,7 +710,7 @@ class LDAPSession:
             self._start_tls(startTLS)
         elif self.uri.lower().startswith('ldaps:') or self.uri.lower().startswith('ldapi:'):
             self.secure_conn = 1
-        self.connStartTime = time.time()
+        self.conn_start = time.time()
         self.init_rootdse()
         # end of open()
 

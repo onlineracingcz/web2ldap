@@ -345,8 +345,8 @@ def w2l_conninfo(app):
             protocol_version,
             app.ls.charset.upper(),
             {False:'not secured', True:'secured'}[app.ls.secure_conn],
-            strftimeiso8601(time.gmtime(app.ls.connStartTime)),
-            time.time()-app.ls.connStartTime,
+            strftimeiso8601(time.gmtime(app.ls.conn_start)),
+            time.time()-app.ls.conn_start,
             app.ls.l._reconnects_done,
             app.form.s2d(
                 app.ls.vendorName
