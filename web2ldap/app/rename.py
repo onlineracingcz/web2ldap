@@ -203,7 +203,7 @@ def w2l_rename(app):
             1,
             options=[],
         )
-        rename_supsearchurl_field.setOptions(rename_supsearchurl_cfg.keys())
+        rename_supsearchurl_field.set_options(rename_supsearchurl_cfg.keys())
 
     # Output empty input form for new RDN
     top_section(

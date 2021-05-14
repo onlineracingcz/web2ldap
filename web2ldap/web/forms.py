@@ -402,7 +402,7 @@ class Radio(Field):
           [('value1','description1),('value2','description2),..]
           for options with different option value and description.
         """
-        self.setOptions(options)
+        self.set_options(options)
         self.set_default(default)
         Field.__init__(self, name, text, self.maxLen, maxValues, '', required, default, accesskey)
 
@@ -416,7 +416,7 @@ class Radio(Field):
         if value and (not value in self.optionValues):
             raise InvalidValueFormat(self.name, self.text, value)
 
-    def setOptions(self, options):
+    def set_options(self, options):
         self.optionValues = {}
         self.maxLen = 0
         if options:
@@ -605,7 +605,7 @@ class DataList(Input, Select):
         self.size = size or 20
         self.multiSelect = 0
         self.ignoreCase = ignoreCase
-        self.setOptions(options)
+        self.set_options(options)
         self.set_default(default)
 
     def input_html(self, default=None, id_value=None, title=None):

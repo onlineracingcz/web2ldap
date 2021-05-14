@@ -61,7 +61,7 @@ def w2l_login(
     )
 
     if app.ls.root_dse:
-        app.form.field['login_mech'].setOptions(app.ls.supportedSASLMechanisms or [])
+        app.form.field['login_mech'].set_options(app.ls.supportedSASLMechanisms or [])
 
     # Determine the bind mech to be used from the
     # form data or the key-word argument login_default_mech
