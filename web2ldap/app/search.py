@@ -109,11 +109,11 @@ is_search_reference = {
 }
 
 
-class excel_semicolon(csv.excel):
+class ExcelSemicolon(csv.excel):
     """Describe the usual properties of Excel-generated TAB-delimited files."""
     delimiter = ';'
 
-csv.register_dialect('excel-semicolon', excel_semicolon)
+csv.register_dialect('excel-semicolon', ExcelSemicolon)
 
 
 class LDIFWriter(asynch.LDIFWriter):
