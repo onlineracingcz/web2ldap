@@ -74,7 +74,6 @@ from ...ldaputil.oidreg import OID_REG
 from ...log import logger
 from ... import cmp
 from . import schema_anchor
-from ...ldaputil import ietf_oid_str
 from ..tmpl import get_variant_filename
 from ...utctime import strptime as utc_strptime
 from ..searchform import (
@@ -1249,13 +1248,7 @@ class OID(IA5String):
         return IA5String.value_button(self, command, row, mode, link_text=link_text)
 
     def sanitize(self, attr_value: bytes) -> bytes:
-        attr_value = attr_value.strip()
-        if attr_value.startswith(b'{') and attr_value.endswith(b'}'):
-            try:
-                attr_value = ietf_oid_str(attr_value)
-            except ValueError:
-                pass
-        return attr_value
+        return attr_value.strip()
 
     def display(self, vidx, links) -> str:
         try:

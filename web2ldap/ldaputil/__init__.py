@@ -42,26 +42,6 @@ ATTR_VALUE_PATTERN = u'(([^,]|\\\\,)+|".*?")'
 RDN_PATTERN = ATTR_TYPE_PATTERN + u'[ ]*=[ ]*' + ATTR_VALUE_PATTERN
 
 
-def ietf_oid_str(oid):
-    """
-    Returns normalized IETF string representation of oid
-    """
-    vl = oid.split(' ')
-    res = []
-    for vs in vl:
-        if vs:
-            vs = ''.join([
-                c
-                for c in vs
-                if c >= '0' and c <= '9'
-            ])
-            if not vs:
-                # no digits in component
-                raise ValueError('oid %r cannot be normalized' % (oid))
-            res.append(vs)
-    return '.'.join(res)
-
-
 def logdb_filter(logdb_objectclass, dn, entry_uuid=None):
     """
     returns a filter for querying a changelog or accesslog DB for
