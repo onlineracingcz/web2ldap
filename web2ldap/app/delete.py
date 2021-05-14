@@ -211,7 +211,6 @@ def delete_entries(
     """
     start_time = time.time()
     end_time = start_time + delete_timelimit
-    delete_filter = delete_filter or '(objectClass=*)'
     if scope == ldap0.SCOPE_SUBTREE and tree_delete_control:
         # Try to directly delete the whole subtree with the tree delete control
         app.ls.l.delete_s(dn, req_ctrls=delete_server_ctrls)
@@ -359,7 +358,10 @@ def w2l_delete(app):
             for a in app.ldap_url.attrs or []
         ]
     )
-    delete_filter = app.form.getInputValue('filterstr', [app.ldap_url.filterstr])[0]
+    delete_filter = app.form.getInputValue(
+        'filterstr',
+        [app.ldap_url.filterstr or '(objectClass=*)']
+    )[0]
     delete_attr.sort()
     if delete_attr:
         scope = ldap0.SCOPE_BASE
@@ -388,7 +390,7 @@ def w2l_delete(app):
         entry = ldap0.schema.models.Entry(app.schema, app.dn, ldap_res.entry_as)
         if delete_attr:
             inner_form = del_attr_form(app, entry, delete_attr)
-        elif delete_filter:
+        elif delete_confirm == 'yes':
             inner_form = del_search_form(app, scope, delete_filter)
         else:
             inner_form = del_subtree_form(app, scope)
