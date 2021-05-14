@@ -25,14 +25,14 @@ def w2l_urlredirect(app):
     if not redirect_ok:
         # Check for valid target URL syntax
         try:
-            tu = urllib.parse.urlparse(app.form.query_string)
+            to_url = urllib.parse.urlparse(app.form.query_string)
         except Exception:
             redirect_ok = False
             error_msg = 'Rejected non-parseable redirect URL!'
         else:
             redirect_ok = True
             # further checks
-            if not tu or not tu.scheme or not tu.netloc:
+            if not to_url or not to_url.scheme or not to_url.netloc:
                 redirect_ok = False
                 error_msg = 'Rejected malformed/suspicious redirect URL!'
             # Check for valid session
