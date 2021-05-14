@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 web2ldap plugin classes for FreeRADIUS/LDAP schema
+
+See also:
+https://github.com/FreeRADIUS/freeradius-server/tree/master/doc/schemas/ldap/openldap
 """
 
 from ..schema.syntaxes import DynamicDNSelectList, syntax_registry
