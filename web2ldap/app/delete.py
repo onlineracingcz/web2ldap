@@ -147,12 +147,12 @@ class DeleteLeafs(AsyncSearchHandler):
             return
         dn, entry = resultItem.dn_s, resultItem.entry_s
         try:
-            hasSubordinates = entry['hasSubordinates'][0].upper() == 'TRUE'
+            has_subordinates = entry['hasSubordinates'][0].upper() == 'TRUE'
         except KeyError:
-            # hasSubordinates not available => look at numeric subordinate counters
-            hasSubordinates = None
+            # attribute hasSubordinates not available => look at numeric subordinate counters
+            has_subordinates = None
             try:
-                subordinateCount = int(
+                subordinate_count = int(
                     entry.get(
                         'subordinateCount',
                         entry.get(
@@ -162,12 +162,12 @@ class DeleteLeafs(AsyncSearchHandler):
                                 entry['msDS-Approx-Immed-Subordinates'])))[0]
                 )
             except KeyError:
-                subordinateCount = None
+                subordinate_count = None
         else:
-            subordinateCount = None
+            subordinate_count = None
         if (
                 not self.tree_delete_ctrl and
-                (hasSubordinates or (subordinateCount or 0) > 0)
+                (has_subordinates or (subordinate_count or 0) > 0)
             ):
             logger.debug('Skipping deletion of non-leaf entry %r', dn)
             self.non_leaf_entries.append(dn)
@@ -182,13 +182,13 @@ class DeleteLeafs(AsyncSearchHandler):
         except ldap0.INSUFFICIENT_ACCESS:
             self.non_deletable_entries.append(dn)
         except ldap0.NOT_ALLOWED_ON_NONLEAF:
-            if hasSubordinates is None and subordinateCount is None:
+            if has_subordinates is None and subordinate_count is None:
                 self.non_leaf_entries.append(dn)
             # Next statements are kind of a safety net and should never be executed
             else:
                 raise ValueError(
-                    'Non-leaf entry %r has hasSubordinates %r and subordinateCount %r' % (
-                        dn, hasSubordinates, subordinateCount,
+                    'Non-leaf entry %r has has_subordinates = %r and subordinate_count = %r' % (
+                        dn, has_subordinates, subordinate_count,
                     )
                 )
         else:
@@ -279,21 +279,21 @@ def del_subtree_form(app, scope):
         ),
         default=str(scope),
     )
-    hasSubordinates, numSubordinates, numAllSubordinates = app.ls.get_sub_ordinates(app.dn)
-    if not hasSubordinates:
+    has_subordinates, num_subordinates, num_all_subordinates = app.ls.get_sub_ordinates(app.dn)
+    if not has_subordinates:
         return del_singleentry_form(app)
-    if numSubordinates:
-        numSubordinates_html = '<p>Number of direct subordinates: %d</p>' % (numSubordinates)
+    if num_subordinates:
+        num_subordinates_html = '<p>Number of direct subordinates: %d</p>' % (num_subordinates)
     else:
-        numSubordinates_html = ''
-    if numAllSubordinates:
-        numAllSubordinates_html = '<p>Total number of subordinates: %d</p>' % (numAllSubordinates)
+        num_subordinates_html = ''
+    if num_all_subordinates:
+        num_all_subordinates_html = '<p>Total number of subordinates: %d</p>' % (num_all_subordinates)
     else:
-        numAllSubordinates_html = ''
+        num_all_subordinates_html = ''
     return DELETE_SUBTREE_FORM_TMPL.format(
         text_dn=app.display_dn(app.dn),
-        text_num_sub_ordinates=numSubordinates_html,
-        text_num_all_sub_ordinates=numAllSubordinates_html,
+        text_num_sub_ordinates=num_subordinates_html,
+        text_num_all_sub_ordinates=num_all_subordinates_html,
         field_delete_scope=delete_scope_field.input_html(),
         value_delete_ctrl_oid=CONTROL_TREEDELETE,
         value_delete_ctrl_checked=' checked'*int(
