@@ -157,6 +157,10 @@ syntax_registry.reg_at(
 
 
 class UserPassword(OctetString, DirectoryString):
+    """
+    Attribute userPassword can be textual or arbitrary octet strings.
+    This plugin displays textual passwords as readable text.
+    """
     oid: str = 'UserPassword-oid'
 
     def display(self, vidx, links) -> str:
@@ -174,6 +178,10 @@ syntax_registry.reg_at(
 
 
 class NamingContexts(DistinguishedName):
+    """
+    Plugin class for attribute namingContexts present in rootDSE
+    https://datatracker.ietf.org/doc/html/rfc4512#section-5.1.2
+    """
     oid: str = 'NamingContexts-oid'
     desc: str = 'Naming contexts in rootDSE'
     ldap_url = 'ldap:///cn=cn=config?olcSuffix?one?(objectClass=olcDatabaseConfig)'
@@ -281,6 +289,10 @@ syntax_registry.reg_at(
 
 
 class AltServer(LDAPUrl):
+    """
+    Plugin class for attribute altServer optionally present in rootDSE
+    https://datatracker.ietf.org/doc/html/rfc4512#section-5.1.1
+    """
     oid: str = 'AltServer-oid'
     desc: str = 'LDAP URIs of alternative server(s)'
 
