@@ -282,9 +282,9 @@ class DHCPRange(IA5String):
     desc: str = 'Network address range'
 
     def _get_ipnetwork(self):
-        cn = self._entry['cn'][0].strip().decode('ascii')
+        name = self._entry['cn'][0].strip().decode('ascii')
         net_mask = self._entry['dhcpNetMask'][0].strip().decode('ascii')
-        return ipaddress.ip_network(('%s/%s' % (cn, net_mask)), strict=False)
+        return ipaddress.ip_network(('%s/%s' % (name, net_mask)), strict=False)
 
     def form_value(self) -> str:
         fval = IA5String.form_value(self)
@@ -307,12 +307,12 @@ class DHCPRange(IA5String):
 
     def _validate(self, attr_value: bytes) -> bool:
         try:
-            l, h = attr_value.split(b' ', 1)
+            l_s, h_s = attr_value.decode(self._app.ls.charset).split(' ', 1)
         except (IndexError, ValueError):
             return False
         try:
-            l_a = ipaddress.ip_address(l.decode(self._app.ls.charset))
-            h_a = ipaddress.ip_address(h.decode(self._app.ls.charset))
+            l_a = ipaddress.ip_address(l_s)
+            h_a = ipaddress.ip_address(h_s)
         except Exception:
             return False
         if l_a > h_a:
