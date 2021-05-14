@@ -529,7 +529,7 @@ class LDAPSession:
         'sasl_mech',
         '_schema_cache',
         '_schema_dn_cache',
-        'secureConn',
+        'secure_conn',
         'sessionStartTime',
         'startTLSOption',
         'supportedControl',
@@ -569,7 +569,7 @@ class LDAPSession:
         # initialize class attributes derived from rootDSE attributes later
         self._reset_rootdse_attrs()
         # security attributes of the connection
-        self.secureConn = 0
+        self.secure_conn = 0
         self.sasl_mech = None
         self.sasl_auth = None
         self.who = None
@@ -617,7 +617,7 @@ class LDAPSession:
         """
         StartTLS if possible and requested
         """
-        self.secureConn = 0
+        self.secure_conn = 0
         self.startTLSOption = 0
         if not startTLSOption:
             return
@@ -635,7 +635,7 @@ class LDAPSession:
                 raise ldap_err
         else:
             self.startTLSOption = 2
-            self.secureConn = 1
+            self.secure_conn = 1
         # end of _start_tls()
 
     def _initialize(self, uri_list, timeout, tls_options=None):
@@ -711,7 +711,7 @@ class LDAPSession:
             # Start TLS extended operation
             self._start_tls(startTLS)
         elif self.uri.lower().startswith('ldaps:') or self.uri.lower().startswith('ldapi:'):
-            self.secureConn = 1
+            self.secure_conn = 1
         self.connStartTime = time.time()
         self.init_rootdse()
         # end of open()
