@@ -1065,6 +1065,7 @@ class AppHandler(LogHelper):
                 ldap0.INAPPROPRIATE_AUTH,
                 UsernameNotFound,
             ) as err:
+            log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
             w2l_login(
                 self,
                 who=u'',
