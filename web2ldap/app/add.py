@@ -167,14 +167,15 @@ def w2l_add(app):
             add_entry,
             req_ctrls=add_req_ctrls
         )
-    except ldap0.NO_SUCH_OBJECT as e:
+    except ldap0.NO_SUCH_OBJECT as err:
         raise ErrorExit(
-            u"""
-            %s<br>
-            Probably this superiour entry does not exist:<br>%s<br>
-            Maybe wrong base DN in LDIF template?<br>
-            """ % (
-                app.ldap_error_msg(e),
+            (
+                '%s<br>'
+                'Probably this superiour entry does not exist:<br>'
+                '%s<br>'
+                'Maybe wrong base DN in LDIF template?<br>'
+            ) % (
+                app.ldap_error_msg(err),
                 app.display_dn(add_basedn.decode(app.ls.charset), links=False),
             )
         )
