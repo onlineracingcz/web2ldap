@@ -126,7 +126,7 @@ def w2l_login(
             app.form.hidden_field_html('ldapurl', str(app.ls.ldap_url('')), u''),
             app.form.hidden_field_html('dn', app.dn, u''),
             app.form.hidden_field_html('delsid', app.sid, u''),
-            app.form.hidden_field_html('conntype', str(int(app.ls.startTLSOption > 0)), u''),
+            app.form.hidden_field_html('conntype', str(int(app.ls.use_start_tls > 0)), u''),
             scope_hidden_field,
             filterstr_hidden_field,
             login_form_html,

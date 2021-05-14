@@ -530,7 +530,7 @@ class LDAPSession:
         '_schema_cache',
         '_schema_dn_cache',
         'secure_conn',
-        'startTLSOption',
+        'use_start_tls',
         'supportedControl',
         'supportedExtension',
         'supportedFeatures',
@@ -573,7 +573,7 @@ class LDAPSession:
         self.sasl_auth = None
         self.who = None
         self.user_entry = {}
-        self.startTLSOption = 0
+        self.use_start_tls = 0
         self._schema_dn_cache = {}
         self._schema_cache = {}
         # Supports feature described in draft-zeilenga-ldap-opattrs
@@ -611,13 +611,13 @@ class LDAPSession:
                     raise
         # end of _set_tls_options()
 
-    def _start_tls(self, startTLSOption):
+    def _start_tls(self, use_start_tls):
         """
         StartTLS if possible and requested
         """
         self.secure_conn = 0
-        self.startTLSOption = 0
-        if not startTLSOption:
+        self.use_start_tls = 0
+        if not use_start_tls:
             return
         try:
             self.l.start_tls_s()
@@ -628,11 +628,11 @@ class LDAPSession:
                 ldap0.INSUFFICIENT_ACCESS,
                 ldap0.SERVER_DOWN,
             ) as ldap_err:
-            if startTLSOption > 1:
+            if use_start_tls > 1:
                 self.unbind()
                 raise ldap_err
         else:
-            self.startTLSOption = 2
+            self.use_start_tls = 2
             self.secure_conn = 1
         # end of _start_tls()
 
@@ -1406,8 +1406,8 @@ class LDAPSession:
             return None
         lu = ExtendedLDAPUrl(ldapUrl=self.uri)
         lu.dn = dn
-        if self.startTLSOption:
-            lu.start_tls = str(START_TLS_REQUIRED * (self.startTLSOption > 0))
+        if self.use_start_tls:
+            lu.start_tls = str(START_TLS_REQUIRED * (self.use_start_tls > 0))
         if add_login:
             if self.sasl_auth:
                 lu.sasl_mech = self.sasl_mech
