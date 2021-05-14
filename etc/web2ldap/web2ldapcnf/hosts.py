@@ -699,6 +699,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'Æ-DIR network device': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeNwDevice.ldif'),
         'Æ-DIR server/service group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeSrvGroup.ldif'),
         'Æ-DIR server/host': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeHost.ldif'),
+        'Æ-DIR service/tool account (POSIX)': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeService_posixAccount.ldif'),
         'Æ-DIR service/tool account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeService.ldif'),
         'Æ-DIR zone': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeZone.ldif'),
         'Æ-DIR zone admins group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeGroup_zone-admins.ldif'),
