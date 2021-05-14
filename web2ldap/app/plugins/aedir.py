@@ -2141,8 +2141,7 @@ class AEStatus(SelectList, Integer):
                 except (KeyError, IndexError, ValueError):
                     pass
                 else:
-                    if ae_status <= ae_expiry_status:
-                        ae_status = ae_expiry_status
+                    ae_status = max(ae_status, ae_expiry_status)
         return [str(ae_status).encode('ascii')]
 
     def display(self, vidx, links) -> str:
