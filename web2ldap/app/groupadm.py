@@ -148,10 +148,10 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     groupadm_name = app.form.getInputValue('groupadm_name', [None])[0]
 
     filter_components = []
-    for oc in groupadm_defs.keys():
-        if len(groupadm_defs[oc]) == 3 and not groupadm_defs[oc][2]:
+    for ocl in groupadm_defs.keys():
+        if len(groupadm_defs[ocl]) == 3 and not groupadm_defs[ocl][2]:
             continue
-        group_member_attrtype, user_entry_attrtype = groupadm_defs[oc][:2]
+        group_member_attrtype, user_entry_attrtype = groupadm_defs[ocl][:2]
         if user_entry_attrtype is None:
             user_entry_attrvalue = app.dn
         else:
@@ -160,7 +160,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             except KeyError:
                 continue
         filter_components.append((
-            oc.strip(),
+            ocl.strip(),
             group_member_attrtype.strip(),
             ldap0.filter.escape_str(user_entry_attrvalue),
         ))
@@ -224,19 +224,19 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                     # => Ignore that condition
                     continue
                 modlist = []
-                for oc in groupadm_defs_keys:
-                    if oc.lower() in [
+                for ocl in groupadm_defs_keys:
+                    if ocl.lower() in [
                             v.lower()
                             for v in all_groups_dict[group_dn].get('objectClass', [])
                         ]:
-                        group_member_attrtype, user_entry_attrtype = groupadm_defs[oc][0:2]
+                        group_member_attrtype, user_entry_attrtype = groupadm_defs[ocl][0:2]
                         if user_entry_attrtype is None:
                             member_value = app.ldap_dn
                         else:
                             if user_entry_attrtype not in user_entry:
                                 raise ErrorExit(
                                     u'Object class %s requires attribute %s in group entry.' % (
-                                        oc,
+                                        ocl,
                                         user_entry_attrtype,
                                     )
                                 )
@@ -250,11 +250,11 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                 if modlist:
                     try:
                         app.ls.modify(group_dn, modlist)
-                    except ldap0.LDAPError as e:
+                    except ldap0.LDAPError as err:
                         ldaperror_entries.append((
                             group_dn,
                             modlist,
-                            app.ldap_error_msg(e),
+                            app.ldap_error_msg(err),
                         ))
                     else:
                         successful_group_mods.append((group_dn, modlist))
