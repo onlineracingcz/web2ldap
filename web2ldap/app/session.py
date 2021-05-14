@@ -147,31 +147,40 @@ class Session(WebSession, LogHelper):
         # end of expire()
 
 
-class ExpiryThread(session.ExpiryThread, LogHelper):
+class ExpiryThread(threading.Thread, LogHelper):
     """
     Thread class for clean-up thread
-
-    Mainly it overrides web2ldap.web.session.ExpiryThread.run()
-    to call ldapSession.unbind().
     """
 
-
-    def __init__(self, *args, **kwargs):
-        session.ExpiryThread.__init__(self, *args, **kwargs)
+    def __init__(self, session_obj, interval=60):
+        self._session_obj = session_obj
+        self._interval = interval
+        self._stop_event = threading.Event()
+        self._removed = 0
         self.run_counter = 0
+        threading.Thread.__init__(self, name=self.__class__.__module__+self.__class__.__name__)
+
+    def stop(self):
+        self._stop_event.set()
+
+    def __repr__(self):
+        return '%s: %d sessions removed' % (
+            self.getName(),
+            self._removed,
+        )
 
     def run(self):
         """Thread function for cleaning up session database"""
         self.log(
             logging.DEBUG,
             'Entering .run() cleaning %s[%x]',
-            self._sessionInstance.__class__.__name__,
-            id(self._sessionInstance),
+            self._session_obj.__class__.__name__,
+            id(self._session_obj),
             )
         while not self._stop_event.is_set():
             self.run_counter += 1
             try:
-                self._sessionInstance.expire()
+                self._session_obj.expire()
             except Exception:
                 # Catch all exceptions to avoid thread being killed.
                 self.log(logging.ERROR, 'Unhandled exception in run()', exc_info=True)

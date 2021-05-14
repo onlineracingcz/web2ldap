@@ -108,36 +108,6 @@ class InvalidSessionId(SessionException):
         return "No session with key %s." % (self.session_id)
 
 
-class ExpiryThread(threading.Thread):
-    """
-    Thread class for clean-up thread
-    """
-
-    def __init__(self, sessionInstance, interval=60):
-        self._sessionInstance = sessionInstance
-        self._interval = interval
-        self._stop_event = threading.Event()
-        self._removed = 0
-        threading.Thread.__init__(self, name=self.__class__.__module__+self.__class__.__name__)
-
-    def stop(self):
-        self._stop_event.set()
-
-    def run(self):
-        """
-        Thread function for cleaning up session database
-        """
-        while not self._stop_event.is_set():
-            self._removed += self._sessionInstance.clean()
-            self._stop_event.wait(self._interval)
-
-    def __repr__(self):
-        return '%s: %d sessions removed' % (
-            self.getName(),
-            self._removed,
-        )
-
-
 class WebSession:
     """
     The session class which handles storing and retrieving of session data
