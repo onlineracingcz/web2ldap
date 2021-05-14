@@ -38,16 +38,6 @@ DIT_ATTR_LIST = [
 ]
 
 
-def decode_dict(d, charset):
-    r = {}
-    for k, v in d.items():
-        r[k] = [
-            value.decode(charset)
-            for value in v
-        ]
-    return r
-
-
 def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
     """
     Outputs HTML representation of a directory information tree (DIT)
