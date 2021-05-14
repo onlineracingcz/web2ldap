@@ -530,7 +530,6 @@ class LDAPSession:
         '_schema_cache',
         '_schema_dn_cache',
         'secure_conn',
-        'sessionStartTime',
         'startTLSOption',
         'supportedControl',
         'supportedExtension',
@@ -582,7 +581,6 @@ class LDAPSession:
         # IP address, host name or other free form information
         # of proxy client
         self.onBehalf = onBehalf
-        self.sessionStartTime = time.time()
         self.connStartTime = None
         self._cache_ttl = cache_ttl
         # end of __init__()
