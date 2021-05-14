@@ -43,16 +43,16 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
     Outputs HTML representation of a directory information tree (DIT)
     """
 
-    def meta_results(d):
+    def meta_results(dat):
         """
         Side effect! This removes meta result data from d!
         """
         try:
-            size_limit = d['_sizelimit_']
+            size_limit = dat['_sizelimit_']
         except KeyError:
             size_limit = False
         else:
-            del d['_sizelimit_']
+            del dat['_sizelimit_']
         return size_limit
 
     assert isinstance(anchor_dn, DNObj), ValueError(
@@ -62,14 +62,14 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
     # Start node's HTML
     res = ['<dl>']
 
-    for dn, d in dit_dict.items():
+    for dn, ddat in dit_dict.items():
 
         assert isinstance(dn, DNObj), ValueError(
             'Expected dn to be DNObj, got %r' % (dn,),
         )
 
         # Handle special dict items
-        size_limit = meta_results(d)
+        size_limit = meta_results(ddat)
 
         # Generate anchor for this node
         if dn:
@@ -141,8 +141,8 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
 
         # Subordinate nodes' HTML
         res.append('<dd>')
-        if max_levels and d:
-            res.extend(dit_html(app, anchor_dn, d, entry_dict, max_levels-1))
+        if max_levels and ddat:
+            res.extend(dit_html(app, anchor_dn, ddat, entry_dict, max_levels-1))
         res.append('</dd>')
 
     # Finish node's HTML
