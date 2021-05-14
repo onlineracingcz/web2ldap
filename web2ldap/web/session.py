@@ -25,30 +25,6 @@ SESSION_ID_CHARS = string.ascii_letters + string.digits + '-._'
 # regex pattern for checking valid session IDs
 SESSION_ID_REGEX = '^[%s]+$' % (re.escape(SESSION_ID_CHARS))
 
-# List of environment variables assumed to be constant throughout
-# web sessions with the same ID if existent.
-# These env vars are cross-checked each time when restoring an
-# web session to reduce the risk of session-hijacking.
-# Note: REMOTE_ADDR and REMOTE_HOST might not be constant if the client
-# access comes through a network of web proxy siblings.
-SESSION_CROSSCHECKVARS = (
-    # REMOTE_ADDR and REMOTE_HOST might not be constant if the client
-    # access comes through a network of web proxy siblings.
-    'REMOTE_ADDR', 'REMOTE_HOST',
-    'REMOTE_IDENT', 'REMOTE_USER',
-    # If the proxy sets them but can be easily spoofed
-    'FORWARDED_FOR', 'HTTP_X_FORWARDED_FOR',
-    # These two are not really secure
-    'HTTP_USER_AGENT', 'HTTP_ACCEPT_CHARSET',
-    # SSL session ID if running on SSL server capable
-    # of reusing SSL sessions
-    'SSL_SESSION_ID',
-    # env vars of client certs used for SSL strong authentication
-    'SSL_CLIENT_V_START', 'SSL_CLIENT_V_END',
-    'SSL_CLIENT_I_DN', 'SSL_CLIENT_IDN',
-    'SSL_CLIENT_S_DN', 'SSL_CLIENT_SDN',
-    'SSL_CLIENT_M_SERIAL', 'SSL_CLIENT_CERT_SERIAL',
-)
 
 ##############################################################################
 # Exception classes
@@ -171,12 +147,9 @@ class WebSession:
 
     def __init__(
             self,
-            dictobj=None,
             session_ttl=0,
-            crossCheckVars=None,
-            maxSessionCount=None,
-            sessionIDLength=SESSION_ID_LENGTH,
-            sessionIDChars=None,
+            session_check_vars=None,
+            max_sessions=None,
         ):
         """
         dictobj
@@ -187,25 +160,20 @@ class WebSession:
             expires and the session data is silently deleted.
             A InvalidSessionId exception is raised in this case if
             the application tries to access the session ID again.
-        crossCheckVars
+        session_check_vars
             List of keys of variables cross-checked for each
-            retrieval of session data in retrieveSession(). If None
+            retrieval of session data in retrieve(). If None
             SESSION_CROSSCHECKVARS is used.
-        maxSessionCount
+        max_sessions
             Maximum number of valid sessions. This affects
-            behaviour of retrieveSession() which raises.
+            behaviour of retrieve() which raises.
             None means unlimited number of sessions.
         """
-        if dictobj is None:
-            self.sessiondict = self.dict_class()
-        else:
-            self.sessiondict = dictobj
+        self.sessiondict = self.dict_class()
         self.session_ttl = session_ttl
         self._session_lock = threading.Lock()
-        if crossCheckVars is None:
-            crossCheckVars = SESSION_CROSSCHECKVARS
-        self.crossCheckVars = crossCheckVars
-        self.maxSessionCount = maxSessionCount
+        self.session_check_vars = session_check_vars
+        self.max_sessions = max_sessions
         self.sessionCounter = 0
         self.expired_counter = 0
         self.session_id_len = SESSION_ID_LENGTH
@@ -223,10 +191,9 @@ class WebSession:
                 self.session_id_re.match(session_id) is None
             ):
             raise BadSessionId(session_id)
-        # end of WebSession._validateSessionIdFormat()
 
     @staticmethod
-    def _crosscheckSessionEnv(stored_env, env):
+    def _check_env(stored_env, env):
         """
         Returns a list of keys of items which differ in
         stored_env and env.
@@ -243,7 +210,7 @@ class WebSession:
         """
         return {
             skey: env[skey]
-            for skey in self.crossCheckVars
+            for skey in self.session_check_vars
             if skey in env
         }
 
@@ -289,7 +256,7 @@ class WebSession:
             self._session_lock.release()
         return session_id
 
-    def retrieveSession(self, session_id, env):
+    def retrieve(self, session_id, env):
         """
         Retrieve session data
         """
@@ -316,7 +283,7 @@ class WebSession:
             # Check if application should be able to allow relogin
             self.delete(session_id)
             raise InvalidSessionId(session_id)
-        failed_vars = self._crosscheckSessionEnv(session_checkvars, env)
+        failed_vars = self._check_env(session_checkvars, env)
         if failed_vars:
             # Remove session entry
             raise SessionHijacked(failed_vars)
@@ -328,8 +295,8 @@ class WebSession:
         Store session data under session id
         """
         env = env or {}
-        if self.maxSessionCount and len(self.sessiondict)/2+1 > self.maxSessionCount:
-            raise MaxSessionCountExceeded(self.maxSessionCount)
+        if self.max_sessions and len(self.sessiondict)/2+1 > self.max_sessions:
+            raise MaxSessionCountExceeded(self.max_sessions)
         self._session_lock.acquire()
         try:
             # generate completely new session data entry

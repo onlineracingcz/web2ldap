@@ -573,7 +573,7 @@ class AppHandler(LogHelper):
                 last_session_timestamp, _ = self._session_store.sessiondict[self.sid]
             except KeyError:
                 pass
-            self.ls = self._session_store.retrieveSession(self.sid, self.env)
+            self.ls = self._session_store.retrieve(self.sid, self.env)
             if not isinstance(self.ls, LDAPSession):
                 raise InvalidSessionInstance()
             if self.ls.cookie:
@@ -610,7 +610,7 @@ class AppHandler(LogHelper):
         except IndexError:
             return
         try:
-            old_ls = self._session_store.retrieveSession(del_sid, self.env)
+            old_ls = self._session_store.retrieve(del_sid, self.env)
         except SessionException:
             pass
         else:

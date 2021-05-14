@@ -48,17 +48,16 @@ class Session(WebSession, LogHelper):
 
     def __init__(
             self,
-            dictobj=None,
-            session_ttl=0,
-            crossCheckVars=None,
-            maxSessionCount=None,
-            max_session_count_per_ip=None,
+            session_ttl,
+            session_check_vars,
+            max_sessions,
+            max_session_count_per_ip,
         ):
-        WebSession.__init__(self, dictobj, session_ttl, crossCheckVars, maxSessionCount)
+        WebSession.__init__(self, session_ttl, session_check_vars, max_sessions)
         self.max_concurrent_sessions = 0
         self.remote_ip_sessions = collections.defaultdict(set)
         self.session_ip_addr = {}
-        self.max_session_count_per_ip = max_session_count_per_ip or self.maxSessionCount/4
+        self.max_session_count_per_ip = max_session_count_per_ip or int(self.max_sessions/4)
         self.remote_ip_counter = collections.Counter()
         self.expiry_thread = ExpiryThread(self, interval=SESSION_EXPIRY_INTERVAL)
         self.expiry_thread.start()
@@ -68,7 +67,7 @@ class Session(WebSession, LogHelper):
             id(self.expiry_thread),
         )
 
-    def new(self, env=None):
+    def new(self, env):
         self.expire()
         self.log(logging.DEBUG, 'new(): creating a new session')
         remote_ip = get_remote_ip(env)
@@ -107,7 +106,7 @@ class Session(WebSession, LogHelper):
         # end of _remove_ip_assoc()
 
     def rename(self, old_sid, env):
-        session_data = self.retrieveSession(old_sid, env)
+        session_data = self.retrieve(old_sid, env)
         new_sid = self.new(env)
         self.save(new_sid, session_data)
         WebSession.delete(self, old_sid)
@@ -197,10 +196,10 @@ def session_store():
     with _SESSION_STORE_LOCK:
         if _SESSION_STORE is None:
             _SESSION_STORE = Session(
-                session_ttl=web2ldapcnf.session_remove,
-                crossCheckVars=web2ldapcnf.session_checkvars,
-                maxSessionCount=web2ldapcnf.session_limit,
-                max_session_count_per_ip=web2ldapcnf.session_per_ip_limit,
+                web2ldapcnf.session_remove,
+                web2ldapcnf.session_checkvars,
+                web2ldapcnf.session_limit,
+                web2ldapcnf.session_per_ip_limit,
             )
             logger.debug(
                 'Initialized web2ldap session store %s[%x]',

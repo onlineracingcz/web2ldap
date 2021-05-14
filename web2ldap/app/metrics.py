@@ -91,7 +91,7 @@ if METRICS_AVAIL:
                 labels=('type',),
             )
             sess_gauge.add_metric(('active',), active_sessions_count)
-            sess_gauge.add_metric(('limit',), self._session_store.maxSessionCount)
+            sess_gauge.add_metric(('limit',), self._session_store.max_sessions)
             sess_gauge.add_metric(('req',), req_sessions_count)
             sess_gauge.add_metric(('max',), self._session_store.max_concurrent_sessions)
             return sess_gauge
