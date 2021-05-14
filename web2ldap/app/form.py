@@ -214,19 +214,19 @@ class Web2LDAPForm(Form):
             self.s2d(desc, sp_entity='&nbsp;&nbsp;'),
         )
 
-    def hidden_input_html(self, ignoreFieldNames=None):
+    def hidden_input_html(self, ignored_fields=None):
         """
         Return all input parameters as hidden fields in one HTML string.
 
-        ignoreFieldNames
+        ignored_fields
             Names of parameters to be excluded.
         """
-        ignoreFieldNames = set(ignoreFieldNames or [])
+        ignored_fields = set(ignored_fields or [])
         result = []
         for f in [
                 self.field[p]
                 for p in self.input_field_names
-                if not p in ignoreFieldNames
+                if not p in ignored_fields
             ]:
             for val in f.value:
                 if not isinstance(val, str):

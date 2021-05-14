@@ -492,7 +492,7 @@ def object_class_form(
             dit_structure_rule_html,
             dit_content_rule_html,
             app.form.hidden_input_html(
-                ignoreFieldNames=(
+                ignored_fields=(
                     'dn',
                     'add_clonedn',
                     'in_ocf',

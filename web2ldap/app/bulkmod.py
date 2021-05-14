@@ -300,7 +300,7 @@ def bulkmod_confirmation_form(
             num_entries=num_entries,
             num_referrals=num_referrals,
             text_ldifchangerecord=bulk_mod_list_ldif,
-            hidden_fields=app.form.hidden_input_html(ignoreFieldNames=[
+            hidden_fields=app.form.hidden_input_html(ignored_fields=[
                 'dn', 'scope', 'filterstr', 'bulkmod_submit', 'bulkmod_newsuperior',
             ]),
         )
@@ -517,7 +517,7 @@ def w2l_bulkmod(app):
                 ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
                 end_time_stamp-begin_time_stamp,
                 app.begin_form('bulkmod', 'POST'),
-                app.form.hidden_input_html(ignoreFieldNames=['bulkmod_submit']),
+                app.form.hidden_input_html(ignored_fields=['bulkmod_submit']),
                 error_messages,
                 change_records,
             ),

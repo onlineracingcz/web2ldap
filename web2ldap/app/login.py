@@ -136,7 +136,7 @@ def w2l_login(
     if relogin:
         app.outf.write(
             app.form.hidden_input_html(
-                ignoreFieldNames=set([
+                ignored_fields=set([
                     'sid', 'delsid',
                     'ldapurl', 'conntype', 'host', 'who', 'cred',
                     'dn', 'scope', 'filterstr', 'search_attrs',
