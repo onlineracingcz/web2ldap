@@ -140,11 +140,11 @@ def bulkmod_input_form(
     bulkmod_av = bulkmod_av or [u'']
     error_attrs = sorted({bulkmod_at[i] for i in input_errors})
     if error_attrs:
-        Msg = '<p class="ErrorMessage">Invalid input: %s</p>' % (
+        error_msg = '<p class="ErrorMessage">Invalid input: %s</p>' % (
             ', '.join(map(app.form.s2d, error_attrs))
         )
     else:
-        Msg = '<p class="WarningMessage">Input bulk modify parameters here.</p>'
+        error_msg = '<p class="WarningMessage">Input bulk modify parameters here.</p>'
     if bulkmod_submit and bulkmod_submit.startswith('-'):
         del_row_num = int(bulkmod_submit[1:])
         if len(bulkmod_at) > 1:
@@ -223,7 +223,7 @@ def bulkmod_input_form(
         </fieldset>
         </form>
         """.format(
-            text_msg=Msg,
+            text_msg=error_msg,
             form_begin=app.begin_form('bulkmod', 'POST'),
             field_bulkmod_ctrl=app.form.field['bulkmod_ctrl'].input_html(default=app.form.field['bulkmod_ctrl'].value),
             input_fields=input_fields,
