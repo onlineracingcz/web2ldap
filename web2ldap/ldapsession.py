@@ -239,7 +239,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             retry_delay=LDAP0_RETRY_DELAY,
             cache_ttl=LDAP0_CACHE_TTL,
         ):
-        self._req_ctrls = {
+        self.req_ctrls = {
             # all LDAP operations
             '**all**': [],
             # all bind operations
@@ -272,14 +272,14 @@ class MyLDAPObject(ReconnectLDAPObject):
 
     def get_ctrls(self, method):
         all_s_ctrls = {}
-        for ctrl in self._req_ctrls[method]:
+        for ctrl in self.req_ctrls[method]:
             all_s_ctrls[ctrl.controlType] = ctrl
         return all_s_ctrls
 
     def add_server_control(self, method, ctrl):
         _s_ctrls = self.get_ctrls(method)
         _s_ctrls[ctrl.controlType] = ctrl
-        self._req_ctrls[method] = list(_s_ctrls.values())
+        self.req_ctrls[method] = list(_s_ctrls.values())
 
     def del_server_control(self, method, control_type):
         _s_ctrls = self.get_ctrls(method)
@@ -287,7 +287,7 @@ class MyLDAPObject(ReconnectLDAPObject):
             del _s_ctrls[control_type]
         except KeyError:
             pass
-        self._req_ctrls[method] = list(_s_ctrls.values())
+        self.req_ctrls[method] = list(_s_ctrls.values())
 
     def abandon(self, msgid, req_ctrls=None):
         return ReconnectLDAPObject.abandon(
@@ -295,8 +295,8 @@ class MyLDAPObject(ReconnectLDAPObject):
             msgid,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['abandon']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['abandon']
             ),
         )
 
@@ -308,9 +308,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             cred,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['**bind**']
-                + self._req_ctrls['simple_bind']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['**bind**']
+                + self.req_ctrls['simple_bind']
             ),
         )
 
@@ -328,9 +328,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             auth,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['**bind**']
-                + self._req_ctrls['sasl_interactive_bind_s']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['**bind**']
+                + self.req_ctrls['sasl_interactive_bind_s']
             ),
             sasl_flags
         )
@@ -342,9 +342,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             modlist,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['**write**']
-                + self._req_ctrls['add']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['**write**']
+                + self.req_ctrls['add']
             ),
         )
 
@@ -356,9 +356,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             value,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['**read**']
-                + self._req_ctrls['compare']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['**read**']
+                + self.req_ctrls['compare']
             ),
         )
 
@@ -368,9 +368,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             dn,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['**write**']
-                + self._req_ctrls['delete']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['**write**']
+                + self.req_ctrls['delete']
             ),
         )
 
@@ -381,9 +381,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             modlist,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['**write**']
-                + self._req_ctrls['modify']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['**write**']
+                + self.req_ctrls['modify']
             ),
         )
 
@@ -395,9 +395,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             newpw,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['**write**']
-                + self._req_ctrls['passwd']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['**write**']
+                + self.req_ctrls['passwd']
             ),
         )
 
@@ -410,9 +410,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             delold,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['**write**']
-                + self._req_ctrls['rename']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['**write**']
+                + self.req_ctrls['rename']
             ),
         )
 
@@ -438,9 +438,9 @@ class MyLDAPObject(ReconnectLDAPObject):
             attrsonly,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['**read**']
-                + self._req_ctrls['search']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['**read**']
+                + self.req_ctrls['search']
             ),
             timeout,
             sizelimit,
@@ -451,8 +451,8 @@ class MyLDAPObject(ReconnectLDAPObject):
             self,
             (
                 (req_ctrls or [])
-                + self._req_ctrls['**all**']
-                + self._req_ctrls['unbind']
+                + self.req_ctrls['**all**']
+                + self.req_ctrls['unbind']
             ),
         )
 

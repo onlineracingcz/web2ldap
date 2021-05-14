@@ -380,7 +380,7 @@ def w2l_bulkmod(app):
         bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
         conn_server_ctrls = {
             server_ctrl.controlType
-            for server_ctrl in app.ls.l._req_ctrls['**all**']+app.ls.l._req_ctrls['**write**']+app.ls.l._req_ctrls['modify']
+            for server_ctrl in app.ls.l.req_ctrls['**all**']+app.ls.l.req_ctrls['**write**']+app.ls.l.req_ctrls['modify']
         }
         bulkmod_server_ctrls = list({
             ldap0.controls.LDAPControl(ctrl_oid, True, None)
