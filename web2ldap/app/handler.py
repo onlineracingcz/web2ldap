@@ -655,7 +655,7 @@ class AppHandler(LogHelper):
                 conntype = int(self.form.getInputValue('conntype', [0])[0])
                 input_ldapurl.urlscheme = CONNTYPE2URLSCHEME[conntype]
                 input_ldapurl.hostport = self.form.getInputValue('host', [None])[0]
-                input_ldapurl.x_startTLS = str(
+                input_ldapurl.start_tls = str(
                     START_TLS_REQUIRED * (conntype == 1)
                 )
 

@@ -1407,7 +1407,7 @@ class LDAPSession:
         lu = ExtendedLDAPUrl(ldapUrl=self.uri)
         lu.dn = dn
         if self.startTLSOption:
-            lu.x_startTLS = str(START_TLS_REQUIRED * (self.startTLSOption > 0))
+            lu.start_tls = str(START_TLS_REQUIRED * (self.startTLSOption > 0))
         if add_login:
             if self.sasl_auth:
                 lu.sasl_mech = self.sasl_mech
