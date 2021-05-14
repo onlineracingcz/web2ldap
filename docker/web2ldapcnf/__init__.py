@@ -11,7 +11,7 @@ https://www.web2ldap.de/web2ldapcnf.html
 import os
 
 from web2ldap.log import logger
-from web2ldap import etc_dir, templates_dir
+from web2ldap import TEMPLATES_DIR
 
 #---------------------------------------------------------------------------
 # General options
@@ -65,10 +65,10 @@ httpenv_override = {
 #---------------------------------------------------------------------------
 
 # Template for initial connect dialogue
-connect_template = os.path.join(templates_dir, 'connect.html')
+connect_template = os.path.join(TEMPLATES_DIR, 'connect.html')
 
 # Template for redirect page
-redirect_template = os.path.join(templates_dir, 'redirect.html')
+redirect_template = os.path.join(TEMPLATES_DIR, 'redirect.html')
 
 # Separator to be used between internal web2ldap links in the middle area
 command_link_separator = ' &bull; '
