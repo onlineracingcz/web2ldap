@@ -463,8 +463,8 @@ class AppHandler(LogHelper):
             # Read entry if necessary
             if entry is None:
                 read_attrs = set(['objectClass'])
-                for oc in bound_as_templates.keys():
-                    read_attrs.update(GrabKeys(bound_as_templates[oc]).keys)
+                for ocl in bound_as_templates.keys():
+                    read_attrs.update(GrabKeys(bound_as_templates[ocl]).keys)
                 try:
                     user_res = self.ls.l.read_s(who, attrlist=read_attrs)
                 except ldap0.LDAPError:
@@ -477,10 +477,10 @@ class AppHandler(LogHelper):
             if entry:
                 display_entry = DisplayEntry(self, self.dn, self.schema, entry, 'read_sep', True)
                 user_structural_oc = display_entry.entry.get_structural_oc()
-                for oc in bound_as_templates.keys():
-                    if self.schema.get_oid(ObjectClass, oc) == user_structural_oc:
+                for ocl in bound_as_templates.keys():
+                    if self.schema.get_oid(ObjectClass, ocl) == user_structural_oc:
                         try:
-                            result = bound_as_templates[oc] % display_entry
+                            result = bound_as_templates[ocl] % display_entry
                         except KeyError:
                             pass
         else:
