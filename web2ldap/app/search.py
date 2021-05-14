@@ -341,7 +341,7 @@ def w2l_search(app):
     if search_submit != u'Search' and searchform_mode == 'adv':
         w2l_searchform(
             app,
-            Msg='',
+            msg='',
             filterstr=u'',
             scope=scope
         )
@@ -397,7 +397,7 @@ def w2l_search(app):
     if not search_filter:
         w2l_searchform(
             app,
-            Msg='Empty search values.',
+            msg='Empty search values.',
             filterstr=u'',
             scope=scope
         )
@@ -529,7 +529,7 @@ def w2l_search(app):
                 searchform_mode = u'adv'
             w2l_searchform(
                 app,
-                Msg='For table-structured export you have to define the attributes to be read!',
+                msg='For table-structured export you have to define the attributes to be read!',
                 filterstr=filterstr,
                 scope=scope,
                 search_root=search_root,
@@ -562,7 +562,7 @@ def w2l_search(app):
         # Give the user a chance to edit his bad search filter
         w2l_searchform(
             app,
-            Msg=' '.join((
+            msg=' '.join((
                 app.ldap_error_msg(err),
                 s2d(filterstr2),
             )),
@@ -610,7 +610,7 @@ def w2l_search(app):
             # Give the user a chance to edit his bad search filter
             w2l_searchform(
                 app,
-                Msg=app.ldap_error_msg(err),
+                msg=app.ldap_error_msg(err),
                 filterstr=filterstr,
                 scope=scope
             )
@@ -621,7 +621,7 @@ def w2l_search(app):
                 # Give the user a chance to edit his bad search filter
                 w2l_searchform(
                     app,
-                    Msg=app.ldap_error_msg(err),
+                    msg=app.ldap_error_msg(err),
                     filterstr=filterstr,
                     scope=scope
                 )

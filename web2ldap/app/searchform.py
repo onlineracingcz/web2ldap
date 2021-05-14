@@ -205,7 +205,7 @@ def search_form_adv(app):
 
 def w2l_searchform(
         app,
-        Msg='',
+        msg='',
         filterstr='',
         scope=ldap0.SCOPE_SUBTREE,
         search_root=None,
@@ -213,8 +213,8 @@ def w2l_searchform(
     ):
     """Output a search form"""
 
-    if Msg:
-        msg_html = '<p class="ErrorMessage">%s</p>' % (Msg)
+    if msg:
+        msg_html = '<p class="ErrorMessage">%s</p>' % (msg)
     else:
         msg_html = ''
 
