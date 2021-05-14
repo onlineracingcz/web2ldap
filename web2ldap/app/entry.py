@@ -145,10 +145,10 @@ class DisplayEntry(UserDict):
         if structural_oc:
             object_class_oid_set.add(structural_oc)
         # Now add the other AUXILIARY and ABSTRACT object classes
-        for oc in all_object_class_oid_set:
-            oc_obj = self.entry._s.get_obj(ldap0.schema.models.ObjectClass, oc)
-            if oc_obj is None or oc_obj.kind != 0:
-                object_class_oid_set.add(oc)
+        for ocl in all_object_class_oid_set:
+            ocl_obj = self.entry._s.get_obj(ldap0.schema.models.ObjectClass, ocl)
+            if ocl_obj is None or ocl_obj.kind != 0:
+                object_class_oid_set.add(ocl)
         template_oc = object_class_oid_set.intersection(read_template_dict.data.keys())
         return template_oc.names, read_template_dict
         # end of get_html_templates()
@@ -165,11 +165,11 @@ class DisplayEntry(UserDict):
         used_templates = set()
         displayed_attrs = set()
         for oc_set in (structural_oc, abstract_oc, auxiliary_oc):
-            for oc in oc_set:
-                read_template_filename = read_template_dict[oc]
-                logger.debug('Template file name %r defined for %r', read_template_dict[oc], oc)
+            for ocl in oc_set:
+                read_template_filename = read_template_dict[ocl]
+                logger.debug('Template file name %r defined for %r', read_template_dict[ocl], ocl)
                 if not read_template_filename:
-                    logger.warning('Ignoring empty template file name for %r', oc)
+                    logger.warning('Ignoring empty template file name for %r', ocl)
                     continue
                 read_template_filename = get_variant_filename(
                     read_template_filename,
@@ -179,8 +179,8 @@ class DisplayEntry(UserDict):
                     # template already processed
                     logger.debug(
                         'Skipping already processed template file name %r for %r',
-                        read_template_dict[oc],
-                        oc,
+                        read_template_dict[ocl],
+                        ocl,
                     )
                     continue
                 used_templates.add(read_template_filename)
@@ -190,8 +190,8 @@ class DisplayEntry(UserDict):
                 except IOError as err:
                     logger.error(
                         'Error reading template file %r for %r: %s',
-                        read_template_dict[oc],
-                        oc,
+                        read_template_dict[ocl],
+                        ocl,
                         err,
                     )
                     continue
@@ -413,11 +413,11 @@ class InputFormEntry(DisplayEntry):
         )
         seen_attr_type_oids = ldap0.cidict.CIDict()
         attr_type_names = ldap0.cidict.CIDict()
-        for a in self.entry.keys():
-            at_oid = self.entry.name2key(a)[0]
+        for atype in self.entry.keys():
+            at_oid = self.entry.name2key(atype)[0]
             if at_oid in attr_types_dict:
                 seen_attr_type_oids[at_oid] = None
-                attr_type_names[a] = None
+                attr_type_names[atype] = None
         for at_oid, at_se in attr_types_dict.items():
             if (
                     at_se and
@@ -477,8 +477,8 @@ class InputFormEntry(DisplayEntry):
         return displayed_attrs # template_output()
 
     def ldif_input(self):
-        f = BytesIO()
-        ldif_writer = LDIFWriter(f)
+        bio = BytesIO()
+        ldif_writer = LDIFWriter(bio)
         ldap_entry = {}
         for attr_type in self.entry.keys():
             attr_values = self.entry.__getitem__(attr_type)
@@ -492,7 +492,7 @@ class InputFormEntry(DisplayEntry):
         self._app.outf.write(
             INPUT_FORM_LDIF_TMPL.format(
                 value_ldif=self._app.form.s2d(
-                    f.getvalue().decode('utf-8'),
+                    bio.getvalue().decode('utf-8'),
                     sp_entity='  ',
                     lf_entity='\n',
                 ),
