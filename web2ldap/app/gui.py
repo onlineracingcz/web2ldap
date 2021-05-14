@@ -45,6 +45,9 @@ host_pattern = r'[a-zA-Z0-9_.:\[\]-]+'
 
 HIDDEN_FIELD = '<input type="hidden" name="%s" value="%s">%s\n'
 
+HTML_OFF_S = {False:'', True:'<!--'}
+HTML_OFF_E = {False:'', True:'-->'}
+
 HTML_FOOTER = """
   <p class="ScrollLink">
     <a href="#web2ldap_top">&uarr; TOP</a>

@@ -23,7 +23,15 @@ from ..ldapsession import CONTROL_RELAXRULES
 from ..ldaputil.passwd import user_password_hash, AVAIL_USERPASSWORD_SCHEMES
 from .form import Web2LDAPFormPasswd
 from . import ErrorExit
-from .gui import context_menu_single_entry, footer, main_menu, read_template, top_section
+from .gui import (
+    context_menu_single_entry,
+    footer,
+    main_menu,
+    read_template,
+    top_section,
+    HTML_OFF_S,
+    HTML_OFF_E,
+)
 from .login import w2l_login
 
 
@@ -38,7 +46,6 @@ PASSWD_USERPASSWORD_OBJECT_CLASSES = (
     'simpleSecurityObject',
     'simpleAuthObject',
 )
-
 
 def get_all_attributes(schema, oc_list):
     """
@@ -216,19 +223,21 @@ def passwd_form(
         value_passwd_who=app.form.hidden_field_html('passwd_who', passwd_who, ''),
         text_desc={False:'Change password for', True:'Change own password of'}[own_pwd_change],
         text_whoami=app.display_authz_dn(passwd_who),
-        disable_oldpw_start={False:'', True:'<!--'}[not own_pwd_change],
-        disable_oldpw_end={False:'', True:'-->'}[not own_pwd_change],
-        disable_ownuser_start={False:'', True:'<!--'}[own_pwd_change],
-        disable_ownuser_end={False:'', True:'-->'}[own_pwd_change],
-        disable_clientsidehashing_start={False:'', True:'<!--'}[not show_clientside_pw_fields],
-        disable_clientsidehashing_end={False:'', True:'-->'}[not show_clientside_pw_fields],
-        disable_syncnthash_start={False:'', True:'<!--'}[not (show_clientside_pw_fields and nthash_available)],
-        disable_syncnthash_end={False:'', True:'-->'}[not (show_clientside_pw_fields and nthash_available)],
-        disable_settimesync_start={False:'', True:'<!--'}[own_pwd_change or not show_clientside_pw_fields],
-        disable_settimesync_end={False:'', True:'-->'}[own_pwd_change or not show_clientside_pw_fields],
+        disable_oldpw_start=HTML_OFF_S[not own_pwd_change],
+        disable_oldpw_end=HTML_OFF_E[not own_pwd_change],
+        disable_ownuser_start=HTML_OFF_S[own_pwd_change],
+        disable_ownuser_end=HTML_OFF_E[own_pwd_change],
+        disable_clientsidehashing_start=HTML_OFF_S[not show_clientside_pw_fields],
+        disable_clientsidehashing_end=HTML_OFF_E[not show_clientside_pw_fields],
+        disable_syncnthash_start=HTML_OFF_S[not (show_clientside_pw_fields and nthash_available)],
+        disable_syncnthash_end=HTML_OFF_E[not (show_clientside_pw_fields and nthash_available)],
+        disable_settimesync_start=HTML_OFF_S[own_pwd_change or not show_clientside_pw_fields],
+        disable_settimesync_end=HTML_OFF_E[own_pwd_change or not show_clientside_pw_fields],
         form_field_passwd_scheme=app.form.field['passwd_scheme'].input_html(),
         form_field_passwd_ntpasswordsync=app.form.field['passwd_ntpasswordsync'].input_html(),
-        form_field_passwd_settimesync=app.form.field['passwd_settimesync'].input_html(checked=(not own_pwd_change)),
+        form_field_passwd_settimesync=app.form.field['passwd_settimesync'].input_html(
+            checked=(not own_pwd_change)
+        ),
     ))
 
     footer(app)
