@@ -22,16 +22,16 @@ def get_variant_filename(pathname, variantlist):
     returns variant filename
     """
     checked_set = set()
-    for v in variantlist:
+    for val in variantlist:
         # Strip subtags
-        v = v.lower().split('-', 1)[0]
-        if v == 'en':
+        val = val.lower().split('-', 1)[0]
+        if val == 'en':
             variant_filename = pathname
         else:
-            variant_filename = '.'.join((pathname, v))
-        if v not in checked_set and os.path.isfile(variant_filename):
+            variant_filename = '.'.join((pathname, val))
+        if val not in checked_set and os.path.isfile(variant_filename):
             break
-        checked_set.add(v)
+        checked_set.add(val)
     else:
         variant_filename = pathname
     return variant_filename
