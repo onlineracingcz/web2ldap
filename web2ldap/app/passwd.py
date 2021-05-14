@@ -142,11 +142,11 @@ def passwd_context_menu(app):
     return result
 
 
-def password_self_change(ls, dn):
+def password_self_change(who, dn):
     """
     returns True, if user changes own password
     """
-    return (ls.who is None) or (ls.who == dn)
+    return (who is None) or (who == dn)
 
 
 def passwd_form(
@@ -174,7 +174,7 @@ def passwd_form(
     unicode_pwd_avail = '1.2.840.113556.1.4.90' in app.schema.sed[AttributeType]
 
     # Determine whether user changes own password
-    own_pwd_change = password_self_change(app.ls, passwd_who)
+    own_pwd_change = password_self_change(app.ls.who, passwd_who)
 
     all_attrs = get_all_attributes(app.schema, user_objectclasses)
 
@@ -251,11 +251,16 @@ def w2l_passwd(app):
     passwd_action = app.form.getInputValue('passwd_action', [None])[0] or passwd_action_default
     passwd_who = app.form.getInputValue('passwd_who', [app.dn])[0]
 
-    user = app.ls.l.read_s(passwd_who, attrlist=['objectClass'])
+    try:
+        user = app.ls.l.read_s(passwd_who, attrlist=['objectClass'])
+    except ldap0.INSUFFICIENT_ACCESS:
+        user_entry = {}
+    else:
+        user_entry = user.entry_s
     user_objectclasses = SchemaElementOIDSet(
         app.schema,
         ObjectClass,
-        user.entry_s.get('objectClass', []),
+        user_entry.get('objectClass', []),
     )
 
     if 'passwd_newpasswd' not in app.form.input_field_names:
@@ -394,7 +399,7 @@ def w2l_passwd(app):
             if old_password:
                 old_passwd_value = user_password_hash(old_password.encode(app.ls.charset), '')
 
-        if password_self_change(app.ls, passwd_who) and old_password:
+        if password_self_change(app.ls.who, passwd_who) and old_password:
             passwd_modlist.extend((
                 (
                     ldap0.MOD_DELETE,
@@ -487,7 +492,7 @@ def w2l_passwd(app):
             return
 
     # Check if relogin is necessary
-    if password_self_change(app.ls, passwd_who):
+    if password_self_change(app.ls.who, passwd_who):
         # Force current connection to anonymous
         try:
             app.ls.l.reconnect(app.ls.uri, reset_last_bind=True)
