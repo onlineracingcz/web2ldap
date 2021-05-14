@@ -81,7 +81,7 @@ class Field:
         # This is set by Form.add() to something meaningful.
         self._charset = 'utf-8'
         self.set_default(default)
-        self.setRegex(pattern)
+        self.set_regex(pattern)
 
     def _accesskey_attr(self):
         if not self.accesskey:
@@ -125,7 +125,7 @@ class Field:
             return pattern, 0
         raise TypeError('Expected pattern to be None, str or tuple, got %r' % (pattern,))
 
-    def setRegex(self, pattern: str):
+    def set_regex(self, pattern: str):
         """
         Set the regex pattern for validating this field.
 
@@ -244,15 +244,15 @@ class Textarea(Field):
         self.cols = cols
         Field.__init__(self, name, text, maxLen, maxValues, None, required, default, accesskey)
 
-    def setRegex(self, pattern: str):
+    def set_regex(self, pattern: str):
         """
-        Like Field.setRegex() but pattern options re.S and re.M are
+        Like Field.set_regex() but pattern options re.S and re.M are
         automatically added.
         """
         patternstring, patternoptions = self._regex_with_options(pattern)
         # This is a Unicode input field
         patternoptions = patternoptions | re.M | re.S
-        Field.setRegex(self, (patternstring, patternoptions))
+        Field.set_regex(self, (patternstring, patternoptions))
 
     def input_html(self, default=None, id_value=None, title=None):
         """Returns string with HTML input field."""
@@ -321,7 +321,7 @@ class HiddenInput(Input):
 
 class BytesInput(Input):
 
-    def setRegex(self, pattern: str):
+    def set_regex(self, pattern: str):
         """
         Set the bytes regex pattern for validating this field.
         """

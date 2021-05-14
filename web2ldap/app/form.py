@@ -959,7 +959,7 @@ class ObjectClassSelect(Select):
             ignoreCase=1,
             multiSelect=1
         )
-        self.setRegex('[\\w]+')
+        self.set_regex('[\\w]+')
         self.maxLen = 200
         # end of ObjectClassSelect()
 
