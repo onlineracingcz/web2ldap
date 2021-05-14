@@ -171,12 +171,11 @@ def w2l_add(app):
         raise ErrorExit(
             (
                 '%s<br>'
-                'Probably this superiour entry does not exist:<br>'
-                '%s<br>'
-                'Maybe wrong base DN in LDIF template?<br>'
+                'Probably this superiour entry does not exist: %s<br>'
+                'Maybe wrong base DN in LDIF template?'
             ) % (
                 app.ldap_error_msg(err),
-                app.display_dn(add_basedn.decode(app.ls.charset), links=False),
+                app.display_dn(add_basedn, links=False),
             )
         )
     except (
