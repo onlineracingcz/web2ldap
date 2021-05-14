@@ -85,7 +85,7 @@ FILTERSTR_FIELDSET_TMPL = """
 """
 
 
-def SearchForm_exp(app, filterstr=''):
+def search_form_exp(app, filterstr=''):
     """
     Output expert search form
     """
@@ -95,10 +95,10 @@ def SearchForm_exp(app, filterstr=''):
         app.form.field['filterstr'].size,
         app.form.s2d(filterstr),
     )
-    return result # SearchForm_exp()
+    return result
 
 
-def SearchForm_base(app, searchform_template_name):
+def search_form_base(app, searchform_template_name):
     """
     Output basic search form based on a HTML template configured
     with host-specific configuration parameter searchform_template
@@ -111,10 +111,10 @@ def SearchForm_base(app, searchform_template_name):
     )
     with open(searchform_template_filename, 'rb') as fileobj:
         template_str = fileobj.read().decode('utf-8')
-    return template_str # SearchForm_base()
+    return template_str
 
 
-def SearchForm_adv(app):
+def search_form_adv(app):
     """advanced search form with select lists"""
 
     search_submit = app.form.getInputValue('search_submit', [u''])[0]
@@ -200,7 +200,7 @@ def SearchForm_adv(app):
         search_mode_select.input_html(),
         '\n'.join(search_fields_html_list),
     )
-    return result # SearchForm_adv()
+    return result
 
 
 def w2l_searchform(
@@ -266,21 +266,21 @@ def w2l_searchform(
     if searchform_mode == u'base':
         # base search form with fixed input fields
         try:
-            inner_searchform_html = SearchForm_base(app, searchform_template_name)
+            inner_searchform_html = search_form_base(app, searchform_template_name)
         except IOError as err:
             logger.warning('Error loading search form template: %s', err)
             msg_html = '\n'.join((
                 msg_html,
                 '<p class="ErrorMessage">I/O error while loading search form template!</p>'
             ))
-            inner_searchform_html = SearchForm_adv(app)
+            inner_searchform_html = search_form_adv(app)
             searchform_mode = u'adv'
     elif searchform_mode == u'exp':
         # expert search form with single filter input field
-        inner_searchform_html = SearchForm_exp(app, filterstr)
+        inner_searchform_html = search_form_exp(app, filterstr)
     elif searchform_mode == u'adv':
         # base search form with fixed input fields
-        inner_searchform_html = SearchForm_adv(app)
+        inner_searchform_html = search_form_adv(app)
 
     searchoptions_template_filename = get_variant_filename(
         app.cfg_param('searchoptions_template', None),
