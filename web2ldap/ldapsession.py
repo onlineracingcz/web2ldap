@@ -542,7 +542,7 @@ class LDAPSession:
         'uc_decode',
         'uc_encode',
         'uri',
-        'userEntry',
+        'user_entry',
         'vendorName',
         'vendorVersion',
         'who',
@@ -573,7 +573,7 @@ class LDAPSession:
         self.sasl_mech = None
         self.sasl_auth = None
         self.who = None
-        self.userEntry = {}
+        self.user_entry = {}
         self.startTLSOption = 0
         self._schema_dn_cache = {}
         self._schema_cache = {}
@@ -1322,16 +1322,16 @@ class LDAPSession:
                     cache_ttl=-1.0,
                 )
             except (ldap0.LDAPError, IndexError):
-                self.userEntry = {}
+                self.user_entry = {}
             else:
                 if user_res is None:
-                    self.userEntry = {}
+                    self.user_entry = {}
                 else:
-                    self.userEntry = user_res.entry_as
+                    self.user_entry = user_res.entry_as
                     # replace DN because Who Am I? ext.op. could have returned case-folded form
                     self.who = user_res.dn_s
         else:
-            self.userEntry = {}
+            self.user_entry = {}
         # end of bind()
 
     def get_governing_structure_rule(self, dn, schema):

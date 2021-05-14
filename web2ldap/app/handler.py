@@ -452,7 +452,7 @@ class AppHandler(LogHelper):
         if who is None:
             if hasattr(self.ls, 'who') and self.ls.who:
                 who = self.ls.who
-                entry = self.ls.userEntry
+                entry = self.ls.user_entry
             else:
                 return 'anonymous'
         if ldap0.dn.is_dn(who):
