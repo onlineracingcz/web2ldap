@@ -431,7 +431,8 @@ def w2l_read(app):
 
         # Templates defined => display the entry with the help of a template
         try:
-            template_str = open(vcard_template_filename, 'rb').read()
+            with open(vcard_template_filename, 'rb') as fileobj:
+                template_str = fileobj.read()
         except IOError:
             raise ErrorExit(u'I/O error during reading vCard template file!')
 
