@@ -2140,6 +2140,9 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
     oid: str = 'DerefDynamicDNSelectList-oid'
 
     def _get_ref_entry(self, dn: str, attrlist=None) -> dict:
+        if self._app.command == 'add':
+            # adding new entry
+            return DynamicDNSelectList._get_ref_entry(self, dn, attrlist)
         deref_crtl = DereferenceControl(
             True,
             {self._at: self.lu_obj.attrs or ['entryDN']}
