@@ -314,7 +314,7 @@ class AEUserUid(AEUid):
     max_len: int = 4
     maxCollisionChecks: int = 15
     UID_LETTERS = 'abcdefghijklmnopqrstuvwxyz'
-    pattern = re.compile('^%s$' % (UID_LETTERS))
+    pattern = re.compile('^[{}]+$'.format(UID_LETTERS))
     genLen = 4
     sani_funcs = (
         bytes.strip,
