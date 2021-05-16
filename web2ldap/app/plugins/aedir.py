@@ -314,7 +314,7 @@ class AEUserUid(AEUid):
     max_len: int = 4
     maxCollisionChecks: int = 15
     UID_LETTERS = 'abcdefghijklmnopqrstuvwxyz'
-    reobj = re.compile('^%s$' % (UID_LETTERS))
+    pattern = re.compile('^%s$' % (UID_LETTERS))
     genLen = 4
     sani_funcs = (
         bytes.strip,
@@ -609,7 +609,6 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
     desc: str = 'AE-DIR: username (uid) of member of a group'
     ldap_url = None
     show_val_button = False
-    reobj = AEUserUid.reobj
 
     def _member_uids_from_member(self):
         return [
@@ -620,9 +619,9 @@ class AEMemberUid(MemberUID, AEObjectMixIn):
     def _validate(self, attr_value: bytes) -> bool:
         """
         Because AEMemberUid.transmute() always resets all attribute values it's
-        ok to not validate values thoroughly
+        ok to not validate values at all
         """
-        return IA5String._validate(self, attr_value)
+        return True
 
     def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         if 'member' not in self._entry:
@@ -2360,7 +2359,6 @@ class AESudoHost(IA5String):
     oid: str = 'AESudoHost-oid'
     desc: str = 'AE-DIR: sudoHost'
     max_values = 1
-    reobj = re.compile('^ALL$')
 
     def transmute(self, attr_values: List[bytes]) -> List[bytes]:
         return [b'ALL']
