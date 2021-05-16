@@ -325,8 +325,8 @@ class AEUserUid(AEUid):
         IA5String.__init__(self, app, dn, schema, attrType, attr_value, entry=entry)
 
     def _gen_uid(self):
-        gen_collisions = 0
-        while gen_collisions < self.maxCollisionChecks:
+        uid_candidates = []
+        while len(uid_candidates) < self.maxCollisionChecks:
             # generate new random UID candidate
             uid_candidate = random_string(alphabet=self.UID_LETTERS, length=self.genLen)
             # check whether UID candidate already exists
@@ -337,10 +337,22 @@ class AEUserUid(AEUid):
                 attrlist=['1.1'],
             )
             if not uid_result:
+                logger.info(
+                    'Generated aeUser-uid after %d collisions: %r',
+                    uid_candidate,
+                    len(uid_candidates),
+                )
                 return uid_candidate
-            gen_collisions += 1
+            uid_candidates.append(uid_candidate)
+        logger.error(
+            'Generating aeUser-uid stopped after %d collisions. Tried candidates: %r',
+            len(uid_candidates),
+            uid_candidates,
+        )
         raise ErrorExit(
-            'Gave up generating new unique <em>uid</em> after %d attempts.' % (gen_collisions)
+            'Gave up generating new unique <em>uid</em> after {0:d} attempts.'.format(
+                len(uid_candidates),
+            )
         )
         # end of _gen_uid()
 
