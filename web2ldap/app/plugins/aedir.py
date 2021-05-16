@@ -15,6 +15,7 @@ from typing import Dict, List, Optional
 import ldap0
 import ldap0.filter
 from ldap0.filter import escape_str as escape_filter_str
+from ldap0.functions import strf_secs as ldap0_strf_secs
 from ldap0.pw import random_string
 from ldap0.controls.readentry import PreReadControl
 from ldap0.controls.deref import DereferenceControl
@@ -91,18 +92,10 @@ def ae_validity_filter(secs=None):
         secs = time.time()
     return (
         '(&'
-          '(|'
-            '(!(aeNotBefore=*))'
-            '(aeNotBefore<={0})'
-          ')'
-          '(|'
-            '(!(aeNotAfter=*))'
-            '(aeNotAfter>={0})'
-          ')'
+          '(|(!(aeNotBefore=*))(aeNotBefore<={0}))'
+          '(|(!(aeNotAfter=*))(aeNotAfter>={0}))'
         ')'
-    ).format(
-        time.strftime('%Y%m%d%H%M%SZ', time.gmtime(secs))
-    )
+    ).format(ldap0_strf_secs(secs))
 
 
 class AEObjectMixIn:
