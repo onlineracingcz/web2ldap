@@ -168,7 +168,7 @@ class Field:
         if len(self.value) >= self.maxValues:
             raise TooManyValues(self.name, self.text, len(self.value), self.maxValues)
 
-    def _decodeValue(self, value):
+    def _decode_val(self, value):
         """
         Return str to be stored in self.value
         """
@@ -190,7 +190,7 @@ class Field:
             'Expected value to be str or bytes, was %r' % (value,)
         )
         if isinstance(value, bytes):
-            value = self._decodeValue(value)
+            value = self._decode_val(value)
         # Length valid?
         self._validate_len(value)
         # Format valid?
@@ -208,17 +208,17 @@ class Field:
         """Set the character set used for the field"""
         self._charset = charset
 
-    def _defaultValue(self, default):
+    def _default_val(self, default):
         """returns default value"""
         return default or getattr(self, 'default', '')
 
-    def titleHTML(self, title):
+    def title_attr(self, title):
         """HTML output of default."""
         return escape_html(title or self.text)
 
     def _default_html(self, default):
         """HTML output of default."""
-        return escape_html(self._defaultValue(default))
+        return escape_html(self._default_val(default))
 
 
 class Textarea(Field):
@@ -258,7 +258,7 @@ class Textarea(Field):
         """Returns string with HTML input field."""
         return '<textarea %stitle="%s" name="%s" %s rows="%d" cols="%d">%s</textarea>' % (
             self.id_attr(id_value),
-            self.titleHTML(title),
+            self.title_attr(title),
             self.name,
             self._accesskey_attr(),
             self.rows,
@@ -300,7 +300,7 @@ class Input(Field):
             pattern_attr = ''
         return '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d"%s%s value="%s">' % (
             self.id_attr(id_value),
-            self.titleHTML(title),
+            self.title_attr(title),
             self.name,
             self._accesskey_attr(),
             self.maxLen,
@@ -337,7 +337,7 @@ class BytesInput(Input):
                 patternoptions,
             )
 
-    def _decodeValue(self, value):
+    def _decode_val(self, value):
         return value
 
 
@@ -352,7 +352,7 @@ class File(Input):
         """Binary data is assumed to be valid all the time"""
         return
 
-    def _decodeValue(self, value):
+    def _decode_val(self, value):
         """
         Return bytes to be stored in self.value
         """
@@ -361,7 +361,7 @@ class File(Input):
     def input_html(self, default=None, id_value=None, title=None, mimeType=None):
         return '<input type="file" %stitle="%s" name="%s" %s accept="%s">' % (
             self.id_attr(id_value),
-            self.titleHTML(title),
+            self.title_attr(title),
             self.name,
             self._accesskey_attr(),
             mimeType or self.mimeType
@@ -431,7 +431,7 @@ class Radio(Field):
 
     def input_html(self, default=None, id_value=None, title=None):
         s = []
-        default_value = self._defaultValue(default)
+        default_value = self._default_val(default)
         for i in self.options:
             if isinstance(i, tuple):
                 optionValue, optionText = i
@@ -450,7 +450,7 @@ class Radio(Field):
                 >%s<br>
                 """ % (
                     self.id_attr(id_value),
-                    self.titleHTML(title),
+                    self.title_attr(title),
                     self.name.encode(self.charset),
                     self._accesskey_attr(),
                     optionValue.encode(self.charset),
@@ -527,7 +527,7 @@ class Select(Radio):
         self.ignoreCase = ignoreCase
         Radio.__init__(self, name, text, maxValues, required, default, accesskey, options)
 
-    def _defaultValue(self, default):
+    def _default_val(self, default):
         """returns default value"""
         if default:
             return default
@@ -538,13 +538,13 @@ class Select(Radio):
     def input_html(self, default=None, id_value=None, title=None):
         res = ['<select %stitle="%s" name="%s" %s  size="%d" %s>' % (
             self.id_attr(id_value),
-            self.titleHTML(title),
+            self.title_attr(title),
             self.name,
             self._accesskey_attr(),
             self.size,
             " multiple"*(self.multiSelect > 0)
         )]
-        default_value = self._defaultValue(default)
+        default_value = self._default_val(default)
         for i in self.options:
             if isinstance(i, tuple):
                 try:
@@ -613,7 +613,7 @@ class DataList(Input, Select):
         s = [
             '<input %stitle="%s" name="%s" %s maxlength="%d" size="%d" value="%s" list="%s">' % (
                 self.id_attr(id_value),
-                self.titleHTML(title),
+                self.title_attr(title),
                 self.name,
                 self._accesskey_attr(),
                 self.maxLen,
@@ -662,7 +662,7 @@ class Checkbox(Field):
             checked = self.checked
         return '<input type="checkbox" %stitle="%s" name="%s" %s value="%s"%s>' % (
             self.id_attr(id_value),
-            self.titleHTML(title),
+            self.title_attr(title),
             self.name,
             self._accesskey_attr(),
             self._default_html(default),
