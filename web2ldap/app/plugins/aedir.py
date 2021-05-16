@@ -14,6 +14,7 @@ from typing import Dict, List, Optional
 # from ldap0 package
 import ldap0
 import ldap0.filter
+from ldap0.filter import escape_str as escape_filter_str
 from ldap0.pw import random_string
 from ldap0.controls.readentry import PreReadControl
 from ldap0.controls.deref import DereferenceControl
@@ -333,7 +334,7 @@ class AEUserUid(AEUid):
             uid_result = self._app.ls.l.search_s(
                 str(self._app.naming_context),
                 ldap0.SCOPE_SUBTREE,
-                '(uid=%s)' % (ldap0.filter.escape_str(uid_candidate)),
+                '(uid=%s)' % (escape_filter_str(uid_candidate)),
                 attrlist=['1.1'],
             )
             if not uid_result:
@@ -859,7 +860,7 @@ class AESrvGroup(AESrvGroupDN, AESameZoneObject):
         filter_str = self.lu_obj.filterstr or '(objectClass=aeSrvGroup)'
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
-            ldap0.filter.escape_str(str(self.dn.parent())),
+            escape_filter_str(str(self.dn.parent())),
         )
 
 
@@ -898,7 +899,7 @@ class AEProxyFor(AESrvGroupDN, AESameZoneObject):
         filter_str = self.lu_obj.filterstr or '(objectClass=*)'
         return '(&%s(!(entryDN=%s)))' % (
             filter_str,
-            ldap0.filter.escape_str(self._dn),
+            escape_filter_str(self._dn),
         )
 
 syntax_registry.reg_at(
@@ -1021,7 +1022,7 @@ class AEEntryDNAEHost(DistinguishedName):
                             '(&(|(objectClass=aeHost)(objectClass=aeService))'
                             '(|(entryDN:dnSubordinateMatch:=%s)%s))'
                         ) % (
-                            ldap0.filter.escape_str(str(self.dn.parent())),
+                            escape_filter_str(str(self.dn.parent())),
                             aesrvgroup_filter,
                         )
                     ),
@@ -1629,7 +1630,7 @@ class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
               '(aePerson=%s)'
               '(mailLocalAddress=*)'
             ')'
-        ) % ldap0.filter.escape_str(self._dn)
+        ) % escape_filter_str(self._dn)
 
 syntax_registry.reg_at(
     AEPersonMailaddress.oid, [
@@ -2427,7 +2428,7 @@ class AEOathHOTPToken(OathHOTPToken):
         if 'aePerson' in self._entry:
             return '(&{0}(aeOwner={1}))'.format(
                 OathHOTPToken._filterstr(self),
-                ldap0.filter.escape_str(
+                escape_filter_str(
                     self._entry['aePerson'][0].decode(self._app.form.accept_charset)
                 ),
             )
