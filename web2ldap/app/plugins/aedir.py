@@ -100,7 +100,7 @@ def ae_validity_filter(secs=None):
 
 class AEObjectMixIn:
     """
-    utility mix-in class
+    utility mix-in class for all aeObject entries
     """
 
     @property
@@ -139,6 +139,9 @@ class AEObjectMixIn:
 
 
 class AEHomeDirectory(HomeDirectory):
+    """
+    Plugin for attribute 'homeDirectory' in aeUser and aeService entries
+    """
     oid: str = 'AEHomeDirectory-oid'
     # all valid directory prefixes for attribute 'homeDirectory'
     # but without trailing slash
@@ -196,6 +199,9 @@ syntax_registry.reg_at(
 
 
 class AEUIDNumber(UidNumber):
+    """
+    Plugin for attribute 'uidNumber' in aeUser and aeService entries
+    """
     oid: str = 'AEUIDNumber-oid'
     desc: str = 'numeric Unix-UID'
 
@@ -224,6 +230,9 @@ syntax_registry.reg_at(
 
 
 class AEGIDNumber(GidNumber):
+    """
+    Plugin for attribute 'gidNumber' in aeUser, aeGroup and aeService entries
+    """
     oid: str = 'AEGIDNumber-oid'
     desc: str = 'numeric Unix-GID'
     minNewValue = 30000
@@ -290,6 +299,9 @@ syntax_registry.reg_at(
 
 
 class AEUid(IA5String):
+    """
+    Base class for attribute 'uid' mainly for sanitizing input values
+    """
     oid: str = 'AEUid-oid'
     sani_funcs = (
         bytes.strip,
@@ -378,6 +390,9 @@ syntax_registry.reg_at(
 
 
 class AEServiceUid(AEUid):
+    """
+    Plugin for attribute 'uid' in aeService entries
+    """
     oid: str = 'AEServiceUid-oid'
 
 syntax_registry.reg_at(
@@ -391,6 +406,9 @@ syntax_registry.reg_at(
 
 
 class AETicketId(IA5String):
+    """
+    Plugin for attribute 'aeTicketId' in all aeObject entries
+    """
     oid: str = 'AETicketId-oid'
     desc: str = 'AE-DIR: Ticket no. related to last change of entry'
     sani_funcs = (
@@ -406,6 +424,9 @@ syntax_registry.reg_at(
 
 
 class AEZoneDN(DerefDynamicDNSelectList):
+    """
+    Plugin for attributes holding DNs of aeZone entries
+    """
     oid: str = 'AEZoneDN-oid'
     desc: str = 'AE-DIR: Zone'
     input_fallback = False # no fallback to normal input field
@@ -422,6 +443,9 @@ syntax_registry.reg_at(
 
 
 class AEHost(DerefDynamicDNSelectList):
+    """
+    Plugin for attribute 'host' in aeHost entries
+    """
     oid: str = 'AEHost-oid'
     desc: str = 'AE-DIR: Host'
     input_fallback = False # no fallback to normal input field
@@ -438,6 +462,9 @@ syntax_registry.reg_at(
 
 
 class AENwDevice(DerefDynamicDNSelectList):
+    """
+    Plugin for attributes holding DNs of aeNwDevice entries
+    """
     oid: str = 'AENwDevice-oid'
     desc: str = 'AE-DIR: network interface'
     input_fallback = False # no fallback to normal input field
@@ -469,6 +496,9 @@ syntax_registry.reg_at(
 
 
 class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
+    """
+    Plugin for attribute 'member' in aeGroup entries
+    """
     oid: str = 'AEGroupMember-oid'
     desc: str = 'AE-DIR: Member of a group'
     input_fallback = False # no fallback to normal input field
@@ -592,6 +622,9 @@ syntax_registry.reg_at(
 
 
 class AEMailGroupMember(AEGroupMember):
+    """
+    Plugin for attribute 'member' in aeMailGroup entries
+    """
     oid: str = 'AEMailGroupMember-oid'
     desc: str = 'AE-DIR: Member of a mail group'
     input_fallback = False # no fallback to normal input field
@@ -611,6 +644,9 @@ syntax_registry.reg_at(
 
 
 class AEMemberUid(MemberUID, AEObjectMixIn):
+    """
+    Plugin for attribute 'memberUid' in aeGroup entries
+    """
     oid: str = 'AEMemberUid-oid'
     desc: str = 'AE-DIR: username (uid) of member of a group'
     ldap_url = None
@@ -663,6 +699,9 @@ syntax_registry.reg_at(
 
 
 class AEGroupDN(DerefDynamicDNSelectList):
+    """
+    Plugin for attribute 'memberOf' in group member entries
+    """
     oid: str = 'AEGroupDN-oid'
     desc: str = 'AE-DIR: DN of user group entry'
     input_fallback = False # no fallback to normal input field
@@ -697,6 +736,9 @@ syntax_registry.reg_at(
 
 
 class AEZoneAdminGroupDN(AEGroupDN):
+    """
+    Plugin for attributes holding DNs of zone admin groups
+    """
     oid: str = 'AEZoneAdminGroupDN-oid'
     desc: str = 'AE-DIR: DN of zone admin group entry'
     ldap_url = (
@@ -723,6 +765,9 @@ syntax_registry.reg_at(
 
 
 class AEZoneAuditorGroupDN(AEGroupDN):
+    """
+    Plugin for attributes holding DNs of zone auditor groups
+    """
     oid: str = 'AEZoneAuditorGroupDN-oid'
     desc: str = 'AE-DIR: DN of zone auditor group entry'
     ldap_url = (
@@ -751,6 +796,10 @@ syntax_registry.reg_at(
 
 
 class AESrvGroupRightsGroupDN(AEGroupDN):
+    """
+    Plugin class for attributes holding DNs of user groups
+    in aeSrvGroup entries
+    """
     oid: str = 'AESrvGroupRightsGroupDN-oid'
     desc: str = 'AE-DIR: DN of user group entry'
     ldap_url = (
@@ -779,6 +828,9 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameGroups(AESrvGroupRightsGroupDN):
+    """
+    Plugin class for attribute 'aeDisplayNameGroups' in aeSrvGroup entries
+    """
     oid: str = 'AEDisplayNameGroups-oid'
     desc: str = 'AE-DIR: DN of visible user group entry'
     ldap_url = (
@@ -807,6 +859,9 @@ syntax_registry.reg_at(
 
 
 class AEVisibleGroups(AEDisplayNameGroups):
+    """
+    Plugin class for attribute 'aeVisibleGroups' in aeSrvGroup entries
+    """
     oid: str = 'AEVisibleGroups-oid'
     desc: str = 'AE-DIR: DN of visible user group entry'
     always_add_groups = (
@@ -828,6 +883,10 @@ syntax_registry.reg_at(
 
 
 class AESameZoneObject(DerefDynamicDNSelectList, AEObjectMixIn):
+    """
+    Plugin class for attributes storing DN references limited to reference
+    entries within the same zone
+    """
     oid: str = 'AESameZoneObject-oid'
     desc: str = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
     input_fallback = False # no fallback to normal input field
@@ -838,6 +897,9 @@ class AESameZoneObject(DerefDynamicDNSelectList, AEObjectMixIn):
 
 
 class AESrvGroupDN(AEGroupDN):
+    """
+    Plugin for attributes holding DNs of aeSrvGroup entries
+    """
     oid: str = 'AESrvGroupDN-oid'
     desc: str = 'AE-DIR: DN of a referenced aeSrvGroup entry'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0))'
@@ -845,6 +907,9 @@ class AESrvGroupDN(AEGroupDN):
 
 
 class AESrvGroup(AESrvGroupDN, AESameZoneObject):
+    """
+    Plugin class for attribute 'aeSrvGroup' in aeUser and aeService entries
+    """
     oid: str = 'AESrvGroup-oid'
     desc: str = 'AE-DIR: DN of supplemental aeSrvGroup entry'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
@@ -856,7 +921,6 @@ class AESrvGroup(AESrvGroupDN, AESameZoneObject):
             escape_filter_str(str(self.dn.parent())),
         )
 
-
 syntax_registry.reg_at(
     AESrvGroup.oid, [
         AE_OID_PREFIX+'.4.27', # aeSrvGroup
@@ -865,6 +929,9 @@ syntax_registry.reg_at(
 
 
 class AERequires(AESrvGroupDN):
+    """
+    Plugin class for attribute 'aeRequires' in aeSrvGroup entries
+    """
     oid: str = 'AERequires-oid'
     desc: str = 'AE-DIR: DN of required aeSrvGroup'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0))'
@@ -875,7 +942,6 @@ class AERequires(AESrvGroupDN):
         ),
     )
 
-
 syntax_registry.reg_at(
     AERequires.oid, [
         AE_OID_PREFIX+'.4.48', # aeRequires
@@ -884,6 +950,9 @@ syntax_registry.reg_at(
 
 
 class AEProxyFor(AESrvGroupDN, AESameZoneObject):
+    """
+    Plugin class for attribute 'aeProxyFor' in aeSrvGroup entries
+    """
     oid: str = 'AEProxyFor-oid'
     desc: str = 'AE-DIR: DN of referenced aeSrvGroup entry this is proxy for'
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSrvGroup)(aeStatus=0)(!(aeProxyFor=*)))'
@@ -903,6 +972,9 @@ syntax_registry.reg_at(
 
 
 class AETag(DynamicValueSelectList):
+    """
+    Plugin class for attribute 'aeTag' in all aeObject entries
+    """
     oid: str = 'AETag-oid'
     desc: str = 'AE-DIR: cn of referenced aeTag entry'
     ldap_url = 'ldap:///_?cn,cn?sub?(&(objectClass=aeTag)(aeStatus=0))'
@@ -915,6 +987,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEPerson(DistinguishedName):
+    """
+    Plugin class for attribute 'entryDN' in aePerson entries
+    """
     oid: str = 'AEEntryDNAEPerson-oid'
     desc: str = 'AE-DIR: entryDN of aePerson entry'
     ref_attrs = (
@@ -940,6 +1015,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEUser(DistinguishedName):
+    """
+    Plugin class for attribute 'entryDN' in aeUser entries
+    """
     oid: str = 'AEEntryDNAEUser-oid'
     desc: str = 'AE-DIR: entryDN of aeUser entry'
 
@@ -990,6 +1068,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEHost(DistinguishedName):
+    """
+    Plugin class for attribute 'entryDN' in aeHost entries
+    """
     oid: str = 'AEEntryDNAEHost-oid'
     desc: str = 'AE-DIR: entryDN of aeUser entry'
     ref_attrs = (
@@ -1039,6 +1120,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEZone(DistinguishedName):
+    """
+    Plugin class for attribute 'entryDN' in aeZone entries
+    """
     oid: str = 'AEEntryDNAEZone-oid'
     desc: str = 'AE-DIR: entryDN of aeZone entry'
 
@@ -1088,6 +1172,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEMailGroup(GroupEntryDN):
+    """
+    Plugin class for attribute 'entryDN' in aeMailGroup entries
+    """
     oid: str = 'AEEntryDNAEMailGroup-oid'
     desc: str = 'AE-DIR: entryDN of aeGroup entry'
     ref_attrs = (
@@ -1110,6 +1197,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEGroup(GroupEntryDN):
+    """
+    Plugin class for attribute 'entryDN' in aeGroup entries
+    """
     oid: str = 'AEEntryDNAEGroup-oid'
     desc: str = 'AE-DIR: entryDN of aeGroup entry'
     ref_attrs = (
@@ -1187,6 +1277,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAESrvGroup(DistinguishedName):
+    """
+    Plugin class for attribute 'entryDN' in aeSrvGroup entries
+    """
     oid: str = 'AEEntryDNAESrvGroup-oid'
     desc: str = 'AE-DIR: entryDN'
     ref_attrs = (
@@ -1235,6 +1328,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNSudoRule(DistinguishedName):
+    """
+    Plugin class for attribute 'entryDN' in aeSudoRule entries
+    """
     oid: str = 'AEEntryDNSudoRule-oid'
     desc: str = 'AE-DIR: entryDN'
     ref_attrs = (
@@ -1255,6 +1351,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAELocation(DistinguishedName):
+    """
+    Plugin class for attribute 'entryDN' in aeLocation entries
+    """
     oid: str = 'AEEntryDNAELocation-oid'
     desc: str = 'AE-DIR: entryDN of aeLocation entry'
     ref_attrs = (
@@ -1283,6 +1382,9 @@ syntax_registry.reg_at(
 
 
 class AELocation(DerefDynamicDNSelectList):
+    """
+    Plugin class for attribute 'aeLocation' in various entries
+    """
     oid: str = 'AELocation-oid'
     desc: str = 'AE-DIR: DN of location entry'
     input_fallback = False # no fallback to normal input field
@@ -1298,6 +1400,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEDept(DistinguishedName):
+    """
+    Plugin class for attribute 'entryDN' in aeDept entries
+    """
     oid: str = 'AEEntryDNAEDept-oid'
     desc: str = 'AE-DIR: entryDN of aePerson entry'
     ref_attrs = (
@@ -1326,6 +1431,9 @@ syntax_registry.reg_at(
 
 
 class AEDept(DerefDynamicDNSelectList):
+    """
+    Plugin class for attribute 'aeDept' in various entries
+    """
     oid: str = 'AEDept-oid'
     desc: str = 'AE-DIR: DN of department entry'
     input_fallback = False # no fallback to normal input field
@@ -1341,6 +1449,9 @@ syntax_registry.reg_at(
 
 
 class AEOwner(DerefDynamicDNSelectList):
+    """
+    Plugin class for attribute 'aeOwner' in aeDevice and aeSession entries
+    """
     oid: str = 'AEOwner-oid'
     desc: str = 'AE-DIR: DN of owner entry'
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
@@ -1360,6 +1471,9 @@ syntax_registry.reg_at(
 
 
 class AEPerson(DerefDynamicDNSelectList, AEObjectMixIn):
+    """
+    Plugin class for attribute 'aePerson' in aeUser entries
+    """
     oid: str = 'AEPerson-oid'
     desc: str = 'AE-DIR: DN of person entry'
     ldap_url = 'ldap:///_?displayName?sub?(objectClass=aePerson)'
@@ -1428,6 +1542,9 @@ syntax_registry.reg_at(
 
 
 class AEManager(DerefDynamicDNSelectList):
+    """
+    Plugin class for attribute 'aeManager' in aePerson and aeDept entries
+    """
     oid: str = 'AEManager-oid'
     desc: str = 'AE-DIR: Manager responsible for a person/department'
     input_fallback = False # no fallback to normal input field
@@ -1446,6 +1563,9 @@ syntax_registry.reg_at(
 
 
 class AEDerefAttribute(DirectoryString):
+    """
+    Plugin class for attributes referencing other entries
+    """
     oid: str = 'AEDerefAttribute-oid'
     max_values: int = 1
     deref_object_class: Optional[str] = None
@@ -1496,6 +1616,9 @@ class AEDerefAttribute(DirectoryString):
 
 
 class AEPersonAttribute(AEDerefAttribute):
+    """
+    Plugin class for aeUser attributes copied from referenced aePerson entries
+    """
     oid: str = 'AEPersonAttribute-oid'
     max_values = 1
     deref_object_class = 'aePerson'
@@ -1503,6 +1626,10 @@ class AEPersonAttribute(AEDerefAttribute):
 
 
 class AEUserNames(AEPersonAttribute, DirectoryString):
+    """
+    Plugin class for aeUser attributes 'sn' and 'givenName' copied
+    from referenced aePerson entries
+    """
     oid: str = 'AEUserNames-oid'
 
 syntax_registry.reg_at(
@@ -1517,6 +1644,9 @@ syntax_registry.reg_at(
 
 
 class AEMailLocalAddress(RFC822Address):
+    """
+    Plugin class for attribute 'mailLocalAddress' in aeUser and aeService entries
+    """
     oid: str = 'AEMailLocalAddress-oid'
     sani_funcs = (
         bytes.strip,
@@ -1535,6 +1665,12 @@ syntax_registry.reg_at(
 
 
 class AEUserMailaddress(AEPersonAttribute, SelectList):
+    """
+    Plugin class for attribute 'mail' in aeUser entries
+
+    For primary mail user accounts this contains one of
+    the values in attribute 'mailLocalAddress'.
+    """
     oid: str = 'AEUserMailaddress-oid'
     html_tmpl = RFC822Address.html_tmpl
     max_values = 1
@@ -1594,6 +1730,13 @@ syntax_registry.reg_at(
 
 
 class AEPersonMailaddress(DynamicValueSelectList, RFC822Address):
+    """
+    Plugin class for attribute 'mail' in aePerson entries
+
+    If there exists a primary mail user account for this person this
+    contains one of the values in attribute 'mailLocalAddress' in that
+    aeUser entry.
+    """
     oid: str = 'AEPersonMailaddress-oid'
     max_values = 1
     ldap_url = 'ldap:///_?mail,mail?sub?'
@@ -1636,6 +1779,9 @@ syntax_registry.reg_at(
 
 
 class AEDeptAttribute(AEDerefAttribute, DirectoryString):
+    """
+    Plugin class for aePerson attributes copied from referenced aeDept entries
+    """
     oid: str = 'AEDeptAttribute-oid'
     max_values = 1
     deref_object_class = 'aeDept'
@@ -1653,6 +1799,9 @@ syntax_registry.reg_at(
 
 
 class AEHostname(DNSDomain):
+    """
+    Plugin class for attribute 'host' in aeHost entries
+    """
     oid: str = 'AEHostname-oid'
     desc: str = 'Canonical hostname / FQDN'
     host_lookup = 0
@@ -1700,6 +1849,9 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameUser(ComposedAttribute, DirectoryString):
+    """
+    Plugin class for attribute 'displayName' in aeUser entries
+    """
     oid: str = 'AEDisplayNameUser-oid'
     desc: str = 'Attribute displayName in object class aeUser'
     compose_templates = (
@@ -1716,6 +1868,9 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameContact(ComposedAttribute, DirectoryString):
+    """
+    Plugin class for attribute 'displayName' in aeContact entries
+    """
     oid: str = 'AEDisplayNameContact-oid'
     desc: str = 'Attribute displayName in object class aeContact'
     compose_templates = (
@@ -1732,6 +1887,9 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameDept(ComposedAttribute, DirectoryString):
+    """
+    Plugin class for attribute 'displayName' in aeDept entries
+    """
     oid: str = 'AEDisplayNameDept-oid'
     desc: str = 'Attribute displayName in object class aeDept'
     compose_templates = (
@@ -1749,6 +1907,9 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNameLocation(ComposedAttribute, DirectoryString):
+    """
+    Plugin class for attribute 'displayName' in aeLocation entries
+    """
     oid: str = 'AEDisplayNameLocation-oid'
     desc: str = 'Attribute displayName in object class aeLocation'
     compose_templates = (
@@ -1768,6 +1929,9 @@ syntax_registry.reg_at(
 
 
 class AEDisplayNamePerson(DisplayNameInetOrgPerson):
+    """
+    Plugin class for attribute 'displayName' in aePerson entries
+    """
     oid: str = 'AEDisplayNamePerson-oid'
     desc: str = 'Attribute displayName in object class aePerson'
     # do not stuff confidential employeeNumber herein!
@@ -1787,6 +1951,9 @@ syntax_registry.reg_at(
 
 
 class AEUniqueIdentifier(DirectoryString):
+    """
+    Plugin class for attribute 'uniqueIdentifier' in aePerson entries
+    """
     oid: str = 'AEUniqueIdentifier-oid'
     max_values = 1
     gen_template = 'web2ldap-{timestamp}'
@@ -1817,6 +1984,9 @@ syntax_registry.reg_at(
 
 
 class AEDepartmentNumber(DirectoryString):
+    """
+    Plugin class for attribute 'departmentNumber' in aeDept entries
+    """
     oid: str = 'AEDepartmentNumber-oid'
     max_values = 1
 
@@ -1831,6 +2001,10 @@ syntax_registry.reg_at(
 
 
 class AECommonName(DirectoryString):
+    """
+    Base class for all plugin classes handling 'cn' in Æ-DIR plugin classes,
+    not directly used
+    """
     oid: str = 'AECommonName-oid'
     desc: str = 'AE-DIR: common name of aeObject'
     max_values = 1
@@ -1840,6 +2014,9 @@ class AECommonName(DirectoryString):
 
 
 class AECommonNameAEZone(AECommonName):
+    """
+    Plugin for attribute 'cn' in aeZone entries
+    """
     oid: str = 'AECommonNameAEZone-oid'
     desc: str = 'AE-DIR: common name of aeZone'
     sani_funcs = (
@@ -1858,6 +2035,9 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAELocation(AECommonName):
+    """
+    Plugin for attribute 'cn' in aeLocation entries
+    """
     oid: str = 'AECommonNameAELocation-oid'
     desc: str = 'AE-DIR: common name of aeLocation'
 
@@ -1872,6 +2052,9 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAEHost(AECommonName):
+    """
+    Plugin for attribute 'cn' in aeHost entries
+    """
     oid: str = 'AECommonNameAEHost-oid'
     desc: str = 'Canonical hostname'
     derive_from_host = True
@@ -1897,6 +2080,9 @@ syntax_registry.reg_at(
 
 
 class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
+    """
+    Base class for handling 'cn' in entries which must have zone name as prefix
+    """
     oid: str = 'AEZonePrefixCommonName-oid'
     desc: str = 'AE-DIR: Attribute values have to be prefixed with zone name'
     pattern = re.compile(r'^[a-z0-9]+-[a-z0-9-]+$')
@@ -1937,6 +2123,9 @@ class AEZonePrefixCommonName(AECommonName, AEObjectMixIn):
 
 
 class AECommonNameAEGroup(AEZonePrefixCommonName):
+    """
+    Plugin for attribute 'cn' in aeGroup entries
+    """
     oid: str = 'AECommonNameAEGroup-oid'
 
 syntax_registry.reg_at(
@@ -1951,6 +2140,9 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAESrvGroup(AEZonePrefixCommonName):
+    """
+    Plugin for attribute 'cn' in aeSrvGroup entries
+    """
     oid: str = 'AECommonNameAESrvGroup-oid'
 
 syntax_registry.reg_at(
@@ -1964,6 +2156,9 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAETag(AEZonePrefixCommonName):
+    """
+    Plugin for attribute 'cn' in aeTag entries
+    """
     oid: str = 'AECommonNameAETag-oid'
 
     def display(self, vidx, links) -> str:
@@ -1996,6 +2191,9 @@ syntax_registry.reg_at(
 
 
 class AECommonNameAESudoRule(AEZonePrefixCommonName):
+    """
+    Plugin for attribute 'cn' in aeSudoRule entries
+    """
     oid: str = 'AECommonNameAESudoRule-oid'
 
 syntax_registry.reg_at(
@@ -2019,6 +2217,9 @@ syntax_registry.reg_at(
 
 
 class AESudoRuleDN(DerefDynamicDNSelectList):
+    """
+    Plugin for attribute 'aeVisibleSudoers' in aeSrvGroup entries
+    """
     oid: str = 'AESudoRuleDN-oid'
     desc: str = 'AE-DIR: DN(s) of visible SUDO rules'
     input_fallback = False # no fallback to normal input field
@@ -2032,6 +2233,9 @@ syntax_registry.reg_at(
 
 
 class AENotBefore(NotBefore):
+    """
+    Plugin for attribute 'aeNotBefore' in all aeObject entries
+    """
     oid: str = 'AENotBefore-oid'
     desc: str = 'AE-DIR: begin of validity period'
 
@@ -2043,6 +2247,9 @@ syntax_registry.reg_at(
 
 
 class AENotAfter(NotAfter):
+    """
+    Plugin for attribute 'aeNotAfter' in all aeObject entries
+    """
     oid: str = 'AENotAfter-oid'
     desc: str = 'AE-DIR: begin of validity period'
 
@@ -2077,6 +2284,9 @@ syntax_registry.reg_at(
 
 
 class AEStatus(SelectList, Integer):
+    """
+    Plugin for attribute 'aeStatus' in all aeObject entries
+    """
     oid: str = 'AEStatus-oid'
     desc: str = 'AE-DIR: Status of object'
     attr_value_dict: Dict[str, str] = {
@@ -2162,6 +2372,9 @@ syntax_registry.reg_at(
 
 
 class AEExpiryStatus(SelectList):
+    """
+    Plugin for attribute 'aeExpiryStatus' in all aeObject entries
+    """
     oid: str = 'AEExpiryStatus-oid'
     desc: str = 'AE-DIR: Expiry status of object'
     attr_value_dict: Dict[str, str] = {
@@ -2178,6 +2391,9 @@ syntax_registry.reg_at(
 
 
 class AESudoUser(SudoUserGroup):
+    """
+    Plugin for attribute 'sudoUser' in aeSudoRule entries
+    """
     oid: str = 'AESudoUser-oid'
     desc: str = 'AE-DIR: sudoUser'
     ldap_url = (
@@ -2208,6 +2424,13 @@ syntax_registry.reg_at(
 
 
 class AEServiceSshPublicKey(SshPublicKey):
+    """
+    Plugin for attribute 'sshPublicKey' in aeService entries
+
+    Mainly this can be used to assign specific regex pattern
+    e.g. for limiting values to certain OpenSSH key types
+    in aeService entries.
+    """
     oid: str = 'AEServiceSshPublicKey-oid'
     desc: str = 'AE-DIR: aeService:sshPublicKey'
 
@@ -2221,7 +2444,31 @@ syntax_registry.reg_at(
 )
 
 
+class AEUserSshPublicKey(SshPublicKey):
+    """
+    Plugin for attribute 'sshPublicKey' in aeUser entries
+
+    Mainly this can be used to assign specific regex pattern
+    e.g. for limiting values to certain OpenSSH key types
+    in aeUser entries.
+    """
+    oid: str = 'AEUserSshPublicKey-oid'
+    desc: str = 'AE-DIR: aeUser:sshPublicKey'
+
+syntax_registry.reg_at(
+    AEUserSshPublicKey.oid, [
+        '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
+    ],
+    structural_oc_oids=[
+        AE_USER_OID, # aeUser
+    ]
+)
+
+
 class AEEntryDNAEAuthcToken(DistinguishedName):
+    """
+    Plugin for attribute 'entryDN' in aeAuthcToken entries
+    """
     oid: str = 'AEEntryDNAEAuthcToken-oid'
     desc: str = 'AE-DIR: entryDN of aeAuthcToken entry'
     ref_attrs = (
@@ -2242,6 +2489,9 @@ syntax_registry.reg_at(
 
 
 class AEEntryDNAEPolicy(DistinguishedName):
+    """
+    Plugin for attribute 'entryDN' in aePolicy entries
+    """
     oid: str = 'AEEntryDNAEPolicy-oid'
     desc: str = 'AE-DIR: entryDN of aePolicy entry'
     ref_attrs = (
@@ -2277,21 +2527,10 @@ syntax_registry.reg_at(
 )
 
 
-class AEUserSshPublicKey(SshPublicKey):
-    oid: str = 'AEUserSshPublicKey-oid'
-    desc: str = 'AE-DIR: aeUser:sshPublicKey'
-
-syntax_registry.reg_at(
-    AEUserSshPublicKey.oid, [
-        '1.3.6.1.4.1.24552.500.1.1.1.13', # sshPublicKey
-    ],
-    structural_oc_oids=[
-        AE_USER_OID, # aeUser
-    ]
-)
-
-
 class AERFC822MailMember(DynamicValueSelectList, AEObjectMixIn):
+    """
+    Plugin for attribute 'rfc822MailMember' in aeMailGroup entries
+    """
     oid: str = 'AERFC822MailMember-oid'
     desc: str = 'AE-DIR: rfc822MailMember'
     ldap_url = (
@@ -2345,6 +2584,9 @@ syntax_registry.reg_at(
 
 
 class AEPwdPolicy(PwdPolicySubentry):
+    """
+    Plugin for attribute 'pwdPolicySubentry' in aeUser, aeService and aeHost entries
+    """
     oid: str = 'AEPwdPolicy-oid'
     desc: str = 'AE-DIR: pwdPolicySubentry'
     ldap_url = 'ldap:///_??sub?(&(objectClass=aePolicy)(objectClass=pwdPolicy)(aeStatus=0))'
@@ -2362,6 +2604,9 @@ syntax_registry.reg_at(
 
 
 class AESudoHost(IA5String):
+    """
+    Plugin for attribute 'sudoHost' in aeSudoRule entries
+    """
     oid: str = 'AESudoHost-oid'
     desc: str = 'AE-DIR: sudoHost'
     max_values = 1
@@ -2390,6 +2635,9 @@ syntax_registry.reg_at(
 
 
 class AELoginShell(Shell):
+    """
+    Plugin for attribute 'loginShell' in aeUser and aeService entries
+    """
     oid: str = 'AELoginShell-oid'
     desc: str = 'AE-DIR: Login shell for POSIX users'
     attr_value_dict: Dict[str, str] = {
@@ -2410,6 +2658,9 @@ syntax_registry.reg_at(
 
 
 class AEOathHOTPToken(OathHOTPToken):
+    """
+    Plugin for attribute 'oathHOTPToken' in aeUser entries
+    """
     oid: str = 'AEOathHOTPToken-oid'
     desc: str = 'DN of the associated oathHOTPToken entry in aeUser entry'
     ref_attrs = (
@@ -2438,6 +2689,9 @@ syntax_registry.reg_at(
 # see sshd(AUTHORIZED_KEYS FILE FORMAT
 # and the -O option in ssh-keygen(1)
 class AESSHPermissions(SelectList):
+    """
+    Plugin for attribute 'aeSSHPermissions' in aeUser and aeService entries
+    """
     oid: str = 'AESSHPermissions-oid'
     desc: str = 'AE-DIR: Status of object'
     attr_value_dict: Dict[str, str] = {
@@ -2456,6 +2710,9 @@ syntax_registry.reg_at(
 
 
 class AERemoteHostAEHost(DynamicValueSelectList):
+    """
+    Plugin for attribute 'aeRemoteHost' in aeHost entries
+    """
     oid: str = 'AERemoteHostAEHost-oid'
     desc: str = 'AE-DIR: aeRemoteHost in aeHost entry'
     ldap_url = 'ldap:///.?ipHostNumber,aeFqdn?one?(&(objectClass=aeNwDevice)(aeStatus=0))'
@@ -2470,8 +2727,11 @@ syntax_registry.reg_at(
 
 
 class AEDescriptionAENwDevice(ComposedAttribute):
+    """
+    Plugin for attribute 'description' in aeNwDevice entries
+    """
     oid: str = 'AEDescriptionAENwDevice-oid'
-    desc: str = 'Attribute description in object class  aeNwDevice'
+    desc: str = 'Attribute description in object class aeNwDevice'
     compose_templates = (
         '{cn}: {aeFqdn} / {ipHostNumber}',
         '{cn}: {ipHostNumber}',
@@ -2486,6 +2746,9 @@ syntax_registry.reg_at(
 
 
 class AEChildClasses(SelectList):
+    """
+    Plugin for attribute 'aeChildClasses' in aeZone entries
+    """
     oid = 'AEChildClasses-oid'
     desc = 'AE-DIR: Structural object classes allowed to be added in child entries'
     attr_value_dict: Dict[str, str] = {
