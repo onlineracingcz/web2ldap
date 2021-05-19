@@ -28,8 +28,72 @@ from ..schema.syntaxes import (
     RFC822Address,
     Uri,
     UTCTime,
+    ObjectClassDescription,
+    AttributeTypeDescription,
+    MatchingRuleDescription,
+    MatchingRuleUseDescription,
+    LDAPSyntaxDescription,
+    DITContentRuleDescription,
+    DITStructureRuleDescription,
+    NameFormDescription,
 )
 
+
+syntax_registry.reg_at(
+    ObjectClassDescription.oid,
+    [
+        '2.5.21.6', 'objectClasses',
+    ]
+)
+
+syntax_registry.reg_at(
+    AttributeTypeDescription.oid,
+    [
+        '2.5.21.5', 'attributeTypes',
+    ]
+)
+
+syntax_registry.reg_at(
+    MatchingRuleDescription.oid,
+    [
+        '2.5.21.4', 'matchingRules',
+    ]
+)
+
+syntax_registry.reg_at(
+    MatchingRuleUseDescription.oid,
+    [
+        '2.5.21.8', 'matchingRuleUse',
+    ]
+)
+
+syntax_registry.reg_at(
+    LDAPSyntaxDescription.oid,
+    [
+        '1.3.6.1.4.1.1466.101.120.16', 'ldapSyntaxes',
+    ]
+)
+
+syntax_registry.reg_at(
+    DITContentRuleDescription.oid,
+    [
+        '2.5.21.2', 'dITContentRules',
+    ]
+)
+
+syntax_registry.reg_at(
+    DITStructureRuleDescription.oid,
+    [
+        '2.5.21.1', 'dITStructureRules',
+    ]
+)
+
+syntax_registry.reg_at(
+    NameFormDescription.oid,
+    [
+        '2.5.21.7', 'nameForms',
+    ]
+)
 
 syntax_registry.reg_at(
     OID.oid,
