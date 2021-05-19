@@ -47,10 +47,12 @@ class OlcSchemaDescription(SchemaDescription):
     oid: str = 'OlcSchemaDescription-oid'
 
     def _validate(self, attr_value: bytes) -> bool:
-        return SchemaDescription._validate(
-            self,
-            attr_value.split(b'}', 1)[1], # strip X-ORDERED number
-        )
+        try:
+            # strip X-ORDERED number
+            schema_desc = attr_value.split(b'}', 1)[1]
+        except IndexError:
+            schema_desc = attr_value
+        return SchemaDescription._validate(self, schema_desc)
 
 
 class OlcObjectClasses(OlcSchemaDescription):
