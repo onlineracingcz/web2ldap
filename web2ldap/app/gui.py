@@ -12,6 +12,7 @@ Apache License Version 2.0 (Apache-2.0)
 https://www.apache.org/licenses/LICENSE-2.0
 """
 
+import re
 import time
 from hashlib import md5
 
@@ -573,6 +574,27 @@ def invalid_syntax_message(app, invalid_attrs):
             for at_ui in invalid_attr_types_ui
         ])
     )
+
+
+def extract_invalid_syntax(app, ldap_err):
+    """
+    try to extract error message and invalid attributes dict from LDAPError instance
+    """
+    try:
+        # try to extract OpenLDAP-specific info message
+        info = ldap_err.args[0].get('info', b'').decode(app.ls.charset)
+        invalid_attr, invalid_index = re.match(
+            '([a-zA-Z0-9;-]+): value #([0-9]+) invalid per syntax',
+            info,
+        ).groups()
+    except (AttributeError, IndexError, UnicodeDecodeError):
+        # could not extract useful info
+        invalid_attrs = {}
+        error_msg = app.ldap_error_msg(ldap_err)
+    else:
+        invalid_attrs = {invalid_attr: [int(invalid_index)]}
+        error_msg = invalid_syntax_message(app, invalid_attrs)
+    return error_msg, invalid_attrs
 
 
 def exception_message(app, h1_msg, error_msg):

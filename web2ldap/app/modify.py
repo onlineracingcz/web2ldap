@@ -32,6 +32,7 @@ from .addmodifyform import (
 from .gui import (
     context_menu_single_entry,
     invalid_syntax_message,
+    extract_invalid_syntax,
     main_menu,
 )
 
@@ -192,10 +193,14 @@ def w2l_modify(app):
             '=> Entry was removed or modified in between! '
             'You have to edit it again.'
         )
+    except ldap0.INVALID_SYNTAX as err:
+        error_msg, invalid_attrs = extract_invalid_syntax(app, err)
+        # go back to input form so the user can correct something
+        w2l_modifyform(app, new_entry, msg=error_msg, invalid_attrs=invalid_attrs)
+        return
     except (
             ldap0.CONSTRAINT_VIOLATION,
             ldap0.INVALID_DN_SYNTAX,
-            ldap0.INVALID_SYNTAX,
             ldap0.NAMING_VIOLATION,
             ldap0.OBJECT_CLASS_VIOLATION,
             ldap0.OTHER,
