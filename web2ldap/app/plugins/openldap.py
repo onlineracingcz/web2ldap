@@ -30,6 +30,7 @@ from ..schema.syntaxes import (
     MultilineText,
     NotBefore,
     OctetString,
+    SchemaDescription,
     SelectList,
     Uri,
     UUID,
@@ -37,6 +38,63 @@ from ..schema.syntaxes import (
 )
 from ...ldaputil.oidreg import OID_REG
 from .quirks import NamingContexts
+
+#---------------------------------------------------------------------------
+# Schema information
+#---------------------------------------------------------------------------
+
+class OlcSchemaDescription(SchemaDescription):
+    oid: str = 'OlcSchemaDescription-oid'
+
+    def _validate(self, attr_value: bytes) -> bool:
+        return SchemaDescription._validate(
+            self,
+            attr_value.split(b'}', 1)[1], # strip X-ORDERED number
+        )
+
+
+class OlcObjectClasses(OlcSchemaDescription):
+    oid: str = 'OlcObjectClasses-oid'
+    schema_cls = ldap0.schema.models.ObjectClass
+
+syntax_registry.reg_at(
+    OlcObjectClasses.oid, [
+        '1.3.6.1.4.1.4203.1.12.2.3.0.32', # olcObjectClasses
+    ]
+)
+
+
+class OlcAttributeTypes(OlcSchemaDescription):
+    oid: str = 'OlcAttributeTypes-oid'
+    schema_cls = ldap0.schema.models.AttributeType
+
+syntax_registry.reg_at(
+    OlcAttributeTypes.oid, [
+        '1.3.6.1.4.1.4203.1.12.2.3.0.4', # olcAttributeTypes
+    ]
+)
+
+
+class OlcLdapSyntaxes(OlcSchemaDescription):
+    oid: str = 'OlcLdapSyntaxes-oid'
+    schema_cls = ldap0.schema.models.LDAPSyntax
+
+syntax_registry.reg_at(
+    OlcLdapSyntaxes.oid, [
+        '1.3.6.1.4.1.4203.1.12.2.3.0.85', # olcLdapSyntaxes
+    ]
+)
+
+
+class OlcDitContentRules(OlcSchemaDescription):
+    oid: str = 'OlcDitContentRules-oid'
+    schema_cls = ldap0.schema.models.DITContentRule
+
+syntax_registry.reg_at(
+    OlcDitContentRules.oid, [
+        '1.3.6.1.4.1.4203.1.12.2.3.0.16', # olcDitContentRules
+    ]
+)
 
 #---------------------------------------------------------------------------
 # slapo-syncprov

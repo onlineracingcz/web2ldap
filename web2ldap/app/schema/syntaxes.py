@@ -2661,36 +2661,58 @@ class LDAPv3ResultCode(SelectList):
     }
 
 
-class ObjectClassDescription(DirectoryString):
+class SchemaDescription(DirectoryString):
+    oid: str = 'SchemaDescription-oid'
+    schema_cls = None
+
+    def _validate(self, attr_value: bytes) -> bool:
+        if self.schema_cls is None:
+            return DirectoryString._validate(self, attr_value)
+        try:
+            se_obj = self.schema_cls(self._app.ls.uc_decode(attr_value)[0])
+        except (IndexError, ValueError):
+            return False
+        return True
+
+
+class ObjectClassDescription(SchemaDescription):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.37'
+    schema_cls = ldap0.schema.models.ObjectClass
 
 
-class AttributeTypeDescription(DirectoryString):
+class AttributeTypeDescription(SchemaDescription):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.3'
+    schema_cls = ldap0.schema.models.AttributeType
 
 
-class MatchingRuleDescription(DirectoryString):
+class MatchingRuleDescription(SchemaDescription):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.30'
+    schema_cls = ldap0.schema.models.MatchingRule
 
 
-class MatchingRuleUseDescription(DirectoryString):
+class MatchingRuleUseDescription(SchemaDescription):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.31'
+    schema_cls = ldap0.schema.models.MatchingRuleUse
 
 
-class LdapSyntaxDescription(DirectoryString):
+class LDAPSyntaxDescription(SchemaDescription):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.54'
+    schema_cls = ldap0.schema.models.LDAPSyntax
 
 
-class DITContentRuleDescription(DirectoryString):
+class DITContentRuleDescription(SchemaDescription):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.16'
+    schema_cls = ldap0.schema.models.DITContentRule
 
 
-class DITStructureRuleDescription(DirectoryString):
+class DITStructureRuleDescription(SchemaDescription):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.17'
+    schema_cls = ldap0.schema.models.DITStructureRule
 
 
-class NameFormDescription(DirectoryString):
+class NameFormDescription(SchemaDescription):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.35'
+    schema_cls = ldap0.schema.models.NameForm
 
 
 # Set up the central syntax registry instance
