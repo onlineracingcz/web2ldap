@@ -2664,6 +2664,9 @@ class LDAPv3ResultCode(SelectList):
 class SchemaDescription(DirectoryString):
     oid: str = 'SchemaDescription-oid'
     schema_cls = None
+    sani_funcs = (
+        bytes.strip,
+    )
 
     def _validate(self, attr_value: bytes) -> bool:
         if self.schema_cls is None:
