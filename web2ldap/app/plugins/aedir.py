@@ -345,8 +345,8 @@ class AEUserUid(AEUid):
             if not uid_result:
                 logger.info(
                     'Generated aeUser-uid after %d collisions: %r',
-                    uid_candidate,
                     len(uid_candidates),
+                    uid_candidate,
                 )
                 return uid_candidate
             uid_candidates.append(uid_candidate)
