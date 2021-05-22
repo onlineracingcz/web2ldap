@@ -432,7 +432,7 @@ class AEZoneDN(DerefDynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeZone)(aeStatus=0))'
     ref_attrs = (
-        (None, 'Same zone', None, 'Search all groups constrained to same zone'),
+        (None, 'Same zone', None, 'aeGroup', 'Search all groups constrained to same zone'),
     )
 
 syntax_registry.reg_at(
@@ -451,7 +451,7 @@ class AEHost(DerefDynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?host?sub?(&(objectClass=aeHost)(aeStatus=0))'
     ref_attrs = (
-        (None, 'Same host', None, 'Search all services running on same host'),
+        (None, 'Same host', None, 'aeService', 'Search all services running on same host'),
     )
 
 syntax_registry.reg_at(
@@ -470,7 +470,7 @@ class AENwDevice(DerefDynamicDNSelectList):
     input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///..?cn?sub?(&(objectClass=aeNwDevice)(aeStatus=0))'
     ref_attrs = (
-        (None, 'Siblings', None, 'Search sibling network devices'),
+        (None, 'Siblings', None, 'aeNwDevice', 'Search sibling network devices'),
     )
 
     def _search_root(self) -> str:
@@ -1184,7 +1184,7 @@ class AEEntryDNAEMailGroup(GroupEntryDN):
     ref_attrs = (
         ('memberOf', 'Members', None, 'Search all member entries of this mail group'),
         (
-            'aeVisibleGroups', 'Visible', None,
+            'aeVisibleGroups', 'Visible', None, 'aeSrvGroup',
             'Search all server/service groups (aeSrvGroup)\n'
             'on which this mail group is visible'
         ),
@@ -1209,22 +1209,22 @@ class AEEntryDNAEGroup(GroupEntryDN):
     ref_attrs = (
         ('memberOf', 'Members', None, 'Search all member entries of this user group'),
         (
-            'aeLoginGroups', 'Login', None,
+            'aeLoginGroups', 'Login', None, 'aeSrvGroup',
             'Search all server/service groups (aeSrvGroup)\n'
             'on which this user group has login right'
         ),
         (
-            'aeLogStoreGroups', 'View Logs', None,
+            'aeLogStoreGroups', 'View Logs', None, 'aeSrvGroup',
             'Search all server/service groups (aeSrvGroup)\n'
             'on which this user group has log view right'
         ),
         (
-            'aeSetupGroups', 'Setup', None,
+            'aeSetupGroups', 'Setup', None, 'aeSrvGroup',
             'Search all server/service groups (aeSrvGroup)\n'
             'on which this user group has setup/installation rights'
         ),
         (
-            'aeVisibleGroups', 'Visible', None,
+            'aeVisibleGroups', 'Visible', None, 'aeSrvGroup',
             'Search all server/service groups (aeSrvGroup)\n'
             'on which this user group is at least visible'
         ),
@@ -1287,7 +1287,10 @@ class AEEntryDNAESrvGroup(DistinguishedName):
     oid: str = 'AEEntryDNAESrvGroup-oid'
     desc: str = 'AE-DIR: entryDN'
     ref_attrs = (
-        ('aeProxyFor', 'Proxy', None, 'Search access gateway/proxy group for this server group'),
+        (
+            'aeProxyFor', 'Proxy', None, 'aeSrvGroup',
+            'Search access gateway/proxy group for this server group'
+        ),
         (
             'aeRequires', 'Required by', None, 'aeSrvGroup',
             'Search all service groups depending on this service group.'
@@ -1339,8 +1342,8 @@ class AEEntryDNSudoRule(DistinguishedName):
     desc: str = 'AE-DIR: entryDN'
     ref_attrs = (
         (
-            'aeVisibleSudoers', 'Used on', None,
-            'Search all server groups (aeSrvGroup entries) referencing this SUDO rule'
+            'aeVisibleSudoers', 'Used on', None, 'aeSrvGroup',
+            'Search all server groups (aeSrvGroup) referencing this SUDO rule'
         ),
     )
 
