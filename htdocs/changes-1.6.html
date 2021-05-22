@@ -29,6 +29,19 @@
   <li>
     Fixed logging in plugin class <var>AEUserUid</var>.
   </li>
+  <li>
+    Fixed plugin class for <var>entryDN</var> in <var>aeHost</var> entries:
+    <ul>
+      <li>
+        Now generates correct search filter for finding sibling
+        services/hosts in all possible service groups.
+      </li>
+      <li>
+        Limit search for services running on same host to
+        object class <var>aeService</var>.
+      </li>
+    </ul>
+  </li>
 </ul>
 
 <h1 id="r1.6.2">1.6.2</h1>

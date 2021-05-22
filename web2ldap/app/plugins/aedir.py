@@ -1074,15 +1074,16 @@ class AEEntryDNAEHost(DistinguishedName):
     oid: str = 'AEEntryDNAEHost-oid'
     desc: str = 'AE-DIR: entryDN of aeUser entry'
     ref_attrs = (
-        ('aeHost', 'Services', None, 'Search all services running on this host'),
+        ('aeHost', 'Services', None, 'aeService', 'Search all services running on this host'),
     )
 
     def _additional_links(self):
-        aesrvgroup_filter = ''.join([
-            '(aeSrvGroup=%s)' % av.decode(self._app.ls.charset)
+        res = DistinguishedName._additional_links(self)
+        srv_group_assertion_values = [escape_filter_str(str(self.dn.parent()))]
+        srv_group_assertion_values.extend([
+            escape_filter_str(av.decode(self._app.ls.charset))
             for av in self._entry.get('aeSrvGroup', [])
         ])
-        res = DistinguishedName._additional_links(self)
         res.extend([
             self._app.anchor(
                 'search', 'Siblings',
@@ -1092,12 +1093,15 @@ class AEEntryDNAEHost(DistinguishedName):
                     ('searchform_mode', 'exp'),
                     (
                         'filterstr',
-                        (
-                            '(&(|(objectClass=aeHost)(objectClass=aeService))'
-                            '(|(entryDN:dnSubordinateMatch:=%s)%s))'
-                        ) % (
-                            escape_filter_str(str(self.dn.parent())),
-                            aesrvgroup_filter,
+                        '(&(|(objectClass=aeHost)(objectClass=aeService))(|{0}{1}))'.format(
+                            ''.join([
+                                '(entryDN:dnSubordinateMatch:=%s)' % av
+                                for av in srv_group_assertion_values
+                            ]),
+                            ''.join([
+                                '(aeSrvGroup=%s)' % av
+                                for av in srv_group_assertion_values
+                            ]),
                         )
                     ),
                 ),
