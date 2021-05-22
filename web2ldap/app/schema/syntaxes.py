@@ -2108,10 +2108,7 @@ class DynamicDNSelectList(DynamicValueSelectList, DistinguishedName):
         return sre.entry_s
 
     def _validate(self, attr_value: bytes) -> bool:
-        return self._get_ref_entry(
-            self._app.ls.uc_decode(attr_value)[0],
-            attrlist=['1.1']
-        ) is not None
+        return SelectList._validate(self, attr_value)
 
     def display(self, vidx, links) -> str:
         if links and self.lu_obj.attrs:
@@ -2140,9 +2137,6 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
     oid: str = 'DerefDynamicDNSelectList-oid'
 
     def _get_ref_entry(self, dn: str, attrlist=None) -> dict:
-        if self._app.command == 'add':
-            # adding new entry
-            return DynamicDNSelectList._get_ref_entry(self, dn, attrlist)
         deref_crtl = DereferenceControl(
             True,
             {self._at: self.lu_obj.attrs or ['entryDN']}
