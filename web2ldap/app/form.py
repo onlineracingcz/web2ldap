@@ -226,7 +226,8 @@ class Web2LDAPForm(Form):
             if fname in ignored_fields:
                 continue
             for val in self.field[fname].value:
-                res.append(self.hidden_field_html(fname, val, ''))
+                if isinstance(val, str):
+                    res.append(self.hidden_field_html(fname, val, ''))
         return '\n'.join(res)
 
 
