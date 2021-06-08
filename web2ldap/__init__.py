@@ -16,25 +16,26 @@ import sys
 import os
 import logging
 import time
+import platform
 
 from .log import logger, LogHelper
 from .__about__ import __version__
 
-# prefixes considered to indicate system-wide installation outside a venv
-OS_SYS_PREFIXES = {
-    '/usr',
-    '/usr/local',
-}
-
 # Path name of [web2ldap]/etc/web2ldap
 if 'WEB2LDAP_HOME' in os.environ:
-    # env var points to web2ldap root directory
+    # env var points to web2ldap root prefix directory,
+    # assume configuration is in a sub-directory etc/web2ldap therein
     ETC_DIR = os.path.join(os.environ['WEB2LDAP_HOME'], 'etc', 'web2ldap')
-elif os.name == 'posix' and sys.prefix in OS_SYS_PREFIXES:
-    # assume OS-wide installation on POSIX platform (Linux, BSD, etc.)
+elif (
+        platform.uname().system == 'Linux'
+        and sys.prefix == '/usr'
+    ):
+    # OS-wide installation on GNU/Linux,
+    # assume configuration is in global /etc/web2ldap
     ETC_DIR = '/etc/web2ldap'
 else:
-    # virtual env
+    # assume configuration is in a sub-directory etc/web2ldap
+    # within system-prefix directory (e.g. in virtual env or on *BSD)
     ETC_DIR = os.path.join(sys.prefix, 'etc', 'web2ldap')
 sys.path.append(ETC_DIR)
 
