@@ -45,6 +45,9 @@ syntax_registry.reg_at(
 
 syntax_registry.reg_at(
     DistinguishedName.oid, [
+        '1.3.6.1.4.1.10176.500.1.5', # univentionDnsForwardZone
+        '1.3.6.1.4.1.10176.500.1.6', # univentionDnsReverseZone
+        '1.3.6.1.4.1.10176.1000.11.1.2', # univentionNetworkLink
         '1.3.6.1.4.1.10176.4200.4.2', # enabledServiceProviderIdentifierGroup
     ]
 )
