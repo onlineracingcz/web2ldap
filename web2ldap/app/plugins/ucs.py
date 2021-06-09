@@ -8,8 +8,10 @@ import bz2
 from ..schema.syntaxes import (
     Binary,
     RFC822Address,
+    DistinguishedName,
     DynamicDNSelectList,
     MultilineText,
+    XmlValue,
     syntax_registry,
 )
 from .msperson import DateOfBirth
@@ -37,6 +39,20 @@ syntax_registry.reg_at(
 syntax_registry.reg_at(
     RFC822Address.oid, [
         '1.3.6.1.4.1.10176.1010.1.1', # mailPrimaryAddress
+    ]
+)
+
+
+syntax_registry.reg_at(
+    DistinguishedName.oid, [
+        '1.3.6.1.4.1.10176.4200.4.2', # enabledServiceProviderIdentifierGroup
+    ]
+)
+
+
+syntax_registry.reg_at(
+    XmlValue.oid, [
+        '1.3.6.1.4.1.10176.4200.1.14', # serviceProviderMetadata
     ]
 )
 
