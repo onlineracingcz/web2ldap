@@ -4,10 +4,12 @@ web2ldap plugin classes for Univention Corporate Server
 """
 
 import bz2
+import re
 
 from ..schema.syntaxes import (
     Binary,
     RFC822Address,
+    DirectoryString,
     DistinguishedName,
     DynamicDNSelectList,
     MultilineText,
@@ -15,6 +17,18 @@ from ..schema.syntaxes import (
     syntax_registry,
 )
 from .msperson import DateOfBirth
+
+
+class UniventionObjectType(DirectoryString):
+    oid: str = 'UniventionObjectType-oid'
+    desc: str = 'Type of UCS object'
+    pattern = re.compile('^[a-z]+/[a-z]+$')
+
+syntax_registry.reg_at(
+    UniventionObjectType.oid, [
+        '1.3.6.1.4.1.10176.1003.1', # univentionObjectType
+    ]
+)
 
 
 class UniventionPolicyReference(DynamicDNSelectList):
