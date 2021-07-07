@@ -2666,7 +2666,7 @@ class SchemaDescription(DirectoryString):
         if self.schema_cls is None:
             return DirectoryString._validate(self, attr_value)
         try:
-            se_obj = self.schema_cls(self._app.ls.uc_decode(attr_value)[0])
+            _ = self.schema_cls(self._app.ls.uc_decode(attr_value)[0])
         except (IndexError, ValueError):
             return False
         return True
