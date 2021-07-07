@@ -53,6 +53,7 @@ syntax_registry.reg_at(
 syntax_registry.reg_at(
     RFC822Address.oid, [
         '1.3.6.1.4.1.10176.1010.1.1', # mailPrimaryAddress
+        '1.3.6.1.4.1.10176.1010.1.100', # univentionMailMember
     ]
 )
 
