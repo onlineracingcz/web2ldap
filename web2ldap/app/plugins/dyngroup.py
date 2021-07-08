@@ -18,9 +18,6 @@ class MemberUrl(LDAPUrl):
     desc: str = 'LDAP URL describing search parameters used to lookup group members'
     ldap_url = None
 
-    def __init__(self, app, dn: str, schema, attrType: str, attr_value: bytes, entry=None):
-        LDAPUrl.__init__(self, app, dn, schema, attrType, attr_value, entry)
-
     def _validate(self, attr_value: bytes) -> bool:
         """
         Checks validity of membership LDAP URL.
