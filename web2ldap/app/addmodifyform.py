@@ -27,6 +27,7 @@ from ldap0.schema.models import (
 
 import web2ldapcnf
 
+from ..log import logger
 from ..msbase import GrabKeys
 from ..web import escape_html
 from ..web.forms import Select as SelectField
@@ -119,7 +120,13 @@ def get_entry_input(app):
     # Get all the attribute values
     in_value_list = app.form.getInputValue('in_av', [])
 
-    if not len(in_attrtype_list) == len(in_value_list):
+    if len(in_attrtype_list) != len(in_value_list):
+        logger.warning(
+            'Different count of attribute types and values input: '
+            'len(in_attrtype_list)=%d len(in_value_list)=%d',
+            len(in_attrtype_list),
+            len(in_value_list),
+        )
         raise ErrorExit('Different count of attribute types and values input.')
 
     entry = Entry(app.schema, app.dn, {})
