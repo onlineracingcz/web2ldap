@@ -22,7 +22,7 @@ from .msperson import DateOfBirth
 class UniventionObjectType(DirectoryString):
     oid: str = 'UniventionObjectType-oid'
     desc: str = 'Type of UCS object'
-    pattern = re.compile('^[a-z]+/[a-z]+$')
+    pattern = re.compile('^[a-z_]+/[a-z_]+$')
 
 syntax_registry.reg_at(
     UniventionObjectType.oid, [
