@@ -64,6 +64,7 @@ syntax_registry.reg_at(
         '1.3.6.1.4.1.10176.500.1.6', # univentionDnsReverseZone
         '1.3.6.1.4.1.10176.1000.11.1.2', # univentionNetworkLink
         '1.3.6.1.4.1.10176.4200.4.2', # enabledServiceProviderIdentifierGroup
+        '1.3.6.1.4.1.10176.1000.308.1.1', # umcPolicyGrantedOperationSet
     ]
 )
 
