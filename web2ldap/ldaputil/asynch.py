@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 web2ldap.ldaputil.asynch - handle async LDAP operations
 

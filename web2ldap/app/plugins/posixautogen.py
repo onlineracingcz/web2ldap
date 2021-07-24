@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Auto-generate some posixAccount attribute values
 
