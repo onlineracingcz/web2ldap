@@ -228,6 +228,8 @@ class Web2LDAPForm(Form):
             for val in self.field[fname].value:
                 if isinstance(val, str):
                     res.append(self.hidden_field_html(fname, val, ''))
+                else:
+                    res.append(self.hidden_field_html(fname, '', ''))
         return '\n'.join(res)
 
 
