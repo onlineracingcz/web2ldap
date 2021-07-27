@@ -12,7 +12,7 @@ from ..schema.syntaxes import (
     DirectoryString,
     DistinguishedName,
     DynamicDNSelectList,
-    MultilineText,
+    PreformattedMultilineText,
     XmlValue,
     syntax_registry,
 )
@@ -76,22 +76,28 @@ syntax_registry.reg_at(
 )
 
 
-class UniventionLDAPACLData(Binary, MultilineText):
+class UniventionLDAPACLData(PreformattedMultilineText):
     oid: str = 'UniventionLDAPACLData-oid'
     desc: str = 'bzip2-ed LDAP ACL data in Univention'
 
-    def display(self, vidx, links) -> str:
-        attr_value = bz2.decompress(self._av)
-        attr_value_u = self._app.ls.uc_decode(attr_value)[0]
-        lines = [
-            self._app.form.s2d(l, tab_identiation='    ')
-            for l in self._split_lines(attr_value_u)
+    def sanitize(self, attr_value: bytes) -> bytes:
+        return bz2.compress(PreformattedMultilineText.sanitize(self, attr_value))
+
+    def form_value(self) -> str:
+        splitted_lines = [
+            self._app.ls.uc_decode(line_b)[0]
+            for line_b in self._split_lines(bz2.decompress(self._av) or b'')
         ]
-        return '<p>%d bytes <em>BZ2</em> data contains %d chars:</p><pre>%s</pre>' % (
-            len(self._av),
-            len(attr_value_u),
-            '<br>'.join(lines),
-        )
+        return '\r\n'.join(splitted_lines)
+
+    def validate(self, attr_value: bytes):
+        Binary.validate(self, bz2.decompress(attr_value))
+
+    def _split_lines(self, value):
+        return bz2.decompress(self._av).split(b'\n')
+
+    def display(self, vidx, links) -> str:
+        return PreformattedMultilineText.display(self, vidx, links)
 
 syntax_registry.reg_at(
     UniventionLDAPACLData.oid, [
