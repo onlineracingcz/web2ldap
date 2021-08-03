@@ -33,13 +33,35 @@ syntax_registry.reg_at(
 
 class UniventionPolicyReference(DynamicDNSelectList):
     oid: str = 'UniventionPolicyReference-oid'
-    desc: str = 'DN of the univentionPolicy entry'
+    desc: str = 'DN of referenced univentionPolicy entry'
     ldap_url = 'ldap:///_?cn?sub?(objectClass=univentionPolicy)'
 
 syntax_registry.reg_at(
     UniventionPolicyReference.oid, [
         '1.3.6.1.4.1.10176.1000', # univentionPolicyReference
     ]
+)
+
+
+class EntryDNUniventionPolicy(DistinguishedName):
+    oid: str = 'EntryDNUniventionPolicy-oid'
+    desc: str = 'entryDN of an univentionPolicy entry'
+    ref_attrs = (
+        (
+            'univentionPolicyReference', 'Used by', None,
+            'Search all entries referencing this policy.'
+        ),
+    )
+
+syntax_registry.reg_at(
+    EntryDNUniventionPolicy.oid, [
+        '1.3.6.1.1.20', # entryDN
+        '1.3.6.1.4.1.4203.666.1.33', # entryDN (legacy)
+    ],
+    structural_oc_oids=[
+        '1.3.6.1.4.1.10176.1000.2.2.1', # univentionPolicy
+        '1.3.6.1.4.1.10176.1000.308.2.1', # umcPolicy
+    ],
 )
 
 
