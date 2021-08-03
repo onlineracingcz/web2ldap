@@ -30,6 +30,7 @@ syntax_registry.reg_at(
 syntax_registry.reg_at(
     OctetString.oid, [
         '1.3.6.1.4.1.5322.10.1.10', # krb5Key
+        '1.3.6.1.4.1.5322.10.1.13', # krb5ExtendedAttributes
     ]
 )
 
