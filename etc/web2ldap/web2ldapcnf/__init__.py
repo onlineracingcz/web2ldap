@@ -154,7 +154,8 @@ http_headers = {
         "media-src 'none'; "
         "object-src 'none'; "
         "script-src 'none'; "
-        "style-src 'self';"
+        "style-src 'self'; "
+        "require-trusted-types-for 'script';"
 #        "report-uri https://logger.example.com/csp-error-handler"
     ),
     'Feature-Policy': (
