@@ -1101,12 +1101,6 @@ ldap_def = {
         description='My poorly configured LDAP host',
     ),
 
-    'ldap://localhost:7389': Web2LDAPConfig(
-        description='Sun/Oracle DSEE',
-        # broken schema shipped with Sun/Oracle/389 DS
-        schema_strictcheck=False,
-    ),
-
     'ldap://ipa.demo1.freeipa.org': Web2LDAPConfig(
         description='FreeIPA demo host',
         # work around 389-DS bug here
