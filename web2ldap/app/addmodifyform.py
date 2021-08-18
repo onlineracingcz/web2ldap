@@ -1042,7 +1042,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         )
         return
 
-    existing_object_classes = decode_list(entry['objectClass'][:], encoding='ascii')
+    existing_object_classes = decode_list(entry.get('objectClass', []), encoding='ascii')
 
     input_form_entry = InputFormEntry(
         app, app.dn, app.schema,
