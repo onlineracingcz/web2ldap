@@ -803,8 +803,7 @@ def display_schema_elements(app, se_classes, se_list):
     app.outf.write(oid_input_form(app, ''))
 
     if oid_dict:
-        for schema_class in oid_dict:
-            schema_elements = oid_dict[schema_class]
+        for schema_class, schema_elements in oid_dict.items():
             if not schema_elements:
                 continue
             app.outf.write('<h2>%s</h2>\n<p>found %d</p>\n%s\n' % (
