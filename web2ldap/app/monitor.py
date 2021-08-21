@@ -267,10 +267,10 @@ def w2l_monitor(app):
                     len(real_ldap_sessions),
                     '\n'.join([
                         '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(
-                            app.form.s2d((i[1].on_behalf or '') or u'unknown'),
+                            app.form.s2d((i[1].on_behalf or '') or 'unknown'),
                             strftimeiso8601(time.gmtime(i[0])),
-                            app.form.s2d(i[1].uri or u'no connection'),
-                            app.form.s2d(i[1].who or u'anonymous'),
+                            app.form.s2d(i[1].uri or 'no connection'),
+                            app.form.s2d(i[1].who or 'anonymous'),
                         )
                         for k, i in real_ldap_sessions
                     ]),

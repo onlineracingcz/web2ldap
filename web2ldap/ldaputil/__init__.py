@@ -37,9 +37,9 @@ AD_LDAP49_ERROR_CODES = {
 }
 AD_LDAP49_ERROR_PREFIX = b'AcceptSecurityContext error, data '
 
-ATTR_TYPE_PATTERN = u'[\\w;.-]+(;[\\w_-]+)*'
-ATTR_VALUE_PATTERN = u'(([^,]|\\\\,)+|".*?")'
-RDN_PATTERN = ATTR_TYPE_PATTERN + u'[ ]*=[ ]*' + ATTR_VALUE_PATTERN
+ATTR_TYPE_PATTERN = '[\\w;.-]+(;[\\w_-]+)*'
+ATTR_VALUE_PATTERN = '(([^,]|\\\\,)+|".*?")'
+RDN_PATTERN = ATTR_TYPE_PATTERN + '[ ]*=[ ]*' + ATTR_VALUE_PATTERN
 
 
 def has_subordinates(entry, default=True) -> bool:
@@ -82,27 +82,27 @@ def logdb_filter(logdb_objectclass, dn, entry_uuid=None):
     returns a filter for querying a changelog or accesslog DB for
     changes to a certain entry referenced by :dn: or :entry_uuid:
     """
-    if logdb_objectclass.startswith(u'audit'):
-        logdb_dn_attr = u'reqDN'
-        logdb_entryuuid_attr = u'reqEntryUUID'
-    elif logdb_objectclass.startswith(u'change'):
-        logdb_dn_attr = u'targetDN'
-        logdb_entryuuid_attr = u'targetEntryUUID'
+    if logdb_objectclass.startswith('audit'):
+        logdb_dn_attr = 'reqDN'
+        logdb_entryuuid_attr = 'reqEntryUUID'
+    elif logdb_objectclass.startswith('change'):
+        logdb_dn_attr = 'targetDN'
+        logdb_entryuuid_attr = 'targetEntryUUID'
     else:
         raise ValueError('Unknown logdb object class %r' % (logdb_objectclass))
     if entry_uuid:
-        target_filterstr = u'(|(%s=%s)(%s=%s))' % (
+        target_filterstr = '(|(%s=%s)(%s=%s))' % (
             logdb_dn_attr,
             ldap0.filter.escape_str(dn),
             logdb_entryuuid_attr,
             ldap0.filter.escape_str(entry_uuid),
         )
     else:
-        target_filterstr = u'(%s=%s)' % (
+        target_filterstr = '(%s=%s)' % (
             logdb_dn_attr,
             ldap0.filter.escape_str(dn),
         )
-    logdb_filterstr = u'(&(objectClass=%s)%s)' % (
+    logdb_filterstr = '(&(objectClass=%s)%s)' % (
         logdb_objectclass,
         target_filterstr,
     )

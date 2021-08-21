@@ -31,26 +31,26 @@ SEARCHFORM_MODE_TEXT = {
     'exp': 'Expert',
 }
 
-SEARCH_OPT_CONTAINS = u'({at}=*{av}*)'
-SEARCH_OPT_DOESNT_CONTAIN = u'(!({at}=*{av}*))'
-SEARCH_OPT_ATTR_EXISTS = u'({at}=*)'
-SEARCH_OPT_ATTR_NOT_EXISTS = u'(!({at}=*))'
-SEARCH_OPT_IS_EQUAL = u'({at}={av})'
-SEARCH_OPT_IS_NOT = u'(!({at}={av}))'
-SEARCH_OPT_BEGINS_WITH = u'({at}={av}*)'
-SEARCH_OPT_ENDS_WITH = u'({at}=*{av})'
-SEARCH_OPT_SOUNDS_LIKE = u'({at}~={av})'
-SEARCH_OPT_GE_THAN = u'({at}>={av})'
-SEARCH_OPT_LE_THAN = u'({at}<={av})'
-SEARCH_OPT_DN_ATTR_IS = u'({at}:dn:={av})'
-SEARCH_OPT_DN_SUBORDINATE = u'({at}:dnSubordinateMatch:={av})'
-SEARCH_OPT_DN_SUBTREE = u'({at}:dnSubtreeMatch:={av})'
-SEARCH_OPT_DN_ONE_LEVEL = u'({at}:dnOneLevelMatch:={av})'
+SEARCH_OPT_CONTAINS = '({at}=*{av}*)'
+SEARCH_OPT_DOESNT_CONTAIN = '(!({at}=*{av}*))'
+SEARCH_OPT_ATTR_EXISTS = '({at}=*)'
+SEARCH_OPT_ATTR_NOT_EXISTS = '(!({at}=*))'
+SEARCH_OPT_IS_EQUAL = '({at}={av})'
+SEARCH_OPT_IS_NOT = '(!({at}={av}))'
+SEARCH_OPT_BEGINS_WITH = '({at}={av}*)'
+SEARCH_OPT_ENDS_WITH = '({at}=*{av})'
+SEARCH_OPT_SOUNDS_LIKE = '({at}~={av})'
+SEARCH_OPT_GE_THAN = '({at}>={av})'
+SEARCH_OPT_LE_THAN = '({at}<={av})'
+SEARCH_OPT_DN_ATTR_IS = '({at}:dn:={av})'
+SEARCH_OPT_DN_SUBORDINATE = '({at}:dnSubordinateMatch:={av})'
+SEARCH_OPT_DN_SUBTREE = '({at}:dnSubtreeMatch:={av})'
+SEARCH_OPT_DN_ONE_LEVEL = '({at}:dnOneLevelMatch:={av})'
 
-SEARCH_SCOPE_STR_BASE = u'0'
-SEARCH_SCOPE_STR_ONELEVEL = u'1'
-SEARCH_SCOPE_STR_SUBTREE = u'2'
-SEARCH_SCOPE_STR_SUBORDINATES = u'3'
+SEARCH_SCOPE_STR_BASE = '0'
+SEARCH_SCOPE_STR_ONELEVEL = '1'
+SEARCH_SCOPE_STR_SUBTREE = '2'
+SEARCH_SCOPE_STR_SUBORDINATES = '3'
 
 SEARCH_SCOPE_OPTIONS = [
     (str(ldap0.SCOPE_BASE), 'Base'),
@@ -60,21 +60,21 @@ SEARCH_SCOPE_OPTIONS = [
 ]
 
 SEARCH_OPTIONS = (
-    (SEARCH_OPT_IS_EQUAL, u'attribute value is'),
-    (SEARCH_OPT_CONTAINS, u'attribute value contains'),
-    (SEARCH_OPT_DOESNT_CONTAIN, u'attribute value does not contain'),
-    (SEARCH_OPT_IS_NOT, u'attribute value is not'),
-    (SEARCH_OPT_BEGINS_WITH, u'attribute value begins with'),
-    (SEARCH_OPT_ENDS_WITH, u'attribute value ends with'),
-    (SEARCH_OPT_SOUNDS_LIKE, u'attribute value sounds like'),
-    (SEARCH_OPT_GE_THAN, u'attribute value greater equal than'),
-    (SEARCH_OPT_LE_THAN, u'attribute value lesser equal than'),
-    (SEARCH_OPT_DN_ATTR_IS, u'DN attribute value is'),
-    (SEARCH_OPT_ATTR_EXISTS, u'entry has attribute'),
-    (SEARCH_OPT_ATTR_NOT_EXISTS, u'entry does not have attribute'),
-    (SEARCH_OPT_DN_SUBORDINATE, u'DN is subordinate of'),
-    (SEARCH_OPT_DN_SUBTREE, u'DN within subtree'),
-    (SEARCH_OPT_DN_ONE_LEVEL, u'DN is direct child of'),
+    (SEARCH_OPT_IS_EQUAL, 'attribute value is'),
+    (SEARCH_OPT_CONTAINS, 'attribute value contains'),
+    (SEARCH_OPT_DOESNT_CONTAIN, 'attribute value does not contain'),
+    (SEARCH_OPT_IS_NOT, 'attribute value is not'),
+    (SEARCH_OPT_BEGINS_WITH, 'attribute value begins with'),
+    (SEARCH_OPT_ENDS_WITH, 'attribute value ends with'),
+    (SEARCH_OPT_SOUNDS_LIKE, 'attribute value sounds like'),
+    (SEARCH_OPT_GE_THAN, 'attribute value greater equal than'),
+    (SEARCH_OPT_LE_THAN, 'attribute value lesser equal than'),
+    (SEARCH_OPT_DN_ATTR_IS, 'DN attribute value is'),
+    (SEARCH_OPT_ATTR_EXISTS, 'entry has attribute'),
+    (SEARCH_OPT_ATTR_NOT_EXISTS, 'entry does not have attribute'),
+    (SEARCH_OPT_DN_SUBORDINATE, 'DN is subordinate of'),
+    (SEARCH_OPT_DN_SUBTREE, 'DN within subtree'),
+    (SEARCH_OPT_DN_ONE_LEVEL, 'DN is direct child of'),
 )
 
 FILTERSTR_FIELDSET_TMPL = """
@@ -117,13 +117,13 @@ def search_form_base(app, searchform_template_name):
 def search_form_adv(app):
     """advanced search form with select lists"""
 
-    search_submit = app.form.getInputValue('search_submit', [u''])[0]
+    search_submit = app.form.getInputValue('search_submit', [''])[0]
 
     # Get input values
-    search_attr_list = app.form.getInputValue('search_attr', [u''])
+    search_attr_list = app.form.getInputValue('search_attr', [''])
     search_option_list = app.form.getInputValue('search_option', [None]*len(search_attr_list))
     search_mr_list = app.form.getInputValue('search_mr', [None]*len(search_attr_list))
-    search_string_list = app.form.getInputValue('search_string', [u'']*len(search_attr_list))
+    search_string_list = app.form.getInputValue('search_string', ['']*len(search_attr_list))
 
     if search_submit.startswith('-'):
         del_row_num = int(search_submit[1:])
@@ -138,18 +138,18 @@ def search_form_adv(app):
             search_option_list.insert(insert_row_num+1, search_option_list[insert_row_num])
             search_attr_list.insert(insert_row_num+1, search_attr_list[insert_row_num])
             search_mr_list.insert(insert_row_num+1, search_mr_list[insert_row_num])
-            search_string_list.insert(insert_row_num+1, u'')
+            search_string_list.insert(insert_row_num+1, '')
 
     if not len(search_option_list) == len(search_attr_list) == len(search_string_list):
-        raise ErrorExit(u'Invalid search form data.')
+        raise ErrorExit('Invalid search form data.')
 
-    search_mode = app.form.getInputValue('search_mode', [u'(&%s)'])[0]
+    search_mode = app.form.getInputValue('search_mode', ['(&%s)'])[0]
 
     search_mode_select = SelectField(
-        'search_mode', u'Search mode', 1,
+        'search_mode', 'Search mode', 1,
         options=[
-            (u'(&%s)', u'all'),
-            (u'(|%s)', u'any'),
+            ('(&%s)', 'all'),
+            ('(|%s)', 'any'),
         ],
         default=search_mode
     )
@@ -158,7 +158,7 @@ def search_form_adv(app):
     search_attr_select = attrtype_select_field(
         app,
         'search_attr',
-        u'Search attribute type',
+        'Search attribute type',
         search_attr_list,
         default_attr_options=app.cfg_param('search_attrs', [])
     )
@@ -166,7 +166,7 @@ def search_form_adv(app):
     mr_list = [''] + sorted(app.schema.name2oid[ldap0.schema.models.MatchingRule].keys())
     # Create a select field instance for matching rule name
     search_mr_select = SelectField(
-        'search_mr', u'Matching rule used',
+        'search_mr', 'Matching rule used',
         web2ldapcnf.max_searchparams,
         options=mr_list,
     )
@@ -218,8 +218,8 @@ def w2l_searchform(
     else:
         msg_html = ''
 
-    searchform_mode = searchform_mode or app.form.getInputValue('searchform_mode', [u'base'])[0]
-    searchform_template_name = app.form.getInputValue('searchform_template', [u'_'])[0]
+    searchform_mode = searchform_mode or app.form.getInputValue('searchform_mode', ['base'])[0]
+    searchform_template_name = app.form.getInputValue('searchform_template', ['_'])[0]
 
     search_root = app.form.getInputValue(
         'search_root',
@@ -263,7 +263,7 @@ def w2l_searchform(
                     ],
                 ))
 
-    if searchform_mode == u'base':
+    if searchform_mode == 'base':
         # base search form with fixed input fields
         try:
             inner_searchform_html = search_form_base(app, searchform_template_name)
@@ -274,11 +274,11 @@ def w2l_searchform(
                 '<p class="ErrorMessage">I/O error while loading search form template!</p>'
             ))
             inner_searchform_html = search_form_adv(app)
-            searchform_mode = u'adv'
-    elif searchform_mode == u'exp':
+            searchform_mode = 'adv'
+    elif searchform_mode == 'exp':
         # expert search form with single filter input field
         inner_searchform_html = search_form_exp(app, filterstr)
-    elif searchform_mode == u'adv':
+    elif searchform_mode == 'adv':
         # base search form with fixed input fields
         inner_searchform_html = search_form_adv(app)
 
@@ -316,10 +316,10 @@ def w2l_searchform(
             form_search_html=app.begin_form('search', 'GET'),
             searchform_mode=app.form.s2d(searchform_mode),
             searchform_template=app.form.s2d(searchform_template_name),
-            search_output=app.form.getInputValue('search_output', [u'table'])[0],
+            search_output=app.form.getInputValue('search_output', ['table'])[0],
             msg_html=msg_html,
             inner_searchform_html=inner_searchform_html,
-            form_dn_html=app.form.hidden_field_html('dn', app.dn, u''),
+            form_dn_html=app.form.hidden_field_html('dn', app.dn, ''),
             searchoptions_template_str=searchoptions_template_str.format(
                 field_search_root=srf.input_html(),
                 field_search_scope=app.form.field['scope'].input_html(
@@ -334,7 +334,7 @@ def w2l_searchform(
                 field_search_lastmod=app.form.field['search_lastmod'].input_html(
                     default=app.form.getInputValue('search_lastmod', [str(-1)])[0]
                 ),
-                value_search_attrs=app.form.s2d(app.form.getInputValue('search_attrs', [u''])[0]),
+                value_search_attrs=app.form.s2d(app.form.getInputValue('search_attrs', [''])[0]),
             ),
         )
     )

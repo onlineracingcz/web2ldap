@@ -32,12 +32,12 @@ class UUIDReference(DynamicValueSelectList, UUID):
                 'searchform', '&raquo;',
                 (
                     ('dn', self._dn),
-                    ('searchform_mode', u'adv'),
-                    ('search_attr', u'apple-generateduid'),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'apple-generateduid'),
                     ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', value_disp),
                 ),
-                title=u'Search entry by UUID',
+                title='Search entry by UUID',
             )
         ))
 

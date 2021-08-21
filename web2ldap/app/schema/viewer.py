@@ -123,7 +123,7 @@ def schema_context_menu(app):
         if sub_schema_dn is not None:
             form_param_list = [
                 ('dn', sub_schema_dn),
-                ('filterstr', u'(objectClass=subschema)'),
+                ('filterstr', '(objectClass=subschema)'),
             ]
             for schema_attr in SCHEMA_ATTRS+['objectClass', 'cn']:
                 form_param_list.append(('read_attr', schema_attr))
@@ -131,7 +131,7 @@ def schema_context_menu(app):
                 app.anchor(
                     'read', 'Subschema Subentry',
                     form_param_list,
-                    title=u'Directly read the subschema subentry'),
+                    title='Directly read the subschema subentry'),
                 )
         if app.schema:
             se_class_attrs = [
@@ -145,7 +145,7 @@ def schema_context_menu(app):
                     app.anchor(
                         'oid', se_class_attr,
                         [('dn', app.dn), ('oid_class', se_class_attr)],
-                        title=u'Browse all %s' % (se_class_attr,),
+                        title='Browse all %s' % (se_class_attr,),
                     )
                 )
     return context_menu_list
@@ -348,12 +348,12 @@ class DisplayObjectClass(DisplaySchemaElement):
                     ),
                     [
                         ('dn', self._app.dn),
-                        ('searchform_mode', u'adv'),
-                        ('search_attr', u'objectClass'),
+                        ('searchform_mode', 'adv'),
+                        ('search_attr', 'objectClass'),
                         ('search_option', SEARCH_OPT_IS_EQUAL),
                         ('search_string', (self._se.names or [self._se.oid])[0]),
                     ],
-                    title=u'Search entries by object class',
+                    title='Search entries by object class',
                 ),
             )
         )
@@ -504,12 +504,12 @@ class DisplayAttributeType(DisplaySchemaElement):
                     ),
                     [
                         ('dn', self._app.dn),
-                        ('searchform_mode', u'adv'),
+                        ('searchform_mode', 'adv'),
                         ('search_attr', (self._se.names or [self._se.oid])[0]),
                         ('search_option', SEARCH_OPT_ATTR_EXISTS),
                         ('search_string', ''),
                     ],
-                    title=u'Search entries by attribute presence',
+                    title='Search entries by attribute presence',
                 ),
             )
         )
@@ -759,7 +759,7 @@ SCHEMA_VIEWER_CLASS = {
 def oid_input_form(app, oid=None):
     oid_input_field_html = OIDInput(
         'oid',
-        u'OID or descriptive name of schema element',
+        'OID or descriptive name of schema element',
         default=oid
     ).input_html(oid)
     oid_class_select_html = app.form.field['oid_class'].input_html('')
@@ -782,7 +782,7 @@ def display_schema_elements(app, se_classes, se_list):
     )
 
     if app.schema is None:
-        raise ErrorExit(u'No sub schema available!')
+        raise ErrorExit('No sub schema available!')
 
     oid_dict = {}
     if se_list:
@@ -903,7 +903,7 @@ def w2l_schema_viewer(app):
     if not se_list:
         # Display error message with input form
         app.simple_message(
-            title=u'',
+            title='',
             message=(
                 '<h1>Schema elements</h1><p class="ErrorMessage">'
                 'Name or OID not found in schema!</p><p>%s</p>'
@@ -923,6 +923,6 @@ def w2l_schema_viewer(app):
     # Directly display a single schema element
     se_obj = se_list[0]
     if se_obj.__class__ not in SCHEMA_VIEWER_CLASS:
-        raise ErrorExit(u'No viewer for this type of schema element!')
+        raise ErrorExit('No viewer for this type of schema element!')
     schema_viewer = SCHEMA_VIEWER_CLASS[se_obj.__class__](app, se_obj)
     schema_viewer.display()

@@ -91,8 +91,8 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
             display_name_list = [app.form.s2d(str(rdn)), partial_str]
         display_name = ''.join(display_name_list)
 
-        title_msg = u'\r\n'.join(
-            (str(dn) or u'Root DSE', node_entry.get('structuralObjectClass', [u''])[0]) + \
+        title_msg = '\r\n'.join(
+            (str(dn) or 'Root DSE', node_entry.get('structuralObjectClass', [''])[0]) + \
             tuple(node_entry.get('description', []))
         )
 
@@ -111,7 +111,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
                 app.anchor(
                     'dit', link_text,
                     [('dn', str(next_dn))],
-                    title=u'Browse from %s' % (str(next_dn),),
+                    title='Browse from %s' % (str(next_dn),),
                     anchor_id=dn_anchor_id,
                 )
             )
@@ -126,7 +126,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
             app.anchor(
                 'read', '&rsaquo;',
                 [('dn', str(dn))],
-                title=u'Read entry',
+                title='Read entry',
             )
         )
         res.append('</dt>')
@@ -207,7 +207,7 @@ def w2l_dit(app):
                         app.anchor(
                             'dit', '&rsaquo;&rsaquo;',
                             (('dn', str(naming_context)),),
-                            title=u'Display tree beneath %s' % (naming_context,),
+                            title='Display tree beneath %s' % (naming_context,),
                         ),
                         app.form.s2d(str(naming_context)),
                     )

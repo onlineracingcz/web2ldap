@@ -250,7 +250,7 @@ class AppHandler(LogHelper):
             cfg_url = 'ldap://'
         return LDAP_DEF.get_param(
             cfg_url,
-            self.naming_context or u'',
+            self.naming_context or '',
             param_key,
             default,
         )
@@ -260,7 +260,7 @@ class AppHandler(LogHelper):
         """
         get parameter 'binddn_mapping' from cascaded configuration
         """
-        return self.cfg_param('binddn_mapping', u'ldap:///_??sub?(uid={user})')
+        return self.cfg_param('binddn_mapping', 'ldap:///_??sub?(uid={user})')
 
     def check_access(self, command):
         """
@@ -377,7 +377,7 @@ class AppHandler(LogHelper):
         """
         form_str = [self.begin_form(command, method, target)]
         for param_name, param_value in form_parameters:
-            form_str.append(self.form.hidden_field_html(param_name, param_value, u''))
+            form_str.append(self.form.hidden_field_html(param_name, param_value, ''))
         form_str.append(
             '<p>\n<input type="submit" value="%s">\n%s\n</p>\n</form>' % (
                 submitstr,
@@ -439,7 +439,7 @@ class AppHandler(LogHelper):
     def display_dn(self, dn, links=False):
         """Display a DN as LDAP URL with or without button"""
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was %r" % (dn,))
-        dn_str = self.form.s2d(dn or u'- World -')
+        dn_str = self.form.s2d(dn or '- World -')
         if links:
             command_buttons = [
                 dn_str,
@@ -490,8 +490,8 @@ class AppHandler(LogHelper):
 
     def simple_message(
             self,
-            title=u'',
-            message=u'',
+            title='',
+            message='',
             main_div_id='Message',
             main_menu_list=None,
             context_menu_list=None,
@@ -528,7 +528,7 @@ class AppHandler(LogHelper):
             self.form = Web2LDAPForm(None, self.env)
         target_url = target_url or self.script_name
         url_redirect_template_str = read_template(
-            self, None, u'redirect',
+            self, None, 'redirect',
             tmpl_filename=web2ldapcnf.redirect_template,
         )
         if refresh_time:
@@ -648,7 +648,7 @@ class AppHandler(LogHelper):
                     input_ldapurl = ExtendedLDAPUrl(ldap_url_input)
                 except ValueError as err:
                     raise ErrorExit(
-                        u'Error parsing LDAP URL: %s.' % (err,)
+                        'Error parsing LDAP URL: %s.' % (err,)
                     )
             else:
                 input_ldapurl = ExtendedLDAPUrl()
@@ -724,17 +724,17 @@ class AppHandler(LogHelper):
         """
         matched_dn = None
         if isinstance(ldap_err, ldap0.TIMEOUT) or not ldap_err.args:
-            error_msg = u''
+            error_msg = ''
         elif isinstance(ldap_err, ldap0.INVALID_CREDENTIALS) and \
             AD_LDAP49_ERROR_PREFIX in ldap_err.args[0].get('info', b''):
             ad_error_code_pos = (
                 ldap_err.args[0]['info'].find(AD_LDAP49_ERROR_PREFIX)+len(AD_LDAP49_ERROR_PREFIX)
             )
             ad_error_code = int(ldap_err.args[0]['info'][ad_error_code_pos:ad_error_code_pos+3], 16)
-            error_msg = u'%s:\n%s (%s)' % (
+            error_msg = '%s:\n%s (%s)' % (
                 ldap_err.args[0]['desc'].decode(self.ls.charset),
                 ldap_err.args[0].get('info', b'').decode(self.ls.charset),
-                AD_LDAP49_ERROR_CODES.get(ad_error_code, u'unknown'),
+                AD_LDAP49_ERROR_CODES.get(ad_error_code, 'unknown'),
             )
         else:
             try:
@@ -1008,8 +1008,8 @@ class AppHandler(LogHelper):
             log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
             exception_message(
                 self,
-                u'Error parsing form',
-                u'Error parsing form:<br>%s' % (
+                'Error parsing form',
+                'Error parsing form:<br>%s' % (
                     self.form.s2d(str(form_error)),
                 ),
             )
@@ -1046,7 +1046,7 @@ class AppHandler(LogHelper):
                 self.dn = ldap_err.args[0]['matched'].decode(self.ls.charset)
             exception_message(
                 self,
-                u'No such object',
+                'No such object',
                 self.ldap_error_msg(
                     ldap_err,
                     template='{{error_msg}}<br>{0}{{matched_dn}}'.format(
@@ -1067,7 +1067,7 @@ class AppHandler(LogHelper):
             log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
             w2l_login(
                 self,
-                who=u'',
+                who='',
                 login_msg=self.ldap_error_msg(err),
                 relogin=True,
             )
@@ -1092,15 +1092,15 @@ class AppHandler(LogHelper):
             # Output the change password form
             passwd.passwd_form(
                 self,
-                u'',
+                '',
                 self.dn,
                 None,
                 'Password change needed',
                 self.form.s2d(
-                    u'Password will expire in %s!' % (
+                    'Password will expire in %s!' % (
                         ts2repr(
                             Timespan.time_divisors,
-                            u' ',
+                            ' ',
                             err.timeBeforeExpiration,
                         )
                     )
@@ -1113,7 +1113,7 @@ class AppHandler(LogHelper):
             # Output the change password form
             passwd.passwd_form(
                 self,
-                u'',
+                '',
                 self.dn,
                 None,
                 'Password change needed',
@@ -1124,7 +1124,7 @@ class AppHandler(LogHelper):
             log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
             exception_message(
                 self,
-                u'Unhandled %s' % err.__class__.__name__,
+                'Unhandled %s' % err.__class__.__name__,
                 self.form.s2d(str(err)),
             )
 
@@ -1132,7 +1132,7 @@ class AppHandler(LogHelper):
             log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
             exception_message(
                 self,
-                u'Unhandled %s' % ldap_err.__class__.__name__,
+                'Unhandled %s' % ldap_err.__class__.__name__,
                 self.ldap_error_msg(ldap_err),
             )
 
@@ -1143,7 +1143,7 @@ class AppHandler(LogHelper):
         except MaxSessionPerIPExceeded as session_err:
             self.log(logging.WARN, str(session_err))
             self.simple_msg(
-                u'Client %s exceeded limit of max. %d sessions! Try later...' % (
+                'Client %s exceeded limit of max. %d sessions! Try later...' % (
                     session_err.remote_ip,
                     session_err.max_session_count,
                 )

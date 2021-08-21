@@ -67,7 +67,7 @@ def w2l_rename(app):
     rename_supsearchurl_cfg = app.cfg_param('rename_supsearchurl', {})
 
     if not app.dn:
-        raise ErrorExit(u'Rename operation not possible at - World - or RootDSE.')
+        raise ErrorExit('Rename operation not possible at - World - or RootDSE.')
 
     rename_newrdn = app.form.getInputValue('rename_newrdn', [None])[0]
     rename_newsuperior = app.form.getInputValue('rename_newsuperior', [None])[0]
@@ -110,7 +110,7 @@ def w2l_rename(app):
 
     app.form.field['rename_newrdn'].set_default(old_rdn)
 
-    rename_template_str = read_template(app, 'rename_template', u'rename form')
+    rename_template_str = read_template(app, 'rename_template', 'rename form')
 
     rename_supsearchurl = app.form.getInputValue('rename_supsearchurl', [None])[0]
     try:
@@ -159,7 +159,7 @@ def w2l_rename(app):
         )
         if not search_result:
             raise ErrorExit(
-                u'Empty search result when reading entry to be renamed.'
+                'Empty search result when reading entry to be renamed.'
             )
 
         entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
@@ -199,7 +199,7 @@ def w2l_rename(app):
     if rename_supsearchurl_cfg:
         rename_supsearchurl_field = forms.Select(
             'rename_supsearchurl',
-            u'LDAP URL for searching new superior entry',
+            'LDAP URL for searching new superior entry',
             1,
             options=[],
         )
@@ -216,7 +216,7 @@ def w2l_rename(app):
     app.outf.write(
         rename_template_str.format(
             form_begin=app.begin_form('rename', 'POST'),
-            field_hidden_dn=app.form.hidden_field_html('dn', app.dn, u''),
+            field_hidden_dn=app.form.hidden_field_html('dn', app.dn, ''),
             field_rename_newrdn=app.form.field['rename_newrdn'].input_html(),
             field_rename_new_superior=rename_new_superior_field.input_html(),
             text_name_forms=name_forms_text,

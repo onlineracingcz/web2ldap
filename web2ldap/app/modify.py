@@ -57,7 +57,7 @@ def modlist_ldif(dn, form, modlist):
 
 def w2l_modify(app):
 
-    in_assertion = app.form.getInputValue('in_assertion', [u'(objectClass=*)'])[0]
+    in_assertion = app.form.getInputValue('in_assertion', ['(objectClass=*)'])[0]
 
     input_modrow = app.form.getInputValue('in_mr', ['.'])[0]
 
@@ -111,7 +111,7 @@ def w2l_modify(app):
     try:
         old_entry, dummy = read_old_entry(app, app.dn, app.schema, in_assertion)
     except ldap0.NO_SUCH_OBJECT:
-        raise ErrorExit(u'Old entry was removed or modified in between! You have to edit it again.')
+        raise ErrorExit('Old entry was removed or modified in between! You have to edit it again.')
 
     # Filter out empty values
     for attr_type, attr_values in new_entry.items():

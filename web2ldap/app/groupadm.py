@@ -127,7 +127,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
     groupadm_defs = ldap0.cidict.CIDict(app.cfg_param('groupadm_defs', {}))
     if not groupadm_defs:
-        raise ErrorExit(u'Group admin options empty or not set.')
+        raise ErrorExit('Group admin options empty or not set.')
     groupadm_defs_keys = groupadm_defs.keys()
 
     all_membership_attrs = [
@@ -138,7 +138,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
     search_result = app.ls.l.read_s(app.dn, attrlist=all_membership_attrs)
     if not search_result:
-        raise ErrorExit(u'No search result when reading entry.')
+        raise ErrorExit('No search result when reading entry.')
 
     user_entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
 
@@ -235,7 +235,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                         else:
                             if user_entry_attrtype not in user_entry:
                                 raise ErrorExit(
-                                    u'Object class %s requires attribute %s in group entry.' % (
+                                    'Object class %s requires attribute %s in group entry.' % (
                                         ocl,
                                         user_entry_attrtype,
                                     )
@@ -387,8 +387,8 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
             """ % (
                 # form for changing group membership
                 app.begin_form('groupadm', 'POST'),
-                app.form.hidden_field_html('dn', app.dn, u''),
-                app.form.hidden_field_html('groupadm_searchroot', str(group_search_root), u''),
+                app.form.hidden_field_html('dn', app.dn, ''),
+                app.form.hidden_field_html('groupadm_searchroot', str(group_search_root), ''),
                 group_select_field(
                     app,
                     all_groups_dict,
@@ -419,7 +419,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
         """ % (
             # form for searching group entries
             app.begin_form('groupadm', 'GET'),
-            app.form.hidden_field_html('dn', app.dn, u''),
+            app.form.hidden_field_html('dn', app.dn, ''),
             group_search_root_field.input_html(title='Search root for searching group entries'),
             app.form.field['groupadm_name'].input_html(),
             app.form.field['groupadm_view'].input_html(
@@ -439,7 +439,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                 app.anchor(
                     'read', 'Read',
                     [('dn', group_dn)],
-                    title=u'Display group entry',
+                    title='Display group entry',
                 ),
                 app.form.s2d(group_dn),
                 ', '.join(group_entry.get('objectClass', [])),

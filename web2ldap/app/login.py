@@ -22,7 +22,7 @@ def w2l_login(
         app,
         title_msg='Bind',
         login_msg='',
-        who=u'',
+        who='',
         relogin=False,
         nomenu=False,
         login_default_mech=None
@@ -33,7 +33,7 @@ def w2l_login(
 
     login_search_root = app.form.getInputValue(
         'login_search_root',
-        [app.naming_context or app.dn or u''],
+        [app.naming_context or app.dn or ''],
     )[0]
 
     if 'login_who' in app.form.input_field_names:
@@ -45,7 +45,7 @@ def w2l_login(
         default=str(login_search_root),
     )
 
-    login_template_str = read_template(app, 'login_template', u'login form')
+    login_template_str = read_template(app, 'login_template', 'login form')
 
     if nomenu:
         main_menu_list = []
@@ -65,7 +65,7 @@ def w2l_login(
 
     # Determine the bind mech to be used from the
     # form data or the key-word argument login_default_mech
-    login_mech = app.form.getInputValue('login_mech', [login_default_mech] or u'')[0]
+    login_mech = app.form.getInputValue('login_mech', [login_default_mech] or '')[0]
 
     if login_msg:
         login_msg_html = '<p class="ErrorMessage">%s</p>' % (login_msg)
@@ -76,7 +76,7 @@ def w2l_login(
         text_heading=app.form.s2d(title_msg),
         text_error=login_msg_html,
         field_login_mech=app.form.field['login_mech'].input_html(default=login_mech),
-        value_ldap_who=app.form.s2d(who or u''),
+        value_ldap_who=app.form.s2d(who or ''),
         value_ldap_mapping=app.form.s2d(app.binddn_mapping),
         field_login_search_root=login_search_root_field.input_html(),
         field_login_authzid_prefix=app.form.field['login_authzid_prefix'].input_html(),
@@ -88,7 +88,7 @@ def w2l_login(
     if not scope_str and app.ldap_url.scope is not None:
         scope_str = str(app.ldap_url.scope)
     if scope_str:
-        scope_hidden_field = app.form.hidden_field_html('scope', scope_str, u'')
+        scope_hidden_field = app.form.hidden_field_html('scope', scope_str, '')
     else:
         scope_hidden_field = ''
 
@@ -100,17 +100,17 @@ def w2l_login(
     else:
         filterstr = app.ldap_url.filterstr or ''
     if filterstr:
-        filterstr_hidden_field = app.form.hidden_field_html('filterstr', filterstr, u'')
+        filterstr_hidden_field = app.form.hidden_field_html('filterstr', filterstr, '')
     else:
         filterstr_hidden_field = ''
 
     search_attrs_hidden_field = ''
     if 'search_attrs' in app.form.field:
         search_attrs = app.form.getInputValue(
-            'search_attrs', [u','.join(app.ldap_url.attrs or [])]
+            'search_attrs', [','.join(app.ldap_url.attrs or [])]
         )[0]
         if search_attrs:
-            search_attrs_hidden_field = app.form.hidden_field_html('search_attrs', search_attrs, u'')
+            search_attrs_hidden_field = app.form.hidden_field_html('search_attrs', search_attrs, '')
 
     # determine which command will be put in form's action attribute
     if not app.command or app.command == 'login':
@@ -123,10 +123,10 @@ def w2l_login(
     app.outf.write(
         '\n'.join((
             app.form.begin_form(action_command, None, 'POST', None),
-            app.form.hidden_field_html('ldapurl', str(app.ls.ldap_url('')), u''),
-            app.form.hidden_field_html('dn', app.dn, u''),
-            app.form.hidden_field_html('delsid', app.sid, u''),
-            app.form.hidden_field_html('conntype', str(int(app.ls.use_start_tls > 0)), u''),
+            app.form.hidden_field_html('ldapurl', str(app.ls.ldap_url('')), ''),
+            app.form.hidden_field_html('dn', app.dn, ''),
+            app.form.hidden_field_html('delsid', app.sid, ''),
+            app.form.hidden_field_html('conntype', str(int(app.ls.use_start_tls > 0)), ''),
             scope_hidden_field,
             filterstr_hidden_field,
             login_form_html,

@@ -70,7 +70,7 @@ def w2l_chasesrvrecord(app, host_list):
     app.outf.write(
         SRVRR_TMPL % (
             app.begin_form(app.command, 'POST'),
-            app.form.hidden_field_html('dn', app.dn, u''),
+            app.form.hidden_field_html('dn', app.dn, ''),
             app.form.s2d(app.dn),
             host_select_field.input_html(),
             '', '', '', ''

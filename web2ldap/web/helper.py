@@ -124,7 +124,7 @@ class AcceptCharsetDict(AcceptHeaderDict):
         lst = self.items()
         while lst and lst[0][0] != '*':
             try:
-                u''.encode(lst[0][0])
+                ''.encode(lst[0][0])
             except LookupError:
                 lst.pop(0)
             else:

@@ -202,9 +202,9 @@ class OpenDSCfgCertificateValidationPolicy(SelectList):
     oid: str = 'OpenDSCfgCertificateValidationPolicy-oid'
     desc: str = 'Specifies the way client certs are checked in user entry.'
     attr_value_dict: Dict[str, str] = {
-        'always': u"Always require matching peer certificate in user's entry",
-        'ifpresent': u"Require one matching certificate if attribute exists in user's entry",
-        'never': u"Peer certificate is not checked in user's entry at all",
+        'always': "Always require matching peer certificate in user's entry",
+        'ifpresent': "Require one matching certificate if attribute exists in user's entry",
+        'never': "Peer certificate is not checked in user's entry at all",
     }
 
 syntax_registry.reg_at(
@@ -228,8 +228,8 @@ class OpenDSCfgAccountStatusNotificationType(SelectList):
         'account-unlocked': 'User account has been unlocked by an administrator',
         'password-changed': 'User changes his/her own password',
         'password-expired': 'User authentication has failed because the password has expired',
-        'password-expiring': u"Password expiration warning is encountered for user's password for the first time.",
-        'password-reset': u"User's password was reset by an administrator.",
+        'password-expiring': "Password expiration warning is encountered for user's password for the first time.",
+        'password-reset': "User's password was reset by an administrator.",
     }
 
 syntax_registry.reg_at(
@@ -347,7 +347,7 @@ class OpenDSCfgPrivilege(SelectList):
         'jmx-write': 'Perform JMX write operations',
         'ldif-export': 'Request LDIF export tasks',
         'ldif-import': 'Request LDIF import tasks',
-        'modify-acl':u"Modify the server's access control configuration",
+        'modify-acl': "Modify the server's access control configuration",
         'password-reset': 'Reset user passwords',
         'privilege-change': 'Make changes to specific root privileges and user privileges',
         'proxied-auth': 'Use proxied authorization control or SASL authz ID',

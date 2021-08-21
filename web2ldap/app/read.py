@@ -92,7 +92,7 @@ def display_attribute_table(app, entry, attrs, comment):
         for at in app.form.getInputValue('read_expandattr', [])
         if at
     }
-    if u'*' in read_expandattr_set:
+    if '*' in read_expandattr_set:
         read_tablemaxcount_dict = {}
     else:
         read_tablemaxcount_dict = ldap0.cidict.CIDict(
@@ -152,8 +152,8 @@ def display_attribute_table(app, entry, attrs, comment):
                 [
                     ('dn', app.dn),
                     ('read_attr', attr_type_name),
-                    ('read_attrmimetype', u'application/octet-stream'),
-                    ('read_attrindex', u'0'),
+                    ('read_attrmimetype', 'application/octet-stream'),
+                    ('read_attrindex', '0'),
                 ],
             ))
         dt_str = '<br>'.join(dt_list)
@@ -184,10 +184,10 @@ def display_attribute_table(app, entry, attrs, comment):
 
 def w2l_read(app):
 
-    read_output = app.form.getInputValue('read_output', [u'template'])[0]
-    filterstr = app.form.getInputValue('filterstr', [u'(objectClass=*)'])[0]
+    read_output = app.form.getInputValue('read_output', ['template'])[0]
+    filterstr = app.form.getInputValue('filterstr', ['(objectClass=*)'])[0]
 
-    read_nocache = int(app.form.getInputValue('read_nocache', [u'0'])[0] or '0')
+    read_nocache = int(app.form.getInputValue('read_nocache', ['0'])[0] or '0')
 
     # Specific attributes requested with form parameter read_attr?
     wanted_attr_set = SchemaElementOIDSet(
@@ -198,7 +198,7 @@ def w2l_read(app):
     wanted_attrs = wanted_attr_set.names
 
     # Specific attributes requested with form parameter search_attrs?
-    search_attrs = app.form.getInputValue('search_attrs', [u''])[0]
+    search_attrs = app.form.getInputValue('search_attrs', [''])[0]
     if search_attrs:
         wanted_attrs.extend([
             a.strip() for a in search_attrs.split(',')
@@ -219,7 +219,7 @@ def w2l_read(app):
     )
 
     if not search_result:
-        raise ErrorExit(u'Empty search result.')
+        raise ErrorExit('Empty search result.')
 
     entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
 
@@ -265,13 +265,13 @@ def w2l_read(app):
                 attr_type = attr_type+';binary'
             else:
                 raise ErrorExit(
-                    u'Attribute <em>%s</em> not in entry.' % (
+                    'Attribute <em>%s</em> not in entry.' % (
                         app.form.s2d(attr_type)
                     )
                 )
 
         # Send a single binary attribute with appropriate MIME-type
-        read_attrindex = int(app.form.getInputValue('read_attrindex', [u'0'])[0])
+        read_attrindex = int(app.form.getInputValue('read_attrindex', ['0'])[0])
         syntax_se = syntax_registry.get_syntax(app.schema, attr_type, entry.get_structural_oc())
 
         # We have to create an LDAPSyntax instance to be able to call its methods
@@ -296,7 +296,7 @@ def w2l_read(app):
 
         return # end of single attribute display
 
-    if read_output in {u'table', u'template'}:
+    if read_output in {'table', 'template'}:
 
         # Display the whole entry with all its attributes
         top_section(
@@ -324,10 +324,10 @@ def w2l_read(app):
                 'search', 'Export', 'GET',
                 [
                     ('dn', app.dn),
-                    ('scope', u'0'),
-                    ('filterstr', u'(objectClass=*)'),
-                    ('search_resnumber', u'0'),
-                    ('search_attrs', u','.join(map(str, wanted_attrs or []))),
+                    ('scope', '0'),
+                    ('filterstr', '(objectClass=*)'),
+                    ('search_resnumber', '0'),
+                    ('search_attrs', ','.join(map(str, wanted_attrs or []))),
                 ],
                 extrastr='\n'.join((
                     export_field.input_html(),
@@ -340,14 +340,14 @@ def w2l_read(app):
 
         displayed_attrs = set()
 
-        if read_output == u'template':
+        if read_output == 'template':
             # Display attributes with HTML templates
             displayed_attrs.update(display_entry.template_output('read_template'))
 
         # Display the DN if no templates were used above
         if not displayed_attrs:
             if not app.dn:
-                h1_display_name = u'Root DSE'
+                h1_display_name = 'Root DSE'
             else:
                 h1_display_name = entry.get(
                     'displayName',
@@ -403,9 +403,9 @@ def w2l_read(app):
             </p></form>
             """ % (
                 app.begin_form('read', 'GET'),
-                app.form.hidden_field_html('read_nocache', u'1', u''),
-                app.form.hidden_field_html('dn', app.dn, u''),
-                app.form.hidden_field_html('read_output', read_output, u''),
+                app.form.hidden_field_html('read_nocache', '1', ''),
+                app.form.hidden_field_html('dn', app.dn, ''),
+                app.form.hidden_field_html('read_output', read_output, ''),
                 ','.join([
                     app.form.s2d(at, sp_entity='  ')
                     for at in (
@@ -427,16 +427,16 @@ def w2l_read(app):
         vcard_template_filename = get_vcard_template(app, entry.get('objectClass', []))
 
         if not vcard_template_filename:
-            raise ErrorExit(u'No vCard template file found for object class(es) of this entry.')
+            raise ErrorExit('No vCard template file found for object class(es) of this entry.')
 
         # Templates defined => display the entry with the help of a template
         try:
             with open(vcard_template_filename, 'rb') as fileobj:
                 template_str = fileobj.read()
         except IOError:
-            raise ErrorExit(u'I/O error during reading vCard template file!')
+            raise ErrorExit('I/O error during reading vCard template file!')
 
-        vcard_filename = u'web2ldap-vcard'
+        vcard_filename = 'web2ldap-vcard'
         for vcard_name_attr in ('displayName', 'cn', 'o'):
             try:
                 vcard_filename = entry[vcard_name_attr][0].decode(app.ls.charset)

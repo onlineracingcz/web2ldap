@@ -171,7 +171,7 @@ syntax_registry.reg_at(
 class OlcRootDN(BindDN):
     oid: str = 'OlcRootDN-oid'
     desc: str = 'The rootdn in the database'
-    default_rdn = u'cn=admin'
+    default_rdn = 'cn=admin'
 
     def form_value(self) -> str:
         fval = BindDN.form_value(self)
@@ -182,7 +182,7 @@ class OlcRootDN(BindDN):
         else:
             if not fval or not fval.endswith(olc_suffix):
                 try:
-                    fval = u','.join((self.default_rdn, olc_suffix))
+                    fval = ','.join((self.default_rdn, olc_suffix))
                 except KeyError:
                     pass
         return fval
@@ -326,7 +326,7 @@ class AuditContext(NamingContexts):
                     'search', 'List all',
                     [
                         ('dn', self.av_u),
-                        ('filterstr', u'(objectClass=auditObject)'),
+                        ('filterstr', '(objectClass=auditObject)'),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
                     title='List audit log entries of all operations',
@@ -335,7 +335,7 @@ class AuditContext(NamingContexts):
                     'search', 'List writes',
                     [
                         ('dn', self.av_u),
-                        ('filterstr', u'(objectClass=auditWriteObject)'),
+                        ('filterstr', '(objectClass=auditWriteObject)'),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
                     ],
                     title='List audit log entries of all write operations',
@@ -489,7 +489,7 @@ class ReqEntryUUID(UUID):
                     ('dn', self._dn),
                     (
                         'filterstr',
-                        u'(entryUUID=%s)' % (self.av_u),
+                        '(entryUUID=%s)' % (self.av_u),
                     ),
                     (
                         'search_root',
@@ -525,8 +525,8 @@ class ReqSession(Integer):
                 (
                     ('dn', self._dn),
                     ('search_root', str(self._app.naming_context)),
-                    ('searchform_mode', u'adv'),
-                    ('search_attr', u'reqSession'),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'reqSession'),
                     ('search_option', SEARCH_OPT_IS_EQUAL),
                     ('search_string', self.av_u),
                 ),
@@ -612,7 +612,7 @@ class OpenLDAPSpecialBackendSuffix(NamingContexts):
                 ('scope', SEARCH_SCOPE_STR_ONELEVEL),
                 (
                     'filterstr',
-                    u'(&(objectClass=olcDatabaseConfig)(olcDatabase=%s))' % (attr_type_u),
+                    '(&(objectClass=olcDatabaseConfig)(olcDatabase=%s))' % (attr_type_u),
                 ),
             ),
             title='Search for configuration entry below %s' % (config_context),

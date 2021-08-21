@@ -78,7 +78,7 @@ def w2l_chasereferral(app, ref_exc):
         return
 
     login_template_str = read_template(
-        app, 'login_template', u'referral login form'
+        app, 'login_template', 'referral login form'
     )
 
     login_search_root_field = search_root_field(
@@ -105,8 +105,8 @@ def w2l_chasereferral(app, ref_exc):
         """  % (
             app.form.s2d(ref_url.unparse()),
             app.begin_form(app.command, 'POST'),
-            app.form.hidden_field_html('host', ref_url.hostport, u''),
-            app.form.hidden_field_html('dn', ref_url.dn, u''),
+            app.form.hidden_field_html('host', ref_url.hostport, ''),
+            app.form.hidden_field_html('dn', ref_url.dn, ''),
             login_fields,
         )
     )

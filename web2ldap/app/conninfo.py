@@ -177,7 +177,7 @@ def w2l_conninfo(app):
                     ),
                     ('scope', str(ldap0.SCOPE_SUBTREE)),
                 ],
-                title=u'Find own connections in Monitor database',
+                title='Find own connections in Monitor database',
             ))
     else:
         config_dn_list.append(('CN=MONITOR', 'Monitor'))
@@ -236,7 +236,7 @@ def w2l_conninfo(app):
                     ('filterstr', '(&(objectClass=auditObject)(reqAuthzID=%s))' % (ldap0.filter.escape_str(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
-                title=u'Complete audit trail for currently bound identity',
+                title='Complete audit trail for currently bound identity',
             ),
             app.anchor(
                 'search', 'Audit my writes',
@@ -245,7 +245,7 @@ def w2l_conninfo(app):
                     ('filterstr', '(&(objectClass=auditWriteObject)(reqAuthzID=%s))' % (ldap0.filter.escape_str(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
-                title=u'Audit trail of write access by currently bound identity',
+                title='Audit trail of write access by currently bound identity',
             ),
             app.anchor(
                 'search', 'Last logins',
@@ -254,7 +254,7 @@ def w2l_conninfo(app):
                     ('filterstr', '(&(objectClass=auditBind)(reqDN=%s))' % (ldap0.filter.escape_str(app.ls.who or ''))),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
-                title=u'Audit trail of last logins (binds) by currently bound identity',
+                title='Audit trail of last logins (binds) by currently bound identity',
             ),
         ])
 
@@ -294,12 +294,12 @@ def w2l_conninfo(app):
                 app.anchor(
                     'read', 'Read',
                     [('dn', app.ls.who)],
-                    title=u'Read bound entry\r\n%s' % (app.ls.who),
+                    title='Read bound entry\r\n%s' % (app.ls.who),
                 ),
                 app.anchor(
                     'passwd', 'Password',
                     [('dn', app.ls.who), ('passwd_who', app.ls.who)],
-                    title=u'Set password of entry\r\n%s' % (app.ls.who),
+                    title='Set password of entry\r\n%s' % (app.ls.who),
                 ),
             ))
         )
@@ -312,7 +312,7 @@ def w2l_conninfo(app):
         whoami_result = '<strong>Failed:</strong> %s' % (app.ldap_error_msg(ldap_err))
 
     if app.ls.sasl_auth:
-        sasl_mech = u'SASL/%s' % (app.ls.sasl_mech)
+        sasl_mech = 'SASL/%s' % (app.ls.sasl_mech)
         sasl_auth_info = '<table>%s</table>' % '\n'.join([
             '<tr><td>%s</td><td>%s</td></tr>' % (
                 app.form.s2d(ldap0.OPT_NAMES.get(key, str(key))),
@@ -322,7 +322,7 @@ def w2l_conninfo(app):
             if val
         ])
     else:
-        sasl_mech = u'simple'
+        sasl_mech = 'simple'
         sasl_auth_info = 'SASL not used'
 
     try:
@@ -335,9 +335,9 @@ def w2l_conninfo(app):
     try:
         sasl_ssf = str(app.ls.l.get_option(ldap0.OPT_X_SASL_SSF))
     except ldap0.LDAPError as ldap_err:
-        sasl_ssf = u'error reading option: %s' % (app.ldap_error_msg(ldap_err))
+        sasl_ssf = 'error reading option: %s' % (app.ldap_error_msg(ldap_err))
     except ValueError:
-        sasl_ssf = u'option not available'
+        sasl_ssf = 'option not available'
 
     app.outf.write(
         CONNINFO_LDAP_TEMPLATE % (
@@ -361,8 +361,8 @@ def w2l_conninfo(app):
             sasl_auth_info,
             sasl_user_name,
             app.form.s2d(sasl_ssf),
-            app.form.s2d(app.dn or u'- World -'),
-            app.form.s2d(app.parent_dn if app.parent_dn is not None else u''),
+            app.form.s2d(app.dn or '- World -'),
+            app.form.s2d(app.parent_dn if app.parent_dn is not None else ''),
             app.form.s2d(str(app.naming_context)),
             min(len(app.ls.l.last_search_bases), app.ls.l.last_search_bases.maxlen),
             '<br>'.join([
@@ -377,7 +377,7 @@ def w2l_conninfo(app):
             app.anchor(
                 'conninfo', 'Flush all caches',
                 [('dn', app.dn), ('conninfo_flushcaches', '1')],
-                title=u'Flush all cached information for this LDAP connection'
+                title='Flush all cached information for this LDAP connection'
             ),
             len(app.ls.l._cache),
             len(app.ls._schema_dn_cache),

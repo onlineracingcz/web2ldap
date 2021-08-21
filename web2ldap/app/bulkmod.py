@@ -90,7 +90,7 @@ def input_modlist(app, bulkmod_at, bulkmod_op, bulkmod_av):
             continue
 
         attr_instance = syntax_registry.get_at(
-            app, u'', app.schema, mod_type, None, entry=None,
+            app, '', app.schema, mod_type, None, entry=None,
         )
         try:
             mod_val = attr_instance.sanitize((bulkmod_av[i] or '').encode(app.ls.charset))
@@ -135,9 +135,9 @@ def bulkmod_input_form(
         input_errors,
     ):
     # Extend the input lists to at least one empty input row
-    bulkmod_at = bulkmod_at or [u'']
-    bulkmod_op = bulkmod_op or [u'']
-    bulkmod_av = bulkmod_av or [u'']
+    bulkmod_at = bulkmod_at or ['']
+    bulkmod_op = bulkmod_op or ['']
+    bulkmod_av = bulkmod_av or ['']
     error_attrs = sorted({bulkmod_at[i] for i in input_errors})
     if error_attrs:
         error_msg = '<p class="ErrorMessage">Invalid input: %s</p>' % (
@@ -156,12 +156,12 @@ def bulkmod_input_form(
         if len(bulkmod_at) < web2ldapcnf.max_searchparams:
             bulkmod_at.insert(insert_row_num+1, bulkmod_at[insert_row_num])
             bulkmod_op.insert(insert_row_num+1, bulkmod_op[insert_row_num])
-            bulkmod_av.insert(insert_row_num+1, u'')
+            bulkmod_av.insert(insert_row_num+1, '')
     # Generate a select field for the attribute type
     bulkmod_attr_select = attrtype_select_field(
         app,
         'bulkmod_at',
-        u'Attribute type',
+        'Attribute type',
         [], default_attr_options=None
     )
     # Output confirmation form
@@ -236,7 +236,7 @@ def bulkmod_input_form(
             ),
             field_bulkmod_newsuperior=app.form.field['bulkmod_newsuperior'].input_html(
                 default=bulkmod_newsuperior,
-                title=u'New superior DN where all entries are moved beneath',
+                title='New superior DN where all entries are moved beneath',
             ),
             field_bulkmod_cp=app.form.field['bulkmod_cp'].input_html(checked=bulkmod_cp),
         )
@@ -296,7 +296,7 @@ def bulkmod_confirmation_form(
                 bulkmod_newsuperior,
                 bulkmod_newsuperior
             ),
-            text_bulkmod_cp={False:u'Move', True:u'Copy'}[bulkmod_cp],
+            text_bulkmod_cp={False:'Move', True:'Copy'}[bulkmod_cp],
             num_entries=num_entries,
             num_referrals=num_referrals,
             text_ldifchangerecord=bulk_mod_list_ldif,
@@ -320,29 +320,29 @@ def w2l_bulkmod(app):
     bulkmod_op = app.form.getInputValue('bulkmod_op', [])
     bulkmod_av = app.form.getInputValue('bulkmod_av', [])
 
-    bulkmod_cp = app.form.getInputValue('bulkmod_cp', [u''])[0] == u'yes'
+    bulkmod_cp = app.form.getInputValue('bulkmod_cp', [''])[0] == 'yes'
 
     scope = int(app.form.getInputValue('scope', [str(app.ldap_url.scope or ldap0.SCOPE_BASE)])[0])
 
     bulkmod_filter = app.form.getInputValue(
         'filterstr',
         [(app.ldap_url.filterstr or '')]
-    )[0] or u'(objectClass=*)'
-    bulkmod_newsuperior = app.form.getInputValue('bulkmod_newsuperior', [u''])[0]
+    )[0] or '(objectClass=*)'
+    bulkmod_newsuperior = app.form.getInputValue('bulkmod_newsuperior', [''])[0]
 
     # Generate a list of requested LDAPv3 extended controls to be sent along
     # with the modify requests
     bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
 
     if not len(bulkmod_at) == len(bulkmod_op) == len(bulkmod_av):
-        raise ErrorExit(u'Invalid bulk modification input.')
+        raise ErrorExit('Invalid bulk modification input.')
 
     bulk_mod_list, input_errors = input_modlist(
         app,
         bulkmod_at, bulkmod_op, bulkmod_av,
     )
 
-    if bulkmod_submit == u'Cancel':
+    if bulkmod_submit == 'Cancel':
 
         app.simple_message(
             'Canceled bulk modification.',
@@ -353,9 +353,9 @@ def w2l_bulkmod(app):
     elif not (bulk_mod_list or bulkmod_newsuperior) or \
          input_errors or \
          bulkmod_submit is None or \
-         bulkmod_submit == u'<<Back' or \
-         bulkmod_submit.startswith(u'+') or \
-         bulkmod_submit.startswith(u'-'):
+         bulkmod_submit == '<<Back' or \
+         bulkmod_submit.startswith('+') or \
+         bulkmod_submit.startswith('-'):
 
         bulkmod_input_form(
             app,
@@ -366,7 +366,7 @@ def w2l_bulkmod(app):
             input_errors
         )
 
-    elif bulkmod_submit == u'Next>>':
+    elif bulkmod_submit == 'Next>>':
 
         bulkmod_confirmation_form(
             app,
@@ -374,7 +374,7 @@ def w2l_bulkmod(app):
             bulkmod_newsuperior, bulk_mod_list, bulkmod_cp,
         )
 
-    elif bulkmod_submit == u'Apply':
+    elif bulkmod_submit == 'Apply':
 
         # now gather list of extended controls to be used with search request
         bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
@@ -433,7 +433,7 @@ def w2l_bulkmod(app):
                     old_rdn = str(DNObj.from_str(rdat.dn_s).rdn())
                     try:
                         if bulkmod_cp:
-                            new_ldap_dn = u','.join((
+                            new_ldap_dn = ','.join((
                                 old_rdn,
                                 bulkmod_newsuperior,
                             ))
@@ -526,6 +526,6 @@ def w2l_bulkmod(app):
 
     else:
 
-        raise ErrorExit(u'Invalid bulk modification form data.')
+        raise ErrorExit('Invalid bulk modification form data.')
 
     # end of w2l_bulkmod()

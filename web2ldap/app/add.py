@@ -64,7 +64,7 @@ def w2l_add(app):
     if add_clonedn:
         entry, _ = read_old_entry(app, add_clonedn, app.schema, None, {'*':'*'})
         add_clonedn_obj = DNObj.from_str(add_clonedn)
-        add_rdn = u'+'.join(['%s=' % (at) for at, _ in add_clonedn_obj[0]])
+        add_rdn = '+'.join(['%s=' % (at) for at, _ in add_clonedn_obj[0]])
         add_basedn = str(add_clonedn_obj.parent()) or app.dn
     elif add_template:
         add_dn, entry = read_ldif_template(app, add_template)
@@ -147,7 +147,7 @@ def w2l_add(app):
     }
 
     if not add_entry:
-        raise ErrorExit(u'Cannot add entry without attribute values.')
+        raise ErrorExit('Cannot add entry without attribute values.')
 
     if app.dn:
         new_dn = rdn + DNObj.from_str(add_basedn)
@@ -218,7 +218,7 @@ def w2l_add(app):
                 app.anchor(
                     'read', 'Read added entry',
                     [('dn', str(new_dn))],
-                    title=u'Display added entry %s' % (new_dn,),
+                    title='Display added entry %s' % (new_dn,),
                 ),
                 app.display_dn(str(new_dn), links=False),
             ),

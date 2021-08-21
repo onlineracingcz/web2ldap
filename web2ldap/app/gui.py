@@ -102,7 +102,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     """
     Output the context menu for a single entry
     """
-    dn_disp = app.dn or u'Root DSE'
+    dn_disp = app.dn or 'Root DSE'
     mil = [
         app.anchor(
             'read', 'Raw',
@@ -111,7 +111,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
                 ('read_output', 'table'),
                 ('read_expandattr', '*')
             ],
-            title=u'Display entry\r\n%s\r\nas raw attribute type/value list' % (dn_disp)
+            title='Display entry\r\n%s\r\nas raw attribute type/value list' % (dn_disp)
         ),
     ]
     if app.dn:
@@ -124,41 +124,41 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
                     ('dn', app.dn),
                     ('login_who', app.dn),
                 ],
-                title=u'Connect and bind new session as\r\n%s' % (app.dn)
+                title='Connect and bind new session as\r\n%s' % (app.dn)
             ),
             app.anchor(
                 'modify', 'Modify',
                 [('dn', app.dn)],
-                title=u'Modify entry\r\n%s' % (app.dn)
+                title='Modify entry\r\n%s' % (app.dn)
             ),
             app.anchor(
                 'rename', 'Rename',
                 [('dn', app.dn)],
-                title=u'Rename/move entry\r\n%s' % (app.dn)
+                title='Rename/move entry\r\n%s' % (app.dn)
             ),
             app.anchor(
                 'delete', 'Delete',
                 [('dn', app.dn)],
-                title=u'Delete entry and/or subtree\r\n%s' % (app.dn)
+                title='Delete entry and/or subtree\r\n%s' % (app.dn)
             ),
             app.anchor(
                 'passwd', 'Password',
                 [('dn', app.dn), ('passwd_who', app.dn)],
-                title=u'Set password for entry\r\n%s' % (app.dn)
+                title='Set password for entry\r\n%s' % (app.dn)
             ),
             app.anchor(
                 'groupadm', 'Groups',
                 [('dn', app.dn)],
-                title=u'Change group membership of entry\r\n%s' % (app.dn)
+                title='Change group membership of entry\r\n%s' % (app.dn)
             ),
             app.anchor(
                 'add', 'Clone',
                 [
                     ('dn', app.parent_dn),
                     ('add_clonedn', app.dn),
-                    ('in_ft', u'Template'),
+                    ('in_ft', 'Template'),
                 ],
-                title=u'Clone entry\r\n%s\r\nbeneath %s' % (app.dn, app.parent_dn)
+                title='Clone entry\r\n%s\r\nbeneath %s' % (app.dn, app.parent_dn)
             ),
         ])
 
@@ -167,7 +167,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
             app.anchor(
                 'read', 'vCard',
                 [('dn', app.dn), ('read_output', 'vcard')],
-                title=u'Export entry\r\n%s\r\nas vCard' % (dn_disp)
+                title='Export entry\r\n%s\r\nas vCard' % (dn_disp)
             )
         )
 
@@ -176,13 +176,13 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
             app.anchor(
                 'dds', 'Refresh',
                 [('dn', app.dn)],
-                title=u'Refresh dynamic entry %s' % (dn_disp)
+                title='Refresh dynamic entry %s' % (dn_disp)
             )
         )
 
     if app.audit_context:
-        accesslog_any_filterstr = logdb_filter(u'auditObject', app.dn, entry_uuid)
-        accesslog_write_filterstr = logdb_filter(u'auditWriteObject', app.dn, entry_uuid)
+        accesslog_any_filterstr = logdb_filter('auditObject', app.dn, entry_uuid)
+        accesslog_write_filterstr = logdb_filter('auditWriteObject', app.dn, entry_uuid)
         mil.extend([
             app.anchor(
                 'search', 'Audit access',
@@ -191,7 +191,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
                     ('filterstr', accesslog_any_filterstr),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
-                title=u'Complete audit trail for entry\r\n%s' % (app.dn),
+                title='Complete audit trail for entry\r\n%s' % (app.dn),
             ),
             app.anchor(
                 'search', 'Audit writes',
@@ -200,7 +200,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
                     ('filterstr', accesslog_write_filterstr),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
-                title=u'Audit trail of write access to entry\r\n%s' % (app.dn),
+                title='Audit trail of write access to entry\r\n%s' % (app.dn),
             ),
         ])
 
@@ -209,7 +209,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
     except KeyError:
         pass
     else:
-        changelog_filterstr = logdb_filter(u'changeLogEntry', app.dn, entry_uuid)
+        changelog_filterstr = logdb_filter('changeLogEntry', app.dn, entry_uuid)
         mil.append(
             app.anchor(
                 'search', 'Change log',
@@ -218,7 +218,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
                     ('filterstr', changelog_filterstr),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
                 ],
-                title=u'Audit trail of write access to current entry',
+                title='Audit trail of write access to current entry',
             )
         )
 
@@ -239,7 +239,7 @@ def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
                 ),
                 ('scope', str(ldap0.SCOPE_SUBTREE)),
             ],
-            title=u'Find connections of this user in monitor database',
+            title='Find connections of this user in monitor database',
         ))
 
     return mil
@@ -261,12 +261,12 @@ def main_menu(app):
                     (
                         ('dn', app.parent_dn),
                         ('scope', str(ldap0.SCOPE_ONELEVEL)),
-                        ('searchform_mode', u'adv'),
-                        ('search_attr', u'objectClass'),
+                        ('searchform_mode', 'adv'),
+                        ('search_attr', 'objectClass'),
                         ('search_option', '({at}=*)'),
                         ('search_string', ''),
                     ),
-                    title=u'List direct subordinates of %s' % (app.parent_dn or u'Root DSE'),
+                    title='List direct subordinates of %s' % (app.parent_dn or 'Root DSE'),
                 )
             )
 
@@ -276,17 +276,17 @@ def main_menu(app):
                 (
                     ('dn', app.dn),
                     ('scope', str(ldap0.SCOPE_ONELEVEL)),
-                    ('searchform_mode', u'adv'),
-                    ('search_attr', u'objectClass'),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'objectClass'),
                     ('search_option', '({at}=*)'),
-                    ('search_string', u''),
+                    ('search_string', ''),
                 ),
-                title=u'List direct subordinates of %s' % (app.dn or u'Root DSE'),
+                title='List direct subordinates of %s' % (app.dn or 'Root DSE'),
             ),
             app.anchor(
                 'searchform', 'Search',
                 (('dn', app.dn),),
-                title=u'Enter search criteria in input form',
+                title='Enter search criteria in input form',
             ),
         ))
 
@@ -294,7 +294,7 @@ def main_menu(app):
             app.anchor(
                 'dit', 'Tree',
                 [('dn', app.dn)],
-                title=u'Display tree around %s' % (app.dn or u'Root DSE'),
+                title='Display tree around %s' % (app.dn or 'Root DSE'),
                 anchor_id=dn_anchor_hash(app.dn_obj)
             ),
         )
@@ -302,8 +302,8 @@ def main_menu(app):
         mil.append(
             app.anchor(
                 'read', 'Read',
-                [('dn', app.dn), ('read_nocache', u'1')],
-                title=u'Display entry %s' % (app.dn or u'Root DSE'),
+                [('dn', app.dn), ('read_nocache', '1')],
+                title='Display entry %s' % (app.dn or 'Root DSE'),
             ),
         )
 
@@ -311,27 +311,27 @@ def main_menu(app):
             app.anchor(
                 'add', 'New entry',
                 [('dn', app.dn)],
-                title=u'Add a new entry below of %s' % (app.dn or u'Root DSE')
+                title='Add a new entry below of %s' % (app.dn or 'Root DSE')
             ),
             app.anchor(
                 'conninfo', 'ConnInfo',
                 [('dn', app.dn)],
-                title=u'Show information about HTTP and LDAP connections'
+                title='Show information about HTTP and LDAP connections'
             ),
             app.anchor(
                 'params', 'Params',
                 [('dn', app.dn)],
-                title=u'Tweak parameters used for LDAP operations (controls etc.)'
+                title='Tweak parameters used for LDAP operations (controls etc.)'
             ),
-            app.anchor('login', 'Bind', [('dn', app.dn)], title=u'Login to directory'),
-            app.anchor('oid', 'Schema', [('dn', app.dn)], title=u'Browse/view subschema'),
+            app.anchor('login', 'Bind', [('dn', app.dn)], title='Login to directory'),
+            app.anchor('oid', 'Schema', [('dn', app.dn)], title='Browse/view subschema'),
         ))
 
-        mil.append(app.anchor('disconnect', 'Disconnect', (), title=u'Disconnect from LDAP server'))
+        mil.append(app.anchor('disconnect', 'Disconnect', (), title='Disconnect from LDAP server'))
 
     else:
 
-        mil.append(app.anchor('', 'Connect', (), title=u'New connection to LDAP server'))
+        mil.append(app.anchor('', 'Connect', (), title='New connection to LDAP server'))
 
     return mil
     # end of main_menu()
@@ -343,7 +343,7 @@ def dit_navigation(app):
             'read',
             app.form.s2d(str(app.dn_obj.slice(i, i+1)) or '[Root DSE]'),
             [('dn', str(app.dn_obj.slice(i, None)))],
-            title=u'Jump to %s' % (str(app.dn_obj.slice(i, None))),
+            title='Jump to %s' % (str(app.dn_obj.slice(i, None))),
         )
         for i in range(len(app.dn_obj))
     ]
@@ -351,7 +351,7 @@ def dit_navigation(app):
         app.anchor(
             'read', '[Root DSE]',
             [('dn', '')],
-            title=u'Jump to root DSE',
+            title='Jump to root DSE',
         )
     )
     return dnil
@@ -370,7 +370,7 @@ def top_section(
     header(app, 'text/html', app.form.accept_charset)
 
     # Read the template file for TopSection
-    top_template_str = read_template(app, 'top_template', u'top section')
+    top_template_str = read_template(app, 'top_template', 'top section')
 
     script_name = escape_html(app.form.script_name)
 
@@ -409,7 +409,7 @@ def top_section(
         template_dict.update({
             'ldap_url': app.ls.ldap_url(app.dn),
             'ldap_uri': app.form.s2d(app.ls.uri),
-            'description': escape_html(app.cfg_param('description', u'')),
+            'description': escape_html(app.cfg_param('description', '')),
             'dit_navi': ',\n'.join(dit_navigation(app)),
             'dn': app.form.s2d(app.dn),
         })
@@ -501,7 +501,7 @@ def footer(app):
 def search_root_field(
         app,
         name='dn',
-        text=u'Search Root',
+        text='Search Root',
         default=None,
         search_root_searchurl=None,
     ):
@@ -547,7 +547,7 @@ def search_root_field(
     if '' in dn_select_list:
         dn_select_list.remove('')
     # Add root search base string with description
-    dn_select_list.add((u'', u'- World -'))
+    dn_select_list.add(('', '- World -'))
     srf = SelectField(
         name, text, 1,
         size=1,

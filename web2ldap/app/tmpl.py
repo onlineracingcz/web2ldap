@@ -37,16 +37,16 @@ def get_variant_filename(pathname, variantlist):
     return variant_filename
 
 
-def read_template(app, config_key, form_desc=u'', tmpl_filename=None):
+def read_template(app, config_key, form_desc='', tmpl_filename=None):
     if not tmpl_filename:
         tmpl_filename = app.cfg_param(config_key, None)
     if not tmpl_filename:
-        raise ErrorExit(u'No template specified for %s.' % (form_desc))
+        raise ErrorExit('No template specified for %s.' % (form_desc))
     tmpl_filename = get_variant_filename(tmpl_filename, app.form.accept_language)
     try:
         # Read template from file
         with open(tmpl_filename, 'rb') as tmpl_fileobj:
             tmpl_str = tmpl_fileobj.read().decode('utf-8')
     except IOError:
-        raise ErrorExit(u'I/O error during reading %s template file.' % (form_desc))
+        raise ErrorExit('I/O error during reading %s template file.' % (form_desc))
     return tmpl_str

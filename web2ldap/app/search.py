@@ -311,9 +311,9 @@ def w2l_search(app):
         if num_result_all is not None:
             display_end_num = min(display_end_num, num_result_all)
         if not search_resnumber:
-            link_title = u'Display all search results'
+            link_title = 'Display all search results'
         else:
-            link_title = u'Display search results %d to %d' % (display_start_num, display_end_num)
+            link_title = 'Display search results %d to %d' % (display_start_num, display_end_num)
         return app.anchor(
             'search',
             link_text.format(display_start_num, display_end_num),
@@ -326,7 +326,7 @@ def w2l_search(app):
                 ('search_resnumber', str(search_resnumber)),
                 ('search_lastmod', str(search_lastmod)),
                 ('scope', str(scope)),
-                ('search_attrs', u','.join(search_attrs)),
+                ('search_attrs', ','.join(search_attrs)),
             ],
             title=link_title,
         )
@@ -335,14 +335,14 @@ def w2l_search(app):
     scope = app.ldap_url.scope
     filterstr = app.ldap_url.filterstr
 
-    search_submit = app.form.getInputValue('search_submit', [u'Search'])[0]
-    searchform_mode = app.form.getInputValue('searchform_mode', [u'exp'])[0]
+    search_submit = app.form.getInputValue('search_submit', ['Search'])[0]
+    searchform_mode = app.form.getInputValue('searchform_mode', ['exp'])[0]
 
-    if search_submit != u'Search' and searchform_mode == 'adv':
+    if search_submit != 'Search' and searchform_mode == 'adv':
         w2l_searchform(
             app,
             msg='',
-            filterstr=u'',
+            filterstr='',
             scope=scope
         )
         return
@@ -359,14 +359,14 @@ def w2l_search(app):
 
     search_filter = app.form.getInputValue('filterstr', [filterstr])
 
-    search_mode = app.form.getInputValue('search_mode', [u'(&%s)'])[0]
+    search_mode = app.form.getInputValue('search_mode', ['(&%s)'])[0]
     search_option = app.form.getInputValue('search_option', [])
     search_attr = app.form.getInputValue('search_attr', [])
     search_mr = app.form.getInputValue('search_mr', [None]*len(search_attr))
     search_string = app.form.getInputValue('search_string', [])
 
     if not len(search_option) == len(search_attr) == len(search_mr) == len(search_string):
-        raise ErrorExit(u'Invalid search form data.')
+        raise ErrorExit('Invalid search form data.')
 
     # Build LDAP search filter from input data of advanced search form
     for i in range(len(search_attr)):
@@ -398,14 +398,14 @@ def w2l_search(app):
         w2l_searchform(
             app,
             msg='Empty search values.',
-            filterstr=u'',
+            filterstr='',
             scope=scope
         )
         return
     if len(search_filter) == 1:
         filterstr = search_filter[0]
     elif len(search_filter) > 1:
-        filterstr = search_mode % (u''.join(search_filter))
+        filterstr = search_mode % (''.join(search_filter))
 
     search_resminindex = int(app.form.getInputValue('search_resminindex', ['0'])[0])
     search_resnumber = int(
@@ -421,12 +421,12 @@ def w2l_search(app):
         if '1.2.840.113556.1.2.2' in app.schema.sed[AttributeType] and \
            '1.2.840.113556.1.2.3' in app.schema.sed[AttributeType]:
             # Assume we're searching MS Active Directory
-            filterstr2 = u'(&(|(whenCreated>=%s.0Z)(whenChanged>=%s.0Z))%s)' % (
+            filterstr2 = '(&(|(whenCreated>=%s.0Z)(whenChanged>=%s.0Z))%s)' % (
                 timestamp_str, timestamp_str, filterstr,
             )
         else:
             # Assume standard LDAPv3 attributes
-            filterstr2 = u'(&(|(createTimestamp>=%sZ)(modifyTimestamp>=%sZ))%s)' % (
+            filterstr2 = '(&(|(createTimestamp>=%sZ)(modifyTimestamp>=%sZ))%s)' % (
                 timestamp_str, timestamp_str, filterstr,
             )
     else:
@@ -438,8 +438,8 @@ def w2l_search(app):
         a.strip()
         for a in app.form.getInputValue(
             'search_attrs',
-            [u','.join(app.ldap_url.attrs or [])]
-        )[0].split(u',')
+            [','.join(app.ldap_url.attrs or [])]
+        )[0].split(',')
         if a.strip()
     ]
 
@@ -460,7 +460,7 @@ def w2l_search(app):
     if search_output == 'print':
         print_template_filenames_dict = app.cfg_param('print_template', None)
         if print_template_filenames_dict is None:
-            raise ErrorExit(u'No templates for printing defined.')
+            raise ErrorExit('No templates for printing defined.')
         print_template_str_dict = CaseinsensitiveStringKeyDict()
         for ocl in print_template_filenames_dict.keys():
             try:
@@ -525,8 +525,8 @@ def w2l_search(app):
 
         read_attrs = [a for a in search_attrs if not a in {'*', '+'}]
         if not read_attrs:
-            if searchform_mode == u'base':
-                searchform_mode = u'adv'
+            if searchform_mode == 'base':
+                searchform_mode = 'adv'
             w2l_searchform(
                 app,
                 msg='For table-structured export you have to define the attributes to be read!',
@@ -668,9 +668,9 @@ def w2l_search(app):
                     ('search_resminindex', str(search_resminindex)),
                     ('search_resnumber', str(search_resnumber)),
                     ('search_lastmod', str(search_lastmod)),
-                    ('search_attrs', u','.join(search_attrs)),
+                    ('search_attrs', ','.join(search_attrs)),
                 ],
-                title=u'Search with negated search filter',
+                title='Search with negated search filter',
             ),
         ]
 
@@ -685,7 +685,7 @@ def w2l_search(app):
                         ],
                         ignore_fields=('dn', 'searchform_mode'),
                     ),
-                    title=u'Modify search parameters',
+                    title='Modify search parameters',
                 )
             )
 
@@ -741,10 +741,10 @@ def w2l_search(app):
                         ('search_resminindex', str(search_resminindex)),
                         ('search_resnumber', str(search_resnumber)),
                         ('search_lastmod', str(search_lastmod)),
-                        ('search_attrs', u','.join(search_attrs)),
+                        ('search_attrs', ','.join(search_attrs)),
                     ],
-                    title=u'Display %s of search results' % (
-                        {False:u'distinguished names', True:u'attributes'}[search_output == 'raw']
+                    title='Display %s of search results' % (
+                        {False:'distinguished names', True:'attributes'}[search_output == 'raw']
                     ),
                 ),
                 app.anchor(
@@ -875,7 +875,7 @@ def w2l_search(app):
                                 app.anchor(
                                     'search', 'Continue search',
                                     [('ldapurl', ref_url.unparse())],
-                                    title=u'Follow this search continuation',
+                                    title='Follow this search continuation',
                                 )
                             ]
                         else:
@@ -885,13 +885,13 @@ def w2l_search(app):
                             command_table.append(app.anchor(
                                 'read', 'Read',
                                 [('ldapurl', ref_url.unparse())],
-                                title=u'Display single entry following search continuation',
+                                title='Display single entry following search continuation',
                             ))
                             ref_url.scope = ldap0.SCOPE_ONELEVEL
                             command_table.append(app.anchor(
                                 'search', 'Down',
                                 [('ldapurl', ref_url.unparse())],
-                                title=u'Descend into tree following search continuation',
+                                title='Descend into tree following search continuation',
                             ))
 
                 elif isinstance(res, SearchResultEntry):
@@ -956,7 +956,7 @@ def w2l_search(app):
                     # If subordinates or unsure a [Down] link is added
                     if has_subordinates(entry, default=True):
 
-                        down_title_list = [u'List direct subordinates of %s' % (res_dn_s)]
+                        down_title_list = ['List direct subordinates of %s' % (res_dn_s)]
 
                         # Determine number of direct subordinates
                         try:
@@ -984,19 +984,19 @@ def w2l_search(app):
                         except (KeyError, ValueError):
                             pass
                         else:
-                            down_title_list.append(u'total: %d' % (num_all_subordinates))
+                            down_title_list.append('total: %d' % (num_all_subordinates))
 
                         command_table.append(app.anchor(
                             'search', 'Down',
                             (
                                 ('dn', res_dn_s),
                                 ('scope', SEARCH_SCOPE_STR_ONELEVEL),
-                                ('searchform_mode', u'adv'),
-                                ('search_attr', u'objectClass'),
+                                ('searchform_mode', 'adv'),
+                                ('search_attr', 'objectClass'),
                                 ('search_option', SEARCH_OPT_ATTR_EXISTS),
                                 ('search_string', ''),
                             ),
-                            title=u'\r\n'.join(down_title_list),
+                            title='\r\n'.join(down_title_list),
                         ))
 
                 else:
@@ -1022,13 +1022,13 @@ def w2l_search(app):
                 """ % (
                     '\n'.join((
                         app.begin_form('search', 'GET', target='web2ldapexport'),
-                        app.form.hidden_field_html('dn', app.dn, u''),
-                        app.form.hidden_field_html('search_root', search_root, u''),
-                        app.form.hidden_field_html('scope', str(scope), u''),
-                        app.form.hidden_field_html('filterstr', filterstr, u''),
-                        app.form.hidden_field_html('search_lastmod', str(search_lastmod), u''),
-                        app.form.hidden_field_html('search_resnumber', u'0', u''),
-                        app.form.hidden_field_html('search_attrs', u','.join(search_attrs), u''),
+                        app.form.hidden_field_html('dn', app.dn, ''),
+                        app.form.hidden_field_html('search_root', search_root, ''),
+                        app.form.hidden_field_html('scope', str(scope), ''),
+                        app.form.hidden_field_html('filterstr', filterstr, ''),
+                        app.form.hidden_field_html('search_lastmod', str(search_lastmod), ''),
+                        app.form.hidden_field_html('search_resnumber', '0', ''),
+                        app.form.hidden_field_html('search_attrs', ','.join(search_attrs), ''),
                     )),
                     export_field.input_html(),
                     InclOpAttrsCheckbox().input_html(),

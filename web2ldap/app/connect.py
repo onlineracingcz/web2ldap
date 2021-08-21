@@ -30,20 +30,20 @@ def w2l_connect(app, h1_msg='Connect', error_msg=''):
     """
 
     connect_template_str = read_template(
-        app, None, u'connect form',
+        app, None, 'connect form',
         tmpl_filename=web2ldapcnf.connect_template
     )
 
     if web2ldapcnf.hosts.ldap_uri_list:
         uri_select_field = forms.Select(
             'ldapurl',
-            u'LDAP uri',
+            'LDAP uri',
             1,
             options=web2ldapcnf.hosts.ldap_uri_list,
         )
         uri_select_field.charset = 'utf-8'
         uri_select_field_html = uri_select_field.input_html(
-            title=u'List of pre-configured directories to connect to',
+            title='List of pre-configured directories to connect to',
         )
     else:
         uri_select_field_html = ''

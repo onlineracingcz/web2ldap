@@ -83,14 +83,14 @@ def ts2repr(
         mult = rest // divisor
         rest = rest % divisor
         if mult > 0:
-            result.append(u'%d %s' % (mult, desc))
+            result.append('%d %s' % (mult, desc))
         if rest == 0:
             break
     return ts_sep.join(result)
 
 
 def repr2ts(time_divisors, ts_sep, value):
-    l1 = [v.strip().split(u' ') for v in value.split(ts_sep)]
+    l1 = [v.strip().split(' ') for v in value.split(ts_sep)]
     l2 = [(int(v), d.strip()) for v, d in l1]
     time_divisors_dict = dict(time_divisors)
     result = 0

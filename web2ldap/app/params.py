@@ -39,7 +39,7 @@ def w2l_params(app):
         context_menu_list=[]
     )
 
-    ldapparam_all_controls = app.form.getInputValue('params_all_controls', [u'0'])[0] == u'1'
+    ldapparam_all_controls = app.form.getInputValue('params_all_controls', ['0'])[0] == '1'
 
     ldapparam_enable_control = app.form.getInputValue('params_enable_control', [None])[0]
     if ldapparam_enable_control and ldapparam_enable_control in AVAILABLE_BOOLEAN_CONTROLS:
@@ -107,8 +107,8 @@ def w2l_params(app):
                             control_oid
                         ),
                     ],
-                    title=u'%s %s' % (
-                        {False:u'Enable', True:u'Disable'}[control_enabled],
+                    title='%s %s' % (
+                        {False:'Enable', True:'Disable'}[control_enabled],
                         name,
                     ),
                 ),
@@ -155,8 +155,8 @@ def w2l_params(app):
                     ('dn', app.dn),
                     ('params_all_controls', str(int(not ldapparam_all_controls))),
                 ],
-                title=u'Show %s controls' % (
-                    {False:u'all', True:u'known'}[ldapparam_all_controls],
+                title='Show %s controls' % (
+                    {False:'all', True:'known'}[ldapparam_all_controls],
                 ),
             ),
             '\n'.join(control_table_rows),
