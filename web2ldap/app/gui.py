@@ -90,12 +90,12 @@ def command_div(
 
 
 def simple_main_menu(app):
-    main_menu = [app.anchor('', 'Connect', [])]
+    mil = [app.anchor('', 'Connect', [])]
     if app.check_access('monitor'):
-        main_menu.append(app.anchor('monitor', 'Monitor', []))
+        mil.append(app.anchor('monitor', 'Monitor', []))
     if DNS_AVAIL and app.check_access('locate'):
-        main_menu.append(app.anchor('locate', 'DNS lookup', []))
-    return main_menu
+        mil.append(app.anchor('locate', 'DNS lookup', []))
+    return mil
 
 
 def context_menu_single_entry(app, vcard_link=0, dds_link=0, entry_uuid=None):
