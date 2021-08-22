@@ -37,18 +37,25 @@ from .entry import DisplayEntry
 class VCardEntry(UserDict):
 
     def __init__(self, app, entry, out_charset='utf-8'):
+        UserDict.__init__(self, entry)
         self._app = app
-        self._entry = entry
         self._out_charset = out_charset
-
-    def __contains__(self, nameoroid):
-        return self._entry.__contains__(nameoroid)
 
     def __getitem__(self, nameoroid):
         if no_humanreadable_attr(self._app.schema, nameoroid):
             raise KeyError('Not human-readable attribute %r not usable in vCard' % (nameoroid,))
-        value = self._entry.__getitem__(nameoroid)[0]
-        return value.decode(self._app.ls.charset)
+        return UserDict.__getitem__(self, nameoroid)[0].decode(self._app.ls.charset)
+
+    def generate_vcard(self, template_str):
+        res = []
+        for line in template_str.decode('utf-8').split('\n'):
+            try:
+                res_line = line % self
+            except KeyError:
+                pass
+            else:
+                res.append(res_line.strip())
+        return '\r\n'.join(res)
 
 
 def get_vcard_template(app, object_classes):
@@ -58,18 +65,6 @@ def get_vcard_template(app, object_classes):
     if not template_oc:
         return None
     return get_variant_filename(template_dict[template_oc[0]], app.form.accept_language)
-
-
-def generate_vcard(template_str, vcard_entry):
-    res = []
-    for line in template_str.decode('utf-8').split('\n'):
-        try:
-            res_line = line % vcard_entry
-        except KeyError:
-            pass
-        else:
-            res.append(res_line.strip())
-    return '\r\n'.join(res)
 
 
 def display_attribute_table(app, entry, attrs, comment):
@@ -457,4 +452,4 @@ def w2l_read(app):
                 ),
             ],
         )
-        app.outf.write(generate_vcard(template_str, display_entry))
+        app.outf.write(display_entry.generate_vcard(template_str))
