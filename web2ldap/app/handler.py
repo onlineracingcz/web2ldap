@@ -1058,32 +1058,26 @@ class AppHandler(LogHelper):
         except (ldap0.PARTIAL_RESULTS, ldap0.REFERRAL) as err:
             w2l_chasereferral(self, err)
 
+        except InvalidSimpleBindDN as err:
+            w2l_login(
+                self,
+                who='',
+                login_msg=self.form.s2d(str(err)),
+                relogin=True,
+            )
+
         except (
                 ldap0.INSUFFICIENT_ACCESS,
                 ldap0.STRONG_AUTH_REQUIRED,
                 ldap0.INAPPROPRIATE_AUTH,
-                UsernameNotFound,
+                ldap0.INVALID_CREDENTIALS,
             ) as err:
             log_exception(self.env, self.ls, self.dn, web2ldapcnf.log_error_details)
             w2l_login(
                 self,
-                who='',
                 login_msg=self.ldap_error_msg(err),
+                who=who,
                 relogin=True,
-            )
-
-        except ldap0.INVALID_CREDENTIALS as err:
-            w2l_login(
-                self,
-                login_msg=self.ldap_error_msg(err),
-                who=who, relogin=True,
-            )
-
-        except (InvalidSimpleBindDN, UsernameNotUnique) as err:
-            w2l_login(
-                self,
-                login_msg=self.form.s2d(str(err)),
-                who=who, relogin=True,
             )
 
         except PasswordPolicyExpirationWarning as err:

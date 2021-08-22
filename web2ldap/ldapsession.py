@@ -461,50 +461,34 @@ class LDAPSessionException(ldap0.LDAPError):
     """
     Base exception class raised within this module
     """
-    def __str__(self):
-        return self.args[0]['desc']
-
-
-class PasswordPolicyException(LDAPSessionException):
-    """
-    Base exception class for all password policy errors
-    """
-
-    def __init__(self, who=None, desc=None):
-        self.who = who
+    def __init__(self, desc: str = None):
         self.desc = desc
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.desc
 
 
-class PasswordChangeAfterReset(PasswordPolicyException):
-    """
-    Exception raised in case the user must change password after reset
-    """
-
-
-class InvalidSimpleBindDN(ldap0.INVALID_DN_SYNTAX):
+class InvalidSimpleBindDN(LDAPSessionException):
     """
     Exception raised in case the bind DN was not valid
     """
 
-    def __init__(self, who=None, desc=None):
+    def __init__(self, desc: str = 'Invalid bind DN', who: str = None):
+        LDAPSessionException.__init__(self, desc=desc)
         self.who = who
-        self.desc = desc or 'Invalid bind DN'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ': '.join((self.desc, self.who))
 
 
-class UsernameNotFound(LDAPSessionException):
+class UsernameNotFound(InvalidSimpleBindDN):
     """
     Simple exception class raised when get_bind_dn() does not
     find any entry matching search
     """
 
 
-class UsernameNotUnique(LDAPSessionException):
+class UsernameNotUnique(InvalidSimpleBindDN):
     """
     Simple exception class raised when get_bind_dn() does not
     find more than one entry matching search
@@ -1158,18 +1142,18 @@ class LDAPSession:
             )
         except ldap0.SIZELIMIT_EXCEEDED as ldap_err:
             logger.warning('Searching user entry failed: %s', ldap_err)
-            raise UsernameNotUnique({'desc':b'More than one matching user entries.'})
+            raise UsernameNotUnique(who=username, desc='More than one matching user entries')
         except ldap0.NO_SUCH_OBJECT as ldap_err:
             logger.warning('Searching user entry failed: %s', ldap_err)
-            raise UsernameNotFound({'desc':b'Login did not find a matching user entry.'})
+            raise UsernameNotFound(who=username, desc='Login did not find a matching user entry')
         # Ignore search continuations in search result list
         result = [r for r in result if isinstance(r, SearchResultEntry)]
         if not result:
             logger.warning('No result when searching user entry')
-            raise UsernameNotFound({'desc':b'Login did not find a matching user entry.'})
+            raise UsernameNotFound(who=username, desc='Login did not find a matching user entry')
         if len(result) != 1:
             logger.warning('More than one matching user entries: %r', result)
-            raise UsernameNotUnique({'desc':b'More than one matching user entries.'})
+            raise UsernameNotUnique(who=username, desc='More than one matching user entries')
         logger.debug(
             'Found user entry %r with base = %r / scope = %d / filter = %r',
             result[0].dn_b,
