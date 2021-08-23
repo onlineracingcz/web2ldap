@@ -67,6 +67,7 @@ class AutogenNumberMixIn:
                 attrlist=[self._at],
             )
         except (
+                ldap0.INVALID_SYNTAX,
                 ldap0.NO_SUCH_OBJECT,
                 ldap0.SIZELIMIT_EXCEEDED,
                 ldap0.TIMELIMIT_EXCEEDED,
