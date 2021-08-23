@@ -102,7 +102,7 @@ class AutogenUIDNumber(UidNumber, AutogenNumberMixIn):
         fval = UidNumber.form_value(self)
         if not fval:
             fval = AutogenNumberMixIn.form_value(self)
-        return fval # form_value()
+        return fval
 
 syntax_registry.reg_at(
     AutogenUIDNumber.oid, [
@@ -120,7 +120,7 @@ class AutogenGIDNumber(GidNumber, AutogenNumberMixIn):
         fval = GidNumber.form_value(self)
         if not fval:
             fval = AutogenNumberMixIn.form_value(self)
-        return fval # form_value()
+        return fval
 
 syntax_registry.reg_at(
     AutogenGIDNumber.oid, [
