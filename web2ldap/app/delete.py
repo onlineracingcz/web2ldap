@@ -360,7 +360,7 @@ def w2l_delete(app):
     )
     delete_filter = app.form.getInputValue(
         'filterstr',
-        [app.ldap_url.filterstr or '(objectClass=*)']
+        [app.ldap_url.filterstr or None]
     )[0]
     delete_attr.sort()
     if delete_attr:
@@ -390,7 +390,7 @@ def w2l_delete(app):
         entry = ldap0.schema.models.Entry(app.schema, app.dn, ldap_res.entry_as)
         if delete_attr:
             inner_form = del_attr_form(app, entry, delete_attr)
-        elif delete_confirm == 'yes':
+        elif delete_filter is not None:
             inner_form = del_search_form(app, scope, delete_filter)
         else:
             inner_form = del_subtree_form(app, scope)
