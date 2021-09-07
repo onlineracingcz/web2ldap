@@ -9,7 +9,7 @@ RUN apt update && apt full-upgrade -f -y
 # install packages from standard repo
 RUN apt-get install --yes --quiet --no-install-recommends --option 'DPkg::Options=--force-confold' --option 'DPkg::Options=--force-confdef' wget apt-transport-https ca-certificates gnupg2
 
-RUN wget -O /usr/share/keyrings/AE-DIR-project.gpg.key https://ae-dir.com/repo/debian/AE-DIR-project.gpg.key
+RUN wget -O /usr/share/keyrings/AE-DIR-project.gpg.key https://ae-dir.com/repo/AE-DIR-project.gpg.key
 RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/AE-DIR-project.gpg.key] https://ae-dir.com/repo/debian/bullseye bullseye main" > /etc/apt/sources.list.d/AE-DIR.list
 RUN apt-get update
 RUN apt-get install --yes --quiet --no-install-recommends --option 'DPkg::Options=--force-confold' --option 'DPkg::Options=--force-confdef' libsasl2-modules python3-defusedxml python3-prometheus-client python3-dnspython web2ldap
