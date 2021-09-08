@@ -250,10 +250,22 @@ OPENLDAP_MONITOR_CONFIG = Web2LDAPConfig(
             '%(monitorConnectionAuthzDN)s<br>'
             '(ops r: %(monitorConnectionOpsReceived)s, e: %(monitorConnectionOpsExecuting)s, p: %(monitorConnectionOpsPending)s, c: %(monitorConnectionOpsCompleted)s)'
         ),
+        # new in OpenLDAP 2.5
+        'olmSyncReplInstance':(
+            '%(cn)s - %(olmSRSyncPhase)s<br>'
+            'Providers: %(olmSRProviderURIList)s %(olmSRConnection)s<br>'
+            'Last connect: %(olmSRLastConnect)s<br>'
+            'Last contact: %(olmSRLastContact)s<br>'
+            'Last cookie received: %(olmSRLastCookieRcvd)s<br>'
+            'Last cookie sent: %(olmSRLastCookieSent)s<br>'
+            'Next connect: %(olmSRNextConnect)s<br>'
+        ),
     },
     read_template={
         # for OpenLDAP
         'monitorConnection': os.path.join(TEMPLATES_DIR, 'read_monitorConnection.html'),
+        # new in OpenLDAP 2.5
+        'olmSyncReplInstance': os.path.join(TEMPLATES_DIR, 'read_olmSyncReplInstance.html'),
     },
 )
 
