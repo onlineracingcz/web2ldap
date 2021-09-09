@@ -21,6 +21,7 @@ import sysconfig
 from pprint import pformat
 
 import ldap0
+import ldap0.functions
 
 from .log import logger
 
@@ -87,4 +88,4 @@ def check_inst():
     logger.debug('*** SASL support ***')
     logger.debug('ldap0.SASL_AVAIL = %r', ldap0.SASL_AVAIL)
     logger.debug('*** ldap0.OPT_API_INFO ***')
-    logger.debug(pformat(ldap0.get_option(ldap0.OPT_API_INFO)))
+    logger.debug(pformat(ldap0.functions.get_option(ldap0.OPT_API_INFO)))

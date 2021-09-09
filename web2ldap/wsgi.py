@@ -22,6 +22,7 @@ import wsgiref.simple_server
 # this has to be done before import module package ldap0
 os.environ['LDAPNOINIT'] = '1'
 import ldap0
+import ldap0.functions
 
 # import config after extending Python module path
 import web2ldapcnf
@@ -49,10 +50,10 @@ logger.debug('End of module %s', __name__)
 warnings.filterwarnings(action="error", category=UnicodeWarning)
 
 ldap0._trace_level = web2ldapcnf.ldap_trace_level
-ldap0.set_option(ldap0.OPT_DEBUG_LEVEL, web2ldapcnf.ldap_opt_debug_level)
-ldap0.set_option(ldap0.OPT_RESTART, 0)
-ldap0.set_option(ldap0.OPT_DEREF, 0)
-ldap0.set_option(ldap0.OPT_REFERRALS, 0)
+ldap0.functions.set_option(ldap0.OPT_DEBUG_LEVEL, web2ldapcnf.ldap_opt_debug_level)
+ldap0.functions.set_option(ldap0.OPT_RESTART, 0)
+ldap0.functions.set_option(ldap0.OPT_DEREF, 0)
+ldap0.functions.set_option(ldap0.OPT_REFERRALS, 0)
 
 
 def application(environ, start_response):
