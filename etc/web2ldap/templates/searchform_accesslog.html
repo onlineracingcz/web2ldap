@@ -49,12 +49,12 @@
     </tr>
 
     <tr>
-      <td>
-        <input type="hidden" name="search_option" value="({at}={av})">
-        <input type="hidden" name="search_attr" value="reqType">
+      <td rowspan="2">
         Request type (reqType) is
       </td>
       <td>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="reqType">
         <select name="search_string">
           <option value="" selected></option>
           <option value="abandon">Abandon Request</option>
@@ -70,6 +70,13 @@
           <option value="extended{1.3.6.1.4.1.4203.1.11.3}">Who am I? Extended Operation</option>
           <option value="extended{1.3.6.1.1.8}">Cancel Operation</option>
         </select>
+      </td>
+    </tr>
+    <tr>
+        <input type="hidden" name="search_option" value="({at}={av})">
+        <input type="hidden" name="search_attr" value="reqType">
+      <td>
+        <input name="search_string" maxlength="70" size="30" value="">
       </td>
     </tr>
 
@@ -125,17 +132,6 @@
           <option value="71">affectsMultipleDSAs (71)</option>
           <option value="80">other (80)</option>
         </select>
-      </td>
-    </tr>
-
-    <tr>
-      <td>
-        <input type="hidden" name="search_option" value="({at}={av})">
-        <input type="hidden" name="search_attr" value="reqType">
-        Request type (reqType) is
-      </td>
-      <td>
-        <input name="search_string" maxlength="70" size="30" value="">
       </td>
     </tr>
 
