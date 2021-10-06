@@ -673,6 +673,8 @@ class DomainFunctionality(SelectList):
         '3': 'Windows 2008',
         '4': 'Windows 2008R2',
         '5': 'Windows 2012',
+        '6': 'Windows 2012R2',
+        '7': 'Windows 2016',
     }
 
 syntax_registry.reg_at(
@@ -695,6 +697,7 @@ class DomainControllerFunctionality(SelectList):
         '4': 'Windows 2008R2',
         '5': 'Windows 2012',
         '6': 'Windows 2012R2',
+        '7': 'Windows 2016',
     }
 
 syntax_registry.reg_at(
