@@ -2,7 +2,7 @@
 """
 web2ldap plugin classes for
 GSER-based LDAP syntaxes defined in
-http://tools.ietf.org/html/rfc4523
+https://datatracker.ietf.org/doc/html/rfc4523
 
 At this time this is mainly a stub module.
 Currently untested!

@@ -3,7 +3,7 @@
 web2ldap plugin classes for X.509 cert/CRL schema by DAASI
 
 See also:
-http://tools.ietf.org/draft/draft-ietf-pkix-ldap-pkc-schema
+https://datatracker.ietf.org/doc/html/draft-ietf-pkix-ldap-pkc-schema
 """
 
 from typing import Dict

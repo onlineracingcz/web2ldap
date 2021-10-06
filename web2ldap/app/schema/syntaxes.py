@@ -507,7 +507,7 @@ class Audio(Binary):
 class DirectoryString(LDAPSyntax):
     """
     Plugin class for LDAP syntax 'Directory String'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.6)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.6)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.15'
     desc: str = 'Directory String'
@@ -529,7 +529,7 @@ class DirectoryString(LDAPSyntax):
 class DistinguishedName(DirectoryString):
     """
     Plugin class for LDAP syntax 'DN'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.9)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.9)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.12'
     desc: str = 'Distinguished Name'
@@ -647,7 +647,7 @@ class AuthzDN(DistinguishedName):
 class NameAndOptionalUID(DistinguishedName):
     """
     Plugin class for LDAP syntax 'Name and Optional UID'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.21)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.21)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.34'
     desc: str = 'Name And Optional UID'
@@ -685,7 +685,7 @@ class NameAndOptionalUID(DistinguishedName):
 class BitString(DirectoryString):
     """
     Plugin class for LDAP syntax 'Bit String'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.2)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.2)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.6'
     desc: str = 'Bit String'
@@ -695,7 +695,7 @@ class BitString(DirectoryString):
 class IA5String(DirectoryString):
     """
     Plugin class for LDAP syntax 'IA5 String'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.15)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.15)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.26'
     desc: str = 'IA5 String'
@@ -711,7 +711,7 @@ class IA5String(DirectoryString):
 class GeneralizedTime(IA5String):
     """
     Plugin class for LDAP syntax 'Generalized Time'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.13)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.13)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.24'
     desc: str = 'Generalized Time'
@@ -884,7 +884,7 @@ class NotAfter(GeneralizedTime):
 class UTCTime(GeneralizedTime):
     """
     Plugin class for LDAP syntax 'UTC Time'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.34)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.34)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.53'
     desc: str = 'UTC Time'
@@ -915,7 +915,7 @@ class NullTerminatedDirectoryString(DirectoryString):
 class OtherMailbox(DirectoryString):
     """
     Plugin class for LDAP syntax 'Other Mailbox'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.27)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.27)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.39'
     desc: str = 'Other Mailbox'
@@ -925,7 +925,7 @@ class OtherMailbox(DirectoryString):
 class Integer(IA5String):
     """
     Plugin class for LDAP syntax 'Integer'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.16)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.16)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.27'
     desc: str = 'Integer'
@@ -1207,7 +1207,7 @@ class Image(Binary):
 class JPEGImage(Image):
     """
     Plugin class for LDAP syntax 'JPEG'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.17)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.17)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.28'
     desc: str = 'JPEG image'
@@ -1219,7 +1219,7 @@ class JPEGImage(Image):
 class PhotoG3Fax(Binary):
     """
     Plugin class for LDAP syntax 'Fax'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.12)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.12)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.23'
     desc: str = 'Photo (G3 fax)'
@@ -1230,7 +1230,7 @@ class PhotoG3Fax(Binary):
 class OID(IA5String):
     """
     Plugin class for LDAP syntax 'OID'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.26)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.26)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.38'
     desc: str = 'OID'
@@ -1328,7 +1328,7 @@ class LDAPUrl(Uri):
 class OctetString(Binary):
     """
     Plugin class for LDAP syntax 'Octet String'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.25)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.25)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.40'
     desc: str = 'Octet String'
@@ -1459,7 +1459,7 @@ class PreformattedMultilineText(MultilineText):
 class PostalAddress(MultilineText):
     """
     Plugin class for LDAP syntax 'Postal Address'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.28)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.28)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.41'
     desc: str = 'Postal Address'
@@ -1479,7 +1479,7 @@ class PostalAddress(MultilineText):
 class PrintableString(DirectoryString):
     """
     Plugin class for LDAP syntax 'Printable String'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.29)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.29)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.44'
     desc: str = 'Printable String'
@@ -1490,7 +1490,7 @@ class PrintableString(DirectoryString):
 class NumericString(PrintableString):
     """
     Plugin class for LDAP syntax 'Numeric String'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.23)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.23)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.36'
     desc: str = 'Numeric String'
@@ -1500,7 +1500,7 @@ class NumericString(PrintableString):
 class EnhancedGuide(PrintableString):
     """
     Plugin class for LDAP syntax 'Enhanced Guide'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.10)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.10)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.21'
     desc: str = 'Enhanced Search Guide'
@@ -1509,7 +1509,7 @@ class EnhancedGuide(PrintableString):
 class Guide(EnhancedGuide):
     """
     Plugin class for LDAP syntax 'Search Guide'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.14)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.14)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.25'
     desc: str = 'Search Guide'
@@ -1518,7 +1518,7 @@ class Guide(EnhancedGuide):
 class TelephoneNumber(PrintableString):
     """
     Plugin class for LDAP syntax ''
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.31)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.31)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.50'
     desc: str = 'Telephone Number'
@@ -1528,7 +1528,7 @@ class TelephoneNumber(PrintableString):
 class FacsimileTelephoneNumber(TelephoneNumber):
     """
     Plugin class for LDAP syntax 'Facsimile Telephone Number'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.11)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.11)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.22'
     desc: str = 'Facsimile Number'
@@ -1543,7 +1543,7 @@ class FacsimileTelephoneNumber(TelephoneNumber):
 class TelexNumber(PrintableString):
     """
     Plugin class for LDAP syntax 'Telex Number'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.33)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.33)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.52'
     desc: str = 'Telex Number'
@@ -1553,7 +1553,7 @@ class TelexNumber(PrintableString):
 class TeletexTerminalIdentifier(PrintableString):
     """
     Plugin class for LDAP syntax 'Teletex Terminal Identifier'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.32)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.32)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.51'
     desc: str = 'Teletex Terminal Identifier'
@@ -2168,7 +2168,7 @@ class DerefDynamicDNSelectList(DynamicDNSelectList):
 class Boolean(SelectList, IA5String):
     """
     Plugin class for LDAP syntax 'Boolean'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.3)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.3)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.7'
     desc: str = 'Boolean'
@@ -2197,7 +2197,7 @@ class Boolean(SelectList, IA5String):
 class CountryString(PropertiesSelectList):
     """
     Plugin class for LDAP syntax 'Country String'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.4)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.4)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.11'
     desc: str = 'Two letter country string as listed in ISO 3166-2'
@@ -2212,7 +2212,7 @@ class CountryString(PropertiesSelectList):
 class DeliveryMethod(PrintableString):
     """
     Plugin class for LDAP syntax 'Delivery Method'
-    (see https://tools.ietf.org/html/rfc4517#section-3.3.5)
+    (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.5)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.14'
     desc: str = 'Delivery Method'
@@ -2341,7 +2341,7 @@ class DNSDomain(IA5String):
     oid: str = 'DNSDomain-oid'
     desc: str = 'DNS domain name (see RFC 1035)'
     pattern = re.compile(r'^(\*|[a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)*$')
-    # see https://tools.ietf.org/html/rfc2181#section-11
+    # see https://datatracker.ietf.org/doc/html/rfc2181#section-11
     max_len: int = min(255, IA5String.max_len)
     sani_funcs = (
         bytes.lower,
@@ -2414,7 +2414,7 @@ class RFC822Address(DNSDomain, IA5String):
 class DomainComponent(DNSDomain):
     """
     Plugin class for a single DNS label
-    (see https://tools.ietf.org/html/rfc2181#section-11)
+    (see https://datatracker.ietf.org/doc/html/rfc2181#section-11)
     """
     oid: str = 'DomainComponent-oid'
     desc: str = 'DNS domain name component'

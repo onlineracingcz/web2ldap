@@ -183,7 +183,7 @@
         New plugin module <var>w2lapp.schema.plugins.x509</var> now
         contains all the cert/CRL plugin classes and new stub classes
         for all the LDAP syntaxes defined in
-        <a href="https://tools.ietf.org/html/rfc4523">RFC 4523</a>.
+        <a href="https://datatracker.ietf.org/doc/html/rfc4523">RFC 4523</a>.
       </li>
     </ul>
   </dd>
@@ -625,7 +625,7 @@
       <li>
         Better handling of <var>LDAPError</var> exceptions in case the
         LDAP server does not support
-        <a href="https://tools.ietf.org/html/rfc4532">&quot;Who am I?&quot;</a>.
+        <a href="https://datatracker.ietf.org/doc/html/rfc4532">&quot;Who am I?&quot;</a>.
         Especially occurred as problem with SASL/GSSAPI bind.
       </li>
       <li>
@@ -685,7 +685,7 @@
     <ul>
       <li>
         The
-        <a href="https://tools.ietf.org/html/rfc4532">&quot;Who am I?&quot;</a>
+        <a href="https://datatracker.ietf.org/doc/html/rfc4532">&quot;Who am I?&quot;</a>
         extended operation is now always used to detect bind-DN rewriting
         also in case of simple bind.
       </li>
@@ -722,7 +722,7 @@
         <strong>@</strong> character in form parameter <var>search_attrs</var>
         is now expanded at the client-side to a set of attribute type names.
         So this works also with LDAP servers not supporting
-        <a href="https://tools.ietf.org/html/rfc4529">RFC 4529</a> and it's
+        <a href="https://datatracker.ietf.org/doc/html/rfc4529">RFC 4529</a> and it's
         usable when exporting entries to a table-based format (CSV or
         Excel).
       </li>
@@ -788,7 +788,7 @@
       </li>
       <li>
         <strong>@</strong> character is now allowed in form parameter <var>search_attrs</var>
-        to correctly support <a href="https://tools.ietf.org/html/rfc4529">RFC 4529</a>.
+        to correctly support <a href="https://datatracker.ietf.org/doc/html/rfc4529">RFC 4529</a>.
       </li>
     </ul>
   </dd>
@@ -803,7 +803,7 @@
       <li>
         Declared new plugin class for attribute type
         <var>
-          <a href="https://tools.ietf.org/html/draft-klasen-ldap-x509certificate-schema-03#section-4.2.3">
+          <a href="https://datatracker.ietf.org/doc/html/draft-klasen-ldap-x509certificate-schema-03#section-4.2.3">
           x509keyUsage</a>
         </var>
       </li>
@@ -856,7 +856,7 @@
       </li>
       <li>
         New plugin class for attribute <var>x509issuer</var> defined in
-        <a href="https://tools.ietf.org/html/draft-ietf-pkix-ldap-pkc-schema">
+        <a href="https://datatracker.ietf.org/doc/html/draft-ietf-pkix-ldap-pkc-schema">
         draft-ietf-pkix-ldap-pkc-schema</a> makes it easier to find CA
         certs in a directory using that schema.
       </li>
@@ -1070,7 +1070,7 @@
     <ul>
       <li>
         [Locate] now allows searching in DNS for internationalized domain names
-        (see <a href="https://tools.ietf.org/html/rfc3490">RFC 3490</a>).
+        (see <a href="https://datatracker.ietf.org/doc/html/rfc3490">RFC 3490</a>).
       </li>
       <li>
         Exception <var>ldap.schema.subentry.SubschemaError</var> is now caught and the
@@ -1088,7 +1088,7 @@
       <li>
         When decoding/encoding DNS names domain components are processed
         separately to more strictly follow guidelines in
-        <a href="https://tools.ietf.org/html/rfc3490">RFC 3490</a>.
+        <a href="https://datatracker.ietf.org/doc/html/rfc3490">RFC 3490</a>.
       </li>
       <li>
         Cleaned up input and error handling in [Locate].
@@ -1280,7 +1280,7 @@
       <li>
         Session tracking control is sent along to the LDAP server
         with each LDAP request
-        (see <a href="https://tools.ietf.org/html/draft-wahl-ldap-session">draft-wahl-ldap-session</a>)
+        (see <a href="https://datatracker.ietf.org/doc/html/draft-wahl-ldap-session">draft-wahl-ldap-session</a>)
         if host-/backend-specific parameter
         <a href="web2ldapcnf_hosts.html#session_track_control">session_track_control</a>
         is non-zero.
@@ -1493,7 +1493,7 @@
         A work-around for older OpenLDAP bug (see
         <a href="https://bugs.openldap.org/show_bug.cgi?id=6899">ITS#6899</a>)
         makes it possible to enable the Read Entry Control (see
-        <a href="https://tools.ietf.org/html/rfc4527">RFC 4527</a>) with
+        <a href="https://datatracker.ietf.org/doc/html/rfc4527">RFC 4527</a>) with
         all OpenLDAP versions.
       </li>
       <li>
@@ -1649,12 +1649,12 @@
     <ul>
       <li>
         Various enhancements for accessing and displaying
-        <a href="https://tools.ietf.org/html/draft-good-ldap-changelog">changelog</a>
+        <a href="https://datatracker.ietf.org/doc/html/draft-good-ldap-changelog">changelog</a>
         data used e.g. by OpenDS/OpenDJ.
       </li>
       <li>
         The exact result or <var>LDAPError</var> message of
-        <a href="https://tools.ietf.org/html/rfc4532">&quot;Who am I?&quot;</a>
+        <a href="https://datatracker.ietf.org/doc/html/rfc4532">&quot;Who am I?&quot;</a>
         extended operation is displayed in [ConnInfo].
       </li>
     </ul>
@@ -1716,7 +1716,7 @@
         Support for <em>LDAPv2</em> connections was dropped to speed up connecting
         to the server. A first anonymous bind request for testing whether a valid
         <em>LDAPv3</em> connection was established is not needed anymore
-        (see also <a href="https://tools.ietf.org/html/rfc3494">RFC 3494</a>).
+        (see also <a href="https://datatracker.ietf.org/doc/html/rfc3494">RFC 3494</a>).
       </li>
     </ul>
   </dd>
@@ -1790,7 +1790,7 @@
       <li>
         Fixed validation of attribute values of LDAP syntax <var>Generalized
         Time</var> to also allow <var>fraction</var> and time zone offset as
-        defined in <a href="https://tools.ietf.org/html/rfc4517">RFC 4517</a>.
+        defined in <a href="https://datatracker.ietf.org/doc/html/rfc4517">RFC 4517</a>.
       </li>
       <li>
         Fix for leap years in age calculation in plugin classes for attribute
@@ -1974,10 +1974,10 @@
             <td><code>Strict-Transport-Security: max-age=15768000 ; includeSubDomains</code></td>
             <td>
               Enforce use of
-              <a href="https://tools.ietf.org/html/rfc2818">HTTPS</a>
+              <a href="https://datatracker.ietf.org/doc/html/rfc2818">HTTPS</a>
               at browser-side, but only sent when application was accessed
               via <em>HTTPS</em>
-              (see <a href="https://tools.ietf.org/html/rfc6797">RFC 6797</a>)
+              (see <a href="https://datatracker.ietf.org/doc/html/rfc6797">RFC 6797</a>)
             </td>
           </tr>
           <tr>
@@ -2010,7 +2010,7 @@
         The <var>Assertion Control</var> is used when sending a modify request
         if the seems to support it to prevent the server to process the
         request if the entry has been changed in between
-        (see <a href="https://tools.ietf.org/html/rfc4528">RFC 4528</a>).
+        (see <a href="https://datatracker.ietf.org/doc/html/rfc4528">RFC 4528</a>).
         Host-specific parameter
         <a href="web2ldapcnf_hosts.html#modify_constant_attrs">modify_constant_attrs</a>
         is used to generate the assertion filter.
@@ -2033,17 +2033,17 @@
       </li>
       <li>
         Added refreshing dynamic entry with extended operation
-        (see <a href="https://tools.ietf.org/html/rfc2589">RFC 2589</a>).
+        (see <a href="https://datatracker.ietf.org/doc/html/rfc2589">RFC 2589</a>).
       </li>
       <li>
         Password policy control sent and received for displaying password
         warnings and guide the user to change the password (see
-        <a href="https://tools.ietf.org/html/draft-behera-ldap-password-policy/">
+        <a href="https://datatracker.ietf.org/doc/html/draft-behera-ldap-password-policy/">
         draft-behera-ldap-password-policy</a>).
       </li>
       <li>
         Added support for Authorization Identity Request and Response Controls
-        (see <a href="https://tools.ietf.org/html/rfc3829">RFC 3829</a>).
+        (see <a href="https://datatracker.ietf.org/doc/html/rfc3829">RFC 3829</a>).
       </li>
     </ul>
   </dd>
@@ -2198,7 +2198,7 @@
     <ul>
       <li>
         Fixed behaviour when
-        <a href="https://tools.ietf.org/html/draft-zeilenga-ldap-relax/">
+        <a href="https://datatracker.ietf.org/doc/html/draft-zeilenga-ldap-relax/">
         Relax Rules Control</a> is in effect.
       </li>
       <li>

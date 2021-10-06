@@ -2,7 +2,7 @@
 """
 web2ldap plugin classes for attributes defined for DHCP service
 
-See http://tools.ietf.org/draft/draft-ietf-dhc-ldap-schema/
+See https://datatracker.ietf.org/doc/html/draft-ietf-dhc-ldap-schema
 """
 
 import ipaddress
