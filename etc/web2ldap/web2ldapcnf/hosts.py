@@ -1156,7 +1156,7 @@ ldap_def = {
 # another cloned config for setting specific LDAPS parameters for public AE-DIR demo server
 ldap_def['ldaps://demo.ae-dir.com'] = ldap_def['ldaps://demo.ae-dir.com/ou=ae-dir'].clone(
     tls_options={
-        ldap0.OPT_X_TLS_CACERTFILE: os.path.join(ETC_DIR, 'tls', 'cacerts', 'DST_Root_CA_X3.pem'),
+        ldap0.OPT_X_TLS_CACERTFILE: os.path.join(ETC_DIR, 'tls', 'cacerts', 'ISRG_Root_X1.pem'),
     },
 )
 # another cloned config for mandating use of StartTLS ext.op.
