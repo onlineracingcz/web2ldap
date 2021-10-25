@@ -129,7 +129,7 @@ if METRICS_AVAIL:
             yield GaugeMetricFamily(
                 'web2ldap_threads',
                 'Number of current threads',
-                threading.activeCount(),
+                threading.active_count(),
             )
             # end of MetricsCollector.collect()
 

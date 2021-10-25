@@ -199,14 +199,14 @@ def w2l_monitor(app):
         text_currenttime=strftimeiso8601(time.gmtime(time.time())),
         text_startuptime=strftimeiso8601(time.gmtime(STARTUP_TIME)),
         text_uptime='%02d:%02d' % (int(uptime//3600), int(uptime//60%60)),
-        int_numthreads=threading.activeCount(),
+        int_numthreads=threading.active_count(),
         text_threadlist='\n'.join(
             [
                 '<li>%s</li>' % ''.join(
                     [
                         app.form.s2d(str(repr(t))),
                         ', alive'*t.is_alive(),
-                        ', daemon'*t.isDaemon(),
+                        ', daemon'*t.daemon,
                     ]
                 )
                 for t in threading.enumerate()

@@ -171,10 +171,7 @@ class ExpiryThread(threading.Thread, LogHelper):
         self._stop_event.set()
 
     def __repr__(self):
-        return '%s: %d sessions removed' % (
-            self.getName(),
-            self._removed,
-        )
+        return '%s: %d sessions removed' % (self.name, self._removed)
 
     def run(self):
         """Thread function for cleaning up session database"""
