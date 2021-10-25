@@ -24,8 +24,12 @@ PYTHONDONTWRITEBYTECODE="1"
 export PYTHONDONTWRITEBYTECODE
 
 # Convert warnings to exceptions
-#PYTHONWARNINGS=error
-#export PYTHONWARNINGS
+PYTHONWARNINGS=error
+export PYTHONWARNINGS
+
+# Python will print threading debug info
+PYTHONTHREADDEBUG=1
+export PYTHONTHREADDEBUG
 
 ${PYTHON3} -m gunicorn.app.wsgiapp \
   --name=web2ldap \
