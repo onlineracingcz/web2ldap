@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldap plugin classes for Novell eDirectory/DirXML
 (see draft-sermersheim-nds-ldap-schema)

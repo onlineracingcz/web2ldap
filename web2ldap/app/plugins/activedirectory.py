@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldap plugin classes for Active Directory (for some information see draft-armijo-ldap-syntax)
 """
@@ -59,7 +59,7 @@ class ObjectVersion(Integer, SelectList):
     desc: str = 'Object version in MS AD (see [MS-ADTS])'
     attr_value_dict: Dict[str, str] = {
         '13': 'Windows 2000 Server operating system',
-        '30': 'Windows Server 2003 operating system or Windows Server 2008 (AD LDS)',
+        '30': 'Windows Server 2003 operating system or Windows Server 2008 (AD LDS)',
         '31': 'Windows Server 2003 R2 operating system or Windows Server 2008 R2 (AD LDS)',
         '44': 'Windows Server 2008 operating system (AD DS)',
         '47': 'Windows Server 2008 R2 (AD DS)',

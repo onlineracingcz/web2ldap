@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldap plugin classes for attributes defined for so-called dynamic groups
 """

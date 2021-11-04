@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldap.app.search: do a search and return results in several formats
 
@@ -773,7 +773,7 @@ def w2l_search(app):
                 if search_resminindex > search_resnumber:
                     page_command_list[0] = page_appl_anchor(
                         app,
-                        '|&larr;{0}…{1}',
+                        '|&larr;{0}\u2026{1}',
                         search_root, filterstr, search_output,
                         0, search_resnumber,
                         search_lastmod, num_result_all,
@@ -782,7 +782,7 @@ def w2l_search(app):
                 if search_resminindex > 0:
                     page_command_list[1] = page_appl_anchor(
                         app,
-                        '&larr;{0}…{1}',
+                        '&larr;{0}\u2026{1}',
                         search_root, filterstr, search_output,
                         max(0, prev_resminindex), search_resnumber,
                         search_lastmod, num_result_all,
@@ -800,7 +800,7 @@ def w2l_search(app):
 
                     page_next_link = page_appl_anchor(
                         app,
-                        '{0}…{1}&rarr;',
+                        '{0}\u2026{1}&rarr;',
                         search_root, filterstr, search_output,
                         search_resminindex+search_resnumber, search_resnumber,
                         search_lastmod, num_result_all,
@@ -810,7 +810,7 @@ def w2l_search(app):
                         page_command_list[3] = page_next_link
                         page_command_list[4] = page_appl_anchor(
                             app,
-                            '{0}…{1}&rarr;|',
+                            '{0}\u2026{1}&rarr;|',
                             search_root, filterstr, search_output,
                             num_result_all-search_resnumber, search_resnumber,
                             search_lastmod, num_result_all,

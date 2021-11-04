@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 ldaputil - several LDAP-related utility classes/functions
 

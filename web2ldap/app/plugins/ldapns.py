@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldap plugin classes for LDAP-based naming service (ldapns.schema)
 """

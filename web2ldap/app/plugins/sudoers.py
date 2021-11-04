@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldap plugin classes for sudo-ldap
 (see http://www.sudo.ws/sudoers.ldap.man.html)

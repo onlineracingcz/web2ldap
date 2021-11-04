@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldap plugin classes for
 
-Æ-DIR -- Authorized Entities Directory
+\xC6-DIR -- Authorized Entities Directory
 """
 
 # Python's standard lib
@@ -2009,7 +2009,7 @@ syntax_registry.reg_at(
 
 class AECommonName(DirectoryString):
     """
-    Base class for all plugin classes handling 'cn' in Æ-DIR plugin classes,
+    Base class for all plugin classes handling 'cn' in xC6-DIR plugin classes,
     not directly used
     """
     oid: str = 'AECommonName-oid'

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldap plugin classes for OpenSSH-LPK
 (see https://code.google.com/p/openssh-lpk/)

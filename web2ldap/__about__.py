@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 Meta information about web2ldap
 
@@ -18,7 +18,7 @@ VersionInfo = collections.namedtuple('VersionInfo', ('major', 'minor', 'micro'))
 __version_info__ = VersionInfo(
     major=1,
     minor=6,
-    micro=16,
+    micro=17,
 )
 __version__ = '.'.join(str(val) for val in __version_info__)
 __author__ = 'Michael Stroeder'

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 This script checks all the prerequisites for running
 a particular release version of web2ldap.

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldap.wsgi -- WSGI app wrapper eventually starting a stand-alone HTTP server
 

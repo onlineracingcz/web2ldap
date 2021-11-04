@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 ldaputil.dns - basic functions for dealing dc-style DNs and SRV RRs
 

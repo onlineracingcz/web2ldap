@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 Special syntax and attribute type registrations for enforcing
 standard-compliant behaviour even if current subschema of

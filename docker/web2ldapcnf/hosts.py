@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldapcnf.hosts - Configuration options for specific LDAP servers
 
@@ -28,7 +28,7 @@ ldap_uri_list = [
             'ldaps://demo.ae-dir.com/ou=ae-dir????'
             'bindname=aead,X-BINDPW=CorrectHorseBatteryStaple'
         ),
-        'Æ-DIR demo role Æ admin',
+        '\xC6-DIR demo role \xC6 admin',
     ),
     (
         (
@@ -334,11 +334,11 @@ CN_CONFIG = Web2LDAPConfig(
 )
 
 #---------------------------------------------------------------------------
-# Presets for Æ-DIR
+# Presets for AE-DIR
 #---------------------------------------------------------------------------
 
 AE_DIR_CONFIG = Web2LDAPConfig(
-    description='Æ-DIR',
+    description='\xC6-DIR',
     top_template=os.path.join(TEMPLATES_DIR, 'ae-dir', 'top.html'),
     binddn_mapping='ldap:///uid={user},_??base',
     boundas_template={
@@ -683,30 +683,30 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'aeHost':r'Host/server: <strong>%(host)s</strong>',
     },
     addform_entry_templates={
-        'Æ-DIR tag': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeTag.ldif'),
-        'Æ-DIR user group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeGroup.ldif'),
-        'Æ-DIR mail group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeMailGroup.ldif'),
-        'Æ-DIR primary user account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeUser_inetLocalMailRecipient.ldif'),
-        'Æ-DIR personal user account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeUser.ldif'),
-        'Æ-DIR OATH-HOTP token': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_oath_hotp_token.ldif'),
-        #'Æ-DIR OATH-TOTP token': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_oath_totp_token.ldif'),
-        'Æ-DIR password policy': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_pwdPolicy.ldif'),
-        'Æ-DIR OATH-HOTP parameters': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_oathHOTPParams.ldif'),
-        'Æ-DIR person': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aePerson.ldif'),
-        'Æ-DIR contact': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeContact.ldif'),
-        'Æ-DIR department': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeDept.ldif'),
-        'Æ-DIR location': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeLocation.ldif'),
-        'Æ-DIR network device': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeNwDevice.ldif'),
-        'Æ-DIR server/service group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeSrvGroup.ldif'),
-        'Æ-DIR server/host': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeHost.ldif'),
-        'Æ-DIR service/tool account (POSIX)': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeService_posixAccount.ldif'),
-        'Æ-DIR service/tool account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeService.ldif'),
-        'Æ-DIR zone': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeZone.ldif'),
-        'Æ-DIR zone admins group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeGroup_zone-admins.ldif'),
-        'Æ-DIR zone auditors group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeGroup_zone-auditors.ldif'),
-        'Æ-DIR replica account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_slapd-replica.ldif'),
-        'Æ-DIR login proxy': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_login-proxy.ldif'),
-        'Æ-DIR sudo su - root': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeSudoRule_su_root.ldif'),
+        '\xC6-DIR tag': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeTag.ldif'),
+        '\xC6-DIR user group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeGroup.ldif'),
+        '\xC6-DIR mail group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeMailGroup.ldif'),
+        '\xC6-DIR primary user account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeUser_inetLocalMailRecipient.ldif'),
+        '\xC6-DIR personal user account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeUser.ldif'),
+        '\xC6-DIR OATH-HOTP token': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_oath_hotp_token.ldif'),
+        #'\xC6-DIR OATH-TOTP token': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_oath_totp_token.ldif'),
+        '\xC6-DIR password policy': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_pwdPolicy.ldif'),
+        '\xC6-DIR OATH-HOTP parameters': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_oathHOTPParams.ldif'),
+        '\xC6-DIR person': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aePerson.ldif'),
+        '\xC6-DIR contact': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeContact.ldif'),
+        '\xC6-DIR department': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeDept.ldif'),
+        '\xC6-DIR location': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeLocation.ldif'),
+        '\xC6-DIR network device': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeNwDevice.ldif'),
+        '\xC6-DIR server/service group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeSrvGroup.ldif'),
+        '\xC6-DIR server/host': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeHost.ldif'),
+        '\xC6-DIR service/tool account (POSIX)': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeService_posixAccount.ldif'),
+        '\xC6-DIR service/tool account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeService.ldif'),
+        '\xC6-DIR zone': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeZone.ldif'),
+        '\xC6-DIR zone admins group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeGroup_zone-admins.ldif'),
+        '\xC6-DIR zone auditors group': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeGroup_zone-auditors.ldif'),
+        '\xC6-DIR replica account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_slapd-replica.ldif'),
+        '\xC6-DIR login proxy': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_login-proxy.ldif'),
+        '\xC6-DIR sudo su - root': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeSudoRule_su_root.ldif'),
     },
     passwd_template=os.path.join(TEMPLATES_DIR, 'ae-dir', 'passwd.html'),
     passwd_hashtypes=('ssha', ''),
@@ -1119,21 +1119,21 @@ ldap_def = {
     # For dynamic configuration via cn=config
     'ldap:///cn=config': CN_CONFIG,
 
-    # Æ-DIR's main DB
+    # AE-DIR's main DB
     'ldap:///ou=ae-dir': AE_DIR_CONFIG,
 
-    # Æ-DIR's accesslog (override description)
+    # AE-DIR's accesslog (override description)
     'ldap:///cn=accesslog-ae-dir': OPENLDAP_ACCESSLOG_CONFIG.clone(
-        description='Æ-DIR accesslog',
+        description='\xC6-DIR accesslog',
     ),
 
-    # Æ-DIR's online demo
+    # AE-DIR's online demo
     #-----------------------------------------------------------------------
 
     # This creates a new config based on config preset instance
     # AE_DIR_CONFIG and just sets a specific description
     'ldaps://demo.ae-dir.com/ou=ae-dir': AE_DIR_CONFIG.clone(
-        description='Æ-DIR demo',
+        description='\xC6-DIR demo',
     ),
 
 }

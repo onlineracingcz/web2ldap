@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 web2ldapcnf - Configure the basic behaviour of web2ldap.py
 

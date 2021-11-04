@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 ldapoidreg - Simple dictionary registry for LDAP-related OIDs.
 
@@ -2215,7 +2215,7 @@ OID_LIST = (
         "IBM Directory Server"),
     (
         "1.3.18.0.2.32.84",
-        "Reread the DB2® Password",
+        "Reread the DB2 Password",
         "Server re-reads the DB2 password to identify any change in DB2 password specified in configuration.",
         "IBM Directory Server"),
     (

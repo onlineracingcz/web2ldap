@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 """
 Plugin modules must be registered here by importing them
 
@@ -259,7 +259,7 @@ import web2ldap.app.plugins.groups
 import web2ldap.app.plugins.h350
 
 #---------------------------------------------------------------------------
-# Æ-DIR
+# AE-DIR
 #---------------------------------------------------------------------------
 
 import web2ldap.app.plugins.aedir
