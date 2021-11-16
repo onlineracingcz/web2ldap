@@ -16,6 +16,10 @@
     Fixed str/bytes regression when generating old password value during
     changing <var>unicodePwd</var> in own user entry in MS AD.
   </li>
+  <li>
+    Catch and ignore <var>ldap0.NO_SUCH_OPERATION</var> when calling
+    <var>LDAPObject.abandon()</var> because MS AD returns this result code.
+  </li>
 </ul>
 
 <h1 id="r1.6.16">1.6.16</h1>

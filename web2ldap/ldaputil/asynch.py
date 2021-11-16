@@ -120,7 +120,10 @@ class AsyncSearchHandler:
                 self.endResultBreak = result_counter
         finally:
             if partial and self._msg_id is not None:
-                self._l.abandon(self._msg_id)
+                try:
+                    self._l.abandon(self._msg_id)
+                except ldap0.NO_SUCH_OPERATION:
+                    pass
         self.post_processing()
         return partial # process_results()
 
