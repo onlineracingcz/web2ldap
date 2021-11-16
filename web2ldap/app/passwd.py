@@ -397,7 +397,7 @@ def w2l_passwd(app):
             new_passwd_value = unicode_pwd(password=passwd_input.encode('utf-8'))
             passwd_scheme = ''
             if old_password:
-                old_passwd_value = unicode_pwd(old_password)
+                old_passwd_value = unicode_pwd(old_password.encode('utf-8'))
         else:
             # Assume standard password attribute userPassword
             passwd_attr_type = b'userPassword'
