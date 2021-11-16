@@ -13,12 +13,17 @@
     to prevent <a href="https://trojansource.codes/">Trojan Source</a>.
   </li>
   <li>
-    Fixed str/bytes regression when generating old password value during
-    changing <var>unicodePwd</var> in own user entry in MS AD.
-  </li>
-  <li>
-    Catch and ignore <var>ldap0.NO_SUCH_OPERATION</var> when calling
-    <var>LDAPObject.abandon()</var> because MS AD returns this result code.
+    Fixed interop issues with MS AD:
+    <ul>
+      <li>
+        Fixed str/bytes regression when generating old password value during
+        changing <var>unicodePwd</var> in own user entry in MS AD.
+      </li>
+      <li>
+        Catch and ignore <var>ldap0.NO_SUCH_OPERATION</var> when calling
+        <var>LDAPObject.abandon()</var> because MS AD returns this result code.
+      </li>
+    </ul>
   </li>
 </ul>
 
