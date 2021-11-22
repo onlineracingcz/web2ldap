@@ -424,6 +424,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'loginShell',
         'macAddress',
         'mail',
+        'mailLocalAddress',
         'manager',
         'member',
         'memberOf',
