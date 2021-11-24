@@ -412,6 +412,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'loginShell',
         'macAddress',
         'mail',
+        'mailLocalAddress',
         'manager',
         'member',
         'memberOf',
@@ -723,6 +724,10 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'member':40,
         'memberUid':40,
         'memberOf':30,
+        'allowedAttributes':2,
+        'allowedAttributesEffective':2,
+        'allowedChildClasses':2,
+        'allowedChildClassesEffective':2,
     },
     requested_attrs=(
         # Proxy Authz attributes
