@@ -280,11 +280,6 @@ import web2ldap.app.plugins.aedir
 #   title="DNS entry">DNS</a>
 #"""
 
-# for mapping username to bind-DN of form
-#import ldapsession
-#ldapsession.LDAPSession = web2ldap.app.plugins.aedir.AEDirLDAPSession
-#web2ldap.app.plugins.aedir.AEDirLDAPSession.binddn_tmpl = 'uid={username},ou=ae-dir'
-
 # Parameters for generating user names
 #web2ldap.app.plugins.aedir.AEUserUid.maxLen = 4
 #web2ldap.app.plugins.aedir.AEUserUid.maxCollisionChecks = 15
