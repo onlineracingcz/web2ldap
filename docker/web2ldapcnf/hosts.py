@@ -708,6 +708,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         '\xC6-DIR replica account': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_slapd-replica.ldif'),
         '\xC6-DIR login proxy': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_login-proxy.ldif'),
         '\xC6-DIR sudo su - root': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeSudoRule_su_root.ldif'),
+        '\xC6-DIR sudoers entry': os.path.join(TEMPLATES_DIR, 'ae-dir', 'add_aeSudoRule.ldif'),
     },
     passwd_template=os.path.join(TEMPLATES_DIR, 'ae-dir', 'passwd.html'),
     passwd_hashtypes=('ssha', ''),
