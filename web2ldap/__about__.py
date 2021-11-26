@@ -1,6 +1,6 @@
 # -*- coding: ascii -*-
 """
-Meta information about web2ldap
+web2ldap.__about__ -- Meta information about web2ldap
 
 web2ldap - a web-based LDAP Client,
 see https://www.web2ldap.de for details
