@@ -448,7 +448,7 @@ def w2l_delete(app):
             scope,
             delete_ctrl_tree_delete,
             delete_server_ctrls,
-            delete_filter,
+            delete_filter or '(objectClass=*)',
         )
         end_time_stamp = time.time()
 
