@@ -140,6 +140,13 @@ http_headers = {
     'Window-Target': '_top',
     # Referer sending policy (see also https://www.w3.org/TR/referrer-policy/)
     'Referrer-Policy': 'no-referrer',
+    # see also https://scotthelme.co.uk/coop-and-coep/
+    # COEP: Cross Origin Embedder Policy
+    'Cross-Origin-Embedder-Policy': 'require-corp',
+    # COOP: Cross Origin Opener Policy
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    # CORP: Cross Origin Resource Policy
+    'Cross-Origin-Resource-Policy': 'same-site',
     # Content Security Policy
     'Content-Security-Policy': (
         "base-uri 'none'; "
@@ -197,7 +204,6 @@ http_headers = {
         "clipboard-write=(none), "
         "display-capture=(none)"
     )
-
 }
 http_headers['X-Webkit-CSP'] = http_headers['Content-Security-Policy']
 http_headers['X-Content-Security-Policy'] = http_headers['Content-Security-Policy']

@@ -140,6 +140,13 @@ http_headers = {
     'Window-Target': '_top',
     # Referer sending policy (see also https://www.w3.org/TR/referrer-policy/)
     'Referrer-Policy': 'no-referrer',
+    # see also https://scotthelme.co.uk/coop-and-coep/
+    # COEP: Cross Origin Embedder Policy
+    'Cross-Origin-Embedder-Policy': 'require-corp',
+    # COOP: Cross Origin Opener Policy
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    # CORP: Cross Origin Resource Policy
+    'Cross-Origin-Resource-Policy': 'same-site',
     # Content Security Policy
     'Content-Security-Policy': (
         "base-uri 'none'; "
