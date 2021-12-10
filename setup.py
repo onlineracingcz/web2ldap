@@ -39,8 +39,8 @@ setup(
     download_url='https://www.web2ldap.de/download.html',
     project_urls={
         'Documentation': 'https://web2ldap.de/docs.html',
-        'Source': 'https://code.stroeder.com/AE-DIR/web2ldap',
-        'Tracker': 'https://code.stroeder.com/AE-DIR/web2ldap/issues',
+        'Code': 'https://code.stroeder.com/AE-DIR/web2ldap',
+        'Issue tracker': 'https://code.stroeder.com/AE-DIR/web2ldap/issues',
     },
     keywords=['LDAP', 'LDAPv3', 'Web', 'Gateway'],
     packages=find_packages(exclude=['tests']),
