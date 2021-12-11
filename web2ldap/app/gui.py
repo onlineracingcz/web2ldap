@@ -453,6 +453,7 @@ def attrtype_select_field(
     attr_select = SelectField(
         field_name, field_desc, 1,
         options=sorted_attr_options,
+        auto_add_option=True,
     )
     attr_select.charset = app.form.accept_charset
     return attr_select
