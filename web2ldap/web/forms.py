@@ -510,6 +510,7 @@ class Select(Radio):
             size=1,
             ignoreCase=0,
             multiSelect=0,
+            auto_add_option=False,
         ):
         """
         Additional parameters:
@@ -525,6 +526,7 @@ class Select(Radio):
         self.size = size
         self.multiSelect = multiSelect
         self.ignoreCase = ignoreCase
+        self.auto_add_option = auto_add_option
         Radio.__init__(self, name, text, maxValues, required, default, accesskey, options)
 
     def _default_val(self, default):
@@ -534,6 +536,20 @@ class Select(Radio):
         if self.multiSelect:
             return self.default or set()
         return self.default
+
+    @property
+    def option_value_set(self):
+        res = set()
+        for i in self.options:
+            if isinstance(i, tuple):
+                try:
+                    optionValue, _, _ = i
+                except ValueError:
+                    optionValue, _ = i
+            else:
+                optionValue = i
+            res.add(optionValue)
+        return res
 
     def input_html(self, default=None, id_value=None, title=None):
         res = ['<select %stitle="%s" name="%s" %s  size="%d" %s>' % (
@@ -545,6 +561,12 @@ class Select(Radio):
             " multiple"*(self.multiSelect > 0)
         )]
         default_value = self._default_val(default)
+        if (
+                self.auto_add_option
+                and default_value is not None
+                and default_value not in self.option_value_set
+            ):
+            self.options.insert(0, default_value)
         for i in self.options:
             if isinstance(i, tuple):
                 try:
