@@ -28,6 +28,46 @@ from .schema.syntaxes import syntax_registry, LDAPSyntaxValueError
 from .modify import modlist_ldif
 
 
+BULKMOD_FORM_TMPL = """
+{form_begin}
+{text_msg}
+<fieldset>
+  <legend>Search parameters</legend>
+  <table>
+    <tr>
+      <td>Search base:</td><td>{field_hidden_dn}</td>
+    </tr>
+    <tr>
+      <td>Search scope:</td><td>{field_hidden_scope}</td>
+    </tr>
+    <tr>
+      <td>Search filter:</td>
+      <td>
+        {field_hidden_filterstr}
+      </td>
+    </tr>
+  </table>
+</fieldset>
+<fieldset>
+  <legend>Bulk modify input</legend>
+  <p><input type="submit" name="bulkmod_submit" value="Next&gt;&gt;"></p>
+  <table>
+  <tr>
+    <td colspan="2">Superior DN:</td><td colspan="3">{field_bulkmod_newsuperior}</td>
+  </tr>
+  <tr>
+    <td colspan="2">Copy entries:</td><td colspan="3">{field_bulkmod_cp}</td>
+  </tr>
+  {input_fields}
+  </table>
+</fieldset>
+<fieldset>
+  <legend>Extended controls</legend>
+  {field_bulkmod_ctrl}
+</fieldset>
+</form>
+"""
+
 BULKMOD_CONFIRMATION_FORM_TMPL = """
 {form_begin}
 <p class="WarningMessage">
@@ -71,6 +111,81 @@ BULKMOD_CONFIRMATION_FORM_TMPL = """
 <input type="submit" name="bulkmod_submit" value="Apply">
 <input type="submit" name="bulkmod_submit" value="Cancel">
 '</form>
+"""
+
+BULKMOD_MESSAGE_TMPL = """
+<p class="SuccessMessage">Modified entries.</p>
+<table>
+  <tr>
+    <td>Modified entries:</td>
+    <td>{num_modify_success_count:d}</td>
+    <td>
+      <meter
+        min="0"
+        max="{num_all_modify_count:d}"
+        value="{num_modify_success_count:d}"
+        optimum="{num_all_modify_count:d}"
+        title="entries"
+      >
+        {num_modify_success_count:d}
+      </meter>
+    </td>
+  </tr>
+  <tr>
+    <td>Modification errors:</td>
+    <td>{num_modify_error_count:d}</td>
+    <td>
+      <meter
+        min="0"
+        max="{num_all_modify_count:d}"
+        value="{num_modify_error_count:d}"
+        optimum="0"
+        title="entries"
+      >
+        {num_modify_error_count:d}
+      </meter>
+    </td>
+  </tr>
+  <tr>
+    <td>Renamed/copied entries:</td>
+    <td>{num_modrdn_success_count:d}</td>
+    <td>
+      <meter
+        min="0"
+        max="{num_all_modrdn_count:d}"
+        value="{num_modrdn_success_count:d}"
+        optimum="{num_all_modrdn_count:d}"
+        title="entries"
+      >
+        {num_modrdn_success_count:d}
+      </meter>
+    </td>
+  </tr>
+  <tr>
+    <td>Rename/copy errors:</td>
+    <td>{num_modrdn_error_count:d}</td>
+    <td>
+      <meter
+        min="0"
+        max="{num_all_modrdn_count:d}"
+        value="{num_modrdn_error_count:d}"
+        optimum="0"
+        title="entries"
+      >
+        {num_modrdn_error_count:d}
+      </meter>
+    </td>
+  </tr>
+  <tr><td>Search base:</td><td>{text_dn}</td></tr>
+  <tr><td>Search scope:</td><td>{text_scope}</td></tr>
+  <tr><td>Time elapsed:</td><td>{num_elapsed_time:0.2f} seconds</td></tr>
+</table>
+{text_form_begin}
+{text_fields}
+  <p><input type="submit" name="bulkmod_submit" value="&lt;&lt;Back"></p>
+</form>
+{text_errors}
+{text_changes}
 """
 
 
@@ -184,45 +299,7 @@ def bulkmod_input_form(
     ])
 
     app.outf.write(
-        """
-        {form_begin}
-        {text_msg}
-        <fieldset>
-          <legend>Search parameters</legend>
-          <table>
-            <tr>
-              <td>Search base:</td><td>{field_hidden_dn}</td>
-            </tr>
-            <tr>
-              <td>Search scope:</td><td>{field_hidden_scope}</td>
-            </tr>
-            <tr>
-              <td>Search filter:</td>
-              <td>
-                {field_hidden_filterstr}
-              </td>
-            </tr>
-          </table>
-        </fieldset>
-        <fieldset>
-          <legend>Bulk modify input</legend>
-          <p><input type="submit" name="bulkmod_submit" value="Next&gt;&gt;"></p>
-          <table>
-          <tr>
-            <td colspan="2">Superior DN:</td><td colspan="3">{field_bulkmod_newsuperior}</td>
-          </tr>
-          <tr>
-            <td colspan="2">Copy entries:</td><td colspan="3">{field_bulkmod_cp}</td>
-          </tr>
-          {input_fields}
-          </table>
-        </fieldset>
-        <fieldset>
-          <legend>Extended controls</legend>
-          {field_bulkmod_ctrl}
-        </fieldset>
-        </form>
-        """.format(
+        BULKMOD_FORM_TMPL.format(
             text_msg=error_msg,
             form_begin=app.begin_form('bulkmod', 'POST'),
             field_bulkmod_ctrl=app.form.field['bulkmod_ctrl'].input_html(default=app.form.field['bulkmod_ctrl'].value),
@@ -391,6 +468,8 @@ def w2l_bulkmod(app):
         ldap_error_html = []
 
         begin_time_stamp = time.time()
+        modify_success_count = modrdn_success_count = 0
+        modify_error_count = modrdn_error_count = 0
 
         # search the entries to be modified
         ldap_msgid = app.ls.l.search(
@@ -417,6 +496,7 @@ def w2l_bulkmod(app):
                     try:
                         app.ls.l.modify_s(rdat.dn_s, bulk_mod_list, req_ctrls=bulkmod_server_ctrls)
                     except ldap0.LDAPError as e:
+                        modify_error_count += 1
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
                                 app.form.s2d(rdat.dn_s),
@@ -424,6 +504,7 @@ def w2l_bulkmod(app):
                             )
                         )
                     else:
+                        modify_success_count += 1
                         result_ldif_html.append(modlist_ldif(
                             rdat.dn_s, app.form, bulk_mod_list
                         ))
@@ -448,6 +529,7 @@ def w2l_bulkmod(app):
                                 delold=app.cfg_param('bulkmod_delold', 0),
                             )
                     except ldap0.LDAPError as e:
+                        modrdn_error_count += 1
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
                                 app.form.s2d(rdat.dn_s),
@@ -455,6 +537,7 @@ def w2l_bulkmod(app):
                             )
                         )
                     else:
+                        modrdn_success_count += 1
                         result_ldif_html.append(
                             '<p>%s %s beneath %s</p>' % (
                                 {False:'Moved', True:'Copied'}[bulkmod_cp],
@@ -476,50 +559,25 @@ def w2l_bulkmod(app):
                 '\n'.join(result_ldif_html),
             )
 
-        num_mods = len(result_ldif_html)
-        num_errors = len(ldap_error_html)
-        num_sum = num_mods+num_errors
         app.simple_message(
             'Modified entries',
-            """
-            <p class="SuccessMessage">Modified entries.</p>
-            <table>
-              <tr>
-                <td>Modified entries:</td>
-                <td>%d</td>
-                <td>
-                  <meter min="0" max="%d" value="%d" optimum="%d" title="entries">%d</meter>
-                </td>
-              </tr>
-              <tr>
-                <td>Errors:</td>
-                <td>%d</td>
-                <td>
-                  <meter min="0" max="%d" value="%d" optimum="0" title="entries">%d</meter>
-                </td>
-              </tr>
-              <tr><td>Search base:</td><td>%s</td></tr>
-              <tr><td>Search scope:</td><td>%s</td></tr>
-              <tr><td>Time elapsed:</td><td>%0.2f seconds</td></tr>
-            </table>
-            %s
-            %s
-              <p><input type="submit" name="bulkmod_submit" value="&lt;&lt;Back"></p>
-            </form>
-            %s
-            %s
-            """ % (
-                num_mods,
-                num_sum, num_mods, num_sum, num_mods,
-                num_errors,
-                num_sum, num_errors, num_errors,
-                app.display_dn(app.dn),
-                ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
-                end_time_stamp-begin_time_stamp,
-                app.begin_form('bulkmod', 'POST'),
-                app.form.hidden_input_html(ignored_fields=['bulkmod_submit']),
-                error_messages,
-                change_records,
+            BULKMOD_MESSAGE_TMPL.format(
+                # modify operations
+                num_modify_success_count=modify_success_count,
+                num_modify_error_count=modify_error_count,
+                num_all_modify_count=modify_success_count+modify_error_count,
+                # modrdn operations
+                num_modrdn_success_count=modrdn_success_count,
+                num_modrdn_error_count=modrdn_error_count,
+                num_all_modrdn_count=modrdn_success_count+modrdn_error_count,
+                # other stuff
+                text_dn=app.display_dn(app.dn),
+                text_scope=ldap0.ldapurl.SEARCH_SCOPE_STR[scope],
+                num_elapsed_time=end_time_stamp-begin_time_stamp,
+                text_form_begin=app.begin_form('bulkmod', 'POST'),
+                text_fields=app.form.hidden_input_html(ignored_fields=['bulkmod_submit']),
+                text_errors=error_messages,
+                text_changes=change_records,
             ),
             main_menu_list=main_menu(app),
         )
