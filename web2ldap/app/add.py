@@ -130,9 +130,13 @@ def w2l_add(app):
                 app,
                 add_rdn,
                 add_basedn, entry,
-                msg='Attribute <var>%s</var> required for RDN not in entry data or multiple RDN values.' % (
-                    app.form.s2d(rdn_attr_type)
+                msg=(
+                    'Attribute <a class="CL" href="#in_a_{0}">{0}</a> required for RDN'
+                    'not in entry data or multiple RDN values.'.format(
+                        app.form.s2d(rdn_attr_type)
+                    )
                 ),
+                invalid_attrs={rdn_attr_type: (0,)},
             )
             return
 
