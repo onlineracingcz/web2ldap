@@ -311,7 +311,6 @@ class InputFormEntry(DisplayEntry):
                         self._app.form.s2d(attr_inst.form_value(), sp_entity='  '),
                         self._app.form.s2d(attr_inst.form_value(), sp_entity='&nbsp;&nbsp;')
                     ),
-                    attr_inst.value_button(self._app.command, self.row_counter, '+'),
                     '</span>'*highlight_invalid,
                 )))
                 self.row_counter += 1
