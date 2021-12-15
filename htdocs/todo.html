@@ -3,22 +3,18 @@
 <!--#include file="ssi/head.html" -->
 <!--#include file="ssi/navigation.html" -->
 
-See also: <a href="https://code.stroeder.com/ldap/web2ldap/issues">web2ldap issue tracker</a>
+<p>
+  Some items were moved into the
+  <a href="https://code.stroeder.com/ldap/web2ldap/issues">issue tracker</a>.
+</p>
 
 <ul>
-  <li>
-    Access control for the different <var>PATH_INFO</var> URLs
-    based on regex-matching of arbitrary environment vars.
-  </li>
   <li>
     Make use of HTML 5 features like &lt;datalist&gt; etc.
   </li>
   <li>
     &lt;optgroup&gt; markup in all dynamic select lists for grouping
     options along their superior DNs.
-  </li>
-  <li>
-    Reimplement using <em>dumpasn1.cfg</em> for displaying OIDs.
   </li>
   <li>
     Reimplement certificate/CRL viewer based on
@@ -29,9 +25,6 @@ See also: <a href="https://code.stroeder.com/ldap/web2ldap/issues">web2ldap issu
     Define binding conditions between HTTP connection parameters
     (<var>REMOTE_ADDR</var>, <var>REMOTE_USER</var>, etc.) and a LDAP
     authz-DN entry which is result of a LDAP bind.
-  </li>
-  <li>
-    Time zone chooser.
   </li>
   <li>
     More powerful handling of attribute input fields:
@@ -52,12 +45,6 @@ See also: <a href="https://code.stroeder.com/ldap/web2ldap/issues">web2ldap issu
     </ul>
   </li>
   <li>
-    LDAP transaction support (see
-    <a href="https://datatracker.ietf.org/doc/html/rfc5805">RFC 5805</a>)
-    for bulk write operations (group administration and bulk
-    modify/renaming)
-  </li>
-  <li>
     Search extensions:
     <ul>
       <li>
@@ -65,23 +52,6 @@ See also: <a href="https://code.stroeder.com/ldap/web2ldap/issues">web2ldap issu
       </li>
       <li>
         <a href="https://datatracker.ietf.org/doc/html/draft-ietf-ldapext-ldapv3-vlv">Virtual List View</a>
-      </li>
-      <li>
-        <a href="https://datatracker.ietf.org/doc/html/rfc2891">server-side sorting</a>
-      </li>
-    </ul>
-  </li>
-  <li>
-    Redesign of plug-in API:
-    <ul>
-      <li>
-        Plug-in classes for pre-input, post-input actions at entry level
-        which makes it possible to implement attribute actions which depend
-        on other entry data (e.g. autogeneration/composition of attribute values).
-      </li>
-      <li>
-        Plug-in classes will be limited to a certain scope
-        by configuration (e.g. by matching LDAP URL).
       </li>
     </ul>
   </li>
