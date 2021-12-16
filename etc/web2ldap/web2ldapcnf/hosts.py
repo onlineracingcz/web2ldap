@@ -939,6 +939,7 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
     # HTML template file used for displaying entries of specific object class
     read_template={
         # 'object class': 'pathname of HTML template file'
+        'OpenLDAProotDSE': os.path.join(TEMPLATES_DIR, 'read_OpenLDAProotDSE.html'),
         'inetOrgPerson': os.path.join(TEMPLATES_DIR, 'read_inetOrgPerson.html'),
         'account': os.path.join(TEMPLATES_DIR, 'read_account.html'),
         'organizationalPerson': os.path.join(TEMPLATES_DIR, 'read_inetOrgPerson.html'),
