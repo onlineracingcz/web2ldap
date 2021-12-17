@@ -120,10 +120,9 @@ def w2l_add(app):
         # Normalize old LDAPv2 RDN form
         if rdn_attr_type.lower().startswith('oid.'):
             rdn_attr_type = rdn_attr_type[4:]
-        if rdn_attr_type in entry and (
-                (not rdn_attr_value and len(entry[rdn_attr_type]) == 1) or
-                rdn_attr_value in entry[rdn_attr_type]
-            ):
+        if rdn_attr_type in entry and rdn_attr_value in entry[rdn_attr_type]:
+            rdn_list[i] = rdn_attr_type, rdn_attr_value
+        elif rdn_attr_type in entry and not rdn_attr_value and len(entry[rdn_attr_type]) == 1:
             rdn_list[i] = rdn_attr_type, entry[rdn_attr_type][0].decode(app.ls.charset)
         else:
             w2l_addform(
@@ -131,7 +130,7 @@ def w2l_add(app):
                 add_rdn,
                 add_basedn, entry,
                 msg=(
-                    'Attribute <a class="CL" href="#in_a_{0}">{0}</a> required for RDN'
+                    'Attribute <a class="CL" href="#in_a_{0}">{0}</a> required for RDN '
                     'not in entry data or multiple RDN values.'.format(
                         app.form.s2d(rdn_attr_type)
                     )
