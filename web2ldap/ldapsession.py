@@ -1347,7 +1347,7 @@ class LDAPSession:
         if 'subschemaAdminSpecificArea' in administrative_roles or not parent_dn:
             # If the current entry is a subschema administrative point all
             # DIT structure rule with a SUP clause have to be sorted out
-            for dit_structure_rule_id in possible_dit_structure_rules.keys():
+            for dit_structure_rule_id in list(possible_dit_structure_rules.keys()):
                 dit_structure_rule_obj = schema.get_obj(DITStructureRule, dit_structure_rule_id)
                 if dit_structure_rule_obj.sup:
                     del possible_dit_structure_rules[dit_structure_rule_id]
