@@ -381,6 +381,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'aeNotAfter',
         'aeNotBefore',
         'aeNwDevice',
+        'aeOwner',
         'aePasswordAdmins',
         'aePerson',
         'aeProxyFor',
