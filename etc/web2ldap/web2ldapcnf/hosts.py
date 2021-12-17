@@ -398,7 +398,6 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'aeVisibleSudoers',
         'aeZoneAdmins',
         'aeZoneAuditors'
-        'authTimestamp',
         'cn',
         'createTimestamp',
         'creatorsName',
@@ -465,6 +464,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         'pwdChangedTime',
         'pwdFailureTime',
         'pwdHistory',
+        'pwdLastSuccess',
         'pwdLockout',
         'pwdMustChange',
         'pwdPolicySubentry',
