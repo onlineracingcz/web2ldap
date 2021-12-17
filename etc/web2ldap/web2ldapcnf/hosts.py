@@ -622,6 +622,7 @@ AE_DIR_CONFIG = Web2LDAPConfig(
         ),
     },
     read_template={
+        'OpenLDAProotDSE': os.path.join(TEMPLATES_DIR, 'ae-dir', 'read_OpenLDAProotDSE.html'),
         'msPwdResetObject': os.path.join(TEMPLATES_DIR, 'read_msPwdResetObject.html'),
         'posixAccount': os.path.join(TEMPLATES_DIR, 'read_posixAccount.html'),
         'aePolicy': os.path.join(TEMPLATES_DIR, 'ae-dir', 'read_aePolicy.html'),
