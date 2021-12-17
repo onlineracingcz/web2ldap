@@ -423,13 +423,33 @@ syntax_registry.reg_at(
 )
 
 
-class AEZoneDN(DerefDynamicDNSelectList):
+class AERootDynamicDNSelectList(DerefDynamicDNSelectList):
+    """
+    custom variant with smarter handling of search base
+    """
+    oid: str = 'AERootDynamicDNSelectList-oid'
+    input_fallback = False # no fallback to normal input field
+    suffix_attr = 'aeRoot'
+
+    def _search_root(self) -> str:
+        if self.lu_obj.dn == self.suffix_attr:
+            try:
+                ae_suffix = self._app.ls.l.read_rootdse_s(
+                    attrlist=['self.suffix_attr']
+                ).entry_s[self.suffix_attr][0]
+            except (ldap0.LDAPError, KeyError):
+                pass
+            else:
+                return ae_suffix
+        return DerefDynamicDNSelectList._search_root(self)
+
+
+class AEZoneDN(AERootDynamicDNSelectList):
     """
     Plugin for attributes holding DNs of aeZone entries
     """
     oid: str = 'AEZoneDN-oid'
     desc: str = 'AE-DIR: Zone'
-    input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeZone)(aeStatus=0))'
     ref_attrs = (
         (None, 'Same zone', None, 'aeGroup', 'Search all groups constrained to same zone'),
@@ -442,13 +462,12 @@ syntax_registry.reg_at(
 )
 
 
-class AEHost(DerefDynamicDNSelectList):
+class AEHost(AERootDynamicDNSelectList):
     """
     Plugin for attribute 'host' in aeHost entries
     """
     oid: str = 'AEHost-oid'
     desc: str = 'AE-DIR: Host'
-    input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?host?sub?(&(objectClass=aeHost)(aeStatus=0))'
     ref_attrs = (
         (None, 'Same host', None, 'aeService', 'Search all services running on same host'),
@@ -461,13 +480,12 @@ syntax_registry.reg_at(
 )
 
 
-class AENwDevice(DerefDynamicDNSelectList):
+class AENwDevice(AERootDynamicDNSelectList):
     """
     Plugin for attributes holding DNs of aeNwDevice entries
     """
     oid: str = 'AENwDevice-oid'
     desc: str = 'AE-DIR: network interface'
-    input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///..?cn?sub?(&(objectClass=aeNwDevice)(aeStatus=0))'
     ref_attrs = (
         (None, 'Siblings', None, 'aeNwDevice', 'Search sibling network devices'),
@@ -698,13 +716,12 @@ syntax_registry.reg_at(
 )
 
 
-class AEGroupDN(DerefDynamicDNSelectList):
+class AEGroupDN(AERootDynamicDNSelectList):
     """
     Plugin for attribute 'memberOf' in group member entries
     """
     oid: str = 'AEGroupDN-oid'
     desc: str = 'AE-DIR: DN of user group entry'
-    input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_??sub?(&(|(objectClass=aeGroup)(objectClass=aeMailGroup))(aeStatus=0))'
     ref_attrs = (
         ('memberOf', 'Members', None, 'Search all member entries of this user group'),
@@ -1388,13 +1405,12 @@ syntax_registry.reg_at(
 )
 
 
-class AELocation(DerefDynamicDNSelectList):
+class AELocation(AERootDynamicDNSelectList):
     """
     Plugin class for attribute 'aeLocation' in various entries
     """
     oid: str = 'AELocation-oid'
     desc: str = 'AE-DIR: DN of location entry'
-    input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aeLocation)(aeStatus=0))'
     ref_attrs = AEEntryDNAELocation.ref_attrs
     desc_sep: str = '<br>'
@@ -1437,13 +1453,12 @@ syntax_registry.reg_at(
 )
 
 
-class AEDept(DerefDynamicDNSelectList):
+class AEDept(AERootDynamicDNSelectList):
     """
     Plugin class for attribute 'aeDept' in various entries
     """
     oid: str = 'AEDept-oid'
     desc: str = 'AE-DIR: DN of department entry'
-    input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aeDept)(aeStatus=0))'
     ref_attrs = AEEntryDNAEDept.ref_attrs
     desc_sep: str = '<br>'
@@ -1455,7 +1470,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEOwner(DerefDynamicDNSelectList):
+class AEOwner(AERootDynamicDNSelectList):
     """
     Plugin class for attribute 'aeOwner' in aeDevice and aeSession entries
     """
@@ -1548,13 +1563,12 @@ syntax_registry.reg_at(
 )
 
 
-class AEManager(DerefDynamicDNSelectList):
+class AEManager(AERootDynamicDNSelectList):
     """
     Plugin class for attribute 'aeManager' in aePerson and aeDept entries
     """
     oid: str = 'AEManager-oid'
     desc: str = 'AE-DIR: Manager responsible for a person/department'
-    input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?displayName?sub?(&(objectClass=aePerson)(aeStatus=0))'
     desc_sep: str = '<br>'
 
@@ -2223,13 +2237,12 @@ syntax_registry.reg_at(
 )
 
 
-class AESudoRuleDN(DerefDynamicDNSelectList):
+class AESudoRuleDN(AERootDynamicDNSelectList):
     """
     Plugin for attribute 'aeVisibleSudoers' in aeSrvGroup entries
     """
     oid: str = 'AESudoRuleDN-oid'
     desc: str = 'AE-DIR: DN(s) of visible SUDO rules'
-    input_fallback = False # no fallback to normal input field
     ldap_url = 'ldap:///_?cn?sub?(&(objectClass=aeSudoRule)(aeStatus=0))'
 
 syntax_registry.reg_at(
