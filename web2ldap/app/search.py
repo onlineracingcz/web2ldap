@@ -305,6 +305,7 @@ def w2l_search(app):
             search_resminindex, search_resnumber,
             search_lastmod,
             num_result_all,
+            link_rel=None,
         ):
         display_start_num = search_resminindex+1
         display_end_num = search_resminindex + search_resnumber
@@ -329,6 +330,7 @@ def w2l_search(app):
                 ('search_attrs', ','.join(search_attrs)),
             ],
             title=link_title,
+            rel=link_rel,
         )
         # end of page_appl_anchor()
 
@@ -777,6 +779,7 @@ def w2l_search(app):
                         search_root, filterstr, search_output,
                         0, search_resnumber,
                         search_lastmod, num_result_all,
+                        link_rel='first',
                     )
 
                 if search_resminindex > 0:
@@ -786,6 +789,7 @@ def w2l_search(app):
                         search_root, filterstr, search_output,
                         max(0, prev_resminindex), search_resnumber,
                         search_lastmod, num_result_all,
+                        link_rel='prev',
                     )
 
                 page_command_list[2] = page_appl_anchor(
@@ -804,6 +808,7 @@ def w2l_search(app):
                         search_root, filterstr, search_output,
                         search_resminindex+search_resnumber, search_resnumber,
                         search_lastmod, num_result_all,
+                        link_rel='next',
                     )
 
                     if num_result_all is not None and resind < num_result_all:
@@ -814,6 +819,7 @@ def w2l_search(app):
                             search_root, filterstr, search_output,
                             num_result_all-search_resnumber, search_resnumber,
                             search_lastmod, num_result_all,
+                            link_rel='last',
                         )
                     elif search_resminindex+search_resnumber <= resind:
                         page_command_list[3] = page_next_link

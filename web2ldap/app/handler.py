@@ -284,6 +284,7 @@ class AppHandler(LogHelper):
             target=None,
             title=None,
             anchor_id=None,
+            rel=None,
         ):
         """
         Build the HTML text of a anchor with form parameters
@@ -306,8 +307,12 @@ class AppHandler(LogHelper):
             title_attr = ' title="%s"' % (self.form.s2d(title).replace(' ', '&nbsp;'))
         if anchor_id:
             anchor_id = '#%s' % (self.form.s2d(anchor_id))
-        res = '<a class="CL"%s%s href="%s?%s%s">%s</a>' % (
+        rel_attr = ''
+        if rel:
+            rel_attr = ' rel="%s"' % (rel)
+        res = '<a class="CL"%s%s%s href="%s?%s%s">%s</a>' % (
             target_attr,
+            rel_attr,
             title_attr,
             self.form.action_url(command, self.sid),
             '&amp;'.join([
