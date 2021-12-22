@@ -14,6 +14,19 @@
 <p>Release Date: 2021-12-xx</p>
 <ul>
   <li>
+    <strong>Security fix:</strong><br>
+    Removed debug <code>print()</code> statement which leaked new passwords
+    to <em>stdout</em> changed with a normal modify operation on
+    <var>userPassword</var> or <var>unicodePwd</var> attribute.
+    This is the default mode for MS AD.
+    <br>
+    Changing the password with <em>Password Modify extended operation</em>
+    was not affected. This is the default mode e.g. for OpenLDAP or any
+    other LDAP server supporting this ext. op.
+    <br>
+    This bug was probably introduced in release <a href="changes-1.5.html#r1.5.94">1.5.94</a>.
+  </li>
+  <li>
     Added link types to pagination links of search results.
   </li>
 </ul>
