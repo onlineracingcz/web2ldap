@@ -476,7 +476,6 @@ def w2l_passwd(app):
 
         # Modify password
         try:
-            print('passwd_modlist', repr(passwd_modlist))
             app.ls.modify(passwd_who, passwd_modlist)
         except (
                 ldap0.CONSTRAINT_VIOLATION,
