@@ -499,8 +499,8 @@ class Web2LDAPFormModify(Web2LDAPFormInput):
                 web2ldapcnf.input_maxattrs,
             ),
             AttributeType(
-                'in_wrtattroids',
-                'Writeable attribute types',
+                'in_roattroids',
+                'Read-only attribute types',
                 web2ldapcnf.input_maxattrs,
             ),
             Input(
