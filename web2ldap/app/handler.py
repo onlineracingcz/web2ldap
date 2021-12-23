@@ -429,11 +429,6 @@ class AppHandler(LogHelper):
         if not path_info:
             cmd, sid = '', ''
         else:
-            # Work around broken web servers which adds the script name
-            # to path info as well
-            script_name = env['SCRIPT_NAME']
-            if path_info.startswith(script_name):
-                path_info = path_info[len(script_name):]
             try:
                 cmd, sid = path_info.split('/', 1)
             except ValueError:
