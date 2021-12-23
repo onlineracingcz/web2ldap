@@ -91,8 +91,12 @@ def application(environ, start_response):
         else:
             return wsgiref.util.FileWrapper(css_file)
     if not environ['PATH_INFO'].startswith(APP_URL_PATH):
-        start_response('404 not found', [('Content-type', 'text/plain')])
-        return [('404 - Resource not found -> must used base URL %s to access' % (APP_URL_PATH,)).encode('ascii')]
+        if environ.get('QUERY_STRING'):
+            start_response('404 not found', [('Content-type', 'text/plain')])
+            return [('404 - Resource not found -> must used base URL %s to access' % (APP_URL_PATH,)).encode('ascii')]
+        else:
+            start_response('302 relocated', [('Location', APP_URL_PATH)])
+            return []
     environ['SCRIPT_NAME'] = APP_URL_PATH
     environ['PATH_INFO'] = environ['PATH_INFO'][len(APP_URL_PATH):]
     logger.debug(
