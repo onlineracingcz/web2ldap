@@ -17,6 +17,9 @@ from web2ldap import TEMPLATES_DIR
 # General options
 #---------------------------------------------------------------------------
 
+# the base URL path accepted in requests for accessing the application
+url_path = '/web2ldap'
+
 # Trace output of the LDAP connection can be written to error
 # output (if not started with python -O).
 # Set to non-zero if you want debug your LDAP connection.
