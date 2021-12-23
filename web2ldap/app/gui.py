@@ -38,6 +38,14 @@ from ..ldaputil import logdb_filter
 from .tmpl import read_template
 
 
+# Sequence of patterns to extract attribute names from LDAP diagnostic messages
+EXTRACT_INVALID_ATTR_PATTERNS = (
+    # OpenLDAP diagnostic messages
+    re.compile(r"(?P<at>[a-zA-Z0-9;-]+): value #(?P<index>[0-9]+) invalid per syntax"),
+    re.compile(r"object class '(?P<oc>[a-zA-Z0-9;-]+)' requires attribute '(?P<at>[a-zA-Z0-9;-]+)'"),
+)
+
+
 #---------------------------------------------------------------------------
 # Constants
 #---------------------------------------------------------------------------
@@ -577,24 +585,29 @@ def invalid_syntax_message(app, invalid_attrs):
     )
 
 
-def extract_invalid_syntax(app, ldap_err):
+def extract_invalid_attr(app, ldap_err):
     """
-    try to extract error message and invalid attributes dict from LDAPError instance
+    Extract invalid attributes dict from diagnostic message in LDAPError instance
     """
     try:
         # try to extract OpenLDAP-specific info message
         info = ldap_err.args[0].get('info', b'').decode(app.ls.charset)
-        invalid_attr, invalid_index = re.match(
-            '([a-zA-Z0-9;-]+): value #([0-9]+) invalid per syntax',
-            info,
-        ).groups()
     except (AttributeError, IndexError, UnicodeDecodeError):
         # could not extract useful info
-        invalid_attrs = {}
-        error_msg = app.ldap_error_msg(ldap_err)
-    else:
-        invalid_attrs = {invalid_attr: [int(invalid_index)]}
-        error_msg = invalid_syntax_message(app, invalid_attrs)
+        return (app.ldap_error_msg(ldap_err), {})
+    invalid_attrs = {}
+    for extract_pattern in EXTRACT_INVALID_ATTR_PATTERNS:
+        match = extract_pattern.match(info)
+        if match is None:
+            continue
+        matches = match.groupdict()
+        if 'at' in matches:
+            invalid_attrs[matches['at']] = [int(matches.get('index', 0))]
+            if isinstance(ldap_err, ldap0.INVALID_SYNTAX):
+                error_msg = invalid_syntax_message(app, invalid_attrs)
+            else:
+                error_msg = app.ldap_error_msg(ldap_err)
+            break
     return error_msg, invalid_attrs
 
 
