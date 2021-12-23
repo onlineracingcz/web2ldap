@@ -19,7 +19,7 @@ from ldap0.dn import DNObj
 
 from .addmodifyform import w2l_addform, get_entry_input, read_old_entry, read_ldif_template
 from . import ErrorExit
-from .gui import invalid_syntax_message, extract_invalid_syntax, main_menu
+from .gui import invalid_syntax_message, extract_invalid_attr, main_menu
 
 
 # Attribute types always ignored for add requests
@@ -181,8 +181,11 @@ def w2l_add(app):
                 app.display_dn(add_basedn, links=False),
             )
         )
-    except ldap0.INVALID_SYNTAX as err:
-        error_msg, invalid_attrs = extract_invalid_syntax(app, err)
+    except (
+            ldap0.INVALID_SYNTAX,
+            ldap0.OBJECT_CLASS_VIOLATION,
+        ) as err:
+        error_msg, invalid_attrs = extract_invalid_attr(app, err)
         # go back to input form so the user can correct something
         w2l_addform(app, add_rdn, add_basedn, entry, msg=error_msg, invalid_attrs=invalid_attrs)
         return
@@ -191,7 +194,6 @@ def w2l_add(app):
             ldap0.CONSTRAINT_VIOLATION,
             ldap0.INVALID_DN_SYNTAX,
             ldap0.NAMING_VIOLATION,
-            ldap0.OBJECT_CLASS_VIOLATION,
             ldap0.OTHER,
             ldap0.TYPE_OR_VALUE_EXISTS,
             ldap0.UNDEFINED_TYPE,
