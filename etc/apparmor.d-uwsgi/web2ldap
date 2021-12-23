@@ -10,12 +10,12 @@ profile web2ldap {
   #include <abstractions/python>
 
   # Python and its modules
-  /opt/web2ldap/bin/python2.7 ix,
-  /opt/web2ldap/lib/python2.7/site-packages/ r,
-  /opt/web2ldap/lib/python2.7/site-packages/** r,
-  /opt/web2ldap/lib/python2.7/orig-prefix.txt r,
-  /opt/web2ldap/lib/python2.7/**.py{,c,o} r,
-  /opt/web2ldap/lib/python2.7/**.so* rm,
+  /opt/web2ldap/bin/python3* ix,
+  /opt/web2ldap/lib/python3*/site-packages/ r,
+  /opt/web2ldap/lib/python3*/site-packages/** r,
+  /opt/web2ldap/lib/python3*/orig-prefix.txt r,
+  /opt/web2ldap/lib/python3*/**.py{,c,o} r,
+  /opt/web2ldap/lib/python3*/**.so* rm,
 
   # access to web2ldap application config
   /opt/web2ldap/etc/web2ldap/** r,
