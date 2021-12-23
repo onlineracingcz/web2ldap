@@ -212,14 +212,14 @@ class InputFormEntry(DisplayEntry):
 
     def __init__(
             self, app, dn, schema, entry,
-            writeable_attr_oids,
+            readonly_attr_oids,
             existing_object_classes=None,
             invalid_attrs=None
         ):
         assert isinstance(dn, str), TypeError("Argument 'dn' must be str, was {!r}".format(dn))
         DisplayEntry.__init__(self, app, dn, schema, entry, 'field_sep', False)
         self.existing_object_classes = existing_object_classes
-        self.writeable_attr_oids = writeable_attr_oids
+        self.readonly_attr_oids = readonly_attr_oids
         self.invalid_attrs = invalid_attrs or {}
         new_object_classes = set(self.entry.object_class_oid_set()) - {
             self.entry._s.get_oid(ObjectClass, oc_name)
@@ -287,8 +287,8 @@ class InputFormEntry(DisplayEntry):
                 ) or (
                     # Check whether the server indicated this attribute
                     # not to be writeable by bound identity
-                    not self.writeable_attr_oids is None and
-                    not oid in self.writeable_attr_oids and
+                    not self.readonly_attr_oids is None and
+                    oid in self.readonly_attr_oids and
                     not oid in self.new_attribute_types_oids
                 ) or (
                     # Check whether attribute type/value is used in the RDN => not writeable

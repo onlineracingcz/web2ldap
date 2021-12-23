@@ -789,7 +789,6 @@ def nomatching_attrs(sub_schema, entry, allowed_attrs_dict, required_attrs_dict)
 
 WRITEABLE_ATTRS_NONE = None
 WRITEABLE_ATTRS_SLAPO_ALLOWED = 1
-WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS = 2
 
 def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
     """
@@ -808,8 +807,9 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
 
     # Try to query attribute allowedAttributesEffective
     if '1.2.840.113556.1.4.914' in sub_schema.sed[AttributeType]:
-        # Query with attribute 'allowedAttributesEffective'
+        # Query attributes 'allowedAttributes' and 'allowedAttributesEffective'
         # e.g. on MS AD or OpenLDAP with slapo-allowed
+        read_attrs['allowedAttributes'] = 'allowedAttributes'
         read_attrs['allowedAttributesEffective'] = 'allowedAttributesEffective'
         write_attrs_method = WRITEABLE_ATTRS_SLAPO_ALLOWED
 
@@ -817,7 +817,7 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
         write_attrs_method = WRITEABLE_ATTRS_NONE
 
     assert write_attrs_method in {
-        WRITEABLE_ATTRS_NONE, WRITEABLE_ATTRS_SLAPO_ALLOWED, WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS
+        WRITEABLE_ATTRS_NONE, WRITEABLE_ATTRS_SLAPO_ALLOWED
     }, ValueError('Invalid value for write_attrs_method')
 
     # Explicitly request attribute 'ref' if in manage DSA IT mode
@@ -839,46 +839,32 @@ def read_old_entry(app, dn, sub_schema, assertion_filter, read_attrs=None):
 
     if write_attrs_method == WRITEABLE_ATTRS_NONE:
         # No method to determine writeable attributes was used
-        writeable_attr_oids = None
+        readonly_attr_oids = None
 
     elif write_attrs_method == WRITEABLE_ATTRS_SLAPO_ALLOWED:
         # Determine writeable attributes from attribute 'allowedAttributesEffective'
         try:
             writeable_attr_oids = SchemaElementOIDSet(
                 sub_schema, AttributeType,
+                decode_list(ldap_res.entry_as.get('allowedAttributesEffective', []), encoding='ascii')
+            )
+            readonly_attr_oids = SchemaElementOIDSet(
+                sub_schema, AttributeType,
                 [
-                    aval.decode('ascii')
-                    for aval in ldap_res.entry_as.get('allowedAttributesEffective', [])
+                    attr
+                    for attr in decode_list(ldap_res.entry_as.get('allowedAttributes', []))
+                    if not attr in writeable_attr_oids
                 ]
             )
+            logger.warning('readonly_attr_oids = %r', list(readonly_attr_oids))
         except KeyError:
-            writeable_attr_oids = set([])
+            readonly_attr_oids = set([])
         else:
-            if 'allowedAttributesEffective' in entry:
-                del entry['allowedAttributesEffective']
+            entry.pop('allowedAttributes', None)
+            entry.pop('allowedAttributesEffective', None)
 
-    elif write_attrs_method == WRITEABLE_ATTRS_GET_EFFECTIVE_RIGHTS:
-        # Try to determine writeable attributes from attribute 'aclRights'
-        acl_rights_attribute_level = [
-            (a, v)
-            for a, v in entry.data.items()
-            if a[0] == '1.3.6.1.4.1.42.2.27.9.1.39' and a[1] == 'attributelevel'
-        ]
-        if acl_rights_attribute_level:
-            writeable_attr_oids = set([])
-            for a, v in acl_rights_attribute_level:
-                try:
-                    dummy1, dummy2, attr_type = a
-                except ValueError:
-                    pass
-                else:
-                    if v[0].lower().find(',write:1,') >= 0:
-                        writeable_attr_oids.add(
-                            sub_schema.get_oid(AttributeType, a[2]).decode('ascii')
-                        )
-                del entry[';'.join((dummy1, dummy2, attr_type))]
-
-    return entry, writeable_attr_oids # read_old_entry()
+    return entry, readonly_attr_oids
+    # read_old_entry()
 
 
 def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
@@ -1022,17 +1008,17 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
         # Read objectclass(es) from input form
         entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].value]
 
-    old_entry, read_writeable_attr_oids = read_old_entry(app, app.dn, app.schema, None)
+    old_entry, readonly_old_attr_oids = read_old_entry(app, app.dn, app.schema, None)
     if not entry:
         entry = old_entry
 
-    in_wrtattroids = app.form.getInputValue('in_wrtattroids', [])
-    if in_wrtattroids == ['nonePseudoValue;x-web2ldap-None']:
-        writeable_attr_oids = None
-    elif in_wrtattroids:
-        writeable_attr_oids = set(in_wrtattroids)
+    in_roattroids = app.form.getInputValue('in_roattroids', [])
+    if in_roattroids == ['nonePseudoValue;x-web2ldap-None']:
+        readonly_attr_oids = None
+    elif in_roattroids:
+        readonly_attr_oids = set(in_roattroids)
     else:
-        writeable_attr_oids = read_writeable_attr_oids
+        readonly_attr_oids = readonly_old_attr_oids
 
     if input_formtype == 'OC':
         # Output the web page with object class input form
@@ -1046,7 +1032,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
     input_form_entry = InputFormEntry(
         app, app.dn, app.schema,
-        entry, writeable_attr_oids, existing_object_classes, invalid_attrs=invalid_attrs
+        entry, readonly_attr_oids, existing_object_classes, invalid_attrs=invalid_attrs
     )
     required_attrs_dict, allowed_attrs_dict = input_form_entry.attribute_types()
     nomatching_attrs_dict = nomatching_attrs(
@@ -1057,10 +1043,10 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
     )
 
     in_wrtattroids_fields_html = '\n'.join([
-        app.form.hidden_field_html('in_wrtattroids', at_name, '')
+        app.form.hidden_field_html('in_roattroids', at_name, '')
         for at_name in (
-            writeable_attr_oids
-            if writeable_attr_oids is not None
+            readonly_attr_oids
+            if readonly_attr_oids is not None
             else ['nonePseudoValue;x-web2ldap-None']
         )
     ])
