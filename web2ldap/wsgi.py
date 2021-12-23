@@ -154,11 +154,11 @@ def run_standalone():
     except (KeyboardInterrupt, SystemExit) as exit_exc:
         logger.debug('Caught %s in run_standalone()', exit_exc.__class__.__name__)
     except OSError as err:
-        logger.error('Error starting service http://%s:%s/web2ldap: %s', host_arg, port_arg, err)
+        logger.error('Error starting service http://%s:%s%s: %s', host_arg, port_arg, APP_URL_PATH, err)
         raise SystemExit('Exiting because of OS error')
     # Stop clean-up thread
     session_store().expiry_thread.stop()
-    logger.info('Stopped service http://%s:%s/web2ldap', host, port)
+    logger.info('Stopped service http://%s:%s%s', host, port, APP_URL_PATH)
     # end of run_standalone()
 
 
