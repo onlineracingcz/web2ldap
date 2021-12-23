@@ -1685,7 +1685,7 @@ syntax_registry.reg_at(
 )
 
 
-class AEUserMailaddress(AEPersonAttribute, SelectList):
+class AEUserMailaddress(AEPersonAttribute, RFC822Address, SelectList):
     """
     Plugin class for attribute 'mail' in aeUser entries
 
@@ -1693,7 +1693,6 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
     the values in attribute 'mailLocalAddress'.
     """
     oid: str = 'AEUserMailaddress-oid'
-    html_tmpl = RFC822Address.html_tmpl
     max_values = 1
     input_fallback = False
     sani_funcs = (
@@ -1717,6 +1716,9 @@ class AEUserMailaddress(AEPersonAttribute, SelectList):
         if self._is_mail_account():
             return SelectList._validate(self, attr_value)
         return AEPersonAttribute._validate(self, attr_value)
+
+    def display(self, vidx, links) -> str:
+        return RFC822Address.display(self, vidx, links)
 
     def form_value(self) -> str:
         if self._is_mail_account():
