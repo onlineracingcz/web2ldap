@@ -49,6 +49,9 @@ logger.debug('End of module %s', __name__)
 # Raise UnicodeError instead of output of UnicodeWarning
 warnings.filterwarnings(action="error", category=UnicodeWarning)
 
+# the base URL path accepted in requests for accessing the application
+APP_URL_PATH = getattr(web2ldapcnf, 'url_path', '/web2ldap')
+
 ldap0._trace_level = web2ldapcnf.ldap_trace_level
 ldap0.functions.set_option(ldap0.OPT_DEBUG_LEVEL, web2ldapcnf.ldap_opt_debug_level)
 ldap0.functions.set_option(ldap0.OPT_RESTART, 0)
@@ -83,12 +86,20 @@ def application(environ, start_response):
             start_response('200 OK', css_http_headers)
         except (IOError, OSError) as err:
             logger.error('Error reading CSS file %r: %s', css_filename, err)
-            start_response('404 not found', (('Content-type', 'text/plain')))
-            return ['404 - CSS file not found.']
+            start_response('404 not found', [('Content-type', 'text/plain')])
+            return [b'404 - CSS file not found.']
         else:
             return wsgiref.util.FileWrapper(css_file)
-    if not environ['SCRIPT_NAME']:
-        wsgiref.util.shift_path_info(environ)
+    if not environ['PATH_INFO'].startswith(APP_URL_PATH):
+        start_response('404 not found', [('Content-type', 'text/plain')])
+        return [('404 - Resource not found -> must used base URL %s to access' % (APP_URL_PATH,)).encode('ascii')]
+    environ['SCRIPT_NAME'] = APP_URL_PATH
+    environ['PATH_INFO'] = environ['PATH_INFO'][len(APP_URL_PATH):]
+    logger.debug(
+        'SCRIPT_NAME = %r / PATH_INFO = %r',
+        environ['SCRIPT_NAME'],
+        environ['PATH_INFO'],
+    )
     outf = AppResponse()
     app = AppHandler(environ, outf)
     app.run()
@@ -124,7 +135,7 @@ def run_standalone():
         raise SystemExit(
             'Argument for port must be valid integer literal, was {0!r}'.format(port_arg)
         )
-    logger.debug('Start listening for http://%s:%s/web2ldap', host_arg, port_arg)
+    logger.debug('Start listening %s:%s', host_arg, port_arg)
     try:
         with wsgiref.simple_server.make_server(
                 host_arg,
@@ -134,7 +145,7 @@ def run_standalone():
                 handler_class=W2lWSGIRequestHandler,
             ) as httpd:
             host, port = httpd.socket.getsockname()
-            logger.info('Serving http://%s:%s/web2ldap', host, port)
+            logger.info('Serving http://%s:%s%s', host, port, APP_URL_PATH)
             httpd.serve_forever()
     except (KeyboardInterrupt, SystemExit) as exit_exc:
         logger.debug('Caught %s in run_standalone()', exit_exc.__class__.__name__)
