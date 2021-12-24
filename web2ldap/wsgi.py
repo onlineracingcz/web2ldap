@@ -69,7 +69,10 @@ def application(environ, start_response):
         start_response('400 invalid request', (('Content-type', 'text/plain')))
         return ['400 - Invalid request.']
     # check URL path whether to deliver a static file
-    if environ['PATH_INFO'].startswith('/css/web2ldap'):
+    if environ['PATH_INFO'] == '/favicon.ico':
+        start_response('404 not found', [('Content-type', 'text/plain')])
+        return [b'404 - File not found.']
+    elif environ['PATH_INFO'].startswith('/css/web2ldap'):
         css_filename = os.path.join(
             ETC_DIR,
             'css',
@@ -90,17 +93,24 @@ def application(environ, start_response):
             return [b'404 - CSS file not found.']
         else:
             return wsgiref.util.FileWrapper(css_file)
-    if not environ['PATH_INFO'].startswith(APP_URL_PATH):
-        if environ.get('QUERY_STRING'):
-            start_response('404 not found', [('Content-type', 'text/plain')])
-            return [('404 - Resource not found -> must used base URL %s to access' % (APP_URL_PATH,)).encode('ascii')]
-        else:
-            start_response('302 relocated', [('Location', APP_URL_PATH)])
-            return []
-    environ['SCRIPT_NAME'] = APP_URL_PATH
-    environ['PATH_INFO'] = environ['PATH_INFO'][len(APP_URL_PATH):]
     logger.debug(
-        'SCRIPT_NAME = %r / PATH_INFO = %r',
+        'original SCRIPT_NAME = %r / PATH_INFO = %r',
+        environ['SCRIPT_NAME'],
+        environ['PATH_INFO'],
+    )
+    if not environ.get('SCRIPT_NAME', None):
+        if environ['PATH_INFO'].startswith(APP_URL_PATH):
+            environ['SCRIPT_NAME'] = APP_URL_PATH
+            environ['PATH_INFO'] = environ['PATH_INFO'][len(APP_URL_PATH):]
+        else:
+            if environ.get('QUERY_STRING'):
+                start_response('404 not found', [('Content-type', 'text/plain')])
+                return [('404 - Resource not found -> must used base URL %s to access' % (APP_URL_PATH,)).encode('ascii')]
+            else:
+                start_response('302 relocated', [('Location', APP_URL_PATH)])
+                return []
+    logger.debug(
+        'massaged SCRIPT_NAME = %r / PATH_INFO = %r',
         environ['SCRIPT_NAME'],
         environ['PATH_INFO'],
     )
