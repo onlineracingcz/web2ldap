@@ -230,9 +230,7 @@ unless it is listed in the <a href="#negative_list">negative list</a>.
 <h1 id="web_browsers">Web Browsers</h1>
 
 <p>
-  <a href="https://anybrowser.org/campaign/">
-    <img src="https://anybrowser.org/campaign/bvgraphics/ab8.gif" alt="Viewable With Any Browser">
-  </a>
+  <a href="https://anybrowser.org/campaign/">Viewable With Any Browser!</a>
 </p>
 
 <dl>
@@ -294,7 +292,12 @@ unless it is listed in the <a href="#negative_list">negative list</a>.
 
   <dt>FreeBSD</dt>
   <dd>
-    There is a FreeBSD port of web2ldap but outdated.
+    There is a FreeBSD port of web2ldap.
+  </dd>
+
+  <dt>OpenBSD</dt>
+  <dd>
+    There is a OpenBSD port of web2ldap.
   </dd>
 
 </dl>
@@ -303,16 +306,22 @@ unless it is listed in the <a href="#negative_list">negative list</a>.
 
 <dl>
 
-  <dt><a href="https://httpd.apache.org">Apache HTTP Server</a></dt>
+  <dt><a href="https://httpd.apache.org">Apache httpd</a></dt>
   <dd>
     I don't have to write any explanation about this one...
   </dd>
 
   <dt><a href="https://uwsgi.readthedocs.io">UWSGI</a></dt>
   <dd>
-    several modes possible,
-    also used within <a href="https://ae-dir.com">&AElig;-DIR</a> configuration
+    several modes possible, e.g. integrated via Apache httpd
     via <a href="https://uwsgi.readthedocs.io/en/latest/Apache.html#mod-proxy-uwsgi">mod_proxy_uwsgi</a>
+  </dd>
+
+  <dt><a href="https://gunicorn.org">gunicorn</a></dt>
+  <dd>
+    also used within <a href="https://ae-dir.com">&AElig;-DIR</a> configuration
+    via Apache httpd with
+    <a href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_http.html">mod_proxy_http</a>
   </dd>
 
   <dt><a href="https://www.lighttpd.net/">lighttpd</a></dt>
