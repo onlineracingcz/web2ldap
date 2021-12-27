@@ -4,3 +4,6 @@ AddType text/html .html
 AddOutputFilter INCLUDES .html
 
 RedirectPermanent /compability.html /compatibility.html
+
+RedirectPermanent /roadmap.html https://code.stroeder.com/ldap/web2ldap/issues
+RedirectPermanent /todo.html https://code.stroeder.com/ldap/web2ldap/issues
