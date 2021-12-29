@@ -427,14 +427,15 @@ class AppHandler(LogHelper):
         path_info = env.get('PATH_INFO', '/')[1:]
         self.log(logging.DEBUG, 'splitting path_info %r', path_info)
         if not path_info:
-            cmd, sid = '', ''
+            sid, cmd = '', ''
         else:
             try:
-                cmd, sid = path_info.split('/', 1)
+                sid, cmd = path_info.split('/', 1)
             except ValueError:
-                cmd, sid = path_info, ''
-        self.log(logging.DEBUG, 'split path_info to (%r, %r)', cmd, sid)
-        return cmd, sid # path_info()
+                sid, cmd = '', path_info
+        self.log(logging.DEBUG, 'split path_info to (%r, %r)', sid, cmd)
+        return cmd, sid
+        # path_info()
 
     def display_dn(self, dn, links=False):
         """Display a DN as LDAP URL with or without button"""
@@ -558,7 +559,7 @@ class AppHandler(LogHelper):
             web2ldapcnf.ldap_trace_level,
             web2ldapcnf.ldap_cache_ttl,
         )
-        self.ls.cookie = self.form.set_cookie(str(id(self.ls)))
+        self.ls.cookie = self.form.set_cookie(self.sid, str(id(self.ls)))
         self._session_store.save(self.sid, self.ls)
         # end of _get_session()
 

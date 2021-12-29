@@ -494,7 +494,7 @@ def header(app, content_type, charset, more_headers=None):
     app.outf.reset()
     if app.form.next_cookie:
         for _, cookie in app.form.next_cookie.items():
-            headers.append(('Set-Cookie', str(cookie)[12:]))
+            headers.append(('Set-Cookie', cookie.output()[12:]))
     if app.form.env.get('HTTPS', 'off') == 'on' and \
        'Strict-Transport-Security' not in web2ldapcnf.http_headers:
         headers.append(('Strict-Transport-Security', 'max-age=15768000 ; includeSubDomains'))

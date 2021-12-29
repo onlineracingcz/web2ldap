@@ -55,8 +55,8 @@ SCHEMA_ELEMENT_HEAD_TMPL = """
 %s
 <h1>%s <em>%s</em> (%s)</h1>
 Try to look it up:
-<a id="alvestrand_oid" href="%s/urlredirect/%s?https://www.alvestrand.no/objectid/%s.html">[Alvestrand]</a>
-<a id="oid-info_oid" href="%s/urlredirect/%s?http://www.oid-info.com/get/%s">[oid-info.com]</a>
+<a id="alvestrand_oid" href="%s?https://www.alvestrand.no/objectid/%s.html">[Alvestrand]</a>
+<a id="oid-info_oid" href="%s?http://www.oid-info.com/get/%s">[oid-info.com]</a>
 <dl>
 <dt>Schema element string:</dt>
 <dd><code>%s</code></dd>
@@ -240,8 +240,8 @@ class DisplaySchemaElement:
                     ', '.join(getattr(self._se, 'names', (()))),
                 ),
                 self._se.oid,
-                self._app.form.script_name, self._app.sid, self._se.oid,
-                self._app.form.script_name, self._app.sid, self._se.oid,
+                self._app.form.action_url('urlredirect', self._app.sid), self._se.oid,
+                self._app.form.action_url('urlredirect', self._app.sid), self._se.oid,
                 self._app.form.s2d(str(self._se)),
                 ms_ad_schema_link,
             )

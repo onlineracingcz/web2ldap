@@ -104,7 +104,7 @@ class Web2LDAPForm(Form):
             cookie_domain = self.env.get('HTTP_HOST', self.env['SERVER_NAME']).split(':')[0]
         return cookie_domain
 
-    def set_cookie(self, name_suffix):
+    def set_cookie(self, sid, name_suffix):
         # Generate a randomized key and value
         cookie_key = random_string(
             alphabet=SESSION_ID_CHARS,
@@ -114,7 +114,7 @@ class Web2LDAPForm(Form):
         cki = http.cookies.SimpleCookie({
             cookie_name: cookie_key,
         })
-        cki[cookie_name]['path'] = self.script_name
+        cki[cookie_name]['path'] = '/'.join((self.script_name, sid))
         cki[cookie_name]['domain'] = self.get_cookie_domain()
         cki[cookie_name]['max-age'] = str(self.cookie_max_age)
         cki[cookie_name]['httponly'] = True
@@ -172,11 +172,7 @@ class Web2LDAPForm(Form):
         ]
 
     def action_url(self, command, sid):
-        return '%s/%s%s' % (
-            self.script_name,
-            command,
-            {False:'/%s' % sid, True:''}[sid is None],
-        )
+        return '/'.join((self.script_name, sid or '', command))
 
     def begin_form(
             self,

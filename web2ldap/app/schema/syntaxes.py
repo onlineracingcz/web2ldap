@@ -491,11 +491,11 @@ class Audio(Binary):
         mimetype = self.mime_type
         return (
             '<embed type="%s" autostart="false" '
-            'src="%s/read/%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d">'
+            'src="%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d">'
             '%d bytes of audio data (%s)'
         ) % (
             mimetype,
-            self._app.form.script_name, self._app.sid,
+            self._app.form.action_url('read', self._app.sid),
             urllib.parse.quote(self._dn.encode(self._app.form.accept_charset)),
             urllib.parse.quote(self._at),
             vidx,
@@ -1110,9 +1110,8 @@ class Uri(DirectoryString):
             return '<code>%s</code>' % (
                 DirectoryString.display(self, vidx=False, links=False)
             )
-        return '<a href="%s/urlredirect/%s?%s">%s%s</a>' % (
-            self._app.form.script_name,
-            self._app.sid,
+        return '<a href="%s?%s">%s%s</a>' % (
+            self._app.form.action_url('urlredirect', self._app.sid),
             self._app.form.s2d(url),
             self._app.form.s2d(label),
             self._app.form.s2d(display_url),
@@ -1175,11 +1174,8 @@ class Image(Binary):
                 else:
                     size_attr_html = 'width="%d" height="%d"' % (width, height)
         attr_value_len = len(self._av)
-        img_link = (
-            '%s/read/%s'
-            '?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d'
-        ) % (
-            self._app.form.script_name, self._app.sid,
+        img_link = '%s?dn=%s&amp;read_attr=%s&amp;read_attrindex=%d' % (
+            self._app.form.action_url('read', self._app.sid),
             urllib.parse.quote(self._dn),
             urllib.parse.quote(self._at),
             vidx,
