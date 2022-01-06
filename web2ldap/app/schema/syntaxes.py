@@ -42,6 +42,13 @@ except ImportError:
 else:
     DEFUSEDXML_AVAIL = True
 
+try:
+    import phonenumbers
+except ImportError:
+    PHONENUMBERS_AVAIL = False
+else:
+    PHONENUMBERS_AVAIL = True
+
 from collections import defaultdict
 from io import BytesIO
 
@@ -1519,6 +1526,26 @@ class TelephoneNumber(PrintableString):
     oid: str = '1.3.6.1.4.1.1466.115.121.1.50'
     desc: str = 'Telephone Number'
     pattern = re.compile('^[0-9+x(). /-]+$')
+
+    def sanitize(self, attr_value: bytes) -> bytes:
+        if PHONENUMBERS_AVAIL:
+            try:
+                attr_value = phonenumbers.format_number(
+                    phonenumbers.parse(
+                        attr_value.decode('ascii'),
+                        region=self._entry.get('c', None)[0].decode('ascii'),
+                    ),
+                    phonenumbers.PhoneNumberFormat.INTERNATIONAL,
+                ).encode('ascii')
+            except (
+                    UnicodeDecodeError,
+                    ValueError,
+                    phonenumbers.phonenumberutil.NumberParseException,
+                ):
+                attr_value = PrintableString.sanitize(self, attr_value)
+        else:
+            attr_value = PrintableString.sanitize(self, attr_value)
+        return attr_value
 
 
 class FacsimileTelephoneNumber(TelephoneNumber):

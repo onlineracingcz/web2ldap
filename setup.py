@@ -61,6 +61,7 @@ setup(
         'xml': ['defusedxml'],
         'metrics': ['prometheus_client>=0.7.1'],
         'dns': ['dnspython>=2.0.0'],
+        'phonenumbers': ['phonenumbers'],
     },
     zip_safe=False,
     entry_points={
