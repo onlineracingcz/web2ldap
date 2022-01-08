@@ -41,6 +41,10 @@
 <h2>Bug fixes</h2>
 <ul>
   <li>
+    Avoid to decode the whole entry of all search results when building
+    list of mail addresses for Cc: and Bcc: links. This fixes <var>UnicodeDecodeError</var>
+    in case some of the attributes are not Unicode (UTF-8)
+    (<a href="https://code.stroeder.com/ldap/web2ldap/issues/41">fixes #41</a>).
   </li>
 </ul>
 

@@ -846,9 +846,9 @@ def w2l_search(app):
                 mailtolist = set()
                 for res in result_dnlist:
                     if isinstance(res, SearchResultEntry):
-                        mailtolist.update(res.entry_s.get('mail', res.entry_s.get('rfc822Mailbox', [])))
+                        mailtolist.update(res.entry_as.get('mail', res.entry_as.get('rfc822Mailbox', [])))
                 if mailtolist:
-                    mailtolist = [urllib.parse.quote(m) for m in mailtolist]
+                    mailtolist = [urllib.parse.quote(m.decode(app.ls.charset)) for m in mailtolist]
                     app.outf.write('Mail to all <a href="mailto:%s?cc=%s">Cc:-ed</a> - <a href="mailto:?bcc=%s">Bcc:-ed</a>' % (
                         mailtolist[0],
                         ','.join(mailtolist[1:]),
