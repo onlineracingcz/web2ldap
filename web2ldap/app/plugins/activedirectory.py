@@ -903,7 +903,7 @@ syntax_registry.reg_at(
         '1.2.840.113556.1.2.91',  # repsFrom
         '1.2.840.113556.1.2.83',  # repsTo
         '1.2.840.113556.1.2.281', # nTSecurityDescriptor
-        '2.16.128.113533.1.1400.1',  # thumbnailPhoto
+        '2.16.840.1.113730.3.1.35',  # thumbnailPhoto
     ]
 )
 
