@@ -8,6 +8,8 @@ import time
 import uuid
 from typing import Dict
 
+import iso3166
+
 from ldap0.dn import is_dn
 from ldap0.msad import sid2sddl, sddl2sid
 
@@ -494,12 +496,9 @@ syntax_registry.reg_at(
 )
 
 
-class CountryCode(PropertiesSelectList):
+class CountryCode(SelectList):
     oid: str = 'CountryCode-oid'
     desc: str = 'Numerical country code'
-    properties_pathname = os.path.join(
-        ETC_DIR, 'properties', 'attribute_select_countryCode.properties'
-    )
     sani_funcs = (
         bytes.strip,
     )
@@ -507,8 +506,10 @@ class CountryCode(PropertiesSelectList):
     def get_attr_value_dict(self) -> Dict[str, str]:
         # Enable empty value in any case
         attr_value_dict: Dict[str, str] = {'0': '-/-'}
-        attr_value_dict.update(PropertiesSelectList.get_attr_value_dict(self))
-        del attr_value_dict['']
+        attr_value_dict.update({
+            str(int(num)): cty.name  for num, cty in iso3166.countries_by_numeric.items()
+        })
+        attr_value_dict.pop('', None)
         return attr_value_dict
 
 

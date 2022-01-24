@@ -53,6 +53,7 @@ setup(
         'setuptools',
         'ldap0>=1.2.8',
         'asn1crypto',
+        'iso3166',
         'xlwt',
         'paramiko',
     ],

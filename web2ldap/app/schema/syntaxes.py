@@ -35,6 +35,8 @@ from typing import (
     Tuple,
 )
 
+import iso3166
+
 try:
     import defusedxml.ElementTree
 except ImportError:
@@ -2217,19 +2219,24 @@ class Boolean(SelectList, IA5String):
         return IA5String.display(self, vidx, links)
 
 
-class CountryString(PropertiesSelectList):
+class CountryString(SelectList):
     """
     Plugin class for LDAP syntax 'Country String'
     (see https://datatracker.ietf.org/doc/html/rfc4517#section-3.3.4)
     """
     oid: str = '1.3.6.1.4.1.1466.115.121.1.11'
     desc: str = 'Two letter country string as listed in ISO 3166-2'
-    properties_pathname = os.path.join(
-        ETC_DIR, 'properties', 'attribute_select_c.properties'
-    )
     sani_funcs = (
         bytes.strip,
     )
+
+    def get_attr_value_dict(self) -> Dict[str, str]:
+        # Enable empty value in any case
+        attr_value_dict: Dict[str, str] = {'': '-/-'}
+        attr_value_dict.update({
+            alpha2: cty.name  for alpha2, cty in iso3166.countries_by_alpha2.items()
+        })
+        return attr_value_dict
 
 
 class DeliveryMethod(PrintableString):
