@@ -44,6 +44,13 @@ ldap_uri_list = [
     ),
     (
         (
+            'ldaps://demo.ae-dir.com/ou=ae-dir????'
+            'bindname=zots,X-BINDPW=CorrectHorseBatteryStaple'
+        ),
+        '\xC6-DIR demo role zone admin',
+    ),
+    (
+        (
             'ldap://ipa.demo1.freeipa.org/dc=demo1,dc=freeipa,dc=org??one??'
             'bindname=uid%3Dadmin%2Ccn%3Dusers%2Ccn%3Daccounts%2Cdc%3Ddemo1%2Cdc%3Dfreeipa%2Cdc%3Dorg,X-BINDPW=Secret123'
         ),
