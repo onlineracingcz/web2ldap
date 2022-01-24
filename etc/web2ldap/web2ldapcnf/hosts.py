@@ -1255,7 +1255,7 @@ for ad_domain in AD_DOMAINS:
 # Local MS AD VMs
 ldap_def['ldaps://win-n2fcj0kh982.adt1.example.com'] = MSAD_CONFIG.clone(
     tls_options={
-        ldap0.OPT_X_TLS_CACERTFILE: '/home/michael/Proj/ae-dir/ansible-example-site/files/my-ae-dir-testca-2017-06.pem',
+        ldap0.OPT_X_TLS_CACERTFILE: '/home/michael/Proj/ae-dir/ansible-example-site/files/my-ae-dir-testca-2021-03.pem',
     },
 )
 
