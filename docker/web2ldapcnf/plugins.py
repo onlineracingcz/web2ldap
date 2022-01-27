@@ -54,7 +54,7 @@ web2ldap.app.plugins.posixautogen.AutogenGIDNumber.maxNewValue = 19999
 import web2ldap.app.plugins.sudoers
 
 # If you solely want to reference group names in 'sudoUser' uncomment following lines
-#web2ldap.app.schema.syntaxes.syntax_registry.registerAttrType(
+#web2ldap.app.schema.syntaxes.syntax_registry.reg_at(
 #  web2ldap.app.plugins.sudoers.SudoUserGroup.oid,[
 #    '1.3.6.1.4.1.15953.9.1.1', # sudoUser
 #  ]
@@ -290,13 +290,13 @@ import web2ldap.app.plugins.aedir
 
 # ..object class inetOrgPerson
 #import web2ldap.app.plugins.inetorgperson
-#syntax_registry.registerAttrType(
+#syntax_registry.reg_at(
 #  web2ldap.app.plugins.inetorgperson.CNInetOrgPerson.oid,[
 #    '2.5.4.3', # commonName
 #  ],
 #  structural_oc_oids=['2.16.840.1.113730.3.2.2'], # inetOrgPerson
 #)
-#syntax_registry.registerAttrType(
+#syntax_registry.reg_at(
 #  web2ldap.app.plugins.inetorgperson.DisplayNameInetOrgPerson.oid,[
 #    '2.16.840.1.113730.3.1.241', # displayName
 #  ],
