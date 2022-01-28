@@ -74,7 +74,6 @@ img.logo {
   margin:0;
   left:0;
   right:0;
-  text-align:left;
   padding:0.4em;
   color:#ffffff;
   background-color:#403F3F;
@@ -211,7 +210,6 @@ div.Main {
   bottom:0;
   right:12%;
   left:12%;
-  text-align:left;
   line-height: 120%;
   padding:0.5em;
   color:#000000;
@@ -318,7 +316,6 @@ input[type="submit"]:hover,input[type="reset"]:hover,button:hover {
 /* link styles */
 
 a {
-  text-align:center;
   padding:0.2em;
   color:#3385a7;
   text-decoration:none;
@@ -335,7 +332,6 @@ a:hover,a:active,a:focus {
 a.CL {
   text-align:center;
   color:#d02f2f;
-  text-align:center;
   font-weight:bold;
 }
 
@@ -353,7 +349,6 @@ dd {
 
 p.ScrollLink {
   font-size:0.6em;
-  text-align:right;
   float:right;
 }
 
