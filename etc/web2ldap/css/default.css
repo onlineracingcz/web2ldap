@@ -455,6 +455,11 @@ a.hide {
     float:right;
   }
 
+  .ReadAttrValue img {
+    max-width:30%;
+    float:none;
+  }
+
   html>body #MainMenu {
     position:fixed;
   }
