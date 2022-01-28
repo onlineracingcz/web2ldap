@@ -1535,7 +1535,11 @@ class TelephoneNumber(PrintableString):
                 attr_value = phonenumbers.format_number(
                     phonenumbers.parse(
                         attr_value.decode('ascii'),
-                        region=self._entry.get('c', None)[0].decode('ascii'),
+                        region=(
+                            self._entry['c'][0].decode('ascii')
+                            if 'c' in self._entry
+                            else None
+                        ),
                     ),
                     phonenumbers.PhoneNumberFormat.INTERNATIONAL,
                 ).encode('ascii')
