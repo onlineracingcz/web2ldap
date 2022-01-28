@@ -51,7 +51,6 @@ img.logo {
 }
 
 #TopSection {
-  font-weight:normal;
 }
 
 #StatusLine {
@@ -63,9 +62,13 @@ img.logo {
   padding:0.3em;
   border:none;
   overflow:auto;
-  color:#ffffff;
-  background-color:#636665;
-  white-space: nowrap;
+  color:#000000;
+  background-color:#fbfbfb;
+  white-space:nowrap;
+}
+
+#StatusLine th {
+  font-weight:normal;
 }
 
 #DITNavigation {
@@ -74,11 +77,19 @@ img.logo {
   margin:0;
   left:0;
   right:0;
+  height:1.2em;
   padding:0.4em;
   color:#ffffff;
-  background-color:#403F3F;
-  white-space: nowrap;
+  background-color:#7b7b7b;
+  white-space:nowrap;
   overflow:hidden;
+  border-top:solid 0.1em #101010;
+  border-bottom:solid 0.1em #101010;
+}
+
+#DITNavigation a.CL {
+  color:#ffffff;
+  font-weight:bold;
 }
 
 html>body #StatusLine {
@@ -97,12 +108,13 @@ html>body #DITNavigation {
 
 #StatusLine input {
   font-size:1.1em;
-  color: white;
+  color:#000000;
+  float:right;
 }
 
 #StatusLine th {
   min-width:10%;
-  max-width:20%;
+  max-width:30%;
   padding:0.1em;
 }
 
@@ -327,7 +339,7 @@ a {
 }
 
 #StatusLine a {
-  color:#f8f8f8;
+  color:#080808;
 }
 
 a:hover,a:active,a:focus {
@@ -358,18 +370,13 @@ p.ScrollLink {
 }
 
 table.PrintSearchResults {
-  background: #ffffff;
+  background-color: #ffffff;
   color: #000000;
 }
 
 #TopSection a.CL {
   border:none;
   padding:0.1em;
-}
-
-#DITNavigation a.CL {
-  color:#ffffff;
-  font-weight:normal;
 }
 
 #MainMenu a.CL {

@@ -14,7 +14,7 @@
       rel="stylesheet"
       type="text/css"
       media="all"
-      integrity="sha512-yxpArWtW9c9CTJkuqbJskZSo3wNC9XLfBwc15dajpH25zhLoNkfpio8atyhG3cqT++7qn75vARdSUAjQpJdHIg=="
+      integrity="sha512-shTroZNkFhFKZuj2SXzKELlHBJezb4gFeLG6RhncAn+tc4C8X/gI5lXW4OkJy9o03CCRNC8EW51UbNKv9g8vEQ=="
       href="/css/web2ldap/default.css"
     >
     <link
@@ -52,17 +52,15 @@
 
           <table>
             <tr>
-              <th>
-                Connected to:
-              </th>
               <td>
+                {description} &#9657;
                 <a
                   href="{script_name}/{command}?{ldap_url}"
                   target="_blank"
                   rel="bookmark"
                   title="Bookmark URL"
                 >
-                  <span class="server">{ldap_uri} {description}</span>
+                  {ldap_uri}
                 </a>
               </td>
               <td class="About">
@@ -75,9 +73,6 @@
               </td>
             </tr>
             <tr>
-              <th>
-                Bound as:
-              </th>
               <td colspan="2">
                 <span class="whoami">{who}</span>
               </td>
