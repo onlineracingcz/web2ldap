@@ -240,6 +240,11 @@ fieldset {
 #Input {
 }
 
+span:target {
+  padding-top: 4em;
+  margin-top: -4em;
+}
+
 .InvalidInput {
   background-color: #f8efdf;
 }

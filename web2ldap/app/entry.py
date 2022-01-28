@@ -360,7 +360,7 @@ class InputFormEntry(DisplayEntry):
 
             self.attr_counter += 1
 
-        return '<a class="hide" id="in_a_%s"></a>%s' % (
+        return '<span id="in_a_%s">%s</span>' % (
             self._app.form.s2d(nameoroid),
             '\n<br>\n'.join(result),
         )
