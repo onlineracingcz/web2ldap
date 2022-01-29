@@ -1028,6 +1028,8 @@ GLOBAL_DEFAULTS = Web2LDAPConfig(
         'dhcpService': os.path.join(TEMPLATES_DIR, 'dhcp', 'inputform_dhcpService.html'),
         'dhcpSubnet': os.path.join(TEMPLATES_DIR, 'dhcp', 'inputform_dhcpSubnet.html'),
         'dNSDomain2': os.path.join(TEMPLATES_DIR, 'inputform_dNSDomain2.html'),
+        'PdnsDomain': os.path.join(TEMPLATES_DIR, 'inputform_PdnsDomain.html'),
+        'PdnsRecordData': os.path.join(TEMPLATES_DIR, 'inputform_PdnsRecordData.html'),
         'inetLocalMailRecipient': os.path.join(TEMPLATES_DIR, 'inputform_inetLocalMailRecipient.html'),
         'oathHOTPUser': os.path.join(TEMPLATES_DIR, 'oath', 'inputform_oathHOTPUser.html'),
         'oathTOTPUser': os.path.join(TEMPLATES_DIR, 'oath', 'inputform_oathTOTPUser.html'),

@@ -230,10 +230,11 @@ import web2ldap.app.plugins.dds
 import web2ldap.app.plugins.freeradius
 
 #---------------------------------------------------------------------------
-# Syntaxes, attribute types for DNS
+# Syntaxes, attribute types for DNS and PowerDNS
 #---------------------------------------------------------------------------
 
 import web2ldap.app.plugins.dns
+import web2ldap.app.plugins.powerdns
 
 # to allow trailing dot in fully-qualified domain names in all plugin
 # classes derived from syntax base class DNSDomain
