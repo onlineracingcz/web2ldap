@@ -153,12 +153,7 @@ def display_attribute_table(app, entry, attrs, comment):
             ))
         dt_str = '<br>'.join(dt_list)
         app.outf.write(
-            (
-                '<tr>'
-                '<th rowspan="%d">\n%s\n</th>\n'
-                '<td>%s</td>'
-                '</tr>'
-            ) % (
+            '<tr>\n<th rowspan="%d">\n%s\n</th>\n<td>%s</td>\n</tr>\n' % (
                 read_tablemaxcount,
                 dt_str,
                 attr_value_disp_list[0],
@@ -167,10 +162,7 @@ def display_attribute_table(app, entry, attrs, comment):
         if read_tablemaxcount >= 2:
             for i in range(1, read_tablemaxcount):
                 app.outf.write(
-                    (
-                        '<tr class="ReadAttrTableRow">\n'
-                        '<td class="ReadAttrValue">%s</td></tr>\n'
-                    ) % (
+                    '<tr>\n<td>%s</td>\n</tr>\n' % (
                         attr_value_disp_list[i],
                     )
                 )
