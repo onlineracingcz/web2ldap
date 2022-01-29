@@ -589,6 +589,8 @@ class DistinguishedName(DirectoryString):
                 ref_oc = None
                 ref_attr, ref_text, ref_dn, ref_title = ref_attr_tuple
             ref_attr = ref_attr or self._at
+            if ref_attr not in self._schema.name2oid[AttributeType]:
+                continue
             ref_dn = ref_dn or self._dn
             ref_title = ref_title or 'Search %s entries referencing entry %s in attribute %s' % (
                 ref_oc, self.av_u, ref_attr,
