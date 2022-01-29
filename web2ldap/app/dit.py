@@ -98,7 +98,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
 
         dn_anchor_id = dn_anchor_hash(dn)
 
-        res.append('<dt id="%s">' % (app.form.s2d(dn_anchor_id)))
+        res.append('<dt><span id="%s">' % (app.form.s2d(dn_anchor_id)))
         if has_subordinates(node_entry, default=True):
             if dn == anchor_dn:
                 link_text = '&lsaquo;&lsaquo;'
@@ -129,7 +129,7 @@ def dit_html(app, anchor_dn, dit_dict, entry_dict, max_levels):
                 title='Read entry',
             )
         )
-        res.append('</dt>')
+        res.append('</span></dt>')
 
         # Subordinate nodes' HTML
         res.append('<dd>')
