@@ -5,7 +5,7 @@ web2ldapcnf - Configure the basic behaviour of web2ldap.py
 See documentation for details:
 https://www.web2ldap.de/web2ldapcnf.html
 
-(c) 1998-2021 by Michael Stroeder <michael@stroeder.com>
+(C) 1998-2022 by Michael Stroeder <michael@stroeder.com>
 """
 
 import os

@@ -6,7 +6,7 @@ See documentation for details:
 https://www.web2ldap.de/web2ldapcnf_hosts.html
 https://www.web2ldap.de/usability.html
 
-(c) 1998-2021 by Michael Stroeder <michael@stroeder.com>
+(C) 1998-2022 by Michael Stroeder <michael@stroeder.com>
 """
 
 # Leave these import lines alone
