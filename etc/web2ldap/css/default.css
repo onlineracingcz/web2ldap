@@ -178,13 +178,12 @@ table.HexDump td {
 }
 
 table.ReadAttrTable {
-  background-color:#fcfcfc;
 }
 
-tr.ReadAttrTableRow {
+table.ReadAttrTable tr {
 }
 
-td.ReadAttrType {
+table.ReadAttrTable th {
   text-align:right;
   width:10%;
   border-bottom:1px dotted;
@@ -193,9 +192,10 @@ td.ReadAttrType {
   padding-left:0.3em;
   margin:0.2em;
   white-space: nowrap;
+  font-weight:normal;
 }
 
-td.ReadAttrValue {
+table.ReadAttrTable td {
   border-bottom:1px dotted;
   padding:0.2em;
   margin:0.2em;
