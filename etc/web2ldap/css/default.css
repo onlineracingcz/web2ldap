@@ -154,18 +154,8 @@ html>body #ContextMenu {
 
 #SrchResList td {
   vertical-align:top;
-  padding:0.6em;
+  padding:0.5em;
   border-bottom:1px dotted;
-  margin-bottom:0.2em;
-}
-
-#SrchResList tr {
-}
-
-#SrchResList td.CT {
-  width:7.1em;
-  padding:0em;
-  padding-top:0.5em;
 }
 
 table.HexDump td {
