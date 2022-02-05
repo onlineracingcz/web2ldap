@@ -409,7 +409,7 @@ def object_class_form(
                         app,
                         dit_content_rule.names[0],
                         DITContentRule,
-                        link_text='&raquo',
+                        link_text='&raquo;',
                     )
                 )
 

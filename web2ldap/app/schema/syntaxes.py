@@ -1281,7 +1281,7 @@ class OID(IA5String):
                     self.av_u,
                     AttributeType,
                     name_template='{name}\n{anchor}',
-                    link_text='&raquo',
+                    link_text='&raquo;',
                 )
             if self._at.lower() == 'structuralobjectclass':
                 name_template = '{name}\n{anchor}'
@@ -1293,7 +1293,7 @@ class OID(IA5String):
                 self.av_u,
                 ObjectClass,
                 name_template=name_template,
-                link_text='&raquo',
+                link_text='&raquo;',
             )
         return '<strong>%s</strong> (%s):<br>%s (see %s)' % (
             self._app.form.s2d(name),

@@ -427,7 +427,7 @@ class InputFormEntry(DisplayEntry):
         attr_types = list(attr_type_names.keys())
         attr_types.sort(key=str.lower)
         for attr_type in attr_types:
-            attr_type_name = schema_anchor(self._app, attr_type, AttributeType, link_text='&raquo')
+            attr_type_name = schema_anchor(self._app, attr_type, AttributeType, link_text='&raquo;')
             attr_value_field_html = self[attr_type]
             self._app.outf.write(
                 '<tr>\n<td class="InputAttrType">\n%s\n</td>\n<td>\n%s\n</td>\n</tr>\n' % (
