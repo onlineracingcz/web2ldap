@@ -82,9 +82,14 @@
                   enctype="application/x-www-form-urlencoded"
                   accept-charset="utf-8"
                 >
+                  <input
+                      type="hidden"
+                      name="filterstr"
+                      value="(|(cn=*{{av}}*)(mail=*{{av}}*)(host={{av}}*)(uid={{av}})(uidNumber={{av}})(gidNumber={{av}})(entryUUID={{av}}))"
+                  >
+                  <input type="hidden" name="search_option" value="">
+                  <input type="hidden" name="search_attr" value="">
                   <input type="hidden" name="search_mr" value="">
-                  <input type="hidden" name="search_option" value="({{at}}=*{{av}}*)">
-                  <input type="hidden" name="search_attr" value="cn">
                   <input type="hidden" name="dn" value="ou=ae-dir">
                   <input type="hidden" name="search_root" value="ou=ae-dir">
                   <input type="text" name="search_string" maxlength="70" value="">

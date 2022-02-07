@@ -370,6 +370,15 @@ def w2l_search(app):
     if not len(search_option) == len(search_attr) == len(search_mr) == len(search_string):
         raise ErrorExit('Invalid search form data.')
 
+    # If one search value without search attribute was provided
+    # we assume this is used as value for a template in filter string
+    if (
+            search_filter and search_filter[0]
+            and len(search_string) == 1 and search_string[0]
+            and not search_attr[0]
+        ):
+        search_filter = [search_filter[0].format(av=ldap0.filter.escape_str(search_string[0]))]
+
     # Build LDAP search filter from input data of advanced search form
     for i in range(len(search_attr)):
         if not search_attr[i]:
