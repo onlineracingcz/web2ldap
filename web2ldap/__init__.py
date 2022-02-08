@@ -21,6 +21,11 @@ import platform
 from .log import logger, LogHelper
 from .__about__ import __version__
 
+# FIX ME! For now we'll strictly block module h2 from loading because
+# it's seriously broken and does not run in strict byte mode (python3 -bb)
+# see https://github.com/python-hyper/h2/issues/1236
+sys.modules['h2'] = None
+
 # Path name of [web2ldap]/etc/web2ldap
 if 'WEB2LDAP_HOME' in os.environ:
     # env var points to web2ldap root prefix directory,

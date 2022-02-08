@@ -14,6 +14,11 @@
 <p>Release Date: 2022-02-xx</p>
 <ul>
   <li>
+    For now module <var>h2</var> is strictly blocked from being imported
+    (via <var>dnspython</var>) because it is currently not useful herein,
+    seriously broken, and thus does not run with Python's command-line option
+    <a href="https://docs.python.org/3/using/cmdline.html#cmdoption-b"><code>-bb</code></a>
+    (see <a href="https://github.com/python-hyper/h2/issues/1236">h2#1236</a>).
   </li>
 </ul>
 
