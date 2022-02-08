@@ -31,7 +31,7 @@ export PYTHONWARNINGS
 PYTHONTHREADDEBUG=1
 export PYTHONTHREADDEBUG
 
-${PYTHON3} -m gunicorn.app.wsgiapp \
+${PYTHON3} -bb -tt -m gunicorn.app.wsgiapp \
   --name=web2ldap \
   --preload \
   --worker-class=gthread \
