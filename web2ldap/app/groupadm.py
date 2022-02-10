@@ -270,7 +270,15 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
                 for group_dn, modlist in successful_group_mods
                 if modlist and modlist[0][0] == ldap0.MOD_DELETE
             ]
-            info_msg_list = ['<p class="SuccessMessage">Changed group membership</p>']
+            info_msg_list = [
+                (
+                    '<p class="SuccessMessage">'
+                    'Changed group membership of <strong>{dn}</strong>'
+                    '</p>'
+                ).format(
+                    dn=app.form.s2d(app.dn),
+                )
+            ]
             if group_add_list:
                 info_msg_list.append('<p>Added to:</p>')
                 info_msg_list.append('<ul>')
