@@ -51,6 +51,24 @@
   <p>%(olcDbConfig)s</p>
 </fieldset>
 
+<fieldset title="Size and time limits">
+  <legend>Limits</legend>
+  <table>
+    <tr>
+      <td>General search-sizelimit (olcSizeLimit)</td>
+      <td>%(olcSizeLimit)s</td>
+    </tr>
+    <tr>
+      <td>General search-timelimit (olcTimeLimit)</td>
+      <td>%(olcTimeLimit)s</td>
+    </tr>
+    <tr>
+      <td>Specific limits (olcLimits)</td>
+      <td>%(olcLimits)s</td>
+    </tr>
+  </table>
+</fieldset>
+
 <fieldset title="Index configuration">
   <legend>Index configuration</legend>
   <p>%(olcDbIndex)s</p>
@@ -62,11 +80,6 @@
     <a title="Go to man-page slapd.access(5)" href="https://www.openldap.org/software/man.cgi?query=slapd.access">slapd.access(5)</a>
   </p>
   <p>%(olcAccess)s</p>
-</fieldset>
-
-<fieldset title="Size and time limits">
-  <legend>Limits</legend>
-  <p>%(olcLimits)s</p>
 </fieldset>
 
 <h2>Replication</h2>
