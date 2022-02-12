@@ -148,11 +148,11 @@ class AEHomeDirectory(HomeDirectory):
     homeDirectoryPrefixes = (
         '/home',
     )
-    homeDirectoryHidden = b'-/-'
+    homeDirectoryHidden = '-/-'
 
     def _validate(self, attr_value: bytes) -> bool:
         av_u = self._app.ls.uc_decode(attr_value)[0]
-        if attr_value == self.homeDirectoryHidden:
+        if av_u == self.homeDirectoryHidden:
             return True
         for prefix in self.homeDirectoryPrefixes:
             if av_u.startswith(prefix):
