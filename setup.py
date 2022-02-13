@@ -8,6 +8,13 @@ import sys
 import os
 from setuptools import setup, find_packages
 
+try:
+    import stdeb.util
+except ImportError:
+    pass
+else:
+    stdeb.util.RULES_OVERRIDE_INSTALL_TARGET_PY3 += " --install-data /"
+
 PYPI_NAME = 'web2ldap'
 
 BASEDIR = os.path.dirname(os.path.realpath(__file__))
