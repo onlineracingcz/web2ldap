@@ -164,21 +164,6 @@ def w2l_conninfo(app):
             ).entry_s['monitoredInfo'][0]
         except (ldap0.LDAPError, KeyError):
             pass
-        else:
-            context_menu_list.append(app.anchor(
-                'search', 'My connections',
-                [
-                    ('dn', monitor_context_dn),
-                    (
-                        'filterstr',
-                        '(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (
-                            ldap0.filter.escape_str(app.ls.who or '')
-                        )
-                    ),
-                    ('scope', str(ldap0.SCOPE_SUBTREE)),
-                ],
-                title='Find own connections in Monitor database',
-            ))
     else:
         config_dn_list.append(('CN=MONITOR', 'Monitor'))
 
@@ -288,20 +273,38 @@ def w2l_conninfo(app):
     )
 
     if app.ls.who:
+        who_menu_list = [
+            app.anchor(
+                'read', 'Read',
+                [('dn', app.ls.who)],
+                title='Read bound entry\r\n%s' % (app.ls.who),
+            ),
+            app.anchor(
+                'passwd', 'Password',
+                [('dn', app.ls.who), ('passwd_who', app.ls.who)],
+                title='Set password of entry\r\n%s' % (app.ls.who),
+            ),
+        ]
+        if monitored_info:
+            who_menu_list.append(
+                app.anchor(
+                    'search', 'Connections',
+                    [
+                        ('dn', monitor_context_dn),
+                        (
+                            'filterstr',
+                            '(&(objectClass=monitorConnection)(monitorConnectionAuthzDN=%s))' % (
+                                ldap0.filter.escape_str(app.ls.who or '')
+                            )
+                        ),
+                        ('scope', str(ldap0.SCOPE_SUBTREE)),
+                    ],
+                    title='Find own connections in Monitor database',
+                )
+            )
         who_html = '%s<br>( %s )' % (
             app.display_dn(app.ls.who, links=False),
-            web2ldapcnf.command_link_separator.join((
-                app.anchor(
-                    'read', 'Read',
-                    [('dn', app.ls.who)],
-                    title='Read bound entry\r\n%s' % (app.ls.who),
-                ),
-                app.anchor(
-                    'passwd', 'Password',
-                    [('dn', app.ls.who), ('passwd_who', app.ls.who)],
-                    title='Set password of entry\r\n%s' % (app.ls.who),
-                ),
-            ))
+            web2ldapcnf.command_link_separator.join(who_menu_list)
         )
     else:
         who_html = 'anonymous'
