@@ -25,6 +25,12 @@
     Moved link "My connections" to main area
     (<a href="https://code.stroeder.com/ldap/web2ldap/issues/56">fixes #56</a>).
   </li>
+  <li>
+    The constant-time string comparison function
+    <a href="https://docs.python.org/3/library/hmac.html#hmac.compare_digest">hmac.compare_digest()</a>
+    is now used for validating session cookie value to prevent timing attacks
+    (<a href="https://code.stroeder.com/ldap/web2ldap/issues/57">fixes #57</a>).
+  </li>
 </ul>
 
 <h1 id="r1.7.5">1.7.5</h1>

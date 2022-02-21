@@ -19,6 +19,7 @@ import time
 import urllib.parse
 import logging
 from ipaddress import ip_address, ip_network
+from hmac import compare_digest
 
 import ldap0
 from ldap0.ldapurl import LDAPUrl, is_ldapurl
@@ -581,7 +582,7 @@ class AppHandler(LogHelper):
                 cookie_name = ''.join((self.form.cookie_name_prefix, str(id(self.ls))))
                 if not (
                         cookie_name in self.form.cookies and
-                        self.ls.cookie[cookie_name].value == self.form.cookies[cookie_name].value
+                        compare_digest(self.ls.cookie[cookie_name].value, self.form.cookies[cookie_name].value)
                     ):
                     raise WrongSessionCookie()
             if web2ldapcnf.session_paranoid and \
