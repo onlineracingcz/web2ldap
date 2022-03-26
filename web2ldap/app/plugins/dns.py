@@ -301,22 +301,17 @@ class AAAARecord(IPv6HostAddress):
         res = [IPv6HostAddress.display(self, vidx, links)]
         if links:
             ip_addr = self.addr_class(self.av_u)
-            try:
-                ip_addr.reverse_dns
-            except AttributeError:
-                pass
-            else:
-                res.append(self._app.anchor(
-                    'search', 'PTR RR',
-                    (
-                        ('dn', str(self._app.naming_context)),
-                        ('searchform_mode', 'adv'),
-                        ('search_attr', 'associatedDomain'),
-                        ('search_option', SEARCH_OPT_IS_EQUAL),
-                        ('search_string', self._app.ls.uc_decode(ip_addr.reverse_dns)[0][:-1]),
-                    ),
-                    title='Search PTR RR for this AAAA address',
-                ))
+            res.append(self._app.anchor(
+                'search', 'PTR RR',
+                (
+                    ('dn', str(self._app.naming_context)),
+                    ('searchform_mode', 'adv'),
+                    ('search_attr', 'associatedDomain'),
+                    ('search_option', SEARCH_OPT_IS_EQUAL),
+                    ('search_string', ip_addr.reverse_pointer),
+                ),
+                title='Search PTR RR for this AAAA address',
+            ))
         return web2ldapcnf.command_link_separator.join(res)
 
 syntax_registry.reg_at(
