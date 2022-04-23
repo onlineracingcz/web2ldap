@@ -13,6 +13,7 @@ from ..schema.syntaxes import (
     DistinguishedName,
     DynamicDNSelectList,
     PreformattedMultilineText,
+    SecondsSinceEpoch,
     XmlValue,
     syntax_registry,
 )
@@ -95,6 +96,13 @@ syntax_registry.reg_at(
 syntax_registry.reg_at(
     XmlValue.oid, [
         '1.3.6.1.4.1.10176.4200.1.14', # serviceProviderMetadata
+    ]
+)
+
+
+syntax_registry.reg_at(
+    SecondsSinceEpoch.oid, [
+        '1.3.6.1.4.1.10176.92', # lockTime
     ]
 )
 
