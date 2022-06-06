@@ -41,7 +41,7 @@ class AcceptHeaderDict(collections.UserDict):
     in sections 14.1 to 14.5 of RFC2616.
     """
 
-    def __init__(self, envKey, env=None, defaultValue=None):
+    def __init__(self, envKey, env=None, default=None):
         """
         Parse the Accept-* header line.
 
@@ -50,7 +50,7 @@ class AcceptHeaderDict(collections.UserDict):
         """
         env = env or os.environ
         collections.UserDict.__init__(self)
-        self.defaultValue = defaultValue
+        self.default = default
         self.preferred_value = []
         try:
             http_accept_value = [
@@ -111,11 +111,10 @@ class AcceptCharsetDict(AcceptHeaderDict):
     Special class for Accept-Charset header
     """
 
-    def __init__(self, envKey='HTTP_ACCEPT_CHARSET', env=None, defaultValue='utf-8'):
-        AcceptHeaderDict.__init__(self, envKey, env, defaultValue)
+    def __init__(self, envKey='HTTP_ACCEPT_CHARSET', env=None, default='utf-8'):
+        AcceptHeaderDict.__init__(self, envKey, env, default)
         # Special treating of ISO-8859-1 charset to be compliant to RFC2616
         self.data['iso-8859-1'] = self.data.get('iso-8859-1', self.data.get('*', 1.0))
-        # end of AcceptCharsetDict.__init__()
 
     def preferred(self):
         """
@@ -130,7 +129,7 @@ class AcceptCharsetDict(AcceptHeaderDict):
             else:
                 break
         if lst:
-            if self.defaultValue and lst[0][0] == '*':
-                return self.defaultValue
+            if self.default and lst[0][0] == '*':
+                return self.default
             return lst[0][0]
-        return self.defaultValue
+        return self.default
