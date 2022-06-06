@@ -256,7 +256,7 @@ class NamingContexts(DistinguishedName):
         config_filter = None
         # Check for OpenLDAP's config context attribute
         try:
-            config_context = self._app.ls.uc_decode(self._app.ls.root_dse['configContext'][0])[0]
+            config_context = self._app.ls.root_dse['configContext'][0].decode(self._app.ls.charset)
         except KeyError:
             # Check for OpenDJ's config context attribute
             try:

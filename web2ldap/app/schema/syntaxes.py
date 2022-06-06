@@ -315,7 +315,7 @@ class LDAPSyntax:
     @property
     def av_u(self):
         if (self._av is not None and self._av_u is None):
-            self._av_u = self._app.ls.uc_decode(self._av)[0]
+            self._av_u = self._av.decode(self._app.ls.charset)
         return self._av_u
 
     def sanitize(self, attr_value: bytes) -> bytes:
@@ -524,7 +524,7 @@ class DirectoryString(LDAPSyntax):
 
     def _validate(self, attr_value: bytes) -> bool:
         try:
-            self._app.ls.uc_decode(attr_value)
+            attr_value.decode(self._app.ls.charset)
         except UnicodeDecodeError:
             return False
         return True
@@ -547,7 +547,7 @@ class DistinguishedName(DirectoryString):
     ref_attrs: Optional[Sequence[Tuple[Optional[str], str, Optional[str], str]]] = None
 
     def _validate(self, attr_value: bytes) -> bool:
-        return is_dn(self._app.ls.uc_decode(attr_value)[0])
+        return is_dn(attr_value.decode(self._app.ls.charset))
 
     def _additional_links(self):
         res = []
@@ -676,7 +676,7 @@ class NameAndOptionalUID(DistinguishedName):
         return dn, uid
 
     def _validate(self, attr_value: bytes) -> bool:
-        dn, _ = self._split_dn_and_uid(self._app.ls.uc_decode(attr_value)[0])
+        dn, _ = self._split_dn_and_uid(attr_value.decode(self._app.ls.charset))
         return is_dn(dn)
 
     def display(self, vidx, links) -> str:
@@ -787,7 +787,7 @@ class GeneralizedTime(IA5String):
         return result
 
     def sanitize(self, attr_value: bytes) -> bytes:
-        av_u = self._app.ls.uc_decode(attr_value.strip().upper())[0]
+        av_u = attr_value.strip().upper().decode(self._app.ls.charset)
         # Special cases first
         if av_u in {'N', 'NOW', '0'}:
             return datetime.datetime.strftime(
@@ -915,11 +915,11 @@ class NullTerminatedDirectoryString(DirectoryString):
         return attr_value.endswith(b'\x00')
 
     def form_value(self) -> str:
-        return self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
+        return (self._av or b'\x00')[:-1].decode(self._app.ls.charset)
 
     def display(self, vidx, links) -> str:
         return self._app.form.s2d(
-            self._app.ls.uc_decode((self._av or b'\x00')[:-1])[0]
+            (self._av or b'\x00')[:-1].decode(self._app.ls.charset)
         )
 
 
@@ -1419,13 +1419,13 @@ class MultilineText(DirectoryString):
 
     def display(self, vidx, links) -> str:
         return '<br>'.join([
-            self._app.form.s2d(self._app.ls.uc_decode(line_b)[0])
+            self._app.form.s2d(line_b.decode(self._app.ls.charset))
             for line_b in self._split_lines(self._av)
         ])
 
     def form_value(self) -> str:
         splitted_lines = [
-            self._app.ls.uc_decode(line_b)[0]
+            line_b.decode(self._app.ls.charset)
             for line_b in self._split_lines(self._av or b'')
         ]
         return '\r\n'.join(splitted_lines)
@@ -1455,7 +1455,7 @@ class PreformattedMultilineText(MultilineText):
     def display(self, vidx, links) -> str:
         lines = [
             self._app.form.s2d(
-                self._app.ls.uc_decode(line_b)[0],
+                line_b.decode(self._app.ls.charset),
                 self.tab_identiation,
             )
             for line_b in self._split_lines(self._av)
@@ -1627,7 +1627,7 @@ class Date(IA5String):
     def _validate(self, attr_value: bytes) -> bool:
         try:
             datetime.datetime.strptime(
-                self._app.ls.uc_decode(attr_value)[0],
+                attr_value.decode(self._app.ls.charset),
                 self.storage_format
             )
         except (UnicodeDecodeError, ValueError):
@@ -1695,7 +1695,7 @@ class DateOfBirth(ISO8601Date):
     def _validate(self, attr_value: bytes) -> bool:
         try:
             birth_dt = datetime.datetime.strptime(
-                self._app.ls.uc_decode(attr_value)[0],
+                attr_value.decode(self._app.ls.charset),
                 self.storage_format
             )
         except ValueError:
@@ -1826,7 +1826,7 @@ class SelectList(DirectoryString):
         vdict = self.get_attr_value_dict()
         # Remove other existing values from the options dict
         for val in self._entry.get(self._at, []):
-            val = self._app.ls.uc_decode(val)[0]
+            val = val.decode(self._app.ls.charset)
             if val != fval:
                 try:
                     del vdict[val]
@@ -1849,7 +1849,7 @@ class SelectList(DirectoryString):
 
     def _validate(self, attr_value: bytes) -> bool:
         attr_value_dict: Dict[str, str] = self.get_attr_value_dict()
-        return self._app.ls.uc_decode(attr_value)[0] in attr_value_dict
+        return attr_value.decode(self._app.ls.charset) in attr_value_dict
 
     def display(self, vidx, links) -> str:
         attr_value_str = DirectoryString.display(self, vidx, links)
@@ -1976,7 +1976,7 @@ class DynamicValueSelectList(SelectList, DirectoryString):
         return None
 
     def _validate(self, attr_value: bytes) -> bool:
-        av_u = self._app.ls.uc_decode(attr_value)[0]
+        av_u = attr_value.decode(self._app.ls.charset)
         if (
                 not av_u.startswith(self.value_prefix) or
                 not av_u.endswith(self.value_suffix) or
@@ -2702,7 +2702,7 @@ class SchemaDescription(DirectoryString):
         if self.schema_cls is None:
             return DirectoryString._validate(self, attr_value)
         try:
-            _ = self.schema_cls(self._app.ls.uc_decode(attr_value)[0])
+            _ = self.schema_cls(attr_value.decode(self._app.ls.charset))
         except (IndexError, ValueError):
             return False
         return True

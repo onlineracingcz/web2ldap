@@ -13,7 +13,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 import socketserver
-import codecs
 import wsgiref.util
 import wsgiref.simple_server
 
@@ -52,6 +51,7 @@ class AppResponse:
         self.lines = []
         self.headers = []
         self.reset()
+        self.charset = 'utf-8'
 
     def reset(self):
         """
@@ -62,18 +62,6 @@ class AppResponse:
         self.lines = []
         del self.headers
         self.headers = []
-        self._charset = None
-        self.charset = 'utf-8'
-
-    @property
-    def charset(self):
-        return self._charset
-
-    @charset.setter
-    def charset(self, charset):
-        self._charset = charset
-        codec = codecs.lookup(self._charset)
-        self._uc_encode, self._uc_decode = codec[0], codec[1]
 
     def set_headers(self, headers):
         """
@@ -86,7 +74,7 @@ class AppResponse:
         file-like method
         """
         assert isinstance(buf, str), TypeError('expected str for buf, but got %r', buf)
-        self.write_bytes(self._uc_encode(buf, 'replace')[0])
+        self.write_bytes(buf.encode(self.charset, 'replace'))
 
     def write_bytes(self, buf):
         assert isinstance(buf, bytes), TypeError('expected bytes for buf, but got %r', buf)

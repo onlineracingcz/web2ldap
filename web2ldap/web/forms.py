@@ -10,7 +10,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 """
 
 import cgi
-import codecs
 import sys
 import re
 import urllib.parse
@@ -855,6 +854,7 @@ class Form:
     Class for declaring and processing a whole <form>
     """
     __slots__ = (
+        'accept_charset',
         'accept_language',
         'env',
         'field',
@@ -866,8 +866,6 @@ class Form:
         'query_string',
         'request_method',
         'script_name',
-        'uc_decode',
-        'uc_encode',
     )
 
     def __init__(self, inf, env):
@@ -889,21 +887,16 @@ class Form:
         self.script_name = env['SCRIPT_NAME']
         # Initialize the AcceptHeaderDict objects
         self.http_accept_charset = AcceptCharsetDict('HTTP_ACCEPT_CHARSET', env)
+        self.accept_charset = self.http_accept_charset.preferred()
         self.http_accept_language = AcceptHeaderDict('HTTP_ACCEPT_LANGUAGE', env)
         self.accept_language = self.http_accept_language.keys()
         self.http_accept_encoding = AcceptHeaderDict('HTTP_ACCEPT_ENCODING', env)
         # Determine query string
         self.query_string = env.get('QUERY_STRING', '')
-        # initialize Unicode codecs
-        self._set_charset()
         # add Field instances
         for field in self.fields():
             self.add_field(field)
         # end of Form.__init__()
-
-    @property
-    def accept_charset(self):
-        return self.http_accept_charset.preferred()
 
     def getContentType(self):
         """
@@ -983,17 +976,10 @@ class Form:
         can be overwritten to add Field instances to the form
         """
 
-    def _set_charset(self):
-        form_codec = codecs.lookup(self.accept_charset)
-        self.uc_encode, self.uc_decode = form_codec[0], form_codec[1]
-        # end of _set_charset()
-
     def _parse_url_encoded(self, max_content_length):
 
         if self.request_method == 'POST':
-            query_string = self.uc_decode(
-                self.inf.read(int(self.env['CONTENT_LENGTH']))
-            )[0]
+            query_string = self.inf.read(int(self.env['CONTENT_LENGTH'])).decode(self.accept_charset)
         elif self.request_method == 'GET':
             query_string = self.env.get('QUERY_STRING', '')
 

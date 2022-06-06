@@ -15,7 +15,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 import sys
 import socket
 import time
-import codecs
 from collections import deque
 
 import ldap0
@@ -515,8 +514,6 @@ class LDAPSession:
         'secure_conn',
         'supports_allop_attr',
         '_traceLevel',
-        'uc_decode',
-        'uc_encode',
         'uri',
         'user_entry',
         'use_start_tls',
@@ -549,7 +546,6 @@ class LDAPSession:
         self._traceLevel = traceLevel
         # Character set/encoding of data stored on this particular host
         self.charset = 'utf-8'
-        self.uc_encode, self.uc_decode, _, _ = codecs.lookup(self.charset)
         # initialize class attributes derived from rootDSE attributes later
         self._reset_rootdse_attrs()
         # security attributes of the connection
@@ -894,7 +890,7 @@ class LDAPSession:
         if hasSubordinates is None:
             # Explicitly search for subordinate entries
             ldap_result = self.l.search_s(
-                self.uc_encode(dn)[0],
+                dn.encode(self.charset),
                 ldap0.SCOPE_ONELEVEL,
                 '(objectClass=*)',
                 attrlist=['1.1'],

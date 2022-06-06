@@ -552,7 +552,7 @@ class DNWithOctetString(DistinguishedName):
 
     def _validate(self, attr_value: bytes) -> bool:
         try:
-            octet_tag, count, octet_string, dn = self._app.ls.uc_decode(attr_value)[0].split(':')
+            octet_tag, count, octet_string, dn = attr_value.decode(self._app.ls.charset).split(':')
         except ValueError:
             return False
         try:

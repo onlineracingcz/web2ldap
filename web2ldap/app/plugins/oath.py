@@ -143,10 +143,11 @@ class OathInitPwAlphabet(DirectoryString):
     desc: str = 'Alphabet used to generate init passwords'
 
     def sanitize(self, attr_value: bytes) -> bytes:
+        charset = self._app.ls.charset
         return b''.join([
-            self._app.ls.uc_encode(c)[0]
+            c.encode(charset)
             for c in sorted(set(
-                self._app.ls.uc_decode(attr_value or '')[0].replace(' ', '')
+                (attr_value or b'').decode(charset).replace(' ', '')
             ))
         ])
 

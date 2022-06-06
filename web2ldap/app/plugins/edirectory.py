@@ -180,14 +180,12 @@ class IndexDefinition(DollarSeparatedMultipleLines):
                 index_type,
                 value_state,
                 nds_attribute_name,
-            ) = self._av.split('$')
+            ) = self._av.decode(self._app.ls.charset).split('$')
             version = int(version)
-            index_name = self._app.ls.uc_decode(index_name)[0]
             state = int(state)
             matching_rule = int(matching_rule)
             index_type = int(index_type)
             value_state = int(value_state)
-            nds_attribute_name = self._app.ls.uc_decode(nds_attribute_name)[0]
         except (ValueError, UnicodeDecodeError):
             return DollarSeparatedMultipleLines.display(self, vidx, links)
         return """
@@ -226,7 +224,7 @@ class TaggedNameAndString(DirectoryString, OctetString):
             ind1 = self._av.rindex('#', 0, ind2-1)
         except ValueError:
             return DirectoryString.display(self, vidx, links)
-        dn = self._app.ls.uc_decode(self._av[0:ind1])[0]
+        dn = self._av[0:ind1].decode(self._app.ls.charset)
         number = self._av[ind1+1:ind2]
         dstring = self._av[ind2+1:]
         try:

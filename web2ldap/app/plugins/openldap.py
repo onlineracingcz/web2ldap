@@ -489,7 +489,7 @@ class ReqEntryUUID(UUID):
                         'search_root',
                         str(
                             self._app.ls.get_search_root(
-                                self._app.ls.uc_decode(self._entry['reqDN'][0])[0]
+                                self._entry['reqDN'][0].decode(self._app.ls.charset)
                             )
                         ),
                     ),
@@ -596,7 +596,7 @@ class OpenLDAPSpecialBackendSuffix(NamingContexts):
     def _config_link(self):
         attr_type_u = self._at[:-7]
         try:
-            config_context = self._app.ls.uc_decode(self._app.ls.root_dse['configContext'][0])[0]
+            config_context = self._app.ls.root_dse['configContext'][0].decode(self._app.ls.charset)
         except KeyError:
             return None
         return self._app.anchor(

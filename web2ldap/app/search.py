@@ -951,7 +951,7 @@ def w2l_search(app):
                             result_dd_str = '<br>\n'.join(tdlist)
 
                         elif 'displayName' in entry:
-                            result_dd_str = s2d(app.ls.uc_decode(entry['displayName'][0])[0])
+                            result_dd_str = s2d(entry['displayName'][0].decode(app.ls.charset))
 
                         else:
                             # Output DN

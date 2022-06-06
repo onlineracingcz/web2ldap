@@ -116,7 +116,7 @@ class UniventionLDAPACLData(PreformattedMultilineText):
 
     def form_value(self) -> str:
         splitted_lines = [
-            self._app.ls.uc_decode(line_b)[0]
+            line_b.decode(self._app.ls.charset)
             for line_b in self._split_lines(bz2.decompress(self._av) or b'')
         ]
         return '\r\n'.join(splitted_lines)

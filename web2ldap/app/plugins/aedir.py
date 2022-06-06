@@ -148,15 +148,15 @@ class AEHomeDirectory(HomeDirectory):
     homeDirectoryPrefixes = (
         '/home',
     )
-    homeDirectoryHidden = '-/-'
+    homeDirectoryHidden = b'-/-'
 
     def _validate(self, attr_value: bytes) -> bool:
-        av_u = self._app.ls.uc_decode(attr_value)[0]
-        if av_u == self.homeDirectoryHidden:
+        if attr_value == self.homeDirectoryHidden:
             return True
+        av_u = attr_value.decode(self._app.ls.charset)
         for prefix in self.homeDirectoryPrefixes:
             if av_u.startswith(prefix):
-                uid = self._app.ls.uc_decode(self._entry.get('uid', [b''])[0])[0]
+                uid = self._entry.get('uid', [b''])[0].decode(self._app.ls.charset)
                 return av_u.endswith(uid)
         return False
 
@@ -164,11 +164,11 @@ class AEHomeDirectory(HomeDirectory):
         if attr_values == [self.homeDirectoryHidden]:
             return attr_values
         if 'uid' in self._entry:
-            uid = self._app.ls.uc_decode(self._entry['uid'][0])[0]
+            uid = self._entry['uid'][0].decode(self._app.ls.charset)
         else:
             uid = ''
         if attr_values:
-            av_u = self._app.ls.uc_decode(attr_values[0])[0]
+            av_u = attr_values[0].decode(self._app.ls.charset)
             for prefix in self.homeDirectoryPrefixes:
                 if av_u.startswith(prefix):
                     break
@@ -176,7 +176,7 @@ class AEHomeDirectory(HomeDirectory):
                 prefix = self.homeDirectoryPrefixes[0]
         else:
             prefix = self.homeDirectoryPrefixes[0]
-        return [self._app.ls.uc_encode('/'.join((prefix, uid)))[0]]
+        return ['/'.join((prefix, uid)).encode(self._app.ls.charset)]
 
     def input_field(self) -> Field:
         input_field = HiddenInput(
@@ -253,7 +253,7 @@ class AEGIDNumber(GidNumber):
         prc = PreReadControl(criticality=True, attrList=[self._at])
         ldap_result = self._app.ls.l.modify_s(
             self._get_id_pool_dn(),
-            [(ldap0.MOD_INCREMENT, self._app.ls.uc_encode(self._at)[0], [b'1'])],
+            [(ldap0.MOD_INCREMENT, self._at.encode(self._app.ls.charset), [b'1'])],
             req_ctrls=[prc],
         )
         return int(ldap_result.ctrls[0].res.entry_s[self._at][0])
@@ -499,7 +499,7 @@ class AENwDevice(AERootDynamicDNSelectList):
     def _filterstr(self):
         orig_filter = DerefDynamicDNSelectList._filterstr(self)
         try:
-            dev_name = self._app.ls.uc_decode(self._entry['cn'][0])[0]
+            dev_name = self._entry['cn'][0].decode(self._app.ls.charset)
         except (KeyError, IndexError):
             result_filter = orig_filter
         else:
@@ -528,7 +528,7 @@ class AEGroupMember(DerefDynamicDNSelectList, AEObjectMixIn):
 
     def _zone_filter(self):
         member_zones = [
-            self._app.ls.uc_decode(mezo)[0]
+            mezo.decode(self._app.ls.charset)
             for mezo in self._entry.get('aeMemberZone', [])
             if mezo
         ]
@@ -1834,7 +1834,7 @@ class AEHostname(DNSDomain):
             return False
         if self.host_lookup:
             try:
-                ip_addr = socket.gethostbyname(self._app.ls.uc_decode(attr_value)[0])
+                ip_addr = socket.gethostbyname(attr_value.decode(self._app.ls.charset))
             except (socket.gaierror, socket.herror):
                 return False
             if self.host_lookup >= 2:
@@ -1852,7 +1852,7 @@ class AEHostname(DNSDomain):
             attr_value.lower().strip()
             if self.host_lookup:
                 try:
-                    ip_addr = socket.gethostbyname(self._app.ls.uc_decode(attr_value)[0])
+                    ip_addr = socket.gethostbyname(attr_value.decode(self._app.ls.charset))
                     reverse_hostname = socket.gethostbyaddr(ip_addr)[0]
                 except (socket.gaierror, socket.herror):
                     pass
