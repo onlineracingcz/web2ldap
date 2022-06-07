@@ -495,12 +495,12 @@ def w2l_bulkmod(app):
                 if bulk_mod_list:
                     try:
                         app.ls.l.modify_s(rdat.dn_s, bulk_mod_list, req_ctrls=bulkmod_server_ctrls)
-                    except ldap0.LDAPError as e:
+                    except ldap0.LDAPError as err:
                         modify_error_count += 1
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
                                 app.form.s2d(rdat.dn_s),
-                                app.ldap_error_msg(e),
+                                app.ldap_error_msg(err),
                             )
                         )
                     else:
@@ -528,12 +528,12 @@ def w2l_bulkmod(app):
                                 new_superior=bulkmod_newsuperior,
                                 delold=app.cfg_param('bulkmod_delold', 0),
                             )
-                    except ldap0.LDAPError as e:
+                    except ldap0.LDAPError as err:
                         modrdn_error_count += 1
                         ldap_error_html.append(
                             '<dt>%s</dt><dd>%s</dd>' % (
                                 app.form.s2d(rdat.dn_s),
-                                app.form.s2d(str(e)),
+                                app.form.s2d(str(err)),
                             )
                         )
                     else:

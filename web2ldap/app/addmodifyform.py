@@ -182,9 +182,9 @@ def get_entry_input(app):
     # extend entry with LDIF input
     try:
         in_ldif = app.form.field['in_ldif'].ldif_records
-    except ValueError as e:
+    except ValueError as err:
         raise ErrorExit(
-            'LDIF parsing error: %s' % (app.form.s2d(str(e)))
+            'LDIF parsing error: %s' % (app.form.s2d(str(err)))
         )
     else:
         if in_ldif:
