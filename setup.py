@@ -74,7 +74,7 @@ setup(
     zip_safe=False,
     entry_points={
         'console_scripts':[
-            'web2ldap=web2ldap.wsgi:run_standalone',
+            'web2ldap=web2ldap.__main__:run_standalone',
         ],
         'web2ldap_data':[
             'templates=web2ldapcnf.templates:get_templates_path',

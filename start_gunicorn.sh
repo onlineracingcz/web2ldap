@@ -42,4 +42,4 @@ ${PYTHON3} -bb -tt -m gunicorn.app.wsgiapp \
   --log-level=DEBUG \
   --bind=127.0.0.1:1760 \
   --reuse-port \
-  web2ldap.wsgi:application
+  web2ldap.__main__:application
