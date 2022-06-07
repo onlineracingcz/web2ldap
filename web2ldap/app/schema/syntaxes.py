@@ -14,7 +14,6 @@ https://www.apache.org/licenses/LICENSE-2.0
 
 import binascii
 import sys
-import os
 import re
 import imghdr
 import sndhdr
@@ -34,6 +33,9 @@ from typing import (
     Sequence,
     Tuple,
 )
+import ipaddress
+from collections import defaultdict
+from io import BytesIO
 
 import iso3166
 
@@ -51,9 +53,6 @@ except ImportError:
 else:
     PHONENUMBERS_AVAIL = True
 
-from collections import defaultdict
-from io import BytesIO
-
 # Detect Python Imaging Library (PIL)
 try:
     from PIL import Image as PILImage
@@ -62,8 +61,6 @@ except ImportError:
 else:
     PIL_AVAIL = True
     warnings.simplefilter('error', PILImage.DecompressionBombWarning)
-
-import ipaddress
 
 import ldap0
 import ldap0.ldapurl
@@ -75,7 +72,6 @@ from ldap0.schema.subentry import SubSchema
 
 import web2ldapcnf
 
-from ... import ETC_DIR
 from ...web import forms as web_forms
 from ...msbase import ascii_dump, chunks
 from ...utctime import repr2ts, ts2repr, strftimeiso8601

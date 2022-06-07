@@ -3,7 +3,6 @@
 web2ldap plugin classes for Active Directory (for some information see draft-armijo-ldap-syntax)
 """
 
-import os
 import time
 import uuid
 from typing import Dict
@@ -13,7 +12,6 @@ import iso3166
 from ldap0.dn import is_dn
 from ldap0.msad import sid2sddl, sddl2sid
 
-from ... import ETC_DIR
 from ...web.forms import Field, Textarea
 from ...utctime import strftimeiso8601
 from ..searchform import SEARCH_OPT_IS_EQUAL
@@ -32,7 +30,6 @@ from ..schema.syntaxes import (
     Integer,
     OctetString,
     OID,
-    PropertiesSelectList,
     SelectList,
     Uri,
     XmlValue,

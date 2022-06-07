@@ -41,9 +41,7 @@ from ..ldapsession import (
     LDAPSession,
     START_TLS_REQUIRED,
     START_TLS_NO,
-    UsernameNotFound,
     InvalidSimpleBindDN,
-    UsernameNotUnique,
 )
 from ..utctime import ts2repr
 from ..log import LogHelper, logger, log_exception
