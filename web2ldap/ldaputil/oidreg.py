@@ -2886,27 +2886,26 @@ OID_LIST = (
 )
 
 
-OID_REG = {}
-
 def build_reg():
     """
     build the globally readable OID dictionary
     """
-    global OID_REG
+    reg = {}
     for oid, name, desc, ref in OID_LIST:
         assert isinstance(oid, str), TypeError("Wrong type for 'oid' for OID %r" % (oid))
         assert isinstance(name, str), TypeError("Wrong type for 'name' for OID %r" % (oid))
         assert isinstance(desc, str), TypeError("Wrong type for 'description' for OID %r" % (oid))
         assert isinstance(ref, str), TypeError("Wrong type for 'reference' for OID %r" % (oid))
-        if oid in OID_REG:
+        if oid in reg:
             logger.warning(
                 'Double OID %r in web2ldap.ldaputil.oidreg.OID_LIST: %r vs. %r',
                 oid,
                 name,
-                OID_REG[oid][0],
+                reg[oid][0],
             )
         else:
-            OID_REG[oid] = (name, desc, ref)
-    logger.debug('Added %d items to web2ldap.ldaputil.oidreg.OID_REG', len(OID_REG))
+            reg[oid] = (name, desc, ref)
+    logger.debug('Added %d items to web2ldap.ldaputil.oidreg.reg', len(reg))
+    return reg
 
-build_reg()
+OID_REG = build_reg()
