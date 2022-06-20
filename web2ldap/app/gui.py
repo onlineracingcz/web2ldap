@@ -579,6 +579,7 @@ def extract_invalid_attr(app, ldap_err):
             else:
                 error_msg = app.ldap_error_msg(ldap_err)
             break
+    error_msg = info
     return error_msg, invalid_attrs
 
 
