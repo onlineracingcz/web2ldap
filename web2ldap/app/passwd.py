@@ -288,10 +288,10 @@ def w2l_passwd(app):
     # New password provided => (re)set it in entry
     #----------------------------------------------
 
-    if len(app.form.field['passwd_newpasswd'].value) != 2:
+    if len(app.form.field['passwd_newpasswd'].val) != 2:
         raise ErrorExit('Repeat password!')
 
-    if app.form.field['passwd_newpasswd'].value[0] != app.form.field['passwd_newpasswd'].value[1]:
+    if app.form.field['passwd_newpasswd'].val[0] != app.form.field['passwd_newpasswd'].val[1]:
         passwd_form(
             app,
             passwd_action, passwd_who, user_objectclasses,
@@ -302,7 +302,7 @@ def w2l_passwd(app):
 
     old_password = app.form.getInputValue('passwd_oldpasswd', [None])[0]
 
-    passwd_input = app.form.field['passwd_newpasswd'].value[0]
+    passwd_input = app.form.field['passwd_newpasswd'].val[0]
 
     no_passwd_input = not passwd_input
     if no_passwd_input:

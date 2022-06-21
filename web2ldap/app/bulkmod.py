@@ -302,7 +302,7 @@ def bulkmod_input_form(
         BULKMOD_FORM_TMPL.format(
             text_msg=error_msg,
             form_begin=app.begin_form('bulkmod', 'POST'),
-            field_bulkmod_ctrl=app.form.field['bulkmod_ctrl'].input_html(default=app.form.field['bulkmod_ctrl'].value),
+            field_bulkmod_ctrl=app.form.field['bulkmod_ctrl'].input_html(default=app.form.field['bulkmod_ctrl'].val),
             input_fields=input_fields,
             field_hidden_dn=app.form.hidden_field_html('dn', app.dn, app.dn),
             field_hidden_filterstr=app.form.hidden_field_html('filterstr', bulkmod_filter, bulkmod_filter),
@@ -363,7 +363,7 @@ def bulkmod_confirmation_form(
                     app.form.s2d(OID_REG.get(ctrl_oid, (ctrl_oid,))[0]),
                     app.form.s2d(ctrl_oid),
                 )
-                for ctrl_oid in app.form.field['bulkmod_ctrl'].value or []
+                for ctrl_oid in app.form.field['bulkmod_ctrl'].val or []
             ]) or '- none -',
             field_hidden_dn=app.form.hidden_field_html('dn', dn, dn),
             field_hidden_filterstr=app.form.hidden_field_html('filterstr', bulkmod_filter, bulkmod_filter),

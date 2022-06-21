@@ -36,7 +36,7 @@ class Field:
         '_re',
         'required',
         'text',
-        'value',
+        'val',
     )
 
     def __init__(
@@ -69,7 +69,7 @@ class Field:
             regex pattern of valid values either as string
             or tuple (pattern,options)
         """
-        self.value = []
+        self.val = []
         self.name = name
         self.text = text
         self.maxLen = maxLen
@@ -164,12 +164,13 @@ class Field:
                 raise InvalidValueFormat(self.name, self.text, value)
 
     def _validate_val_count(self):
-        if len(self.value) >= self.maxValues:
-            raise TooManyValues(self.name, self.text, len(self.value), self.maxValues)
+
+        if len(self.val) >= self.maxValues:
+            raise TooManyValues(self.name, self.text, len(self.val), self.maxValues)
 
     def _decode_val(self, value):
         """
-        Return str to be stored in self.value
+        Return str to be stored in self.val
         """
         try:
             value = value.decode(self.charset)
@@ -183,7 +184,7 @@ class Field:
         Store the user's value into the field object.
 
         This method can be used to modify the user's value
-        before storing it into self.value.
+        before storing it into self.val.
         """
         assert isinstance(value, (str, bytes)), TypeError(
             'Expected value to be str or bytes, was %r' % (value,)
@@ -195,7 +196,7 @@ class Field:
         # Format valid?
         self._validate_format(value)
         self._validate_val_count()
-        self.value.append(value)
+        self.val.append(value)
 
     @property
     def charset(self):
@@ -353,7 +354,7 @@ class File(Input):
 
     def _decode_val(self, value):
         """
-        Return bytes to be stored in self.value
+        Return bytes to be stored in self.val
         """
         return value
 
@@ -926,7 +927,7 @@ class Form:
         in form input. Return default else.
         """
         if name in self.input_field_names:
-            return self.field[name].value
+            return self.field[name].val
         if name in self.field:
             return default
         raise KeyError('Invalid field name %r requested for %s' % (name, self.__class__.__name__))
@@ -944,9 +945,9 @@ class Form:
                 self.field[p]
                 for p in self.input_field_names-ignore_fields
             ]:
-            for val in f.value:
+            for val in f.val:
                 result.append((f.name, val))
-        return result # allInputFields()
+        return result
 
     def hidden_fields(self, outf=sys.stdout, ignore_fields=None):
         """
@@ -962,7 +963,7 @@ class Form:
                 self.field[p]
                 for p in self.input_field_names-ignore_fields
             ]:
-            for val in field.value:
+            for val in field.val:
                 outf.write(
                     '<input type="hidden" name="%s" value="%s">\n\r' % (
                         field.name,

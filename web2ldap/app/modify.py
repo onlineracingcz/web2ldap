@@ -63,25 +63,26 @@ def w2l_modify(app):
 
     if input_modrow[0] == '-':
         del_row_num = int(input_modrow[1:])
-        in_at_len = len(app.form.field['in_at'].value)
+        in_at_len = len(app.form.field['in_at'].val)
         if in_at_len >= del_row_num+2 and \
-           app.form.field['in_at'].value[del_row_num] == app.form.field['in_at'].value[del_row_num+1] or \
+           app.form.field['in_at'].val[del_row_num] == app.form.field['in_at'].val[del_row_num+1] \
+           or \
            in_at_len >= 1 and \
-           app.form.field['in_at'].value[del_row_num] == app.form.field['in_at'].value[del_row_num-1]:
+           app.form.field['in_at'].val[del_row_num] == app.form.field['in_at'].val[del_row_num-1]:
             # more input fields for same attribute type => pop()
-            app.form.field['in_at'].value.pop(del_row_num)
-            app.form.field['in_av'].value.pop(del_row_num)
+            app.form.field['in_at'].val.pop(del_row_num)
+            app.form.field['in_av'].val.pop(del_row_num)
         else:
             # only delete attribute value
-            app.form.field['in_av'].value[del_row_num] = ''
-        app.form.field['in_avi'].value = map(str, range(0, len(app.form.field['in_av'].value)))
+            app.form.field['in_av'].val[del_row_num] = ''
+        app.form.field['in_avi'].val = map(str, range(0, len(app.form.field['in_av'].val)))
     elif input_modrow[0] == '+':
         insert_row_num = int(input_modrow[1:])
-        app.form.field['in_at'].value.insert(
-            insert_row_num+1, app.form.field['in_at'].value[insert_row_num]
+        app.form.field['in_at'].val.insert(
+            insert_row_num+1, app.form.field['in_at'].val[insert_row_num]
         )
-        app.form.field['in_av'].value.insert(insert_row_num+1, '')
-        app.form.field['in_avi'].value = map(str, range(0, len(app.form.field['in_av'].value)))
+        app.form.field['in_av'].val.insert(insert_row_num+1, '')
+        app.form.field['in_avi'].val = map(str, range(0, len(app.form.field['in_av'].val)))
 
     new_entry, invalid_attrs = get_entry_input(app)
 

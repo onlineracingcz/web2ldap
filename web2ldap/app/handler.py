@@ -605,7 +605,7 @@ class AppHandler(LogHelper):
         if del_sid form parameter is present then delete the obsolete session
         """
         try:
-            del_sid = self.form.field['delsid'].value[0]
+            del_sid = self.form.field['delsid'].val[0]
         except IndexError:
             return
         try:
@@ -643,7 +643,7 @@ class AppHandler(LogHelper):
             self._handle_delsid()
             if 'ldapurl' in self.form.input_field_names:
                 # One form parameter with LDAP URL
-                ldap_url_input = self.form.field['ldapurl'].value[0]
+                ldap_url_input = self.form.field['ldapurl'].val[0]
                 try:
                     input_ldapurl = ExtendedLDAPUrl(ldap_url_input)
                 except ValueError as err:

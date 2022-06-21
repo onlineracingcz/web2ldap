@@ -879,7 +879,7 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
 
     if 'in_oc' in app.form.input_field_names:
         # Read objectclass(es) from input form
-        entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].value]
+        entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].val]
 
     if input_formtype == 'OC' or not entry:
         # Output the web page with object class input form
@@ -1006,7 +1006,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
 
     if 'in_oc' in app.form.input_field_names:
         # Read objectclass(es) from input form
-        entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].value]
+        entry['objectClass'] = [oc.encode('ascii') for oc in app.form.field['in_oc'].val]
 
     old_entry, readonly_old_attr_oids = read_old_entry(app, app.dn, app.schema, None)
     if not entry:

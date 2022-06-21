@@ -221,7 +221,7 @@ class Web2LDAPForm(Form):
         for fname in self.input_field_names:
             if fname in ignored_fields:
                 continue
-            for val in self.field[fname].value:
+            for val in self.field[fname].val:
                 if isinstance(val, str):
                     res.append(self.hidden_field_html(fname, val, ''))
                 else:
@@ -899,10 +899,10 @@ class LDIFTextArea(Textarea):
 
     @property
     def ldif_records(self):
-        if self.value:
+        if self.val:
             return list(
                 ldap0.ldif.LDIFParser.frombuf(
-                    '\n'.join(self.value).encode(self.charset),
+                    '\n'.join(self.val).encode(self.charset),
                     ignored_attr_types=[],
                     process_url_schemes=web2ldapcnf.ldif_url_schemes
                 ).parse(max_entries=self._max_entries)

@@ -37,7 +37,7 @@ def w2l_login(
     )[0]
 
     if 'login_who' in app.form.input_field_names:
-        who = app.form.field['login_who'].value[0]
+        who = app.form.field['login_who'].val[0]
 
     login_search_root_field = search_root_field(
         app,

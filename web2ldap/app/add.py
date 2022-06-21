@@ -40,21 +40,21 @@ def w2l_add(app):
 
     if input_modrow[0] == '-':
         del_row_num = int(input_modrow[1:])
-        del app.form.field['in_at'].value[del_row_num]
-        del app.form.field['in_av'].value[del_row_num]
+        del app.form.field['in_at'].val[del_row_num]
+        del app.form.field['in_av'].val[del_row_num]
         # FIX ME! This is definitely not sufficient!
-        del app.form.field['in_avi'].value[del_row_num]
+        del app.form.field['in_avi'].val[del_row_num]
     elif input_modrow[0] == '+':
         insert_row_num = int(input_modrow[1:])
-        app.form.field['in_at'].value.insert(
+        app.form.field['in_at'].val.insert(
             insert_row_num+1,
-            app.form.field['in_at'].value[insert_row_num]
+            app.form.field['in_at'].val[insert_row_num]
         )
-        app.form.field['in_av'].value.insert(insert_row_num+1, '')
+        app.form.field['in_av'].val.insert(insert_row_num+1, '')
         # FIX ME! This is definitely not sufficient!
-        app.form.field['in_avi'].value.insert(
+        app.form.field['in_avi'].val.insert(
             insert_row_num+1,
-            app.form.field['in_avi'].value[insert_row_num]
+            app.form.field['in_avi'].val[insert_row_num]
         )
 
     add_clonedn = app.form.getInputValue('add_clonedn', [None])[0]
