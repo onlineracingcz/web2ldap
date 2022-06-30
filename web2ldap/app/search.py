@@ -337,8 +337,8 @@ def w2l_search(app):
     scope = app.ldap_url.scope
     filterstr = app.ldap_url.filterstr
 
-    search_submit = app.form.getInputValue('search_submit', ['Search'])[0]
-    searchform_mode = app.form.getInputValue('searchform_mode', ['exp'])[0]
+    search_submit = app.form.get_input_value('search_submit', ['Search'])[0]
+    searchform_mode = app.form.get_input_value('searchform_mode', ['exp'])[0]
 
     if search_submit != 'Search' and searchform_mode == 'adv':
         w2l_searchform(
@@ -352,20 +352,20 @@ def w2l_search(app):
     # This should speed up things
     s2d = app.form.s2d
 
-    search_output = app.form.getInputValue('search_output', ['table'])[0]
-    search_opattrs = app.form.getInputValue('search_opattrs', ['no'])[0] == 'yes'
-    search_root = app.form.getInputValue('search_root', [app.dn])[0]
+    search_output = app.form.get_input_value('search_output', ['table'])[0]
+    search_opattrs = app.form.get_input_value('search_opattrs', ['no'])[0] == 'yes'
+    search_root = app.form.get_input_value('search_root', [app.dn])[0]
 
     if scope is None:
         scope = ldap0.SCOPE_SUBTREE
 
-    search_filter = app.form.getInputValue('filterstr', [filterstr])
+    search_filter = app.form.get_input_value('filterstr', [filterstr])
 
-    search_mode = app.form.getInputValue('search_mode', ['(&%s)'])[0]
-    search_option = app.form.getInputValue('search_option', [])
-    search_attr = app.form.getInputValue('search_attr', [])
-    search_mr = app.form.getInputValue('search_mr', [None]*len(search_attr))
-    search_string = app.form.getInputValue('search_string', [])
+    search_mode = app.form.get_input_value('search_mode', ['(&%s)'])[0]
+    search_option = app.form.get_input_value('search_option', [])
+    search_attr = app.form.get_input_value('search_attr', [])
+    search_mr = app.form.get_input_value('search_mr', [None]*len(search_attr))
+    search_string = app.form.get_input_value('search_string', [])
 
     if not len(search_option) == len(search_attr) == len(search_mr) == len(search_string):
         raise ErrorExit('Invalid search form data.')
@@ -418,15 +418,15 @@ def w2l_search(app):
     elif len(search_filter) > 1:
         filterstr = search_mode % (''.join(search_filter))
 
-    search_resminindex = int(app.form.getInputValue('search_resminindex', ['0'])[0])
+    search_resminindex = int(app.form.get_input_value('search_resminindex', ['0'])[0])
     search_resnumber = int(
-        app.form.getInputValue(
+        app.form.get_input_value(
             'search_resnumber',
             [str(app.cfg_param('search_resultsperpage', 10))]
         )[0]
     )
 
-    search_lastmod = int(app.form.getInputValue('search_lastmod', [-1])[0])
+    search_lastmod = int(app.form.get_input_value('search_lastmod', [-1])[0])
     if search_lastmod > 0:
         timestamp_str = time.strftime('%Y%m%d%H%M%S', time.gmtime(time.time()-search_lastmod))
         if '1.2.840.113556.1.2.2' in app.schema.sed[AttributeType] and \
@@ -447,7 +447,7 @@ def w2l_search(app):
 
     search_attrs = [
         a.strip()
-        for a in app.form.getInputValue(
+        for a in app.form.get_input_value(
             'search_attrs',
             [','.join(app.ldap_url.attrs or [])]
         )[0].split(',')
@@ -689,7 +689,7 @@ def w2l_search(app):
             ctx_menu_items.append(
                 app.anchor(
                     'searchform', 'Modify Search',
-                    app.form.allInputFields(
+                    app.form.list_fields(
                         fields=[
                             ('dn', app.dn),
                             ('searchform_mode', 'adv')

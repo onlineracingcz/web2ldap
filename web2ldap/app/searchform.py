@@ -89,7 +89,7 @@ def search_form_exp(app, filterstr=''):
     """
     Output expert search form
     """
-    filterstr = app.form.getInputValue('filterstr', [filterstr])[0]
+    filterstr = app.form.get_input_value('filterstr', [filterstr])[0]
     result = FILTERSTR_FIELDSET_TMPL % (
         app.form.field['filterstr'].maxLen,
         app.form.field['filterstr'].size,
@@ -117,13 +117,13 @@ def search_form_base(app, searchform_template_name):
 def search_form_adv(app):
     """advanced search form with select lists"""
 
-    search_submit = app.form.getInputValue('search_submit', [''])[0]
+    search_submit = app.form.get_input_value('search_submit', [''])[0]
 
     # Get input values
-    search_attr_list = app.form.getInputValue('search_attr', [''])
-    search_option_list = app.form.getInputValue('search_option', [None]*len(search_attr_list))
-    search_mr_list = app.form.getInputValue('search_mr', [None]*len(search_attr_list))
-    search_string_list = app.form.getInputValue('search_string', ['']*len(search_attr_list))
+    search_attr_list = app.form.get_input_value('search_attr', [''])
+    search_option_list = app.form.get_input_value('search_option', [None]*len(search_attr_list))
+    search_mr_list = app.form.get_input_value('search_mr', [None]*len(search_attr_list))
+    search_string_list = app.form.get_input_value('search_string', ['']*len(search_attr_list))
 
     if search_submit.startswith('-'):
         del_row_num = int(search_submit[1:])
@@ -143,7 +143,7 @@ def search_form_adv(app):
     if not len(search_option_list) == len(search_attr_list) == len(search_string_list):
         raise ErrorExit('Invalid search form data.')
 
-    search_mode = app.form.getInputValue('search_mode', ['(&%s)'])[0]
+    search_mode = app.form.get_input_value('search_mode', ['(&%s)'])[0]
 
     search_mode_select = SelectField(
         'search_mode', 'Search mode', 1,
@@ -218,10 +218,10 @@ def w2l_searchform(
     else:
         msg_html = ''
 
-    searchform_mode = searchform_mode or app.form.getInputValue('searchform_mode', ['base'])[0]
-    searchform_template_name = app.form.getInputValue('searchform_template', ['_'])[0]
+    searchform_mode = searchform_mode or app.form.get_input_value('searchform_mode', ['base'])[0]
+    searchform_template_name = app.form.get_input_value('searchform_template', ['_'])[0]
 
-    search_root = app.form.getInputValue(
+    search_root = app.form.get_input_value(
         'search_root',
         [search_root or str(app.naming_context)],
     )[0]
@@ -316,25 +316,25 @@ def w2l_searchform(
             form_search_html=app.begin_form('search', 'GET'),
             searchform_mode=app.form.s2d(searchform_mode),
             searchform_template=app.form.s2d(searchform_template_name),
-            search_output=app.form.getInputValue('search_output', ['table'])[0],
+            search_output=app.form.get_input_value('search_output', ['table'])[0],
             msg_html=msg_html,
             inner_searchform_html=inner_searchform_html,
             form_dn_html=app.form.hidden_field_html('dn', app.dn, ''),
             searchoptions_template_str=searchoptions_template_str.format(
                 field_search_root=srf.input_html(),
                 field_search_scope=app.form.field['scope'].input_html(
-                    default=app.form.getInputValue('scope', [str(scope)])[0]
+                    default=app.form.get_input_value('scope', [str(scope)])[0]
                 ),
                 field_search_resnumber=app.form.field['search_resnumber'].input_html(
-                    default=app.form.getInputValue(
+                    default=app.form.get_input_value(
                         'search_resnumber',
                         [str(app.cfg_param('search_resultsperpage', 10))],
                     )[0]
                 ),
                 field_search_lastmod=app.form.field['search_lastmod'].input_html(
-                    default=app.form.getInputValue('search_lastmod', [str(-1)])[0]
+                    default=app.form.get_input_value('search_lastmod', [str(-1)])[0]
                 ),
-                value_search_attrs=app.form.s2d(app.form.getInputValue('search_attrs', [''])[0]),
+                value_search_attrs=app.form.s2d(app.form.get_input_value('search_attrs', [''])[0]),
             ),
         )
     )

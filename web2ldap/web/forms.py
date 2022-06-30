@@ -28,7 +28,7 @@ class Field:
     """
     __slots__ = (
         'accesskey',
-        '_charset',
+        'charset',
         'default',
         'maxLen',
         'maxValues',
@@ -197,16 +197,6 @@ class Field:
         self._validate_format(value)
         self._validate_val_count()
         self.val.append(value)
-
-    @property
-    def charset(self):
-        """Return the character set used for the field"""
-        return self._charset
-
-    @charset.setter
-    def charset(self, charset):
-        """Set the character set used for the field"""
-        self._charset = charset
 
     def _default_val(self, default):
         """returns default value"""
@@ -899,14 +889,6 @@ class Form:
             self.add_field(field)
         # end of Form.__init__()
 
-    def getContentType(self):
-        """
-        Determine the HTTP content type of HTTP request
-        """
-        if self.request_method == 'POST':
-            return self.env.get('CONTENT_TYPE', 'application/x-www-form-urlencoded').lower() or None
-        return 'application/x-www-form-urlencoded'
-
     def fields(self):
         """
         Return a list of Field instances to be added to this Form instance.
@@ -921,7 +903,7 @@ class Form:
         self.field[field.name] = field
         # end of Form.add_field()
 
-    def getInputValue(self, name, default=None):
+    def get_input_value(self, name, default=None):
         """
         Return input value of a field defined by name if presented
         in form input. Return default else.
@@ -932,7 +914,7 @@ class Form:
             return default
         raise KeyError('Invalid field name %r requested for %s' % (name, self.__class__.__name__))
 
-    def allInputFields(self, fields=None, ignore_fields=None):
+    def list_fields(self, fields=None, ignore_fields=None):
         """
         Return list with all former input parameters.
 
@@ -977,18 +959,24 @@ class Form:
         can be overwritten to add Field instances to the form
         """
 
-    def _parse_url_encoded(self, max_content_length):
+    @property
+    def max_content_length(self) -> int:
+        """
+        calculate maximum acceptable content length
+        """
+        res = 0
+        for field in self.field.values():
+            res += field.maxValues * field.maxLen
+        return res
 
+    def _parse_url_encoded(self):
         if self.request_method == 'POST':
             query_string = self.inf.read(int(self.env['CONTENT_LENGTH'])).decode(self.accept_charset)
         elif self.request_method == 'GET':
             query_string = self.env.get('QUERY_STRING', '')
-
         if not query_string:
             return
-
         content_length = 0
-
         for name, value in urllib.parse.parse_qsl(
                 query_string,
                 keep_blank_values=True,
@@ -997,53 +985,41 @@ class Form:
                 errors='strict',
                 max_num_fields=None
             ):
-
             if name not in self.field:
                 raise InvalidFieldName(name)
-
             content_length += len(value)
-
             # Overall length of input data still valid?
+            max_content_length = self.max_content_length
             if content_length > max_content_length:
                 raise ContentLengthExceeded(content_length, max_content_length)
-
             # Input is stored in field instance
             self.field[name].set_value(value)
             # Add name of field to set of input keys
             self.input_field_names.add(name)
-
         # end of _parse_url_encoded()
 
-    def _parse_mime_multipart(self, max_content_length):
-
+    def _parse_mime_multipart(self):
         _, pdict = cgi.parse_header(self.env['CONTENT_TYPE'])
         pdict['boundary'] = pdict['boundary'].encode('ascii')
         pdict['CONTENT-LENGTH'] = self.env['CONTENT_LENGTH'].encode('ascii')
         parts = cgi.parse_multipart(self.inf, pdict)
-
         content_length = 0
-
+        max_content_length = self.max_content_length
         for name in parts.keys():
-
             if name not in self.field:
                 raise InvalidFieldName(name)
-
             for value in parts[name]:
-
                 content_length += len(value)
                 # sum of all received input still valid?
                 if content_length > max_content_length:
                     raise ContentLengthExceeded(content_length, max_content_length)
-
                 # Input is stored in field instance
                 self.field[name].set_value(value)
                 # Add name of field to set of input keys
                 self.input_field_names.add(name)
-
         # end of _parse_mime_multipart()
 
-
-    def getInputFields(self):
+    def get_input_fields(self):
         """
         Process user's <form> input and store the values in each
         field instance's content attribute.
@@ -1051,23 +1027,11 @@ class Form:
         When a processing error occurs FormException (or derivatives)
         are raised.
         """
-
-        # Calculate maxContentLength
-        maxContentLength = 0
-        for _, field in self.field.items():
-            maxContentLength += field.maxValues * field.maxLen
-
-        content_type = self.getContentType()
-        if content_type.startswith('application/x-www-form-urlencoded'):
-            # Parse user's input
-            self._parse_url_encoded(maxContentLength)
-        elif content_type.startswith('multipart/form-data'):
-            self._parse_mime_multipart(
-                maxContentLength,
-            )
+        content_type = self.env.get('CONTENT_TYPE', '').lower()
+        if self.request_method == 'POST' and content_type.startswith('multipart/form-data'):
+            self._parse_mime_multipart()
         else:
-            raise FormException('Invalid content received: %r' % (content_type))
-
+            self._parse_url_encoded()
         # Are all required parameters present?
         missing_params = []
         for _, field in self.field.items():
@@ -1075,5 +1039,4 @@ class Form:
                 missing_params.append((field.name, field.text))
         if missing_params:
             raise ParamsMissing(missing_params)
-
-        # end of Form.getInputFields()
+        # end of Form.get_input_fields()

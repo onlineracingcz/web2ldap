@@ -391,25 +391,25 @@ def w2l_bulkmod(app):
     Applies bulk modifications to multiple LDAP entries
     """
 
-    bulkmod_submit = app.form.getInputValue('bulkmod_submit', [None])[0]
+    bulkmod_submit = app.form.get_input_value('bulkmod_submit', [None])[0]
 
-    bulkmod_at = app.form.getInputValue('bulkmod_at', [])
-    bulkmod_op = app.form.getInputValue('bulkmod_op', [])
-    bulkmod_av = app.form.getInputValue('bulkmod_av', [])
+    bulkmod_at = app.form.get_input_value('bulkmod_at', [])
+    bulkmod_op = app.form.get_input_value('bulkmod_op', [])
+    bulkmod_av = app.form.get_input_value('bulkmod_av', [])
 
-    bulkmod_cp = app.form.getInputValue('bulkmod_cp', [''])[0] == 'yes'
+    bulkmod_cp = app.form.get_input_value('bulkmod_cp', [''])[0] == 'yes'
 
-    scope = int(app.form.getInputValue('scope', [str(app.ldap_url.scope or ldap0.SCOPE_BASE)])[0])
+    scope = int(app.form.get_input_value('scope', [str(app.ldap_url.scope or ldap0.SCOPE_BASE)])[0])
 
-    bulkmod_filter = app.form.getInputValue(
+    bulkmod_filter = app.form.get_input_value(
         'filterstr',
         [(app.ldap_url.filterstr or '')]
     )[0] or '(objectClass=*)'
-    bulkmod_newsuperior = app.form.getInputValue('bulkmod_newsuperior', [''])[0]
+    bulkmod_newsuperior = app.form.get_input_value('bulkmod_newsuperior', [''])[0]
 
     # Generate a list of requested LDAPv3 extended controls to be sent along
     # with the modify requests
-    bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
+    bulkmod_ctrl_oids = app.form.get_input_value('bulkmod_ctrl', [])
 
     if not len(bulkmod_at) == len(bulkmod_op) == len(bulkmod_av):
         raise ErrorExit('Invalid bulk modification input.')
@@ -454,7 +454,7 @@ def w2l_bulkmod(app):
     elif bulkmod_submit == 'Apply':
 
         # now gather list of extended controls to be used with search request
-        bulkmod_ctrl_oids = app.form.getInputValue('bulkmod_ctrl', [])
+        bulkmod_ctrl_oids = app.form.get_input_value('bulkmod_ctrl', [])
         conn_server_ctrls = {
             server_ctrl.controlType
             for server_ctrl in app.ls.l.req_ctrls['**all**']+app.ls.l.req_ctrls['**write**']+app.ls.l.req_ctrls['modify']

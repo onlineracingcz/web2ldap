@@ -57,9 +57,9 @@ def modlist_ldif(dn, form, modlist):
 
 def w2l_modify(app):
 
-    in_assertion = app.form.getInputValue('in_assertion', ['(objectClass=*)'])[0]
+    in_assertion = app.form.get_input_value('in_assertion', ['(objectClass=*)'])[0]
 
-    input_modrow = app.form.getInputValue('in_mr', ['.'])[0]
+    input_modrow = app.form.get_input_value('in_mr', ['.'])[0]
 
     if input_modrow[0] == '-':
         del_row_num = int(input_modrow[1:])
@@ -107,7 +107,7 @@ def w2l_modify(app):
         )
         return
 
-    in_oldattrtypes = set(app.form.getInputValue('in_oldattrtypes', []))
+    in_oldattrtypes = set(app.form.get_input_value('in_oldattrtypes', []))
 
     try:
         old_entry, dummy = read_old_entry(app, app.dn, app.schema, in_assertion)

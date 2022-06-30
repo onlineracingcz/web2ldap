@@ -69,9 +69,9 @@ def w2l_rename(app):
     if not app.dn:
         raise ErrorExit('Rename operation not possible at - World - or RootDSE.')
 
-    rename_newrdn = app.form.getInputValue('rename_newrdn', [None])[0]
-    rename_newsuperior = app.form.getInputValue('rename_newsuperior', [None])[0]
-    rename_delold = app.form.getInputValue('rename_delold', ['no'])[0] == 'yes'
+    rename_newrdn = app.form.get_input_value('rename_newrdn', [None])[0]
+    rename_newsuperior = app.form.get_input_value('rename_newsuperior', [None])[0]
+    rename_delold = app.form.get_input_value('rename_delold', ['no'])[0] == 'yes'
 
     if rename_newrdn:
 
@@ -112,23 +112,23 @@ def w2l_rename(app):
 
     rename_template_str = read_template(app, 'rename_template', 'rename form')
 
-    rename_supsearchurl = app.form.getInputValue('rename_supsearchurl', [None])[0]
+    rename_supsearchurl = app.form.get_input_value('rename_supsearchurl', [None])[0]
     try:
         sup_search_url = ldap0.ldapurl.LDAPUrl(rename_supsearchurl_cfg[rename_supsearchurl])
     except KeyError:
-        rename_newsupfilter = app.form.getInputValue('rename_newsupfilter', [None])[0]
+        rename_newsupfilter = app.form.get_input_value('rename_newsupfilter', [None])[0]
         sup_search_url = ldap0.ldapurl.LDAPUrl()
         if rename_newsupfilter is not None:
             sup_search_url.urlscheme = 'ldap'
             sup_search_url.filterstr = (
                 rename_newsupfilter or app.form.field['rename_newsupfilter'].default
             )
-            sup_search_url.dn = app.form.getInputValue(
+            sup_search_url.dn = app.form.get_input_value(
                 'rename_searchroot',
                 [''],
             )[0]
             sup_search_url.scope = int(
-                app.form.getInputValue('scope', [str(ldap0.SCOPE_SUBTREE)])[0]
+                app.form.get_input_value('scope', [str(ldap0.SCOPE_SUBTREE)])[0]
             )
         else:
             sup_search_url = None

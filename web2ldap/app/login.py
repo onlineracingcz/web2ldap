@@ -31,7 +31,7 @@ def w2l_login(
     Provide a input form for doing a (re-)login
     """
 
-    login_search_root = app.form.getInputValue(
+    login_search_root = app.form.get_input_value(
         'login_search_root',
         [app.naming_context or app.dn or ''],
     )[0]
@@ -65,7 +65,7 @@ def w2l_login(
 
     # Determine the bind mech to be used from the
     # form data or the key-word argument login_default_mech
-    login_mech = app.form.getInputValue('login_mech', [login_default_mech] or '')[0]
+    login_mech = app.form.get_input_value('login_mech', [login_default_mech] or '')[0]
 
     if login_msg:
         login_msg_html = '<p class="ErrorMessage">%s</p>' % (login_msg)
@@ -84,7 +84,7 @@ def w2l_login(
         value_currenttime=time.strftime(r'%Y%m%d%H%M%SZ', time.gmtime()),
     )
 
-    scope_str = app.form.getInputValue('scope', [None])[0]
+    scope_str = app.form.get_input_value('scope', [None])[0]
     if not scope_str and app.ldap_url.scope is not None:
         scope_str = str(app.ldap_url.scope)
     if scope_str:
@@ -93,7 +93,7 @@ def w2l_login(
         scope_hidden_field = ''
 
     if 'filterstr' in app.form.field:
-        filterstr = app.form.getInputValue(
+        filterstr = app.form.get_input_value(
             'filterstr',
             [app.ldap_url.filterstr or ''],
         )[0]
@@ -106,7 +106,7 @@ def w2l_login(
 
     search_attrs_hidden_field = ''
     if 'search_attrs' in app.form.field:
-        search_attrs = app.form.getInputValue(
+        search_attrs = app.form.get_input_value(
             'search_attrs', [','.join(app.ldap_url.attrs or [])]
         )[0]
         if search_attrs:

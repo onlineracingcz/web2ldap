@@ -138,7 +138,7 @@ def w2l_conninfo(app):
 
     protocol_version = app.ls.l.get_option(ldap0.OPT_PROTOCOL_VERSION)
 
-    conninfo_flushcaches = int(app.form.getInputValue('conninfo_flushcaches', ['0'])[0])
+    conninfo_flushcaches = int(app.form.get_input_value('conninfo_flushcaches', ['0'])[0])
     if conninfo_flushcaches:
         app.ls.flush_cache()
 

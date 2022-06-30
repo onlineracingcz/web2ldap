@@ -829,10 +829,10 @@ def w2l_schema_viewer(app):
         return val.endswith(oid)
 
     # Get input parameter from form input
-    oid = app.form.getInputValue('oid', [None])[0]
+    oid = app.form.get_input_value('oid', [None])[0]
     se_classes = [
         SCHEMA_CLASS_MAPPING[se_name]
-        for se_name in app.form.getInputValue('oid_class', [])
+        for se_name in app.form.get_input_value('oid_class', [])
         if se_name
     ]
 

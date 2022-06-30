@@ -78,8 +78,8 @@ def w2l_dds(app):
 
     try:
         request_ttl = \
-            int(app.form.getInputValue('dds_renewttlnum', [None])[0]) * \
-            int(app.form.getInputValue('dds_renewttlfac', [None])[0])
+            int(app.form.get_input_value('dds_renewttlnum', [None])[0]) * \
+            int(app.form.get_input_value('dds_renewttlfac', [None])[0])
     except ValueError:
         request_ttl = None
 

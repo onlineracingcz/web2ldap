@@ -85,7 +85,7 @@ def w2l_locate(app):
         logger.warning('Module package dnspython not installed!')
         raise ErrorExit('No DNS support!')
 
-    locate_name = app.form.getInputValue('locate_name', [''])[0].strip()
+    locate_name = app.form.get_input_value('locate_name', [''])[0].strip()
 
     msg_html = ''
     outf_lines = []

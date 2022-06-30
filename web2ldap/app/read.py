@@ -84,7 +84,7 @@ def display_attribute_table(app, entry, attrs, comment):
     # Determine which attributes are shown expanded or collapsed
     read_expandattr_set = {
         at.strip().lower()
-        for at in app.form.getInputValue('read_expandattr', [])
+        for at in app.form.get_input_value('read_expandattr', [])
         if at
     }
     if '*' in read_expandattr_set:
@@ -127,7 +127,7 @@ def display_attribute_table(app, entry, attrs, comment):
                 dt_list.append(app.anchor(
                     'read',
                     '(%d of %d values)' % (read_tablemaxcount, attr_value_count),
-                    app.form.allInputFields(
+                    app.form.list_fields(
                         fields=[
                             ('read_expandattr', attr_type_name),
                         ],
@@ -172,21 +172,21 @@ def display_attribute_table(app, entry, attrs, comment):
 
 def w2l_read(app):
 
-    read_output = app.form.getInputValue('read_output', ['template'])[0]
-    filterstr = app.form.getInputValue('filterstr', ['(objectClass=*)'])[0]
+    read_output = app.form.get_input_value('read_output', ['template'])[0]
+    filterstr = app.form.get_input_value('filterstr', ['(objectClass=*)'])[0]
 
-    read_nocache = int(app.form.getInputValue('read_nocache', ['0'])[0] or '0')
+    read_nocache = int(app.form.get_input_value('read_nocache', ['0'])[0] or '0')
 
     # Specific attributes requested with form parameter read_attr?
     wanted_attr_set = SchemaElementOIDSet(
         app.schema,
         ldap0.schema.models.AttributeType,
-        app.form.getInputValue('read_attr', app.ldap_url.attrs or []),
+        app.form.get_input_value('read_attr', app.ldap_url.attrs or []),
     )
     wanted_attrs = wanted_attr_set.names
 
     # Specific attributes requested with form parameter search_attrs?
-    search_attrs = app.form.getInputValue('search_attrs', [''])[0]
+    search_attrs = app.form.get_input_value('search_attrs', [''])[0]
     if search_attrs:
         wanted_attrs.extend([
             a.strip() for a in search_attrs.split(',')
@@ -259,7 +259,7 @@ def w2l_read(app):
                 )
 
         # Send a single binary attribute with appropriate MIME-type
-        read_attrindex = int(app.form.getInputValue('read_attrindex', ['0'])[0])
+        read_attrindex = int(app.form.get_input_value('read_attrindex', ['0'])[0])
         syntax_se = syntax_registry.get_syntax(app.schema, attr_type, entry.get_structural_oc())
 
         # We have to create an LDAPSyntax instance to be able to call its methods
@@ -267,7 +267,7 @@ def w2l_read(app):
         # Send HTTP header with appropriate MIME type
         header(
             app,
-            app.form.getInputValue(
+            app.form.get_input_value(
                 'read_attrmimetype',
                 [attr_instance.mime_type],
             )[0],

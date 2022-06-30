@@ -28,7 +28,7 @@ from .gui import (
 def w2l_params(app):
 
     # Set the LDAP connection option for deferencing aliases
-    ldap_deref = app.form.getInputValue('ldap_deref', [])
+    ldap_deref = app.form.get_input_value('ldap_deref', [])
     if ldap_deref:
         app.ls.l.deref = int(ldap_deref[0])
 
@@ -39,9 +39,9 @@ def w2l_params(app):
         context_menu_list=[]
     )
 
-    ldapparam_all_controls = app.form.getInputValue('params_all_controls', ['0'])[0] == '1'
+    ldapparam_all_controls = app.form.get_input_value('params_all_controls', ['0'])[0] == '1'
 
-    ldapparam_enable_control = app.form.getInputValue('params_enable_control', [None])[0]
+    ldapparam_enable_control = app.form.get_input_value('params_enable_control', [None])[0]
     if ldapparam_enable_control and ldapparam_enable_control in AVAILABLE_BOOLEAN_CONTROLS:
         methods, control_class, control_value = AVAILABLE_BOOLEAN_CONTROLS[ldapparam_enable_control]
         for method in methods:
@@ -56,7 +56,7 @@ def w2l_params(app):
                     control_class(ldapparam_enable_control, 1)
                 )
 
-    ldapparam_disable_control = app.form.getInputValue('params_disable_control', [None])[0]
+    ldapparam_disable_control = app.form.get_input_value('params_disable_control', [None])[0]
     if ldapparam_disable_control and \
        ldapparam_disable_control in AVAILABLE_BOOLEAN_CONTROLS:
         methods, control_class, control_value = \

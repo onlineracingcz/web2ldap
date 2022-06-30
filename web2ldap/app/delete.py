@@ -350,15 +350,15 @@ def del_search_form(app, scope, delete_filter):
 
 def w2l_delete(app):
 
-    delete_confirm = app.form.getInputValue('delete_confirm', [None])[0]
-    delete_attr = app.form.getInputValue(
+    delete_confirm = app.form.get_input_value('delete_confirm', [None])[0]
+    delete_attr = app.form.get_input_value(
         'delete_attr',
         [
             a.decode('ascii')
             for a in app.ldap_url.attrs or []
         ]
     )
-    delete_filter = app.form.getInputValue(
+    delete_filter = app.form.get_input_value(
         'filterstr',
         [app.ldap_url.filterstr or None]
     )[0]
@@ -367,7 +367,7 @@ def w2l_delete(app):
         scope = ldap0.SCOPE_BASE
     else:
         scope = int(
-            app.form.getInputValue(
+            app.form.get_input_value(
                 'scope',
                 [str(app.ldap_url.scope or ldap0.SCOPE_BASE)],
             )[0]
@@ -375,7 +375,7 @@ def w2l_delete(app):
 
     # Generate a list of requested LDAPv3 extended controls to be sent along
     # with a modify or delete request
-    delete_ctrl_oids = app.form.getInputValue('delete_ctrl', [])
+    delete_ctrl_oids = app.form.get_input_value('delete_ctrl', [])
     delete_ctrl_tree_delete = CONTROL_TREEDELETE in delete_ctrl_oids
 
     if delete_confirm is None:

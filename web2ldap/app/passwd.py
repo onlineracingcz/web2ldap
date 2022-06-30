@@ -257,8 +257,8 @@ def w2l_passwd(app):
     else:
         passwd_action_default = 'setuserpassword'
 
-    passwd_action = app.form.getInputValue('passwd_action', [None])[0] or passwd_action_default
-    passwd_who = app.form.getInputValue('passwd_who', [app.dn])[0]
+    passwd_action = app.form.get_input_value('passwd_action', [None])[0] or passwd_action_default
+    passwd_who = app.form.get_input_value('passwd_who', [app.dn])[0]
 
     try:
         user = app.ls.l.read_s(passwd_who, attrlist=['objectClass'])
@@ -300,7 +300,7 @@ def w2l_passwd(app):
         )
         return
 
-    old_password = app.form.getInputValue('passwd_oldpasswd', [None])[0]
+    old_password = app.form.get_input_value('passwd_oldpasswd', [None])[0]
 
     passwd_input = app.form.field['passwd_newpasswd'].val[0]
 
@@ -311,8 +311,8 @@ def w2l_passwd(app):
             length=app.cfg_param('passwd_genlength', PASSWD_GEN_DEFAULT_LENGTH),
         )
 
-    passwd_forcechange = app.form.getInputValue('passwd_forcechange', ['no'])[0] == 'yes'
-    passwd_inform = app.form.getInputValue('passwd_inform', [''])[0]
+    passwd_forcechange = app.form.get_input_value('passwd_forcechange', ['no'])[0] == 'yes'
+    passwd_inform = app.form.get_input_value('passwd_inform', [''])[0]
 
     password_attr_types_msg = ''
 
@@ -388,7 +388,7 @@ def w2l_passwd(app):
                 except KeyError:
                     pass
 
-        passwd_scheme = app.form.getInputValue('passwd_scheme', [''])[0]
+        passwd_scheme = app.form.get_input_value('passwd_scheme', [''])[0]
 
         # Set "standard" password of LDAP entry
         if '1.2.840.113556.1.4.90' in all_attrs:
@@ -430,7 +430,7 @@ def w2l_passwd(app):
                 ),
             )
 
-        passwd_settimesync = app.form.getInputValue('passwd_settimesync', ['no'])[0] == 'yes'
+        passwd_settimesync = app.form.get_input_value('passwd_settimesync', ['no'])[0] == 'yes'
 
         pwd_change_timestamp = time.time()
 
@@ -443,7 +443,7 @@ def w2l_passwd(app):
                 )
             )
 
-        passwd_ntpasswordsync = app.form.getInputValue('passwd_ntpasswordsync', ['no'])[0] == 'yes'
+        passwd_ntpasswordsync = app.form.get_input_value('passwd_ntpasswordsync', ['no'])[0] == 'yes'
 
         # Samba password synchronization if requested
         if passwd_ntpasswordsync and '1.3.6.1.4.1.7165.2.1.25' in all_attrs:

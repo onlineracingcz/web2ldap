@@ -652,9 +652,9 @@ class AppHandler(LogHelper):
                     )
             else:
                 input_ldapurl = ExtendedLDAPUrl()
-                conntype = int(self.form.getInputValue('conntype', [0])[0])
+                conntype = int(self.form.get_input_value('conntype', [0])[0])
                 input_ldapurl.urlscheme = CONNTYPE2URLSCHEME[conntype]
-                input_ldapurl.hostport = self.form.getInputValue('host', [None])[0]
+                input_ldapurl.hostport = self.form.get_input_value('host', [None])[0]
                 input_ldapurl.start_tls = str(
                     START_TLS_REQUIRED * (conntype == 1)
                 )
@@ -662,16 +662,16 @@ class AppHandler(LogHelper):
         # Separate parameters for dn, who, cred and scope
         # have predecence over parameters specified in LDAP URL
 
-        dn = self.form.getInputValue('dn', [input_ldapurl.dn])[0]
+        dn = self.form.get_input_value('dn', [input_ldapurl.dn])[0]
 
-        who = self.form.getInputValue('who', [None])[0]
+        who = self.form.get_input_value('who', [None])[0]
         if who is None:
             if input_ldapurl.who is not None:
                 who = input_ldapurl.who
         else:
             input_ldapurl.who = who
 
-        cred = self.form.getInputValue('cred', [None])[0]
+        cred = self.form.get_input_value('cred', [None])[0]
         if cred is None:
             if input_ldapurl.cred is not None:
                 cred = input_ldapurl.cred
@@ -698,7 +698,7 @@ class AppHandler(LogHelper):
         if not ldap0.dn.is_dn(dn, flags=1):
             raise ErrorExit('Invalid DN.')
 
-        scope_str = self.form.getInputValue(
+        scope_str = self.form.get_input_value(
             'scope',
             [
                 {False:str(input_ldapurl.scope), True:''}[input_ldapurl.scope is None]
@@ -792,8 +792,7 @@ class AppHandler(LogHelper):
         try:
 
             if self.command in FORM_CLASS and not is_ldapurl(self.form.query_string):
-                # get the input fields
-                self.form.getInputFields()
+                self.form.get_input_fields()
 
             # Check access here
             if not self.check_access(self.command):
@@ -919,7 +918,7 @@ class AppHandler(LogHelper):
             self._session_store.save(self.sid, self.ls)
             self.dn = self.dn
 
-            login_mech = self.form.getInputValue(
+            login_mech = self.form.get_input_value(
                 'login_mech',
                 [self.ldap_url.sasl_mech or '']
             )[0].upper() or None
@@ -949,7 +948,7 @@ class AppHandler(LogHelper):
                 ):
                 self.dn = self.dn
                 # real bind operation
-                login_search_root = self.form.getInputValue(
+                login_search_root = self.form.get_input_value(
                     'login_search_root',
                     [self.naming_context],
                 )[0]
@@ -959,13 +958,13 @@ class AppHandler(LogHelper):
                         cred or '',
                         login_mech,
                         ''.join((
-                            self.form.getInputValue('login_authzid_prefix', [''])[0],
-                            self.form.getInputValue(
+                            self.form.get_input_value('login_authzid_prefix', [''])[0],
+                            self.form.get_input_value(
                                 'login_authzid',
                                 [self.ldap_url.sasl_authzid or ''],
                             )[0],
                         )) or None,
-                        self.form.getInputValue('login_realm', [self.ldap_url.sasl_realm])[0],
+                        self.form.get_input_value('login_realm', [self.ldap_url.sasl_realm])[0],
                         self.binddn_mapping,
                         loginSearchRoot=login_search_root,
                     )

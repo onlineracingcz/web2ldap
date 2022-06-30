@@ -143,9 +143,9 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
     user_entry = ldap0.schema.models.Entry(app.schema, app.dn, search_result.entry_as)
 
     # Extract form parameters
-    group_search_root = app.form.getInputValue('groupadm_searchroot', [app.naming_context])[0]
-    groupadm_view = int(app.form.getInputValue('groupadm_view', ['1'])[0])
-    groupadm_name = app.form.getInputValue('groupadm_name', [None])[0]
+    group_search_root = app.form.get_input_value('groupadm_searchroot', [app.naming_context])[0]
+    groupadm_view = int(app.form.get_input_value('groupadm_view', ['1'])[0])
+    groupadm_name = app.form.get_input_value('groupadm_name', [None])[0]
 
     filter_components = []
     for ocl in groupadm_defs.keys():
@@ -217,7 +217,7 @@ def w2l_groupadm(app, info_msg='', error_msg=''):
 
         for action in ACTION2MODTYPE:
 
-            for action_group_dn in app.form.getInputValue('groupadm_%s' % action, []):
+            for action_group_dn in app.form.get_input_value('groupadm_%s' % action, []):
                 group_dn = action_group_dn
                 if group_dn not in all_groups_dict:
                     # The group entry could have been removed in the mean time

@@ -116,9 +116,9 @@ INPUT_FORM_BEGIN_TMPL = """
 def get_entry_input(app):
 
     # Get all the attribute types
-    in_attrtype_list = app.form.getInputValue('in_at', [])
+    in_attrtype_list = app.form.get_input_value('in_at', [])
     # Get all the attribute values
-    in_value_list = app.form.getInputValue('in_av', [])
+    in_value_list = app.form.get_input_value('in_av', [])
 
     if len(in_attrtype_list) != len(in_value_list):
         logger.warning(
@@ -450,7 +450,7 @@ def object_class_form(
             misc_select_field_th = ''
             misc_select_field_td = ''
 
-        input_currentformtype = app.form.getInputValue('in_oft', ['Template'])[0]
+        input_currentformtype = app.form.get_input_value('in_oft', ['Template'])[0]
 
         add_structural_oc_html = structural_select_field.input_html(
             id_value='add_structural_oc',
@@ -620,7 +620,7 @@ def object_class_form(
         # end of ldif_template_select_html()
 
 
-    in_ocf = app.form.getInputValue('in_ocf', ['tmpl'])[0]
+    in_ocf = app.form.get_input_value('in_ocf', ['tmpl'])[0]
 
     command_hidden_fields = [('dn', app.dn)]
 
@@ -872,9 +872,9 @@ def w2l_addform(app, add_rdn, add_basedn, entry, msg='', invalid_attrs=None):
     if msg:
         msg = '<p class="ErrorMessage">%s</p>' % (msg)
 
-    input_formtype = app.form.getInputValue(
+    input_formtype = app.form.get_input_value(
         'in_ft',
-        app.form.getInputValue('in_oft', ['OC'])
+        app.form.get_input_value('in_oft', ['OC'])
     )[0]
 
     if 'in_oc' in app.form.input_field_names:
@@ -999,9 +999,9 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
     if msg:
         msg = '<p class="ErrorMessage">%s</p>' % (msg)
 
-    input_formtype = app.form.getInputValue(
+    input_formtype = app.form.get_input_value(
         'in_ft',
-        app.form.getInputValue('in_oft', ['Template'])
+        app.form.get_input_value('in_oft', ['Template'])
     )[0]
 
     if 'in_oc' in app.form.input_field_names:
@@ -1012,7 +1012,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
     if not entry:
         entry = old_entry
 
-    in_roattroids = app.form.getInputValue('in_roattroids', [])
+    in_roattroids = app.form.get_input_value('in_roattroids', [])
     if in_roattroids == ['nonePseudoValue;x-web2ldap-None']:
         readonly_attr_oids = None
     elif in_roattroids:
@@ -1100,7 +1100,7 @@ def w2l_modifyform(app, entry, msg='', invalid_attrs=None):
             app.form.hidden_field_html('in_assertion', gen_assertion_filter(app, entry), ''),
             '\n'.join([
                 app.form.hidden_field_html('in_oldattrtypes', at_name, '')
-                for at_name in app.form.getInputValue('in_oldattrtypes', entry.keys())
+                for at_name in app.form.get_input_value('in_oldattrtypes', entry.keys())
             ]),
         ))
     )

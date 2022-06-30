@@ -36,7 +36,7 @@ ADD_IGNORE_ATTR_TYPES = {
 
 def w2l_add(app):
 
-    input_modrow = app.form.getInputValue('in_mr', ['.'])[0]
+    input_modrow = app.form.get_input_value('in_mr', ['.'])[0]
 
     if input_modrow[0] == '-':
         del_row_num = int(input_modrow[1:])
@@ -57,8 +57,8 @@ def w2l_add(app):
             app.form.field['in_avi'].val[insert_row_num]
         )
 
-    add_clonedn = app.form.getInputValue('add_clonedn', [None])[0]
-    add_template = app.form.getInputValue('add_template', [None])[0]
+    add_clonedn = app.form.get_input_value('add_clonedn', [None])[0]
+    add_template = app.form.get_input_value('add_template', [None])[0]
     invalid_attrs = None
 
     if add_clonedn:
@@ -74,8 +74,8 @@ def w2l_add(app):
         entry = ldap0.schema.models.Entry(app.schema, add_basedn, entry)
     else:
         entry, invalid_attrs = get_entry_input(app)
-        add_rdn = app.form.getInputValue('add_rdn', [''])[0]
-        add_basedn = app.form.getInputValue('add_basedn', [app.dn])[0]
+        add_rdn = app.form.get_input_value('add_rdn', [''])[0]
+        add_basedn = app.form.get_input_value('add_basedn', [app.dn])[0]
 
     if invalid_attrs:
         error_msg = invalid_syntax_message(app, invalid_attrs)
