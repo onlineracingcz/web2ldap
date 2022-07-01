@@ -1,6 +1,8 @@
 # -*- coding: ascii -*-
 """
 web2ldap plugin classes for attributes defined for PowerDNS' LDAP backend
+
+https://doc.powerdns.com/authoritative/backends/ldap.html
 """
 
 from typing import Dict
