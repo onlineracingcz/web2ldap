@@ -1,8 +1,8 @@
 # -*- coding: ascii -*-
 """
-web2ldap plugin classes for DNS attributes
+web2ldap plugin classes for dNSDomain/dNSDomain2 schema
 
-https://drift.uninett.no/nett/ip-nett/dnsattributes.schema
+https://doc.powerdns.com/authoritative/backends/ldap.html#schemas
 """
 
 import re

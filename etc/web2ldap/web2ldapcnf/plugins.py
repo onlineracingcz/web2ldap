@@ -233,7 +233,7 @@ import web2ldap.app.plugins.freeradius
 # Syntaxes, attribute types for DNS and PowerDNS
 #---------------------------------------------------------------------------
 
-import web2ldap.app.plugins.dns
+import web2ldap.app.plugins.dnsdomain
 import web2ldap.app.plugins.powerdns
 
 # to allow trailing dot in fully-qualified domain names in all plugin
