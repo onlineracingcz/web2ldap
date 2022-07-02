@@ -230,6 +230,12 @@ import web2ldap.app.plugins.dds
 import web2ldap.app.plugins.freeradius
 
 #---------------------------------------------------------------------------
+# Syntaxes, attribute types for Bind-DLZ LDAP driver
+#---------------------------------------------------------------------------
+
+import web2ldap.app.plugins.dnszone
+
+#---------------------------------------------------------------------------
 # Syntaxes, attribute types for DNS and PowerDNS
 #---------------------------------------------------------------------------
 
