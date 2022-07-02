@@ -30,6 +30,12 @@ from ..schema.syntaxes import (
 )
 
 
+DNSDOMAIN_OBJECTCLASS_OIDS = [
+    '0.9.2342.19200300.100.4.15', # dNSDomain
+    '1.3.6.1.4.1.2428.20.2',      # dNSDomain2
+]
+
+
 class AssociatedDomain(DNSDomain):
     oid: str = 'AssociatedDomain-oid'
     desc: str = 'Associated DNS domain name (see RFC 4524, section 2.1.)'
@@ -184,10 +190,7 @@ syntax_registry.reg_at(
     AssociatedDomain.oid, [
         '0.9.2342.19200300.100.1.37', # associatedDomain
     ],
-    #structural_oc_oids=[
-    #    '0.9.2342.19200300.100.4.15', # dNSDomain
-    #    '1.3.6.1.4.1.2428.20.2',      # dNSDomain2
-    #],
+    structural_oc_oids=DNSDOMAIN_OBJECTCLASS_OIDS,
 )
 
 
@@ -206,7 +209,8 @@ syntax_registry.reg_at(
     ResourceRecord.oid, [
         '1.3.6.1.4.1.2428.20.1.12',   # pTRRecord
         '0.9.2342.19200300.100.1.29', # nSRecord
-    ]
+    ],
+    structural_oc_oids=DNSDOMAIN_OBJECTCLASS_OIDS,
 )
 
 
