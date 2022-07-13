@@ -120,7 +120,7 @@ def w2l_add(app):
         # Normalize old LDAPv2 RDN form
         if rdn_attr_type.lower().startswith('oid.'):
             rdn_attr_type = rdn_attr_type[4:]
-        if rdn_attr_type in entry and rdn_attr_value in entry[rdn_attr_type]:
+        if rdn_attr_type in entry and rdn_attr_value and rdn_attr_value.encode(app.ls.charset) in entry[rdn_attr_type]:
             rdn_list[i] = rdn_attr_type, rdn_attr_value
         elif rdn_attr_type in entry and not rdn_attr_value and len(entry[rdn_attr_type]) == 1:
             rdn_list[i] = rdn_attr_type, entry[rdn_attr_type][0].decode(app.ls.charset)
