@@ -945,7 +945,7 @@ class Integer(IA5String):
         if self.max_value is not None:
             self.max_len = len(str(self.max_value))
 
-    def _maxlen(self, fval):
+    def _maxlen(self, fval: str) -> int:
         min_value_len = max_value_len = fval_len = 0
         if self.min_value is not None:
             min_value_len = len(str(self.min_value))
