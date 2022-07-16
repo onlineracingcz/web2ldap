@@ -20,6 +20,7 @@ import urllib.parse
 import logging
 from ipaddress import ip_address, ip_network
 from hmac import compare_digest
+from typing import Union
 
 import ldap0
 from ldap0.ldapurl import LDAPUrl, is_ldapurl
@@ -324,11 +325,9 @@ class AppHandler(LogHelper):
         assert isinstance(res, str), TypeError('res must be str, was %r', res)
         return res
 
-    def ldap_url_anchor(self, data):
-        if isinstance(data, LDAPUrl):
-            ldap_url = data
-        else:
-            ldap_url = LDAPUrl(ldapUrl=data)
+    def ldap_url_anchor(self, ldap_url: Union[str, LDAPUrl]) -> str:
+        if isinstance(ldap_url, str):
+            ldap_url = LDAPUrl(ldapUrl=ldap_url)
         command_func = {True:'read', False:'search'}[ldap_url.scope == ldap0.SCOPE_BASE]
         if ldap_url.hostport:
             command_text = 'Connect'
