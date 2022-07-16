@@ -5,6 +5,8 @@ standard-compliant behaviour even if current subschema of
 a server is erroneous or could not be retrieved.
 """
 
+from typing import Union
+
 import ldap0.ldapurl
 
 from ..searchform import SEARCH_SCOPE_STR_ONELEVEL
@@ -360,7 +362,7 @@ class AltServer(LDAPUrl):
     oid: str = 'AltServer-oid'
     desc: str = 'LDAP URIs of alternative server(s)'
 
-    def _command_ldap_url(self, ldap_url):
+    def _command_ldap_url(self, ldap_url: str) -> Union[str, LDAPUrl]:
         ldap_url_obj = ldap0.ldapurl.LDAPUrl(ldapUrl=ldap_url)
         ldap_url_obj.who = self._app.ls.who
         ldap_url_obj.scope = ldap0.ldapurl.LDAP_SCOPE_BASE

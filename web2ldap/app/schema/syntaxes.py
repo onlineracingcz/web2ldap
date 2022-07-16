@@ -32,6 +32,7 @@ from typing import (
     Pattern,
     Sequence,
     Tuple,
+    Union,
 )
 import ipaddress
 from collections import defaultdict
@@ -1306,7 +1307,7 @@ class LDAPUrl(Uri):
     oid: str = 'LDAPUrl-oid'
     desc: str = 'LDAP URL'
 
-    def _command_ldap_url(self, ldap_url):
+    def _command_ldap_url(self, ldap_url: str) -> Union[str, ldap0.ldapurl.LDAPUrl]:
         return ldap_url
 
     def display(self, vidx, links) -> str:
