@@ -61,7 +61,7 @@ httpenv_remote_addr = 'REMOTE_ADDR'
 httpenv_override = {
     # explicitly set HTTPS=on to force "secure" cookie flag no matter what
     #'HTTPS': 'on',
-    'SERVER_NAME': os.environ['SERVER_NAME']
+    'SERVER_NAME': os.getenv('SERVER_NAME')
 }
 
 #---------------------------------------------------------------------------
