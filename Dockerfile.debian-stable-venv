@@ -1,0 +1,24 @@
+FROM debian:stable
+MAINTAINER Michael Stroeder <michael@stroeder.com>
+
+# install latest updates to be on the safe side
+RUN apt update && apt full-upgrade -f -y
+
+# install packages from standard repo
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --yes --quiet --no-install-recommends --option 'DPkg::Options=--force-confold' --option 'DPkg::Options=--force-confdef' libldap2-dev libsasl2-dev libsasl2-modules python3-setuptools python3-setuptools-git python3-setuptools-scm gcc python3-dev python3-pip python3-venv ca-certificates
+
+# install web2ldap in virtual env
+RUN python3 -m venv /opt/web2ldap
+RUN /opt/web2ldap/bin/pip3 install --no-cache-dir --upgrade-strategy=only-if-needed --find-links https://www.web2ldap.de/download.html web2ldap[image,xml,metrics]
+
+# Override web2ldap's config module files
+ADD --chown=root:root web2ldapcnf/*.py /opt/web2ldap/etc/web2ldap/web2ldapcnf/
+RUN chmod 0755 /opt/web2ldap/etc/web2ldap/web2ldapcnf
+RUN chmod 0644 /opt/web2ldap/etc/web2ldap/web2ldapcnf/*.py
+
+# run web2ldap and expose its TCP port 1760 for web access
+RUN groupadd -r -g 1760 web2ldap
+RUN useradd -r -u 1760 -g 1760 web2ldap
+USER web2ldap
+EXPOSE 1760
+CMD /opt/web2ldap/bin/web2ldap 0.0.0.0 1760
