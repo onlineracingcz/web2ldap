@@ -1,8 +1,0 @@
-dn: cn=
-objectClass: top
-objectClass: sudoRole
-objectClass: aeObject
-objectClass: aeSudoRule
-aeStatus: 0
-aeNotBefore: now
-

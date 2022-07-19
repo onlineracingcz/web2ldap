@@ -1,8 +1,0 @@
-dn: cn=
-objectClass: top
-objectClass: person
-objectClass: organizationalPerson
-objectClass: user
-objectClass: computer
-userAccountControl: 4096
-

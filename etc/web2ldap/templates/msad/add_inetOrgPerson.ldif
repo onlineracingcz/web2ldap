@@ -1,8 +1,0 @@
-dn: cn=
-objectClass: top
-objectClass: person
-objectClass: organizationalPerson
-objectClass: user
-objectClass: inetOrgPerson
-userAccountControl: 514
-
