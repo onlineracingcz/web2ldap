@@ -222,7 +222,7 @@ cookie_max_age = 86400
 
 # Cookie domain to send with Set-Cookie (DNS name)
 # None lets web2ldap send the hostname
-cookie_domain = None
+cookie_domain = os.getenv('COOKIE_DOMAIN')
 
 # If non-zero this is the time-span in seconds after which a
 # new session ID is generated.
